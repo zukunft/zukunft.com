@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -51,6 +52,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -87,6 +89,8 @@ class data_object
 
     // the session user
     public user $usr;
+
+    public change_log_list $chg_log;
 
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -125,6 +129,7 @@ class data_object
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
         $this->usr_msg = new user_message();
+        $this->chg_log = new change_log_list();
         $this->online = true;
     }
 
@@ -255,6 +260,29 @@ class data_object
     function set_offline(): void
     {
         $this->online = false;
+    }
+
+    /**
+     * @return bool true if this context object contains at least some phrases
+     */
+    function has_changes(): bool
+    {
+        return !$this->chg_log->is_empty();
+    }
+
+    function add_changes(change_log_list $chg_log): void
+    {
+        foreach ($chg_log->lst() as $log) {
+            $this->chg_log->add($log);
+        }
+    }
+
+    /**
+     * @return change_log_list the cache of the relevant change log entries
+     */
+    function change_log(): change_log_list
+    {
+        return $this->chg_log;
     }
 
 }

@@ -112,6 +112,7 @@ class test_lib
         // set the value cache list based
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
+        $dto_dsp->chg_log = $cto->change_log_list_named_ui();
 
         // set the global cache var
         $ui_cac = $dto_dsp;

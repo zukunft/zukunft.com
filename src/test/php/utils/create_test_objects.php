@@ -201,6 +201,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
@@ -4938,6 +4939,20 @@ class create_test_objects extends test_base
         $log_lst = new change_log_list();
         $log_lst->add($this->change_log_named());
         return $log_lst;
+    }
+
+    function change_log_list_named_ui(): change_log_list_ui
+    {
+        return $this->change_log_list_to_ui($this->change_log_list_named());
+    }
+
+    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
+    private function change_log_list_to_ui(change_log_list $lst): change_log_list_ui
+    {
+        $lst_ui = new change_log_list_ui();
+        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
+        $lst_ui->set_from_json($api_json);
+        return $lst_ui;
     }
 
     /**

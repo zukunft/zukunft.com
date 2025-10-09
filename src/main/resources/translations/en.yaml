@@ -51,6 +51,7 @@ messages:
   system_sub_title_no_usage: "Not used"
   system_sub_title_values: "Values"
   system_sub_title_references: "References"
+  system_sub_title_log: "Changes"
   system_title_about: "About"
   system_title_setup: "Setup"
   system_title_signup: "Signup"

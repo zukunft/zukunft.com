@@ -53,7 +53,7 @@ include_once html_paths::EXECUTE . 'ui_im_export.php';
 include_once html_paths::EXECUTE . 'ui_link.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -72,7 +72,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_link;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
@@ -126,6 +126,13 @@ class component_exe extends component
         if ($cfg != null) {
             if ($cfg->has_phrases()) {
                 $phr_lst = $cfg->phrase_list();
+            }
+        }
+        $log_lst = new change_log_list();
+        $log_lst->load_fallback();
+        if ($cfg != null) {
+            if ($cfg->has_changes()) {
+                $log_lst = $cfg->change_log();
             }
         }
 
@@ -319,7 +326,7 @@ class component_exe extends component
             component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_type::RANK_PHRASE => $rank->system_phrases($dbo),
-            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $form_name),
+            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
 
             // base
             component_type::PHRASE => $this->name_tip(),

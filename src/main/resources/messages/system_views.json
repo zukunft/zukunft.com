@@ -362,6 +362,13 @@
       "ui_msg_code_id": "system_sub_title_references"
     },
     {
+      "name": "system sub title log",
+      "description": "show the language specific sub title for the change log",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_log",
+      "ui_msg_code_id": "system_sub_title_log"
+    },
+    {
       "name": "system title about",
       "description": "show the language specific title for the about page",
       "type": "system_title",
@@ -1554,8 +1561,21 @@
         },
         {
           "position": "26",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "27",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "28",
           "name": "change log word",
-          "position_type": "side"
+          "position_type": "combine"
+        },
+        {
+          "position": "29",
+          "name": "system formatter row end"
         }
       ]
     },

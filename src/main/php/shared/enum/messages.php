@@ -1073,6 +1073,7 @@ enum messages: string
     case SYSTEM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
     case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case SYSTEM_SUB_TITLE_REF = 'system_sub_title_references';
+    case SYSTEM_SUB_TITLE_LOG = 'system_sub_title_log';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
