@@ -7,6 +7,6 @@ PREPARE verb_by_code_id FROM
            name_reverse,
            name_plural_reverse,
            formula_name,
-           words
+           `usage`
       FROM verbs
      WHERE code_id = ?';

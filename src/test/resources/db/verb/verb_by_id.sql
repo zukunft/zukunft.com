@@ -7,6 +7,6 @@ PREPARE verb_by_id (bigint) AS
            name_reverse,
            name_plural_reverse,
            formula_name,
-           words
+           usage
       FROM verbs
      WHERE verb_id = $1;

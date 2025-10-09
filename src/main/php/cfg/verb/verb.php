@@ -196,11 +196,11 @@ class verb extends type_object
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
-            if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
-                if ($db_row[verb_db::FLD_WORDS] == null) {
+            if (array_key_exists(verb_db::FLD_USAGE, $db_row)) {
+                if ($db_row[verb_db::FLD_USAGE] == null) {
                     $this->usage = 0;
                 } else {
-                    $this->usage = $db_row[verb_db::FLD_WORDS];
+                    $this->usage = $db_row[verb_db::FLD_USAGE];
                 }
             }
         }
@@ -733,8 +733,8 @@ class verb extends type_object
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
         $db_row = $db_con->get1($qp);
-        $used_by_words = $db_row[verb_db::FLD_WORDS];
-        if ($used_by_words > 0) {
+        $usage = $db_row[verb_db::FLD_USAGE];
+        if ($usage > 0) {
             $result = false;
         }
 

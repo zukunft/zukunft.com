@@ -78,8 +78,8 @@ class verb_db
     const string FLD_REVERSE = 'name_reverse';
     const string FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
     const string FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const string FLD_WORDS_COM = 'used for how many phrases or formulas';
-    const string FLD_WORDS = 'words';
+    const string FLD_USAGE_COM = 'used for how many phrases or formulas';
+    const string FLD_USAGE = 'usage';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const array FLD_NAMES = array(
@@ -89,7 +89,7 @@ class verb_db
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
         self::FLD_FORMULA,
-        self::FLD_WORDS
+        self::FLD_USAGE
     );
 
     // field lists for the table creation
@@ -104,7 +104,7 @@ class verb_db
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
         [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_WORDS, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_WORDS_COM],
+        [self::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
     );
 
 

@@ -7,6 +7,6 @@ PREPARE verb_by_code_id (text) AS
            name_reverse,
            name_plural_reverse,
            formula_name,
-           words
+           usage
       FROM verbs
      WHERE code_id = $1 AND code_id IS NOT NULL;

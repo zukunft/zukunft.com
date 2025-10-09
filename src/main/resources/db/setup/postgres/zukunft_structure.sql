@@ -1103,7 +1103,7 @@ CREATE TABLE IF NOT EXISTS verbs
     name_plural_reverse varchar(255) DEFAULT NULL,
     name_plural         varchar(255) DEFAULT NULL,
     name_reverse        varchar(255) DEFAULT NULL,
-    words               bigint       DEFAULT NULL
+    usage               bigint       DEFAULT NULL
 );
 
 COMMENT ON TABLE verbs IS 'for verbs / triple predicates to use predefined behavior';
@@ -1113,7 +1113,7 @@ COMMENT ON COLUMN verbs.code_id IS 'id text to link coded functionality to a spe
 COMMENT ON COLUMN verbs.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN verbs.formula_name IS 'naming used in formulas';
 COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
-COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
+COMMENT ON COLUMN verbs.usage IS 'used for how many phrases or formulas';
 
 -- --------------------------------------------------------
 
@@ -4903,7 +4903,7 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage        AS usage,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -4966,7 +4966,7 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage        AS usage,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -5031,7 +5031,7 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage        AS usage,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -5094,7 +5094,7 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage        AS usage,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
