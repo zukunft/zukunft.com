@@ -173,6 +173,8 @@ class component_type
     const int FORM_FIELD_REVERSE_ID = 135;
     const string FORM_FIELD_PLURAL_REVERSE = "system_form_field_plural_reverse";
     const int FORM_FIELD_PLURAL_REVERSE_ID = 136;
+    const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
+    const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
 
     // value only fields
     const string FORM_FIELD_GROUP = "system_form_field_group";
@@ -314,8 +316,10 @@ class component_type
     const int LIST_PARENTS_OF_WORD_ID = 96;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 48;
-    const string LIST_TRIPLES_OF_VERB = "list_of_triples_that_use_a_verb";
+    const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
+    const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
     const int LIST_PHRASES_OF_FORMULA_ID = 48;
     const string LIST_REF = "ref_list";
@@ -535,6 +539,7 @@ class component_type
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
+        [self::FORM_FIELD_NAME_IN_FORMULAS, self::FORM_FIELD_NAME_IN_FORMULAS_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],

@@ -441,6 +441,13 @@ class db_object extends TextIdObject
         return $msg;
     }
 
+    function formula_name(): ?string
+    {
+        $msg = 'ERROR: formula_name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;

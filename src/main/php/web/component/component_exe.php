@@ -222,6 +222,7 @@ class component_exe extends component
             component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $this->style_code_id($cfg->typ_lst_cache)),
 
             // value only fields
             component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $this->style_code_id($cfg->typ_lst_cache)),
@@ -301,6 +302,7 @@ class component_exe extends component
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
             component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
+            component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo),
             component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
 
             // TODO Prio 1 review the components below

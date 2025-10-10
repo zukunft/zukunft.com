@@ -159,6 +159,7 @@ class json_fields
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
+    const string NAME_IN_FORMULA = 'name_in_formula'; // the name of the verb if used in formulas
 
     // batch job fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested

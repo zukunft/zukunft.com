@@ -1071,8 +1071,10 @@ enum messages: string
     case SYSTEM_SUB_TITLE_USAGE = 'system_sub_title_usage';
     case SYSTEM_SUB_TITLE_VAR_USAGE = 'system_sub_title_var_usage';
     case SYSTEM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
-    case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case SYSTEM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
     case SYSTEM_SUB_TITLE_REF = 'system_sub_title_references';
+    case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case SYSTEM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
     case SYSTEM_SUB_TITLE_LOG = 'system_sub_title_log';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
@@ -1146,6 +1148,7 @@ enum messages: string
     case FORM_FIELD_PLURAL = 'form_field_plural';
     case FORM_FIELD_REVERSE = 'form_field_reverse';
     case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
+    case FORM_FIELD_NAME_IN_FORMULAS = 'form_field_name_in_formulas';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
     case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';

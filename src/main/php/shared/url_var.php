@@ -190,6 +190,7 @@ class url_var
     const string PLURAL = 'plural';
     const string REVERSE = 'reverse';
     const string REVERSE_PLURAL = 'plural_reverse';
+    const string NAME_IN_FORMULA = 'name_in_formula';
     const string URL = 'url';
     const string WEIGHT = 'weight';
 

@@ -90,6 +90,9 @@ class verb extends sandbox_named
     public ?string $plural = null;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
+    // short name of the verb for the use in formulas
+    // because there both sides are combined
+    public ?string $frm_name = null;
 
 
     /*
@@ -131,6 +134,16 @@ class verb extends sandbox_named
         return $this->rev_plural;
     }
 
+    function formula_name(): ?string
+    {
+        return $this->frm_name;
+    }
+
+    function usage(): ?int
+    {
+        return $this->usage;
+    }
+
 
     /*
      * api
@@ -170,6 +183,11 @@ class verb extends sandbox_named
         } else {
             $this->rev_plural = '';
         }
+        if (array_key_exists(json_fields::NAME_IN_FORMULA, $json_array)) {
+            $this->frm_name = $json_array[json_fields::NAME_IN_FORMULA];
+        } else {
+            $this->frm_name = '';
+        }
         return $usr_msg;
     }
 
@@ -185,6 +203,7 @@ class verb extends sandbox_named
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
         $vars[json_fields::REV_PLURAL] = $this->rev_plural;
+        $vars[json_fields::NAME_IN_FORMULA] = $this->frm_name;
         return $vars;
     }
 

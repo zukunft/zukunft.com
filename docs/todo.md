@@ -7,6 +7,9 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO note what has to be changed based on the old http scripts (done: about)
+    TODO add to all sortable objects the fields usage (int) and the impact (float) for fast sorting 
+         because objects can only be sorted by one criteria and the usage is the fallback;
+         the phrase that should be used to calculate the impact is defined in the config file
     TODO complete and test the db write via api
     TODO complete the import db write tests (pending: )
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)

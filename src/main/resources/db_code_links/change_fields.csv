@@ -793,3 +793,4 @@ change_field_id,change_field_name,table_id,description
 793,ui_msg_code_id_vars,18,
 794,ui_msg_code_id_exception,18,
 795,ui_msg_value_exception,18,
+796,usage,9,

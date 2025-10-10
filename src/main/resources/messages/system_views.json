@@ -348,6 +348,20 @@
       "ui_msg_value_exception": 0
     },
     {
+      "name": "system sub title triples",
+      "description": "show the language specific sub title for a triple list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_triples",
+      "ui_msg_code_id": "system_sub_title_triples"
+    },
+    {
+      "name": "system sub title references",
+      "description": "show the language specific sub title for a reference list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_references",
+      "ui_msg_code_id": "system_sub_title_references"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -355,11 +369,11 @@
       "ui_msg_code_id": "system_sub_title_values"
     },
     {
-      "name": "system sub title references",
-      "description": "show the language specific sub title for a references list",
+      "name": "system sub title formulas",
+      "description": "show the language specific sub title for a formula list",
       "type": "system_sub_title",
-      "code_id": "system_sub_title_references",
-      "ui_msg_code_id": "system_sub_title_references"
+      "code_id": "system_sub_title_formulas",
+      "ui_msg_code_id": "system_sub_title_formulas"
     },
     {
       "name": "system sub title log",
@@ -1234,6 +1248,18 @@
       "code_id": "formula_list_word"
     },
     {
+      "name": "triples that use a verb",
+      "description": "list of triples which use a given verb",
+      "type": "triples_by_verb",
+      "code_id": "triples_by_verb"
+    },
+    {
+      "name": "formulas that use a verb",
+      "description": "list of formulas which use a given verb",
+      "type": "formulas_by_verb",
+      "code_id": "formulas_by_verb"
+    },
+    {
       "name": "assigned phrases of this formula",
       "description": "changeable list of phrases assigned to this formula",
       "type": "list_phrases_of_formula",
@@ -1324,6 +1350,66 @@
       "code_id": "change_log_word"
     },
     {
+      "name": "change log verb",
+      "description": "show the change log of this verb",
+      "type": "change_log",
+      "code_id": "change_log_verb"
+    },
+    {
+      "name": "change log triple",
+      "description": "show the change log of this triple",
+      "type": "change_log",
+      "code_id": "change_log_triple"
+    },
+    {
+      "name": "change log source",
+      "description": "show the change log of this source",
+      "type": "change_log",
+      "code_id": "change_log_source"
+    },
+    {
+      "name": "change log reference",
+      "description": "show the change log of this reference",
+      "type": "change_log",
+      "code_id": "change_log_reference"
+    },
+    {
+      "name": "change log value",
+      "description": "show the change log of this value",
+      "type": "change_log",
+      "code_id": "change_log_value"
+    },
+    {
+      "name": "change log group",
+      "description": "show the change log of this group",
+      "type": "change_log",
+      "code_id": "change_log_group"
+    },
+    {
+      "name": "change log formula",
+      "description": "show the change log of this formula",
+      "type": "change_log",
+      "code_id": "change_log_formula"
+    },
+    {
+      "name": "change log result",
+      "description": "show the change log of this result",
+      "type": "change_log",
+      "code_id": "change_log_result"
+    },
+    {
+      "name": "change log view",
+      "description": "show the change log of this view",
+      "type": "change_log",
+      "code_id": "change_log_view"
+    },
+    {
+      "name": "change log component",
+      "description": "show the change log of this component",
+      "type": "change_log",
+      "code_id": "change_log_component"
+    },
+    {
       "name": "system form field plural",
       "description": "the plural language form field in a form (to be move to languages forms)",
       "type": "system_form_field_plural",
@@ -1343,6 +1429,13 @@
       "type": "system_form_field_plural_reverse",
       "code_id": "form_field_plural_reverse",
       "ui_msg_code_id": "form_field_plural_reverse"
+    },
+    {
+      "name": "system form field name in formulas",
+      "description": "a form field for the verb name used in formulas",
+      "type": "system_form_field_name_in_formulas",
+      "code_id": "form_field_name_in_formulas",
+      "ui_msg_code_id": "form_field_name_in_formulas"
     }
   ],
   "views": [
@@ -1825,6 +1918,60 @@
         {
           "position": "13",
           "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "18",
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "19",
+          "name": "triples that use a verb",
+          "position_type": "combine",
+          "style": "col-md-6"
+        },
+        {
+          "position": "20",
+          "name": "system sub title formulas",
+          "position_type": "side",
+          "style": "col-md-4"
+        },
+        {
+          "position": "21",
+          "name": "formulas that use a verb",
+          "position_type": "combine",
+          "style": "col-md-6"
+        },
+        {
+          "position": "25",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "26",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "27",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "28",
+          "name": "change log verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "29",
+          "name": "system formatter row end"
         }
       ]
     },

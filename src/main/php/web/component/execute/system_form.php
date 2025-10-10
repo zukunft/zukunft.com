@@ -278,6 +278,26 @@ class system_form extends component
     }
 
     /**
+     * request the verb name if used in a formula
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to request the verb name used in a formula
+     */
+    function form_field_name_in_formulas(db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $frm_name = $dbo->formula_name();
+        if ($frm_name == null) {
+            $frm_name = '';
+        }
+        return $html->form_field(
+            url_var::NAME_IN_FORMULA,
+            $frm_name,
+            html_base::INPUT_TEXT,
+            '', $style_text
+        );
+    }
+
+    /**
      * @param db_object_dsp $dbo the object
      * @return string the html code to request a numeric value from the user
      */

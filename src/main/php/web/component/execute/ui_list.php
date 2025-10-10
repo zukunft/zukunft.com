@@ -113,6 +113,15 @@ class ui_list extends ui_base
         return $dbo->name();
     }
 
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function formula_list(?db_object $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
     private function phrases(phrase $phr, foaf_direction $dir): string
     {
         $phr_lst = new phrase_list();
