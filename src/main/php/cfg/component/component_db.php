@@ -62,7 +62,6 @@ include_once paths::DB . 'sql_field_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -72,7 +71,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class component_db
@@ -140,6 +138,7 @@ class component_db
         [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
         [self::FLD_LINK_COMP_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
         [self::FLD_LINK_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -153,6 +152,7 @@ class component_db
     // all database field names excluding the id
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE,
         self::FLD_UI_MSG_ID,
         self::FLD_UI_MSG_ID_VARS,
         self::FLD_UI_MSG_ID_EXCEPTION,
@@ -186,6 +186,7 @@ class component_db
         formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
+        sql_db::FLD_USAGE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT

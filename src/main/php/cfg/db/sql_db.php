@@ -372,6 +372,14 @@ class sql_db
     const string FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
     const string FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
+    const string FLD_USAGE = 'usage';
+    const string FLD_USAGE_COM = 'the number of linked objects (values, triples and formulas) to the object (e.g. word), which gives an indication of the importance and is used as fallback value for sorting';
+    const sql_field_type FLD_USAGE_SQL_TYP = sql_field_type::INT;
+    const string FLD_IMPACT = 'impact';
+    const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
+    const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
+    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
         config::class,

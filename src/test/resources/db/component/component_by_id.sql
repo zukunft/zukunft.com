@@ -3,6 +3,7 @@ PREPARE component_by_id (bigint, bigint) AS
                u.component_id AS user_component_id,
                s.user_id,
                s.code_id,
+               s.usage,
                s.ui_msg_code_id,
                s.ui_msg_code_id_vars,
                s.ui_msg_code_id_exception,

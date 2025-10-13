@@ -735,8 +735,8 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         if ($this->owner_id() != $obj->owner_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
-                msg_id::VAR_USER => $obj->owner()->dsp_id(),
-                msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
+                msg_id::VAR_USER => $obj->owner_id(),
+                msg_id::VAR_USER_CHK => $this->owner_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
             ]);

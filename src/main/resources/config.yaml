@@ -179,6 +179,9 @@ zukunft.com:
           impact:
             phrase: "happy time points"
             tooltip-comment: "the impact type is the default word or triple that is used to define what is most relevant"
+          risk:
+            phrase: "CHF"
+            tooltip-comment: "the currency used to estimate the risk in case of an 1% change of a related parameter e.g. for an call of put option the change in the currency if the underlying stock price changes by 1%; for the risk calculation the same measure is used e.g. to set the priority of the jobs whereas the impact is used for sorting"
           max change:
             daily:
               ip user: 1000

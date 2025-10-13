@@ -137,8 +137,8 @@ class word extends sandbox_code_id
     // the main parent phrase
     private ?phrase $parent = null;
 
-    // the number of references to this word object
-    private int $usage = 0;
+    // the impact used to sort the words
+    private float $impact = 0.0;
 
     // the default view
     private ?view $msk = null;
@@ -163,12 +163,14 @@ class word extends sandbox_code_id
             } else {
                 $this->set_plural(null);
             }
-            if (array_key_exists(url_var::USAGE, $url_array)) {
-                $this->usage = $url_array[url_var::USAGE];
-            }
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 if ($url_array[url_var::VIEW] != null) {
                     $this->set_view_id($url_array[url_var::VIEW]);
+                }
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
                 }
             }
             if (array_key_exists(url_var::VIEW_LONG, $url_array)) {
@@ -203,10 +205,14 @@ class word extends sandbox_code_id
         } else {
             $this->set_plural(null);
         }
-        if (array_key_exists(json_fields::USAGE, $json_array)) {
-            $this->usage = $json_array[json_fields::USAGE];
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
         } else {
-            $this->usage = 0;
+            $this->impact = 0.0;
         }
         if (array_key_exists(json_fields::PARENT, $json_array)) {
             $this->set_parent($json_array[json_fields::PARENT]);
@@ -230,8 +236,8 @@ class word extends sandbox_code_id
     {
         $vars = parent::api_array();
 
+        // usage and impact are not included here because this system value is never updated by the frontend
         $vars[json_fields::PLURAL] = $this->get_plural();
-        // usage is not included here because this system value is never updated by the frontend
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
@@ -263,9 +269,9 @@ class word extends sandbox_code_id
         return $this->parent;
     }
 
-    function usage(): ?int
+    function impact(): float
     {
-        return $this->usage;
+        return $this->impact;
     }
 
     function set_view_id(?int $view_id): void

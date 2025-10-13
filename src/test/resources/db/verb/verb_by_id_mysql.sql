@@ -7,6 +7,7 @@ PREPARE verb_by_id FROM
            name_reverse,
            name_plural_reverse,
            formula_name,
-           `usage`
+           `usage`,
+           impact
       FROM verbs
      WHERE verb_id = ?';

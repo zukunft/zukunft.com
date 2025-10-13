@@ -108,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
@@ -1009,6 +1010,26 @@ class test_base
     function assert_json_string(string $test_name, string $result, string $target): bool
     {
         return $this->assert_json($test_name, json_decode($result, true), json_decode($target, true));
+    }
+
+    /**
+     * remove the fields from an json array that are send to the frontend
+     * but are not send back to the backend
+     * because they should not be updated via api
+     * e.g. the usage which is calculated by a backend job
+     * @param array $json_to_ui the array with the unidirectional fields
+     * @return array the array without the unidirectional fields
+     */
+    function json_remove_fields_only_to_ui(array $json_to_ui): array
+    {
+        $json_to_db = $json_to_ui;
+        foreach (json_fields::UNIDIRECTIONAL as $uni_fld) {
+            if (array_key_exists($uni_fld, $json_to_db)) {
+                unset($json_to_db[$uni_fld]);
+            }
+        }
+
+        return $json_to_db;
     }
 
     /**

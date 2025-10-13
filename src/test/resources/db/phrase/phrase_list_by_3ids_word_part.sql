@@ -2,7 +2,7 @@ PREPARE phrase_list_by_3ids_word_part (bigint, bigint, bigint, bigint) AS
     SELECT s.word_id,
            u.word_id AS user_word_id,
            s.user_id,
-           s.values,
+           s.usage,
            CASE WHEN (u.word_name   <> '' IS NOT TRUE) THEN s.word_name      ELSE u.word_name      END AS word_name,
            CASE WHEN (u.plural      <> '' IS NOT TRUE) THEN s.plural         ELSE u.plural         END AS plural,
            CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,

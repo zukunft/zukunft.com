@@ -5,6 +5,7 @@ PREPARE component_link_list_by_view_id FROM
             s.view_id,
             s.component_id,
             l.code_id,
+            l.`usage`,
             l.ui_msg_code_id,
             l.ui_msg_code_id_vars,
             l.ui_msg_code_id_exception,

@@ -11,6 +11,7 @@ PREPARE verb_list_by_phr_id_down FROM
             l.name_plural_reverse,
             l.formula_name,
             l.`usage`,
+            l.impact,
             l.verb_name,
             IF(u.excluded IS NULL, s.excluded, u.excluded) AS excluded
        FROM triples s

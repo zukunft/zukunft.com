@@ -60,7 +60,7 @@ class value_ts_data extends db_object_no_id
      */
 
     // comment used for the database creation
-    const string TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intra-day values';
+    const string TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intraday values';
     const string FLD_ID_COM = 'link to the value time series';
     const string FLD_TIME_COM = 'short name of the configuration entry to be shown to the admin';
     const string FLD_TIME = 'val_time';

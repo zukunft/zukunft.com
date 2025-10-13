@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS words
     description    text                  DEFAULT NULL,
     phrase_type_id smallint              DEFAULT NULL,
     view_id        bigint                DEFAULT NULL,
-    values         bigint                DEFAULT NULL,
+    usage          bigint                DEFAULT NULL,
+    impact         double precision      DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
     code_id        varchar(255)          DEFAULT NULL,
     excluded       smallint              DEFAULT NULL,
@@ -29,7 +30,8 @@ COMMENT ON COLUMN words.plural IS 'to be replaced by a language form entry; TODO
 COMMENT ON COLUMN words.description IS 'to be replaced by a language form entry';
 COMMENT ON COLUMN words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN words.view_id IS 'the default mask for this word';
-COMMENT ON COLUMN words.values IS 'number of values linked to the word, which gives an indication of the importance';
+COMMENT ON COLUMN words.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
+COMMENT ON COLUMN words.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN words.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
 COMMENT ON COLUMN words.code_id IS 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN words.excluded IS 'true if a user, but not all, have removed it';
@@ -50,7 +52,8 @@ CREATE TABLE IF NOT EXISTS user_words
     description    text              DEFAULT NULL,
     phrase_type_id smallint          DEFAULT NULL,
     view_id        bigint            DEFAULT NULL,
-    values         bigint            DEFAULT NULL,
+    usage          bigint            DEFAULT NULL,
+    impact         double precision  DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,
     protect_id     smallint          DEFAULT NULL
@@ -65,7 +68,8 @@ COMMENT ON COLUMN user_words.plural IS 'to be replaced by a language form entry;
 COMMENT ON COLUMN user_words.description IS 'to be replaced by a language form entry';
 COMMENT ON COLUMN user_words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN user_words.view_id IS 'the default mask for this word';
-COMMENT ON COLUMN user_words.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN user_words.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
+COMMENT ON COLUMN user_words.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN user_words.excluded IS 'true if a user,but not all, have removed it';
 COMMENT ON COLUMN user_words.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes';

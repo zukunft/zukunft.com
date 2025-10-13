@@ -6,7 +6,9 @@ PREPARE triple_by_usr_cfg FROM
            description,
            weight,
            phrase_type_id,
-           `values`,
+           view_id,
+           `usage`,
+           impact,
            excluded,
            share_type_id,
            protect_id

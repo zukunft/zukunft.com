@@ -122,6 +122,8 @@ class triple extends sandbox_code_id
             $this->plural = $value;
         }
     }
+    // the impact used to sort the triples
+    private float $impact = 0.0;
 
 
     /*
@@ -155,6 +157,11 @@ class triple extends sandbox_code_id
                 $this->plural = $url_array[url_var::PLURAL];
             } else {
                 $this->plural = null;
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
             }
         }
         return $usr_msg;
@@ -228,6 +235,15 @@ class triple extends sandbox_code_id
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->plural = $json_array[json_fields::PLURAL];
         }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
+        } else {
+            $this->impact = 0.0;
+        }
         return $usr_msg;
     }
 
@@ -248,6 +264,7 @@ class triple extends sandbox_code_id
         $vars[json_fields::TO] = $this->to()->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
+        // usage and impact are not included here because this system value is never updated by the frontend
         return $vars;
     }
 
@@ -358,6 +375,11 @@ class triple extends sandbox_code_id
     function get_plural(): ?string
     {
         return $this->plural;
+    }
+
+    function impact(): float
+    {
+        return $this->impact;
     }
 
 

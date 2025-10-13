@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS triples
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
-    values              bigint            DEFAULT NULL,
+    usage               bigint            DEFAULT NULL,
+    impact              double precision  DEFAULT NULL,
     inactive            smallint          DEFAULT NULL,
     code_id             varchar(255)      DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
@@ -41,7 +42,8 @@ COMMENT ON COLUMN triples.weight IS 'the weight of this triple compared to other
 COMMENT ON COLUMN triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN triples.view_id IS 'the default mask for this triple';
-COMMENT ON COLUMN triples.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN triples.usage IS 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';
+COMMENT ON COLUMN triples.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN triples.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
 COMMENT ON COLUMN triples.code_id IS 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
 COMMENT ON COLUMN triples.excluded IS 'true if a user,but not all,have removed it';
@@ -65,7 +67,8 @@ CREATE TABLE IF NOT EXISTS user_triples
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
-    values              bigint            DEFAULT NULL,
+    usage               bigint            DEFAULT NULL,
+    impact              double precision  DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
     share_type_id       smallint          DEFAULT NULL,
     protect_id          smallint          DEFAULT NULL
@@ -83,7 +86,8 @@ COMMENT ON COLUMN user_triples.weight IS 'the weight of this triple compared to 
 COMMENT ON COLUMN user_triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN user_triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN user_triples.view_id IS 'the default mask for this triple';
-COMMENT ON COLUMN user_triples.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN user_triples.usage IS 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';
+COMMENT ON COLUMN user_triples.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN user_triples.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_triples.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted changes';

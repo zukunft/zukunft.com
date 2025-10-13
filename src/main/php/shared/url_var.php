@@ -195,6 +195,7 @@ class url_var
     const string WEIGHT = 'weight';
 
     const string USAGE = 'usage';
+    const string IMPACT = 'impact';
     const string EXTERNAL_KEY = 'external_key';
 
     // for triple link selections

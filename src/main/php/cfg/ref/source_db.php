@@ -89,12 +89,14 @@ class source_db
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
         [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
     );
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const array FLD_NAMES = array(
         self::FLD_NAME,
-        sql_db::FLD_CODE_ID
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE
     );
     // list of the user specific database field names
     const array FLD_NAMES_USR = array(
@@ -112,9 +114,10 @@ class source_db
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         sql_db::FLD_DESCRIPTION,
+        self::FLD_URL,
         self::FLD_TYPE,
-        sql_db::FLD_EXCLUDED,
-        self::FLD_URL
+        sql_db::FLD_USAGE,
+        sql_db::FLD_EXCLUDED
     );
 
 }

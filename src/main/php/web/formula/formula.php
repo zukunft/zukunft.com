@@ -125,40 +125,32 @@ class formula extends sandbox_code_id
     private string $ref_text = '';
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
+    // the impact used to sort the triples
+    private float $impact = 0.0;
 
 
     /*
-     * set and get
+     * construct and map
      */
 
-    function set_usr_text(?string $usr_text): void
-    {
-        if ($usr_text != null) {
-            $this->usr_text = $usr_text;
-        }
-    }
-
-    function usr_text(): string
-    {
-        return $this->usr_text;
-    }
-
-    function set_ref_text(?string $ref_text): void
-    {
-        if ($ref_text != null) {
-            $this->ref_text = $ref_text;
-        }
-    }
-
-    function ref_text(): string
-    {
-        return $this->ref_text;
-    }
-
-
-    /*
-     * api
+    /**
+     * set the vars of this formula frontend object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars this formula bases on the api json array
@@ -189,8 +181,56 @@ class formula extends sandbox_code_id
         } else {
             $this->name_wrd = null;
         }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
+        } else {
+            $this->impact = 0.0;
+        }
         return $usr_msg;
     }
+
+
+    /*
+     * set and get
+     */
+
+    function set_usr_text(?string $usr_text): void
+    {
+        if ($usr_text != null) {
+            $this->usr_text = $usr_text;
+        }
+    }
+
+    function usr_text(): string
+    {
+        return $this->usr_text;
+    }
+
+    function set_ref_text(?string $ref_text): void
+    {
+        if ($ref_text != null) {
+            $this->ref_text = $ref_text;
+        }
+    }
+
+    function ref_text(): string
+    {
+        return $this->ref_text;
+    }
+
+    function impact(): float
+    {
+        return $this->impact;
+    }
+
+
+    /*
+     * api
+     */
 
     /**
      * @return array the json message array to send the updated data to the backend
@@ -201,6 +241,7 @@ class formula extends sandbox_code_id
         $vars = parent::api_array();
 
         $vars[json_fields::USER_TEXT] = $this->usr_text();
+        // usage and impact are not included here because this system value is never updated by the frontend
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

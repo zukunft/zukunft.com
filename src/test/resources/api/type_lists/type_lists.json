@@ -2872,8 +2872,8 @@
         "id": 83
       },
       {
-        "name": "5values",
-        "code_id": "5values",
+        "name": "5usage",
+        "code_id": "5usage",
         "description": "",
         "id": 84
       },
@@ -3410,6 +3410,12 @@
         "code_id": "10user_id",
         "description": "",
         "id": 173
+      },
+      {
+        "name": "10impact",
+        "code_id": "10impact",
+        "description": "",
+        "id": 174
       },
       {
         "name": "25config_id",
@@ -7142,6 +7148,96 @@
         "code_id": "9usage",
         "description": "",
         "id": 796
+      },
+      {
+        "name": "5impact",
+        "code_id": "5impact",
+        "description": "",
+        "id": 797
+      },
+      {
+        "name": "6usage",
+        "code_id": "6usage",
+        "description": "",
+        "id": 798
+      },
+      {
+        "name": "6impact",
+        "code_id": "6impact",
+        "description": "",
+        "id": 799
+      },
+      {
+        "name": "9impact",
+        "code_id": "9impact",
+        "description": "",
+        "id": 800
+      },
+      {
+        "name": "7usage",
+        "code_id": "7usage",
+        "description": "",
+        "id": 801
+      },
+      {
+        "name": "7impact",
+        "code_id": "7impact",
+        "description": "",
+        "id": 802
+      },
+      {
+        "name": "8usage",
+        "code_id": "8usage",
+        "description": "",
+        "id": 803
+      },
+      {
+        "name": "8impact",
+        "code_id": "8impact",
+        "description": "",
+        "id": 804
+      },
+      {
+        "name": "14usage",
+        "code_id": "14usage",
+        "description": "",
+        "id": 805
+      },
+      {
+        "name": "15usage",
+        "code_id": "15usage",
+        "description": "",
+        "id": 806
+      },
+      {
+        "name": "20usage",
+        "code_id": "20usage",
+        "description": "",
+        "id": 807
+      },
+      {
+        "name": "21usage",
+        "code_id": "21usage",
+        "description": "",
+        "id": 808
+      },
+      {
+        "name": "11impact",
+        "code_id": "11impact",
+        "description": "",
+        "id": 809
+      },
+      {
+        "name": "18usage",
+        "code_id": "18usage",
+        "description": "",
+        "id": 810
+      },
+      {
+        "name": "19usage",
+        "code_id": "19usage",
+        "description": "",
+        "id": 811
       }
     ],
     "verbs": [
@@ -7153,7 +7249,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 1
       },
       {
@@ -7164,7 +7261,8 @@
         "reverse": "are",
         "rev_plural": "are",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 2
       },
       {
@@ -7175,7 +7273,8 @@
         "reverse": "contains",
         "rev_plural": "contains",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 3
       },
       {
@@ -7186,7 +7285,8 @@
         "reverse": "contains",
         "rev_plural": "contains",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 4
       },
       {
@@ -7197,7 +7297,8 @@
         "reverse": "of",
         "rev_plural": "of",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 5
       },
       {
@@ -7208,7 +7309,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 6
       },
       {
@@ -7219,7 +7321,8 @@
         "reverse": "is used for",
         "rev_plural": "is used for",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 7
       },
       {
@@ -7230,7 +7333,8 @@
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
         "frm_name": "time jump",
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 8
       },
       {
@@ -7241,7 +7345,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 9
       },
       {
@@ -7252,7 +7357,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 10
       },
       {
@@ -7263,7 +7369,8 @@
         "reverse": "is followed by",
         "rev_plural": "is followed by",
         "frm_name": "follower",
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 11
       },
       {
@@ -7274,7 +7381,8 @@
         "reverse": "is used by",
         "rev_plural": "are used by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 12
       },
       {
@@ -7285,7 +7393,8 @@
         "reverse": "is issued by",
         "rev_plural": "are issued by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 13
       },
       {
@@ -7296,7 +7405,8 @@
         "reverse": "has the measure type",
         "rev_plural": "have the measure type",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 14
       },
       {
@@ -7307,7 +7417,8 @@
         "reverse": "is an acronym of",
         "rev_plural": "are an acronyms of",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 15
       },
       {
@@ -7318,7 +7429,8 @@
         "reverse": "can be differentiated by",
         "rev_plural": "can be differentiated by",
         "frm_name": "differentiator",
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 16
       },
       {
@@ -7329,7 +7441,8 @@
         "reverse": "is influenced by",
         "rev_plural": "is influenced by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 17
       },
       {
@@ -7340,7 +7453,8 @@
         "reverse": "is alias of",
         "rev_plural": "is alias of",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 18
       },
       {
@@ -7351,7 +7465,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 19
       },
       {
@@ -7362,7 +7477,8 @@
         "reverse": "can be",
         "rev_plural": "can be",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 20
       },
       {
@@ -7373,7 +7489,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 21
       },
       {
@@ -7384,7 +7501,8 @@
         "reverse": "can be caused by",
         "rev_plural": "can be caused by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 22
       },
       {
@@ -7395,7 +7513,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 23
       },
       {
@@ -7406,7 +7525,8 @@
         "reverse": "can be used by",
         "rev_plural": "can be used by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 24
       },
       {
@@ -7417,7 +7537,8 @@
         "reverse": "is scaling for",
         "rev_plural": "are scaling for",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 25
       },
       {
@@ -7428,7 +7549,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 26
       },
       {
@@ -7439,7 +7561,8 @@
         "reverse": "times",
         "rev_plural": "times",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 27
       },
       {
@@ -7450,7 +7573,8 @@
         "reverse": "is grouped by",
         "rev_plural": "are grouped by",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 28
       },
       {
@@ -7461,7 +7585,8 @@
         "reverse": "can have symbol",
         "rev_plural": "can have symbols",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 29
       },
       {
@@ -7472,7 +7597,8 @@
         "reverse": "and",
         "rev_plural": "and",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 30
       },
       {
@@ -7483,7 +7609,8 @@
         "reverse": "distribute to",
         "rev_plural": "distribute to",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 31
       },
       {
@@ -7494,7 +7621,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 32
       },
       {
@@ -7505,7 +7633,8 @@
         "reverse": null,
         "rev_plural": null,
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 33
       },
       {
@@ -7516,7 +7645,8 @@
         "reverse": "is sort phrases for",
         "rev_plural": "are sort phrases for",
         "frm_name": null,
-        "usage": 0,
+        "usage": null,
+        "impact": null,
         "id": 34
       }
     ],
@@ -7526,6 +7656,7 @@
         "protection": 3,
         "name": "Start view",
         "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+        "usage": null,
         "type_id": 2,
         "code_id": "entry_view",
         "components": [
@@ -7554,6 +7685,7 @@
         "protection": 3,
         "name": "Add new word",
         "description": "Create a new word with all parameters e.g. the phrase type",
+        "usage": null,
         "type_id": 7,
         "code_id": "word_add",
         "components": [
@@ -7725,6 +7857,7 @@
         "protection": 3,
         "name": "Change word",
         "description": "Change name, description or settings of a word",
+        "usage": null,
         "type_id": 7,
         "code_id": "word_edit",
         "components": [
@@ -8047,6 +8180,7 @@
         "protection": 3,
         "name": "Delete word",
         "description": "Exclude or delete a word",
+        "usage": null,
         "type_id": 7,
         "code_id": "word_del",
         "components": [
@@ -8310,6 +8444,7 @@
         "protection": 3,
         "name": "Add new verb",
         "description": "Request to add a new verb\/predicate",
+        "usage": null,
         "type_id": 7,
         "code_id": "verb_add",
         "components": [
@@ -8461,6 +8596,7 @@
         "protection": 3,
         "name": "Change verb",
         "description": "Rename a verb\/predicate",
+        "usage": null,
         "type_id": 7,
         "code_id": "verb_edit",
         "components": [
@@ -8733,6 +8869,7 @@
         "protection": 3,
         "name": "Delete verb",
         "description": "Exclude or delete a verb",
+        "usage": null,
         "type_id": 7,
         "code_id": "verb_del",
         "components": [
@@ -8845,6 +8982,7 @@
         "protection": 3,
         "name": "Add new triple",
         "description": "Create a new triple with all parameters",
+        "usage": null,
         "type_id": 7,
         "code_id": "triple_add",
         "components": [
@@ -9037,6 +9175,7 @@
         "protection": 3,
         "name": "Change triple",
         "description": "Rename a triple",
+        "usage": null,
         "type_id": 7,
         "code_id": "triple_edit",
         "components": [
@@ -9269,6 +9408,7 @@
         "protection": 3,
         "name": "Delete triple",
         "description": "Exclude or delete a triple",
+        "usage": null,
         "type_id": 7,
         "code_id": "triple_del",
         "components": [
@@ -9351,6 +9491,7 @@
         "protection": 3,
         "name": "Add new source",
         "description": "Create a new source with all parameters e.g. the type",
+        "usage": null,
         "type_id": 7,
         "code_id": "source_add",
         "components": [
@@ -9501,6 +9642,7 @@
         "protection": 3,
         "name": "Change source",
         "description": "Rename a triple or change the type",
+        "usage": null,
         "type_id": 7,
         "code_id": "source_edit",
         "components": [
@@ -9651,6 +9793,7 @@
         "protection": 3,
         "name": "Delete source",
         "description": "To confirm the exclusion or deleting of an external source",
+        "usage": null,
         "type_id": 7,
         "code_id": "source_del",
         "components": [
@@ -9733,6 +9876,7 @@
         "protection": 3,
         "name": "Add new reference",
         "description": "Create a new data link to external systems",
+        "usage": null,
         "type_id": 7,
         "code_id": "ref_add",
         "components": [
@@ -9839,6 +9983,7 @@
         "protection": 3,
         "name": "Change reference",
         "description": "Change then link to external system",
+        "usage": null,
         "type_id": 7,
         "code_id": "ref_edit",
         "components": [
@@ -9945,6 +10090,7 @@
         "protection": 3,
         "name": "Delete reference",
         "description": "To confirm the exclusion or deleting of a reference",
+        "usage": null,
         "type_id": 7,
         "code_id": "ref_del",
         "components": [
@@ -10027,6 +10173,7 @@
         "protection": 3,
         "name": "Add new number",
         "description": "Create a new value",
+        "usage": null,
         "type_id": 7,
         "code_id": "value_add",
         "components": [
@@ -10198,6 +10345,7 @@
         "protection": 3,
         "name": "Change number",
         "description": "Change a number",
+        "usage": null,
         "type_id": 7,
         "code_id": "value_edit",
         "components": [
@@ -10379,6 +10527,7 @@
         "protection": 3,
         "name": "Delete number",
         "description": "Exclude or delete a number",
+        "usage": null,
         "type_id": 7,
         "code_id": "value_del",
         "components": [
@@ -10481,6 +10630,7 @@
         "protection": 3,
         "name": "Add a group name",
         "description": "Add a new group name",
+        "usage": null,
         "type_id": 7,
         "code_id": "group_add",
         "components": [
@@ -10576,6 +10726,7 @@
         "protection": 3,
         "name": "Change group",
         "description": "Change a group name",
+        "usage": null,
         "type_id": 7,
         "code_id": "group_edit",
         "components": [
@@ -10671,6 +10822,7 @@
         "protection": 3,
         "name": "Delete group",
         "description": "Exclude or delete a group name",
+        "usage": null,
         "type_id": 7,
         "code_id": "group_del",
         "components": [
@@ -10753,6 +10905,7 @@
         "protection": 3,
         "name": "Add new formula",
         "description": "Create a new formula with all parameters e.g. the type",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_add",
         "components": [
@@ -10934,6 +11087,7 @@
         "protection": 3,
         "name": "Change formula",
         "description": "Change a formula, the name or the type",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_edit",
         "components": [
@@ -11145,6 +11299,7 @@
         "protection": 3,
         "name": "Delete formula",
         "description": "To confirm the exclusion or deleting of a formula",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_del",
         "components": [
@@ -11227,6 +11382,7 @@
         "protection": 3,
         "name": "Add result number",
         "description": "Administrator can add manually a formula result e.g. for debugging",
+        "usage": null,
         "type_id": 7,
         "code_id": "result_add",
         "components": [
@@ -11398,6 +11554,7 @@
         "protection": 3,
         "name": "Change result",
         "description": "Overwrite a result",
+        "usage": null,
         "type_id": 7,
         "code_id": "result_edit",
         "components": [
@@ -11569,6 +11726,7 @@
         "protection": 3,
         "name": "Delete result",
         "description": "Exclude or delete a result",
+        "usage": null,
         "type_id": 7,
         "code_id": "result_del",
         "components": [
@@ -11671,6 +11829,7 @@
         "protection": 3,
         "name": "Add view",
         "description": "Create a new view and set the type",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_add",
         "components": [
@@ -11830,6 +11989,7 @@
         "protection": 3,
         "name": "Change view",
         "description": "Rename a view",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_edit",
         "components": [
@@ -11989,6 +12149,7 @@
         "protection": 3,
         "name": "Change confirm view",
         "description": "show the old and the new view and let the user confirm the change",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_preview",
         "components": [
@@ -12092,6 +12253,7 @@
         "protection": 3,
         "name": "Delete view",
         "description": "Exclude or delete a view",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_del",
         "components": [
@@ -12174,6 +12336,7 @@
         "protection": 3,
         "name": "Add new view component",
         "description": "Create a new view component with all parameters",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_add",
         "components": [
@@ -12388,6 +12551,7 @@
         "protection": 3,
         "name": "Change view component",
         "description": "Adjust a view component",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_edit",
         "components": [
@@ -12591,6 +12755,7 @@
         "protection": 3,
         "name": "Delete view component",
         "description": "Exclude or delete a view component",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_del",
         "components": [
@@ -12673,6 +12838,7 @@
         "protection": 3,
         "name": "Add view link",
         "description": "Create a new link between a view and a term",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_link_add",
         "components": [
@@ -12842,6 +13008,7 @@
         "protection": 3,
         "name": "Change view link",
         "description": "Change a link between a view and a term",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_link_edit",
         "components": [
@@ -13007,6 +13174,7 @@
         "protection": 3,
         "name": "Delete view link",
         "description": "To confirm the exclusion or deleting of a view link",
+        "usage": null,
         "type_id": 7,
         "code_id": "view_link_del",
         "components": [
@@ -13108,6 +13276,7 @@
         "protection": 3,
         "name": "Add component link",
         "description": "Create a new link between a component and a view",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_link_add",
         "components": [
@@ -13284,6 +13453,7 @@
         "protection": 3,
         "name": "Change component link",
         "description": "Change a link between a component and a view",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_link_edit",
         "components": [
@@ -13460,6 +13630,7 @@
         "protection": 3,
         "name": "Delete component link",
         "description": "To confirm the exclusion or deleting of a component link",
+        "usage": null,
         "type_id": 7,
         "code_id": "component_link_del",
         "components": [
@@ -13561,6 +13732,7 @@
         "protection": 3,
         "name": "Add formula link",
         "description": "Create a new link between a formula and a phrase",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_add",
         "components": [
@@ -13730,6 +13902,7 @@
         "protection": 3,
         "name": "Change formula link",
         "description": "Change a link between a formula and a phrase",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_edit",
         "components": [
@@ -13895,6 +14068,7 @@
         "protection": 3,
         "name": "Delete formula link",
         "description": "To confirm the exclusion or deleting of a formula link",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_del",
         "components": [
@@ -13988,6 +14162,7 @@
         "protection": 3,
         "name": "Confirm adding",
         "description": "Ask the user for confirmation of the changes to be written to the database",
+        "usage": null,
         "type_id": 7,
         "code_id": "confirm_add",
         "components": [
@@ -14107,6 +14282,7 @@
         "protection": 3,
         "name": "Confirm update",
         "description": "Show the impact of the changes to the user and ask the user for confirmation",
+        "usage": null,
         "type_id": 7,
         "code_id": "confirm_update",
         "components": [
@@ -14230,6 +14406,7 @@
         "protection": 3,
         "name": "Confirm delete",
         "description": "Show the impact of the deletion to the user and ask the user for confirmation",
+        "usage": null,
         "type_id": 7,
         "code_id": "confirm_delete",
         "components": [
@@ -14343,6 +14520,7 @@
         "id": 48,
         "name": "about",
         "description": "Show the about page",
+        "usage": null,
         "type_id": 7,
         "code_id": "about",
         "components": [
@@ -14373,6 +14551,7 @@
         "id": 49,
         "name": "Setup",
         "description": "The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation",
+        "usage": null,
         "type_id": 7,
         "code_id": "setup",
         "components": [
@@ -14403,6 +14582,7 @@
         "id": 50,
         "name": "Signup",
         "description": "the system signup form",
+        "usage": null,
         "type_id": 7,
         "code_id": "signup",
         "components": [
@@ -14433,6 +14613,7 @@
         "id": 51,
         "name": "Login",
         "description": "the system login form",
+        "usage": null,
         "type_id": 7,
         "code_id": "login",
         "components": [
@@ -14463,6 +14644,7 @@
         "id": 52,
         "name": "Login activate",
         "description": "the system login activate form",
+        "usage": null,
         "type_id": 7,
         "code_id": "login_activate",
         "components": [
@@ -14493,6 +14675,7 @@
         "id": 53,
         "name": "Login reset",
         "description": "reset the password of a login user name",
+        "usage": null,
         "type_id": 7,
         "code_id": "login_reset",
         "components": [
@@ -14523,6 +14706,7 @@
         "id": 54,
         "name": "Logout",
         "description": "the system logout form",
+        "usage": null,
         "type_id": 7,
         "code_id": "logout",
         "components": [
@@ -14553,6 +14737,7 @@
         "id": 55,
         "name": "Error Log",
         "description": "simple confirm page for a new error that has been logged in the database",
+        "usage": null,
         "type_id": 7,
         "code_id": "error_log",
         "components": [
@@ -14583,6 +14768,7 @@
         "id": 56,
         "name": "System Error List",
         "description": "List the system errors and allow the user to change the status",
+        "usage": null,
         "type_id": 7,
         "code_id": "error_update",
         "components": [
@@ -14613,6 +14799,7 @@
         "id": 57,
         "name": "Search",
         "description": "The search page for all words, triples, verbs and formulas",
+        "usage": null,
         "type_id": 7,
         "code_id": "word_find",
         "components": [
@@ -14643,6 +14830,7 @@
         "id": 58,
         "name": "Search detail",
         "description": "The full search page for all words, triples, verbs and formulas",
+        "usage": null,
         "type_id": 7,
         "code_id": "search_full",
         "components": [
@@ -14674,6 +14862,7 @@
         "protection": 3,
         "name": "Value detail",
         "description": "show all details of one value",
+        "usage": null,
         "type_id": 7,
         "code_id": "value_detail",
         "components": [
@@ -14705,6 +14894,7 @@
         "protection": 3,
         "name": "Explain result",
         "description": "explains one formula result",
+        "usage": null,
         "type_id": 7,
         "code_id": "result_explain",
         "components": [
@@ -14729,6 +14919,7 @@
         "protection": 3,
         "name": "Formula test",
         "description": "debug the formula results",
+        "usage": null,
         "type_id": 7,
         "code_id": "formula_test",
         "components": [
@@ -14752,6 +14943,7 @@
         "id": 62,
         "name": "Sandbox",
         "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
+        "usage": null,
         "type_id": null,
         "code_id": "sandbox",
         "components": [
@@ -14782,6 +14974,7 @@
         "id": 63,
         "name": "Undo",
         "description": "show the last changes of the user and offer selective undo",
+        "usage": null,
         "type_id": null,
         "code_id": "undo",
         "components": [
@@ -14812,6 +15005,7 @@
         "id": 64,
         "name": "User Settings",
         "description": "to change the user settings",
+        "usage": null,
         "type_id": null,
         "code_id": "user",
         "components": [
@@ -14843,6 +15037,7 @@
         "protection": 3,
         "name": "Paste table",
         "description": "add more than one values by pasting a table",
+        "usage": null,
         "type_id": 7,
         "code_id": "paste_table",
         "components": [
@@ -14877,6 +15072,7 @@
         "id": 66,
         "name": "Import",
         "description": "Select a file to import data",
+        "usage": null,
         "type_id": 7,
         "code_id": "import",
         "components": [
@@ -14949,6 +15145,7 @@
         "id": 67,
         "name": "Export",
         "description": "Show the control page to export a selection from this pod in the selected format",
+        "usage": null,
         "type_id": null,
         "code_id": "export_in_selected_format",
         "components": [
@@ -15082,6 +15279,7 @@
         "id": 68,
         "name": "Export JSON",
         "description": "Show the control page to export a selection from this pod in the json format",
+        "usage": null,
         "type_id": null,
         "code_id": "export_json",
         "components": [
@@ -15204,6 +15402,7 @@
         "id": 69,
         "name": "Export XML",
         "description": "Show the control page to export a selection from this pod in the xml format",
+        "usage": null,
         "type_id": null,
         "code_id": "export_xml",
         "components": [
@@ -15326,6 +15525,7 @@
         "id": 70,
         "name": "Export CSV",
         "description": "Show the control page to export a selection from this pod in the csv format",
+        "usage": null,
         "type_id": null,
         "code_id": "export_csv",
         "components": [
@@ -15448,6 +15648,7 @@
         "id": 71,
         "name": "Export ODS",
         "description": "Show the control page to export a selection from this pod in the ods format",
+        "usage": null,
         "type_id": null,
         "code_id": "export_ods",
         "components": [
@@ -15570,6 +15771,7 @@
         "id": 72,
         "name": "Asynchronous process",
         "description": "Show the progress of one asynchronous process",
+        "usage": null,
         "type_id": 7,
         "code_id": "job_async",
         "components": [
@@ -15600,6 +15802,7 @@
         "id": 73,
         "name": "Job and process overview",
         "description": "Show all batch progress jobs with the progress and offer process control",
+        "usage": null,
         "type_id": 7,
         "code_id": "job_control",
         "components": [
@@ -15630,6 +15833,7 @@
         "id": 74,
         "name": "Job overview",
         "description": "Show the control board to start and monitor the system consistency check e.g. to calc again all formula results",
+        "usage": null,
         "type_id": 7,
         "code_id": "job_check",
         "components": [
@@ -15660,6 +15864,7 @@
         "id": 75,
         "name": "Verb List",
         "description": "List all available ways how to link two words",
+        "usage": null,
         "type_id": null,
         "code_id": "verbs",
         "components": []
@@ -15668,6 +15873,7 @@
         "id": 78,
         "name": "Word",
         "description": "the default view for words",
+        "usage": null,
         "type_id": null,
         "code_id": "word",
         "components": [
@@ -15695,6 +15901,7 @@
         "id": 79,
         "name": "Verb",
         "description": "the default view for verbs",
+        "usage": null,
         "type_id": null,
         "code_id": "verb",
         "components": [
@@ -15722,6 +15929,7 @@
         "id": 80,
         "name": "Triple",
         "description": "the default view for triples",
+        "usage": null,
         "type_id": null,
         "code_id": "triple",
         "components": [
@@ -15749,6 +15957,7 @@
         "id": 81,
         "name": "Source",
         "description": "the default view for sources",
+        "usage": null,
         "type_id": null,
         "code_id": "source",
         "components": [
@@ -15776,6 +15985,7 @@
         "id": 82,
         "name": "Reference",
         "description": "the default view for references",
+        "usage": null,
         "type_id": null,
         "code_id": "ref",
         "components": [
@@ -15803,6 +16013,7 @@
         "id": 83,
         "name": "Language",
         "description": "the default view for languages",
+        "usage": null,
         "type_id": null,
         "code_id": "language",
         "components": [
@@ -15830,6 +16041,7 @@
         "id": 84,
         "name": "Display Number",
         "description": "the default view for values",
+        "usage": null,
         "type_id": null,
         "code_id": "value",
         "components": [
@@ -15848,6 +16060,7 @@
         "id": 86,
         "name": "Result",
         "description": "the default view for results",
+        "usage": null,
         "type_id": null,
         "code_id": "result",
         "components": [
@@ -15866,6 +16079,7 @@
         "id": 87,
         "name": "Ranking",
         "description": "the default view for all phrases where a better could be selected",
+        "usage": null,
         "type_id": null,
         "code_id": "ranking",
         "components": [

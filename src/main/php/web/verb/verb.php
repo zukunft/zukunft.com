@@ -86,7 +86,7 @@ class verb extends sandbox_named
 
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id = null;
-    public int $usage = 0;
+    public float $impact = 0.0;
     public ?string $plural = null;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
@@ -139,9 +139,9 @@ class verb extends sandbox_named
         return $this->frm_name;
     }
 
-    function usage(): ?int
+    function impact(): int
     {
-        return $this->usage;
+        return $this->impact;
     }
 
 
@@ -163,10 +163,14 @@ class verb extends sandbox_named
         } else {
             $this->set_code_id('');
         }
-        if (array_key_exists(json_fields::USAGE, $json_array)) {
-            $this->usage = $json_array[json_fields::USAGE];
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
         } else {
-            $this->usage = 0;
+            $this->impact = 0.0;
         }
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->plural = $json_array[json_fields::PLURAL];
@@ -199,7 +203,6 @@ class verb extends sandbox_named
     {
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id();
-        $vars[json_fields::USAGE] = $this->usage;
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
         $vars[json_fields::REV_PLURAL] = $this->rev_plural;

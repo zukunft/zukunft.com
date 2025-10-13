@@ -92,6 +92,7 @@ class view_db
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -100,7 +101,8 @@ class view_db
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
-        sql_db::FLD_CODE_ID
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE
     );
     // list of the user specific database field names
     const array FLD_NAMES_USR = array(
@@ -119,6 +121,7 @@ class view_db
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_STYLE,
+        sql_db::FLD_USAGE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT

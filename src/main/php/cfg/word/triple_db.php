@@ -93,9 +93,7 @@ class triple_db
     const sql_field_type FLD_WEIGHT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
     const string FLD_VIEW_COM = 'the default mask for this triple';
     const string FLD_VIEW = 'view_id';
-    const string FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
-    const string FLD_VALUES = 'values';
-    const sql_field_type FLD_VALUES_SQL_TYP = sql_field_type::INT;
+    const string FLD_USAGE_COM = 'number of values, formulas and results linked to this triple, which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';
     const string FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
     const string FLD_INACTIVE = 'inactive';
     const string FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
@@ -122,7 +120,8 @@ class triple_db
         [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word_db::FLD_TYPE_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+        [sql_db::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -132,7 +131,8 @@ class triple_db
 
     // all database field names excluding the id and excluding the user specific fields
     const array FLD_NAMES = array(
-        phrase::FLD_TYPE,
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE,
         self::FLD_COND_ID
     );
     // list of the link database field names
@@ -152,7 +152,9 @@ class triple_db
     // list of the user specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_WIGHT,
-        self::FLD_VALUES,
+        phrase::FLD_TYPE,
+        self::FLD_VIEW,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -165,7 +167,9 @@ class triple_db
         sql_db::FLD_DESCRIPTION,
         self::FLD_WIGHT,
         phrase::FLD_TYPE,
-        self::FLD_VALUES,
+        self::FLD_VIEW,
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT

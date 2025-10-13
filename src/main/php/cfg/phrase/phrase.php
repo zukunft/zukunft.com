@@ -151,7 +151,8 @@ class phrase extends combine_named
     const string FLD_TYPE = 'phrase_type_id';
     const string FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
     const sql_field_type FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
-    const string FLD_VALUES = 'values';
+    const string FLD_USAGE = 'usage';
+    const string FLD_IMPACT = 'impact';
 
     // the common phrase database field names excluding the id and excluding the user specific fields
     const array FLD_NAMES = array(
@@ -172,7 +173,8 @@ class phrase extends combine_named
     );
     // list of the common user specific numeric database field names of phrases
     const array FLD_NAMES_NUM_USR = array(
-        self::FLD_VALUES,
+        self::FLD_USAGE,
+        self::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -196,7 +198,8 @@ class phrase extends combine_named
             [user_db::FLD_ID],
             [word_db::FLD_NAME, phrase::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [word_db::FLD_VALUES],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -207,7 +210,8 @@ class phrase extends combine_named
             [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [triple_db::FLD_VALUES],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -503,6 +507,17 @@ class phrase extends combine_named
     }
 
     /**
+     * set the value to rank the words by impact
+     *
+     * @param float|null $impact a higher value moves the word to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->obj()->set_impact($impact);
+    }
+
+    /**
      * @return int the id of the phrase witch is (corresponding to id_obj())
      * e.g 1 for a word, -1 for a triple
      */
@@ -556,6 +571,14 @@ class phrase extends combine_named
     function usage(): ?int
     {
         return $this->obj()->usage();
+    }
+
+    /**
+     * @return float|null a higher number indicates a higher impact
+     */
+    function impact(): ?float
+    {
+        return $this->obj()->impact();
     }
 
     /**

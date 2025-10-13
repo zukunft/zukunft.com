@@ -165,12 +165,13 @@ class horizontal_tests
             $ui_obj->set_from_json($api_json);
             $check_obj->reset();
             $ui_json = $ui_obj->api_json();
+            $api_json_ui = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $check_obj->set_from_api($ui_json);
             $diff = $check_obj->diff_msg($filled_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());
             } else {
-                $t->assert_json_string($test_name, $ui_json, $api_json);
+                $t->assert_json_string($test_name, $ui_json, $api_json_ui);
             }
             $t->assert_true($test_name, $diff->is_ok());
         }
@@ -214,7 +215,8 @@ class horizontal_tests
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
-            $t->assert_json_string($test_name, $final_json, $api_json);
+            $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
+            $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
 
         $t->subheader($ts . 'system views');

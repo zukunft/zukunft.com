@@ -112,6 +112,7 @@ class json_fields
     const string REV_PLURAL = 'rev_plural';
     const string FRM_NAME = 'frm_name';
     const string USAGE = 'usage';
+    const string IMPACT = 'impact';
 
 
     /*
@@ -348,4 +349,12 @@ class json_fields
     // and for value lists to reduce the number of phrase for each value
     // also used to select the phrases used to filter the values for calculating this result
     const string CONTEXT = 'context';
+
+    // list of json fields that are used for the api message to the frontend
+    // but that are never used for the api message to the backend
+    const array UNIDIRECTIONAL = [
+        self::USAGE,
+        self::IMPACT
+    ];
+
 }

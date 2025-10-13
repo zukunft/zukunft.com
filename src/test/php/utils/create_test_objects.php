@@ -1061,6 +1061,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
                 $obj = $this->verb_filled();
@@ -1324,6 +1325,7 @@ class create_test_objects extends test_base
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
+        $wrd->set_impact(3.4);
         $wrd->exclude();
         $wrd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -3429,13 +3431,18 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $frm = new formula($this->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
+        // TODO Prio 1 activate
+        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->usr_system);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
+        // TODO Prio 1 activate
+        //$frm->set_owner_id($this->usr1->id());
         $frm->set_type(formula_type::CALC, $this->usr1);
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
         $frm->set_usage(2);
+        $frm->set_impact(3.4);
         $frm->exclude();
         $frm->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $frm->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4047,6 +4054,7 @@ class create_test_objects extends test_base
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_usage(2);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4241,6 +4249,7 @@ class create_test_objects extends test_base
         $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
+        $cmp->set_usage(2);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
         $cmp->ui_msg_code_id_vars = msg_id::DONE;
         $cmp->ui_msg_code_id_exception = msg_id::ERROR;

@@ -37,25 +37,17 @@ namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-//include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
-//include_once paths::MODEL_LANGUAGE . 'language.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\cfg\language\language;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 
 class verb_db
 {
@@ -79,7 +71,6 @@ class verb_db
     const string FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
     const string FLD_PLURAL_REVERSE = 'name_plural_reverse';
     const string FLD_USAGE_COM = 'used for how many phrases or formulas';
-    const string FLD_USAGE = 'usage';
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const array FLD_NAMES = array(
@@ -89,7 +80,8 @@ class verb_db
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
         self::FLD_FORMULA,
-        self::FLD_USAGE
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT
     );
 
     // field lists for the table creation
@@ -104,7 +96,8 @@ class verb_db
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
         [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
     );
 
 

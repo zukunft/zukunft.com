@@ -190,7 +190,9 @@ class word extends sandbox_code_id
             $this->set_modified();
         }
     }
-    private ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
+
+    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
+    private ?float $impact;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -228,7 +230,7 @@ class word extends sandbox_code_id
     {
         parent::reset();
         $this->plural = null;
-        $this->values = null;
+        $this->impact = null;
 
         $this->link_type_id = null;
 
@@ -267,6 +269,9 @@ class word extends sandbox_code_id
                 if ($db_row[word_db::FLD_VIEW] != null) {
                     $this->set_view_id($db_row[word_db::FLD_VIEW]);
                 }
+            }
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[sql_db::FLD_IMPACT];
             }
         }
         return $result;
@@ -404,6 +409,7 @@ class word extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::PLURAL] = $this->plural;
         }
+        $vars[json_fields::IMPACT] = $this->impact();
 
         return $vars;
     }
@@ -479,26 +485,6 @@ class word extends sandbox_code_id
     }
 
     /**
-     * set the value to rank the words by usage
-     *
-     * @param int|null $usage a higher value moves the word to the top of the selection list
-     * @return void
-     */
-    function set_usage(?int $usage): void
-    {
-        $this->values = $usage;
-    }
-
-    /**
-     * TODO Prio 1 review the usage handling for all object and create a batch job to update the usage
-     * @return int|null a higher number indicates a higher usage
-     */
-    function usage(): ?int
-    {
-        return $this->values;
-    }
-
-    /**
      * @param int $id the id of the default view that should be remembered
      */
     function set_view_id(int $id): void
@@ -543,6 +529,27 @@ class word extends sandbox_code_id
             $ref_lst->add($ref);
         }
         return $ref_lst;
+    }
+
+    /**
+     * set the cache value to sort this word by relevance
+     * the impact is calculated based on the formula assigned to the object
+     * by the system triple "impact phrase"
+     *
+     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->impact = $impact;
+    }
+
+    /**
+     * @return float|null a higher number indicates a higher relevance
+     */
+    function impact(): ?float
+    {
+        return $this->impact;
     }
 
 
@@ -888,8 +895,8 @@ class word extends sandbox_code_id
                 $result = true;
             }
         }
-        if ($this->values != null) {
-            if ($this->values != $db_obj->values) {
+        if ($this->impact != null) {
+            if ($this->impact != $db_obj->impact) {
                 $result = true;
             }
         }
@@ -983,8 +990,8 @@ class word extends sandbox_code_id
         if ($obj->plural != null) {
             $this->plural = $obj->plural;
         }
-        if ($obj->values != null) {
-            $this->values = $obj->values;
+        if ($obj->impact != null) {
+            $this->impact = $obj->impact;
         }
         return $usr_msg;
     }
@@ -1783,7 +1790,7 @@ class word extends sandbox_code_id
                 phrase::FLD_TYPE,
                 word_db::FLD_VIEW,
                 word_db::FLD_PLURAL,
-                word_db::FLD_VALUES
+                sql_db::FLD_IMPACT
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1863,20 +1870,19 @@ class word extends sandbox_code_id
                 $sbx->plural
             );
         }
-        // TODO Prio 0 rename to usage
-        if ($sbx->values !== $this->values) {
+        if ($sbx->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VALUES,
-                    $cng_fld_cac->id($table_id . word_db::FLD_VALUES),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                word_db::FLD_VALUES,
-                $this->values,
-                word_db::FLD_VALUES_SQL_TYP,
-                $sbx->values
+                sql_db::FLD_IMPACT,
+                $this->impact,
+                sql_db::FLD_IMPACT_SQL_TYP,
+                $sbx->impact
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

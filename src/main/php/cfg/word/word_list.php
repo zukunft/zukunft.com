@@ -267,7 +267,7 @@ class word_list extends sandbox_list_named
         $sc->set_fields(word_db::FLD_NAMES);
         $sc->set_usr_fields(word_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word_db::FLD_VALUES) . ' DESC, '
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(sql_db::FLD_USAGE) . ' DESC, '
             . word_db::FLD_NAME);
         return $qp;
     }

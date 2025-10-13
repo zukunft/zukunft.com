@@ -198,7 +198,9 @@ class triple extends sandbox_link_named
 
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
-    private ?int $values;
+    private ?int $usage;
+    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
+    private ?float $impact;
 
     // only used for the export object
     // name of the default view for this word
@@ -243,7 +245,8 @@ class triple extends sandbox_link_named
         $this->name_generated = '';
         $this->weight = null;
         $this->code_id = null;
-        $this->values = null;
+        $this->usage = null;
+        $this->impact = null;
 
         $this->view = null;
         $this->ref_lst = [];
@@ -315,8 +318,11 @@ class triple extends sandbox_link_named
             if (array_key_exists(triple_db::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_db::FLD_WIGHT];
             }
-            if (array_key_exists(triple_db::FLD_VALUES, $db_row)) {
-                $this->values = $db_row[triple_db::FLD_VALUES];
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                $this->usage = $db_row[sql_db::FLD_USAGE];
+            }
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[sql_db::FLD_IMPACT];
             }
         }
         return $result;
@@ -555,6 +561,8 @@ class triple extends sandbox_link_named
             } elseif ($vars[json_fields::NAME] == '') {
                 $vars[json_fields::NAME] = $this->generate_name();
             }
+            $vars[json_fields::USAGE] = $this->usage();
+            $vars[json_fields::IMPACT] = $this->impact();
         }
 
         return $vars;
@@ -725,6 +733,9 @@ class triple extends sandbox_link_named
             }
             $vars[json_fields::REFS] = $ref_lst;
         }
+        // the impact is only included in the export as an indication to validate the consistency
+        $vars[json_fields::USAGE] = $this->usage();
+        $vars[json_fields::IMPACT] = $this->impact();
 
         return $vars;
     }
@@ -1023,7 +1034,7 @@ class triple extends sandbox_link_named
      */
     function set_usage(?int $usage): void
     {
-        $this->values = $usage;
+        $this->usage = $usage;
     }
 
     /**
@@ -1031,7 +1042,28 @@ class triple extends sandbox_link_named
      */
     function usage(): ?int
     {
-        return $this->values;
+        return $this->usage;
+    }
+
+    /**
+     * set the cache value to sort this triple by relevance
+     * the impact is calculated based on the formula assigned to the object
+     * by the system triple "impact phrase"
+     *
+     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->impact = $impact;
+    }
+
+    /**
+     * @return float|null a higher number indicates a higher relevance
+     */
+    function impact(): ?float
+    {
+        return $this->impact;
     }
 
     /**
@@ -1232,6 +1264,9 @@ class triple extends sandbox_link_named
         }
         if ($obj->usage() != null) {
             $this->set_usage($obj->usage());
+        }
+        if ($obj->impact() != null) {
+            $this->set_impact($obj->impact());
         }
         return $usr_msg;
     }
@@ -1990,8 +2025,13 @@ class triple extends sandbox_link_named
                 $result = true;
             }
         }
-        if ($this->values != null) {
-            if ($this->values != $db_obj->values) {
+        if ($this->usage != null) {
+            if ($this->usage != $db_obj->usage) {
+                $result = true;
+            }
+        }
+        if ($this->impact != null) {
+            if ($this->impact != $db_obj->impact) {
                 $result = true;
             }
         }
@@ -2737,7 +2777,8 @@ class triple extends sandbox_link_named
                 triple_db::FLD_NAME_GIVEN,
                 triple_db::FLD_NAME_AUTO,
                 triple_db::FLD_WIGHT,
-                triple_db::FLD_VALUES,
+                sql_db::FLD_USAGE,
+                sql_db::FLD_IMPACT,
                 triple_db::FLD_VIEW
             ],
             parent::db_fields_all_sandbox()
@@ -2954,20 +2995,34 @@ class triple extends sandbox_link_named
                 $sbx->weight
             );
         }
-        // TODO rename to usage
-        if ($sbx->values !== $this->values) {
+        if ($sbx->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VALUES,
-                    $cng_fld_cac->id($table_id . triple_db::FLD_VALUES),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                triple_db::FLD_VALUES,
-                $this->values,
-                triple_db::FLD_VALUES_SQL_TYP,
-                $sbx->values
+                sql_db::FLD_USAGE,
+                $this->usage,
+                sql_db::FLD_USAGE_SQL_TYP,
+                $sbx->usage
+            );
+        }
+        if ($sbx->impact !== $this->impact) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_IMPACT,
+                $this->impact,
+                sql_db::FLD_IMPACT_SQL_TYP,
+                $sbx->impact
             );
         }
         if ($sbx->view_id() !== $this->view_id()) {

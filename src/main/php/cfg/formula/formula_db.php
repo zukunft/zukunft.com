@@ -89,8 +89,6 @@ class formula_db
     const string FLD_VIEW = 'view_id';
     const sql_field_type FLD_VIEW_SQL_TYP = sql_field_type::INT;
     const string FLD_USAGE_COM = 'number of results linked to this formula';
-    const string FLD_USAGE = 'usage'; // TODO convert to a percent value of relative importance e.g. is 100% if all results, words and triples use this formula; should be possible to adjust the weight of e.g. values and views with the user specific system settings
-    const sql_field_type FLD_USAGE_SQL_TYP = sql_field_type::INT;
 
     // list of fields that MUST be set by one user
     // TODO add foreign key for share and protection type?
@@ -112,7 +110,8 @@ class formula_db
         [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
         [self::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
         [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_USAGE, self::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
     );
 
     // all database field names excluding the id

@@ -139,7 +139,7 @@ SELECT ((l.triple_id * -2) + 1)                                                 
                         ELSE l.name_given END
             ELSE l.triple_name END AS phrase_name,
        l.description,
-       l.values                                                                     AS usage,
+       l.usage                                                                      AS usage,
        l.phrase_type_id,
        l.excluded,
        l.share_type_id,
@@ -201,7 +201,7 @@ SELECT ((l.triple_id * -2) + 1)  AS term_id,
                         ELSE l.name_given END
             ELSE l.triple_name END AS phrase_name,
        l.description,
-       l.values                  AS usage,
+       l.usage                   AS usage,
        l.excluded,
        l.share_type_id,
        l.protect_id,

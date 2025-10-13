@@ -2,6 +2,7 @@ PREPARE component_norm_by_name (text) AS
     SELECT component_id,
            component_name,
            code_id,
+           usage,
            ui_msg_code_id,
            ui_msg_code_id_vars,
            ui_msg_code_id_exception,

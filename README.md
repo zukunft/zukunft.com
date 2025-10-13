@@ -13,6 +13,7 @@ This program should
 - use common sense by using opencyc via [conceptnet](https://conceptnet.io/)
 - enable data exchange to [wikidata](https://www.wikidata.org/) and other interlinking databases
 - secure the relevant LLM tokens to enable live learning without losing the [golden rule](https://en.wikipedia.org/wiki/Golden_Rule) as a target
+- help everyone to move smart and fix it
 
 ## Development installation
 
