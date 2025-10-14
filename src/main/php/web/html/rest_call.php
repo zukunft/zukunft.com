@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 //include_once paths::API_OBJECT . 'controller.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -63,7 +64,7 @@ class rest_call
      * create and execute an api call for a database object
      * by id
      * @param string $class the frontend class name that should be loaded
-     * @param int|string $id|string the id of the database object that should be loaded
+     * @param int|string $id |string the id of the database object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */
@@ -153,6 +154,12 @@ class rest_call
         return $ctrl->check_api_msg($json_msg);
     }
 
+    function curl_get(string $url, user_message $usr_msg): array
+    {
+        $json_str = $this->curl_call($url);
+        return json_decode($json_str, true);
+    }
+
     /**
      * execute an api call
      *
@@ -193,6 +200,30 @@ class rest_call
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+
+        $result = curl_exec($curl);
+
+        if ($result === false) {
+            $error = curl_error($curl);
+        } else {
+            $error = '';
+        }
+
+        curl_close($curl);
+
+        if ($error != '') {
+            return $error;
+        } else {
+            return $result;
+        }
+    }
+
+    function curl_call(string $url): string
+    {
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($curl, CURLOPT_USERAGENT, "zukunft.com/0.0.3 (timon@zukunft.com)");
 
         $result = curl_exec($curl);
 

@@ -149,6 +149,8 @@ class all_unit_write_tests extends all_unit_read_tests
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
 
+                new wikidata_write_tests()->run($t);
+
                 // TODO activate Prio 2
                 // run_export_test($t);
                 // run_permission_test ($t);

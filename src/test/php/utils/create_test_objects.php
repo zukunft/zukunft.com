@@ -201,7 +201,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
@@ -899,7 +899,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_READ, true);
         return $url;
     }
 
@@ -1026,7 +1026,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_CREATE, true);
         return $url;
     }
 
@@ -1056,6 +1056,8 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
                 $obj = $this->verb_filled();
@@ -1154,7 +1156,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_UPDATE, true);
         return $url;
     }
 
@@ -1237,7 +1239,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_REMOVE, true);
         return $url;
     }
 
@@ -1319,6 +1321,7 @@ class create_test_objects extends test_base
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
+        $wrd->set_impact(3.4);
         $wrd->exclude();
         $wrd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -1580,6 +1583,13 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::ONE_ID, words::ONE);
         $wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $this->usr1);
+        return $wrd;
+    }
+
+    function word_math(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::MATH_ID, words::MATH);
         return $wrd;
     }
 
@@ -2505,9 +2515,9 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function phrase_list_start_view_dsp(): phrase_list_dsp
+    function phrase_list_start_view_ui(): phrase_list_ui
     {
-        return new phrase_list_dsp($this->phrase_list_start_view()->api_json([api_type::INCL_PHRASES]));
+        return new phrase_list_ui($this->phrase_list_start_view()->api_json([api_type::INCL_PHRASES]));
     }
 
     /**
@@ -2774,6 +2784,11 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function phrase_list_zh_mio_ui(): phrase_list_ui
+    {
+        return $this->phrase_list_ui($this->phrase_list_zh_mio());
+    }
+
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
@@ -2883,10 +2898,16 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function phrase_list_dsp(): phrase_list_dsp
+    function phrase_list_dsp(): phrase_list_ui
     {
-        return new phrase_list_dsp($this->phrase_list()->api_json());
+        return new phrase_list_ui($this->phrase_list()->api_json());
     }
+
+    function phrase_list_ui(phrase_list $phr_lst): phrase_list_ui
+    {
+        return new phrase_list_ui($phr_lst->api_json([api_type::INCL_PHRASES]));
+    }
+
 
     /**
      * @return group with one prime phrases
@@ -3417,13 +3438,18 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $frm = new formula($this->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
+        // TODO Prio 1 activate
+        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->usr_system);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
+        // TODO Prio 1 activate
+        //$frm->set_owner_id($this->usr1->id());
         $frm->set_type(formula_type::CALC, $this->usr1);
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
         $frm->set_usage(2);
+        $frm->set_impact(3.4);
         $frm->exclude();
         $frm->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $frm->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -3801,6 +3827,31 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return ref with the most often used fields set for unit testing
+     */
+    function reference_math(): ref
+    {
+        global $ref_typ_cac;
+        $ref = new ref($this->usr1);
+        $ref->set(refs::MATH_ID,
+            $this->word_math()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::MATH_KEY);
+        $ref->description = refs::MATH_COM;
+        return $ref;
+    }
+
+    /**
+     * @return ref with the city of zurich wikidata reference to test the wikidata interface
+     */
+    function reference_zh(): ref
+    {
+        global $ref_typ_cac;
+        $ref = new ref($this->usr1);
+        $ref->set(refs::ZH_ID,
+            $this->word_zh()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::ZH_KEY);
+        return $ref;
+    }
+
+    /**
      * @return ref with the more fields set for unit testing
      */
     function reference_plus(): ref
@@ -3876,6 +3927,41 @@ class create_test_objects extends test_base
         $ref->id = 0;
         $ref->set_phrase($this->word_filled_add()->phrase());
         return $ref;
+    }
+
+    function ref_list_math(): ref_list
+    {
+        $lst = new ref_list();
+        $lst->add($this->reference());
+        $lst->add($this->reference_math());
+        return $lst;
+    }
+
+    function ref_list_math_ui(): ref_list_ui
+    {
+        return $this->list_to_ui($this->ref_list_math());
+    }
+
+    function ref_list_zh(): ref_list
+    {
+        $lst = new ref_list();
+        $lst->add($this->reference());
+        $lst->add($this->reference_zh());
+        return $lst;
+    }
+
+    function ref_list_zh_ui(): ref_list_ui
+    {
+        return $this->list_to_ui($this->ref_list_zh());
+    }
+
+    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
+    private function list_to_ui(ref_list $lst): ref_list_ui
+    {
+        $lst_ui = new ref_list_ui();
+        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
+        $lst_ui->set_from_json($api_json);
+        return $lst_ui;
     }
 
     function view(): view
@@ -4000,6 +4086,7 @@ class create_test_objects extends test_base
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_usage(2);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4194,7 +4281,11 @@ class create_test_objects extends test_base
         $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
+        $cmp->set_usage(2);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
+        $cmp->ui_msg_code_id_vars = msg_id::DONE;
+        $cmp->ui_msg_code_id_exception = msg_id::ERROR;
+        $cmp->ui_msg_value_exception = 0;
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
         $cmp->set_col_sub_phrase($this->city());
@@ -4889,6 +4980,20 @@ class create_test_objects extends test_base
         $log_lst = new change_log_list();
         $log_lst->add($this->change_log_named());
         return $log_lst;
+    }
+
+    function change_log_list_named_ui(): change_log_list_ui
+    {
+        return $this->change_log_list_to_ui($this->change_log_list_named());
+    }
+
+    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
+    private function change_log_list_to_ui(change_log_list $lst): change_log_list_ui
+    {
+        $lst_ui = new change_log_list_ui();
+        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
+        $lst_ui->set_from_json($api_json);
+        return $lst_ui;
     }
 
     /**

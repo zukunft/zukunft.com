@@ -40,6 +40,7 @@ class triples
     // this list includes all preserved triple names
     // *_COM is the tooltip for the triple; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing
+    // *_WD is the wikidata id
 
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';

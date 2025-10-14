@@ -79,6 +79,12 @@ class files
 
 
     /*
+     * curl test files
+     */
+
+    CONST string WIKIDATA_ZURICH = test_paths::IMPORT_WIKIDATA . 'Q72' . self::JSON;
+
+    /*
      * sql
      */
 

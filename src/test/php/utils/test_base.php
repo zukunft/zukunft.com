@@ -213,6 +213,7 @@ include_once test_paths::UNIT . 'user_list_tests.php';
 include_once test_paths::UNIT . 'sandbox_tests.php';
 include_once test_paths::UNIT . 'type_tests.php';
 include_once test_paths::UNIT . 'horizontal_tests.php';
+include_once test_paths::UNIT . 'wikidata_tests.php';
 include_once test_paths::UNIT . 'word_tests.php';
 include_once test_paths::UNIT . 'word_list_tests.php';
 include_once test_paths::UNIT . 'triple_tests.php';
@@ -328,6 +329,7 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'wikidata_tests.php';
 
 include_once test_paths::UNIT_WRITE . 'test_word_display.php';
 include_once test_paths::UNIT_WRITE . 'test_math.php';
@@ -2477,7 +2479,10 @@ class test_base
 
         // check if no relevant fields a lost during save and reload
         if ($result) {
-            $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
+            // remove the fields from the api json towards the frontend that are not expected to be send back to the backend
+            $api_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($api_json, true)));
+            $sbx_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($sbx->api_json(), true)));
+            $result = $this->assert('API json based compare', $sbx_json_ex, $api_json_ex);
         }
 
         // check if the system reports correctly, that no one has changed the named object

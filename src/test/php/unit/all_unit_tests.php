@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\wikidata_write_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\unit\import_tests as import_tests;
@@ -193,8 +194,8 @@ class all_unit_tests extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            new word_list_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
@@ -202,19 +203,22 @@ class all_unit_tests extends test_cleanup
 
             $sys_usr = new user;
             $sys_usr->load_by_id(users::SYSTEM_ID);
-            $import = new import_file();
-            $import->import_config_yaml($sys_usr);
+            //$import = new import_file();
+            //$import->import_config_yaml($sys_usr);
 
 
             /*
              * unit testing - with system users
              */
 
-            new horizontal_tests()->run($t);
+            // new horizontal_tests()->run($t);
+            new wikidata_tests()->run($t);
 
             /*
              * prepare db testing
              */
+
+            $t->type_list_recreate($t);
 
             //$this->create_test_db_entries($t);
 
@@ -251,8 +255,8 @@ class all_unit_tests extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            new word_list_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
             // run the selected db read tests
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);
@@ -269,7 +273,7 @@ class all_unit_tests extends test_cleanup
              * user interface
              */
 
-            new horizontal_ui_tests()->run($t);
+            //new horizontal_ui_tests()->run($t);
 
             /*
              * db write
@@ -292,8 +296,9 @@ class all_unit_tests extends test_cleanup
             //new element_write_tests()->run_list($this);
             //new view_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            new component_write_tests()->run($this);
+            //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
+            //new wikidata_write_tests()->run($t);
 
 
             //$import = new import_file();
@@ -398,6 +403,7 @@ class all_unit_tests extends test_cleanup
 
         // do the im- and export unit tests
         new import_tests()->run($this);
+        new wikidata_tests()->run($this);
 
         // db setup
         new db_setup_tests()->run($this);

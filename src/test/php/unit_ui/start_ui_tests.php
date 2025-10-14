@@ -68,7 +68,7 @@ class start_ui_tests
         */
         $dto_dsp = new data_object_dsp();
         $dto_dsp->set_offline();
-        $dto_dsp->add_phrases($t->phrase_list_start_view_dsp());
+        $dto_dsp->add_phrases($t->phrase_list_start_view_ui());
 
         $msk = new list_sort();
         $phr = $t->global_problem()->phrase();
