@@ -70,7 +70,7 @@ include_once test_paths::UNIT_UI . 'language_ui_tests.php';
 include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'sys_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'job_ui_tests.php';
-include_once test_paths::UNIT_UI . 'system_views_ui_tests.php';
+include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 
 class all_ui_tests extends all_unit_tests
@@ -124,7 +124,7 @@ class all_ui_tests extends all_unit_tests
         // TODO compare with run_ui_test in all_unit_read_tests
         //new start_ui_tests()->run($t);
         // test all relevant system views (to deprecate? - new in horizontal_test.php)
-        new system_views_ui_tests()->run($t, $ui);
+        new spacial_cases_ui_tests()->run($t, $ui);
 
         $t->subheader($ts . 'check about page e.g. to check the library');
 

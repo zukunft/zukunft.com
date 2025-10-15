@@ -59,7 +59,7 @@ class term_list_ui_tests
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector($form, 0, url_var::TERM_LONG, msg_id::LABEL_TERM) . '<br>';
 
-        $t->html_test($test_page, 'term_list', 'term_list', $t);
+        $t->html_page_test($test_page, 'term_list', 'term_list', $t);
     }
 
 }

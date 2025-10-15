@@ -53,7 +53,7 @@ class phrase_ui_tests
         $test_page .= 'word phrase with link: ' . $wrd->name_link() . '<br>';
         $test_page .= 'triple phrase with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'triple phrase with link: ' . $trp->name_link() . '<br>';
-        $t->html_test($test_page, 'phrase', 'phrase', $t);
+        $t->html_page_test($test_page, 'phrase', 'phrase', $t);
     }
 
 }

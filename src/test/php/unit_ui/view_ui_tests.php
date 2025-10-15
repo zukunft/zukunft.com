@@ -60,7 +60,7 @@ class view_ui_tests
         $from_rows = $msk->type_selector(views::VIEW_EDIT, $ui->typ_lst_cache) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
-        $t->html_test($test_page, 'view', 'view', $t);
+        $t->html_page_test($test_page, 'view', 'view', $t);
     }
 
 }

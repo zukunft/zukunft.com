@@ -79,7 +79,7 @@ class change_log_ui_tests
         $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);
 
-        $t->html_test($test_page, 'change_log', 'change_log', $t);
+        $t->html_page_test($test_page, 'change_log', 'change_log', $t);
     }
 
 }

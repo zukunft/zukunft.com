@@ -56,7 +56,7 @@ class result_ui_tests
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';
-        $t->html_test($test_page, 'result', 'result', $t);
+        $t->html_page_test($test_page, 'result', 'result', $t);
     }
 
 }

@@ -61,7 +61,7 @@ class sys_log_ui_tests
         $test_page .= 'admin view of a table with system log entries<br>';
         $test_page .= $log_lst->display_admin($sys_usr_dsp) . '<br>';
 
-        $t->html_test($test_page, 'sys_log', 'sys_log', $t);
+        $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
     }
 
 }

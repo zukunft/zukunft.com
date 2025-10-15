@@ -65,7 +65,7 @@ class verb_db
     const string FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
     const string FLD_CONDITION = 'condition_type';
     const string FLD_FORMULA_COM = 'naming used in formulas';
-    const string FLD_FORMULA = 'formula_name';
+    const string FLD_NAME_FORMULA = 'formula_name';
     const string FLD_PLURAL = 'name_plural';
     const string FLD_REVERSE = 'name_reverse';
     const string FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
@@ -79,7 +79,7 @@ class verb_db
         self::FLD_PLURAL,
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
-        self::FLD_FORMULA,
+        self::FLD_NAME_FORMULA,
         sql_db::FLD_USAGE,
         sql_db::FLD_IMPACT
     );
@@ -92,7 +92,7 @@ class verb_db
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
+        [self::FLD_NAME_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
         [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],

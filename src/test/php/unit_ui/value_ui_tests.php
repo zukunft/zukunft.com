@@ -56,7 +56,7 @@ class value_ui_tests
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $val->btn_del() . '<br>';
-        $t->html_test($test_page, 'value html components', 'value', $t);
+        $t->html_page_test($test_page, 'value html components', 'value', $t);
 
 
         // TODO review

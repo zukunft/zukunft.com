@@ -52,10 +52,6 @@ class verbs
     const string IS = "is";
     const string IS_NAME = "is a";
     const int IS_ID = 2;
-    const string IS_COM = 'the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...';
-    const string IS_PLURAL = 'are';
-    const string IS_REVERSE = 'are';
-    const string IS_REV_PLURAL = 'are';
     const string PART = "contains";
     const string PART_NAME = "is part of";
     const int PART_ID = 3;
@@ -74,6 +70,11 @@ class verbs
     const string MEASURE = "measure_type";
     const string MEASURE_NAME = "is measure type for";
     const int MEASURE_ID = 14;
+    const string MEASURE_COM = "is the default measure type for";
+    const string MEASURE_PLURAL = 'are measure type for';
+    const string MEASURE_REVERSE = 'has the measure type';
+    const string MEASURE_REV_PLURAL = 'have the measure type';
+    const string MEASURE_NAME_FORMULA = 'measure type';
     const string ALIAS = "alias";
     const string ALIAS_NAME = "is alias of";
     const int ALIAS_ID = 18;

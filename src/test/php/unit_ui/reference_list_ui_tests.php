@@ -66,7 +66,7 @@ class reference_list_ui_tests
         $test_page .= 'short list of reference names with tooltip: ' . $lst->name_text() . '<br>';
         $test_page .= 'vertical list of reference with link:<br>' . $lst->list() . '<br>';
         $test_page .= 'table of reference with add and remove option:<br>' . $lst->list() . '<br>';
-        $t->html_test($test_page, 'reference_list', 'reference_list', $t);
+        $t->html_page_test($test_page, 'reference_list', 'reference_list', $t);
     }
 
 }

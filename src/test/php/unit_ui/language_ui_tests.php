@@ -60,7 +60,7 @@ class language_ui_tests
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';
-        $t->html_test($test_page, 'language', 'language', $t);
+        $t->html_page_test($test_page, 'language', 'language', $t);
     }
 
 }

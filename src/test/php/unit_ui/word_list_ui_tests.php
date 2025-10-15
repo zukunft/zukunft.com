@@ -68,7 +68,7 @@ class word_list_ui_tests
         $test_page .= $lst_long->selector(views::WORD_LIST) . '<br>';
         $test_page .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
 
-        $t->html_test($test_page, '', 'word_list', $t);
+        $t->html_page_test($test_page, '', 'word_list', $t);
     }
 
 }

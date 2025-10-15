@@ -106,6 +106,7 @@
       "name": "is measure type for",
       "code_id": "measure_type",
       "description": "is the default measure type for",
+      "formula_name": "measure type",
       "name_plural_reverse": "have the measure type",
       "name_plural": "are measure type for",
       "name_reverse": "has the measure type"

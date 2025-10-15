@@ -56,7 +56,7 @@ class job_ui_tests
         $test_page .= 'user view of a table with batch job entries<br>';
         $test_page .= $log_lst->display() . '<br>';
 
-        $t->html_test($test_page, 'job', 'job', $t);
+        $t->html_page_test($test_page, 'job', 'job', $t);
     }
 
 }

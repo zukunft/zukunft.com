@@ -854,7 +854,7 @@ class test_base
                 $dbo_name .= '_' . $id;
             }
         }
-        $filename = test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
+        $file_path = test_paths::HTML . test_paths::VIEWS .  $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
         $msk = new view($usr);
@@ -893,7 +893,7 @@ class test_base
         // check if the created view matches the expected view
         return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
-            $actual, $filename);
+            $actual, $file_path);
     }
 
     /**
@@ -1037,15 +1037,15 @@ class test_base
      *
      * @param string $test_name the description of the test
      * @param string $body the body of a html page
-     * @param string $filename the filename of the expected html page
+     * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $filename): bool
+    function assert_html_body(string $test_name, string $body, string $file_path): bool
     {
         $lib = new library();
 
         $actual = $this->html_page($body);
-        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        $expected = $this->file($file_path . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
     }
 
@@ -1054,14 +1054,14 @@ class test_base
      *
      * @param string $test_name the description of the test
      * @param string $html the html code of a html page
-     * @param string $filename the filename of the expected html page
+     * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_page(string $test_name, string $html, string $filename): bool
+    function assert_html_page(string $test_name, string $html, string $file_path): bool
     {
         $lib = new library();
 
-        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        $expected = $this->file($file_path . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
     }
 

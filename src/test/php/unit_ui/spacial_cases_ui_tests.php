@@ -42,13 +42,13 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class system_views_ui_tests
+class spacial_cases_ui_tests
 {
     function run(test_cleanup $t, frontend $ui): void
     {
 
         $html = new html_base();
-        $ui = new frontend('system_views_ui_tests');
+        $ui = new frontend('spacial_cases_ui_tests');
         $ui->load_dummy_cache_from_test_resources($t->usr1);
 
         // start the test section (ts)
@@ -67,7 +67,7 @@ class system_views_ui_tests
         $test_page .= $msk->show($wrd, $cfg, $back) . '<br>';
 
         // TODO review and combine with read db tests
-        $t->html_view_test($test_page, view_shared::WORD_ADD, $t);
+        $t->html_view_test($test_page, view_shared::WORD_ADD);
 
         // TODO add a word edit page with no usage to test the switch to the exception message
     }

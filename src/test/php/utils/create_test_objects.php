@@ -819,7 +819,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case verb::class;
-                $obj = $this->verb_is_filled();
+                $obj = $this->verb_measure_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::USAGE, $obj->usage());
@@ -1070,7 +1070,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
-                $obj = $this->verb_is_filled();
+                $obj = $this->verb_measure_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::PLURAL, $obj->plural());
@@ -1898,15 +1898,24 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb that has different entries for all fields
+     */
+    function verb_measure(): verb
+    {
+        return new verb(verbs::MEASURE_ID, verbs::MEASURE_NAME, verbs::MEASURE);
+    }
+
+    /**
      * @return verb a standard verb with all fields set
      */
-    function verb_is_filled(): verb
+    function verb_measure_filled(): verb
     {
-        $vrb = $this->verb_is();
-        $vrb->set_description(verbs::IS_COM);
-        $vrb->set_plural(verbs::IS_PLURAL);
-        $vrb->set_reverse(verbs::IS_REVERSE);
-        $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
+        $vrb = $this->verb_measure();
+        $vrb->set_description(verbs::MEASURE_COM);
+        $vrb->set_plural(verbs::MEASURE_PLURAL);
+        $vrb->set_reverse(verbs::MEASURE_REVERSE);
+        $vrb->set_reverse_plural(verbs::MEASURE_REV_PLURAL);
+        $vrb->set_formula_name(verbs::MEASURE_NAME_FORMULA);
         $vrb->set_user($this->usr1);
         $vrb->set_usage(self::DUMMY_USAGE);
         $vrb->set_impact(self::DUMMY_IMPACT);

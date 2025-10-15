@@ -194,8 +194,8 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
                 $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
             }
-            if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
-                $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
+            if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
+                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
@@ -404,7 +404,7 @@ class verb extends type_object
      */
     function set_usage(int $usage): void
     {
-        //$this->values = $usage;
+        $this->usage = $usage;
     }
 
     /**
@@ -486,7 +486,7 @@ class verb extends type_object
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(verb_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(verb_db::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(verb_db::FLD_NAME_FORMULA, $name, sql_par_type::TEXT_OR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -631,7 +631,7 @@ class verb extends type_object
             if ($key == verb_db::FLD_PLURAL) {
                 $this->set_plural($value);
             }
-            if ($key == verb_db::FLD_FORMULA) {
+            if ($key == verb_db::FLD_NAME_FORMULA) {
                 $this->set_formula_name($value);
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
@@ -996,7 +996,7 @@ class verb extends type_object
             $log->new_value = $this->formula_name();
             $log->std_value = $db_rec->formula_name();
             $log->row_id = $this->id();
-            $log->set_field(verb_db::FLD_FORMULA);
+            $log->set_field(verb_db::FLD_NAME_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;

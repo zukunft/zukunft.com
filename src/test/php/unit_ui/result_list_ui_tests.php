@@ -57,7 +57,7 @@ class result_list_ui_tests
         $test_page = $html->text_h2('result list display test');
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';
-        $t->html_test($test_page, 'result_list', 'result_list', $t);
+        $t->html_page_test($test_page, 'result_list', 'result_list', $t);
     }
 
 }

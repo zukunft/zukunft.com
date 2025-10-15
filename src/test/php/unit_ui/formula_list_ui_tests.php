@@ -65,7 +65,7 @@ class formula_list_ui_tests
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector($form, 0, url_var::FORMULA_LONG, msg_id::LABEL_FORMULA) . '<br>';
 
-        $t->html_test($test_page, 'formula_list', 'formula_list', $t);
+        $t->html_page_test($test_page, 'formula_list', 'formula_list', $t);
     }
 
 }

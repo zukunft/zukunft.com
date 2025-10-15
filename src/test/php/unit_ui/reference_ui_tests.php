@@ -51,7 +51,7 @@ class reference_ui_tests
         $test_page = $html->text_h2('reference display test');
         $test_page .= 'with tooltip: ' . $ref->name_tip() . '<br>';
         $test_page .= 'with link: ' . $ref->name_link() . '<br>';
-        $t->html_test($test_page, 'reference', 'reference', $t);
+        $t->html_page_test($test_page, 'reference', 'reference', $t);
     }
 
 }

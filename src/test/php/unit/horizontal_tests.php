@@ -219,7 +219,9 @@ class horizontal_tests
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
 
-        // TODO move to horizontal_ui_tests or system_views_ui_tests ?
+        // TODO move to horizontal_ui_tests or spacial_cases_ui_tests ?
+        // test the system views based on the object
+        //
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
         $dto = $tl->dummy_test_cache($t->usr1);
@@ -253,8 +255,8 @@ class horizontal_tests
                     $dbo_name .= '_' . $lib->str_to_file($dbo_id);
                 }
             }
-            $filename = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-            $t->assert_html_page($test_name, $html, $filename);
+            $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+            $t->assert_html_page($test_name, $html, $file_path);
         }
 
     }

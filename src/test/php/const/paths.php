@@ -43,9 +43,9 @@ class paths
     const string UTILS = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 
     // path for unit tests
-    const string UNIT = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;               // for unit tests
-    const string UNIT_READ = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;     // for the unit tests with database read only
-    const string UNIT_DSP = self::UNIT . 'html' . DIRECTORY_SEPARATOR;           // for the unit tests that create HTML code
+    const string UNIT = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;              // for unit tests
+    const string UNIT_READ = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;    // for the unit tests with database read only
+    const string UNIT_DSP = self::UNIT . 'html' . DIRECTORY_SEPARATOR;             // for the unit tests that create HTML code
     const string UNIT_HTML = TEST_PHP_PATH . 'unit_display' . DIRECTORY_SEPARATOR; // for the unit tests that create HTML code
     const string UNIT_UI = TEST_PHP_PATH . 'unit_ui' . DIRECTORY_SEPARATOR;        // for the unit tests that create JSON messages for the frontend
     const string UNIT_WRITE = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;  // for the unit tests that save to database (and cleanup the test data after completion)
@@ -86,8 +86,12 @@ class paths
     // path parts
     const string DB = 'db' . DIRECTORY_SEPARATOR;
     const string FORMULA = 'formula' . DIRECTORY_SEPARATOR;
-    const string VIEWS = 'views' . DIRECTORY_SEPARATOR;
-    const string VIEWS_BY_ID = 'views_by_id' . DIRECTORY_SEPARATOR;
+    // to test if all interface function of each web object word fine
+    const string VIEW_FUNCTIONS = 'object_pages' . DIRECTORY_SEPARATOR;
+    // to test if each object has all curl views including one or many read only view
+    const string VIEWS = 'views_by_object' . DIRECTORY_SEPARATOR;
+    // to test if all system view based on the id are fine including more static views like the about page
+    const string VIEWS_BY_ID = self::HTML . 'views_by_id' . DIRECTORY_SEPARATOR;
     const string WEB = 'web' . DIRECTORY_SEPARATOR;
 
 }
