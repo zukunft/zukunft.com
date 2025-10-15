@@ -271,6 +271,10 @@ class create_test_objects extends test_base
 
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    // usage used for unit testing
+    const int DUMMY_USAGE = 2;
+    // impact used for unit testing
+    const float DUMMY_IMPACT = 3.4;
 
     /*
      * dummy objects for unit tests
@@ -815,9 +819,11 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -1064,9 +1070,15 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::REVERSE, $obj->reverse());
+                $url .= $this->url_par(url_var::REVERSE_PLURAL, $obj->reverse_plural());
+                $url .= $this->url_par(url_var::FORMULA, $obj->formula_name());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -1324,8 +1336,8 @@ class create_test_objects extends test_base
         $wrd->set_code_id(words::MATH, $this->usr_system);
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
-        $wrd->set_usage(2);
-        $wrd->set_impact(3.4);
+        $wrd->set_usage(self::DUMMY_USAGE);
+        $wrd->set_impact(self::DUMMY_IMPACT);
         $wrd->exclude();
         $wrd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -1883,6 +1895,22 @@ class create_test_objects extends test_base
     function verb_is(): verb
     {
         return new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
+    }
+
+    /**
+     * @return verb a standard verb with all fields set
+     */
+    function verb_is_filled(): verb
+    {
+        $vrb = $this->verb_is();
+        $vrb->set_description(verbs::IS_COM);
+        $vrb->set_plural(verbs::IS_PLURAL);
+        $vrb->set_reverse(verbs::IS_REVERSE);
+        $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
+        $vrb->set_user($this->usr1);
+        $vrb->set_usage(self::DUMMY_USAGE);
+        $vrb->set_impact(self::DUMMY_IMPACT);
+        return $vrb;
     }
 
     /**
@@ -3441,8 +3469,8 @@ class create_test_objects extends test_base
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
-        $frm->set_usage(2);
-        $frm->set_impact(3.4);
+        $frm->set_usage(self::DUMMY_USAGE);
+        $frm->set_impact(self::DUMMY_IMPACT);
         $frm->exclude();
         $frm->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $frm->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4054,7 +4082,7 @@ class create_test_objects extends test_base
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
-        $msk->set_usage(2);
+        $msk->set_usage(self::DUMMY_USAGE);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4249,7 +4277,7 @@ class create_test_objects extends test_base
         $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
-        $cmp->set_usage(2);
+        $cmp->set_usage(self::DUMMY_USAGE);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
         $cmp->ui_msg_code_id_vars = msg_id::DONE;
         $cmp->ui_msg_code_id_exception = msg_id::ERROR;

@@ -1936,41 +1936,30 @@
         {
           "position": "19",
           "name": "triples that use a verb",
-          "position_type": "combine",
-          "style": "col-md-6"
+          "position_type": "combine"
         },
         {
           "position": "20",
           "name": "system sub title formulas",
-          "position_type": "side",
           "style": "col-md-4"
         },
         {
           "position": "21",
           "name": "formulas that use a verb",
-          "position_type": "combine",
-          "style": "col-md-6"
+          "position_type": "combine"
         },
         {
-          "position": "25",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "26",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "27",
+          "position": "22",
           "name": "system sub title log",
-          "style": "col-md-12"
+          "style": "col-md-4"
         },
         {
-          "position": "28",
+          "position": "23",
           "name": "change log verb",
           "position_type": "combine"
         },
         {
-          "position": "29",
+          "position": "24",
           "name": "system formatter row end"
         }
       ]

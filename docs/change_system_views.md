@@ -5,14 +5,13 @@ to change the system views these steps are needed at the moment:
 
 1) add, change or remove component in the view (e.g. "name": "Change word") in the src/main/resources/messages/system_views.json
 2) update the position numbers in components if needed because json does not have a fixed order
-3) activate the line 86 ( $t->type_list_recreate($t); ) in test/reset_db.php so that the test/resources/api/type_lists/type_lists.json file is checked and can be updated
-4) run test/reset_db.php to update the database and update the test/resources/api/type_lists/type_lists.json with the result created based on the updated database 
-5) undo the removal of "7weight" and "8weight" (this is probably due to a bug in the system)
-6) deploy the changes to your local test host
-7) if test/reset_db.php runs without error (beside the two missing lines in type_lists) deactivate the line 86 ( $t->type_list_recreate($t); ) in test/reset_db.php
-8) run test/test.php and update the expected results of the test case where the changes are expected changes
-9) repeat the deployment of the changes to your local test host and step 8 until the test runs without error
-10) git commit & git push
+3) run test/reset_db.php to update the database 
+4) update the test/resources/api/type_lists/type_lists.json with the result created based on the updated database as suggested by the debug 
+5) deploy the changes to your local test host
+6) if test/reset_db.php runs without error (beside the two missing lines in type_lists) deactivate the line 86 ( $t->type_list_recreate($t); ) in test/reset_db.php
+7) run test/test.php and update the expected results of the test case where the changes are expected changes
+8) repeat the deployment of the changes to your local test host and step 8 until the test runs without error
+9) git commit & git push
 
 add component type
 ------------------
@@ -25,6 +24,11 @@ if a component type needs to be added the steps are
 4) add the const with the ID to "const array TEST_TYPES" to include the component to the set of test components
 5) add the call of the corresponding function in src/main/php/web/component/component_exe.php
 6) continue with step 3) from the steps above to change a system view
+
+add database field
+-----------------
+
+if a database fields is added busied fixing the tests remember to add the new field to src/main/resources/db_code_links/change_fields.csv
 
 add a translatable frontend text
 --------------------------------

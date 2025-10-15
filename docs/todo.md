@@ -179,6 +179,7 @@ A proper issue ticket should be created for these TODOs notes:
             3. order the functions by importance
             4. remove unneeded overwrites
     TODO use list of most often used words for the prime word selection
+    TODO limit the number of arguments allowed per person and adjust the limit based on the previous number of destructive arguments
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view

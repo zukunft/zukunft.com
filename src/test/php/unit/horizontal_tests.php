@@ -219,6 +219,7 @@ class horizontal_tests
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
 
+        // TODO move to horizontal_ui_tests or system_views_ui_tests ?
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
         $dto = $tl->dummy_test_cache($t->usr1);

@@ -41,6 +41,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -52,6 +53,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
@@ -86,13 +88,57 @@ class verb extends sandbox_named
 
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id = null;
-    public float $impact = 0.0;
     public ?string $plural = null;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
     // short name of the verb for the use in formulas
     // because there both sides are combined
     public ?string $frm_name = null;
+    public float $impact = 0.0;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this verb frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            // the code id is not set by the url and cannot be changed by the frontend
+            if (array_key_exists(url_var::PLURAL, $url_array)) {
+                $this->plural = $url_array[url_var::PLURAL];
+            } else {
+                $this->plural = null;
+            }
+            if (array_key_exists(url_var::REVERSE, $url_array)) {
+                $this->reverse = $url_array[url_var::REVERSE];
+            } else {
+                $this->reverse = null;
+            }
+            if (array_key_exists(url_var::REVERSE_PLURAL, $url_array)) {
+                $this->rev_plural = $url_array[url_var::REVERSE_PLURAL];
+            } else {
+                $this->rev_plural = null;
+            }
+            if (array_key_exists(url_var::NAME_IN_FORMULA, $url_array)) {
+                if ($url_array[url_var::NAME_IN_FORMULA] != null) {
+                    $this->frm_name = $url_array[url_var::IMPACT];
+                }
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
 
     /*

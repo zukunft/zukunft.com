@@ -84,11 +84,13 @@ class all_ui_tests extends all_unit_tests
         $t->header($ts);
 
         $t->subheader($ts . 'base');
+        // the used html elements e.g. the buttons
         new base_ui_tests()->run($t);
         new user_ui_tests()->run($t);
         new horizontal_ui_tests()->run($t);
 
         $t->subheader($ts . 'page');
+        // test all interface functions of the frontend classes
         new word_ui_tests()->run($t, $ui->typ_lst_cache);
         new word_list_ui_tests()->run($t);
         new verb_ui_tests()->run($t);
@@ -121,6 +123,7 @@ class all_ui_tests extends all_unit_tests
 
         // TODO compare with run_ui_test in all_unit_read_tests
         //new start_ui_tests()->run($t);
+        // test all relevant system views (to deprecate? - new in horizontal_test.php)
         new system_views_ui_tests()->run($t, $ui);
 
         $t->subheader($ts . 'check about page e.g. to check the library');
