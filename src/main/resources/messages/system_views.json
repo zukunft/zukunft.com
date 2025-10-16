@@ -2010,6 +2010,49 @@
         {
           "position": "10",
           "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "14",
+          "name": "triples that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "system sub title formulas",
+          "style": "col-md-4"
+        },
+        {
+          "position": "16",
+          "name": "formulas that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "system sub title log",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "change log verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
         }
       ]
     },

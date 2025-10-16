@@ -4580,7 +4580,7 @@ class create_test_objects extends test_base
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
-        $chg->row_id = 1;
+        $chg->row_id = words::MATH_ID;
         return $chg;
     }
 
@@ -4601,6 +4601,20 @@ class create_test_objects extends test_base
     {
         $chg = $this->change_log_named_update();
         $chg->new_value = null;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a verb
+     */
+    function change_log_verb(): change
+    {
+        global $phr_typ_cac;
+        $chg = $this->change_log_named();
+        $chg->set_table(change_tables::VERB);
+        $chg->set_field(change_fields::FLD_VERB_NAME);
+        $chg->new_value = verbs::MEASURE;
+        $chg->row_id = verbs::MEASURE_ID;
         return $chg;
     }
 
@@ -4972,6 +4986,7 @@ class create_test_objects extends test_base
     {
         $log_lst = new change_log_list();
         $log_lst->add($this->change_log_named());
+        $log_lst->add($this->change_log_verb());
         return $log_lst;
     }
 
