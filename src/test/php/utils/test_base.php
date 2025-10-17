@@ -257,6 +257,7 @@ include_once test_paths::UNIT . 'db_setup_tests.php';
 // load the testing functions for creating HTML code
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
+include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
 
 // load the unit testing modules with database read only

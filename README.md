@@ -4,6 +4,7 @@
 
 This program should
 - be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser
+- a wordpress like frontend for the GGG using mayly a similar view editor
 - make the GGG usable for a real-time [delphi-method](https://en.wikipedia.org/wiki/Delphi_method)
 - an [exoskeleton](https://en.wikipedia.org/wiki/Exoskeleton_(human)) for the brain
 - make slow thinking ([Kahneman](https://en.wikipedia.org/wiki/Daniel_Kahneman)) faster

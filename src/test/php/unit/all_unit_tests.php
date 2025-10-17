@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\types\formula_type_list as formula_type_list
 use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -364,6 +365,7 @@ class all_unit_tests extends test_cleanup
 
         // do the user object unit tests
         new horizontal_tests()->run($this);
+        new system_view_ui_tests()->run($this);
         new word_tests()->run($this);
         new word_list_tests()->run($this);
         new verb_tests()->run($this);
