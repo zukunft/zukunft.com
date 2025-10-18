@@ -163,7 +163,7 @@ class system_tests
         $t->assert_dsp_id($t->change_log_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name measure_type (id ) in row 14 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
         $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
         $t->assert_dsp_id($t->change_log_value_prime(), 'log add words,word_name  3.1415927');

@@ -111,15 +111,12 @@ use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -2408,6 +2405,7 @@ class library
 
     /**
      * remove the namespace from the class name and adds the name extension for the table
+     * TODO Prio 2 check if the code_id or the name is returned and clean this up
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -2442,6 +2440,25 @@ class library
         if ($result == 'value_geos') {
             $result = 'values_geo';
         }
+        return $result;
+    }
+
+    /**
+     * get a list of table ids that are relevant for the given frontend class name
+     * including table ids of used in previous versions of this program
+     * @return array with the table ids that are relevant for a ui class name
+     */
+    function ui_class_to_table_id_list(string $class): array
+    {
+        global $cng_tbl_cac;
+
+        $result = [];
+
+        $result[] = $cng_tbl_cac->id($this->class_to_table($class));
+        // TODO Prio 2 add a test case for a table rename
+        //if ($class == word_dsp::class) {
+        //    $result[] = 5;
+        //}
         return $result;
     }
 

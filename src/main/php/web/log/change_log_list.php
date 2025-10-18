@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
@@ -48,6 +49,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -166,6 +168,25 @@ class change_log_list extends list_dsp
         return new change_log_list();
     }
 
+
+    /*
+     * filter
+     */
+
+    function filter(db_object $dbo): change_log_list
+    {
+        $lib = new library();
+        $result = new change_log_list();
+        $tbl_id_lst = $lib->ui_class_to_table_id_list($dbo::class);
+        foreach ($this->lst() as $chg) {
+            if (in_array($chg->table_id, $tbl_id_lst) ) {
+                if ($chg->row_id == $dbo->id()) {
+                    $result->add($chg);
+                }
+            }
+        }
+        return $result;
+    }
 
     /*
      * list

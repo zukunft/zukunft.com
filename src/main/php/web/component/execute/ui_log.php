@@ -48,13 +48,16 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $phr, change_log_list $log_lst): string
+    function system_change_log(db_object $dbo, change_log_list $log_lst): string
     {
         // TODO review
+        // if the given change og is empty use the global cache
         if ($log_lst->is_empty()) {
             global $ui_cac;
             $log_lst = $ui_cac->chg_log;
         }
+        // filter the change log based on the given object
+        $log_lst = $log_lst->filter($dbo);
         return $log_lst->dsp();
     }
 

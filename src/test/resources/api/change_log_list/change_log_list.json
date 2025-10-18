@@ -9,5 +9,16 @@
     "field_id": 10,
     "row_id": 1,
     "new_value": "mathematics"
+  },
+  {
+    "usr": {
+      "id": 1,
+      "name": "zukunft.com system"
+    },
+    "action_id": 1,
+    "table_id": 9,
+    "field_id": 23,
+    "row_id": 14,
+    "new_value": "measure_type"
   }
 ]

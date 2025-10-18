@@ -100,7 +100,7 @@ class system_view_ui_tests
 
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
-        $t->subheader($ts . 'system views');
+        $t->subheader($ts . 'by id');
         $ui = new frontend('unit test');
         $dto = $tl->dummy_test_cache($t->usr1);
         $ui->set_cache($dto);
@@ -113,6 +113,10 @@ class system_view_ui_tests
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $usr_dsp = $tl->cast_user($t->usr1);
+            // TODO Prio 0 remove temp
+            if ($id == 3) {
+                log_info('word edit');
+            }
             $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
             $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
             // create the filename of the expected result

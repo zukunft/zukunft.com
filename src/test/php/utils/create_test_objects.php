@@ -276,6 +276,21 @@ class create_test_objects extends test_base
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
 
+
+    /*
+     * vars
+     */
+
+    private int $chg_log_seq = 0;
+
+    function chg_log_seq(): int
+    {
+        $this->chg_log_seq++;
+        return $this->chg_log_seq;
+    }
+
+
+
     /*
      * dummy objects for unit tests
      */
@@ -4575,6 +4590,7 @@ class create_test_objects extends test_base
         global $usr_sys;
 
         $chg = new change($usr_sys);
+        $chg->id = $this->chg_log_seq();
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
@@ -4611,6 +4627,7 @@ class create_test_objects extends test_base
     {
         global $phr_typ_cac;
         $chg = $this->change_log_named();
+        $chg->id = $this->chg_log_seq();
         $chg->set_table(change_tables::VERB);
         $chg->set_field(change_fields::FLD_VERB_NAME);
         $chg->new_value = verbs::MEASURE;
