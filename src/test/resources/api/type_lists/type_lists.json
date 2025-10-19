@@ -7315,8 +7315,8 @@
       },
       {
         "name": "has a",
-        "code_id": "",
-        "description": "",
+        "code_id": "has",
+        "description": "to assign potential properties e.g. a Country has a Human Development Index",
         "plural": "has",
         "reverse": "is used for",
         "rev_plural": "is used for",
@@ -7327,8 +7327,8 @@
       },
       {
         "name": "is time jump for",
-        "code_id": "",
-        "description": "is the default time jump for",
+        "code_id": "time_jump",
+        "description": "the default time jump e.g year is the default time period for annual reports",
         "plural": "are the time jump for",
         "reverse": "has the default time jump",
         "rev_plural": "have the default time jump",
@@ -7339,8 +7339,8 @@
       },
       {
         "name": "is term jump for",
-        "code_id": "",
-        "description": "is the default term jump for",
+        "code_id": "term_jump",
+        "description": "the default term jump e.g. state of aggregation is used for a physical substance",
         "plural": null,
         "reverse": null,
         "rev_plural": null,
@@ -7351,7 +7351,7 @@
       },
       {
         "name": "term type needed",
-        "code_id": "",
+        "code_id": "term_needed",
         "description": "the formula needs the linked term type",
         "plural": null,
         "reverse": null,
@@ -7375,7 +7375,7 @@
       },
       {
         "name": "uses",
-        "code_id": "",
+        "code_id": "uses",
         "description": "real use e.g. wind energy is used by a wind turbine",
         "plural": "uses",
         "reverse": "is used by",
@@ -7387,8 +7387,8 @@
       },
       {
         "name": "issue",
-        "code_id": "",
-        "description": "",
+        "code_id": "issue",
+        "description": "e.g. a company issues an annual report",
         "plural": "issues",
         "reverse": "is issued by",
         "rev_plural": "are issued by",
@@ -7411,7 +7411,7 @@
       },
       {
         "name": "is an acronym for",
-        "code_id": "",
+        "code_id": "acronym",
         "description": "is an acronym for",
         "plural": "are an acronyms for",
         "reverse": "is an acronym of",
@@ -7435,7 +7435,7 @@
       },
       {
         "name": "influences",
-        "code_id": "",
+        "code_id": "influence",
         "description": "",
         "plural": "influences",
         "reverse": "is influenced by",

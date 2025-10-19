@@ -1372,7 +1372,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word with all fields set and a another reserved test name for testing the db write function
+     * @return word with all fields set and another reserved test name for testing the db write function
      */
     function word_filled_add_to(): word
     {
@@ -1964,6 +1964,14 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb that indicates a status change e.g. water can get warmer
+     */
+    function verb_can_get(): verb
+    {
+        return new verb(verbs::CAN_GET_ID, verbs::CAN_GET_NAME, verbs::CAN_GET);
+    }
+
+    /**
      * @return verb a standard verb with user null
      */
     function verb_with(): verb
@@ -1979,14 +1987,6 @@ class create_test_objects extends test_base
     function verb_can_be(): verb
     {
         return new verb(verbs::CAN_BE_ID, verbs::CAN_BE_NAME, verbs::CAN_BE);
-    }
-
-    /**
-     * @return verb
-     */
-    function verb_can_get(): verb
-    {
-        return new verb(verbs::CAN_GET_ID, verbs::CAN_GET_NAME, verbs::CAN_GET);
     }
 
     /**
@@ -2091,6 +2091,7 @@ class create_test_objects extends test_base
     function triple_global_warming(): triple
     {
         $trp = new triple($this->usr1);
+        $trp->set(triples::GLOBAL_WARMING_ID, triples::GLOBAL_WARMING);
         $trp->set_from($this->word_global()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_warmer()->phrase());
@@ -2349,10 +2350,24 @@ class create_test_objects extends test_base
         return $trp;
     }
 
+    function triple_list_short(): triple_list
+    {
+        $lst = new triple_list($this->usr1);
+        // TODO Prio 0 activate
+        //$lst->add($this->triple_filled());
+        $lst->add($this->triple_pi_symbol());
+        // TODO Prio 0 activate
+        //$lst->add($this->triple_gwp());
+        return $lst;
+    }
+
     function triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
+        $lst->add($this->triple_filled());
         $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_global_warming());
+        $lst->add($this->triple_gwp());
         return $lst;
     }
 
@@ -4944,7 +4959,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return sys_log a open system error log entry
+     * @return sys_log an open system error log entry
      */
     function sys_log(): sys_log
     {
@@ -5205,7 +5220,7 @@ class create_test_objects extends test_base
             $test_name .= $target;
             if ($db_obj->load_by_name($sbx->name())) {
                 if ($sbx->id() == 0) {
-                    $sbx->set_id($db_obj->id());
+                    $sbx->id = $db_obj->id();
                     $sbx->save();
                     $test_name .= ' update ';
                 } elseif ($sbx->id() == $db_obj->id()) {
@@ -6122,7 +6137,7 @@ class create_test_objects extends test_base
         return $result;
     }
 
-    function test_formula_link(string $formula_name, string $word_name, bool $autocreate = true): string
+    function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string
     {
         $result = '';
 
@@ -6138,7 +6153,7 @@ class create_test_objects extends test_base
                 $target = $formula_name . ' is linked to ' . $word_name;
                 $this->display('formula_link', $target, $result);
             } else {
-                if ($autocreate) {
+                if ($auto_create) {
                     $frm_lnk->set_formula($frm);
                     $frm_lnk->set_phrase($wrd->phrase());
                     $result = $frm_lnk->save()->get_last_message();

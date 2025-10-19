@@ -56,7 +56,7 @@ class triple_list_ui_tests
         $t->header($ts);
 
         // fill the triple list based on the api message
-        $db_lst = $t->triple_list();
+        $db_lst = $t->triple_list_short();
         $lst = new triple_list_dsp($db_lst->api_json());
         $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
 

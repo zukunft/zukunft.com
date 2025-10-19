@@ -152,6 +152,11 @@ class word_tests
         $t->assert_api($wrd, 'word_full');
         $wrd = $t->word();
         $t->assert_api($wrd, 'word_body');
+        // TODO Prio 0 activate
+        //$wrd = $t->word_filled();
+        //$t->assert_api($wrd, 'word_excluded');
+        //$wrd = $t->word();
+        //$t->assert_api($wrd, 'word_with_excluded');
 
         $t->subheader($ts . 'html frontend');
         $wrd = $t->word();

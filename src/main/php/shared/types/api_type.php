@@ -38,6 +38,10 @@ enum api_type: string
     // include the phrases in the value list api message
     case INCL_PHRASES = 'incl_phrases';
 
+    // include objects that have been excluded by the user e.g. so that the user can include the objects again
+    // by default excluded objects are not send to the frontend
+    case INCL_EXCLUDED = 'incl_excluded';
+
     // do not fill up the group id to the full key length
     case NO_KEY_FILL = 'no_key_fill';
 

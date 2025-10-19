@@ -46,8 +46,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_tests
@@ -113,8 +114,11 @@ class triple_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->triple_list();
+        $trp_lst = $t->triple_list_short();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
+
+        $trp_lst = $t->triple_list_short();
+        $t->assert_api_to_dsp($trp_lst, new triple_list_dsp(), [api_type::INCL_EXCLUDED]);
 
     }
 

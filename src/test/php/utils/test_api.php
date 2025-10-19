@@ -95,11 +95,15 @@ class test_api extends create_test_objects
     /**
      * check if the HTML frontend object can be set based on the api json message
      * @param object $usr_obj the user sandbox object that should be tested
+     * @param object $dsp_obj the display object used to create the api message to the backend
+     * @param array $api_types to check the different message type e.g.to test if excluded object can be reactivated
+     * @return bool true if the test has been successful
      */
-    function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
+    function assert_api_to_dsp(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
         $class = $this->class_to_api($usr_obj::class);
-        $msg_to_frontend = $usr_obj->api_json([api_type::TEST_MODE]);
+        $api_types[] = api_type::TEST_MODE;
+        $msg_to_frontend = $usr_obj->api_json($api_types);
         $dsp_obj->set_from_json($msg_to_frontend);
         $array_to_backend = $dsp_obj->api_array();
         // remove the empty fields to compare the "api save" message with the "api show" message

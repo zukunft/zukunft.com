@@ -1260,7 +1260,11 @@ class sandbox_list_named extends sandbox_list
             $pos = 0;
             foreach ($this->lst() as $sbx_obj) {
                 if ($pos <= $limit or $limit == null) {
-                    $result[] = $sbx_obj->name($ignore_excluded);
+                    $name = $sbx_obj->name($ignore_excluded);
+                    // do not add excluded names
+                    if ($name != null and $name != '') {
+                        $result[] = $sbx_obj->name($ignore_excluded);
+                    }
                     $pos++;
                 }
             }
