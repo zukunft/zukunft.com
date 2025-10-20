@@ -143,7 +143,7 @@ class horizontal_tests
             // use the clone function instead of pure clone of the object to clone also the child objects like the group of the value
             $check_obj = $filled_obj->clone_all();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
-            $ui_obj = $t->frontend_obj_from_backend_object($filled_obj);
+            $ui_obj = $tl->obj_to_ui_obj($filled_obj);
             $ui_obj->set_from_json($api_json);
             $check_obj->reset();
             $ui_json = $ui_obj->api_json();

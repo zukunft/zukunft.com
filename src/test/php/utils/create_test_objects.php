@@ -219,6 +219,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -253,6 +254,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\triple_list_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\value_list_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -834,7 +836,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case verb::class;
-                $obj = $this->verb_measure_filled();
+                $obj = $this->verb_is();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::USAGE, $obj->usage());
@@ -1085,7 +1087,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
-                $obj = $this->verb_measure_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::PLURAL, $obj->plural());
@@ -1213,9 +1215,15 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::REVERSE, $obj->reverse());
+                $url .= $this->url_par(url_var::REVERSE_PLURAL, $obj->reverse_plural());
+                $url .= $this->url_par(url_var::FORMULA, $obj->formula_name());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -1913,6 +1921,23 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb a standard verb with all fields set
+     */
+    function verb_is_filled(): verb
+    {
+        $vrb = $this->verb_is();
+        $vrb->set_description(verbs::IS_COM);
+        $vrb->set_plural(verbs::IS_PLURAL);
+        $vrb->set_reverse(verbs::IS_REVERSE);
+        $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
+        $vrb->set_formula_name(verbs::IS_NAME_FORMULA);
+        $vrb->set_user($this->usr1);
+        $vrb->set_usage(self::DUMMY_USAGE);
+        $vrb->set_impact(self::DUMMY_IMPACT);
+        return $vrb;
+    }
+
+    /**
      * @return verb that has different entries for all fields
      */
     function verb_measure(): verb
@@ -2380,9 +2405,15 @@ class create_test_objects extends test_base
         $lst = new triple_list($this->usr1);
         $lst->add($this->triple_filled());
         $lst->add($this->triple_pi_symbol());
-        $lst->add($this->triple_global_warming());
-        $lst->add($this->triple_gwp());
+        $lst->add($this->zh_city());
+        $lst->add($this->zh_canton());
         return $lst;
+    }
+
+    function triple_list_ui(): triple_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->triple_list());
     }
 
     function phrase(): phrase
@@ -3439,26 +3470,20 @@ class create_test_objects extends test_base
     // TODO Prio 1 easy: rename a _dsp functions and object to _ui
     function value_list_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list());
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list(), [api_type::INCL_PHRASES]);
     }
 
     function value_list_zh_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list_zh());
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_zh(), [api_type::INCL_PHRASES]);
     }
 
     function value_list_math_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list_math());
-    }
-
-    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
-    private function value_list_to_ui(value_list $val_lst): value_list_ui
-    {
-        $val_lst_ui = new value_list_ui();
-        $api_json = $val_lst->api_json([api_type::INCL_PHRASES]);
-        $val_lst_ui->set_from_json($api_json);
-        return $val_lst_ui;
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_math(), [api_type::INCL_PHRASES]);
     }
 
     /**
@@ -4001,16 +4026,8 @@ class create_test_objects extends test_base
 
     function ref_list_math_ui(): ref_list_ui
     {
-        return $this->list_to_ui($this->ref_list_math());
-    }
-
-    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
-    private function list_to_ui(ref_list $lst): ref_list_ui
-    {
-        $lst_ui = new ref_list_ui();
-        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
-        $lst_ui->set_from_json($api_json);
-        return $lst_ui;
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->ref_list_math(), [api_type::INCL_PHRASES]);
     }
 
     function view(): view
@@ -4654,13 +4671,12 @@ class create_test_objects extends test_base
      */
     function change_log_verb(): change
     {
-        global $phr_typ_cac;
         $chg = $this->change_log_named();
         $chg->id = $this->chg_log_seq();
         $chg->set_table(change_tables::VERB);
         $chg->set_field(change_fields::FLD_VERB_NAME);
-        $chg->new_value = verbs::MEASURE;
-        $chg->row_id = verbs::MEASURE_ID;
+        $chg->new_value = verbs::IS;
+        $chg->row_id = verbs::IS_ID;
         return $chg;
     }
 
@@ -5038,16 +5054,8 @@ class create_test_objects extends test_base
 
     function change_log_list_named_ui(): change_log_list_ui
     {
-        return $this->change_log_list_to_ui($this->change_log_list_named());
-    }
-
-    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
-    private function change_log_list_to_ui(change_log_list $lst): change_log_list_ui
-    {
-        $lst_ui = new change_log_list_ui();
-        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
-        $lst_ui->set_from_json($api_json);
-        return $lst_ui;
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->change_log_list_named(), [api_type::INCL_PHRASES]);
     }
 
     /**

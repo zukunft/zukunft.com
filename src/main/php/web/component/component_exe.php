@@ -301,7 +301,7 @@ class component_exe extends component
             component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
-            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
+            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
             component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo),
             component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
 

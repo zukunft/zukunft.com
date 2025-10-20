@@ -15,6 +15,7 @@
       "name": "is a",
       "code_id": "is",
       "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
+      "formula_name": "is",
       "name_plural_reverse": "are",
       "name_plural": "are",
       "name_reverse": "are",

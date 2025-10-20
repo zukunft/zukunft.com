@@ -43,6 +43,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
@@ -53,13 +54,13 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -382,6 +383,14 @@ class triple extends sandbox_code_id
         return $this->impact;
     }
 
+    function has_verb(verb $vrb): float
+    {
+        if ($this->verb->id() == $vrb->id()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * cast
@@ -442,6 +451,14 @@ class triple extends sandbox_code_id
 
         log_debug($wrd_lst->name_tip());
         return $wrd_lst;
+    }
+
+    /**
+     * @return bool true if the triple is normally not shown to the user e.g. scaling of one is assumed
+     */
+    function is_hidden(): bool
+    {
+        return $this->is_type(phrase_type::SCALING_HIDDEN);
     }
 
 

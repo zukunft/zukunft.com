@@ -36,10 +36,13 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -48,14 +51,51 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp as list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class test_lib
@@ -64,31 +104,31 @@ class test_lib
     /**
      * cast a backend user to a frontend user
      * @param user $usr the filled backend user object
-     * @return user_dsp the filled frontend user object
+     * @return user_ui the filled frontend user object
      */
-    function cast_user(user $usr): user_dsp
+    function cast_user(user $usr): user_ui
     {
-        $usr_dsp = new user_dsp();
+        $usr_dsp = new user_ui();
         $usr_dsp->set_from_json($usr->api_json());
         return $usr_dsp;
     }
 
-    function cast_view_list(view_list $msk_lst): view_list_dsp
+    function cast_view_list(view_list $msk_lst): view_list_ui
     {
         $api_msg = $msk_lst->api_json();
-        return new view_list_dsp($api_msg);
+        return new view_list_ui($api_msg);
     }
 
     /**
      * create the dummy frontend cache entries for the unit tests
      * @param user $usr the user for which the sample cache should be created
-     * @return data_object_dsp
+     * @return data_object_ui
      */
-    function dummy_test_cache(user $usr): data_object_dsp
+    function dummy_test_cache(user $usr): data_object_ui
     {
         global $ui_cac;
 
-        $dto_dsp = new data_object_dsp();
+        $dto_dsp = new data_object_ui();
         $dto_dsp->usr = $this->cast_user($usr);
 
         // load type lists from resource json file
@@ -110,6 +150,7 @@ class test_lib
         $cto->usr1 = $usr;
 
         // set the value cache list based
+        $dto_dsp->trp_lst = $cto->triple_list_ui();
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
         $dto_dsp->chg_log = $cto->change_log_list_named_ui();
@@ -119,5 +160,52 @@ class test_lib
 
         return $dto_dsp;
     }
+
+    /**
+     * cast a backend list to a frontend list via api message
+     * @param sandbox_list|type_list|change_log_list $lst the filled backend list
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return triple_list_ui|ref_list_ui|value_list_ui|change_log_list_ui|list_ui
+     */
+    function list_to_ui(sandbox_list|type_list|change_log_list $lst, api_type_list|array $typ_lst = []): triple_list_ui|ref_list_ui|value_list_ui|change_log_list_ui|list_ui
+    {
+        $tl = new test_lib();
+        $lst_ui = $tl->obj_to_ui_obj($lst);
+        $api_json = $lst->api_json($typ_lst);
+        $lst_ui->set_from_json($api_json);
+        return $lst_ui;
+    }
+
+    /**
+     * get the frontend object related to the given backend object
+     * @param db_object_seq_id|sandbox_value|base_list|type_list $dbo the given backend object
+     * @return false|db_object_ui|list_ui the corresponding frontend object
+     */
+    public function obj_to_ui_obj(
+        db_object_seq_id|sandbox_value|base_list|type_list $dbo
+    ): false|db_object_ui|list_ui
+    {
+        return match ($dbo::class) {
+            word::class => new word_ui(),
+            verb::class => new verb_ui(),
+            triple::class => new triple_ui(),
+            source::class => new source_ui(),
+            ref::class => new ref_ui(),
+            value::class => new value_ui(),
+            //group::class => new group_ui(),
+            formula::class => new formula_ui(),
+            result::class => new result_ui(),
+            view::class => new view_ui(),
+            component::class => new component_ui(),
+            user::class => new user_ui(),
+            word_list::class => new word_list_ui(),
+            triple_list::class => new triple_list_ui(),
+            value_list::class => new value_list_ui(),
+            ref_list::class => new ref_list_ui(),
+            change_log_list::class => new change_log_list_ui(),
+            default => false,
+        };
+    }
+
 
 }

@@ -48,6 +48,7 @@ include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once html_paths::WORD . 'triple_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -71,6 +73,7 @@ class data_object
      */
 
     private word_list $wrd_lst;
+    public triple_list $trp_lst;
     private phrase_list $phr_lst;
     public ref_list $ref_lst {
         set(ref_list $value) {
@@ -122,6 +125,7 @@ class data_object
     {
         $this->usr = new user();
         $this->wrd_lst = new word_list();
+        $this->trp_lst = new triple_list();
         $this->phr_lst = new phrase_list();
         $this->val_lst = new value_list();
         $this->ref_lst = new ref_list();

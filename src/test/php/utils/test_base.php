@@ -842,6 +842,7 @@ class test_base
     ): bool
     {
         $lib = new library();
+        $tl = new test_lib();
 
         // create the filename of the expected result
         $folder = '';
@@ -875,7 +876,7 @@ class test_base
         }
         $dbo_api_msg = $dbo->api_json();
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
-        $dbo_dsp = $this->frontend_obj_from_backend_object($dbo);
+        $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
             $dbo_dsp->set_from_json($dbo_api_msg);
         }
@@ -895,30 +896,6 @@ class test_base
         return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
             $actual, $file_path);
-    }
-
-    /**
-     * the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value $dbo the given backend object
-     * @return false|db_object_dsp the corresponding frontend object
-     */
-    public function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
-    {
-        return match ($dbo::class) {
-            word::class => new word_dsp(),
-            verb::class => new verb_dsp(),
-            triple::class => new triple_dsp(),
-            source::class => new source_dsp(),
-            ref::class => new ref_dsp(),
-            value::class => new value_dsp(),
-            //group::class => new group_dsp(),
-            formula::class => new formula_dsp(),
-            result::class => new result_dsp(),
-            view::class => new view_dsp(),
-            component::class => new component_dsp(),
-            user::class => new user_dsp(),
-            default => false,
-        };
     }
 
     /**

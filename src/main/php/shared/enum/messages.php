@@ -960,6 +960,7 @@ enum messages: string
     case PHRASE_MISSING_ID = 'phrase id is zero';
     case PHRASE_ID_NOT_FOUND = 'phrase id not found';
     case TERM_ID_NOT_FOUND = 'term id not found';
+    case NOT_USED_FOR_TRIPLES = 'not used for triples';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';

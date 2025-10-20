@@ -40,6 +40,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
@@ -51,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -76,6 +78,29 @@ class triple_list extends list_dsp
 
 
     /*
+     * filter
+     */
+
+    /**
+     * select the references that are linked to the given phrase
+     * @param verb|null $vrb
+     * @return triple_list
+     */
+    function get_by_verb(verb|null $vrb): triple_list
+    {
+        $trp_lst = new triple_list();
+        if ($vrb != null) {
+            foreach ($this->lst() as $trp) {
+                if ($trp->has_verb($vrb)) {
+                    $trp_lst->add($trp);
+                }
+            }
+        }
+        return $trp_lst;
+    }
+
+
+    /*
      * display
      */
 
@@ -96,9 +121,9 @@ class triple_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst() as $wrd) {
-            if (!$wrd->is_hidden()) {
-                $result[] = $wrd->name_linked($back);
+        foreach ($this->lst() as $trp) {
+            if (!$trp->is_hidden()) {
+                $result[] = $trp->name_link($back);
             }
         }
         return $result;

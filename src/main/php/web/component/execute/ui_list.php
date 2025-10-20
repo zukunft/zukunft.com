@@ -46,11 +46,13 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -59,11 +61,13 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 
 class ui_list extends ui_base
@@ -108,9 +112,22 @@ class ui_list extends ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function triple_list(?db_object $dbo = null): string
+    function triple_list(?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        return $dbo->name();
+        global $mtr;
+
+        $result = '';
+        $trp_lst = clone $cfg->trp_lst;
+        if ($dbo::class == verb::class) {
+            $trp_lst = $trp_lst->get_by_verb($dbo);
+            $result = $trp_lst->display();
+        } else {
+            log_err($dbo::class . '  is not expected to be a selection for triples');
+        }
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
+        }
+        return $result;
     }
 
     /**
@@ -143,10 +160,10 @@ class ui_list extends ui_base
     {
         $result = '';
         $phr = null;
-        if ($dbo:: class == word::class) {
+        if ($dbo::class == word::class) {
             $phr = $dbo->phrase();
         }
-        if ($dbo:: class == triple::class) {
+        if ($dbo::class == triple::class) {
             $phr = $dbo->phrase();
         }
         $ref_lst = $dto->ref_list_cloned();

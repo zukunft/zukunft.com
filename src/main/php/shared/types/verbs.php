@@ -52,6 +52,11 @@ class verbs
     const string IS = "is";
     const string IS_NAME = "is a";
     const int IS_ID = 2;
+    const string IS_COM = "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...";
+    const string IS_PLURAL = "are";
+    const string IS_REVERSE = "are";
+    const string IS_REV_PLURAL = "are";
+    const string IS_NAME_FORMULA = "is";
     const string PART = "contains";
     const string PART_NAME = "is part of";
     const int PART_ID = 3;
