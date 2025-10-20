@@ -133,7 +133,7 @@ class def
     // corresponding frontend object,
     // a database table and
     // can be im- and exported
-    const MAIN_CLASSES = [
+    const array MAIN_CLASSES = [
         word::class,
         verb::class,
         triple::class,
@@ -151,7 +151,7 @@ class def
     // to select single database rows from the code with a unique key
     // or a type which cannot be changed by IP users
     // so the requesting user needs to be included in the mapping request
-    const CODE_ID_CLASSES = [
+    const array CODE_ID_CLASSES = [
         word::class,
         word_list::class,
         verb::class,
@@ -169,17 +169,17 @@ class def
     ];
 
     // classes that have a user interface message code id
-    const UI_MSG_CODE_ID_CLASSES = [
+    const array UI_MSG_CODE_ID_CLASSES = [
         component::class,
     ];
 
     // classes that does not need a foreign db key
-    const NO_FOREIGN_DB_KEY_CLASSES = [
+    const array NO_FOREIGN_DB_KEY_CLASSES = [
         verb::class,
     ];
 
     // type classes that have a csv file for the initial load
-    const BASE_CODE_LINK_FILES = [
+    const array BASE_CODE_LINK_FILES = [
         sys_log_status::class,
         sys_log_type::class,
         job_type::class,
@@ -209,14 +209,14 @@ class def
     ];
 
     // log type classes that have a csv file for the initial load
-    const LOG_CODE_LINK_FILES = [
+    const array LOG_CODE_LINK_FILES = [
         change_action::class,
         change_table::class,
         change_field::class,
     ];
 
     // list of classes that are used in the api e.g. to receive the user changes
-    const API_CLASSES = [
+    const array API_CLASSES = [
         word::class,
         verb::class,
         triple::class,
@@ -230,13 +230,13 @@ class def
     ];
 
     // list of classes that have a csv with the code id for the initial user profile and type setup
-    const CLASS_WITH_USER_CODE_LINK_CSV = [
+    const array CLASS_WITH_USER_CODE_LINK_CSV = [
         user_profile::class,
         user_type::class
     ];
 
     // list of classes that use the user sandbox
-    const SANDBOX_CLASSES = [
+    const array SANDBOX_CLASSES = [
         word::class,
         triple::class,
         source::class,

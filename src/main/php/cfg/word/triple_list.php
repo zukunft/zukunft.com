@@ -481,7 +481,7 @@ class triple_list extends sandbox_list_named
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();

@@ -4,6 +4,7 @@
 
 This program should
 - be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser
+- a wordpress like frontend for the GGG using mayly a similar view editor
 - make the GGG usable for a real-time [delphi-method](https://en.wikipedia.org/wiki/Delphi_method)
 - an [exoskeleton](https://en.wikipedia.org/wiki/Exoskeleton_(human)) for the brain
 - make slow thinking ([Kahneman](https://en.wikipedia.org/wiki/Daniel_Kahneman)) faster
@@ -13,6 +14,7 @@ This program should
 - use common sense by using opencyc via [conceptnet](https://conceptnet.io/)
 - enable data exchange to [wikidata](https://www.wikidata.org/) and other interlinking databases
 - secure the relevant LLM tokens to enable live learning without losing the [golden rule](https://en.wikipedia.org/wiki/Golden_Rule) as a target
+- help everyone to move smart and fix it
 
 ## Development installation
 

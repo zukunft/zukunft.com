@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class view_type_list extends type_list
 {
 
-    const NAME = url_var::VIEW_TYPE;
+    const string NAME = url_var::VIEW_TYPE;
 
     /**
      * create the HTML code to select a view type

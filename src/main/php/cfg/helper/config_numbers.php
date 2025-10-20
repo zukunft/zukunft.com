@@ -60,19 +60,19 @@ class config_numbers extends value_list
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
-    const HIDDEN_KEYWORDS = [
+    const array HIDDEN_KEYWORDS = [
         words::THIS_SYSTEM,
     ];
 
     // list of triples that should be hidden be default for normal selections
     // TODO check on pod start that these triples exists and are of hidden type
-    const HIDDEN_KEY_TRIPLES = [
+    const array HIDDEN_KEY_TRIPLES = [
         [words::SYSTEM, words::CONFIGURATION],
     ];
 
     // list of words that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these words exists and are admin protected
-    const ADMIN_KEYWORDS = [
+    const array ADMIN_KEYWORDS = [
         words::AUTOMATIC,
         words::AVERAGE,
         words::BACKEND,
@@ -131,7 +131,7 @@ class config_numbers extends value_list
 
     // list of triples that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these triples exists and are admin protected
-    const ADMIN_KEY_TRIPLES = [
+    const array ADMIN_KEY_TRIPLES = [
         [words::START, words::DELAY],
         [words::MAX, words::DELAY],
         [words::SYS_CONF_VALUE, words::TABLE],

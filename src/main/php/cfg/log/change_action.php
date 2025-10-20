@@ -52,7 +52,7 @@ class change_action extends type_object
 {
 
     // list of all log actions allowed in this program version
-    const ACTION_LIST = array(
+    const array ACTION_LIST = array(
         change_actions::ADD,
         change_actions::UPDATE,
         change_actions::DELETE
@@ -64,15 +64,15 @@ class change_action extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for add, change, delete, undo and redo actions';
-    const FLD_ID = 'change_action_id';
-    const FLD_NAME = 'change_action_name';
+    const string TBL_COMMENT = 'for add, change, delete, undo and redo actions';
+    const string FLD_ID = 'change_action_id';
+    const string FLD_NAME = 'change_action_name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );

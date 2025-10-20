@@ -86,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 class verb extends type_object
 {
 
+    // TODO MAYBE base verb on named sandbox object like suggested in the frontend or change the frontend object
     // TODO add an easy way to get the name from the code id
 
 
@@ -128,7 +129,9 @@ class verb extends type_object
     private ?string $frm_name = null;
     // how often this current used has used the verb
     // (until now just the usage of all users)
-    private int $usage = 0;
+    private ?int $usage = null;
+    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
+    private ?float $impact = null;
 
 
     /*
@@ -157,7 +160,8 @@ class verb extends type_object
         $this->reverse = null;
         $this->rev_plural = null;
         $this->frm_name = null;
-        $this->usage = 0;
+        $this->usage = null;
+        $this->impact = null;
     }
 
     /**
@@ -190,17 +194,24 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
                 $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
             }
-            if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
-                $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
+            if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
+                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
-            if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
-                if ($db_row[verb_db::FLD_WORDS] == null) {
-                    $this->usage = 0;
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                if ($db_row[sql_db::FLD_USAGE] == null) {
+                    $this->usage = null;
                 } else {
-                    $this->usage = $db_row[verb_db::FLD_WORDS];
+                    $this->usage = $db_row[sql_db::FLD_USAGE];
+                }
+            }
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                if ($db_row[sql_db::FLD_IMPACT] == null) {
+                    $this->impact = null;
+                } else {
+                    $this->impact = $db_row[sql_db::FLD_IMPACT];
                 }
             }
         }
@@ -235,7 +246,7 @@ class verb extends type_object
             }
         }
 
-        // the usage var is not expected to be changed via api
+        // the usage and impact var is not expected to be changed via api
 
         return $usr_msg;
     }
@@ -251,10 +262,10 @@ class verb extends type_object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
@@ -272,6 +283,8 @@ class verb extends type_object
                 $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
             }
         }
+
+        // the usage and impact var is not expected to be changed via import
 
         return $usr_msg;
     }
@@ -309,17 +322,6 @@ class verb extends type_object
     function set_user(?user $usr): void
     {
         $this->usr = $usr;
-    }
-
-    /**
-     * set the value to rank the verbs by usage
-     *
-     * @param int $usage a higher value moves the verb to the top of the selection list
-     * @return void
-     */
-    function set_usage(int $usage): void
-    {
-        //$this->values = $usage;
     }
 
     function set_plural(?string $plural): void
@@ -395,11 +397,43 @@ class verb extends type_object
     }
 
     /**
+     * set the value to rank the verbs by usage
+     *
+     * @param int $usage a higher value moves the verb to the top of the selection list
+     * @return void
+     */
+    function set_usage(int $usage): void
+    {
+        $this->usage = $usage;
+    }
+
+    /**
      * @return int a higher number indicates a higher usage
      */
-    function usage(): int
+    function usage(): ?int
     {
-        return 0;
+        return $this->usage;
+    }
+
+    /**
+     * set the cache value to sort this verb by relevance
+     * the impact is calculated based on the formula assigned to the object
+     * by the system triple "impact phrase"
+     *
+     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->impact = $impact;
+    }
+
+    /**
+     * @return float a higher number indicates a higher impact
+     */
+    function impact(): ?float
+    {
+        return $this->impact;
     }
 
 
@@ -452,7 +486,7 @@ class verb extends type_object
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(verb_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(verb_db::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(verb_db::FLD_NAME_FORMULA, $name, sql_par_type::TEXT_OR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -542,6 +576,7 @@ class verb extends type_object
         $vars[json_fields::REV_PLURAL] = $this->reverse_plural();
         $vars[json_fields::FRM_NAME] = $this->formula_name();
         $vars[json_fields::USAGE] = $this->usage();
+        $vars[json_fields::IMPACT] = $this->impact();
         $vars[json_fields::ID] = $this->id();
 
         return $vars;
@@ -564,7 +599,7 @@ class verb extends type_object
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         global $vrb_cac;
@@ -596,7 +631,7 @@ class verb extends type_object
             if ($key == verb_db::FLD_PLURAL) {
                 $this->set_plural($value);
             }
-            if ($key == verb_db::FLD_FORMULA) {
+            if ($key == verb_db::FLD_NAME_FORMULA) {
                 $this->set_formula_name($value);
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
@@ -733,8 +768,8 @@ class verb extends type_object
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
         $db_row = $db_con->get1($qp);
-        $used_by_words = $db_row[verb_db::FLD_WORDS];
-        if ($used_by_words > 0) {
+        $usage = $db_row[sql_db::FLD_USAGE];
+        if ($usage > 0) {
             $result = false;
         }
 
@@ -773,7 +808,7 @@ class verb extends type_object
     {
         log_debug('verb->can_change ' . $this->id());
         $can_change = false;
-        if ($this->usage == 0) {
+        if ($this->usage == null or $this->usage == 0) {
             $can_change = true;
         }
 
@@ -961,7 +996,7 @@ class verb extends type_object
             $log->new_value = $this->formula_name();
             $log->std_value = $db_rec->formula_name();
             $log->row_id = $this->id();
-            $log->set_field(verb_db::FLD_FORMULA);
+            $log->set_field(verb_db::FLD_NAME_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;

@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS verbs
     name_plural_reverse varchar(255) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ... TODO move to language forms',
     name_plural         varchar(255) DEFAULT NULL,
     name_reverse        varchar(255) DEFAULT NULL,
-    words               bigint       DEFAULT NULL COMMENT 'used for how many phrases or formulas',
+    `usage`             bigint       DEFAULT NULL COMMENT 'used for how many phrases or formulas',
+    impact              double       DEFAULT NULL COMMENT 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover and is used as fallback value for sorting',
     PRIMARY KEY (verb_id)
 )
     ENGINE = InnoDB

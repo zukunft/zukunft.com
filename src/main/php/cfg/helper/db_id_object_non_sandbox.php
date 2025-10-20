@@ -11,7 +11,7 @@
     - set and get:       to capsule the single variables from unexpected changes
     - load:              database access object (DAO) functions
     - del:               database access object (DAO) functions
-    - sql:               create the curl sql statements based on the sql creator
+    - sql:               create the crud sql statements based on the sql creator
     - overwrite:         declared functions that must be overwritten by the child objects
 
 
@@ -462,10 +462,10 @@ class db_id_object_non_sandbox extends db_object_seq_id
     }
 
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $msg = 'import_mapper_user used but not overwritten in ' . $this::class;

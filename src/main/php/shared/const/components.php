@@ -64,9 +64,6 @@ class components
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';
     const string FORM_PHRASE_TYPE_NAME = 'form field phrase type';
     const string FORM_PHRASE_TYPE_COM = 'the phrase type field in a form';
-    const string FORM_VERB_TYPE = 'form_field_verb_type';
-    const string FORM_VERB_TYPE_NAME = 'form field verb type';
-    const string FORM_VERB_TYPE_COM = 'the verb type field in a form';
 
     // select object fields
 

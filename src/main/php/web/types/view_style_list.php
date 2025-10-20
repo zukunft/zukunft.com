@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class view_style_list extends type_list
 {
 
-    const NAME = url_var::STYLE;
+    const string NAME = url_var::STYLE;
 
     /**
      * create the HTML code to select a view style

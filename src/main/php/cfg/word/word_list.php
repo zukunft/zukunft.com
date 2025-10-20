@@ -267,7 +267,7 @@ class word_list extends sandbox_list_named
         $sc->set_fields(word_db::FLD_NAMES);
         $sc->set_usr_fields(word_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word_db::FLD_VALUES) . ' DESC, '
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(sql_db::FLD_USAGE) . ' DESC, '
             . word_db::FLD_NAME);
         return $qp;
     }
@@ -503,7 +503,7 @@ class word_list extends sandbox_list_named
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();
@@ -1597,7 +1597,7 @@ class word_list extends sandbox_list_named
      * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp = null): user_message
+    function save(?import $imp = null): user_message
     {
         return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
     }

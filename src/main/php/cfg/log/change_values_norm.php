@@ -49,10 +49,10 @@ class change_values_norm extends change_value
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all changes done by any user on values with a standard group id';
+    const string TBL_COMMENT = 'to log all changes done by any user on values with a standard group id';
 
     // field list to identify the value with a standard group id that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [self::FLD_GROUP_ID, sql_field_type::REF_512, sql_field_default::NOT_NULL, '', '', ''],
     );
 

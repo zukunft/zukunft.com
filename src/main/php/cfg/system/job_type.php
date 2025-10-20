@@ -48,8 +48,8 @@ class job_type extends type_object
 {
 
     // list of the job types that have a coded functionality
-    const WORD_DELETE = "word_delete";
-    const TRIPLE_DELETE = "triple_delete";
+    const string WORD_DELETE = "word_delete";
+    const string TRIPLE_DELETE = "triple_delete";
 
 
     /*
@@ -57,7 +57,7 @@ class job_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
-    const FLD_ID = 'job_type_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
+    const string TBL_COMMENT = 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
+    const string FLD_ID = 'job_type_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
 
 }

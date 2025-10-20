@@ -65,60 +65,60 @@ class ref_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'ref_id';
-    const FLD_USER_COM = 'the user who has created or adjusted the reference';
-    const FLD_EX_KEY_COM = 'the unique external key used in the other system';
-    const FLD_EX_KEY = 'external_key';
-    const FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
-    const FLD_TYPE = 'ref_type_id';
-    const FLD_URL_COM = 'the concrete url for the entry including the item id';
-    const FLD_URL = 'url';
-    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
-    const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
-    const FLD_SOURCE = 'source_id';
-    const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
+    const string FLD_ID = 'ref_id';
+    const string FLD_USER_COM = 'the user who has created or adjusted the reference';
+    const string FLD_EX_KEY_COM = 'the unique external key used in the other system';
+    const string FLD_EX_KEY = 'external_key';
+    const sql_field_type FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
+    const string FLD_TYPE = 'ref_type_id';
+    const string FLD_URL_COM = 'the concrete url for the entry including the item id';
+    const string FLD_URL = 'url';
+    const sql_field_type FLD_URL_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
+    const string FLD_SOURCE = 'source_id';
+    const string FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
 
     // field names that cannot be user specific
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         phrase::FLD_ID,
         self::FLD_TYPE
     );
     // list of user specific text field names
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         self::FLD_EX_KEY,
         self::FLD_URL,
         sql_db::FLD_DESCRIPTION
     );
     // list of user specific numeric field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_EX_KEY,
         self::FLD_URL,
         sql_db::FLD_DESCRIPTION,
         sql_db::FLD_EXCLUDED
     );
     // list of fields that must be set
-    const FLD_LST_MUST_BUT_STD_ONLY = array(
+    const array FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that must be set, but CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
+    const array FLD_LST_NON_CHANGEABLE = array(
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
         [ref_type::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
     );

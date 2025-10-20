@@ -77,6 +77,9 @@ class sandbox_named extends sandbox
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
 
+    // the number of objects where word is used
+    private int $usage = 0;
+
 
     /*
      * set and get
@@ -109,6 +112,11 @@ class sandbox_named extends sandbox
         }
     }
 
+    function usage(): int
+    {
+        return $this->usage;
+    }
+
 
     /*
      * api
@@ -135,6 +143,15 @@ class sandbox_named extends sandbox
         } else {
             $this->set_description(null);
         }
+        if (array_key_exists(json_fields::USAGE, $json_array)) {
+            if ($json_array[json_fields::USAGE] != null) {
+                $this->usage = $json_array[json_fields::USAGE];
+            } else {
+                $this->usage = 0;
+            }
+        } else {
+            $this->usage = 0;
+        }
         return $usr_msg;
     }
 
@@ -148,6 +165,7 @@ class sandbox_named extends sandbox
 
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->description();
+        // the usage is not included here because it should always be updated in the backend
         return $vars;
     }
 
@@ -168,6 +186,11 @@ class sandbox_named extends sandbox
         }
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
             $this->set_description($url_array[url_var::DESCRIPTION]);
+        }
+        if (array_key_exists(url_var::USAGE, $url_array)) {
+            if ($url_array[url_var::USAGE] != null) {
+                $this->usage = $url_array[url_var::USAGE];
+            }
         }
         return $usr_msg;
     }

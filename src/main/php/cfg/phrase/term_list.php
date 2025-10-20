@@ -85,6 +85,54 @@ class term_list extends sandbox_list_named
 
 
     /*
+     * set and get
+     */
+
+    /**
+     * @returns array with all unique names of this list with the keys within this list
+     */
+    function name_pos_lst(): array
+    {
+        $result = array();
+        if ($this->is_name_list_dirty()) {
+            foreach ($this->lst() as $key => $trm) {
+                $obj = $trm->obj();
+                $result[$obj->name()] = $key;
+                // TODO Prio 2 add the language forms of words and triples
+                if ($obj::class == word::class) {
+                    if ($obj->plural != '') {
+                        $result[$obj->plural] = $key;
+                    }
+                }
+                if ($obj::class == triple::class) {
+                    if ($obj->name_generated() != '') {
+                        $result[$obj->name_generated()] = $key;
+                    }
+                }
+                if ($obj::class == verb::class) {
+                    if ($obj->plural() != '') {
+                        $result[$obj->plural()] = $key;
+                    }
+                    if ($obj->reverse() != '') {
+                        $result[$obj->reverse()] = $key;
+                    }
+                    if ($obj->reverse_plural() != '') {
+                        $result[$obj->reverse_plural()] = $key;
+                    }
+                    if ($obj->formula_name() != '') {
+                        $result[$obj->formula_name()] = $key;
+                    }
+                }
+            }
+            $this->set_name_pos_list($result);
+        } else {
+            $result = parent::name_pos_lst();
+        }
+        return $result;
+    }
+
+
+    /*
      * load
      */
 
@@ -523,7 +571,7 @@ class term_list extends sandbox_list_named
     /**
      * @return string with all names of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         $name_lst = $this->names();
         return '"' . implode('","', $name_lst) . '"';
@@ -534,7 +582,7 @@ class term_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $trm) {

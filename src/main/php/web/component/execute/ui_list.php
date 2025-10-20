@@ -46,10 +46,13 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
@@ -58,10 +61,13 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 
 class ui_list extends ui_base
@@ -106,9 +112,44 @@ class ui_list extends ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function triple_list(?db_object $dbo = null): string
+    function triple_list(?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        return $dbo->name();
+        global $mtr;
+
+        $result = '';
+        $trp_lst = clone $cfg->trp_lst;
+        if ($dbo::class == verb::class) {
+            $trp_lst = $trp_lst->get_by_verb($dbo);
+            $result = $trp_lst->display();
+        } else {
+            log_err($dbo::class . '  is not expected to be a selection for triples');
+        }
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES);
+        }
+        return $result;
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function formula_list(?db_object $dbo = null, ?data_object $cfg = null): string
+    {
+        global $mtr;
+
+        $result = '';
+        $frm_lst = clone $cfg->frm_lst;
+        if ($dbo::class == verb::class) {
+            $frm_lst = $frm_lst->get_by_verb($dbo);
+            $result = $frm_lst->name_link();
+        } else {
+            log_err($dbo::class . '  is not expected to be a selection for formulas');
+        }
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::NOT_USED_FOR_FORMULAS);
+        }
+        return $result;
     }
 
     private function phrases(phrase $phr, foaf_direction $dir): string
@@ -119,16 +160,31 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
+     * show a list of references related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param db_object $dbo the word or triple shown to the user and used to select the related references
+     * @param data_object|null $dto the context used to create the view
      * @return string with the html code of the external references
      */
-    function ref_list_word(db_object $dbo, ?data_object $cfg): string
+    function ref_list_word(db_object $dbo, ?data_object $dto): string
     {
-        // TODO review
-        $result = 'list of references to ' . $dbo->name() . ' ';
-        if ($cfg != null) {
-            $result .= '';
+        $result = '';
+        $phr = null;
+        if ($dbo::class == word::class) {
+            $phr = $dbo->phrase();
+        }
+        if ($dbo::class == triple::class) {
+            $phr = $dbo->phrase();
+        }
+        $ref_lst = $dto->ref_list_cloned();
+        if ($phr != null) {
+            $ref_lst = $ref_lst->get_by_phrase($phr);
+            $phr_lst = new phrase_list();
+            $phr_lst->add_phrase($dbo->phrase());
+            $result = $ref_lst->list($phr_lst);
         }
         return $result;
     }
@@ -172,13 +228,23 @@ class ui_list extends ui_base
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @return string the html code to show the list of values
      */
-    function value_list(word|db_object|null $dbo, ?data_object $dto = null): string
+    function value_list(
+        word|db_object|null $dbo,
+        ?data_object        $dto = null,
+        ?int                $style_id = null
+    ): string
     {
+        global $msk_sty_cac;
+        $style_txt = '';
+        if ($style_id != null) {
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+        }
         $val_lst = $dto->value_list_cloned();
         $val_lst->filter($dbo);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $val_lst->list($phr_lst);
+        return $val_lst->list($phr_lst, '', $style_txt);
     }
 
     /**
@@ -203,7 +269,7 @@ class ui_list extends ui_base
      * @return string the html code of a sortable list
      */
     function list_sort(
-        phrase $phr,
+        phrase      $phr,
         data_object $dbo
     ): string
     {

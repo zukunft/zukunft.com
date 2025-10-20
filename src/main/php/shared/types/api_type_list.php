@@ -103,6 +103,22 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message should contain excluded objects with all details
+     */
+    public function with_excluded(): bool
+    {
+        return in_array(api_type::WITH_EXCLUDED, $this->lst);
+    }
+
+    /**
+     * @return bool true if the api message should contain the id of excluded objects
+     */
+    public function with_excluded_id(): bool
+    {
+        return in_array(api_type::WITH_EXCLUDED_ID, $this->lst);
+    }
+
+    /**
      * @return bool true if the keys should not be filled to the full key length
      */
     public function no_key_fill(): bool

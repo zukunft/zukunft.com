@@ -73,21 +73,21 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class ip_range extends db_object_seq_id
 {
 
-    const OBJ_NAME = 'ip range';
+    const string OBJ_NAME = 'ip range';
 
     /*
      * database link
      */
 
     // database and JSON object field names and comments
-    const TBL_COMMENT = 'of ip addresses that should be blocked';
-    const FLD_ID = 'ip_range_id';
-    const FLD_FROM = 'ip_from';
-    const FLD_TO = 'ip_to';
-    const FLD_REASON = 'reason';
-    const FLD_ACTIVE = 'is_active';
+    const string TBL_COMMENT = 'of ip addresses that should be blocked';
+    const string FLD_ID = 'ip_range_id';
+    const string FLD_FROM = 'ip_from';
+    const string FLD_TO = 'ip_to';
+    const string FLD_REASON = 'reason';
+    const string FLD_ACTIVE = 'is_active';
 
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_FROM,
         self::FLD_TO,
         self::FLD_REASON,
@@ -95,7 +95,7 @@ class ip_range extends db_object_seq_id
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_FROM, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [self::FLD_TO, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [self::FLD_REASON, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
@@ -311,7 +311,7 @@ class ip_range extends db_object_seq_id
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_db_obj($this, $test_obj);

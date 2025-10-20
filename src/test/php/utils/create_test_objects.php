@@ -87,6 +87,7 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::FORMULA . 'formula.php';
@@ -158,6 +159,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -199,10 +201,13 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
@@ -215,6 +220,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -249,6 +255,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\triple_list_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\value_list_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -267,6 +274,25 @@ class create_test_objects extends test_base
 
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    // usage used for unit testing
+    const int DUMMY_USAGE = 2;
+    // impact used for unit testing
+    const float DUMMY_IMPACT = 3.4;
+
+
+    /*
+     * vars
+     */
+
+    private int $chg_log_seq = 0;
+
+    function chg_log_seq(): int
+    {
+        $this->chg_log_seq++;
+        return $this->chg_log_seq;
+    }
+
+
 
     /*
      * dummy objects for unit tests
@@ -811,9 +837,11 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -899,7 +927,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_READ, true);
         return $url;
     }
 
@@ -1026,7 +1054,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_CREATE, true);
         return $url;
     }
 
@@ -1056,11 +1084,19 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::REVERSE, $obj->reverse());
+                $url .= $this->url_par(url_var::REVERSE_PLURAL, $obj->reverse_plural());
+                $url .= $this->url_par(url_var::FORMULA, $obj->formula_name());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -1154,7 +1190,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_UPDATE, true);
         return $url;
     }
 
@@ -1180,9 +1216,15 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 break;
             case verb::class;
-                $obj = $this->verb_filled();
+                $obj = $this->verb_is_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::REVERSE, $obj->reverse());
+                $url .= $this->url_par(url_var::REVERSE_PLURAL, $obj->reverse_plural());
+                $url .= $this->url_par(url_var::FORMULA, $obj->formula_name());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
+                $url .= $this->url_par(url_var::IMPACT, $obj->impact());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
@@ -1237,7 +1279,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_REMOVE, true);
         return $url;
     }
 
@@ -1318,7 +1360,8 @@ class create_test_objects extends test_base
         $wrd->set_code_id(words::MATH, $this->usr_system);
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
-        $wrd->set_usage(2);
+        $wrd->set_usage(self::DUMMY_USAGE);
+        $wrd->set_impact(self::DUMMY_IMPACT);
         $wrd->exclude();
         $wrd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -1338,7 +1381,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word with all fields set and a another reserved test name for testing the db write function
+     * @return word with all fields set and another reserved test name for testing the db write function
      */
     function word_filled_add_to(): word
     {
@@ -1580,6 +1623,13 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::ONE_ID, words::ONE);
         $wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $this->usr1);
+        return $wrd;
+    }
+
+    function word_math(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::MATH_ID, words::MATH);
         return $wrd;
     }
 
@@ -1872,6 +1922,48 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb a standard verb with all fields set
+     */
+    function verb_is_filled(): verb
+    {
+        $vrb = $this->verb_is();
+        $vrb->set_description(verbs::IS_COM);
+        $vrb->set_plural(verbs::IS_PLURAL);
+        $vrb->set_reverse(verbs::IS_REVERSE);
+        $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
+        $vrb->set_formula_name(verbs::IS_NAME_FORMULA);
+        $vrb->set_user($this->usr1);
+        $vrb->set_usage(self::DUMMY_USAGE);
+        $vrb->set_impact(self::DUMMY_IMPACT);
+        return $vrb;
+    }
+
+    /**
+     * @return verb that has different entries for all fields
+     */
+    function verb_measure(): verb
+    {
+        return new verb(verbs::MEASURE_ID, verbs::MEASURE_NAME, verbs::MEASURE);
+    }
+
+    /**
+     * @return verb a standard verb with all fields set
+     */
+    function verb_measure_filled(): verb
+    {
+        $vrb = $this->verb_measure();
+        $vrb->set_description(verbs::MEASURE_COM);
+        $vrb->set_plural(verbs::MEASURE_PLURAL);
+        $vrb->set_reverse(verbs::MEASURE_REVERSE);
+        $vrb->set_reverse_plural(verbs::MEASURE_REV_PLURAL);
+        $vrb->set_formula_name(verbs::MEASURE_NAME_FORMULA);
+        $vrb->set_user($this->usr1);
+        $vrb->set_usage(self::DUMMY_USAGE);
+        $vrb->set_impact(self::DUMMY_IMPACT);
+        return $vrb;
+    }
+
+    /**
      * @return verb alias
      */
     function verb_alias(): verb
@@ -1898,6 +1990,14 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb that indicates a status change e.g. water can get warmer
+     */
+    function verb_can_get(): verb
+    {
+        return new verb(verbs::CAN_GET_ID, verbs::CAN_GET_NAME, verbs::CAN_GET);
+    }
+
+    /**
      * @return verb a standard verb with user null
      */
     function verb_with(): verb
@@ -1913,14 +2013,6 @@ class create_test_objects extends test_base
     function verb_can_be(): verb
     {
         return new verb(verbs::CAN_BE_ID, verbs::CAN_BE_NAME, verbs::CAN_BE);
-    }
-
-    /**
-     * @return verb
-     */
-    function verb_can_get(): verb
-    {
-        return new verb(verbs::CAN_GET_ID, verbs::CAN_GET_NAME, verbs::CAN_GET);
     }
 
     /**
@@ -2025,6 +2117,7 @@ class create_test_objects extends test_base
     function triple_global_warming(): triple
     {
         $trp = new triple($this->usr1);
+        $trp->set(triples::GLOBAL_WARMING_ID, triples::GLOBAL_WARMING);
         $trp->set_from($this->word_global()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_warmer()->phrase());
@@ -2283,11 +2376,45 @@ class create_test_objects extends test_base
         return $trp;
     }
 
-    function triple_list(): triple_list
+    /**
+     * @return triple_list with just one element to test the group id
+     */
+    function triple_list_one(): triple_list
     {
         $lst = new triple_list($this->usr1);
         $lst->add($this->triple_pi_symbol());
         return $lst;
+    }
+
+    /**
+     * @return triple_list with only a few triples for efficient testing of the main functionalities
+     */
+    function triple_list_short(): triple_list
+    {
+        $lst = new triple_list($this->usr1);
+        $lst->add($this->triple_filled());
+        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_gwp());
+        return $lst;
+    }
+
+    /**
+     * @return triple_list with many triples for testing the handling of longer lists including paging
+     */
+    function triple_list(): triple_list
+    {
+        $lst = new triple_list($this->usr1);
+        $lst->add($this->triple_filled());
+        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->zh_city());
+        $lst->add($this->zh_canton());
+        return $lst;
+    }
+
+    function triple_list_ui(): triple_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->triple_list());
     }
 
     function phrase(): phrase
@@ -3157,6 +3284,9 @@ class create_test_objects extends test_base
         $lst->add($this->word_inhabitant()->term());
         $lst->add($this->word_2020()->term());
         $lst->add($this->word_mio()->term());
+        $lst->add($this->verb_is_filled()->term());
+        $lst->add($this->word_total()->term());
+        $lst->add($this->word_city()->term());
         return $lst;
     }
 
@@ -3344,26 +3474,20 @@ class create_test_objects extends test_base
     // TODO Prio 1 easy: rename a _dsp functions and object to _ui
     function value_list_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list());
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list(), [api_type::INCL_PHRASES]);
     }
 
     function value_list_zh_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list_zh());
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_zh(), [api_type::INCL_PHRASES]);
     }
 
     function value_list_math_ui(): value_list_ui
     {
-        return $this->value_list_to_ui($this->value_list_math());
-    }
-
-    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
-    private function value_list_to_ui(value_list $val_lst): value_list_ui
-    {
-        $val_lst_ui = new value_list_ui();
-        $api_json = $val_lst->api_json([api_type::INCL_PHRASES]);
-        $val_lst_ui->set_from_json($api_json);
-        return $val_lst_ui;
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_math(), [api_type::INCL_PHRASES]);
     }
 
     /**
@@ -3417,13 +3541,18 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $frm = new formula($this->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
+        // TODO Prio 1 activate
+        //$frm->set_code_id(formulas::SCALE_TO_SEC_CODE_ID, $this->usr_system);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
+        // TODO Prio 1 activate
+        //$frm->set_owner_id($this->usr1->id());
         $frm->set_type(formula_type::CALC, $this->usr1);
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
-        $frm->set_usage(2);
+        $frm->set_usage(self::DUMMY_USAGE);
+        $frm->set_impact(self::DUMMY_IMPACT);
         $frm->exclude();
         $frm->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $frm->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -3478,11 +3607,39 @@ class create_test_objects extends test_base
         return $frm;
     }
 
-    function formula_list(): formula_list
+    /**
+     * @return formula to get the sum of all people living in cities
+     */
+    function formula_city_population(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(formulas::CITY_POPULATION_ID, formulas::CITY_POPULATION);
+        $frm->set_user_text(formulas::CITY_POPULATION_EXP, $this->term_list_increase());
+        $frm->set_type(formula_type::CALC, $this->usr1);
+        return $frm;
+    }
+
+    function formula_list_short(): formula_list
     {
         $lst = new formula_list($this->usr1);
         $lst->add($this->formula());
         return $lst;
+    }
+
+    function formula_list(): formula_list
+    {
+        $lst = new formula_list($this->usr1);
+        $lst->add($this->formula());
+        $lst->add($this->formula_this());
+        $lst->add($this->formula_prior());
+        $lst->add($this->formula_city_population());
+        return $lst;
+    }
+
+    function formula_list_ui(): formula_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->formula_list());
     }
 
     function formula_link(): formula_link
@@ -3801,6 +3958,19 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return ref with the most often used fields set for unit testing
+     */
+    function reference_math(): ref
+    {
+        global $ref_typ_cac;
+        $ref = new ref($this->usr1);
+        $ref->set(refs::MATH_ID,
+            $this->word_math()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::MATH_KEY);
+        $ref->description = refs::MATH_COM;
+        return $ref;
+    }
+
+    /**
      * @return ref with the more fields set for unit testing
      */
     function reference_plus(): ref
@@ -3876,6 +4046,20 @@ class create_test_objects extends test_base
         $ref->id = 0;
         $ref->set_phrase($this->word_filled_add()->phrase());
         return $ref;
+    }
+
+    function ref_list_math(): ref_list
+    {
+        $lst = new ref_list();
+        $lst->add($this->reference());
+        $lst->add($this->reference_math());
+        return $lst;
+    }
+
+    function ref_list_math_ui(): ref_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->ref_list_math(), [api_type::INCL_PHRASES]);
     }
 
     function view(): view
@@ -4000,6 +4184,7 @@ class create_test_objects extends test_base
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
+        $msk->set_usage(self::DUMMY_USAGE);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -4194,7 +4379,11 @@ class create_test_objects extends test_base
         $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
+        $cmp->set_usage(self::DUMMY_USAGE);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
+        $cmp->ui_msg_code_id_vars = msg_id::DONE;
+        $cmp->ui_msg_code_id_exception = msg_id::ERROR;
+        $cmp->ui_msg_value_exception = 0;
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
         $cmp->set_col_sub_phrase($this->city());
@@ -4318,16 +4507,6 @@ class create_test_objects extends test_base
         $cmp->set_type(comp_type_shared::FORM_SELECT_PHRASE_TYPE, $this->usr1);
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
         $cmp->set_code_id(components::FORM_PHRASE_TYPE, $this->usr_system);
-        return $cmp;
-    }
-
-    function component_word_add_verb_type(): component
-    {
-        $cmp = new component($this->usr1);
-        $cmp->set(6, components::FORM_VERB_TYPE_NAME);
-        $cmp->set_type(comp_type_shared::FORM_SELECT_VERB_TYPE, $this->usr1);
-        $cmp->description = components::FORM_VERB_TYPE_COM;
-        $cmp->set_code_id(components::FORM_VERB_TYPE, $this->usr_system);
         return $cmp;
     }
 
@@ -4455,8 +4634,6 @@ class create_test_objects extends test_base
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_phrase_type(), $pos);
         $pos++;
-        $lst->add($pos, $msk, $this->component_word_add_verb_type(), $pos);
-        $pos++;
         $lst->add($pos, $msk, $this->component_word_add_share_type(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_protection_type(), $pos);
@@ -4491,12 +4668,13 @@ class create_test_objects extends test_base
         global $usr_sys;
 
         $chg = new change($usr_sys);
+        $chg->id = $this->chg_log_seq();
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
-        $chg->row_id = 1;
+        $chg->row_id = words::MATH_ID;
         return $chg;
     }
 
@@ -4517,6 +4695,20 @@ class create_test_objects extends test_base
     {
         $chg = $this->change_log_named_update();
         $chg->new_value = null;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a verb
+     */
+    function change_log_verb(): change
+    {
+        $chg = $this->change_log_named();
+        $chg->id = $this->chg_log_seq();
+        $chg->set_table(change_tables::VERB);
+        $chg->set_field(change_fields::FLD_VERB_NAME);
+        $chg->new_value = verbs::IS;
+        $chg->row_id = verbs::IS_ID;
         return $chg;
     }
 
@@ -4829,7 +5021,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return sys_log a open system error log entry
+     * @return sys_log an open system error log entry
      */
     function sys_log(): sys_log
     {
@@ -4888,7 +5080,14 @@ class create_test_objects extends test_base
     {
         $log_lst = new change_log_list();
         $log_lst->add($this->change_log_named());
+        $log_lst->add($this->change_log_verb());
         return $log_lst;
+    }
+
+    function change_log_list_named_ui(): change_log_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->change_log_list_named(), [api_type::INCL_PHRASES]);
     }
 
     /**
@@ -5075,7 +5274,7 @@ class create_test_objects extends test_base
             $test_name .= $target;
             if ($db_obj->load_by_name($sbx->name())) {
                 if ($sbx->id() == 0) {
-                    $sbx->set_id($db_obj->id());
+                    $sbx->id = $db_obj->id();
                     $sbx->save();
                     $test_name .= ' update ';
                 } elseif ($sbx->id() == $db_obj->id()) {
@@ -5992,7 +6191,7 @@ class create_test_objects extends test_base
         return $result;
     }
 
-    function test_formula_link(string $formula_name, string $word_name, bool $autocreate = true): string
+    function test_formula_link(string $formula_name, string $word_name, bool $auto_create = true): string
     {
         $result = '';
 
@@ -6008,7 +6207,7 @@ class create_test_objects extends test_base
                 $target = $formula_name . ' is linked to ' . $word_name;
                 $this->display('formula_link', $target, $result);
             } else {
-                if ($autocreate) {
+                if ($auto_create) {
                     $frm_lnk->set_formula($frm);
                     $frm_lnk->set_phrase($wrd->phrase());
                     $result = $frm_lnk->save()->get_last_message();

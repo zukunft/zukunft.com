@@ -125,7 +125,7 @@ class type_lists_ui_tests
 
         $test_page .= $html->form_end_with_submit($form, '');
 
-        $t->html_test($test_page, 'types', 'types', $t);
+        $t->html_page_test($test_page, 'types', 'types', $t);
     }
 
 }

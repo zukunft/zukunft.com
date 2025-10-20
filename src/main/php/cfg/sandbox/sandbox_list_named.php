@@ -140,6 +140,12 @@ class sandbox_list_named extends sandbox_list
         $this->lst_name_dirty_all = true;
     }
 
+    function set_name_pos_list(array $lst): void
+    {
+        $this->name_pos_lst = $lst;
+        $this->lst_name_dirty = false;
+    }
+
     /**
      * @return true if the name hash table is updated
      */
@@ -166,8 +172,7 @@ class sandbox_list_named extends sandbox_list
             foreach ($this->lst() as $key => $obj) {
                 $result[$obj->name()] = $key;
             }
-            $this->name_pos_lst = $result;
-            $this->lst_name_dirty = false;
+            $this->set_name_pos_list($result);
         } else {
             $result = $this->name_pos_lst;
         }
@@ -274,7 +279,7 @@ class sandbox_list_named extends sandbox_list
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         return new user_message();
@@ -862,7 +867,7 @@ class sandbox_list_named extends sandbox_list
     function insert(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = ''
     ): user_message
     {
@@ -943,7 +948,7 @@ class sandbox_list_named extends sandbox_list
     function update(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = '',
         float                                                            $upd_per_sec = 0.1
     ): user_message
@@ -1007,7 +1012,7 @@ class sandbox_list_named extends sandbox_list
     function delete(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = '',
         float                                                            $del_per_sec = 0.1
     ): user_message
@@ -1231,7 +1236,7 @@ class sandbox_list_named extends sandbox_list
      * overwrite
      */
 
-    function save(import $imp = null): user_message
+    function save(?import $imp = null): user_message
     {
         $msg = 'sandbox_list_named function save not overwritten';
         log_err($msg);
@@ -1251,7 +1256,7 @@ class sandbox_list_named extends sandbox_list
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         if ($limit == null and !$this->is_name_list_dirty()) {
             $result = array_keys($this->name_pos_lst);
@@ -1260,7 +1265,11 @@ class sandbox_list_named extends sandbox_list
             $pos = 0;
             foreach ($this->lst() as $sbx_obj) {
                 if ($pos <= $limit or $limit == null) {
-                    $result[] = $sbx_obj->name($ignore_excluded);
+                    $name = $sbx_obj->name($ignore_excluded);
+                    // do not add excluded names
+                    if ($name != null and $name != '') {
+                        $result[] = $sbx_obj->name($ignore_excluded);
+                    }
                     $pos++;
                 }
             }

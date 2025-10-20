@@ -44,6 +44,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -68,7 +69,9 @@ include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -91,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -106,14 +110,14 @@ class formula extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::FORMULA_ADD;
-    const VIEW_EDIT = views::FORMULA_EDIT;
-    const VIEW_DEL = views::FORMULA_DEL;
+    const string VIEW_ADD = views::FORMULA_ADD;
+    const string VIEW_EDIT = views::FORMULA_EDIT;
+    const string VIEW_DEL = views::FORMULA_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::FORMULA_ADD;
-    const MSG_EDIT = msg_id::FORMULA_EDIT;
-    const MSG_DEL = msg_id::FORMULA_DEL;
+    const msg_id MSG_ADD = msg_id::FORMULA_ADD;
+    const msg_id MSG_EDIT = msg_id::FORMULA_EDIT;
+    const msg_id MSG_DEL = msg_id::FORMULA_DEL;
 
 
     /*
@@ -125,40 +129,32 @@ class formula extends sandbox_code_id
     private string $ref_text = '';
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
     public ?phrase $name_wrd = null;         // the triple object for the formula name:
+    // the impact used to sort the triples
+    private float $impact = 0.0;
 
 
     /*
-     * set and get
+     * construct and map
      */
 
-    function set_usr_text(?string $usr_text): void
-    {
-        if ($usr_text != null) {
-            $this->usr_text = $usr_text;
-        }
-    }
-
-    function usr_text(): string
-    {
-        return $this->usr_text;
-    }
-
-    function set_ref_text(?string $ref_text): void
-    {
-        if ($ref_text != null) {
-            $this->ref_text = $ref_text;
-        }
-    }
-
-    function ref_text(): string
-    {
-        return $this->ref_text;
-    }
-
-
-    /*
-     * api
+    /**
+     * set the vars of this formula frontend object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the vars this formula bases on the api json array
@@ -189,8 +185,67 @@ class formula extends sandbox_code_id
         } else {
             $this->name_wrd = null;
         }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
+        } else {
+            $this->impact = 0.0;
+        }
         return $usr_msg;
     }
+
+
+    /*
+     * set and get
+     */
+
+    function set_usr_text(?string $usr_text): void
+    {
+        if ($usr_text != null) {
+            $this->usr_text = $usr_text;
+        }
+    }
+
+    function usr_text(): string
+    {
+        return $this->usr_text;
+    }
+
+    function set_ref_text(?string $ref_text): void
+    {
+        if ($ref_text != null) {
+            $this->ref_text = $ref_text;
+        }
+    }
+
+    function ref_text(): string
+    {
+        return $this->ref_text;
+    }
+
+    function impact(): float
+    {
+        return $this->impact;
+    }
+
+    function has_verb(verb $vrb): bool
+    {
+        $ref_txt = $this->ref_text();
+        $vrb_maker = chars::TERM_START . chars::VERB_SYMBOL . $vrb->id() . chars::TERM_END;
+        if (str_contains($ref_txt, $vrb_maker)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
+     * api
+     */
 
     /**
      * @return array the json message array to send the updated data to the backend
@@ -201,6 +256,7 @@ class formula extends sandbox_code_id
         $vars = parent::api_array();
 
         $vars[json_fields::USER_TEXT] = $this->usr_text();
+        // usage and impact are not included here because this system value is never updated by the frontend
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -351,10 +407,10 @@ class formula extends sandbox_code_id
      * display the history of a formula
      */
     function dsp_hist(
-        int        $page,
-        int        $size,
-        string     $call = '',
-        back_trace $back = null
+        int         $page,
+        int         $size,
+        string      $call = '',
+        ?back_trace $back = null
     ): string
     {
         $log_dsp = new user_log_display();

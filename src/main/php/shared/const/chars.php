@@ -38,48 +38,48 @@ class chars
 
     // text maker to convert phrase, formula or verb database reference to
     // a phrase or phrase list and in a second step to a value or value list
-    const TERM_START = '{'; //
-    const TERM_END = '}'; //
-    const WORD_SYMBOL = 'w'; //
-    const TRIPLE_SYMBOL = 't'; //
-    const FORMULA_SYMBOL = 'f'; //
-    const VERB_SYMBOL = 'v'; //
-    const WORD_START = '{w';   //
-    const WORD_END = '}';    //
-    const TRIPLE_START = '{t';   //
-    const TRIPLE_END = '}';    //
-    const FORMULA_START = '{f';   //
-    const FORMULA_END = '}';    //
-    const VERB_START = '{v';   //
-    const VERB_END = '}';    //
+    const string TERM_START = '{'; //
+    const string TERM_END = '}'; //
+    const string WORD_SYMBOL = 'w'; //
+    const string TRIPLE_SYMBOL = 't'; //
+    const string FORMULA_SYMBOL = 'f'; //
+    const string VERB_SYMBOL = 'v'; //
+    const string WORD_START = '{w';   //
+    const string WORD_END = '}';    //
+    const string TRIPLE_START = '{t';   //
+    const string TRIPLE_END = '}';    //
+    const string FORMULA_START = '{f';   //
+    const string FORMULA_END = '}';    //
+    const string VERB_START = '{v';   //
+    const string VERB_END = '}';    //
 
-    // text conversion const (used to convert word, formula or verbs text to a reference)
-    const BRACKET_OPEN = '(';    //
-    const BRACKET_CLOSE = ')';    //
-    const TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
+    // text conversion const string (used to convert word, formula or verbs text to a reference)
+    const string BRACKET_OPEN = '(';    //
+    const string BRACKET_CLOSE = ')';    //
+    const string TXT_FIELD = '"';    // don't look for math symbols in text that is a high quotes
 
     // text conversion syntax elements
     // used to convert word, triple, verb or formula name to a database reference
-    const TERM_DELIMITER = '"';    // or a zukunft verb or a zukunft formula
-    const TERM_LIST_START = '[';    //
-    const TERM_LIST_END = ']';    //
-    const SEPARATOR = ',';    //
-    const RANGE = ':';    //
-    const CONCAT = '&';    //
+    const string TERM_DELIMITER = '"';    // or a zukunft verb or a zukunft formula
+    const string TERM_LIST_START = '[';    //
+    const string TERM_LIST_END = ']';    //
+    const string SEPARATOR = ',';    //
+    const string RANGE = ':';    //
+    const string CONCAT = '&';    //
 
     // math calc (probably not needed any more if r-project.org is used)
-    const CHAR_CALC = '=';    //
-    const ADD = '+';    //
-    const SUB = '-';    //
-    const MUL = '*';    //
-    const DIV = '/';    //
+    const string CHAR_CALC = '=';    //
+    const string ADD = '+';    //
+    const string SUB = '-';    //
+    const string MUL = '*';    //
+    const string DIV = '/';    //
 
-    const AND = '&';   //
-    const OR = '|';    // probably not needed because can and should be solved by triples
+    const string AND = '&';   //
+    const string OR = '|';    // probably not needed because can and should be solved by triples
 
     // fixed functions
-    const FUNC_IF = 'if';    //
-    const FUNC_SUM = 'sum';    //
-    const FUNC_IS_NUM = 'is.numeric';    //
+    const string FUNC_IF = 'if';    //
+    const string FUNC_SUM = 'sum';    //
+    const string FUNC_IS_NUM = 'is.numeric';    //
 
 }

@@ -148,26 +148,26 @@ class ref extends sandbox_link
     // object specific database and JSON object field names
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'to link external data to internal for synchronisation';
+    const string TBL_COMMENT = 'to link external data to internal for synchronisation';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = ref_db::FLD_ID;
-    const FLD_NAMES = ref_db::FLD_NAMES;
-    const FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
-    const FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
+    const string FLD_ID = ref_db::FLD_ID;
+    const array FLD_NAMES = ref_db::FLD_NAMES;
+    const array FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
+    const array FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
 
     // char used to create one unique key string for the reference
-    private const SEP = '|';
-    private const ESC_CHR = '|';
+    private const string SEP = '|';
+    private const string ESC_CHR = '|';
 
 
     // persevered reference names for unit and integration tests
-    const TEST_REF_NAME = 'System Test Reference Name';
+    const string TEST_REF_NAME = 'System Test Reference Name';
 
 
     /*
@@ -291,7 +291,7 @@ class ref extends sandbox_link
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
 
@@ -381,17 +381,30 @@ class ref extends sandbox_link
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url();
-        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
-        if ($this->phrase()->id() != 0) {
-            $vars[json_fields::PHRASE] = $this->phrase()->id();
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::URL] = $this->url();
+            $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
+            if ($this->phrase()->id() != 0) {
+                if ($typ_lst->include_phrases()) {
+                    $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
+                } else {
+                    $vars[json_fields::PHRASE] = $this->phrase()->id();
+                }
+            }
+            if ($this->source()?->id() != null) {
+                $vars[json_fields::SOURCE] = $this->source()?->id();
+            }
+            if ($this->predicate_id() != 0) {
+                $vars[json_fields::PREDICATE] = $this->predicate_id();
+            }
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
-        $vars[json_fields::SOURCE] = $this->source()?->id();
-        if ($this->predicate_id() != 0) {
-            $vars[json_fields::PREDICATE] = $this->predicate_id();
-        }
-        $vars[json_fields::DESCRIPTION] = $this->description;
+
         return $vars;
     }
 
@@ -441,7 +454,7 @@ class ref extends sandbox_link
      * @param int $id the database id of the reference mainly for unit testing
      * @param phrase|null $phr the phrase that should be linked to an external source for data exchange
      */
-    function set(int $id = 0, phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
+    function set(int $id = 0, ?phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
     {
         $this->id = $id;
         if ($phr != null) {
@@ -473,7 +486,7 @@ class ref extends sandbox_link
      * @param phrase_list|null $phr_lst cache of phrases
      * @return void
      */
-    function set_phrase_by_id(?int $id, phrase_list $phr_lst = null): void
+    function set_phrase_by_id(?int $id, ?phrase_list $phr_lst = null): void
     {
         if ($id != null) {
             if ($id != 0) {
@@ -1456,7 +1469,7 @@ class ref extends sandbox_link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
             // because it is part of the prime index
-            if ($sbx->predicate_id() <> $this->predicate_id() or $sc_par_lst->is_insert()) {
+            if ($sbx->predicate_id() !== $this->predicate_id() or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
@@ -1481,7 +1494,7 @@ class ref extends sandbox_link
             }
         }
         if ($sc_par_lst->is_insert()) {
-            if ($sbx->phrase_id() <> $this->phrase_id()) {
+            if ($sbx->phrase_id() !== $this->phrase_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
@@ -1497,7 +1510,7 @@ class ref extends sandbox_link
                 );
             }
         }
-        if ($sbx->external_key() <> $this->external_key()) {
+        if ($sbx->external_key() !== $this->external_key()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
@@ -1516,7 +1529,7 @@ class ref extends sandbox_link
                 $old_key
             );
         }
-        if ($sbx->url() <> $this->url()) {
+        if ($sbx->url() !== $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
@@ -1531,7 +1544,7 @@ class ref extends sandbox_link
                 $sbx->url()
             );
         }
-        if ($sbx->source()?->id() <> $this->source()?->id()) {
+        if ($sbx->source()?->id() !== $this->source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
@@ -1546,7 +1559,7 @@ class ref extends sandbox_link
                 $sbx->source()
             );
         }
-        if ($sbx->description <> $this->description) {
+        if ($sbx->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,

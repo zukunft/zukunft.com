@@ -50,7 +50,7 @@ class figure_ui_tests
         $test_page = $html->text_h2('Figure display test');
         $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked() . '<br>';
-        $t->html_test($test_page, 'figure', 'figure', $t);
+        $t->html_page_test($test_page, 'figure', 'figure', $t);
     }
 
 }

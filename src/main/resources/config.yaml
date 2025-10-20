@@ -22,6 +22,18 @@ zukunft.com:
       row limit:
         tooltip-comment: "initial number of page rows"
         default: 20
+      access:
+        log:
+          type:
+            sys-conf-value: "round robin"
+            tooltip-comment: "the type of the log size limitation: if round robin the storage size or time can be limited and older entries are simply deleted or in case of full a warning is created if the log reaches the limit"
+          limit:
+            storage size:
+              MB: 500
+              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the olf log"
+            time:
+              days: 100
+              tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
@@ -173,6 +185,15 @@ zukunft.com:
       default:
         tooltip-comment: "the default settings for normal users"
         backend:
+          rank:
+            phrase: "usage"
+            tooltip-comment: "the rank is the default word or triple that is used to sort the related objects e.g. math const are ranked by the time of discovery"
+          impact:
+            phrase: "happy time points"
+            tooltip-comment: "the impact type is the default word or triple that is used to define what is most relevant"
+          risk:
+            phrase: "CHF"
+            tooltip-comment: "the currency used to estimate the risk in case of an 1% change of a related parameter e.g. for an call of put option the change in the currency if the underlying stock price changes by 1%; for the risk calculation the same measure is used e.g. to set the priority of the jobs whereas the impact is used for sorting"
           max change:
             daily:
               ip user: 1000
@@ -280,6 +301,10 @@ zukunft.com:
         top level:
           pods: 16380
           tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      api:
+        message:
+          format: "json"
+          tooltip-comment: "json for human friendly api message, yaml for as short as possible messages without compression and compressed to activate additional the compression on yaml messages; to sync the api message format between front end backend an upfront handshake message should be used; fallback is json"
       launch: 2025-06-07
       point: 2025-06-07
       hardware:

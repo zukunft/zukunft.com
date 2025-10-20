@@ -99,26 +99,26 @@ class type_object extends db_object_seq_id
 
     // comments used for the database creation
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
+    const string TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
 
     // database and JSON object field names
-    const FLD_ID_COM = 'the database id is also used as the array pointer';
-    const FLD_ID_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
-    const FLD_NAME = 'type_name';
-    const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
-    const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+    const string FLD_ID_COM = 'the database id is also used as the array pointer';
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
+    const string FLD_NAME = 'type_name';
+    const string FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+    const string FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 
     // type name exceptions
-    const FLD_ACTION = 'change_action_name';
-    const FLD_TABLE = 'change_table_name';
-    const FLD_FIELD = 'change_table_field_name';
+    const string FLD_ACTION = 'change_action_name';
+    const string FLD_TABLE = 'change_table_name';
+    const string FLD_FIELD = 'change_table_field_name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
@@ -228,7 +228,7 @@ class type_object extends db_object_seq_id
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         return new user_message();
     }

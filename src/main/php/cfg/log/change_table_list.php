@@ -47,7 +47,7 @@ class change_table_list extends type_list
 {
 
     // list of all log tables allowed in this program version
-    const TABLE_LIST = array(
+    const array TABLE_LIST = array(
         change_tables::USER,
         change_tables::WORD,
         change_tables::WORD_USR,

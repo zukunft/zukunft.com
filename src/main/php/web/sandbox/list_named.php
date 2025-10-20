@@ -78,7 +78,7 @@ class list_named extends list_dsp
      * @param ?int $limit the max number of ids to show
      * @return string a simple name of the list
      */
-    function name_tip(int $limit = null): string
+    function name_tip(?int $limit = null): string
     {
         return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
@@ -87,7 +87,7 @@ class list_named extends list_dsp
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(?int $limit = null): array
     {
         $result = [];
         $pos = 0;

@@ -53,6 +53,7 @@ include_once html_paths::EXECUTE . 'ui_im_export.php';
 include_once html_paths::EXECUTE . 'ui_link.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_link;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
@@ -100,6 +102,7 @@ class component_exe extends component
         string         $form_name = '',
         int            $msk_id = 0,
         ?data_object   $cfg = null,
+        ?int           $style_id = null,
         string         $back = '',
         string         $pattern = '',
         bool           $test_mode = false
@@ -125,6 +128,13 @@ class component_exe extends component
                 $phr_lst = $cfg->phrase_list();
             }
         }
+        $log_lst = new change_log_list();
+        $log_lst->load_fallback();
+        if ($cfg != null) {
+            if ($cfg->has_changes()) {
+                $log_lst = $cfg->change_log();
+            }
+        }
 
         $form = new system_form();
         $page = new system_page();
@@ -144,7 +154,7 @@ class component_exe extends component
             log_info('');
         }
         $tc_id = $this->type_code_id($cfg->typ_lst_cache);
-        $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
+        $result .= match ($tc_id) {
 
             // start page - components used for the start page
             component_type::PHRASE_NAME => $base->phrase_name($dbo),
@@ -186,7 +196,6 @@ class component_exe extends component
 
             // select object types
             component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VERB_TYPE => $form->form_verb_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),
@@ -213,6 +222,7 @@ class component_exe extends component
             component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $this->style_code_id($cfg->typ_lst_cache)),
 
             // value only fields
             component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $this->style_code_id($cfg->typ_lst_cache)),
@@ -254,7 +264,6 @@ class component_exe extends component
 
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
@@ -288,15 +297,19 @@ class component_exe extends component
             component_type::SELECT_VIEW => $select->view_select($dbo, $form_name, $cfg),
 
             // related
+            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
-            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
+            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
+            component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
             component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
 
             // TODO Prio 1 review the components below
 
             // verb only -
             component_type::VERB_NAME => $base->verb_name($dbo),
+
 
             // value only -
             component_type::VALUE_NAME => $base->value_name($dbo),
@@ -309,12 +322,13 @@ class component_exe extends component
 
             // view only -
             component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::SHOW_FIELD_USAGE => $form->usage($dbo),
+            component_type::SHOW_DESCRIPTION => $form->show_description($dbo),
+            component_type::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_type::WORD_RESULTS => $form->result($dbo),
             component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
-            component_type::USAGE_WORD => $rank->usage_word($dbo, $form_name),
-            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $form_name),
+            component_type::RANK_PHRASE => $rank->system_phrases($dbo),
+            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
 
             // base
             component_type::PHRASE => $this->name_tip(),
@@ -322,7 +336,7 @@ class component_exe extends component
 
             // table
             component_type::VALUES_ALL => $base->all($dbo, $back),
-            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg),
+            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg, $style_id),
             component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related
@@ -355,6 +369,7 @@ class component_exe extends component
             $this->log_err($result);
         }
 
+        // finally add the html style if requested
         return $result;
     }
 

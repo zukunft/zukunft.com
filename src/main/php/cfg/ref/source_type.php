@@ -52,6 +52,6 @@ class source_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to link predefined behaviour to a source';
+    const string TBL_COMMENT = 'to link predefined behaviour to a source';
 
 }

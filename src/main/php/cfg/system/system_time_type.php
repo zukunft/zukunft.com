@@ -45,11 +45,11 @@ class system_time_type extends type_object
      */
 
     // list of the monitored areas
-    const DEFAULT = "not_specified";
-    const DB_WRITE = "db_write";
-    const DB_READ = "db_read";
-    const DB_UPGRADE = "db_upgrade";
-    const DB_SETUP = "db_setup";
+    const string DEFAULT = "not_specified";
+    const string DB_WRITE = "db_write";
+    const string DB_READ = "db_read";
+    const string DB_UPGRADE = "db_upgrade";
+    const string DB_SETUP = "db_setup";
 
 
     /*
@@ -57,7 +57,7 @@ class system_time_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the execution time groups';
-    const FLD_ID = 'system_time_type_id'; // name of the id field as const for other const
+    const string TBL_COMMENT = 'to define the execution time groups';
+    const string FLD_ID = 'system_time_type_id'; // name of the id field as const for other const
 
 }

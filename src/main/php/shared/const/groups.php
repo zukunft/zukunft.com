@@ -38,35 +38,35 @@ class groups
     // phrase group or value names used by the system for testing
 
     // persevered phrase group names for unit and integration tests
-    const TN_READ = 'Pi (math)';
-    const TN_RENAMED = 'Pi';
+    const string TN_READ = 'Pi (math)';
+    const string TN_RENAMED = 'Pi';
 
-    const ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
-    const ZH_CITY_INHABITANTS_COM = words::INHABITANTS . ' in the ' . words::CITY . ' of ' . words::ZH;
+    const string ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
+    const string ZH_CITY_INHABITANTS_COM = words::INHABITANTS . ' in the ' . words::CITY . ' of ' . words::ZH;
 
     // persevered group names for database write tests
-    const TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
-    const TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';
-    const TN_ADD_MOST_FUNC = 'System Test Group main added via sql function';
-    const TN_ADD_MOST_SQL = 'System Test Group main added via sql insert';
-    const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
-    const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
+    const string TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
+    const string TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';
+    const string TN_ADD_MOST_FUNC = 'System Test Group main added via sql function';
+    const string TN_ADD_MOST_SQL = 'System Test Group main added via sql insert';
+    const string TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
+    const string TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
-    const TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . words::YEAR_2019 . ')';
-    const TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANTS . ' from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
-    const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::MIO;
-    const TN_CH_2019 = words::INHABITANTS . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';
+    const string TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . words::YEAR_2019 . ')';
+    const string TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANTS . ' from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
+    const string TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::MIO;
+    const string TN_CH_2019 = words::INHABITANTS . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';
 
-    const TN_TIME_VALUE = 'zukunft.com beta launch date';
-    const TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
-    const TN_TEXT_VALUE = 'zukunft.com pod URL';
-    const TD_TEXT_VALUE = 'URL of this zukunft.com pod from the system configuration';
+    const string TN_TIME_VALUE = 'zukunft.com beta launch date';
+    const string TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
+    const string TN_TEXT_VALUE = 'zukunft.com pod URL';
+    const string TD_TEXT_VALUE = 'URL of this zukunft.com pod from the system configuration';
 
-    const TN_GEO_VALUE = 'zukunft.com development geolocation';
-    const TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
+    const string TN_GEO_VALUE = 'zukunft.com development geolocation';
+    const string TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
 
     // list of predefined group names used for system testing that are expected to be never renamed
-    const RESERVED_GROUP_NAMES = [
+    const array RESERVED_GROUP_NAMES = [
         self::TN_READ,
         self::TN_ZH_2019,
         self::TN_CH_2019
@@ -74,7 +74,7 @@ class groups
 
     // list of group names and the related phrases that are used for system testing
     // and that should be created before the system test starts
-    const TEST_GROUPS_CREATE = [
+    const array TEST_GROUPS_CREATE = [
         [self::TN_READ,
             [words::PI, words::MATH]],
         [self::TN_CH_2019,

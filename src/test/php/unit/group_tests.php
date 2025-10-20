@@ -135,13 +135,13 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_list()),values::PI_SYMBOL_ID);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t->triple_list()->phrase_list()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list_one()->phrase_list()),values::PI_SYMBOL_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t->triple_list_one()->phrase_list()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->word_list()->phrase_list());
-        $phr_lst->merge($t->triple_list()->phrase_list());
+        $phr_lst->merge($t->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '.....0-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+......+......+');
+            '..../Y-.....0-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
             '.....0-...../-...../+.....0+.....3+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),

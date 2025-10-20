@@ -32,13 +32,17 @@
 namespace Zukunft\ZukunftCom\main\php\web\ref;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
-include_once html_paths::REF . 'ref.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
-use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class ref_list extends list_dsp
@@ -56,6 +60,24 @@ class ref_list extends list_dsp
     function api_mapper(array $json_array): user_message
     {
         return parent::api_mapper_list($json_array, new ref());
+    }
+
+    /**
+     * select the references that are linked to the given phrase
+     * @param phrase|null $phr
+     * @return ref_list
+     */
+    function get_by_phrase(phrase|null $phr): ref_list
+    {
+        $ref_lst = new ref_list();
+        if ($phr != null) {
+            foreach ($this->lst() as $ref) {
+                if ($ref->has_phrase($phr)) {
+                    $ref_lst->add($ref);
+                }
+            }
+        }
+        return $ref_lst;
     }
 
 }

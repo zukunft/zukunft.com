@@ -54,7 +54,7 @@ class formula_ui_tests
         $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
-        $t->html_test($test_page, 'formula', 'formula', $t);
+        $t->html_page_test($test_page, 'formula', 'formula', $t);
 
         // TODO review
 

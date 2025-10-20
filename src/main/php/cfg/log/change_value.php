@@ -78,13 +78,13 @@ class change_value extends change_log
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
-    const FLD_FIELD_ID = 'change_field_id';
-    const FLD_GROUP_ID = 'group_id';
-    const FLD_ROW_ID = self::FLD_GROUP_ID;
+    const string TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
+    const string FLD_FIELD_ID = 'change_field_id';
+    const string FLD_GROUP_ID = 'group_id';
+    const string FLD_ROW_ID = self::FLD_GROUP_ID;
 
     // all database field names
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         user_db::FLD_ID,
         self::FLD_TIME,
         self::FLD_ACTION,
@@ -95,7 +95,7 @@ class change_value extends change_log
     );
 
     // field list to log the actual change of the value with a standard group id
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],

@@ -135,18 +135,18 @@ class view extends sandbox_code_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to store all user interfaces entry points';
+    const string TBL_COMMENT = 'to store all user interfaces entry points';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = view_db::FLD_ID;
-    const FLD_LST_MUST_BE_IN_STD = view_db::FLD_LST_MUST_BE_IN_STD;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = view_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = view_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = view_db::FLD_LST_NON_CHANGEABLE;
-    const FLD_NAMES = view_db::FLD_NAMES;
-    const FLD_NAMES_USR = view_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = view_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = view_db::ALL_SANDBOX_FLD_NAMES;
+    const string FLD_ID = view_db::FLD_ID;
+    const array FLD_LST_MUST_BE_IN_STD = view_db::FLD_LST_MUST_BE_IN_STD;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = view_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = view_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = view_db::FLD_LST_NON_CHANGEABLE;
+    const array FLD_NAMES = view_db::FLD_NAMES;
+    const array FLD_NAMES_USR = view_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = view_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = view_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -164,6 +164,10 @@ class view extends sandbox_code_id
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
+
+    // the parent view so that this view is either overwrites some component of the parent view
+    // or is used to group some components and use the group for several view
+    // which type is use is defined by the view type
 
 
     /*
@@ -254,10 +258,10 @@ class view extends sandbox_code_id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         // TODO use a requesting user because the object user might differ from the user who is requesting the import
@@ -362,21 +366,20 @@ class view extends sandbox_code_id
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
-
             if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;
@@ -399,7 +402,7 @@ class view extends sandbox_code_id
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
@@ -872,7 +875,7 @@ class view extends sandbox_code_id
      * @return user_message an empty string if the new component link has been saved to the database
      *                      or the message that should be shown to the user
      */
-    function add_component(component_link $lnk, int $pos = null): user_message
+    function add_component(component_link $lnk, ?int $pos = null): user_message
     {
         $result = new user_message();
 
@@ -909,7 +912,7 @@ class view extends sandbox_code_id
         ?int      $pos = null,
         ?string   $pos_type_code_id = null,
         ?string   $style_code_id = null,
-        object    $test_obj = null
+        ?object   $test_obj = null
     ): string
     {
         $result = '';
@@ -919,7 +922,7 @@ class view extends sandbox_code_id
             $pos = $this->component_links() + 1;
         }
         if ($pos_type_code_id == null) {
-            $pos_type_code_id = position_types::BELOW;
+            $pos_type_code_id = position_types::DEFAULT;
         }
         if ($pos != null) {
             if ($this->cmp_lnk_lst == null) {
@@ -1270,7 +1273,7 @@ class view extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_TYPE,
@@ -1293,7 +1296,7 @@ class view extends sandbox_code_id
                 $msk_typ_cac
             );
         }
-        if ($sbx->style_id() <> $this->style_id()) {
+        if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,

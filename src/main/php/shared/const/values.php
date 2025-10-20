@@ -38,35 +38,37 @@ class values
     // a list of fixed values that are used for system tests
     // *_ID is the group id of the value
     // *_FORM is the default formatted value
-    CONST PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
-    CONST PI = 3.1415926535898; // pi
-    CONST PI_SHORT = 3.1415927; // pi
-    const PI_ID = 32819;
-    const PI_SYMBOL_ID = 32770;
-    CONST SAMPLE_ZERO = 0.0;
-    CONST E = 0.57721566490153; // Euler const
-    const E_ID = 32771;
-    CONST SAMPLE_INT = 123456;
-    CONST SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
-    CONST SAMPLE_FLOAT = 123.456;
-    CONST SAMPLE_BIG = 123456789;
-    CONST SAMPLE_BIGGER = 234567890;
-    CONST SAMPLE_FLOAT_HIGH_QUOTE_FORM = "123'456";
-    CONST SAMPLE_FLOAT_SPACE_FORM = "123 456";
-    CONST SAMPLE_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
-    CONST INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
-    CONST CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
-    CONST CITY_ZH_INHABITANTS_2019 = 415367;
-    CONST CH_INHABITANTS_2019_IN_MIO = 8.438822;
-    CONST CH_INHABITANTS_2020_IN_MIO = 8.505251;
-    CONST SHARE_PRICE = 17.08;
-    CONST EARNINGS_PER_SHARE = 1.22;
-    CONST SALES_INCREASE_2017_FORM = '90.03 %';
-    const NESN_SALES_2016_FORM = '89\'469';
+    CONST float PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
+    CONST float PI = 3.1415926535898; // pi
+    CONST float PI_SHORT = 3.1415927; // pi
+    const int PI_ID = 32819;
+    const int PI_SYMBOL_ID = 32770;
+    CONST float SAMPLE_ZERO = 0.0;
+    CONST float E = 2.718281828459045235360; // Euler number
+    const int E_ID = 32771;
+    CONST float E_CONST = 0.57721566490153; // Euler const
+    const int E_CONST_ID = 32771;
+    CONST int SAMPLE_INT = 123456;
+    CONST string SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
+    CONST float SAMPLE_FLOAT = 123.456;
+    CONST int SAMPLE_BIG = 123456789;
+    CONST int SAMPLE_BIGGER = 234567890;
+    CONST string SAMPLE_FLOAT_HIGH_QUOTE_FORM = "123'456";
+    CONST string SAMPLE_FLOAT_SPACE_FORM = "123 456";
+    CONST float SAMPLE_PCT = 0.182642816772838; // to test the percentage calculation by the percent of Swiss inhabitants living in Canton Zurich
+    CONST float INCREASE = 0.007871833296164; // to test the increase calculation by the increase of inhabitants in Switzerland from 2019 to 2020
+    CONST float CANTON_ZH_INHABITANTS_2020_IN_MIO = 1.553423;
+    CONST int CITY_ZH_INHABITANTS_2019 = 415367;
+    CONST float CH_INHABITANTS_2019_IN_MIO = 8.438822;
+    CONST float CH_INHABITANTS_2020_IN_MIO = 8.505251;
+    CONST float SHARE_PRICE = 17.08;
+    CONST float EARNINGS_PER_SHARE = 1.22;
+    CONST string SALES_INCREASE_2017_FORM = '90.03 %';
+    const string NESN_SALES_2016_FORM = '89\'469';
 
-    CONST TIME = '2025-06-07 12:30:00 UTC'; // to test time values
-    CONST TEXT = POD_NAME; // to test text values
-    CONST GEO = '47.263179, 8.684730'; // to test geo values
-    CONST DB_TEXT = 'old db text sample value'; // to test updating text values
+    CONST string TIME = '2025-06-07 12:30:00 UTC'; // to test time values
+    CONST string TEXT = POD_NAME; // to test text values
+    CONST string GEO = '47.263179, 8.684730'; // to test geo values
+    CONST string DB_TEXT = 'old db text sample value'; // to test updating text values
 
 }

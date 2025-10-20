@@ -3,7 +3,7 @@ PREPARE phrase_list_by_3ids_word_part FROM
             s.word_id,
             u.word_id AS user_word_id,
             s.user_id,
-            s.`values`,
+            s.`usage`,
             IF(u.word_name IS NULL, s.word_name, u.word_name) AS word_name,
             IF(u.plural IS NULL, s.plural, u.plural) AS plural,
             IF(u.description IS NULL, s.description, u.description) AS description,

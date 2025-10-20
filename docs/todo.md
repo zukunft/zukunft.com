@@ -7,11 +7,15 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO note what has to be changed based on the old http scripts (done: about)
+    TODO add to all sortable objects the fields usage (int) and the impact (float) for fast sorting 
+         because objects can only be sorted by one criteria and the usage is the fallback;
+         the phrase that should be used to calculate the impact is defined in the config file
     TODO complete and test the db write via api
     TODO complete the import db write tests (pending: )
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
+    TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
 
     TODO complete system view with: about, async_process, calculate
 
@@ -57,6 +61,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
     TODO activate the class section test
     TODO include owner and user in im- and export
+    TODO add a test case for all verbs
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
@@ -101,7 +106,10 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
     TODO check which arrays cam be converted to a class
-    TODO add system parameter to include the log write into the curl sql statements or use separate statements for log
+    TODO adapt the best view editor features from wordpress
+    TODO adapt the best user handling features from wordpress
+    TODO import values and formulas from open Access studies and validate the results and figures
+    TODO add system parameter to include the log write into the crud sql statements or use separate statements for log
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
@@ -175,6 +183,7 @@ A proper issue ticket should be created for these TODOs notes:
             3. order the functions by importance
             4. remove unneeded overwrites
     TODO use list of most often used words for the prime word selection
+    TODO limit the number of arguments allowed per person and adjust the limit based on the previous number of destructive arguments
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view

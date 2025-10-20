@@ -105,11 +105,11 @@ class system_form extends component
      * create the HTML code to select this and the previous views
      *
      * @param int $msk_id the database id of the view that should be shown
-     * @param int|null $id the database id of the object that should be shown in the view
+     * @param int|string|null $id the database id of the object that should be shown in the view (string is used for the phrase list of values)
      * @param string $back the history of the views and actions for the back und undo function
      * @return string the html code to include the back trace into the form result
      */
-    function form_back(int $msk_id, ?int $id, string $back): string
+    function form_back(int $msk_id, int|string|null $id, string $back): string
     {
         $result = '';
         $html = new html_base();
@@ -138,11 +138,20 @@ class system_form extends component
     }
 
     /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object description to the user
+     */
+    function show_description(db_object_dsp $dbo): string
+    {
+        return $dbo->description();
+    }
+
+    /**
      * TODO Prio 1 fill with the correct field
      * @param db_object_dsp $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function usage(db_object_dsp $dbo): string
+    function show_usage(db_object_dsp $dbo): string
     {
         return $dbo->name();
     }
@@ -263,6 +272,26 @@ class system_form extends component
         return $html->form_field(
             url_var::REVERSE_PLURAL,
             $reverse,
+            html_base::INPUT_TEXT,
+            '', $style_text
+        );
+    }
+
+    /**
+     * request the verb name if used in a formula
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to request the verb name used in a formula
+     */
+    function form_field_name_in_formulas(db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $frm_name = $dbo->formula_name();
+        if ($frm_name == null) {
+            $frm_name = '';
+        }
+        return $html->form_field(
+            url_var::NAME_IN_FORMULA,
+            $frm_name,
             html_base::INPUT_TEXT,
             '', $style_text
         );
@@ -474,7 +503,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -536,7 +565,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -598,7 +627,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -644,7 +673,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -919,18 +948,6 @@ class system_form extends component
     }
 
     /**
-     * create the html code for the form element to select the verb type
-     * @param db_object_dsp $dbo the frontend verb object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb type
-     */
-    function form_verb_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
-    {
-        return $dbo->verb_type_selector($form_name, $typ_lst);
-    }
-
-    /**
      * create the html code for the form element to select the source type
      * @param db_object_dsp $dbo the frontend source object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
@@ -1134,7 +1151,7 @@ class system_form extends component
     /**
      * @return string the html code for a form cancel button
      */
-    function button_cancel(int $msk_id, ?int $id): string
+    function button_cancel(int $msk_id, int|string|null $id): string
     {
         $html = new html_base();
         $views = new views();

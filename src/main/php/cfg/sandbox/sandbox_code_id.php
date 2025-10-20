@@ -173,10 +173,10 @@ class sandbox_code_id extends sandbox_typed
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
@@ -426,7 +426,7 @@ class sandbox_code_id extends sandbox_typed
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->code_id <> $this->code_id) {
+        if ($sbx->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,

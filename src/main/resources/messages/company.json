@@ -90,15 +90,6 @@
       ]
     },
     {
-      "name": "¥",
-      "refs": [
-        {
-          "name": "Yen and yuan sign",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "p"
     },
     {
@@ -108,13 +99,24 @@
       "name": "Share"
     },
     {
-      "name": "Share Price"
+      "name": "ABB",
+      "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
+      "refs": [
+        {
+          "name": "ABB",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q52825",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Vestas"
     },
     {
       "name": "sales"
-    },
-    {
-      "name": "balance sheet"
     },
     {
       "name": "cash"
@@ -127,6 +129,9 @@
     },
     {
       "name": "Earnings"
+    },
+    {
+      "name": "price"
     },
     {
       "name": "parts"
@@ -190,11 +195,6 @@
       "to": "Pound sterling"
     },
     {
-      "from": "¥",
-      "verb": "is symbol for",
-      "to": "Japanese yen"
-    },
-    {
       "from": "p",
       "verb": "is symbol for",
       "to": "pence"
@@ -216,6 +216,12 @@
       "from": "tax",
       "verb": "on",
       "to": "income"
+    },
+    {
+      "name": "Share Price",
+      "from": "Share",
+      "verb": "has a",
+      "to": "price"
     }
   ],
   "formulas": [

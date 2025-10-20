@@ -485,7 +485,7 @@ COMMENT ON TABLE changes IS 'to log all changes done by any user on all tables e
 COMMENT ON COLUMN changes.change_id IS 'the prime key to identify the change change';
 COMMENT ON COLUMN changes.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes.old_id IS 'old value id';
 COMMENT ON COLUMN changes.new_id IS 'new value id';
@@ -514,7 +514,7 @@ COMMENT ON TABLE changes_norm IS 'to log all changes done by any user on the gro
 COMMENT ON COLUMN changes_norm.change_id IS 'the prime key to identify the change changes_norm';
 COMMENT ON COLUMN changes_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_norm.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes_norm.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes_norm.old_id IS 'old value id';
 COMMENT ON COLUMN changes_norm.new_id IS 'new value id';
@@ -543,7 +543,7 @@ COMMENT ON TABLE changes_big IS 'to log all changes done by any user on the grou
 COMMENT ON COLUMN changes_big.change_id IS 'the prime key to identify the change changes_big';
 COMMENT ON COLUMN changes_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_big.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes_big.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes_big.old_id IS 'old value id';
 COMMENT ON COLUMN changes_big.new_id IS 'new value id';
@@ -570,7 +570,7 @@ COMMENT ON TABLE change_values_prime IS 'to log all changes done by any user on 
 COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify the change change_values_prime';
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -594,7 +594,7 @@ COMMENT ON TABLE change_values_time_prime IS 'to log all time value changes done
 COMMENT ON COLUMN change_values_time_prime.change_id IS 'the prime key to identify the change change_values_time_prime';
 COMMENT ON COLUMN change_values_time_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -618,7 +618,7 @@ COMMENT ON TABLE change_values_text_prime IS 'to log all text value changes done
 COMMENT ON COLUMN change_values_text_prime.change_id IS 'the prime key to identify the change change_values_text_prime';
 COMMENT ON COLUMN change_values_text_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -642,7 +642,7 @@ COMMENT ON TABLE change_values_geo_prime IS 'to log all geo value changes done b
 COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identify the change change_values_geo_prime';
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -666,7 +666,7 @@ COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on v
 COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the change change_values_norm';
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -690,7 +690,7 @@ COMMENT ON TABLE change_values_time_norm IS 'to log all time value changes done 
 COMMENT ON COLUMN change_values_time_norm.change_id IS 'the prime key to identify the change change_values_time_norm';
 COMMENT ON COLUMN change_values_time_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -714,7 +714,7 @@ COMMENT ON TABLE change_values_text_norm IS 'to log all text value changes done 
 COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identify the change change_values_text_norm';
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -738,7 +738,7 @@ COMMENT ON TABLE change_values_geo_norm IS 'to log all geo value changes done by
 COMMENT ON COLUMN change_values_geo_norm.change_id IS 'the prime key to identify the change change_values_geo_norm';
 COMMENT ON COLUMN change_values_geo_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -762,7 +762,7 @@ COMMENT ON TABLE change_values_big IS 'to log all changes done by any user on va
 COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the change change_values_big';
 COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -786,7 +786,7 @@ COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done b
 COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify the change change_values_time_big';
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -810,7 +810,7 @@ COMMENT ON TABLE change_values_text_big IS 'to log all text value changes done b
 COMMENT ON COLUMN change_values_text_big.change_id IS 'the prime key to identify the change change_values_text_big';
 COMMENT ON COLUMN change_values_text_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -834,7 +834,7 @@ COMMENT ON TABLE change_values_geo_big IS 'to log all geo value changes done by 
 COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify the change change_values_geo_big';
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -868,7 +868,7 @@ COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
 COMMENT ON COLUMN change_links.change_link_id IS 'the prime key to identify the change change_link';
 COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_links.change_action_id IS 'the crud action';
 COMMENT ON COLUMN change_links.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN change_links.new_to_id IS 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
 COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
@@ -1029,7 +1029,8 @@ CREATE TABLE IF NOT EXISTS words
     description    text                  DEFAULT NULL,
     phrase_type_id smallint              DEFAULT NULL,
     view_id        bigint                DEFAULT NULL,
-    values         bigint                DEFAULT NULL,
+    usage          bigint                DEFAULT NULL,
+    impact         double precision      DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
     code_id        varchar(255)          DEFAULT NULL,
     excluded       smallint              DEFAULT NULL,
@@ -1045,7 +1046,8 @@ COMMENT ON COLUMN words.plural IS 'to be replaced by a language form entry; TODO
 COMMENT ON COLUMN words.description IS 'to be replaced by a language form entry';
 COMMENT ON COLUMN words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN words.view_id IS 'the default mask for this word';
-COMMENT ON COLUMN words.values IS 'number of values linked to the word, which gives an indication of the importance';
+COMMENT ON COLUMN words.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
+COMMENT ON COLUMN words.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN words.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
 COMMENT ON COLUMN words.code_id IS 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN words.excluded IS 'true if a user, but not all, have removed it';
@@ -1066,7 +1068,8 @@ CREATE TABLE IF NOT EXISTS user_words
     description    text              DEFAULT NULL,
     phrase_type_id smallint          DEFAULT NULL,
     view_id        bigint            DEFAULT NULL,
-    values         bigint            DEFAULT NULL,
+    usage          bigint            DEFAULT NULL,
+    impact         double precision  DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
     share_type_id  smallint          DEFAULT NULL,
     protect_id     smallint          DEFAULT NULL
@@ -1081,7 +1084,8 @@ COMMENT ON COLUMN user_words.plural IS 'to be replaced by a language form entry;
 COMMENT ON COLUMN user_words.description IS 'to be replaced by a language form entry';
 COMMENT ON COLUMN user_words.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN user_words.view_id IS 'the default mask for this word';
-COMMENT ON COLUMN user_words.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN user_words.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
+COMMENT ON COLUMN user_words.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN user_words.excluded IS 'true if a user,but not all, have removed it';
 COMMENT ON COLUMN user_words.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes';
@@ -1095,15 +1099,16 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 CREATE TABLE IF NOT EXISTS verbs
 (
     verb_id             SERIAL PRIMARY KEY,
-    verb_name           varchar(255)     NOT NULL,
-    code_id             varchar(255) DEFAULT NULL,
-    description         text         DEFAULT NULL,
-    condition_type      bigint       DEFAULT NULL,
-    formula_name        varchar(255) DEFAULT NULL,
-    name_plural_reverse varchar(255) DEFAULT NULL,
-    name_plural         varchar(255) DEFAULT NULL,
-    name_reverse        varchar(255) DEFAULT NULL,
-    words               bigint       DEFAULT NULL
+    verb_name           varchar(255)         NOT NULL,
+    code_id             varchar(255)     DEFAULT NULL,
+    description         text             DEFAULT NULL,
+    condition_type      bigint           DEFAULT NULL,
+    formula_name        varchar(255)     DEFAULT NULL,
+    name_plural_reverse varchar(255)     DEFAULT NULL,
+    name_plural         varchar(255)     DEFAULT NULL,
+    name_reverse        varchar(255)     DEFAULT NULL,
+    usage               bigint           DEFAULT NULL,
+    impact              double precision DEFAULT NULL
 );
 
 COMMENT ON TABLE verbs IS 'for verbs / triple predicates to use predefined behavior';
@@ -1113,7 +1118,8 @@ COMMENT ON COLUMN verbs.code_id IS 'id text to link coded functionality to a spe
 COMMENT ON COLUMN verbs.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
 COMMENT ON COLUMN verbs.formula_name IS 'naming used in formulas';
 COMMENT ON COLUMN verbs.name_plural_reverse IS 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
-COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
+COMMENT ON COLUMN verbs.usage IS 'used for how many phrases or formulas';
+COMMENT ON COLUMN verbs.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 
 -- --------------------------------------------------------
 
@@ -1136,7 +1142,8 @@ CREATE TABLE IF NOT EXISTS triples
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
-    values              bigint            DEFAULT NULL,
+    usage               bigint            DEFAULT NULL,
+    impact              double precision  DEFAULT NULL,
     inactive            smallint          DEFAULT NULL,
     code_id             varchar(255)      DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
@@ -1158,7 +1165,8 @@ COMMENT ON COLUMN triples.weight IS 'the weight of this triple compared to other
 COMMENT ON COLUMN triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN triples.view_id IS 'the default mask for this triple';
-COMMENT ON COLUMN triples.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN triples.usage IS 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';
+COMMENT ON COLUMN triples.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN triples.inactive IS 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
 COMMENT ON COLUMN triples.code_id IS 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
 COMMENT ON COLUMN triples.excluded IS 'true if a user,but not all,have removed it';
@@ -1182,7 +1190,8 @@ CREATE TABLE IF NOT EXISTS user_triples
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
-    values              bigint            DEFAULT NULL,
+    usage               bigint            DEFAULT NULL,
+    impact              double precision  DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
     share_type_id       smallint          DEFAULT NULL,
     protect_id          smallint          DEFAULT NULL
@@ -1200,7 +1209,8 @@ COMMENT ON COLUMN user_triples.weight IS 'the weight of this triple compared to 
 COMMENT ON COLUMN user_triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN user_triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN user_triples.view_id IS 'the default mask for this triple';
-COMMENT ON COLUMN user_triples.values IS 'number of values linked to the word,which gives an indication of the importance';
+COMMENT ON COLUMN user_triples.usage IS 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing';
+COMMENT ON COLUMN user_triples.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
 COMMENT ON COLUMN user_triples.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_triples.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted changes';
@@ -1413,6 +1423,7 @@ CREATE TABLE IF NOT EXISTS sources
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
+    usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
     share_type_id  smallint     DEFAULT NULL,
     protect_id     smallint     DEFAULT NULL
@@ -1426,6 +1437,7 @@ COMMENT ON COLUMN sources.description    IS 'the user specific description of th
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN sources.url            IS 'the url of the source';
 COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN sources.excluded       IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
@@ -1443,6 +1455,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
+    usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
     share_type_id  smallint     DEFAULT NULL,
     protect_id     smallint     DEFAULT NULL
@@ -1456,6 +1469,7 @@ COMMENT ON COLUMN user_sources.description    IS 'the user specific description 
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
 COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN user_sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted changes';
@@ -2575,7 +2589,7 @@ COMMENT ON COLUMN user_values_time_series_big.protect_id           IS 'to protec
 -- --------------------------------------------------------
 
 --
--- table structure for a single time series value data entry and efficient saving of daily or intra-day values
+-- table structure for a single time series value data entry and efficient saving of daily or intraday values
 --
 
 CREATE TABLE IF NOT EXISTS value_ts_data
@@ -2585,7 +2599,7 @@ CREATE TABLE IF NOT EXISTS value_ts_data
     number               double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE value_ts_data IS 'for a single time series value data entry and efficient saving of daily or intra-day values';
+COMMENT ON TABLE value_ts_data IS 'for a single time series value data entry and efficient saving of daily or intraday values';
 COMMENT ON COLUMN value_ts_data.value_time_series_id IS 'link to the value time series';
 COMMENT ON COLUMN value_ts_data.val_time IS 'short name of the configuration entry to be shown to the admin';
 COMMENT ON COLUMN value_ts_data.number IS 'the configuration value as a string';
@@ -2662,19 +2676,20 @@ COMMENT ON COLUMN formula_types.description IS 'text to explain the type to the 
 CREATE TABLE IF NOT EXISTS formulas
 (
     formula_id BIGSERIAL PRIMARY KEY,
-    user_id           bigint   DEFAULT NULL,
-    formula_name      varchar(255) NOT NULL,
-    formula_text      text     DEFAULT NULL,
-    resolved_text     text     DEFAULT NULL,
-    description       text     DEFAULT NULL,
-    formula_type_id   smallint DEFAULT NULL,
-    all_values_needed smallint DEFAULT NULL,
-    last_update       timestamp DEFAULT NULL,
-    view_id           bigint   DEFAULT NULL,
-    usage             bigint   DEFAULT NULL,
-    excluded          smallint DEFAULT NULL,
-    share_type_id     smallint DEFAULT NULL,
-    protect_id        smallint DEFAULT NULL
+    user_id           bigint           DEFAULT NULL,
+    formula_name      varchar(255)         NOT NULL,
+    formula_text      text             DEFAULT NULL,
+    resolved_text     text             DEFAULT NULL,
+    description       text             DEFAULT NULL,
+    formula_type_id   smallint         DEFAULT NULL,
+    all_values_needed smallint         DEFAULT NULL,
+    last_update       timestamp        DEFAULT NULL,
+    view_id           bigint           DEFAULT NULL,
+    usage             bigint           DEFAULT NULL,
+    impact            double precision DEFAULT NULL,
+    excluded          smallint         DEFAULT NULL,
+    share_type_id     smallint         DEFAULT NULL,
+    protect_id        smallint         DEFAULT NULL
 );
 
 COMMENT ON TABLE formulas IS 'the mathematical expression to calculate results based on values and results';
@@ -2689,6 +2704,7 @@ COMMENT ON COLUMN formulas.all_values_needed IS 'the "calculate only if all valu
 COMMENT ON COLUMN formulas.last_update IS 'time of the last calculation relevant update';
 COMMENT ON COLUMN formulas.view_id IS 'the default mask for this formula';
 COMMENT ON COLUMN formulas.usage IS 'number of results linked to this formula';
+COMMENT ON COLUMN formulas.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover and is used as fallback value for sorting';
 COMMENT ON COLUMN formulas.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formulas.protect_id IS 'to protect against unwanted changes';
@@ -2699,20 +2715,21 @@ COMMENT ON COLUMN formulas.protect_id IS 'to protect against unwanted changes';
 
 CREATE TABLE IF NOT EXISTS user_formulas
 (
-    formula_id        bigint           NOT NULL,
-    user_id           bigint           NOT NULL,
-    formula_name      varchar(255) DEFAULT NULL,
-    formula_text      text         DEFAULT NULL,
-    resolved_text     text         DEFAULT NULL,
-    description       text         DEFAULT NULL,
-    formula_type_id   smallint     DEFAULT NULL,
-    all_values_needed smallint     DEFAULT NULL,
-    last_update       timestamp    DEFAULT NULL,
-    view_id           bigint       DEFAULT NULL,
-    usage             bigint       DEFAULT NULL,
-    excluded          smallint     DEFAULT NULL,
-    share_type_id     smallint     DEFAULT NULL,
-    protect_id        smallint     DEFAULT NULL
+    formula_id        bigint               NOT NULL,
+    user_id           bigint               NOT NULL,
+    formula_name      varchar(255)     DEFAULT NULL,
+    formula_text      text             DEFAULT NULL,
+    resolved_text     text             DEFAULT NULL,
+    description       text             DEFAULT NULL,
+    formula_type_id   smallint         DEFAULT NULL,
+    all_values_needed smallint         DEFAULT NULL,
+    last_update       timestamp        DEFAULT NULL,
+    view_id           bigint           DEFAULT NULL,
+    usage             bigint           DEFAULT NULL,
+    impact            double precision DEFAULT NULL,
+    excluded          smallint         DEFAULT NULL,
+    share_type_id     smallint         DEFAULT NULL,
+    protect_id        smallint         DEFAULT NULL
 );
 
 COMMENT ON TABLE user_formulas IS 'the mathematical expression to calculate results based on values and results';
@@ -2727,6 +2744,7 @@ COMMENT ON COLUMN user_formulas.all_values_needed IS 'the "calculate only if all
 COMMENT ON COLUMN user_formulas.last_update IS 'time of the last calculation relevant update';
 COMMENT ON COLUMN user_formulas.view_id IS 'the default mask for this formula';
 COMMENT ON COLUMN user_formulas.usage IS 'number of results linked to this formula';
+COMMENT ON COLUMN user_formulas.impact IS 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover and is used as fallback value for sorting';
 COMMENT ON COLUMN user_formulas.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_formulas.protect_id IS 'to protect against unwanted changes';
@@ -4386,6 +4404,7 @@ CREATE TABLE IF NOT EXISTS views
     description   text         DEFAULT NULL,
     view_type_id  smallint     DEFAULT NULL,
     view_style_id smallint     DEFAULT NULL,
+    usage         bigint       DEFAULT NULL,
     code_id       varchar(255) DEFAULT NULL,
     excluded      smallint     DEFAULT NULL,
     share_type_id smallint     DEFAULT NULL,
@@ -4399,6 +4418,7 @@ COMMENT ON COLUMN views.view_name IS 'the name of the view used for searching';
 COMMENT ON COLUMN views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
 COMMENT ON COLUMN views.view_style_id IS 'the default display style for this view';
+COMMENT ON COLUMN views.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views';
 COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN views.share_type_id IS 'to restrict the access';
@@ -4417,6 +4437,7 @@ CREATE TABLE IF NOT EXISTS user_views
     description   text              DEFAULT NULL,
     view_type_id  smallint          DEFAULT NULL,
     view_style_id smallint          DEFAULT NULL,
+    usage         bigint            DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint          DEFAULT NULL
@@ -4430,6 +4451,7 @@ COMMENT ON COLUMN user_views.view_name IS 'the name of the view used for searchi
 COMMENT ON COLUMN user_views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN user_views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
 COMMENT ON COLUMN user_views.view_style_id IS 'the default display style for this view';
+COMMENT ON COLUMN user_views.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_views.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes';
@@ -4572,23 +4594,27 @@ COMMENT ON COLUMN component_types.description IS 'text to explain the type to th
 CREATE TABLE IF NOT EXISTS components
 (
     component_id                BIGSERIAL PRIMARY KEY,
-    user_id                     bigint       DEFAULT NULL,
-    component_name              varchar(255)     NOT NULL,
-    description                 text         DEFAULT NULL,
-    component_type_id           smallint     DEFAULT NULL,
-    view_style_id               smallint     DEFAULT NULL,
-    word_id_row                 bigint       DEFAULT NULL,
-    formula_id                  bigint       DEFAULT NULL,
-    word_id_col                 bigint       DEFAULT NULL,
-    word_id_col2                bigint       DEFAULT NULL,
-    linked_component_id         bigint       DEFAULT NULL,
-    component_link_type_id      smallint     DEFAULT NULL,
-    link_type_id                smallint     DEFAULT NULL,
-    code_id                     varchar(255) DEFAULT NULL,
-    ui_msg_code_id              varchar(255) DEFAULT NULL,
-    excluded                    smallint     DEFAULT NULL,
-    share_type_id               smallint     DEFAULT NULL,
-    protect_id                  smallint     DEFAULT NULL
+    user_id                     bigint           DEFAULT NULL,
+    component_name              varchar(255)         NOT NULL,
+    description                 text             DEFAULT NULL,
+    component_type_id           smallint         DEFAULT NULL,
+    view_style_id               smallint         DEFAULT NULL,
+    word_id_row                 bigint           DEFAULT NULL,
+    formula_id                  bigint           DEFAULT NULL,
+    word_id_col                 bigint           DEFAULT NULL,
+    word_id_col2                bigint           DEFAULT NULL,
+    linked_component_id         bigint           DEFAULT NULL,
+    component_link_type_id      smallint         DEFAULT NULL,
+    link_type_id                smallint         DEFAULT NULL,
+    usage                       bigint           DEFAULT NULL,
+    code_id                     varchar(255)     DEFAULT NULL,
+    ui_msg_code_id              varchar(255)     DEFAULT NULL,
+    ui_msg_code_id_vars         varchar(255)     DEFAULT NULL,
+    ui_msg_code_id_exception    varchar(255)     DEFAULT NULL,
+    ui_msg_value_exception      double precision DEFAULT NULL,
+    excluded                    smallint         DEFAULT NULL,
+    share_type_id               smallint         DEFAULT NULL,
+    protect_id                  smallint         DEFAULT NULL
 );
 
 COMMENT ON TABLE components IS 'for the single components of a view';
@@ -4605,8 +4631,12 @@ COMMENT ON COLUMN components.word_id_col2 IS 'e.g. "quarter" to show the quarter
 COMMENT ON COLUMN components.linked_component_id IS 'to link this component to another component';
 COMMENT ON COLUMN components.component_link_type_id IS 'to define how this entry links to the other entry';
 COMMENT ON COLUMN components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN components.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN components.code_id IS 'used for system components to select the component by the program code';
 COMMENT ON COLUMN components.ui_msg_code_id IS 'used for system components the id to select the language specific user interface message e.g. "add word"';
+COMMENT ON COLUMN components.ui_msg_code_id_vars IS 'used for system components the id to select the language specific user interface message where some variable placeholders are replaced with system values';
+COMMENT ON COLUMN components.ui_msg_code_id_exception IS 'used for system components the id to select the language specific user interface exception message e.g. if the system value is zero';
+COMMENT ON COLUMN components.ui_msg_value_exception IS 'used for system components the value to select the exception message e.g. 0 (zero)';
 COMMENT ON COLUMN components.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN components.protect_id IS 'to protect against unwanted changes';
@@ -4630,6 +4660,7 @@ CREATE TABLE IF NOT EXISTS user_components
     linked_component_id    bigint       DEFAULT NULL,
     component_link_type_id smallint     DEFAULT NULL,
     link_type_id           smallint     DEFAULT NULL,
+    usage                  bigint       DEFAULT NULL,
     excluded               smallint     DEFAULT NULL,
     share_type_id          smallint     DEFAULT NULL,
     protect_id             smallint     DEFAULT NULL
@@ -4649,6 +4680,7 @@ COMMENT ON COLUMN user_components.word_id_col2 IS 'e.g. "quarter" to show the qu
 COMMENT ON COLUMN user_components.linked_component_id IS 'to link this component to another component';
 COMMENT ON COLUMN user_components.component_link_type_id IS 'to define how this entry links to the other entry';
 COMMENT ON COLUMN user_components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN user_components.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_components.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted changes';
@@ -4720,7 +4752,8 @@ CREATE OR REPLACE VIEW prime_phrases AS
            w.user_id,
            w.word_name AS phrase_name,
            w.description,
-           w.values,
+           w.usage,
+           w.impact,
            w.phrase_type_id,
            w.excluded,
            w.share_type_id,
@@ -4736,7 +4769,8 @@ UNION
                          ELSE t.name_given END
                 ELSE t.triple_name END AS phrase_name,
            t.description,
-           t.values,
+           t.usage,
+           t.impact,
            t.phrase_type_id,
            t.excluded,
            t.share_type_id,
@@ -4753,7 +4787,8 @@ CREATE OR REPLACE VIEW phrases AS
            w.user_id,
            w.word_name AS phrase_name,
            w.description,
-           w.values,
+           w.usage,
+           w.impact,
            w.phrase_type_id,
            w.excluded,
            w.share_type_id,
@@ -4768,7 +4803,8 @@ UNION
                          ELSE t.name_given END
                 ELSE t.triple_name END AS phrase_name,
            t.description,
-           t.values,
+           t.usage,
+           t.impact,
            t.phrase_type_id,
            t.excluded,
            t.share_type_id,
@@ -4784,7 +4820,8 @@ CREATE OR REPLACE VIEW user_prime_phrases AS
            w.user_id,
            w.word_name AS phrase_name,
            w.description,
-           w.values,
+           w.usage,
+           w.impact,
            w.phrase_type_id,
            w.excluded,
            w.share_type_id,
@@ -4800,7 +4837,8 @@ UNION
                          ELSE t.name_given END
                 ELSE t.triple_name END AS phrase_name,
            t.description,
-           t.values,
+           t.usage,
+           t.impact,
            t.phrase_type_id,
            t.excluded,
            t.share_type_id,
@@ -4817,7 +4855,8 @@ CREATE OR REPLACE VIEW user_phrases AS
            w.user_id,
            w.word_name AS phrase_name,
            w.description,
-           w.values,
+           w.usage,
+           w.impact,
            w.phrase_type_id,
            w.excluded,
            w.share_type_id,
@@ -4832,7 +4871,8 @@ UNION
                          ELSE t.name_given END
                 ELSE t.triple_name END AS phrase_name,
            t.description,
-           t.values,
+           t.usage,
+           t.impact,
            t.phrase_type_id,
            t.excluded,
            t.share_type_id,
@@ -4850,7 +4890,8 @@ CREATE OR REPLACE VIEW prime_terms AS
            w.user_id,
            w.word_name       AS term_name,
            w.description,
-           w.values          AS usage,
+           w.usage,
+           w.impact,
            w.phrase_type_id  AS term_type_id,
            w.excluded,
            w.share_type_id,
@@ -4869,7 +4910,8 @@ UNION
                ELSE t.name_given END
            ELSE t.triple_name END AS term_name,
            t.description,
-           t.values                   AS usage,
+           t.usage,
+           t.impact,
            t.phrase_type_id           AS term_type_id,
            t.excluded,
            t.share_type_id,
@@ -4883,7 +4925,8 @@ UNION
            f.user_id,
            f.formula_name    AS term_name,
            f.description,
-           f.usage           AS usage,
+           f.usage,
+           f.impact,
            f.formula_type_id AS term_type_id,
            f.excluded,
            f.share_type_id,
@@ -4897,7 +4940,8 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage,
+           v.impact,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -4916,7 +4960,8 @@ CREATE OR REPLACE VIEW terms AS
            w.user_id,
            w.word_name       AS term_name,
            w.description,
-           w.values          AS usage,
+           w.usage,
+           w.impact,
            w.phrase_type_id  AS term_type_id,
            w.excluded,
            w.share_type_id,
@@ -4934,7 +4979,8 @@ UNION
                ELSE t.name_given END
            ELSE t.triple_name END AS term_name,
            t.description,
-           t.values                   AS usage,
+           t.usage,
+           t.impact,
            t.phrase_type_id           AS term_type_id,
            t.excluded,
            t.share_type_id,
@@ -4947,7 +4993,8 @@ UNION
            f.user_id,
            f.formula_name    AS term_name,
            f.description,
-           f.usage           AS usage,
+           f.usage,
+           f.impact,
            f.formula_type_id AS term_type_id,
            f.excluded,
            f.share_type_id,
@@ -4960,7 +5007,8 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage,
+           v.impact,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -4978,7 +5026,8 @@ CREATE OR REPLACE VIEW user_prime_terms AS
            w.user_id,
            w.word_name       AS term_name,
            w.description,
-           w.values          AS usage,
+           w.usage,
+           w.impact,
            w.phrase_type_id  AS term_type_id,
            w.excluded,
            w.share_type_id,
@@ -4997,7 +5046,8 @@ UNION
                ELSE t.name_given END
            ELSE t.triple_name END AS term_name,
            t.description,
-           t.values                   AS usage,
+           t.usage,
+           t.impact,
            t.phrase_type_id           AS term_type_id,
            t.excluded,
            t.share_type_id,
@@ -5011,7 +5061,8 @@ UNION
            f.user_id,
            f.formula_name    AS term_name,
            f.description,
-           f.usage           AS usage,
+           f.usage,
+           f.impact,
            f.formula_type_id AS term_type_id,
            f.excluded,
            f.share_type_id,
@@ -5025,7 +5076,8 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage,
+           v.impact,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,
@@ -5044,7 +5096,8 @@ CREATE OR REPLACE VIEW user_terms AS
            w.user_id,
            w.word_name       AS term_name,
            w.description,
-           w.values          AS usage,
+           w.usage,
+           w.impact,
            w.phrase_type_id  AS term_type_id,
            w.excluded,
            w.share_type_id,
@@ -5062,7 +5115,8 @@ UNION
                ELSE t.name_given END
            ELSE t.triple_name END AS term_name,
            t.description,
-           t.values                   AS usage,
+           t.usage,
+           t.impact,
            t.phrase_type_id           AS term_type_id,
            t.excluded,
            t.share_type_id,
@@ -5075,7 +5129,8 @@ UNION
            f.user_id,
            f.formula_name    AS term_name,
            f.description,
-           f.usage           AS usage,
+           f.usage,
+           f.impact,
            f.formula_type_id AS term_type_id,
            f.excluded,
            f.share_type_id,
@@ -5088,7 +5143,8 @@ UNION
            NULL           AS user_id,
            v.verb_name    AS term_name,
            v.description,
-           v.words        AS usage,
+           v.usage,
+           v.impact,
            NULL           AS term_type_id,
            NULL           AS excluded,
            1              AS share_type_id,

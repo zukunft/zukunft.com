@@ -42,6 +42,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::TYPES . 'ref_type.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
@@ -93,6 +94,17 @@ class type_list
                 $vrb = new verb();
                 $vrb->api_mapper($value);
                 $this->add_obj($vrb);
+            } elseif ($class == ref_type::class) {
+                $ref_typ = new ref_type(
+                    $value[json_fields::ID],
+                    $value[json_fields::CODE_ID],
+                    $value[json_fields::NAME],
+                    $value[json_fields::DESCRIPTION]
+                );
+                if (key_exists(json_fields::URL, $value)) {
+                    $ref_typ->url = $value[json_fields::URL];
+                }
+                $this->add_obj($ref_typ);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
                     $usr_msg->add_err('code id is missing for ' . implode(',', $value));
@@ -227,9 +239,9 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return verb|type_object|null the type object
+     * @return verb|ref_type|type_object|null the type object
      */
-    function get(int $id): verb|type_object|null
+    function get(int $id): verb|ref_type|type_object|null
     {
         $result = null;
         if (count($this->hash) != count($this->lst)) {

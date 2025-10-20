@@ -110,7 +110,7 @@ class verb_read_tests
         $t->subheader('Verb list tests');
         $t->name = 'verb list read db->';
 
-        // load the verb types
+        // load the verbs
         $lst = new verb_list($t->usr1);
         $result = $lst->load($db_con);
         $t->assert('load', $result, true);

@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class languages extends type_list
 {
 
-    const NAME = url_var::LANGUAGE;
+    const string NAME = url_var::LANGUAGE;
 
     /**
      * create the HTML code to select a language

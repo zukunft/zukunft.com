@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula_link_type_list extends type_list
 {
-    const NAME = url_var::FORMULA_TYPE;
+    const string NAME = url_var::FORMULA_TYPE;
 
     /**
      * create the HTML code to select a formula link type

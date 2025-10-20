@@ -29,7 +29,7 @@
 
 */
 
-namespace formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 

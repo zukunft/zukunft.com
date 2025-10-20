@@ -52,10 +52,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 class group_link extends db_object_seq_id
 {
     // object specific database and JSON object field names
-    const FLD_ID = 'group_triple_link_id';
+    const string FLD_ID = 'group_triple_link_id';
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         group::FLD_ID,
         triple_db::FLD_ID
     );

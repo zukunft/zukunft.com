@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_list_ui_tests
 {
@@ -46,6 +48,10 @@ class value_list_ui_tests
     {
         global $usr;
         $html = new html_base();
+        $tl = new test_lib();
+        $ui = new frontend('unit ui html reference list');
+        $dto = $tl->dummy_test_cache($t->usr1);
+        $ui->set_cache($dto);
 
         // start the test section (ts)
         $ts = 'unit ui html value list ';
@@ -75,13 +81,13 @@ class value_list_ui_tests
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $test_page .= 'as list: ' . $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
+        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
         $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_dsp->headline();
         $table_html = $lst_zh_ui->table($phr_lst_context_dsp);
         $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
-        $t->html_test($test_page, 'value_list', 'value_list', $t);
+        $t->html_page_test($test_page, 'value_list', 'value_list', $t);
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

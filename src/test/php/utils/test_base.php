@@ -108,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
@@ -256,6 +257,7 @@ include_once test_paths::UNIT . 'db_setup_tests.php';
 // load the testing functions for creating HTML code
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
+include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
 
 // load the unit testing modules with database read only
@@ -356,12 +358,12 @@ include_once html_paths::USER . 'user_display_old.php';
 class test_base
 {
     // the url which should be used for testing (maybe later https://test.zukunft.com/)
-    const URL = 'https://zukunft.com/';
+    const string URL = 'https://zukunft.com/';
 
-    const TEST_TYPE_CONTAINS = 'contains';
-    const TEST_TYPE_NOT = 'not';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
+    const string TEST_TYPE_CONTAINS = 'contains';
+    const string TEST_TYPE_NOT = 'not';
+    const string FILE_EXT = '.sql';
+    const string FILE_MYSQL = '_mysql';
 
 
     /*
@@ -369,7 +371,7 @@ class test_base
      */
 
     // add this to the object name to test if it can be renamed
-    const EXT_RENAME = ' renamed';
+    const string EXT_RENAME = ' renamed';
 
 
     /*
@@ -377,21 +379,21 @@ class test_base
      */
 
     // switch for the email testing
-    const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
+    const bool TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
     // max time expected for each function execution
-    const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
-    const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
-    const TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
-    const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
-    const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
-    const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
-    const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+    const float TIMEOUT_LIMIT = 0.03; // time limit for normal functions
+    const float TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
+    const float TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
+    const float TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
+    const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
+    const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
 
-    const TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+    const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
 
     public user $usr1; // the main user for testing
@@ -840,6 +842,7 @@ class test_base
     ): bool
     {
         $lib = new library();
+        $tl = new test_lib();
 
         // create the filename of the expected result
         $folder = '';
@@ -853,7 +856,7 @@ class test_base
                 $dbo_name .= '_' . $id;
             }
         }
-        $filename = test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
+        $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
         $msk = new view($usr);
@@ -873,7 +876,7 @@ class test_base
         }
         $dbo_api_msg = $dbo->api_json();
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
-        $dbo_dsp = $this->frontend_obj_from_backend_object($dbo);
+        $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
             $dbo_dsp->set_from_json($dbo_api_msg);
         }
@@ -892,31 +895,7 @@ class test_base
         // check if the created view matches the expected view
         return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
-            $actual, $filename);
-    }
-
-    /**
-     * the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value $dbo the given backend object
-     * @return false|db_object_dsp the corresponding frontend object
-     */
-    public function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
-    {
-        return match ($dbo::class) {
-            word::class => new word_dsp(),
-            verb::class => new verb_dsp(),
-            triple::class => new triple_dsp(),
-            source::class => new source_dsp(),
-            ref::class => new ref_dsp(),
-            value::class => new value_dsp(),
-            //group::class => new group_dsp(),
-            formula::class => new formula_dsp(),
-            result::class => new result_dsp(),
-            view::class => new view_dsp(),
-            component::class => new component_dsp(),
-            user::class => new user_dsp(),
-            default => false,
-        };
+            $actual, $file_path);
     }
 
     /**
@@ -1012,19 +991,45 @@ class test_base
     }
 
     /**
+     * remove the fields from an json array that are send to the frontend
+     * but are not send back to the backend
+     * because they should not be updated via api
+     * e.g. the usage which is calculated by a backend job
+     * @param array $json_to_ui the array with the unidirectional fields
+     * @return array the array without the unidirectional fields
+     */
+    function json_remove_fields_only_to_ui(array $json_to_ui): array
+    {
+        $json_to_db = $json_to_ui;
+        foreach ($json_to_db as $key => $value) {
+            if (is_array($value)) {
+                $json_to_db[$key] = $this->json_remove_fields_only_to_ui($value);
+            } else {
+                foreach (json_fields::UNIDIRECTIONAL as $uni_fld) {
+                    if (array_key_exists($uni_fld, $json_to_db)) {
+                        unset($json_to_db[$uni_fld]);
+                    }
+                }
+            }
+        }
+
+        return $json_to_db;
+    }
+
+    /**
      * check if the created html matches a defined html file
      *
      * @param string $test_name the description of the test
      * @param string $body the body of a html page
-     * @param string $filename the filename of the expected html page
+     * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $filename): bool
+    function assert_html_body(string $test_name, string $body, string $file_path): bool
     {
         $lib = new library();
 
         $actual = $this->html_page($body);
-        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        $expected = $this->file($file_path . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
     }
 
@@ -1033,14 +1038,14 @@ class test_base
      *
      * @param string $test_name the description of the test
      * @param string $html the html code of a html page
-     * @param string $filename the filename of the expected html page
+     * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_page(string $test_name, string $html, string $filename): bool
+    function assert_html_page(string $test_name, string $html, string $file_path): bool
     {
         $lib = new library();
 
-        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        $expected = $this->file($file_path . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
     }
 
@@ -2477,7 +2482,10 @@ class test_base
 
         // check if no relevant fields a lost during save and reload
         if ($result) {
-            $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
+            // remove the fields from the api json towards the frontend that are not expected to be send back to the backend
+            $api_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($api_json, true)));
+            $sbx_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($sbx->api_json(), true)));
+            $result = $this->assert('API json based compare', $sbx_json_ex, $api_json_ex);
         }
 
         // check if the system reports correctly, that no one has changed the named object

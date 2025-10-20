@@ -74,6 +74,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class base_ui_tests
 {
@@ -91,7 +93,7 @@ class base_ui_tests
         $t->subheader($ts . 'login');
 
         $created_html = $html->about();
-        $expected_html = $t->file('web/html/about.html');
+        $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
         $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
@@ -122,7 +124,7 @@ class base_ui_tests
 
         // button add
         $url = $html->url(views::WORD_ADD);
-        $t->html_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
+        $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
         $t->subheader('unit html table tests');
 
@@ -187,11 +189,11 @@ class base_ui_tests
         $res_lst = new result_list_dsp();
         $res_lst->add(new result_dsp($res_city->api_json([api_type::INCL_PHRASES])));
         $res_lst->add(new result_dsp($res_canton->api_json([api_type::INCL_PHRASES])));
-        $t->html_test($res_lst->table(), '', 'table_result', $t);
+        $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
         $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json([api_type::INCL_PHRASES]));
-        $t->html_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
+        $t->html_page_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
         $t->subheader('unit html view component tests');
@@ -200,7 +202,7 @@ class base_ui_tests
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
         $cmp->set_type(comp_type_shared::TEXT, $usr);
         $cmp_dsp = new component_dsp($cmp->api_json());
-        $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
+        $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
 
 
         $t->header('unit html list tests');
@@ -215,7 +217,7 @@ class base_ui_tests
         // TODO use set_from_json to set the display object
         $vrb_lst_dsp = new verb_list_dsp();
         $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
-        $t->html_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
+        $t->html_page_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
 
         $test_name = 'sort a named list by the name';
         $lst = $t->phrase_list_zh_mio();

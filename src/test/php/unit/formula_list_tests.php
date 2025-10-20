@@ -93,7 +93,7 @@ class formula_list_tests
 
         $t->subheader($ts . 'api');
 
-        $frm_lst = $t->formula_list();
+        $frm_lst = $t->formula_list_short();
         $t->assert_api($frm_lst);
 
 
@@ -104,7 +104,7 @@ class formula_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->formula_list();
+        $trp_lst = $t->formula_list_short();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
     }

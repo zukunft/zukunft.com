@@ -138,11 +138,11 @@ class sandbox_value extends sandbox_multi
 
     // the table name extension for public unprotected values related up to four prime phrase
     const string TBL_EXT_STD = '_standard';
-    const TBL_COMMENT_STD = 'for public unprotected ';
+    const string TBL_COMMENT_STD = 'for public unprotected ';
     const string TBL_COMMENT_STD_PRIME_CONT = 's related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
     const string TBL_COMMENT_STD_MAIN_CONT = 's related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
     const string TBL_COMMENT_STD_CONT = 's that have never changed the owner, does not have a description and are rarely updated';
-    const TBL_COMMENT = 'for ';
+    const string TBL_COMMENT = 'for ';
     const string TBL_COMMENT_CONT = 's related to up to 16 phrases';
     const string TBL_COMMENT_USER = 'for user specific changes of ';
     const string TBL_COMMENT_PRIME = 'for the most often requested ';
@@ -1455,7 +1455,7 @@ class sandbox_value extends sandbox_multi
      * @param phrase_list|null $phr_lst with the cache of the phrases already loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_names(array $names, phrase_list $phr_lst = null): int
+    function load_by_names(array $names, ?phrase_list $phr_lst = null): int
     {
         $load_lst = new phrase_list($this->user());
         if ($phr_lst == null) {

@@ -175,7 +175,7 @@ class phrase_list extends sandbox_list_named
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $json_obj, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $json_obj, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         $phr_lst = $dto->phrase_list();
@@ -340,7 +340,7 @@ class phrase_list extends sandbox_list_named
         $sc->set_fields(phrase::FLD_NAMES);
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_VALUES) . ' DESC, ' . phrase::FLD_NAME);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(phrase::FLD_USAGE) . ' DESC, ' . phrase::FLD_NAME);
         return $qp;
     }
 
@@ -470,6 +470,32 @@ class phrase_list extends sandbox_list_named
         return $trp_lst->fill_missing_verbs();
     }
 
+    /**
+     * @returns array with all unique names of this list with the keys within this list
+     */
+    function name_pos_lst(): array
+    {
+        $result = array();
+        if ($this->is_name_list_dirty()) {
+            foreach ($this->lst() as $key => $phr) {
+                $obj = $phr->obj();
+                $result[$obj->name()] = $key;
+                // TODO Prio 2 add the language forms of words and triples
+                if ($obj::class == word::class) {
+                    $result[$obj->plural] = $key;
+                }
+                if ($obj::class == triple::class) {
+                    $result[$obj->name_generated()] = $key;
+                }
+            }
+            $this->set_name_pos_list($result);
+        } else {
+            $result = parent::name_pos_lst();
+        }
+        return $result;
+    }
+
+
 
     /*
      * im- and export
@@ -482,7 +508,7 @@ class phrase_list extends sandbox_list_named
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_lst(array $json_obj, object $test_obj = null): user_message
+    function import_lst(array $json_obj, ?object $test_obj = null): user_message
     {
         global $phr_typ_cac;
 
@@ -547,7 +573,7 @@ class phrase_list extends sandbox_list_named
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_map_names(array $json_obj, data_object $dto = null): user_message
+    function import_map_names(array $json_obj, ?data_object $dto = null): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $word_name) {
@@ -576,7 +602,7 @@ class phrase_list extends sandbox_list_named
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_names(array $json_obj, data_object $dto = null): user_message
+    function import_names(array $json_obj, ?data_object $dto = null): user_message
     {
         $usr_msg = $this->import_map_names($json_obj, $dto);
         $this->save();
@@ -2148,7 +2174,7 @@ class phrase_list extends sandbox_list_named
      * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message that should be shown to the user if something went wrong
      */
-    function save(import $imp = null): user_message
+    function save(?import $imp = null): user_message
     {
         $usr_msg = new user_message();
 
@@ -2233,7 +2259,7 @@ class phrase_list extends sandbox_list_named
     /**
      * @return string one string with all names of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         $result = '';
         if ($limit == null) {
@@ -2255,7 +2281,7 @@ class phrase_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $phr) {

@@ -86,15 +86,15 @@ class db_object extends TextIdObject
      * const
      */
 
-    // the fallback curl views that are expected to be overwritten by the child objects
-    const VIEW_ADD = views::WORD_ADD;
-    const VIEW_EDIT = views::WORD_EDIT;
-    const VIEW_DEL = views::WORD_DEL;
+    // the fallback crud views that are expected to be overwritten by the child objects
+    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_EDIT = views::WORD_EDIT;
+    const string VIEW_DEL = views::WORD_DEL;
 
-    // the fallback curl message id that are expected to be overwritten by the child objects
-    const MSG_ADD = msg_id::WORD_ADD;
-    const MSG_EDIT = msg_id::WORD_EDIT;
-    const MSG_DEL = msg_id::WORD_DEL;
+    // the fallback crud message id that are expected to be overwritten by the child objects
+    const msg_id MSG_ADD = msg_id::WORD_ADD;
+    const msg_id MSG_EDIT = msg_id::WORD_EDIT;
+    const msg_id MSG_DEL = msg_id::WORD_DEL;
 
 
     /*
@@ -147,12 +147,12 @@ class db_object extends TextIdObject
     {
         $is_add = false;
         if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CURL_CREATE) {
+            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
                 $is_add = true;
             }
         }
         if (array_key_exists(url_var::ACTION_LONG, $url_array)) {
-            if ($url_array[url_var::ACTION_LONG] == url_var::CURL_CREATE) {
+            if ($url_array[url_var::ACTION_LONG] == url_var::CRUD_CREATE) {
                 $is_add = true;
             }
         }
@@ -397,7 +397,7 @@ class db_object extends TextIdObject
      */
     function obj_url(string $view_code_id, ?string $back = ''): string
     {
-        return (new html_base())->url($view_code_id, $this->id(), $back);
+        return new html_base()->url($view_code_id, $this->id(), $back);
     }
 
 
@@ -441,12 +441,29 @@ class db_object extends TextIdObject
         return $msg;
     }
 
+    function formula_name(): ?string
+    {
+        $msg = 'ERROR: formula_name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
         // TODO Prio 0 activate
         //log_err($msg);
-        return $msg;
+        return 0;
+    }
+
+    /**
+     * @return int|null how many times the object has been referenced or used
+     */
+    function usage(): int|null
+    {
+        $msg = 'ERROR: usage not overwritten by ' . $this::class;
+        log_err($msg);
+        return 0;
     }
 
     function phrase(): phrase_dsp
@@ -495,7 +512,7 @@ class db_object extends TextIdObject
 
 
     /*
-     * curl
+     * crud
      */
 
     /**
@@ -570,19 +587,6 @@ class db_object extends TextIdObject
     public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'phrase type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
-    }
-
-    /**
-     * create the html code to select the verb type
-     * @param string $form the name of the html form
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb type
-     */
-    public function verb_type_selector(string $form, ?type_lists $typ_lst): string
-    {
-        $msg = 'verb type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }

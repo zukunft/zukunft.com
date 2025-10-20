@@ -12,7 +12,8 @@ PREPARE formula_link_list_by_frm_id FROM
             IF(u.protect_id           IS NULL, s.protect_id,           u.protect_id)           AS protect_id,
             IF(ul.phrase_name         IS NULL, l.phrase_name,         ul.phrase_name)          AS phrase_name1,
             IF(ul.description         IS NULL, l.description,         ul.description)          AS description1,
-            IF(ul.`values`            IS NULL, l.`values`,            ul.`values`)             AS values1,
+            IF(ul.`usage`             IS NULL, l.`usage`,             ul.`usage`)              AS usage1,
+            IF(ul.impact              IS NULL, l.impact,              ul.impact)               AS impact1,
             IF(ul.excluded            IS NULL, l.excluded,            ul.excluded)             AS excluded1,
             IF(ul.share_type_id       IS NULL, l.share_type_id,       ul.share_type_id)        AS share_type_id1,
             IF(ul.protect_id          IS NULL, l.protect_id,          ul.protect_id)           AS protect_id1

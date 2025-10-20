@@ -36,8 +36,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 
 class ui_log
@@ -46,10 +48,17 @@ class ui_log
     /**
      * @return string with the html code that shows the recent changes of this object
      */
-    function system_change_log(db_object $phr, string $form_name): string
+    function system_change_log(db_object $dbo, change_log_list $log_lst): string
     {
         // TODO review
-        return 'change log for ' . $phr->name() . ' ';
+        // if the given change og is empty use the global cache
+        if ($log_lst->is_empty()) {
+            global $ui_cac;
+            $log_lst = $ui_cac->chg_log;
+        }
+        // filter the change log based on the given object
+        $log_lst = $log_lst->filter($dbo);
+        return $log_lst->dsp();
     }
 
 }

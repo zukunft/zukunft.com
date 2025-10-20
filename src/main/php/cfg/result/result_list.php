@@ -680,7 +680,7 @@ class result_list extends sandbox_value_list
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();
@@ -725,7 +725,7 @@ class result_list extends sandbox_value_list
      * @param ?int $limit the max number of ids to show
      * @return string one string with all names of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -752,7 +752,7 @@ class result_list extends sandbox_value_list
     /**
      * return a list of the formula result names
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         $lib = new library();

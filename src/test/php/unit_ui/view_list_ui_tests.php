@@ -63,7 +63,7 @@ class view_list_ui_tests
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector($form, 0, url_var::VIEW_ID, msg_id::LABEL_VIEW) . '<br>';
 
-        $t->html_test($test_page, 'view_list', 'view_list', $t);
+        $t->html_page_test($test_page, 'view_list', 'view_list', $t);
     }
 
 }

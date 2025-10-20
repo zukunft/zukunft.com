@@ -133,6 +133,7 @@ include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -170,6 +171,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -201,7 +203,6 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use DateTime;
 use Exception;
-use math;
 
 class value_base extends sandbox_value
 {
@@ -218,7 +219,7 @@ class value_base extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const array FLD_NAMES = value_db::FLD_NAMES;
-    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
     const array FLD_NAMES_USR = value_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
     const array FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
@@ -448,7 +449,7 @@ class value_base extends sandbox_value
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
 
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
@@ -1237,7 +1238,7 @@ class value_base extends sandbox_value
                                                 $r_part = str_replace($wrd_symbol, $this->value(), $r_part);
                                                 log_debug('replace done (' . $r_part . ')');
                                                 // TODO separate time from value words
-                                                $calc = new math();
+                                                $calc = new calc_internal();
                                                 $result = $calc->parse($r_part);
                                             } else {
                                                 log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');
@@ -1279,7 +1280,7 @@ class value_base extends sandbox_value
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         log_debug();
@@ -1330,7 +1331,7 @@ class value_base extends sandbox_value
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_phrase_value(string $phr_name, float $value, object $test_obj = null): user_message
+    function import_phrase_value(string $phr_name, float $value, ?object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         log_debug();
@@ -2431,7 +2432,7 @@ class value_base extends sandbox_value
         // in the user table the source is part of the index to allow several sources for the same value
         // but only if any other field has been updated, update the last_update field also
         if (!$lst->is_empty_except_internal_fields()) {
-            if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+            if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,

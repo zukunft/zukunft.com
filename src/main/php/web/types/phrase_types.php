@@ -48,7 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class phrase_types extends type_list
 {
 
-    const NAME = url_var::PHRASE_TYPE;
+    const string NAME = url_var::PHRASE_TYPE;
 
     /**
      * create the HTML code to select a phrase type

@@ -221,7 +221,7 @@ class sys_log_list
      * @param string $back
      * @return string the html code of the system log
      */
-    function get_html(user $usr = null, string $back = ''): string
+    function get_html(?user $usr = null, string $back = ''): string
     {
         $html = new html_base();
         $result = ''; // reset the html code var
@@ -261,7 +261,7 @@ class sys_log_list
         return $result;
     }
 
-    function get_html_page(user $usr = null, string $back = ''): string
+    function get_html_page(?user $usr = null, string $back = ''): string
     {
         return $this->get_html_header('System log') . $this->get_html($usr, $back) . $this->get_html_footer();
     }

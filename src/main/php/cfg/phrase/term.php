@@ -113,6 +113,7 @@ class term extends combine_named
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_NAME = 'term_name';
     const string FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
+    const string FLD_IMPACT = 'impact';
     const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
     // the common term database field names excluding the id and excluding the user specific fields
@@ -130,7 +131,8 @@ class term extends combine_named
     );
     // list of the user specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
-        self::FLD_USAGE,
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -165,7 +167,8 @@ class term extends combine_named
             [user_db::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [word_db::FLD_VALUES, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -178,7 +181,8 @@ class term extends combine_named
             [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [triple_db::FLD_VALUES, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -191,7 +195,8 @@ class term extends combine_named
             [user_db::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [formula_db::FLD_USAGE, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [formula_db::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -204,7 +209,8 @@ class term extends combine_named
             [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [verb_db::FLD_WORDS, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
             [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
             [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
@@ -256,7 +262,7 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
-                $this->set_usage($db_row[self::FLD_USAGE]);
+                $this->set_usage($db_row[sql_db::FLD_USAGE]);
                 $result = true;
             }
         }
@@ -501,6 +507,21 @@ class term extends combine_named
     }
 
     /**
+     * set the value to rank the terms by impact
+     *
+     * @param float|null $impact a higher value moves the term to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        if ($impact == null) {
+            $this->obj()->set_impact(0);
+        } else {
+            $this->obj()->set_impact($impact);
+        }
+    }
+
+    /**
      * @return int the id of the term witch is  (corresponding to id_obj())
      * must have the same logic as the database view and the frontend
      *
@@ -574,9 +595,14 @@ class term extends combine_named
         return $result;
     }
 
-    function usage(): int
+    function usage(): ?int
     {
         return $this->obj()->usage();
+    }
+
+    function impact(): ?float
+    {
+        return $this->obj()->impact();
     }
 
 
@@ -987,6 +1013,7 @@ class term extends combine_named
         }
         return $result;
     }
+
 
     /*
      * conversion

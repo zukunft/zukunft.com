@@ -36,9 +36,9 @@ enum sys_log_statuus: string
 {
 
     // list of all possible log statuus
-    const OPEN = "new";
-    const ASSIGNED = "assigned";
-    const RESOLVED = "resolved";
-    const CLOSED = "closed";
+    const string OPEN = "new";
+    const string ASSIGNED = "assigned";
+    const string RESOLVED = "resolved";
+    const string CLOSED = "closed";
 
 }

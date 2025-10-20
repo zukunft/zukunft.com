@@ -49,7 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class protection extends type_list
 {
 
-    const NAME = url_var::PROTECTION;
+    const string NAME = url_var::PROTECTION;
 
     /**
      * create the HTML code to select a protection type

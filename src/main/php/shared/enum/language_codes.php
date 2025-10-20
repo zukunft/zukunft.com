@@ -36,10 +36,10 @@ enum language_codes: string
 {
 
     // predefined language id
-    const EN = 'en';
-    const DE = 'de';
+    const string EN = 'en';
+    const string DE = 'de';
 
     // the fallback system language
-    const SYS = self::EN;
+    const string SYS = self::EN;
 
 }

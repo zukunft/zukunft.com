@@ -34,8 +34,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\export\xml;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\export\json_io;
+use Zukunft\ZukunftCom\main\php\service\export\json_io;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -48,10 +49,8 @@ function run_export_test(test_cleanup $t): void
 
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(words::MATH));
-    $xml_export = new xml_io;
-    $xml_export->usr = $usr;
-    $xml_export->phr_lst = $phr_lst;
-    $result = $xml_export->export();
+    $xml_export = new xml($usr);
+    $result = $xml_export->export_by_phrase_list($phr_lst, $usr);
     $target = 'mathematics';
     $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 

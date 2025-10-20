@@ -168,35 +168,35 @@ class change_log extends db_object_seq_id_user
      */
 
     // change log database and JSON object field names
-    const FLD_ID_COM = 'the prime key to identify the change';
-    const FLD_ID = 'change_id';
-    const FLD_TIME_COM = 'time when the user has confirmed the change';
-    const FLD_TIME = 'change_time';
-    const FLD_USER_COM = 'reference to the user who has done the change';
-    const FLD_ACTION_COM = 'the curl action';
-    const FLD_ACTION = 'change_action_id';
-    const FLD_ROW_ID_COM = 'the prime id in the table with the change';
-    const FLD_ROW_ID = 'row_id';
+    const string FLD_ID_COM = 'the prime key to identify the change';
+    const string FLD_ID = 'change_id';
+    const string FLD_TIME_COM = 'time when the user has confirmed the change';
+    const string FLD_TIME = 'change_time';
+    const string FLD_USER_COM = 'reference to the user who has done the change';
+    const string FLD_ACTION_COM = 'the crud action';
+    const string FLD_ACTION = 'change_action_id';
+    const string FLD_ROW_ID_COM = 'the prime id in the table with the change';
+    const string FLD_ROW_ID = 'row_id';
 
     // sql table comments
-    const TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
+    const string TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
-    const FLD_LST_KEY = array(
+    const array FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
-    const FLD_LST_CHANGE = array();
+    const array FLD_LST_CHANGE = array();
     // field list to identify the database row in the table that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
     // list of classes that store change log entries except log link because logging a link is too different
-    const LOG_CLASSES = [
+    const array LOG_CLASSES = [
         change::class,
         changes_norm::class,
         changes_big::class,
@@ -378,7 +378,7 @@ class change_log extends db_object_seq_id_user
                         $db_changed = true;
                     }
                 } else {
-                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id);
+                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
                 }
             }
         } else {

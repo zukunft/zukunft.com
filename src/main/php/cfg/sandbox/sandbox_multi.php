@@ -428,7 +428,7 @@ class sandbox_multi extends db_object_multi_user
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -1064,7 +1064,7 @@ class sandbox_multi extends db_object_multi_user
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         global $shr_typ_cac;

@@ -126,6 +126,9 @@ class files
     const string COUNTRY_FILE = 'country' . self::JSON;
     const string COMPANY_FILE = 'company' . self::JSON;
 
+    // temp setup files that are loaded at the end not to change the id of objects used by the system tests
+    const string MATH_EXTRA_FILE = 'math_extra' . self::JSON;
+
 
     /*
      * file lists
@@ -144,6 +147,7 @@ class files
         self::START_PAGE_DATA_FILE,
         self::COMPANY_FILE,
         self::COUNTRY_FILE,
+        self::MATH_EXTRA_FILE,
     ];
 
     // to load the default data for all pods

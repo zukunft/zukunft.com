@@ -81,7 +81,7 @@ class word_ui_tests
         //$test_page .= $wrd_zh->parents()->name_link() . '<br>';
         //$test_page .= $html->text_h2('children of ' . $wrd_city->name());
         //$test_page .= $wrd_city->children()->name_link() . '<br>';
-        $t->html_test($test_page, 'word html components', 'word', $t);
+        $t->html_page_test($test_page, 'word html components', 'word', $t);
 
     }
 

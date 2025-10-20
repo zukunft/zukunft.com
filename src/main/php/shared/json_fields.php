@@ -112,6 +112,7 @@ class json_fields
     const string REV_PLURAL = 'rev_plural';
     const string FRM_NAME = 'frm_name';
     const string USAGE = 'usage';
+    const string IMPACT = 'impact';
 
 
     /*
@@ -159,6 +160,7 @@ class json_fields
     const string NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const string FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
     const string FORMULA_NAME = 'formula'; // the name of the formula for im- and export
+    const string NAME_IN_FORMULA = 'name_in_formula'; // the name of the verb if used in formulas
 
     // batch job fields
     const string TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
@@ -190,8 +192,14 @@ class json_fields
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
 
-    // to link predefined functionality to a row e.g. to select a system view
+    // id the select a predefined text for the user that is translated into the user interface language
     const string UI_MSG_CODE_ID = 'ui_msg_code_id';
+    // id the select a second predefined text for the user that is translated into the user interface language e.g. after the number that is shown
+    const string UI_MSG_CODE_ID_VARS = 'ui_msg_code_id_vars';
+    // id the select a predefined text for the user in case of a special value that is translated into the user interface language e.g. if the number is zero
+    const string UI_MSG_CODE_ID_EXCEPTION = 'ui_msg_code_id_exception';
+    // the value of the system var the select the exception message; the value is selected by the placeholder in the ui_msg_code_id_vars text
+    const string UI_MSG_CODE_VAL_EXCEPTION = 'ui_msg_value_exception';
 
     // phrase api specific fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula
@@ -341,4 +349,13 @@ class json_fields
     // and for value lists to reduce the number of phrase for each value
     // also used to select the phrases used to filter the values for calculating this result
     const string CONTEXT = 'context';
+
+    // list of json fields that are used for the api message to the frontend
+    // but that are never used for the api message to the backend
+    const array UNIDIRECTIONAL = [
+        self::REF_TEXT,
+        self::USAGE,
+        self::IMPACT
+    ];
+
 }

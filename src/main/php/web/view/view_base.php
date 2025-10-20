@@ -82,14 +82,14 @@ class view_base extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::VIEW_ADD;
-    const VIEW_EDIT = views::VIEW_EDIT;
-    const VIEW_DEL = views::VIEW_DEL;
+    const string VIEW_ADD = views::VIEW_ADD;
+    const string VIEW_EDIT = views::VIEW_EDIT;
+    const string VIEW_DEL = views::VIEW_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::VIEW_ADD;
-    const MSG_EDIT = msg_id::VIEW_EDIT;
-    const MSG_DEL = msg_id::VIEW_DEL;
+    const msg_id MSG_ADD = msg_id::VIEW_ADD;
+    const msg_id MSG_EDIT = msg_id::VIEW_EDIT;
+    const msg_id MSG_DEL = msg_id::VIEW_DEL;
 
 
     /*

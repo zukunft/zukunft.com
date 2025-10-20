@@ -54,7 +54,7 @@ class group_ui_tests
         $test_page .= 'named phrase group with link: ' . $grp->name_link_list() . '<br>';
         $test_page .= 'phrase group with tooltip: ' . $grp_2019->name_tip() . '<br>';
         $test_page .= 'phrase group with link: ' . $grp_2019->name_link_list() . '<br>';
-        $t->html_test($test_page, 'phrase_group', 'phrase_group', $t);
+        $t->html_page_test($test_page, 'phrase_group', 'phrase_group', $t);
     }
 
 }

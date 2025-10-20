@@ -8,6 +8,7 @@ PREPARE term_list_by_name_like FROM
             IF(u.formula_text  IS NULL,s.formula_text,  u.formula_text)  AS formula_text,
             IF(u.resolved_text IS NULL,s.resolved_text, u.resolved_text) AS resolved_text,
             IF(u.`usage`       IS NULL,s.`usage`,       u.`usage`)       AS `usage`,
+            IF(u.impact        IS NULL,s.impact,        u.impact)        AS impact,
             IF(u.excluded      IS NULL,s.excluded,      u.excluded)      AS excluded,
             IF(u.share_type_id IS NULL,s.share_type_id, u.share_type_id) AS share_type_id,
             IF(u.protect_id    IS NULL,s.protect_id,    u.protect_id)    AS protect_id

@@ -38,6 +38,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\service\export;
 
+use Zukunft\ZukunftCom\main\php\cfg\export\export;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 

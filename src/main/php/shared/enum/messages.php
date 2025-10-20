@@ -111,6 +111,8 @@ enum messages: string
     const string VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const string VAR_CLASS_NAME = 'VarClassName';
+    // value how many times the object is referenced
+    const string VAR_USAGE = 'VarUsage';
     // the share permission of a sandbox object
     const string VAR_SHARE = 'VarShare';
     // the share permission of the compare sandbox object
@@ -905,6 +907,10 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' failed.';
 
+    case SYS_MSG_USAGE = 'Used '
+        . self::VAR_START . self::VAR_USAGE . self::VAR_END
+        . ' times';
+
 
     case JOB_FORMULA_MISSING = 'Job '
         . self::VAR_START . self::VAR_ID . self::VAR_END
@@ -954,6 +960,8 @@ enum messages: string
     case PHRASE_MISSING_ID = 'phrase id is zero';
     case PHRASE_ID_NOT_FOUND = 'phrase id not found';
     case TERM_ID_NOT_FOUND = 'term id not found';
+    case NOT_USED_FOR_TRIPLES = 'not used for triples';
+    case NOT_USED_FOR_FORMULAS = 'not used for formulas';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1063,7 +1071,13 @@ enum messages: string
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
     case SYSTEM_SUB_TITLE_USAGE = 'system_sub_title_usage';
+    case SYSTEM_SUB_TITLE_VAR_USAGE = 'system_sub_title_var_usage';
+    case SYSTEM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
+    case SYSTEM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
+    case SYSTEM_SUB_TITLE_REF = 'system_sub_title_references';
     case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case SYSTEM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
+    case SYSTEM_SUB_TITLE_LOG = 'system_sub_title_log';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
@@ -1136,6 +1150,7 @@ enum messages: string
     case FORM_FIELD_PLURAL = 'form_field_plural';
     case FORM_FIELD_REVERSE = 'form_field_reverse';
     case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
+    case FORM_FIELD_NAME_IN_FORMULAS = 'form_field_name_in_formulas';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
     case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
@@ -1147,7 +1162,6 @@ enum messages: string
     case FORM_TRIPLE_VERB = 'form_select_verb';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
-    case FORM_SELECT_VERB_TYPE = 'form_select_verb_type';
     case FORM_SELECT_PHRASE_TYPE = 'form_select_phrase_type';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
@@ -1167,6 +1181,7 @@ enum messages: string
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';
+    case YES_NO = 'yes or no';
     case UNDO_ADD = 'undo_add';
     case UNDO_EDIT = 'undo_edit';
     case UNDO_DEL = 'undo_del';

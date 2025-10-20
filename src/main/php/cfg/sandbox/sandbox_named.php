@@ -131,8 +131,8 @@ class sandbox_named extends sandbox
 
     // object specific database and JSON object field names
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_NAME = 'name';
-    const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
+    const string FLD_NAME = 'name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
 
 
     /*
@@ -145,6 +145,9 @@ class sandbox_named extends sandbox
     // the object description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     public ?string $description = null;
+    // cache value of the number of objects that use this object
+    // also used as a fallback value for sorting if the impact is missing or incomplete
+    private ?int $usage = null;
 
 
     /*
@@ -161,6 +164,7 @@ class sandbox_named extends sandbox
 
         $this->set_name(null);
         $this->description = null;
+        $this->usage = null;
     }
 
     /**
@@ -188,6 +192,9 @@ class sandbox_named extends sandbox
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                $this->set_usage($db_row[sql_db::FLD_USAGE]);
+            }
         }
         return $result;
     }
@@ -208,6 +215,7 @@ class sandbox_named extends sandbox
                 $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
+        // the usage is set by an internal batch and cannot be set by the api
 
         return $usr_msg;
     }
@@ -221,7 +229,7 @@ class sandbox_named extends sandbox
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
@@ -233,6 +241,7 @@ class sandbox_named extends sandbox
                 $this->description = $in_ex_json[json_fields::DESCRIPTION];
             }
         }
+        // the usage is set by an internal batch and cannot be set via import
 
         return $usr_msg;
     }
@@ -259,6 +268,7 @@ class sandbox_named extends sandbox
         } else {
             $vars[json_fields::DESCRIPTION] = $this->description();
         }
+        $vars[json_fields::USAGE] = $this->usage();
 
         return $vars;
     }
@@ -280,6 +290,8 @@ class sandbox_named extends sandbox
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
+        // the usage is only included in the export as an indication to validate the consistency
+        $vars[json_fields::USAGE] = $this->usage();
         return $vars;
     }
 
@@ -379,6 +391,25 @@ class sandbox_named extends sandbox
     }
 
     /**
+     * set the value to rank the sandbox object by usage and indicate to the user the impact of an exclusion
+     *
+     * @param int|null $usage a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_usage(?int $usage): void
+    {
+        $this->usage = $usage;
+    }
+
+    /**
+     * @return int|null a higher number indicates a higher usage
+     */
+    function usage(): ?int
+    {
+        return $this->usage;
+    }
+
+    /**
      * create a clone and update the name (mainly used for unit testing)
      * but keep the id a unique db id
      *
@@ -415,6 +446,9 @@ class sandbox_named extends sandbox
         }
         if ($obj->description() != null) {
             $this->set_description($obj->description());
+        }
+        if ($obj->usage() != null) {
+            $this->usage = $obj->usage();
         }
         return $usr_msg;
     }
@@ -604,6 +638,11 @@ class sandbox_named extends sandbox
                 $result = true;
             }
         }
+        if ($this->usage != null) {
+            if ($this->usage != $db_obj->usage) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
@@ -621,7 +660,7 @@ class sandbox_named extends sandbox
     /**
      * check if the named sandbox object can be added to the database
      * @return user_message including suggested solutions
-     *       if e.g. the id and the name is something
+     *                      e.g. if the id and the name are something
      */
     function db_ready(): user_message
     {
@@ -1257,7 +1296,8 @@ class sandbox_named extends sandbox
             $this::FLD_ID,
             user_db::FLD_ID,
             $this->name_field(),
-            sql_db::FLD_DESCRIPTION
+            sql_db::FLD_DESCRIPTION,
+            sql_db::FLD_USAGE
         ];
     }
 
@@ -1265,17 +1305,19 @@ class sandbox_named extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox_named|sandbox $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        sandbox_named|sandbox $sbx,
+        sql_type_list         $sc_par_lst = new sql_type_list(),
+        user_message          $usr_msg = new user_message()
     ): sql_par_field_list
     {
+        global $cng_fld_cac;
+
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
@@ -1290,6 +1332,21 @@ class sandbox_named extends sandbox
             $lst->add_user($this, $sbx, $do_log, $table_id);
         }
         $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
+        if ($sbx->usage() !== $this->usage()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_USAGE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_USAGE,
+                $this->usage(),
+                sql_db::FLD_USAGE_SQL_TYP,
+                $sbx->usage()
+            );
+        }
         return $lst;
     }
 

@@ -31,6 +31,7 @@
 */
 
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -48,7 +49,7 @@ function run_math_test(all_tests $t): void
 
     // build a list of all formula results that needs to be update
 
-    $calc = new math();
+    $calc = new calc_internal();
 
     // test zuc_parse
     /*$formula_id = $result;

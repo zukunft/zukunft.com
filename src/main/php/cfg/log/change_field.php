@@ -55,20 +55,20 @@ class change_field extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to keep the original field name even if a table name has changed';
-    const FLD_ID = 'change_field_id';
-    const FLD_NAME_COM = 'the real name';
-    const FLD_NAME = 'change_field_name';
-    const FLD_TABLE_COM = 'because every field must only be unique within a table';
-    const FLD_TABLE = 'table_id';
-    const FLD_CODE_ID_COM = 'to display the change with some linked information';
+    const string TBL_COMMENT = 'to keep the original field name even if a table name has changed';
+    const string FLD_ID = 'change_field_id';
+    const string FLD_NAME_COM = 'the real name';
+    const string FLD_NAME = 'change_field_name';
+    const string FLD_TABLE_COM = 'because every field must only be unique within a table';
+    const string FLD_TABLE = 'table_id';
+    const string FLD_CODE_ID_COM = 'to display the change with some linked information';
 
     // field lists for the field creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_TABLE, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, change_table::class, self::FLD_TABLE_COM, change_table::FLD_ID],
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );

@@ -35,7 +35,7 @@ class file_types
 {
 
     // list of the file types that have a coded functionality
-    const YAML = 'YAML';
-    const JSOM = 'JSOM';
+    const string YAML = 'YAML';
+    const string JSOM = 'JSOM';
 
 }

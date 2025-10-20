@@ -57,7 +57,7 @@ class formula_list_ui_tests
 
         // test the formula list display functions
         $form = 'formula_list_ui_test';
-        $lst = new formula_list_dsp($t->formula_list()->api_json());
+        $lst = new formula_list_dsp($t->formula_list_short()->api_json());
         $test_page = $html->text_h2('formula list display test');
         $test_page .= 'formula list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->name_link() . '<br>';
@@ -65,7 +65,7 @@ class formula_list_ui_tests
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector($form, 0, url_var::FORMULA_LONG, msg_id::LABEL_FORMULA) . '<br>';
 
-        $t->html_test($test_page, 'formula_list', 'formula_list', $t);
+        $t->html_page_test($test_page, 'formula_list', 'formula_list', $t);
     }
 
 }

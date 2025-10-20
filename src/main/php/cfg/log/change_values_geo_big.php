@@ -48,10 +48,10 @@ class change_values_geo_big extends change_value_geo
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all geo value changes done by any user on values with a big group id';
+    const string TBL_COMMENT = 'to log all geo value changes done by any user on values with a big group id';
 
     // field list to identify the value with a big group id that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [change_value::FLD_GROUP_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
     );
 

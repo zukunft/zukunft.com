@@ -116,12 +116,12 @@ class word extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::WORD_ADD;
     const msg_id MSG_EDIT = msg_id::WORD_EDIT;
     const msg_id MSG_DEL = msg_id::WORD_DEL;
@@ -136,6 +136,9 @@ class word extends sandbox_code_id
 
     // the main parent phrase
     private ?phrase $parent = null;
+
+    // the impact used to sort the words
+    private float $impact = 0.0;
 
     // the default view
     private ?view $msk = null;
@@ -163,6 +166,11 @@ class word extends sandbox_code_id
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 if ($url_array[url_var::VIEW] != null) {
                     $this->set_view_id($url_array[url_var::VIEW]);
+                }
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
                 }
             }
             if (array_key_exists(url_var::VIEW_LONG, $url_array)) {
@@ -197,6 +205,15 @@ class word extends sandbox_code_id
         } else {
             $this->set_plural(null);
         }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
+        } else {
+            $this->impact = 0.0;
+        }
         if (array_key_exists(json_fields::PARENT, $json_array)) {
             $this->set_parent($json_array[json_fields::PARENT]);
         } else {
@@ -219,6 +236,7 @@ class word extends sandbox_code_id
     {
         $vars = parent::api_array();
 
+        // usage and impact are not included here because this system value is never updated by the frontend
         $vars[json_fields::PLURAL] = $this->get_plural();
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
@@ -249,6 +267,11 @@ class word extends sandbox_code_id
     function parent(): ?phrase
     {
         return $this->parent;
+    }
+
+    function impact(): float
+    {
+        return $this->impact;
     }
 
     function set_view_id(?int $view_id): void

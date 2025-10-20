@@ -74,9 +74,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class sql_par_field_list
 {
     // assumed positions of the field name, value and type in the array used for set
-    private const FLD_POS = 0;
-    private const VAL_POS = 1;
-    private const TYP_POS = 2;
+    private const int FLD_POS = 0;
+    private const int VAL_POS = 1;
+    private const int TYP_POS = 2;
 
     public array $lst = [];  // a list of sql parameter fields
 

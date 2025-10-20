@@ -298,7 +298,7 @@ class component_link extends sandbox_link
      * @param object|null $test_obj if not null the unit testing object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         log_debug();
 
@@ -377,12 +377,10 @@ class component_link extends sandbox_link
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
-        if ($this->id() != 0) {
-            $vars[json_fields::LINK_ID] = $this->id();
-        }
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            if ($this->id() != 0) {
+                $vars[json_fields::LINK_ID] = $this->id();
+            }
             if ($this->component() != null) {
                 $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
             }
@@ -391,12 +389,17 @@ class component_link extends sandbox_link
             }
             // TODO Prio 2 activate
             //$vars[json_fields::TYPE] = $this->type_id();
-            if ($this->pos_type_code_id() != position_types::BELOW or $this->id() != 0) {
+            if ($this->pos_type_code_id() != position_types::DEFAULT or $this->id() != 0) {
                 $vars[json_fields::POS_TYPE] = $this->pos_type_id();
             }
-            if ($this->style != null) {
+            if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            if ($this->id() != 0) {
+                $vars[json_fields::ID] = $this->id();
+            }
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;
@@ -521,7 +524,7 @@ class component_link extends sandbox_link
     }
 
     /**
-     * @return string the code id of the position type for the component in the linked view by the database id
+     * @return string|null the code id of the position type for the component in the linked view by the database id
      */
     function pos_type_code_id(): ?string
     {
@@ -581,7 +584,11 @@ class component_link extends sandbox_link
      */
     function style_id(): ?int
     {
-        return $this->style?->id();
+        $style_id = $this->style?->id();
+        if ($style_id == null) {
+            $style_id = $this->component()->style_id();
+        }
+        return $style_id;
     }
 
     /**
@@ -738,7 +745,7 @@ class component_link extends sandbox_link
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
-            $this->set_id(0);
+            $this->id = 0;
         }
 
         $sc->set_class($this::class);
@@ -1252,7 +1259,7 @@ class component_link extends sandbox_link
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
@@ -1275,7 +1282,7 @@ class component_link extends sandbox_link
                 $cmp_lnk_typ_cac
             );
         }
-        if ($sbx->pos() <> $this->pos()) {
+        if ($sbx->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
@@ -1290,7 +1297,7 @@ class component_link extends sandbox_link
                 $sbx->pos()
             );
         }
-        if ($sbx->pos_type_id() <> $this->pos_type_id()) {
+        if ($sbx->pos_type_id() !== $this->pos_type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
@@ -1313,7 +1320,7 @@ class component_link extends sandbox_link
                 $pos_typ_cac
             );
         }
-        if ($sbx->style_id() <> $this->style_id()) {
+        if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,

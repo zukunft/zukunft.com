@@ -53,11 +53,11 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class user_message
 {
     // the message types that defines what needs to be done next
-    const OK = 1;
-    const NOK = 2;
-    const WARNING = 3;
-    //const YES_NO = 4;
-    //const CONFIRM_CANCEL = 5;
+    const int OK = 1;
+    const int NOK = 2;
+    const int WARNING = 3;
+    //const int YES_NO = 4;
+    //const int CONFIRM_CANCEL = 5;
 
     private int $msg_status;
     private int|null $checksum = null;
@@ -524,40 +524,14 @@ class user_message
     }
 
     /**
-     * TODO review
+     * TODO Prio 3 review
      * @return string the translated text for all messages with vars
      */
     function var_message_text(): string
     {
         global $mtr;
-
-        $part = '';
-        foreach ($this->msg_var_lst as $msg_var) {
-            if ($part != '') {
-                $part .= ', ';
-            }
-            $msg_txt = $mtr->txt($msg_var[0]);
-            foreach ($msg_var[1] as $key => $var) {
-                // TODO use a library function for this
-                // avoid using escaped var makers (probably not 100% correct)
-                $msg_txt = str_replace(
-                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
-                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
-                // replace the var
-                $msg_txt = str_replace(
-                    msg_id::VAR_START . $key . msg_id::VAR_END,
-                    $var, $msg_txt);
-                // undo escaped vars
-                $msg_txt = str_replace(
-                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
-                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
-            }
-            // replace the escaped var makers
-            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
-            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
-            $part .= $msg_txt;
-        }
-        return $part;
+        $lib = new library();
+        return $lib->msg_var_text($this->msg_var_lst, $mtr);
     }
 
     /**

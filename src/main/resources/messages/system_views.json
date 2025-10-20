@@ -339,11 +339,48 @@
       "ui_msg_code_id": "system_sub_title_usage"
     },
     {
+      "name": "system sub title usage number",
+      "description": "show the language specific sub title and the number how many times the object has been used",
+      "type": "system_sub_title_var",
+      "code_id": "system_sub_title_value_usage",
+      "ui_msg_code_id_vars": "system_sub_title_var_usage",
+      "ui_msg_code_id_exception": "system_sub_title_no_usage",
+      "ui_msg_value_exception": 0
+    },
+    {
+      "name": "system sub title triples",
+      "description": "show the language specific sub title for a triple list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_triples",
+      "ui_msg_code_id": "system_sub_title_triples"
+    },
+    {
+      "name": "system sub title references",
+      "description": "show the language specific sub title for a reference list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_references",
+      "ui_msg_code_id": "system_sub_title_references"
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
       "code_id": "system_sub_title_values",
       "ui_msg_code_id": "system_sub_title_values"
+    },
+    {
+      "name": "system sub title formulas",
+      "description": "show the language specific sub title for a formula list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_formulas",
+      "ui_msg_code_id": "system_sub_title_formulas"
+    },
+    {
+      "name": "system sub title log",
+      "description": "show the language specific sub title for the change log",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_log",
+      "ui_msg_code_id": "system_sub_title_log"
     },
     {
       "name": "system title about",
@@ -905,13 +942,6 @@
       "ui_msg_code_id": "form_select_phrase_type"
     },
     {
-      "name": "system form select verb type",
-      "description": "selector for the verb type",
-      "type": "system_form_select_verb_type",
-      "code_id": "form_select_verb_type",
-      "ui_msg_code_id": "form_select_verb_type"
-    },
-    {
       "name": "system form select source type",
       "description": "selector for the source type",
       "type": "system_form_select_source_type",
@@ -1093,6 +1123,12 @@
       "code_id": "show_field_name"
     },
     {
+      "name": "system show field description",
+      "description": "the object description as read only",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    },
+    {
       "name": "system show value usage",
       "description": "the value usage as read only",
       "type": "system_show_field_usage",
@@ -1152,16 +1188,19 @@
     },
     {
       "name": "system formatter row start",
+      "description": "to start a new row and combine the following components in one row until the row end is triggered",
       "type": "row_start",
       "code_id": "row_start"
     },
     {
       "name": "system formatter row right",
+      "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
       "type": "row_right",
       "code_id": "row_right"
     },
     {
       "name": "system formatter row end",
+      "description": "to close the previous opened row and show the components collected since the start in one row",
       "type": "row_end",
       "code_id": "row_end"
     },
@@ -1207,6 +1246,18 @@
       "description": "changeable list of formulas related to this word",
       "type": "formula_list",
       "code_id": "formula_list_word"
+    },
+    {
+      "name": "triples that use a verb",
+      "description": "list of triples which use a given verb",
+      "type": "triples_by_verb",
+      "code_id": "triples_by_verb"
+    },
+    {
+      "name": "formulas that use a verb",
+      "description": "list of formulas which use a given verb",
+      "type": "formulas_by_verb",
+      "code_id": "formulas_by_verb"
     },
     {
       "name": "assigned phrases of this formula",
@@ -1299,6 +1350,66 @@
       "code_id": "change_log_word"
     },
     {
+      "name": "change log verb",
+      "description": "show the change log of this verb",
+      "type": "change_log",
+      "code_id": "change_log_verb"
+    },
+    {
+      "name": "change log triple",
+      "description": "show the change log of this triple",
+      "type": "change_log",
+      "code_id": "change_log_triple"
+    },
+    {
+      "name": "change log source",
+      "description": "show the change log of this source",
+      "type": "change_log",
+      "code_id": "change_log_source"
+    },
+    {
+      "name": "change log reference",
+      "description": "show the change log of this reference",
+      "type": "change_log",
+      "code_id": "change_log_reference"
+    },
+    {
+      "name": "change log value",
+      "description": "show the change log of this value",
+      "type": "change_log",
+      "code_id": "change_log_value"
+    },
+    {
+      "name": "change log group",
+      "description": "show the change log of this group",
+      "type": "change_log",
+      "code_id": "change_log_group"
+    },
+    {
+      "name": "change log formula",
+      "description": "show the change log of this formula",
+      "type": "change_log",
+      "code_id": "change_log_formula"
+    },
+    {
+      "name": "change log result",
+      "description": "show the change log of this result",
+      "type": "change_log",
+      "code_id": "change_log_result"
+    },
+    {
+      "name": "change log view",
+      "description": "show the change log of this view",
+      "type": "change_log",
+      "code_id": "change_log_view"
+    },
+    {
+      "name": "change log component",
+      "description": "show the change log of this component",
+      "type": "change_log",
+      "code_id": "change_log_component"
+    },
+    {
       "name": "system form field plural",
       "description": "the plural language form field in a form (to be move to languages forms)",
       "type": "system_form_field_plural",
@@ -1318,6 +1429,13 @@
       "type": "system_form_field_plural_reverse",
       "code_id": "form_field_plural_reverse",
       "ui_msg_code_id": "form_field_plural_reverse"
+    },
+    {
+      "name": "system form field name in formulas",
+      "description": "a form field for the verb name used in formulas",
+      "type": "system_form_field_name_in_formulas",
+      "code_id": "form_field_name_in_formulas",
+      "ui_msg_code_id": "form_field_name_in_formulas"
     }
   ],
   "views": [
@@ -1478,49 +1596,78 @@
         },
         {
           "position": "14",
-          "name": "system sub title usage",
-          "style": "col-md-12"
+          "name": "system formatter row end"
         },
         {
           "position": "15",
+          "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "18",
           "name": "parents of word",
           "style": "col-md-6"
         },
         {
-          "position": "16",
+          "position": "19",
           "name": "children of word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "17",
-          "name": "system sub title values",
-          "style": "col-md-6"
-        },
-        {
-          "position": "18",
-          "name": "value list of word",
-          "style": "col-md-6"
-        },
-        {
-          "position": "19",
-          "name": "ref list word",
-          "position_type": "side",
-          "style": "col-md-6"
-        },
-        {
           "position": "20",
-          "name": "system form end"
+          "name": "system sub title values",
+          "style": "col-md-4"
         },
         {
           "position": "21",
+          "name": "value list of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "22",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "23",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "24",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "22",
+          "position": "25",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "26",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "27",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "28",
           "name": "change log word",
-          "position_type": "side"
+          "position_type": "combine"
+        },
+        {
+          "position": "29",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -1549,15 +1696,94 @@
         },
         {
           "position": "5",
-          "name": "system form button cancel"
+          "name": "system show field description"
         },
         {
           "position": "6",
-          "name": "system form button del"
+          "name": "system formatter row right"
         },
         {
           "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "parents of word",
+          "style": "col-md-6"
+        },
+        {
+          "position": "14",
+          "name": "children of word",
+          "position_type": "side",
+          "style": "col-md-6"
+        },
+        {
+          "position": "15",
+          "name": "system sub title values",
+          "style": "col-md-4"
+        },
+        {
+          "position": "16",
+          "name": "value list of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "usage word",
+          "position_type": "side"
+        },
+        {
+          "position": "20",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "22",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "23",
+          "name": "change log word",
+          "position_type": "combine"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -1582,7 +1808,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -1590,19 +1817,24 @@
         },
         {
           "position": "6",
-          "name": "system form select verb type"
+          "name": "system form field plural",
+          "style": "col-md-4"
         },
         {
           "position": "7",
-          "name": "system form field plural"
+          "name": "system form field reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "8",
-          "name": "system form field reverse"
+          "name": "system form field plural reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form field plural reverse"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
@@ -1614,6 +1846,10 @@
         },
         {
           "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1639,7 +1875,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -1647,19 +1884,24 @@
         },
         {
           "position": "6",
-          "name": "system form select verb type"
+          "name": "system form field plural",
+          "style": "col-md-4"
         },
         {
           "position": "7",
-          "name": "system form field plural"
+          "name": "system form field reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "8",
-          "name": "system form field reverse"
+          "name": "system form field plural reverse",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form field plural reverse"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
@@ -1671,7 +1913,54 @@
         },
         {
           "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "18",
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "19",
+          "name": "triples that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "20",
+          "name": "system sub title formulas",
+          "style": "col-md-4"
+        },
+        {
+          "position": "21",
+          "name": "formulas that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "22",
+          "name": "system sub title log",
+          "style": "col-md-4"
+        },
+        {
+          "position": "23",
+          "name": "change log verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -1700,15 +1989,70 @@
         },
         {
           "position": "5",
-          "name": "system form button cancel"
+          "name": "system show field description"
         },
         {
           "position": "6",
-          "name": "system form button del"
+          "name": "system formatter row right"
         },
         {
           "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "system sub title triples",
+          "style": "col-md-4"
+        },
+        {
+          "position": "14",
+          "name": "triples that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "system sub title formulas",
+          "style": "col-md-4"
+        },
+        {
+          "position": "16",
+          "name": "formulas that use a verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "system sub title log",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "change log verb",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -1948,7 +2292,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -2011,7 +2356,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -2111,7 +2457,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -2156,7 +2503,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -2429,7 +2777,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -2470,7 +2819,8 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
@@ -4031,6 +4381,7 @@
         {
           "position": "5",
           "name": "system form field name",
+          "style": "col-md-8",
           "position_type": "side"
         },
         {
@@ -4092,6 +4443,7 @@
         {
           "position": "5",
           "name": "system form field name",
+          "style": "col-md-8",
           "position_type": "side"
         },
         {

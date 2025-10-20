@@ -432,6 +432,47 @@ class term extends combine_named_dsp
 
 
     /*
+     * conversion
+     */
+
+    function get_word(): word
+    {
+        $wrd = new word();
+        if (get_class($this->obj) == word::class) {
+            $wrd = $this->obj;
+        }
+        return $wrd;
+    }
+
+    function get_triple(): triple
+    {
+        $lnk = new triple();
+        if (get_class($this->obj) == triple::class) {
+            $lnk = $this->obj;
+        }
+        return $lnk;
+    }
+
+    function get_formula(): formula
+    {
+        $frm = new formula();
+        if (get_class($this->obj) == formula::class) {
+            $frm = $this->obj;
+        }
+        return $frm;
+    }
+
+    function get_verb(): verb
+    {
+        $vrb = new verb();
+        if (get_class($this->obj) == verb::class) {
+            $vrb = $this->obj;
+        }
+        return $vrb;
+    }
+
+
+    /*
      * display
      */
 

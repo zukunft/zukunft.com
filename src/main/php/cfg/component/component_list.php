@@ -295,7 +295,7 @@ class component_list extends sandbox_list_named
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();
@@ -331,7 +331,7 @@ class component_list extends sandbox_list_named
      * @param import|null $imp the import object with the filename and the estimated time of arrival
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(import $imp = null): user_message
+    function save(?import $imp = null): user_message
     {
         global $cfg;
 

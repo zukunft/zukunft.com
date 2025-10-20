@@ -36,11 +36,11 @@ enum source_types: string
 {
 
     // list of the source types that have a coded functionality
-    const XBRL = "xbrl";
-    const XBRL_ID = 2; // the fixed database ID for testing
-    const CSV = "csv";
-    const CSV_ID = 3; // the fixed database ID for testing
-    const PDF = "pdf";
-    const PDF_ID = 4; // the fixed database ID for testing
+    const string XBRL = "xbrl";
+    const int XBRL_ID = 2; // the fixed database ID for testing
+    const string CSV = "csv";
+    const int CSV_ID = 3; // the fixed database ID for testing
+    const string PDF = "pdf";
+    const int PDF_ID = 4; // the fixed database ID for testing
 
 }

@@ -61,18 +61,18 @@ class job_time extends db_object_seq_id
      */
 
     // field names and comments used for the database creation
-    const TBL_COMMENT = 'to schedule jobs with predefined parameters';
-    const FLD_SCHEDULE_COM = 'the crontab for the job schedule';
-    const FLD_SCHEDULE = 'schedule';
-    const FLD_USER_COM = 'the id of the user who edit the scheduler the last time';
-    const FLD_TYPE_COM = 'the id of the job type that should be started';
-    const FLD_START_COM = 'the last start of the job';
-    const FLD_START = 'start';
-    const FLD_PARAMETER_COM = 'the phrase id that contains all parameters for the next job start';
-    const FLD_PARAMETER = 'parameter';
+    const string TBL_COMMENT = 'to schedule jobs with predefined parameters';
+    const string FLD_SCHEDULE_COM = 'the crontab for the job schedule';
+    const string FLD_SCHEDULE = 'schedule';
+    const string FLD_USER_COM = 'the id of the user who edit the scheduler the last time';
+    const string FLD_TYPE_COM = 'the id of the job type that should be started';
+    const string FLD_START_COM = 'the last start of the job';
+    const string FLD_START = 'start';
+    const string FLD_PARAMETER_COM = 'the phrase id that contains all parameters for the next job start';
+    const string FLD_PARAMETER = 'parameter';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_SCHEDULE, sql_field_type::CRONTAB, sql_field_default::NULL, sql::INDEX, '', self::FLD_SCHEDULE_COM],
         [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],

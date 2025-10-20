@@ -321,7 +321,7 @@ class component_link_list extends sandbox_link_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {

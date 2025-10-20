@@ -35,15 +35,18 @@
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::WEB . 'frontend.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -57,22 +60,22 @@ class html_base
     // TODO move all html const used in zukunft.com to html_names
 
     // fixed elements
-    const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
+    const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
 
     // the html input types used
-    const INPUT_TEXT = 'text';
-    const INPUT_NUMBER = 'text';
-    const INPUT_SUBMIT = 'submit';
-    const INPUT_SEARCH = 'search';
-    const INPUT_CHECKBOX = 'checkbox';
-    const INPUT_FILE = 'file';
-    const INPUT_HIDDEN = 'hidden';
-    const INPUT_PASSWORD = 'password';
-    const INPUT_EMAIL = 'email';
+    const string INPUT_TEXT = 'text';
+    const string INPUT_NUMBER = 'text';
+    const string INPUT_SUBMIT = 'submit';
+    const string INPUT_SEARCH = 'search';
+    const string INPUT_CHECKBOX = 'checkbox';
+    const string INPUT_FILE = 'file';
+    const string INPUT_HIDDEN = 'hidden';
+    const string INPUT_PASSWORD = 'password';
+    const string INPUT_EMAIL = 'email';
 
-    // bootstrap const used in zukunft.com
-    const BS_FORM = 'form-control';
-    const BS_BTN = 'btn btn-space col-1';
+    // bootstrap const string used in zukunft.com
+    const string BS_FORM = 'form-control';
+    const string BS_BTN = 'btn btn-space col-1';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -80,15 +83,15 @@ class html_base
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
-    const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
+    const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
-    const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
+    const string IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
-    const SIZE_FULL = 'full';
-    const SIZE_HALF = 'half';
+    const string SIZE_FULL = 'full';
+    const string SIZE_HALF = 'half';
 
-    const WIDTH_FULL = '800px';
-    const WIDTH_HALF = '400px';
+    const string WIDTH_FULL = '800px';
+    const string WIDTH_HALF = '400px';
 
     /*
      * header & footer
@@ -284,7 +287,7 @@ class html_base
      */
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
@@ -358,7 +361,7 @@ class html_base
     }
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @return string the created url
@@ -366,6 +369,21 @@ class html_base
     function url_api(string $obj_name): string
     {
         return $this->host() . rest_ctrl::PATH . $obj_name . '/';
+    }
+
+    /**
+     * build a url for an external webside
+     *
+     * @param string $url the base url of the external page
+     * @param string $id the external id of the entry or subpage
+     * @param string $name the name of the link as shown to the user
+     * @param string $description the tooltip for the link
+     * @
+     * @return string the created url
+     */
+    function url_ex(string $url, string $id, string $name, string $description, string $style = ''): string
+    {
+        return $this->ref($url . $id, $name, $description, $style);
     }
 
     /**
@@ -702,6 +720,7 @@ class html_base
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
+        $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
@@ -727,10 +746,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -818,6 +837,7 @@ class html_base
         string $script_parameter,
         string $back = ''): string
     {
+        $but = new button();
         $result = '';
 
         $row_nbr = 0;
@@ -840,7 +860,7 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            $result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -1127,6 +1147,7 @@ class html_base
 // end a html form
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
+        $but = new button();
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
@@ -1153,10 +1174,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -1295,7 +1316,7 @@ class html_base
           $result .= '</script> ';
         } else {
         */
-        $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
+        $result .= ' <form action="/view.php?m=import" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
         $result .= '   <input type="' . html_base::INPUT_FILE .
             '" name="fileToUpload" id="fileToUpload">';
@@ -1372,14 +1393,28 @@ class html_base
         return '<input' . $class . $type . $name . $id . $value . $placeholder . '>';
     }
 
-    function div(string $text, string $class = ''): string
+    function div_form(string $text, string $style = ''): string
     {
-        if ($class == '') {
-            $class = 'form-group ' . view_styles::COL_SM_4;
-        } else {
-            $class = 'form-group ' . $class;
+        return $this->div($text, 'form-group ' . $style);
+    }
+
+    function div(string $text, string $style = ''): string
+    {
+        if ($style == '') {
+            $style = view_styles::COL_SM_4;
         }
-        return '<div class="' . $class . '">' . $text . '</div>';
+        return '<div class="' . $style . '">' . $text . '</div>';
+    }
+
+    function add_style(string $text, ?int $style_id = null): string
+    {
+        if ($style_id != null and $text != '') {
+            global $msk_sty_cac;
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+            $text = $this->div($text, $style_txt);
+        }
+        return $text;
     }
 
     /**
@@ -1414,7 +1449,7 @@ class html_base
     ): string
     {
         $text = $this->label($name) . $this->input($name, $value, $type, $input_class);
-        return $this->div($text, $col_class);
+        return $this->div_form($text, $col_class);
     }
 
     /**
@@ -1441,7 +1476,8 @@ class html_base
      */
     function row_right(): string
     {
-        $result = '<div class="row ';
+        $result = $this->lf();
+        $result .= '<div class="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
         return $result;

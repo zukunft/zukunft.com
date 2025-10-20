@@ -44,25 +44,6 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -86,6 +67,27 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 class triple extends sandbox_code_id
 {
 
@@ -93,12 +95,12 @@ class triple extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::TRIPLE_ADD;
     const string VIEW_EDIT = views::TRIPLE_EDIT;
     const string VIEW_DEL = views::TRIPLE_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
     const msg_id MSG_EDIT = msg_id::TRIPLE_EDIT;
     const msg_id MSG_DEL = msg_id::TRIPLE_DEL;
@@ -122,6 +124,8 @@ class triple extends sandbox_code_id
             $this->plural = $value;
         }
     }
+    // the impact used to sort the triples
+    private float $impact = 0.0;
 
 
     /*
@@ -155,6 +159,11 @@ class triple extends sandbox_code_id
                 $this->plural = $url_array[url_var::PLURAL];
             } else {
                 $this->plural = null;
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
             }
         }
         return $usr_msg;
@@ -228,6 +237,15 @@ class triple extends sandbox_code_id
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->plural = $json_array[json_fields::PLURAL];
         }
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
+        } else {
+            $this->impact = 0.0;
+        }
         return $usr_msg;
     }
 
@@ -248,6 +266,7 @@ class triple extends sandbox_code_id
         $vars[json_fields::TO] = $this->to()->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
+        // usage and impact are not included here because this system value is never updated by the frontend
         return $vars;
     }
 
@@ -360,6 +379,19 @@ class triple extends sandbox_code_id
         return $this->plural;
     }
 
+    function impact(): float
+    {
+        return $this->impact;
+    }
+
+    function has_verb(verb $vrb): bool
+    {
+        if ($this->verb->id() == $vrb->id()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * cast
@@ -420,6 +452,14 @@ class triple extends sandbox_code_id
 
         log_debug($wrd_lst->name_tip());
         return $wrd_lst;
+    }
+
+    /**
+     * @return bool true if the triple is normally not shown to the user e.g. scaling of one is assumed
+     */
+    function is_hidden(): bool
+    {
+        return $this->is_type(phrase_type::SCALING_HIDDEN);
     }
 
 

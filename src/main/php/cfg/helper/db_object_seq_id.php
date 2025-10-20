@@ -93,7 +93,7 @@ class db_object_seq_id extends db_object
 
     // database fields and comments
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
     /*
@@ -337,7 +337,7 @@ class db_object_seq_id extends db_object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_db_obj(db_object_seq_id $db_obj, object $test_obj = null): user_message
+    function import_db_obj(db_object_seq_id $db_obj, ?object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         // add a dummy id for unit testing

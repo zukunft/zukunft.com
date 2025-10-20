@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class language_forms extends type_list
 {
 
-    const NAME = url_var::LANGUAGE_FORM;
+    const string NAME = url_var::LANGUAGE_FORM;
 
     /**
      * create the HTML code to select a language form

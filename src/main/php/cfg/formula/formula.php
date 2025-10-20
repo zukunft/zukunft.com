@@ -98,6 +98,7 @@ include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
@@ -141,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -153,7 +155,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use DateTime;
 use Exception;
-use math;
 
 class formula extends sandbox_code_id
 {
@@ -189,7 +190,8 @@ class formula extends sandbox_code_id
     public ?bool $need_all_val = null;     // calculate and save the result only if all used values are not null
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
     private ?view $view;                   // name of the default view for this formula
-    private ?int $usage = null;            // indicator of the popularity for sorting selection boxes
+    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
+    private ?float $impact = null;
 
     // in memory only fields
     // list of phrase that link to this formula
@@ -234,7 +236,7 @@ class formula extends sandbox_code_id
         $this->type_id = null;
         $this->need_all_val = null;
         $this->last_update = null;
-        $this->usage = null;
+        $this->impact = null;
 
         $this->lnk_lst = null;
         $this->phr_lst = null;
@@ -287,8 +289,8 @@ class formula extends sandbox_code_id
                     $this->set_view_id($db_row[formula_db::FLD_VIEW]);
                 }
             }
-            if (array_key_exists(formula_db::FLD_USAGE, $db_row)) {
-                $this->set_usage($db_row[formula_db::FLD_USAGE]);
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                $this->impact = $db_row[sql_db::FLD_IMPACT];
             }
 
             if ($this->type_id > 0) {
@@ -342,10 +344,10 @@ class formula extends sandbox_code_id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
@@ -372,7 +374,7 @@ class formula extends sandbox_code_id
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         global $frm_typ_cac;
 
@@ -435,13 +437,17 @@ class formula extends sandbox_code_id
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
+            $vars[json_fields::REF_TEXT] = $this->ref_text;
+            $vars[json_fields::IMPACT] = $this->impact();
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+            $vars[json_fields::IMPACT] = $this->impact();
         }
 
         return $vars;
@@ -472,17 +478,6 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * set the value to rank the formulas by usage
-     *
-     * @param int|null $usage a higher value moves the formula to the top of the selection list
-     * @return void
-     */
-    function set_usage(?int $usage): void
-    {
-        $this->usage = $usage;
-    }
-
-    /**
      * @param int $id the id of the default view that should be remembered
      */
     function set_view_id(int $id): void
@@ -503,14 +498,6 @@ class formula extends sandbox_code_id
         } else {
             return $this->view->id();
         }
-    }
-
-    /**
-     * @return int|null a higher number indicates a higher usage
-     */
-    function usage(): ?int
-    {
-        return $this->usage;
     }
 
     /**
@@ -541,6 +528,27 @@ class formula extends sandbox_code_id
             $this->generate_ref_text();
         }
         return $this->ref_text;
+    }
+
+    /**
+     * set the cache value to sort this sandbox object by relevance
+     * the impact is calculated based on the formula assigned to the object
+     * by the system triple "impact phrase"
+     *
+     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->impact = $impact;
+    }
+
+    /**
+     * @return float|null a higher number indicates a higher relevance
+     */
+    function impact(): ?float
+    {
+        return $this->impact;
     }
 
 
@@ -826,6 +834,9 @@ class formula extends sandbox_code_id
                 $this->last_update = $used_obj->last_update;
             }
         }
+        if ($obj->impact() != null) {
+            $this->set_impact($obj->impact());
+        }
 
         return $usr_msg;
     }
@@ -905,13 +916,15 @@ class formula extends sandbox_code_id
         if ($this->need_all_val != $db_obj->need_all_val) {
             $result = true;
         }
+        if ($this->impact != null) {
+            if ($this->impact != $db_obj->impact) {
+                $result = true;
+            }
+        }
         if ($this->view_id() != null) {
             if ($this->view_id() != $db_obj->view_id()) {
                 $result = true;
             }
-        }
-        if ($this->usage() != $db_obj->usage()) {
-            $result = true;
         }
         return $result;
     }
@@ -1379,7 +1392,7 @@ class formula extends sandbox_code_id
                         }
                         if ($can_calc) {
                             log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
-                            $calc = new math;
+                            $calc = new calc_internal();
                             $res->set_number($calc->parse($res->num_text));
                             $res->is_updated = true;
                             log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
@@ -1622,7 +1635,7 @@ class formula extends sandbox_code_id
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
@@ -1633,7 +1646,7 @@ class formula extends sandbox_code_id
         return $usr_msg;
     }
 
-    private function assign_name(string $phr_name, object $test_obj = null): string
+    private function assign_name(string $phr_name, ?object $test_obj = null): string
     {
         $result = '';
         $phr = new phrase($this->user());
@@ -1740,6 +1753,8 @@ class formula extends sandbox_code_id
                 $vars[json_fields::ASSIGNED_WORD] = $exp_lst;
             }
         }
+        // the impact is only included in the export as an indication to validate the consistency
+        $vars[json_fields::IMPACT] = $this->impact();
 
         return $vars;
     }
@@ -2074,7 +2089,7 @@ class formula extends sandbox_code_id
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
     function generate_ref_text(
-        ?term_list $trm_lst = null,
+        ?term_list   $trm_lst = null,
         user_message $usr_msg = new user_message()
     ): string
     {
@@ -2908,7 +2923,7 @@ class formula extends sandbox_code_id
                 formula_db::FLD_ALL_NEEDED,
                 formula_db::FLD_LAST_UPDATE,
                 formula_db::FLD_VIEW,
-                formula_db::FLD_USAGE
+                sql_db::FLD_IMPACT
             ],
             parent::db_fields_all_sandbox()
         );
@@ -2926,7 +2941,7 @@ class formula extends sandbox_code_id
     function db_fields_changed(
         sandbox|formula $sbx,
         sql_type_list   $sc_par_lst = new sql_type_list(),
-        user_message      $usr_msg = new user_message()
+        user_message    $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -2936,7 +2951,7 @@ class formula extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
@@ -2951,7 +2966,7 @@ class formula extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->ref_text <> $this->ref_text) {
+        if ($sbx->ref_text !== $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
@@ -2966,7 +2981,7 @@ class formula extends sandbox_code_id
                 $sbx->ref_text
             );
         }
-        if ($sbx->usr_text <> $this->usr_text) {
+        if ($sbx->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
@@ -2981,7 +2996,7 @@ class formula extends sandbox_code_id
                 $sbx->usr_text
             );
         }
-        if ($sbx->need_all_val <> $this->need_all_val) {
+        if ($sbx->need_all_val !== $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
@@ -2996,7 +3011,7 @@ class formula extends sandbox_code_id
                 $sbx->need_all_val
             );
         }
-        if ($sbx->ref_text <> $this->ref_text
+        if ($sbx->ref_text !== $this->ref_text
             or $sbx->type_id() <> $this->type_id()
             or $sbx->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
@@ -3006,7 +3021,7 @@ class formula extends sandbox_code_id
                 sql_field_type::TIME
             );
         }
-        if ($sbx->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() !== $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
@@ -3021,19 +3036,19 @@ class formula extends sandbox_code_id
                 $sbx->view
             );
         }
-        if ($sbx->usage() <> $this->usage()) {
+        if ($sbx->impact() !== $this->impact()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_USAGE,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                formula_db::FLD_USAGE,
-                $this->usage(),
-                formula_db::FLD_USAGE_SQL_TYP,
-                $sbx->usage()
+                sql_db::FLD_IMPACT,
+                $this->impact(),
+                sql_db::FLD_IMPACT_SQL_TYP,
+                $sbx->impact()
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

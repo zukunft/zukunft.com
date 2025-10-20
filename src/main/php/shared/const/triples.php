@@ -42,104 +42,104 @@ class triples
     // *_ID is the expected database id only used for system testing
 
     // keyword to select the system configuration
-    const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 92;
+    const string SYSTEM_CONFIG = 'system configuration';
+    const int SYSTEM_CONFIG_ID = 92;
 
     // triple names used for the system configuration
-    const NUMBER_FORMAT = 'number format';
-    const PERCENT_DECIMAL = 'percent decimal';
-    const BLOCK_SIZE = 'block size';
-    const AVERAGE_DELAY = 'average delay';
-    const START_DELAY = 'start delay';
-    const MAX_DELAY = 'max delay';
-    const FILE_READ = 'file read';
-    const OBJECT_CREATION = 'object creation';
-    const OBJECT_STORING = 'object storing';
-    const TIME_PERCENT = 'time percent';
-    const EXPECTED_TIME = 'expected time';
-    const BYTES_PER_SECOND = 'bytes second';
-    const OBJECTS_PER_SECOND = 'objects second';
-    const MAX_LEVELS = 'max levels';
-    const AUTOMATIC_CREATE = 'automatic create';
-    const ROW_LIMIT = 'row limit';
-    const LINK_LIST = 'link list';
-    const RESPONSE_TIME = 'response time';
-    const OUTPUT_FORMAT = 'output format';
+    const string NUMBER_FORMAT = 'number format';
+    const string PERCENT_DECIMAL = 'percent decimal';
+    const string BLOCK_SIZE = 'block size';
+    const string AVERAGE_DELAY = 'average delay';
+    const string START_DELAY = 'start delay';
+    const string MAX_DELAY = 'max delay';
+    const string FILE_READ = 'file read';
+    const string OBJECT_CREATION = 'object creation';
+    const string OBJECT_STORING = 'object storing';
+    const string TIME_PERCENT = 'time percent';
+    const string EXPECTED_TIME = 'expected time';
+    const string BYTES_PER_SECOND = 'bytes second';
+    const string OBJECTS_PER_SECOND = 'objects second';
+    const string MAX_LEVELS = 'max levels';
+    const string AUTOMATIC_CREATE = 'automatic create';
+    const string ROW_LIMIT = 'row limit';
+    const string LINK_LIST = 'link list';
+    const string RESPONSE_TIME = 'response time';
+    const string OUTPUT_FORMAT = 'output format';
 
     // triples included in the initial setup that are used for system testing
-    const MATH_CONST = 'mathematical constant';
-    const MATH_CONST_GIVEN = 'math const';
-    const MATH_CONST_ID = 1;
-    const MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
-    const PI = 'Pi (math)';
-    const PI_NAME = 'Pi (math)';
-    const PI_ID = 51;
-    const PI_COM = 'ratio of the circumference of a circle to its diameter';
-    const PI_SYMBOL = 'π (unit symbol)';
-    const PI_SYMBOL_NAME = 'π (unit symbol)';
-    const PI_SYMBOL_ID = 2;
-    const PI_SYMBOL_COM = 'ratio of the circumference of a circle to its diameter';
-    const E = '𝑒 (unit symbol)';
-    const E_ID = 3;
-    const E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
-    const SYSTEM_TEST_ADD = 'System Test Triple';
-    const SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
-    const SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
-    const SYSTEM_TEST_ADD_USAGE = 123;
-    const SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
-    const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
-    const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
+    const string MATH_CONST = 'mathematical constant';
+    const string MATH_CONST_GIVEN = 'math const';
+    const int MATH_CONST_ID = 1;
+    const string MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
+    const string PI = 'Pi (math)';
+    const string PI_NAME = 'Pi (math)';
+    const int PI_ID = 51;
+    const string PI_COM = 'ratio of the circumference of a circle to its diameter';
+    const string PI_SYMBOL = 'π (unit symbol)';
+    const string PI_SYMBOL_NAME = 'π (unit symbol)';
+    const int PI_SYMBOL_ID = 2;
+    const string PI_SYMBOL_COM = 'ratio of the circumference of a circle to its diameter';
+    const string E = '𝑒 (unit symbol)';
+    const int E_ID = 3;
+    const string E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
+    const string SYSTEM_TEST_ADD = 'System Test Triple';
+    const string SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
+    const string SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
+    const int SYSTEM_TEST_ADD_USAGE = 123;
+    const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
+    const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
+    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
 
     // triple used in the default start view
-    const GLOBAL_PROBLEM = 'global problem';
-    const GLOBAL_PROBLEM_ID = 91;
-    const GLOBAL_WARMING = 'global warming';
-    const GLOBAL_WARMING_ID = 99;
-    const GWP = 'global warming potential';
-    const GWP_ID = 100;
-    const TIME_POINTS = 'time points';
-    const TIME_POINTS_ID = 103;
-    const HAPPY_TIME_POINTS = 'happy time points';
-    const HAPPY_TIME_POINTS_ID = 111;
-    const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const GLOBAL_WARMING_PROBLEM_ID = 112;
-    const POPULISM_PROBLEM = 'populism (global problem)';
-    const POPULISM_PROBLEM_ID = 105;
-    const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const POTENTIAL_HEALTH_PROBLEM_ID = 106;
-    const POVERTY_PROBLEM = 'poverty (global problem)';
-    const POVERTY_PROBLEM_ID = 108;
-    const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
-    const POTENTIAL_EDUCATION_PROBLEM_ID = 109;
-    const CASH_FLOW = 'cash flow';
-    const CASH_FLOW_ID = 127;
-    const CASH_FLOW_STATEMENT = 'cash flow statement';
-    const CASH_FLOW_STATEMENT_ID = 129;
-    const INCOME_TAX = 'income taxes';
-    const INCOME_TAX_ID = 128;
+    const string GLOBAL_PROBLEM = 'global problem';
+    const int GLOBAL_PROBLEM_ID = 91;
+    const string GLOBAL_WARMING = 'global warming';
+    const int GLOBAL_WARMING_ID = 99;
+    const string GWP = 'global warming potential';
+    const int GWP_ID = 100;
+    const string TIME_POINTS = 'time points';
+    const int TIME_POINTS_ID = 103;
+    const string HAPPY_TIME_POINTS = 'happy time points';
+    const int HAPPY_TIME_POINTS_ID = 111;
+    const string GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
+    const int GLOBAL_WARMING_PROBLEM_ID = 112;
+    const string POPULISM_PROBLEM = 'populism (global problem)';
+    const int POPULISM_PROBLEM_ID = 105;
+    const string POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
+    const int POTENTIAL_HEALTH_PROBLEM_ID = 106;
+    const string POVERTY_PROBLEM = 'poverty (global problem)';
+    const int POVERTY_PROBLEM_ID = 108;
+    const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
+    const int POTENTIAL_EDUCATION_PROBLEM_ID = 109;
+    const string CASH_FLOW = 'cash flow';
+    const int CASH_FLOW_ID = 126;
+    const string CASH_FLOW_STATEMENT = 'cash flow statement';
+    const int CASH_FLOW_STATEMENT_ID = 129;
+    const string INCOME_TAX = 'income taxes';
+    const int INCOME_TAX_ID = 127;
 
-    const TN_CUBIC_METER = 'm3';
+    const string TN_CUBIC_METER = 'm3';
 
-    const CANTON_ZURICH = 'Zurich (Canton)';
-    const CANTON_ZURICH_ID = 94;
-    const CITY_ZH = 'Zurich (City)';
-    const CITY_ZH_ID = 93;
-    const CITY_ZH_NAME = 'City of Zurich';
-    const CITY_ZH_COM = 'the city of Zurich';
-    const CITY_BE = 'Bern (City)';
-    const CITY_BE_ID = 95;
-    const CITY_GE = 'Geneva (City)';
-    const CITY_GE_ID = 96;
-    const CANTON_ZURICH_NAME = 'Canton Zurich';
-    const COMPANY_ZURICH = "Zurich Insurance";
-    const COMPANY_VESTAS = "Vestas SA";
-    const COMPANY_ABB = "ABB (company)";
-    const YEAR_2013_FOLLOW = "2014 is follower of 2013";
-    const TAXES_OF_CF = "income taxes is part of cash flow statement";
+    const string CANTON_ZURICH = 'Zurich (Canton)';
+    const int CANTON_ZURICH_ID = 94;
+    const string CITY_ZH = 'Zurich (City)';
+    const int CITY_ZH_ID = 93;
+    const string CITY_ZH_NAME = 'City of Zurich';
+    const string CITY_ZH_COM = 'the city of Zurich';
+    const string CITY_BE = 'Bern (City)';
+    const int CITY_BE_ID = 95;
+    const string CITY_GE = 'Geneva (City)';
+    const int CITY_GE_ID = 96;
+    const string CANTON_ZURICH_NAME = 'Canton Zurich';
+    const string COMPANY_ZURICH = "Zurich Insurance";
+    const string COMPANY_VESTAS = "Vestas SA";
+    const string COMPANY_ABB = "ABB (company)";
+    const string YEAR_2013_FOLLOW = "2014 is follower of 2013";
+    const string TAXES_OF_CF = "income taxes is part of cash flow statement";
 
     // list of often used triples used as a default selection e.g. for the phrase selection
     // TODO Prio 2 to be filled up
-    const BASE_TRIPLES = [
+    const array BASE_TRIPLES = [
         [self::MATH_CONST, self::MATH_CONST_ID],
         [self::CANTON_ZURICH, self::CANTON_ZURICH_ID],
         [self::CASH_FLOW, self::CASH_FLOW_ID],
@@ -164,32 +164,32 @@ class triples
     ];
 
     // list of predefined triple used for system testing that are expected to be never renamed
-    const RESERVED_NAMES = array(
+    const array RESERVED_NAMES = array(
         self::SYSTEM_CONFIG,
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_EXCLUDED
     );
 
     // array of triple names that used for db read testing and that should not be renamed
-    const FIXED_NAMES = array(
+    const array FIXED_NAMES = array(
         self::MATH_CONST
     );
 
     // list of triples that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
-    const TEST_TRIPLES = array(
+    const array TEST_TRIPLES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
         self::SYSTEM_TEST_ADD_VIA_SQL
     );
 
-    const TEST_TRIPLE_STANDARD = array(
+    const array TEST_TRIPLE_STANDARD = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_EXCLUDED
     );
 
     // list of words where the id is used for system testing
-    const TEST_TRIPLE_IDS = array(
+    const array TEST_TRIPLE_IDS = array(
         [self::CANTON_ZURICH_ID, self::CANTON_ZURICH],
         [self::CASH_FLOW_ID, self::CASH_FLOW],
         [self::CASH_FLOW_STATEMENT_ID, self::CASH_FLOW_STATEMENT],

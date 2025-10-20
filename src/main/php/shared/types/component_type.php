@@ -125,8 +125,8 @@ class component_type
     // select object types
     const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
     const int FORM_SELECT_PHRASE_TYPE_ID = 25;
-    const string FORM_SELECT_VERB_TYPE = "system_form_select_verb_type";
-    const int FORM_SELECT_VERB_TYPE_ID = 122;
+    const string LIST_VIEWS = "view_list";
+    const int LIST_VIEWS_ID = 122;
     const string FORM_SELECT_SOURCE_TYPE = "system_form_select_source_type";
     const int FORM_SELECT_SOURCE_TYPE_ID = 39;
     const string FORM_SELECT_REF_TYPE = "system_form_select_ref_type";
@@ -173,6 +173,8 @@ class component_type
     const int FORM_FIELD_REVERSE_ID = 135;
     const string FORM_FIELD_PLURAL_REVERSE = "system_form_field_plural_reverse";
     const int FORM_FIELD_PLURAL_REVERSE_ID = 136;
+    const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
+    const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
 
     // value only fields
     const string FORM_FIELD_GROUP = "system_form_field_group";
@@ -241,6 +243,8 @@ class component_type
     const int SYSTEM_TITLE_ID = 63;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 145;
+    const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
+    const int SYSTEM_SUB_TITLE_VAR_ID = 146;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
     const int SYSTEM_BODY_ABOUT_ID = 64;
     const string SYSTEM_BODY_SETUP = "system_body_setup";
@@ -312,8 +316,10 @@ class component_type
     const int LIST_PARENTS_OF_WORD_ID = 96;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 48;
-    const string LIST_TRIPLES_OF_VERB = "list_of_triples_that_use_a_verb";
+    const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
+    const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
     const int LIST_PHRASES_OF_FORMULA_ID = 48;
     const string LIST_REF = "ref_list";
@@ -324,7 +330,7 @@ class component_type
     const int LIST_RESULTS_ID = 97;
     const string LINK_LIST_WORD = "link_list";
     const int LINK_LIST_WORD_ID = 43;
-    const string USAGE_WORD = "usage";
+    const string RANK_PHRASE = "usage";
     const int USAGE_WORD_ID = 44;
 
     // user components for value
@@ -353,6 +359,8 @@ class component_type
 
     const string SHOW_NAME = "system_show_field_name";
     const int SHOW_NAME_ID = 20;
+    const string SHOW_DESCRIPTION = "system_show_field_description";
+    const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string VIEW_AFTER_CHANGE = "system_show_after_change";
@@ -449,7 +457,7 @@ class component_type
         self::FORM_SELECT_FILE,
         self::FORM_SELECT_FORMAT_EXPORT,
         self::FORM_SELECT_PHRASE_TYPE,
-        self::FORM_SELECT_VERB_TYPE,
+        self::LIST_VIEWS,
         self::FORM_SELECT_SOURCE_TYPE,
         self::FORM_SELECT_REF_TYPE,
         self::FORM_SELECT_VALUE_TYPE,
@@ -479,6 +487,7 @@ class component_type
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::SHOW_NAME,
+        self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
         self::VIEW_AFTER_CHANGE,
         self::VIEW_BEFORE_CHANGE,
@@ -497,7 +506,7 @@ class component_type
         self::FORM_BUTTON_EXPORT
     );
 
-    // list of component types that are a e.g. button
+    // list of component types that are hidden
     const array HIDDEN_TYPES = array(
         self::ROW_START,
         self::FORM_TITLE,
@@ -507,6 +516,14 @@ class component_type
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_END
+    );
+
+    // list of component types that are used to combine lists
+    const array LIST_GROUP = array(
+        self::SYSTEM_SUB_TITLE,
+        self::SYSTEM_SUB_TITLE_VAR,
+        self::VALUES_RELATED,
+        self::LIST_REF,
     );
 
     // list of the component types used for unit testing
@@ -522,6 +539,7 @@ class component_type
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
+        [self::FORM_FIELD_NAME_IN_FORMULAS, self::FORM_FIELD_NAME_IN_FORMULAS_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
@@ -557,7 +575,6 @@ class component_type
         [self::FORM_SELECT_FILE, self::FORM_SELECT_FILE_ID],
         [self::FORM_SELECT_FORMAT_EXPORT, self::FORM_SELECT_FORMAT_EXPORT_ID],
         [self::FORM_SELECT_PHRASE_TYPE, self::FORM_SELECT_PHRASE_TYPE_ID],
-        [self::FORM_SELECT_VERB_TYPE, self::FORM_SELECT_VERB_TYPE_ID],
         [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
         [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
         [self::FORM_SELECT_VALUE_TYPE, self::FORM_SELECT_VALUE_TYPE_ID],
@@ -589,6 +606,7 @@ class component_type
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
+        [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
         [self::SYSTEM_BODY_SETUP, self::SYSTEM_BODY_SETUP_ID],
         [self::SYSTEM_BODY_SIGNUP, self::SYSTEM_BODY_SIGNUP_ID],
@@ -618,8 +636,9 @@ class component_type
         [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
+        [self::LIST_VIEWS, self::LIST_VIEWS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
-        [self::USAGE_WORD, self::USAGE_WORD_ID],
+        [self::RANK_PHRASE, self::USAGE_WORD_ID],
         [self::VALUE_NAME, self::VALUE_NAME_ID],
         [self::GROUP_NAME, self::GROUP_NAME_ID],
         [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],
@@ -627,6 +646,7 @@ class component_type
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
+        [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
         [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],

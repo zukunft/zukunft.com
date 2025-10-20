@@ -4,6 +4,7 @@ PREPARE view_by_id FROM
                u.view_id AS user_view_id,
                s.user_id,
                s.code_id,
+               s.`usage`,
                IF(u.view_name     IS NULL, s.view_name,     u.view_name)     AS view_name,
                IF(u.description   IS NULL, s.description,   u.description)   AS description,
                IF(u.view_type_id  IS NULL, s.view_type_id,  u.view_type_id)  AS view_type_id,

@@ -45,12 +45,16 @@ class ui_rank
 {
 
     /**
-     * @return string with the html code that shows the usage of this word
+     * the triple names that are used by the system
+     * e.g. to sort the related terms
+     *      or the calculate the impact and create warning based on a threshold
+     *
+     * @return string with the triple names as a vertical list
      */
-    function usage_word(db_object_dsp $phr, string $form_name): string
+    function system_phrases(db_object_dsp $phr): string
     {
         // TODO review
-        return 'usage of ' . $phr->name() . ' ';
+        return $phr->name() . ' is ranked by time of discovery';
     }
 
 }

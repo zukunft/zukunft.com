@@ -52,7 +52,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
-
 global $db_con;
 
 // open database and display header

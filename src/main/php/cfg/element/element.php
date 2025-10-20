@@ -116,21 +116,21 @@ class element extends db_object_seq_id_user
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'cache for fast update of formula resolved text';
+    const string TBL_COMMENT = 'cache for fast update of formula resolved text';
 
     // database fields only used for formula elements
-    const FLD_ID = 'element_id';
-    const FLD_FORMULA_COM = 'each element can only be used for one formula';
-    const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQL_TYP = sql_field_type::INT;
-    const FLD_TYPE = 'element_type_id';
-    const FLD_REF_ID_COM = 'either a term, verb or formula id';
-    const FLD_REF_ID = 'ref_id';
-    const FLD_TEXT = 'resolved_text';
+    const string FLD_ID = 'element_id';
+    const string FLD_FORMULA_COM = 'each element can only be used for one formula';
+    const string FLD_ORDER = 'order_nbr';
+    const sql_field_type FLD_ORDER_SQL_TYP = sql_field_type::INT;
+    const string FLD_TYPE = 'element_type_id';
+    const string FLD_REF_ID_COM = 'either a term, verb or formula id';
+    const string FLD_REF_ID = 'ref_id';
+    const string FLD_TEXT = 'resolved_text';
     // TODO: is resolved text needed?
 
     // all database field names excluding the id, standard name and user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         formula_db::FLD_ID,
         user_db::FLD_ID,
         self::FLD_ORDER,
@@ -139,7 +139,7 @@ class element extends db_object_seq_id_user
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
@@ -251,11 +251,8 @@ class element extends db_object_seq_id_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = $this->obj->api_json_array($typ_lst, $usr);
             if ($this->is_word()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
@@ -268,6 +265,9 @@ class element extends db_object_seq_id_user
             } else {
                 $vars[json_fields::OBJECT_CLASS] = '';
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;
@@ -555,7 +555,7 @@ class element extends db_object_seq_id_user
     function db_fields_changed(element $sbx): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        if ($sbx->trm_id() <> $this->trm_id()) {
+        if ($sbx->trm_id() !== $this->trm_id()) {
             $lst->add_field(
                 term::FLD_ID,
                 $this->trm_id(),

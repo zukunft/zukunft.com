@@ -46,7 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class component_link_type_list extends type_list
 {
 
-    const NAME = url_var::COMPONENT_LINK_TYPE;
+    const string NAME = url_var::COMPONENT_LINK_TYPE;
 
     /**
      * create the HTML code to select a component link type

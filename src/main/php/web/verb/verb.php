@@ -41,6 +41,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -52,6 +53,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
@@ -86,10 +88,57 @@ class verb extends sandbox_named
 
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id = null;
-    public int $usage = 0;
     public ?string $plural = null;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
+    // short name of the verb for the use in formulas
+    // because there both sides are combined
+    public ?string $frm_name = null;
+    public float $impact = 0.0;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this verb frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            // the code id is not set by the url and cannot be changed by the frontend
+            if (array_key_exists(url_var::PLURAL, $url_array)) {
+                $this->plural = $url_array[url_var::PLURAL];
+            } else {
+                $this->plural = null;
+            }
+            if (array_key_exists(url_var::REVERSE, $url_array)) {
+                $this->reverse = $url_array[url_var::REVERSE];
+            } else {
+                $this->reverse = null;
+            }
+            if (array_key_exists(url_var::REVERSE_PLURAL, $url_array)) {
+                $this->rev_plural = $url_array[url_var::REVERSE_PLURAL];
+            } else {
+                $this->rev_plural = null;
+            }
+            if (array_key_exists(url_var::NAME_IN_FORMULA, $url_array)) {
+                if ($url_array[url_var::NAME_IN_FORMULA] != null) {
+                    $this->frm_name = $url_array[url_var::IMPACT];
+                }
+            }
+            if (array_key_exists(url_var::IMPACT, $url_array)) {
+                if ($url_array[url_var::IMPACT] != null) {
+                    $this->impact = $url_array[url_var::IMPACT];
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
 
     /*
@@ -131,6 +180,16 @@ class verb extends sandbox_named
         return $this->rev_plural;
     }
 
+    function formula_name(): ?string
+    {
+        return $this->frm_name;
+    }
+
+    function impact(): int
+    {
+        return $this->impact;
+    }
+
 
     /*
      * api
@@ -150,10 +209,14 @@ class verb extends sandbox_named
         } else {
             $this->set_code_id('');
         }
-        if (array_key_exists(json_fields::USAGE, $json_array)) {
-            $this->usage = $json_array[json_fields::USAGE];
+        if (array_key_exists(json_fields::IMPACT, $json_array)) {
+            if ($json_array[json_fields::IMPACT] != null) {
+                $this->impact = $json_array[json_fields::IMPACT];
+            } else {
+                $this->impact = 0.0;
+            }
         } else {
-            $this->usage = 0;
+            $this->impact = 0.0;
         }
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->plural = $json_array[json_fields::PLURAL];
@@ -170,6 +233,11 @@ class verb extends sandbox_named
         } else {
             $this->rev_plural = '';
         }
+        if (array_key_exists(json_fields::NAME_IN_FORMULA, $json_array)) {
+            $this->frm_name = $json_array[json_fields::NAME_IN_FORMULA];
+        } else {
+            $this->frm_name = '';
+        }
         return $usr_msg;
     }
 
@@ -181,10 +249,10 @@ class verb extends sandbox_named
     {
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id();
-        $vars[json_fields::USAGE] = $this->usage;
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
         $vars[json_fields::REV_PLURAL] = $this->rev_plural;
+        $vars[json_fields::NAME_IN_FORMULA] = $this->frm_name;
         return $vars;
     }
 
@@ -215,22 +283,6 @@ class verb extends sandbox_named
     function name_link(?string $back = '', string $style = '', int $msk_id = views::VERB_ID): string
     {
         return parent::name_link($back, $style, $msk_id);
-    }
-
-    /**
-     * create the html code to select the verb type
-     * @param string $form the name of the html form
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb type
-     */
-    public function verb_type_selector(string $form, ?type_lists $typ_lst): string
-    {
-        $used_verb_type_id = $this->type_id();
-        if ($used_verb_type_id == null) {
-            //$used_verb_type_id = $typ_lst->html_verb_types->default_id();
-        }
-        //return $typ_lst->html_verb_types->selector($form, $used_verb_type_id);
-        return 'Missing verb type';
     }
 
 

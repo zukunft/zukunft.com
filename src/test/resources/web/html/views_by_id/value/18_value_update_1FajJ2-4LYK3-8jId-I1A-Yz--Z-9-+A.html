@@ -18,9 +18,9 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active">
-                <a href="/http/view.php?m=64&id=3" title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com system test</a>
-                </li>
+                <li class="active"><a href="/http/view.php?m=64&id=3"
+                                      title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
+                    system test</a></li>
                 <li class="active"></li>
                 <li class="active"><a href="/http/view.php?m=view_edit&id=18" title="adjust the view"><i
                         class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=18" title="create a new view"><i
@@ -31,10 +31,10 @@
     <br><br><br><br><br><h4>Change value</h4>
     <form action="/http/view.php" id="value_edit"><input class="form-control" type="hidden" name="m" id="m"
                                                          value="18"><input class="form-control" type="hidden" name="id"
-                                                                           id="id" value="0"><input class="form-control"
-                                                                                                    type="hidden"
-                                                                                                    name="back"
-                                                                                                    id="back" value="0"><input
+                                                                           id="id"
+                                                                           value="1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+"><input
+            class="form-control" type="hidden" name="back" id="back"
+            value="1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="group_name">group_name</label><input class="form-control"
@@ -43,8 +43,8 @@
                                                                                               id="group_name"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="v">v</label><input class="form-control" type="text" name="v"
-                                                                            id="v" value="3.14"></div>
+            <div class="form-group "><label for="v">v</label><input class="form-control" type="text" name="v" id="v"
+                                                                    value="3.14"></div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
@@ -56,15 +56,12 @@
             <div class="form-group col-md-4"><label for="source_id">style</label><select class="form-control"
                                                                                          name="source_id"
                                                                                          form="value_edit"
-                                                                                         id="source_id">
-                <option value="0" selected>please select ...</option>
-            </select></div>
+                                                                                         id="source_id"></select></div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="l">style</label><select class="form-control" name="l"
-                                                                                 form="value_edit" id="l">
-                <option value="0" selected>please select ...</option>
-            </select></div>
+                                                                                 form="value_edit" id="l"></select>
+            </div>
         </div>
         <div class="row col-md-12">reference type selector not defined for Zukunft\ZukunftCom\main\php\web\value\value
         </div>
@@ -80,6 +77,9 @@
                 <option value="2">personal</option>
                 <option value="3" selected>group</option>
                 <option value="4">private</option>
+                <option value="5">personal log</option>
+                <option value="6">group log</option>
+                <option value="7">private log</option>
             </select></div>
             <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
                                                                                                name="protection"
@@ -91,8 +91,8 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <div class="row col-md-12"><a href="/http/view.php?m=0" title="Cancel"
-                                      class="btn btn-space col-1 btn-outline-secondary">Cancel</a></div>
+        <a href="/http/view.php?m=0&id=1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+"
+           title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
     </form>
 </div>

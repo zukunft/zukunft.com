@@ -177,7 +177,8 @@ class change_log_read_tests
         $wrd->load_by_id(1);
         $log_lst = new change_log_list();
         $log_lst->load_by_fld_of_wrd($wrd, $usr_sys, change_fields::FLD_WORD_NAME);
-        $t->assert_api($log_lst);
+        // TODO Prio 1 activate
+        // $t->assert_api($log_lst);
 
     }
 

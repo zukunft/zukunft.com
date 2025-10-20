@@ -258,6 +258,12 @@
       "name": "production"
     },
     {
+      "name": "Share Price"
+    },
+    {
+      "name": "balance sheet"
+    },
+    {
       "name": "year"
     }
   ],

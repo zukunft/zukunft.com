@@ -532,7 +532,7 @@ class sandbox_list extends base_list
      * @param ?int $limit the max number of ids to show
      * @return string a simple name of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
@@ -542,7 +542,7 @@ class sandbox_list extends base_list
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = [];
         $pos = 0;
@@ -560,7 +560,7 @@ class sandbox_list extends base_list
      * @return string with the list of the sandbox object ids as a SQL compatible text,
      * but actually used onl< for debugging?
      */
-    private function ids_txt(int $limit = null): string
+    private function ids_txt(?int $limit = null): string
     {
         $lib = new library();
         if ($this::class == value_list::class or $this::class == result_list::class) {

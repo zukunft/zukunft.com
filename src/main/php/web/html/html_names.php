@@ -39,9 +39,9 @@ class html_names
     // html const used in zukunft.com
 
     // html base elements
-    const SPAN = 'span';
-    const HTML_CLASS = 'class';
-    const TITLE = 'title';
-    const INPUT = 'input';
+    const string SPAN = 'span';
+    const string HTML_CLASS = 'class';
+    const string TITLE = 'title';
+    const string INPUT = 'input';
 
 }

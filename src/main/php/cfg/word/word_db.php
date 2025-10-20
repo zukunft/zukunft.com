@@ -82,9 +82,6 @@ class word_db
     const string FLD_VIEW_COM = 'the default mask for this word';
     const string FLD_VIEW = 'view_id';
     const sql_field_type FLD_VIEW_SQL_TYP = sql_field_type::INT;
-    const string FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
-    const string FLD_VALUES = 'values'; // TODO convert to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
-    const sql_field_type FLD_VALUES_SQL_TYP = sql_field_type::INT;
     const string FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
     const string FLD_INACTIVE = 'inactive';
     const sql_field_type FLD_INACTIVE_SQL_TYP = sql_field_type::INT_SMALL;
@@ -104,7 +101,8 @@ class word_db
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
         [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_VALUES, self::FLD_VALUES_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
     );
     // list of fields that CANNOT be changed by the user
     const array FLD_LST_NON_CHANGEABLE = array(
@@ -115,8 +113,8 @@ class word_db
 
     // all database field names excluding the id, standard name and user specific fields
     const array FLD_NAMES = array(
-        self::FLD_VALUES,
-        sql_db::FLD_CODE_ID
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE
     );
     // list of the user specific database field names
     const array FLD_NAMES_USR = array(
@@ -127,6 +125,7 @@ class word_db
     const array FLD_NAMES_NUM_USR = array(
         phrase::FLD_TYPE,
         self::FLD_VIEW,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -134,11 +133,12 @@ class word_db
     // all database field names excluding the id used to identify if there are some user specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
-        self::FLD_VALUES,
         self::FLD_PLURAL,
         sql_db::FLD_DESCRIPTION,
         phrase::FLD_TYPE,
         self::FLD_VIEW,
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT

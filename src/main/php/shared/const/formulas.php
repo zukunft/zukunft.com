@@ -59,6 +59,7 @@ class formulas
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
+    const string SCALE_TO_SEC_CODE_ID = 'scale_minute_to_sec';
     const int SCALE_TO_SEC_ID = 1;
     const string SCALE_HOUR = 'scale hour to sec';
     const int SCALE_HOUR_ID = 2;
@@ -84,6 +85,9 @@ class formulas
     const string PARTS_IN_PERCENT = 'parts in percent';
     const string PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "' . verbs::OF_NAME . '" / "total"'; // TODO check if separate verb "of each" is needed
     const string PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . words::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
+    const string CITY_POPULATION = 'city population';
+    const int CITY_POPULATION_ID = 26;
+    const string CITY_POPULATION_EXP = '"total" = &sum; ( "inhabitants" "of all" "City" )';
 
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

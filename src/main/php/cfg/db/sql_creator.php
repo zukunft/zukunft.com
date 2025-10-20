@@ -153,14 +153,14 @@ class sql_creator
 {
 
     // internal const for unit testing
-    const FILE_INSERT = 'insert'; // for insert (or create in curl notation) unit test files
-    const FILE_UPDATE = 'update'; // for update unit test files
-    const FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
-    const FILE_LOAD = 'load'; // for load unit test files
+    const string FILE_INSERT = 'insert'; // for insert (or create in crud notation) unit test files
+    const string FILE_UPDATE = 'update'; // for update unit test files
+    const string FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
+    const string FILE_LOAD = 'load'; // for load unit test files
 
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
-    const DB_TYPES_NOT_NAMED = [
+    const array DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
         value_time::class,
@@ -187,25 +187,25 @@ class sql_creator
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     // classes where the tables have no auto increase id
-    const DB_TYPES_NO_SEQ = [
+    const array DB_TYPES_NO_SEQ = [
         group::class,
         value::class,
         result::class
     ];
 
     // name the positions in the field definition array
-    private const FLD_POS_NAME = 0;
-    private const FLD_POS_TYPE = 1;
-    private const FLD_POS_DEFAULT_VALUE = 2;
-    private const FLD_POS_INDEX = 3;
-    private const FLD_POS_FOREIGN_LINK = 4;
-    private const FLD_POS_COMMENT = 5;
-    private const FLD_POS_NAME_LINK = 6;
+    private const int FLD_POS_NAME = 0;
+    private const int FLD_POS_TYPE = 1;
+    private const int FLD_POS_DEFAULT_VALUE = 2;
+    private const int FLD_POS_INDEX = 3;
+    private const int FLD_POS_FOREIGN_LINK = 4;
+    private const int FLD_POS_COMMENT = 5;
+    private const int FLD_POS_NAME_LINK = 6;
 
     // positions in the field, value and type array
-    private const FVT_FLD = 0;
-    private const FVT_VAL = 1;
-    private const FVT_TYP = 2;
+    private const int FVT_FLD = 0;
+    private const int FVT_VAL = 1;
+    private const int FVT_TYP = 2;
 
     // parameters for the sql creation that might be used for the next query creation
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query

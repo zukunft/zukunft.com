@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class verbs extends type_list
 {
 
-    const NAME = url_var::VERB;
+    const string NAME = url_var::VERB;
 
     /**
      * create the HTML code to select a verb

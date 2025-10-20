@@ -190,26 +190,26 @@ class sandbox extends db_object_seq_id_user
     // e.g. always "word_id" instead of simply "id
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_COM = 'the owner / creator of the -=class=-';
-    const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
-    const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
-    const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
-    const FLD_USER_NAME = 'user_name';
-    const FLD_SHARE_COM = 'to restrict the access';
-    const FLD_SHARE = "share_type_id";  // field name for the share permission
-    const FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_PROTECT_COM = 'to protect against unwanted changes';
-    const FLD_PROTECT = "protect_id";   // field name for the protection level
-    const FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_ID_COM = 'the owner / creator of the -=class=-';
+    const string FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
+    const string FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
+    const string FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
+    const string FLD_USER_NAME = 'user_name';
+    const string FLD_SHARE_COM = 'to restrict the access';
+    const string FLD_SHARE = "share_type_id";  // field name for the share permission
+    const sql_field_type FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_PROTECT_COM = 'to protect against unwanted changes';
+    const string FLD_PROTECT = "protect_id";   // field name for the protection level
+    const sql_field_type FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
 
     // field lists for the table creation
-    const FLD_ALL_OWNER = array(
+    const array FLD_ALL_OWNER = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_ID_COM],
     );
-    const FLD_ALL_CHANGER = array(
+    const array FLD_ALL_CHANGER = array(
         [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_EXCLUDED_COM],
         [self::FLD_SHARE, self::FLD_SHARE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
         [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
@@ -217,13 +217,13 @@ class sandbox extends db_object_seq_id_user
 
     // all database field names excluding the id used to identify if there are some user specific changes
     // dummy arrays that should be overwritten by the child object
-    const FLD_NAMES = array();
+    const array FLD_NAMES = array();
     // list of the user specific database field names
-    const FLD_NAMES_USR = array();
+    const array FLD_NAMES_USR = array();
     // database fields that should only be taken from the user sandbox table
-    const FLD_NAMES_USR_ONLY = array();
+    const array FLD_NAMES_USR_ONLY = array();
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
@@ -426,7 +426,7 @@ class sandbox extends db_object_seq_id_user
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -477,20 +477,16 @@ class sandbox extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+        if ($this->is_excluded()) {
             $vars[json_fields::EXCLUDED] = true;
-        } else {
-            if ($this->is_excluded() and $typ_lst->test_mode()) {
-                $vars[json_fields::EXCLUDED] = true;
-            }
-            if ($this->share_id != null) {
-                $vars[json_fields::SHARE] = $this->share_id;
-            }
-            if ($this->protection_id != null) {
-                $vars[json_fields::PROTECTION] = $this->protection_id;
-            }
-
         }
+        if ($this->share_id != null) {
+            $vars[json_fields::SHARE] = $this->share_id;
+        }
+        if ($this->protection_id != null) {
+            $vars[json_fields::PROTECTION] = $this->protection_id;
+        }
+
 
         return $vars;
     }
@@ -511,7 +507,7 @@ class sandbox extends db_object_seq_id_user
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         global $usr; // must always be the user who has initiated the import
@@ -735,8 +731,8 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         if ($this->owner_id() != $obj->owner_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
-                msg_id::VAR_USER => $obj->owner()->dsp_id(),
-                msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
+                msg_id::VAR_USER => $obj->owner_id(),
+                msg_id::VAR_USER_CHK => $this->owner_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
             ]);
@@ -2015,6 +2011,18 @@ class sandbox extends db_object_seq_id_user
                 if ($this->ui_msg_code_id() != $norm_obj->ui_msg_code_id()) {
                     $this->set_ui_msg_code_id($norm_obj->ui_msg_code_id(), $this->user());
                     log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+                if ($this->ui_msg_code_id_vars() != $norm_obj->ui_msg_code_id_vars()) {
+                    $this->set_ui_msg_code_id_vars($norm_obj->ui_msg_code_id_vars(), $this->user());
+                    log_warning('ui variable message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+                if ($this->ui_msg_code_id_exception() != $norm_obj->ui_msg_code_id_exception()) {
+                    $this->set_ui_msg_code_id_exception($norm_obj->ui_msg_code_id_exception(), $this->user());
+                    log_warning('ui exception message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+                if ($this->ui_msg_value_exception() !== $norm_obj->ui_msg_value_exception()) {
+                    $this->set_ui_msg_value_exception($norm_obj->ui_msg_value_exception(), $this->user());
+                    log_warning('ui exception value has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
             // TODO check why $this seems to be here updated but not in the sandbox multi object
@@ -4213,10 +4221,10 @@ class sandbox extends db_object_seq_id_user
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         log_err('overwrite of import_mapper_user missing in ' . $this::class);
@@ -4250,6 +4258,51 @@ class sandbox extends db_object_seq_id_user
     function ui_msg_code_id(): ?msg_id
     {
         log_err('a frontend message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
+        return null;
+    }
+
+    function set_ui_msg_code_id_vars(?msg_id $ui_msg_id, user $usr): user_message
+    {
+        $msg = 'frontend after message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function ui_msg_code_id_vars(): ?msg_id
+    {
+        log_err('a frontend after message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
+        return null;
+    }
+
+    function set_ui_msg_code_id_exception(?msg_id $ui_msg_id, user $usr): user_message
+    {
+        $msg = 'frontend exception message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function ui_msg_code_id_exception(): ?msg_id
+    {
+        log_err('a frontend exception message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
+        return null;
+    }
+
+    function set_ui_msg_value_exception(?float $ui_msg_value_exception, user $usr): user_message
+    {
+        $msg = 'frontend exception message value has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function ui_msg_value_exception(): ?float
+    {
+        log_err('a frontend exception message value change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;
     }
 

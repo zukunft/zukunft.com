@@ -111,15 +111,12 @@ use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
@@ -137,38 +134,38 @@ use Zukunft\ZukunftCom\test\php\utils\test_api;
 class library
 {
 
-    const DIFF_NUM_PRECISION = 7;
+    const int DIFF_NUM_PRECISION = 7;
 
     // to separate two string for the human-readable format
-    const SEPARATOR = ',';
+    const string SEPARATOR = ',';
 
     /*
      * internal const
      */
 
-    const STR_TYPE_AUTO = -1; // try to detect the type
-    const STR_TYPE_CODE = 0; // the string should be checked byte by byte
-    const STR_TYPE_PROSA = 1; // words are the critical parts
-    const STR_TYPE_JSON = 2; // check for json elements
-    const STR_TYPE_HTML = 3;
+    const int STR_TYPE_AUTO = -1; // try to detect the type
+    const int STR_TYPE_CODE = 0; // the string should be checked byte by byte
+    const int STR_TYPE_PROSA = 1; // words are the critical parts
+    const int STR_TYPE_JSON = 2; // check for json elements
+    const int STR_TYPE_HTML = 3;
 
-    private const STR_DIFF_VAL = 'values';
-    private const STR_DIFF_TYP = 'type';
-    private const STR_DIFF_UNCHANGED = 0;
-    private const STR_DIFF_ADD = 1;
-    private const STR_DIFF_DEL = -1;
-    private const STR_DIFF_ADD_START = '//+';
-    private const STR_DIFF_ADD_END = '//';
-    private const STR_DIFF_DEL_START = '//-';
-    private const STR_DIFF_DEL_END = '//';
-    private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
-    private const STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
+    private const string STR_DIFF_VAL = 'values';
+    private const string STR_DIFF_TYP = 'type';
+    private const int STR_DIFF_UNCHANGED = 0;
+    private const int STR_DIFF_ADD = 1;
+    private const int STR_DIFF_DEL = -1;
+    private const string STR_DIFF_ADD_START = '//+';
+    private const string STR_DIFF_ADD_END = '//';
+    private const string STR_DIFF_DEL_START = '//-';
+    private const string STR_DIFF_DEL_END = '//';
+    private const int STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
+    private const int STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
 
     // the expected minimal length of 80% of the words
-    private const STR_WORD_MIN_LEN = 2;
+    private const int STR_WORD_MIN_LEN = 2;
     // the expected maximal length of 80% of the words
-    private const STR_WORD_MAX_LEN = 20;
-    private const STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
+    private const int STR_WORD_MAX_LEN = 20;
+    private const float STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
 
 
     /*
@@ -515,6 +512,57 @@ class library
         return substr($text, 0, 32);
     }
 
+    /**
+     * translated a text with a list of variables to the user interface language
+     * and replace the variable names with the variable values
+     *
+     * @param array $msg_var_lst list with the variable names and the matching values
+     * @param object $mtr the translator object of the back or frontend
+     * @return string the translated text for all messages with vars
+     */
+    function msg_var_text(array $msg_var_lst, object $mtr): string
+    {
+        $part = '';
+        foreach ($msg_var_lst as $msg_var) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $msg_txt = $mtr->txt($msg_var[0]);
+            foreach ($msg_var[1] as $key => $var) {
+                $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
+            }
+            // replace the escaped var makers
+            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $part .= $msg_txt;
+        }
+        return $part;
+    }
+
+    /**
+     * replace one message var with the message value
+     *
+     * @param string $msg_txt the message text before the variable replacement
+     * @param string $key the variable name
+     * @param string $var the value to be used
+     * @return string the message text after the variable replacement
+     */
+    function msg_var_replace(string $msg_txt, string $key, string $var): string
+    {
+        // avoid using escaped var makers (probably not 100% correct)
+        $msg_txt = str_replace(
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
+        // replace the var
+        $msg_txt = str_replace(
+            msg_id::VAR_START . $key . msg_id::VAR_END,
+            $var, $msg_txt);
+        // undo escaped vars
+        return str_replace(
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
+    }
+
 
     /*
      * list functions (to be replaced by standard functions if possible)
@@ -538,6 +586,21 @@ class library
                 $keys = array_merge($keys, $this->array_keys_r($sub_array));
 
         return $keys;
+    }
+
+    function array_filter_r(array $array, callable $callback): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->array_filter_r($value, $callback);
+            } else {
+                if ($callback($value, $key)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+
+        return $array;
     }
 
     /**
@@ -1177,6 +1240,7 @@ class library
             'Zukunft\ZukunftCom\main\php\web\component\execute' => 'html_paths::EXECUTE',
             'Zukunft\ZukunftCom\main\php\web\component\sheet' => 'html_paths::SHEET',
             'Zukunft\ZukunftCom\main\php\service' => 'paths::SERVICE',
+            'Zukunft\ZukunftCom\main\php\service\math' => 'paths::SERVICE_MATH',
             'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
             'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
             'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
@@ -2355,6 +2419,7 @@ class library
 
     /**
      * remove the namespace from the class name and adds the name extension for the table
+     * TODO Prio 2 check if the code_id or the name is returned and clean this up
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -2389,6 +2454,25 @@ class library
         if ($result == 'value_geos') {
             $result = 'values_geo';
         }
+        return $result;
+    }
+
+    /**
+     * get a list of table ids that are relevant for the given frontend class name
+     * including table ids of used in previous versions of this program
+     * @return array with the table ids that are relevant for a ui class name
+     */
+    function ui_class_to_table_id_list(string $class): array
+    {
+        global $cng_tbl_cac;
+
+        $result = [];
+
+        $result[] = $cng_tbl_cac->id($this->class_to_table($class));
+        // TODO Prio 2 add a test case for a table rename
+        //if ($class == word_dsp::class) {
+        //    $result[] = 5;
+        //}
         return $result;
     }
 

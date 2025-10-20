@@ -59,7 +59,7 @@ class term_ui_tests
         $test_page .= 'verb term with link: ' . $vrb->name_link() . '<br>';
         $test_page .= 'formula term with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'formula term with link: ' . $frm->name_link() . '<br>';
-        $t->html_test($test_page, 'term', 'term', $t);
+        $t->html_page_test($test_page, 'term', 'term', $t);
     }
 
 }

@@ -20,4 +20,4 @@ COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on v
 COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the change change_values_norm';
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';

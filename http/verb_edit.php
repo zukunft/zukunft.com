@@ -97,6 +97,9 @@ if ($usr->id() > 0) {
             if (isset($_GET[url_var::REVERSE_PLURAL])) {
                 $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
             }
+            if (isset($_GET[url_var::NAME_IN_FORMULA])) {
+                $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
+            }
 
             // save the changes
             $upd_result = $vrb->save()->get_last_message();

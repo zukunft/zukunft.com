@@ -31,8 +31,8 @@
     <br><br><br><br><br><h4>Add a view element</h4>
     <form action="/http/view.php" id="component_add"><input class="form-control" type="hidden" name="m" id="m"
                                                             value="33"><input class="form-control" type="hidden"
-                                                                              name="id" id="id" value="0"><input
-            class="form-control" type="hidden" name="back" id="back" value="0"><input class="form-control" type="hidden"
+                                                                              name="id" id="id" value="1"><input
+            class="form-control" type="hidden" name="back" id="back" value="1"><input class="form-control" type="hidden"
                                                                                       name="confirm" id="confirm"
                                                                                       value="1">
         <div class="row col-md-12">
@@ -162,7 +162,7 @@
                 <option value="119">form select multi source</option>
                 <option value="120">form select ref</option>
                 <option value="121">form select multi ref</option>
-                <option value="122">form field verb type</option>
+                <option value="122">views</option>
                 <option value="123">form field value type</option>
                 <option value="124">system form select component style</option>
                 <option value="125">system form view link priority</option>
@@ -186,6 +186,10 @@
                 <option value="143">system preview after change</option>
                 <option value="144">system view before change</option>
                 <option value="145">system sub title</option>
+                <option value="146">system sub title var</option>
+                <option value="147">show description</option>
+                <option value="148">formulas by verb</option>
+                <option value="149">form field formula name</option>
             </select></div>
         </div>
         <div class="row col-md-12">
@@ -205,7 +209,7 @@
                                                                                                   id="phrase_row">
                 <datalist id="phrase_row_list">
                     <option data-value="1" selected>mathematics</option>
-                    <option data-value="1029">ABB</option>
+                    <option data-value="278">ABB</option>
                     <option data-value="184">Bern</option>
                     <option data-value="158">billion</option>
                     <option data-value="185">Canton</option>
@@ -253,12 +257,11 @@
                     <option data-value="205">problem</option>
                     <option data-value="280">sales</option>
                     <option data-value="24">second</option>
-                    <option data-value="283">statement</option>
                     <option data-value="288">tax</option>
                     <option data-value="286">total</option>
                     <option data-value="255">trillion</option>
                     <option data-value="258">USD</option>
-                    <option data-value="1032">Vestas</option>
+                    <option data-value="279">Vestas</option>
                     <option data-value="222">warmer</option>
                     <option data-value="208">way</option>
                     <option data-value="107">week</option>
@@ -276,7 +279,7 @@
                     <option data-value="213">Zurich</option>
                     <option data-value="-1">mathematical constant</option>
                     <option data-value="-94">Zurich (Canton)</option>
-                    <option data-value="-127">cash flow</option>
+                    <option data-value="-126">cash flow</option>
                     <option data-value="-129">cash flow statement</option>
                     <option data-value="-95">Bern (City)</option>
                     <option data-value="-96">Geneva (City)</option>
@@ -287,7 +290,7 @@
                     <option data-value="-112">global warming (global problem)</option>
                     <option data-value="-100">global warming potential</option>
                     <option data-value="-111">happy time points</option>
-                    <option data-value="-128">income taxes</option>
+                    <option data-value="-127">income taxes</option>
                     <option data-value="-51">Pi (math)</option>
                     <option data-value="-2">π (unit symbol)</option>
                     <option data-value="-105">populism (global problem)</option>
@@ -305,7 +308,7 @@
                                                                                                      id="phrase_col">
                 <datalist id="phrase_col_list">
                     <option data-value="1" selected>mathematics</option>
-                    <option data-value="1029">ABB</option>
+                    <option data-value="278">ABB</option>
                     <option data-value="184">Bern</option>
                     <option data-value="158">billion</option>
                     <option data-value="185">Canton</option>
@@ -353,12 +356,11 @@
                     <option data-value="205">problem</option>
                     <option data-value="280">sales</option>
                     <option data-value="24">second</option>
-                    <option data-value="283">statement</option>
                     <option data-value="288">tax</option>
                     <option data-value="286">total</option>
                     <option data-value="255">trillion</option>
                     <option data-value="258">USD</option>
-                    <option data-value="1032">Vestas</option>
+                    <option data-value="279">Vestas</option>
                     <option data-value="222">warmer</option>
                     <option data-value="208">way</option>
                     <option data-value="107">week</option>
@@ -376,7 +378,7 @@
                     <option data-value="213">Zurich</option>
                     <option data-value="-1">mathematical constant</option>
                     <option data-value="-94">Zurich (Canton)</option>
-                    <option data-value="-127">cash flow</option>
+                    <option data-value="-126">cash flow</option>
                     <option data-value="-129">cash flow statement</option>
                     <option data-value="-95">Bern (City)</option>
                     <option data-value="-96">Geneva (City)</option>
@@ -387,7 +389,7 @@
                     <option data-value="-112">global warming (global problem)</option>
                     <option data-value="-100">global warming potential</option>
                     <option data-value="-111">happy time points</option>
-                    <option data-value="-128">income taxes</option>
+                    <option data-value="-127">income taxes</option>
                     <option data-value="-51">Pi (math)</option>
                     <option data-value="-2">π (unit symbol)</option>
                     <option data-value="-105">populism (global problem)</option>
@@ -405,7 +407,7 @@
                                                                                                              id="phrase_col_sub">
                 <datalist id="phrase_col_sub_list">
                     <option data-value="1" selected>mathematics</option>
-                    <option data-value="1029">ABB</option>
+                    <option data-value="278">ABB</option>
                     <option data-value="184">Bern</option>
                     <option data-value="158">billion</option>
                     <option data-value="185">Canton</option>
@@ -453,12 +455,11 @@
                     <option data-value="205">problem</option>
                     <option data-value="280">sales</option>
                     <option data-value="24">second</option>
-                    <option data-value="283">statement</option>
                     <option data-value="288">tax</option>
                     <option data-value="286">total</option>
                     <option data-value="255">trillion</option>
                     <option data-value="258">USD</option>
-                    <option data-value="1032">Vestas</option>
+                    <option data-value="279">Vestas</option>
                     <option data-value="222">warmer</option>
                     <option data-value="208">way</option>
                     <option data-value="107">week</option>
@@ -476,7 +477,7 @@
                     <option data-value="213">Zurich</option>
                     <option data-value="-1">mathematical constant</option>
                     <option data-value="-94">Zurich (Canton)</option>
-                    <option data-value="-127">cash flow</option>
+                    <option data-value="-126">cash flow</option>
                     <option data-value="-129">cash flow statement</option>
                     <option data-value="-95">Bern (City)</option>
                     <option data-value="-96">Geneva (City)</option>
@@ -487,7 +488,7 @@
                     <option data-value="-112">global warming (global problem)</option>
                     <option data-value="-100">global warming potential</option>
                     <option data-value="-111">happy time points</option>
-                    <option data-value="-128">income taxes</option>
+                    <option data-value="-127">income taxes</option>
                     <option data-value="-51">Pi (math)</option>
                     <option data-value="-2">π (unit symbol)</option>
                     <option data-value="-105">populism (global problem)</option>
@@ -513,6 +514,9 @@
                 <option value="2">personal</option>
                 <option value="3">group</option>
                 <option value="4">private</option>
+                <option value="5">personal log</option>
+                <option value="6">group log</option>
+                <option value="7">private log</option>
             </select></div>
             <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
                                                                                                name="protection"
@@ -538,7 +542,8 @@
                 <option value="0">complete</option>
             </select></div>
         </div>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
+        <br>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0&id=1" title="Cancel"
                                                           class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
             <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
         </div>

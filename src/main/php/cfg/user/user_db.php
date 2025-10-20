@@ -94,69 +94,69 @@ class user_db extends db_object_seq_id
     // database fields and comments only used for user
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'user_id'; // also the field name for foreign keys
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
+    const string FLD_ID = 'user_id'; // also the field name for foreign keys
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
     // fields for the main logon
-    const FLD_NAME_COM = 'the user name unique for this pod';
-    const FLD_NAME = 'user_name';
-    const FLD_IP_ADDR_COM = 'all users a first identified with the ip address';
-    const FLD_IP_ADDR = 'ip_address';
-    const FLD_PASSWORD_COM = 'the hash value of the password';
-    const FLD_PASSWORD = 'password';
+    const string FLD_NAME_COM = 'the user name unique for this pod';
+    const string FLD_NAME = 'user_name';
+    const string FLD_IP_ADDR_COM = 'all users a first identified with the ip address';
+    const string FLD_IP_ADDR = 'ip_address';
+    const string FLD_PASSWORD_COM = 'the hash value of the password';
+    const string FLD_PASSWORD = 'password';
     // description and type
-    const FLD_DESCRIPTION_COM = 'for system users the description to explain the profile to human users';
-    const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
-    const FLD_CODE_ID = 'code_id';
-    const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
-    const FLD_PROFILE = 'user_profile_id';
-    const FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
-    const FLD_TYPE_ID = 'user_type_id';
-    const FLD_EXCLUDED_COM = 'true if the user is deactivated but cannot be deleted due to log entries';
-    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
-    const FLD_LEVEL = 'right_level';
+    const string FLD_DESCRIPTION_COM = 'for system users the description to explain the profile to human users';
+    const string FLD_CODE_ID_COM = 'to select e.g. the system batch user';
+    const string FLD_CODE_ID = 'code_id';
+    const string FLD_PROFILE_COM = 'to define the user roles and read and write rights';
+    const string FLD_PROFILE = 'user_profile_id';
+    const string FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
+    const string FLD_TYPE_ID = 'user_type_id';
+    const string FLD_EXCLUDED_COM = 'true if the user is deactivated but cannot be deleted due to log entries';
+    const string FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
+    const string FLD_LEVEL = 'right_level';
     // online verification
-    const FLD_EMAIL_COM = 'the primary email for verification';
-    const FLD_EMAIL = 'email';
-    const FLD_EMAIL_STATUS_COM = 'if the email has been verified or if a password reset has been send';
-    const FLD_EMAIL_STATUS = 'email_status';
-    const FLD_EMAIL_ALT_COM = 'an alternative email for account recovery';
-    const FLD_EMAIL_ALT = 'email_alternative';
-    const FLD_TWO_FACTOR_ID = 'mobile_number';
-    const FLD_TWO_FACTOR_STATUS = 'mobile_status';
-    const FLD_ACTIVATION_KEY = 'activation_key';
-    const FLD_ACTIVATION_TIMEOUT = 'activation_timeout';
+    const string FLD_EMAIL_COM = 'the primary email for verification';
+    const string FLD_EMAIL = 'email';
+    const string FLD_EMAIL_STATUS_COM = 'if the email has been verified or if a password reset has been send';
+    const string FLD_EMAIL_STATUS = 'email_status';
+    const string FLD_EMAIL_ALT_COM = 'an alternative email for account recovery';
+    const string FLD_EMAIL_ALT = 'email_alternative';
+    const string FLD_TWO_FACTOR_ID = 'mobile_number';
+    const string FLD_TWO_FACTOR_STATUS = 'mobile_status';
+    const string FLD_ACTIVATION_KEY = 'activation_key';
+    const string FLD_ACTIVATION_TIMEOUT = 'activation_timeout';
     // offline verification
-    const FLD_FIRST_NAME = 'first_name';
-    const FLD_LAST_NAME = 'last_name';
-    const FLD_NAME_TRIPLE_COM = 'triple that contains e.g. the given name, family name, selected name or title of the person';
-    const FLD_NAME_TRIPLE_ID = 'name_triple_id';
-    const FLD_GEO_TRIPLE_COM = 'the post address with street, city or any other form of geo location for physical transport';
-    const FLD_GEO_TRIPLE_ID = 'geo_triple_id';
-    const FLD_GEO_STATUS = 'geo_status_id';
-    const FLD_OFFICIAL_ID_COM = 'e.g. the number of the passport';
-    const FLD_OFFICIAL_ID = 'official_id';
-    const FLD_OFFICIAL_TYPE_ID = 'official_id_type';
-    const FLD_OFFICIAL_ID_STATUS = 'official_id_status';
+    const string FLD_FIRST_NAME = 'first_name';
+    const string FLD_LAST_NAME = 'last_name';
+    const string FLD_NAME_TRIPLE_COM = 'triple that contains e.g. the given name, family name, selected name or title of the person';
+    const string FLD_NAME_TRIPLE_ID = 'name_triple_id';
+    const string FLD_GEO_TRIPLE_COM = 'the post address with street, city or any other form of geo location for physical transport';
+    const string FLD_GEO_TRIPLE_ID = 'geo_triple_id';
+    const string FLD_GEO_STATUS = 'geo_status_id';
+    const string FLD_OFFICIAL_ID_COM = 'e.g. the number of the passport';
+    const string FLD_OFFICIAL_ID = 'official_id';
+    const string FLD_OFFICIAL_TYPE_ID = 'official_id_type';
+    const string FLD_OFFICIAL_ID_STATUS = 'official_id_status';
     // settings
-    const FLD_TERM_COM = 'the last term that the user had used';
-    const FLD_TERM = 'term_id';
-    const FLD_VIEW_COM = 'the last mask that the user has used';
-    const FLD_VIEW = 'view_id';
-    const FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
-    const FLD_SOURCE = 'source_id';
-    const FLD_STATUS_COM = 'e.g. to exclude inactive users';
-    const FLD_STATUS = 'user_status_id';
-    const FLD_CREATED = 'created';
-    const FLD_LAST_LOGIN = 'last_login';
-    const FLD_LAST_LOGOUT = 'last_logoff';
+    const string FLD_TERM_COM = 'the last term that the user had used';
+    const string FLD_TERM = 'term_id';
+    const string FLD_VIEW_COM = 'the last mask that the user has used';
+    const string FLD_VIEW = 'view_id';
+    const string FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
+    const string FLD_SOURCE = 'source_id';
+    const string FLD_STATUS_COM = 'e.g. to exclude inactive users';
+    const string FLD_STATUS = 'user_status_id';
+    const string FLD_CREATED = 'created';
+    const string FLD_LAST_LOGIN = 'last_login';
+    const string FLD_LAST_LOGOUT = 'last_logoff';
 
 
     // database fields used for the user logon process
-    const FLD_DB_NOW = 'NOW() AS db_now';
+    const string FLD_DB_NOW = 'NOW() AS db_now';
 
     // all database field names excluding the id
     // TODO review and sync with FLD_LST_ALL and move non critical fields to a value_list
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_IP_ADDR,
         self::FLD_PASSWORD,
@@ -177,7 +177,7 @@ class user_db extends db_object_seq_id
         //self::FLD_DB_NOW
     );
     // the database field names excluding the id and the fields for logon
-    const FLD_NAMES_LIST = array(
+    const array FLD_NAMES_LIST = array(
         sql_db::FLD_CODE_ID,
         self::FLD_IP_ADDR,
         self::FLD_EMAIL,
@@ -189,7 +189,7 @@ class user_db extends db_object_seq_id
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         // main logon
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],

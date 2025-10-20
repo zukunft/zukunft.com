@@ -58,8 +58,8 @@ class source_type_list extends type_list
      */
 
     // object specific database and JSON object field names
-    const FLD_ID = 'source_type_id';
-    //const FLD_URL = 'base_url';
+    const string FLD_ID = 'source_type_id';
+    //const string FLD_URL = 'base_url';
 
     /**
      * overwrite the user_type_list function to include the specific fields like the url

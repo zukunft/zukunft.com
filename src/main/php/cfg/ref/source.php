@@ -117,17 +117,17 @@ class source extends sandbox_code_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
+    const string TBL_COMMENT = 'for the original sources for the numeric, time and geo values';
 
-    // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = source_db::FLD_ID;
-    const FLD_NAMES = source_db::FLD_NAMES;
-    const FLD_NAMES_USR = source_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = source_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = source_db::ALL_SANDBOX_FLD_NAMES;
-    const FLD_LST_MUST_BE_IN_STD = source_db::FLD_LST_MUST_BE_IN_STD;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = source_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = source_db::FLD_LST_USER_CAN_CHANGE;
+    // forward the const string to enable usage of $this::CONST_NAME
+    const string FLD_ID = source_db::FLD_ID;
+    const array FLD_NAMES = source_db::FLD_NAMES;
+    const array FLD_NAMES_USR = source_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = source_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = source_db::ALL_SANDBOX_FLD_NAMES;
+    const array FLD_LST_MUST_BE_IN_STD = source_db::FLD_LST_MUST_BE_IN_STD;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = source_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = source_db::FLD_LST_USER_CAN_CHANGE;
 
 
     /*
@@ -212,10 +212,10 @@ class source extends sandbox_code_id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         global $src_typ_cac;
@@ -243,8 +243,14 @@ class source extends sandbox_code_id
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url();
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::URL] = $this->url();
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        }
         return $vars;
     }
 
@@ -634,7 +640,7 @@ class source extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
@@ -649,7 +655,7 @@ class source extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->url() <> $this->url()) {
+        if ($sbx->url() !== $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,

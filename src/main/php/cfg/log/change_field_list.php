@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 class change_field_list extends type_list
 {
 
-    const TI_WORD_NAME = 10;
+    const int TI_WORD_NAME = 10;
 
 
     /**

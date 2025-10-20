@@ -523,7 +523,7 @@ class type_list
         return json_encode($msg);
     }
 
-    function api_json_array(): array
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
     {
         $vars = [];
         foreach ($this->lst() as $typ) {
@@ -531,7 +531,7 @@ class type_list
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
                 or $typ::class == view::class) {
-                $typ_vars = $typ->api_json_array(new api_type_list([]));
+                $typ_vars = $typ->api_json_array();
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
                 $typ_vars[json_fields::CODE_ID] = $typ->code_id();

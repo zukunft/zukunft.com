@@ -2,11 +2,12 @@ PREPARE word_by_usr_cfg FROM
    'SELECT
         word_id,
         word_name,
-        `values`,
         plural,
         description,
         phrase_type_id,
         view_id,
+        `usage`,
+        impact,
         excluded,
         share_type_id,
         protect_id

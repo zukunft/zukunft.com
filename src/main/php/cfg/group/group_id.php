@@ -71,12 +71,12 @@ class group_id extends id
      */
 
     // the database table name extensions
-    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
-    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const PRIME_PHRASES_STD = 4;
-    const MAIN_PHRASES_STD = 7;
-    const STANDARD_PHRASES = 16;
+    const string TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const string TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const string TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const int PRIME_PHRASES_STD = 4;
+    const int MAIN_PHRASES_STD = 7;
+    const int STANDARD_PHRASES = 16;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value

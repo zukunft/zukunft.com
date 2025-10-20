@@ -47,6 +47,8 @@ include_once paths::DB . 'sql_db.php';
 //include_once paths::SHARED_CONST . 'triples.php';
 //include_once paths::SHARED_CONST . 'words.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
@@ -58,6 +60,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class ref_list extends type_list
 {
@@ -80,7 +84,7 @@ class ref_list extends type_list
      */
     function __construct(?user $usr = null)
     {
-        parent::__construct();
+        parent::__construct(true);
         $this->set_user($usr);
     }
 
@@ -117,6 +121,21 @@ class ref_list extends type_list
             $this->key_lst_dirty = false;
         }
         return $this->key_lst;
+    }
+
+
+    /*
+     * api
+     */
+
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $ref) {
+            $ref_vars = $ref->api_json_array($typ_lst, $usr);
+            $vars[] = $ref_vars;
+        }
+        return $vars;
     }
 
 

@@ -7,6 +7,17 @@
 
     e.g. used to display phrase, term and figure lists
 
+    The main sections of this object are
+    - construct and map: including the mapping of the api message to this list object
+    - set and get:       for fast detection of pending backend updates
+    - api:               create an api array for the backend to update the database
+    - load:              update the list using the backend api
+    - modify:            update the list based on the function parameters
+    - info:              just the make the code easier to read
+    - html:              create the html code to show this list to the user in different forms
+    - select:            create the html code to select on of the elements from the list
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -37,8 +48,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -53,8 +66,10 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -81,6 +96,34 @@ class list_dsp extends ListOfIdObjects
         }
     }
 
+    /**
+     * set the vars of this figure list based on the given json
+     * @param array $json_array an api single object json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
+    }
+
+    /**
+     * set the vars of these list display objects bases on the api json array
+     * @param array $json_array an api list json message
+     * @param db_object|IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper_list(array $json_array, db_object|IdObject|TextIdObject|CombineObject $dbo): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_array as $value) {
+            $new = clone $dbo;
+            $msg = $new->api_mapper($value);
+            $usr_msg->add($msg);
+            $this->add_obj($new, true);
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
@@ -97,34 +140,6 @@ class list_dsp extends ListOfIdObjects
     }
 
     /**
-     * set the vars of this figure list based on the given json
-     * @param array $json_array an api single object json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function api_mapper(array $json_array): user_message
-    {
-        return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
-    }
-
-    /**
-     * set the vars of these list display objects bases on the api json array
-     * @param array $json_array an api list json message
-     * @param IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function api_mapper_list(array $json_array, IdObject|TextIdObject|CombineObject $dbo): user_message
-    {
-        $usr_msg = new user_message();
-        foreach ($json_array as $value) {
-            $new = clone $dbo;
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
-            $this->add_obj($new, true);
-        }
-        return $usr_msg;
-    }
-
-    /**
      * @returns array with the names on the db keys
      */
     function lst_key(): array
@@ -138,26 +153,12 @@ class list_dsp extends ListOfIdObjects
 
 
     /*
-     * interface
+     * api
      */
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(api_type_list|array $typ_lst = []): array
-    {
-        $result = array();
-        foreach ($this->lst() as $obj) {
-            if ($obj != null) {
-                $result[] = $obj->api_array();
-            }
-        }
-        return $result;
-    }
 
     /**
      * create the api json message string of this list that can be sent to the backend
+     *
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return string with the api json string that should be sent to the backend
@@ -180,6 +181,23 @@ class list_dsp extends ListOfIdObjects
         }
 
         return json_encode($msg);
+    }
+
+    /**
+     * create the json array for updating the database via backend
+     *
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(api_type_list|array $typ_lst = []): array
+    {
+        $result = array();
+        foreach ($this->lst() as $obj) {
+            if ($obj != null) {
+                $result[] = $obj->api_array();
+            }
+        }
+        return $result;
     }
 
 
@@ -249,7 +267,55 @@ class list_dsp extends ListOfIdObjects
 
 
     /*
-     * html - function that create html code
+     * html
+     */
+
+    /**
+     * create the html code to show the entries below each other in a vertical list
+     *
+     * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
+     * @param string $back list of the last view to suggest the best follow-up view
+     * @param string $style to define e.g. the width of the list
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
+     * @return string the html code to show a useful numbers of list objects
+     */
+    function list(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string      $back = '',
+        string      $style = '',
+        ?int        $limit = null,
+        ?int        $page = null
+    ): string
+    {
+        $result = '';
+
+        $html = new html_base();
+
+        foreach ($this->lst() as $obj) {
+            $result .= $obj->name_link($context_phr_lst);
+            $result .= $html->lf();
+        }
+        return $result;
+    }
+
+    /**
+     * create the html code to show the entries below each other in a vertical list
+     *
+     * @return string the html code to show a useful numbers of list objects
+     */
+    function name_text(): string
+    {
+        $names = [];
+        foreach ($this->lst() as $obj) {
+            $names[] = $obj->name();
+        }
+        return implode(', ', $names);
+    }
+
+
+    /*
+     * select
      */
 
     /**
@@ -263,19 +329,19 @@ class list_dsp extends ListOfIdObjects
      * 4. cmp->view_select: add the component and view parameters e.g. the form name and the unique name within the form
      *
      * @param string $form the html form name which must be unique within the html page
-     * @param int|null $selected the unique database id of the object that has been selected
+     * @param int|string|null $selected the unique database id of the object that has been selected
      * @param string $name the name of this selector which must be unique within the form
      * @param msg_id $label_id the text show to the user
      * @param string $style the formatting code to adjust the formatting
      * @returns string the html code to select a word from this list
      */
     function selector(
-        string $form = '',
-        ?int   $selected = null,
-        string $name = '',
-        msg_id $label_id = msg_id::LABEL,
-        string $style = view_styles::COL_SM_4,
-        string $type = html_selector::TYPE_SELECT
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = '',
+        msg_id          $label_id = msg_id::LABEL,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
     ): string
     {
         $sel = new html_selector();

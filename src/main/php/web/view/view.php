@@ -530,10 +530,10 @@ class view extends view_exe
      * display the history of a view
      */
     function dsp_hist(
-        int        $page,
-        int        $size,
-        string     $call,
-        back_trace $back = null
+        int         $page,
+        int         $size,
+        string      $call,
+        ?back_trace $back = null
     ): string
     {
         $log_dsp = new user_log_display();

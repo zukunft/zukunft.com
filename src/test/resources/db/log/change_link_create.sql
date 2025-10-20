@@ -30,7 +30,7 @@ COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
 COMMENT ON COLUMN change_links.change_link_id IS 'the prime key to identify the change change_link';
 COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_links.change_action_id IS 'the crud action';
 COMMENT ON COLUMN change_links.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN change_links.new_to_id IS 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
 COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';

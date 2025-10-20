@@ -31,7 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
-class component_link_dsp
+class component_link
 {
 
     /**

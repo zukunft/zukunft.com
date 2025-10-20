@@ -67,11 +67,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 class test_cleanup extends test_api
 {
     // queries to check if removing of the test rows is complete
-    const CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
-    const CLEAN_CHECK_TRIPLES = 'db/cleanup/test_triples.sql';
-    const CLEAN_CHECK_FORMULAS = 'db/cleanup/test_formulas.sql';
-    const CLEAN_CHECK_SOURCES = 'db/cleanup/test_sources.sql';
-    const CLEAN_CHECKS = array(
+    const string CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
+    const string CLEAN_CHECK_TRIPLES = 'db/cleanup/test_triples.sql';
+    const string CLEAN_CHECK_FORMULAS = 'db/cleanup/test_formulas.sql';
+    const string CLEAN_CHECK_SOURCES = 'db/cleanup/test_sources.sql';
+    const array CLEAN_CHECKS = array(
         self::CLEAN_CHECK_WORDS,
         self::CLEAN_CHECK_TRIPLES,
         self::CLEAN_CHECK_FORMULAS,
@@ -514,7 +514,24 @@ class test_cleanup extends test_api
         return $result;
     }
 
-    function html_test(string $body, string $title, string $filename, test_cleanup $t): void
+    function html_page_test(string $body, string $title, string $filename): void
+    {
+        $this->html_test($body, $title, test_paths::VIEW_FUNCTIONS . $filename);
+    }
+
+    function html_view_test(string $body, string $filename): void
+    {
+        $this->html_test($body, 'view', test_paths::VIEWS . $filename);
+    }
+
+    /**
+     * check if a generated html page matches the fixed html page saved in the resource path
+     * @param string $body the generated html page body
+     * @param string $title the page title name
+     * @param string $file_path the file path starting from the resource path for the html resources
+     * @return void
+     */
+    private function html_test(string $body, string $title, string $file_path): void
     {
         $lib = new library();
 
@@ -524,13 +541,8 @@ class test_cleanup extends test_api
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $expected_html = $t->file(test_paths::HTML . $filename . test_files::HTML);
-        $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
-    }
-
-    function html_view_test(string $body, string $filename, test_cleanup $t): void
-    {
-        $this->html_test($body, 'view', test_paths::VIEWS . $filename, $t);
+        $expected_html = $this->file(test_paths::HTML . $file_path . test_files::HTML);
+        $this->display($file_path, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
     private function html_page(string $body, string $title): string
