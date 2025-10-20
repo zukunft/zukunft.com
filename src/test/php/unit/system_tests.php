@@ -130,7 +130,7 @@ class system_tests
         $t->assert_dsp_id($t->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple_list_short(), '"π (unit symbol)" (triple_id 2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,2,100) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
         $t->assert_dsp_id($t->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-94,-95,-96) for user 1 (zukunft.com system test)');

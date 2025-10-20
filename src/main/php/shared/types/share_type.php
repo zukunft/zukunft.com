@@ -40,5 +40,8 @@ class share_type
     const string PERSONAL = "personal";
     const string GROUP = "group";
     const string PRIVATE = "private";
+    const string PERSONAL_LOG = "personal_log";
+    const string GROUP_LOG = "group_log";
+    const string PRIVATE_LOG = "private_log";
 
 }

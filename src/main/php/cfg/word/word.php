@@ -402,14 +402,15 @@ class word extends sandbox_code_id
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::PLURAL] = $this->plural;
+            $vars[json_fields::IMPACT] = $this->impact();
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+            $vars[json_fields::IMPACT] = $this->impact();
         }
-        $vars[json_fields::IMPACT] = $this->impact();
 
         return $vars;
     }

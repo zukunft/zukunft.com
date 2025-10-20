@@ -101,6 +101,7 @@ class test_api extends create_test_objects
      */
     function assert_api_to_dsp(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
+        $lib = new library();
         $class = $this->class_to_api($usr_obj::class);
         $api_types[] = api_type::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
@@ -112,8 +113,9 @@ class test_api extends create_test_objects
         // the "api save" message ($array_to_backend) should contain empty fields
         // to allow the user to remove e.g. a description and less save traffic is expected
         // TODO add a test that e.g. the description can be removed via api
-        $array_to_backend = array_filter($array_to_backend, fn($value) => !is_null($value) && $value !== '');
+        $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
+        $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
         return $this->assert_api_compare($class, $array_to_frontend, $array_to_backend);
     }
 
@@ -165,15 +167,30 @@ class test_api extends create_test_objects
         $class_api = $this->class_to_api($class);
 
         // is excluded api json empty?
-        $test_name = $class_api . ' excluded returns id only api json';
+        $test_name = $class_api . ' excluded json is empty';
         $usr_obj->exclude();
         $json_excluded = $usr_obj->api_json();
-        $target = '"id":1,"excluded":true';
-        // TODO Prio 2 deprecate this exception
-        if ($class == element::class) {
-            $target = '"id":104,"excluded":true';
-        }
+        $json_excluded_full = $usr_obj->api_json([api_type::WITH_EXCLUDED]);
+        $target = test_api::JSON_ARRAY_ONLY;
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
+        // is excluded api json only the id if requested?
+        if ($result) {
+            $test_name = $class_api . ' excluded json can be only id';
+            $json_excluded_id = $usr_obj->api_json([api_type::WITH_EXCLUDED_ID]);
+            $target = '"id":1,"excluded":true';
+            // TODO Prio 2 deprecate this exception
+            if ($class == element::class) {
+                $target = '"id":104,"excluded":true';
+            }
+            $result = $this->assert_text_contains($test_name, $json_excluded_id, $target);
+        }
+        // is excluded api json filled if requested?
+        if ($result) {
+            $test_name = $class_api . ' excluded json can be complete';
+            $target = '"excluded":true,';
+            $result = $this->assert_text_contains($test_name, $json_excluded_full, $target);
+            $json_excluded_full = str_replace($target, '', $json_excluded_full);
+        }
         if ($result) {
             $test_name = $class_api . ' reset returns empty api json';
             $usr_obj->include();
@@ -201,6 +218,10 @@ class test_api extends create_test_objects
             $json_compare = $clone_obj->api_json();
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
+        }
+        // does the remaining part of the full excluded api json match the normal api json
+        if ($result) {
+            $result = $this->assert_json_string($test_name, $json_excluded_full, $json_api);
         }
         return $result;
     }
@@ -665,7 +686,7 @@ class test_api extends create_test_objects
      */
     function assert_api_post_direct(
         string $class,
-        user $usr,
+        user   $usr,
         string $msg = ''
     ): bool
     {
@@ -694,7 +715,7 @@ class test_api extends create_test_objects
      */
     function assert_api_del_direct(
         string $class,
-        user $usr,
+        user   $usr,
         string $msg = ''
     ): bool
     {

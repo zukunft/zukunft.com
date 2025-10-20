@@ -142,7 +142,7 @@ class combine_object extends CombineObject
         if ($typ_lst->use_header()) {
             global $db_con;
             $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
         } else {
             $msg = $vars;
         }
@@ -160,10 +160,17 @@ class combine_object extends CombineObject
     function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
         $lib = new library();
-        $vars = $this->obj()->api_json_array($typ_lst, $usr);
-        if ($this->obj()->id() != 0) {
-            $class = $lib->class_to_name($this->obj()::class);
-            $vars[json_fields::OBJECT_CLASS] = $class;
+        $obj = $this->obj();
+        $vars = $obj->api_json_array($typ_lst, $usr);
+        if ($obj->id() != 0) {
+            $class = $lib->class_to_name($obj::class);
+            if ($obj::class == verb::class) {
+                $vars[json_fields::OBJECT_CLASS] = $class;
+            } else {
+                if (!$obj->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+                    $vars[json_fields::OBJECT_CLASS] = $class;
+                }
+            }
         }
         return $vars;
     }

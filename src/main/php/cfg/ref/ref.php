@@ -381,23 +381,30 @@ class ref extends sandbox_link
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url();
-        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
-        if ($this->phrase()->id() != 0) {
-            if ($typ_lst->include_phrases()) {
-                $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
-            } else {
-                $vars[json_fields::PHRASE] = $this->phrase()->id();
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::URL] = $this->url();
+            $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
+            if ($this->phrase()->id() != 0) {
+                if ($typ_lst->include_phrases()) {
+                    $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
+                } else {
+                    $vars[json_fields::PHRASE] = $this->phrase()->id();
+                }
             }
+            if ($this->source()?->id() != null) {
+                $vars[json_fields::SOURCE] = $this->source()?->id();
+            }
+            if ($this->predicate_id() != 0) {
+                $vars[json_fields::PREDICATE] = $this->predicate_id();
+            }
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
-        if ($this->source()?->id() != null) {
-            $vars[json_fields::SOURCE] = $this->source()?->id();
-        }
-        if ($this->predicate_id() != 0) {
-            $vars[json_fields::PREDICATE] = $this->predicate_id();
-        }
-        $vars[json_fields::DESCRIPTION] = $this->description;
+
         return $vars;
     }
 

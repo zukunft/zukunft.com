@@ -2350,17 +2350,31 @@ class create_test_objects extends test_base
         return $trp;
     }
 
-    function triple_list_short(): triple_list
+    /**
+     * @return triple_list with just one element to test the group id
+     */
+    function triple_list_one(): triple_list
     {
         $lst = new triple_list($this->usr1);
-        // TODO Prio 0 activate
-        //$lst->add($this->triple_filled());
         $lst->add($this->triple_pi_symbol());
-        // TODO Prio 0 activate
-        //$lst->add($this->triple_gwp());
         return $lst;
     }
 
+    /**
+     * @return triple_list with only a few triples for efficient testing of the main functionalities
+     */
+    function triple_list_short(): triple_list
+    {
+        $lst = new triple_list($this->usr1);
+        $lst->add($this->triple_filled());
+        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_gwp());
+        return $lst;
+    }
+
+    /**
+     * @return triple_list with many triples for testing the handling of longer lists including paging
+     */
     function triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);

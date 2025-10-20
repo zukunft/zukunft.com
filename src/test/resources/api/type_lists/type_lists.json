@@ -1480,6 +1480,24 @@
         "code_id": "private",
         "description": "only the user itself can see und use the value",
         "id": 4
+      },
+      {
+        "name": "personal log",
+        "code_id": "personal_log",
+        "description": "value can be seen by everyone, but every read access is written to a log",
+        "id": 5
+      },
+      {
+        "name": "group log",
+        "code_id": "group_log",
+        "description": "only a closed group of users can seen and every read access is written to a log",
+        "id": 6
+      },
+      {
+        "name": "private log",
+        "code_id": "private_log",
+        "description": "only the user itself can see und every read access is written to a log",
+        "id": 7
       }
     ],
     "protection_types": [
@@ -15433,17 +15451,6 @@
             "position_type": 1
           },
           {
-            "link_id": 674,
-            "id": 169,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 676,
             "id": 172,
             "name": "system form button export",
@@ -15451,6 +15458,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 674,
+            "id": 169,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -15679,17 +15697,6 @@
             "position_type": 1
           },
           {
-            "link_id": 696,
-            "id": 169,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 698,
             "id": 172,
             "name": "system form button export",
@@ -15697,6 +15704,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 696,
+            "id": 169,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -15802,17 +15820,6 @@
             "position_type": 1
           },
           {
-            "link_id": 707,
-            "id": 169,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 709,
             "id": 172,
             "name": "system form button export",
@@ -15820,6 +15827,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 707,
+            "id": 169,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },

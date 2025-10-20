@@ -214,7 +214,11 @@ class sandbox_link_named extends sandbox_link
     {
         $vars = parent::api_json_array($typ_lst, $usr);
 
-        $vars[json_fields::NAME] = $this->name();
+        if ($typ_lst->with_excluded()) {
+            $vars[json_fields::NAME] = $this->name(true);
+        } else {
+            $vars[json_fields::NAME] = $this->name();
+        }
         $vars[json_fields::DESCRIPTION] = $this->description();
         $vars[json_fields::TYPE] = $this->type_id();
 
@@ -243,9 +247,13 @@ class sandbox_link_named extends sandbox_link
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
-    function name(): string
+    function name(bool $ignore_excluded = false): string
     {
-        return $this->name;
+        if (!$this->is_excluded() or $ignore_excluded) {
+            return $this->name;
+        } else {
+            return '';
+        }
     }
 
     /**

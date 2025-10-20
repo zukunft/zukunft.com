@@ -368,19 +368,18 @@ class view extends sandbox_code_id
      */
     function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
-
             if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;

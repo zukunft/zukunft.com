@@ -564,7 +564,6 @@ class library
     }
 
 
-
     /*
      * list functions (to be replaced by standard functions if possible)
      */
@@ -587,6 +586,21 @@ class library
                 $keys = array_merge($keys, $this->array_keys_r($sub_array));
 
         return $keys;
+    }
+
+    function array_filter_r(array $array, callable $callback): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->array_filter_r($value, $callback);
+            } else {
+                if ($callback($value, $key)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+
+        return $array;
     }
 
     /**

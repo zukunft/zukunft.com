@@ -185,6 +185,7 @@ class url_var
     const string STYLE = 'style';
     const string SHARE = 'share';
     const string PROTECTION = 'protection';
+    const string EXCLUDED = 'excluded';
     const string REFERENCE = 'reference';
     const string PHRASE_TYPE = 'phrase_type';
     const string PLURAL = 'plural';

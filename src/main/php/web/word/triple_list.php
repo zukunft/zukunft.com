@@ -33,6 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -452,11 +453,14 @@ class triple_list extends list_dsp
         $name_lst = array();
         foreach ($this->lst() as $phr) {
             if ($phr != null) {
-                $name_lst[] = $phr->name();
+                $name = $phr->name();
+                if ($name != '') {
+                    $name_lst[] = $name;
+                }
             }
         }
         // TODO allow to fix the order
-        asort($name_lst);
+        // asort($name_lst);
         return $name_lst;
     }
 

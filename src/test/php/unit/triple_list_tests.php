@@ -118,7 +118,7 @@ class triple_list_tests
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
         $trp_lst = $t->triple_list_short();
-        $t->assert_api_to_dsp($trp_lst, new triple_list_dsp(), [api_type::INCL_EXCLUDED]);
+        $t->assert_api_to_dsp($trp_lst, new triple_list_dsp(), [api_type::WITH_EXCLUDED]);
 
     }
 

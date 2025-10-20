@@ -62,10 +62,19 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class sandbox extends db_object_dsp
 {
 
+    // the share_id is used to define the access rights
+    // which can be public, personal, group, private or log
     // for preloaded types just include the id on the sandbox object
-    public ?int $share_id = null;      // id for public, personal, group or private
-    public ?int $protection_id = null; // id for no, user, admin or full protection
+    public ?int $share_id = null;
 
+    // the protection_id is used to define the change rights
+    //  which can no, user, admin or full protection
+    public ?int $protection_id = null;
+
+    // to reactivate an excluded sandbox object also excluded objects are send to the frontend
+    public ?bool $excluded = null;
+
+    // the user that has created the standard object
     protected ?user_dsp $owner = null;
 
     // the id of the default view for this object
@@ -97,6 +106,11 @@ class sandbox extends db_object_dsp
         } else {
             $this->protection_id = null;
         }
+        if (array_key_exists(json_fields::EXCLUDED, $json_array)) {
+            $this->excluded = $json_array[json_fields::EXCLUDED];
+        } else {
+            $this->excluded = null;
+        }
         return $usr_msg;
     }
 
@@ -118,6 +132,11 @@ class sandbox extends db_object_dsp
             $this->protection_id = $url_array[url_var::PROTECTION];
         } else {
             $this->protection_id = null;
+        }
+        if (array_key_exists(url_var::EXCLUDED, $url_array)) {
+            $this->excluded = $url_array[url_var::EXCLUDED];
+        } else {
+            $this->excluded = null;
         }
         return $usr_msg;
     }
@@ -146,6 +165,9 @@ class sandbox extends db_object_dsp
         if ($this->protection_id != null) {
             $vars[json_fields::PROTECTION] = $this->protection_id;
         }
+        if ($this->excluded != null) {
+            $vars[json_fields::EXCLUDED] = $this->excluded;
+        }
         return $vars;
     }
 
@@ -162,6 +184,15 @@ class sandbox extends db_object_dsp
     function protection_id(): ?int
     {
         return $this->protection_id;
+    }
+
+    function is_excluded(): bool
+    {
+        if ($this->excluded != null) {
+            return $this->excluded;
+        } else {
+            return false;
+        }
     }
 
 

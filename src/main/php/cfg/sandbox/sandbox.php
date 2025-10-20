@@ -477,20 +477,16 @@ class sandbox extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+        if ($this->is_excluded()) {
             $vars[json_fields::EXCLUDED] = true;
-        } else {
-            if ($this->is_excluded() and $typ_lst->test_mode()) {
-                $vars[json_fields::EXCLUDED] = true;
-            }
-            if ($this->share_id != null) {
-                $vars[json_fields::SHARE] = $this->share_id;
-            }
-            if ($this->protection_id != null) {
-                $vars[json_fields::PROTECTION] = $this->protection_id;
-            }
-
         }
+        if ($this->share_id != null) {
+            $vars[json_fields::SHARE] = $this->share_id;
+        }
+        if ($this->protection_id != null) {
+            $vars[json_fields::PROTECTION] = $this->protection_id;
+        }
+
 
         return $vars;
     }

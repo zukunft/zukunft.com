@@ -377,12 +377,10 @@ class component_link extends sandbox_link
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
-        if ($this->id() != 0) {
-            $vars[json_fields::LINK_ID] = $this->id();
-        }
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
+            if ($this->id() != 0) {
+                $vars[json_fields::LINK_ID] = $this->id();
+            }
             if ($this->component() != null) {
                 $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
             }
@@ -397,6 +395,11 @@ class component_link extends sandbox_link
             if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            if ($this->id() != 0) {
+                $vars[json_fields::ID] = $this->id();
+            }
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;

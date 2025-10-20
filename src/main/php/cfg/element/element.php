@@ -251,11 +251,8 @@ class element extends db_object_seq_id_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = $this->obj->api_json_array($typ_lst, $usr);
             if ($this->is_word()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
@@ -268,6 +265,9 @@ class element extends db_object_seq_id_user
             } else {
                 $vars[json_fields::OBJECT_CLASS] = '';
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;

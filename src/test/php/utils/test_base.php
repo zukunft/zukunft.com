@@ -855,7 +855,7 @@ class test_base
                 $dbo_name .= '_' . $id;
             }
         }
-        $file_path = test_paths::HTML . test_paths::VIEWS .  $folder . $dsp_code_id . $dbo_name;
+        $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
         $msk = new view($usr);
@@ -1024,9 +1024,15 @@ class test_base
     function json_remove_fields_only_to_ui(array $json_to_ui): array
     {
         $json_to_db = $json_to_ui;
-        foreach (json_fields::UNIDIRECTIONAL as $uni_fld) {
-            if (array_key_exists($uni_fld, $json_to_db)) {
-                unset($json_to_db[$uni_fld]);
+        foreach ($json_to_db as $key => $value) {
+            if (is_array($value)) {
+                $json_to_db[$key] = $this->json_remove_fields_only_to_ui($value);
+            } else {
+                foreach (json_fields::UNIDIRECTIONAL as $uni_fld) {
+                    if (array_key_exists($uni_fld, $json_to_db)) {
+                        unset($json_to_db[$uni_fld]);
+                    }
+                }
             }
         }
 

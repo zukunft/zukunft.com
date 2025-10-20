@@ -428,11 +428,8 @@ class component extends sandbox_code_id
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
@@ -452,6 +449,9 @@ class component extends sandbox_code_id
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;

@@ -22,6 +22,18 @@ zukunft.com:
       row limit:
         tooltip-comment: "initial number of page rows"
         default: 20
+      access:
+        log:
+          type:
+            sys-conf-value: "round robin"
+            tooltip-comment: "the type of the log size limitation: if round robin the storage size or time can be limited and older entries are simply deleted or in case of full a warning is created if the log reaches the limit"
+          limit:
+            storage size:
+              MB: 500
+              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the olf log"
+            time:
+              days: 100
+              tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"

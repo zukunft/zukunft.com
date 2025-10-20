@@ -525,11 +525,8 @@ class triple extends sandbox_link_named
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded() and !$typ_lst->test_mode()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
             $from = $this->from()->obj();
             if ($from != null) {
@@ -563,6 +560,9 @@ class triple extends sandbox_link_named
             }
             $vars[json_fields::USAGE] = $this->usage();
             $vars[json_fields::IMPACT] = $this->impact();
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;
