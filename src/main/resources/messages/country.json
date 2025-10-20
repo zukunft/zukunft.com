@@ -26,6 +26,8 @@
     { "name": "2019", "type": "time"},
     { "name": "2020", "type": "time"},
     { "name": "Year", "type": "time"},
+    { "name": "countryside"},
+    { "name": "suburb"},
     {
       "name": "one",
       "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
@@ -170,6 +172,26 @@
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
       "assigned_word": "\"inhabitants\""
+    },
+    {
+      "name": "city population",
+      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"City\" )",
+      "assigned_word": "\"Country\""
+    },
+    {
+      "name": "countryside population",
+      "expression": "\"total\" = \"total\" \"inhabitants\" - \"city population\"",
+      "assigned_word": "\"Country\""
+    },
+    {
+      "name": "suburb population",
+      "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"suburb\" )",
+      "assigned_word": "\"Country\""
+    },
+    {
+      "name": "countryside population without suburb",
+      "expression": "\"total\" = \"countryside population\" - \"suburb population\"",
+      "assigned_word": "\"Country\""
     },
     {
       "name": "population in the city of Zurich in percent of Switzerland",

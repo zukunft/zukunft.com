@@ -134,9 +134,22 @@ class ui_list extends ui_base
      * TODO move to a component exe part class
      * @return string a dummy text
      */
-    function formula_list(?db_object $dbo = null): string
+    function formula_list(?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        return $dbo->name();
+        global $mtr;
+
+        $result = '';
+        $frm_lst = clone $cfg->frm_lst;
+        if ($dbo::class == verb::class) {
+            $frm_lst = $frm_lst->get_by_verb($dbo);
+            $result = $frm_lst->name_link();
+        } else {
+            log_err($dbo::class . '  is not expected to be a selection for formulas');
+        }
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::NOT_USED_FOR_FORMULAS);
+        }
+        return $result;
     }
 
     private function phrases(phrase $phr, foaf_direction $dir): string

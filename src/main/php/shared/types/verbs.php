@@ -56,7 +56,7 @@ class verbs
     const string IS_PLURAL = "are";
     const string IS_REVERSE = "are";
     const string IS_REV_PLURAL = "are";
-    const string IS_NAME_FORMULA = "is";
+    const string IS_NAME_FORMULA = "of all";
     const string PART = "contains";
     const string PART_NAME = "is part of";
     const int PART_ID = 3;

@@ -140,6 +140,12 @@ class sandbox_list_named extends sandbox_list
         $this->lst_name_dirty_all = true;
     }
 
+    function set_name_pos_list(array $lst): void
+    {
+        $this->name_pos_lst = $lst;
+        $this->lst_name_dirty = false;
+    }
+
     /**
      * @return true if the name hash table is updated
      */
@@ -166,8 +172,7 @@ class sandbox_list_named extends sandbox_list
             foreach ($this->lst() as $key => $obj) {
                 $result[$obj->name()] = $key;
             }
-            $this->name_pos_lst = $result;
-            $this->lst_name_dirty = false;
+            $this->set_name_pos_list($result);
         } else {
             $result = $this->name_pos_lst;
         }

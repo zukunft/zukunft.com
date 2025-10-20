@@ -94,6 +94,7 @@ class term_list_read_tests
         // TODO add this to all db read tests for all API call functions
         $json_txt = $trm_lst->api_json();
         $result = json_decode($json_txt, true);
+        $result = $t->json_remove_fields_only_to_ui($result);
         $class_for_file = $t->class_without_namespace(term_list::class);
         $target = json_decode($t->api_json_expected($class_for_file . '_without_link'), true);
         $t->assert_json($test_name . $trm_lst->dsp_id(), $result, $target);

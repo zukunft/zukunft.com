@@ -215,7 +215,7 @@ class test_api extends create_test_objects
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
             $clone_obj->api_mapper(json_decode($json_api, true));
-            $json_compare = $clone_obj->api_json();
+            $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
         }

@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -153,6 +155,7 @@ class test_lib
         $dto_dsp->trp_lst = $cto->triple_list_ui();
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
+        $dto_dsp->frm_lst = $cto->formula_list_ui();
         $dto_dsp->chg_log = $cto->change_log_list_named_ui();
 
         // set the global cache var
@@ -165,9 +168,11 @@ class test_lib
      * cast a backend list to a frontend list via api message
      * @param sandbox_list|type_list|change_log_list $lst the filled backend list
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @return triple_list_ui|ref_list_ui|value_list_ui|change_log_list_ui|list_ui
+     * @return triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
      */
-    function list_to_ui(sandbox_list|type_list|change_log_list $lst, api_type_list|array $typ_lst = []): triple_list_ui|ref_list_ui|value_list_ui|change_log_list_ui|list_ui
+    function list_to_ui(
+        sandbox_list|type_list|change_log_list $lst, api_type_list|array $typ_lst = []
+    ): triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);
@@ -202,6 +207,7 @@ class test_lib
             triple_list::class => new triple_list_ui(),
             value_list::class => new value_list_ui(),
             ref_list::class => new ref_list_ui(),
+            formula_list::class => new formula_list_ui(),
             change_log_list::class => new change_log_list_ui(),
             default => false,
         };

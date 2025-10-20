@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
@@ -286,6 +287,13 @@ class formula_tests
             values::CH_INHABITANTS_2019_IN_MIO . ')/' .
             values::CH_INHABITANTS_2019_IN_MIO;
         //$t->assert('get numbers for formula ' . $frm->dsp_id() . ' based on term list ' . $trm_lst->dsp_id(), $result, $target);
+
+        // TODO Prio 2 add calculation test
+        $test_name = 'formula city population reference text';
+        $frm = $t->formula_city_population();
+        $result = $frm->ref_text();
+        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
+        $t->assert($test_name, $result, $target);
 
     }
 

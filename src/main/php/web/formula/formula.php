@@ -44,6 +44,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -68,7 +69,9 @@ include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -91,6 +94,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -225,6 +229,17 @@ class formula extends sandbox_code_id
     function impact(): float
     {
         return $this->impact;
+    }
+
+    function has_verb(verb $vrb): bool
+    {
+        $ref_txt = $this->ref_text();
+        $vrb_maker = chars::TERM_START . chars::VERB_SYMBOL . $vrb->id() . chars::TERM_END;
+        if (str_contains($ref_txt, $vrb_maker)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

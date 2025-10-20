@@ -204,6 +204,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
@@ -3283,6 +3284,9 @@ class create_test_objects extends test_base
         $lst->add($this->word_inhabitant()->term());
         $lst->add($this->word_2020()->term());
         $lst->add($this->word_mio()->term());
+        $lst->add($this->verb_is_filled()->term());
+        $lst->add($this->word_total()->term());
+        $lst->add($this->word_city()->term());
         return $lst;
     }
 
@@ -3603,11 +3607,39 @@ class create_test_objects extends test_base
         return $frm;
     }
 
-    function formula_list(): formula_list
+    /**
+     * @return formula to get the sum of all people living in cities
+     */
+    function formula_city_population(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(formulas::CITY_POPULATION_ID, formulas::CITY_POPULATION);
+        $frm->set_user_text(formulas::CITY_POPULATION_EXP, $this->term_list_increase());
+        $frm->set_type(formula_type::CALC, $this->usr1);
+        return $frm;
+    }
+
+    function formula_list_short(): formula_list
     {
         $lst = new formula_list($this->usr1);
         $lst->add($this->formula());
         return $lst;
+    }
+
+    function formula_list(): formula_list
+    {
+        $lst = new formula_list($this->usr1);
+        $lst->add($this->formula());
+        $lst->add($this->formula_this());
+        $lst->add($this->formula_prior());
+        $lst->add($this->formula_city_population());
+        return $lst;
+    }
+
+    function formula_list_ui(): formula_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->formula_list());
     }
 
     function formula_link(): formula_link

@@ -7,5 +7,6 @@
   "usage": 2,
   "type_id": 1,
   "user_text": "\"second\" = \"minute\" * 60",
+  "ref_text": "{w24}={w104}*60",
   "impact": 3.4
 }

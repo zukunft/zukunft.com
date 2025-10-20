@@ -85,7 +85,7 @@ class data_object
             $this->val_lst = $value;
         }
     }
-    private formula_list $frm_lst;
+    public formula_list $frm_lst;
     private view_list $msk_lst;
     private component_list $cmp_lst;
     public ?type_lists $typ_lst_cache = null;

@@ -442,6 +442,7 @@ class formula extends sandbox_code_id
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
+            $vars[json_fields::REF_TEXT] = $this->ref_text;
             $vars[json_fields::IMPACT] = $this->impact();
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();

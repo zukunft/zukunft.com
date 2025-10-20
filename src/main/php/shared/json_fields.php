@@ -353,6 +353,7 @@ class json_fields
     // list of json fields that are used for the api message to the frontend
     // but that are never used for the api message to the backend
     const array UNIDIRECTIONAL = [
+        self::REF_TEXT,
         self::USAGE,
         self::IMPACT
     ];
