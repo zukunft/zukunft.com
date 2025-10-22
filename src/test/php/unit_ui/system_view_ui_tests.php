@@ -102,7 +102,7 @@ class system_view_ui_tests
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');
         $ui = new frontend('unit test');
-        $dto = $tl->dummy_test_cache($t->usr1);
+        $dto = $tl->ui_test_cache($t->usr1);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);

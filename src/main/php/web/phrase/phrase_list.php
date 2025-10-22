@@ -36,24 +36,6 @@ namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
-use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 //include_once html_paths::HELPER . 'config.php';
@@ -68,6 +50,7 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'triple_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -76,6 +59,26 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_list extends sandbox_list_named
 {
@@ -190,7 +193,7 @@ class phrase_list extends sandbox_list_named
     /**
      * get the phrase of the most relevant result
      * e.g. "happy time points" for "global problems"
-     * @return phrase the main phrase of the most relevant result
+     * @return phrase_list the main phrase of the most relevant result
      */
     function result_phrases_most_relevant(): phrase_list
     {
@@ -232,7 +235,7 @@ class phrase_list extends sandbox_list_named
      * selected by the given verb
      * @param phrase $phr the parent phrase
      * @param verb|null $vrb the verb to filter the child phrases
-     * @return phrase_list the filtered children
+     * @return phrase_list the filtered parents
      */
     function parents(phrase $phr, verb|null $vrb = null): phrase_list
     {
@@ -242,6 +245,28 @@ class phrase_list extends sandbox_list_named
                 if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->to()->id() == $phr->id()) {
                         $result->add($trp->from());
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all triples that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered parents
+     */
+    function parent_triples(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->to()->id() == $phr->id()) {
+                        $result->add($trp);
                     }
                 }
             }
@@ -311,6 +336,56 @@ class phrase_list extends sandbox_list_named
 
         log_debug($wrd_lst->dsp_id());
         return $wrd_lst;
+    }
+
+    /**
+     * get the words from the phrase list
+     * @return word_list with the direct words of the phrase list
+     */
+    function word_list(): word_list
+    {
+        $wrd_lst = new word_list();
+
+        // fill up the word list
+        foreach ($this->lst() as $phr) {
+            $wrd = $phr->obj();
+            if ($wrd == null) {
+                log_err('Object of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($wrd->id() == 0) {
+                log_err('Id of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($wrd->name() == '') {
+                log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
+            } elseif ($wrd::class == word::class) {
+                $wrd_lst->add($wrd);
+            }
+        }
+
+        return $wrd_lst;
+    }
+
+    /**
+     * get the triples from the phrase list
+     * @return triple_list with the direct triples of the phrase list
+     */
+    function triple_list(): triple_list
+    {
+        $trp_lst = new triple_list();
+
+        // fill up the triple list
+        foreach ($this->lst() as $phr) {
+            $trp = $phr->obj();
+            if ($trp == null) {
+                log_err('Object of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($trp->id() == 0) {
+                log_err('Id of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($trp->name() == '') {
+                log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
+            } elseif ($trp::class == triple::class) {
+                $trp_lst->add($trp);
+            }
+        }
+
+        return $trp_lst;
     }
 
 

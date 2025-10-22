@@ -534,7 +534,8 @@ class triple extends sandbox_link_named
                     //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
                     $vars[json_fields::FROM] = $this->from_id();
                     if ($typ_lst->include_phrases()) {
-                        $vars[json_fields::FROM_PHRASE] = $from->api_json_array($typ_lst);
+                        // create the json based on the phrase not the object to include the class type
+                        $vars[json_fields::FROM_PHRASE] = $this->from()->api_json_array($typ_lst);
                     }
                 }
             }
@@ -548,7 +549,8 @@ class triple extends sandbox_link_named
                     //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
                     $vars[json_fields::TO] = $this->to_id();
                     if ($typ_lst->include_phrases()) {
-                        $vars[json_fields::TO_PHRASE] = $to->api_json_array($typ_lst);
+                        // create the json based on the phrase not the object to include the class type
+                        $vars[json_fields::TO_PHRASE] = $this->to()->api_json_array($typ_lst);
                     }
                 }
             }

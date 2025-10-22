@@ -16,6 +16,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
+    TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
+    TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 
     TODO complete system view with: about, async_process, calculate
 

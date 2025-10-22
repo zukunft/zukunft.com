@@ -72,11 +72,17 @@ class components
     const string FORM_PLURAL_NAME = 'system form field plural';
     const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
     const int FORM_PLURAL_ID = 92;
+
+    // triple only fields
+    const string FORM_WEIGHT = 'form_field_weight';
     const string FORM_PHRASE_FROM_CODE_ID = 'form_field_triple_phrase_from';
     const string FORM_PHRASE_TO_CODE_ID = 'form_field_triple_phrase_from';
+
+    // component only fields
     const string FORM_PHRASE_ROW = 'form_field_select_phrase_row';
     const string FORM_PHRASE_COL = 'form_field_select_phrase_col';
     const string FORM_PHRASE_COL_SUB = 'form_field_select_phrase_col_sub';
+
     const string FORM_SHARE_TYPE = 'form_field_share_type';
     const string FORM_SHARE_TYPE_NAME = 'form field share type';
     const string FORM_SHARE_TYPE_COM = 'the share type field in a form';

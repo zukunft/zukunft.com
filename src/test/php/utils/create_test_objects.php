@@ -222,6 +222,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_d
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -276,8 +277,10 @@ class create_test_objects extends test_base
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
     // usage used for unit testing
     const int DUMMY_USAGE = 2;
+    const int DUMMY_USAGE_VERB = 23;
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
+    const float DUMMY_IMPACT_VERB = 123.4;
 
 
     /*
@@ -1832,6 +1835,20 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_chf(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::CHF_ID, words::CHF);
+        return $wrd;
+    }
+
+    function word_eur(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::EUR_ID, words::EUR);
+        return $wrd;
+    }
+
     function word_usd(): word
     {
         $wrd = new word($this->usr1);
@@ -1843,6 +1860,20 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::HTP_ID, words::HTP);
+        return $wrd;
+    }
+
+    function word_company(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        return $wrd;
+    }
+
+    function word_abb(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::ABB_ID, words::ABB);
         return $wrd;
     }
 
@@ -1884,11 +1915,55 @@ class create_test_objects extends test_base
         $lst->add($this->word());
         $lst->add($this->word_const());
         $lst->add($this->word_pi());
+        $lst->add($this->word_cf());
+        $lst->add($this->word_diameter());
+        $lst->add($this->word_e_symbol());
+        $lst->add($this->word_e());
+        $lst->add($this->word_year());
         $lst->add($this->word_2019());
+        $lst->add($this->word_2020());
+        $lst->add($this->word_percent());
+        $lst->add($this->word_math());
         $lst->add($this->word_one());
         $lst->add($this->word_mio());
-        $lst->add($this->word_percent());
+        $lst->add($this->word_minute());
+        $lst->add($this->word_second());
+        $lst->add($this->word_ch());
+        $lst->add($this->word_city());
+        $lst->add($this->word_canton());
+        $lst->add($this->word_zh());
+        $lst->add($this->word_bern());
+        $lst->add($this->word_ge());
+        $lst->add($this->word_inhabitant());
+        $lst->add($this->word_parts());
+        $lst->add($this->word_total());
+        $lst->add($this->word_problem());
+        $lst->add($this->word_global());
+        $lst->add($this->word_potential());
+        $lst->add($this->word_climate());
+        $lst->add($this->word_warmer());
+        $lst->add($this->word_health());
+        $lst->add($this->word_populism());
+        $lst->add($this->word_poverty());
+        $lst->add($this->word_education());
+        $lst->add($this->word_happy());
+        $lst->add($this->word_time());
+        $lst->add($this->word_points());
+        $lst->add($this->word_trillion());
+        $lst->add($this->word_billion());
+        $lst->add($this->word_chf());
+        $lst->add($this->word_eur());
+        $lst->add($this->word_usd());
+        $lst->add($this->word_htp());
+        $lst->add($this->word_company());
+        $lst->add($this->word_abb());
         return $lst;
+    }
+
+    function word_list_ui(): word_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->word_list_all_types(), [api_type::INCL_PHRASES]);
     }
 
     /**
@@ -1933,8 +2008,8 @@ class create_test_objects extends test_base
         $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
         $vrb->set_formula_name(verbs::IS_NAME_FORMULA);
         $vrb->set_user($this->usr1);
-        $vrb->set_usage(self::DUMMY_USAGE);
-        $vrb->set_impact(self::DUMMY_IMPACT);
+        $vrb->set_usage(self::DUMMY_USAGE_VERB);
+        $vrb->set_impact(self::DUMMY_IMPACT_VERB);
         return $vrb;
     }
 
@@ -1958,8 +2033,8 @@ class create_test_objects extends test_base
         $vrb->set_reverse_plural(verbs::MEASURE_REV_PLURAL);
         $vrb->set_formula_name(verbs::MEASURE_NAME_FORMULA);
         $vrb->set_user($this->usr1);
-        $vrb->set_usage(self::DUMMY_USAGE);
-        $vrb->set_impact(self::DUMMY_IMPACT);
+        $vrb->set_usage(self::DUMMY_USAGE_VERB);
+        $vrb->set_impact(self::DUMMY_IMPACT_VERB);
         return $vrb;
     }
 
@@ -2042,7 +2117,18 @@ class create_test_objects extends test_base
         $trp->weight = 0.5;
         $trp->set_view_id(views::START_ID);
         $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
+        $trp->set_impact(triples::SYSTEM_TEST_ADD_IMPACT);
         $trp->exclude();
+        return $trp;
+    }
+
+    /**
+     * @return triple with all fields set and a reserved test name for testing the db write function
+     */
+    function triple_filled_included(): triple
+    {
+        $trp = $this->triple_filled();
+        $trp->include();
         return $trp;
     }
 
@@ -2051,8 +2137,7 @@ class create_test_objects extends test_base
      */
     function triple_filled_add(): triple
     {
-        $trp = $this->triple();
-        $trp->include();
+        $trp = $this->triple_filled_included();
         $trp->id = 0;
         $trp->set_name(triples::SYSTEM_TEST_ADD);
         $trp->set_from($this->word_filled_add()->phrase());
@@ -2404,17 +2489,44 @@ class create_test_objects extends test_base
     function triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
-        $lst->add($this->triple_filled());
+        $lst->add($this->triple_filled_included());
         $lst->add($this->triple_pi_symbol());
         $lst->add($this->zh_city());
         $lst->add($this->zh_canton());
         return $lst;
     }
 
+    /**
+     * @return triple_list with all triples for testing the handling of longer lists including paging
+     */
+    function triple_list_all(): triple_list
+    {
+        $lst = new triple_list($this->usr1);
+        $lst->add($this->triple_filled_included());
+        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
+        $lst->add($this->triple_e());
+        $lst->add($this->global_problem());
+        $lst->add($this->triple_global_warming());
+        $lst->add($this->triple_gwp());
+        $lst->add($this->global_warming_potential());
+        $lst->add($this->populism_problem());
+        $lst->add($this->poverty_problem());
+        $lst->add($this->potential_health_problem());
+        $lst->add($this->potential_education_problem());
+        $lst->add($this->time_points());
+        $lst->add($this->happy_time_points());
+        $lst->add($this->zh_city());
+        $lst->add($this->zh_canton());
+        $lst->add($this->triple_bern());
+        $lst->add($this->triple_ge());
+        return $lst;
+    }
+
     function triple_list_ui(): triple_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->triple_list());
+        return $tl->list_to_ui($this->triple_list_all(), [api_type::INCL_PHRASES]);
     }
 
     function phrase(): phrase

@@ -87,6 +87,7 @@ class component_exe extends component
     /**
      * create the html code of this component filled with the data from the given database object ($dbo)
      * TODO the html form field name should always be an url var name
+     * TODO use the style id of the component instead of having a function parameter
      *
      * @param db_object_dsp|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
@@ -125,7 +126,7 @@ class component_exe extends component
         $phr_lst->load_fallback();
         if ($cfg != null) {
             if ($cfg->has_phrases()) {
-                $phr_lst = $cfg->phrase_list();
+                $phr_lst = $cfg->phr_lst;
             }
         }
         $log_lst = new change_log_list();
@@ -154,6 +155,10 @@ class component_exe extends component
             log_info('');
         }
         $tc_id = $this->type_code_id($cfg->typ_lst_cache);
+        // get the style code id from the component
+        $style = $this->style_code_id($cfg->typ_lst_cache);
+
+        // get the html code from the component
         $result .= match ($tc_id) {
 
             // start page - components used for the start page
@@ -165,7 +170,7 @@ class component_exe extends component
             // system form - components that can only be used for internal system forms
             // general form fields
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_type::FORM_FIELD_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_NAME => $form->form_name($dbo, $style),
             component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
             // select object fields
@@ -219,13 +224,16 @@ class component_exe extends component
             component_type::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
 
             // verb only fields
-            component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
-            component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
-            component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
-            component_type::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $style),
+            component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $style),
+            component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $style),
+            component_type::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $style),
+
+            // triple only fields
+            component_type::FORM_FIELD_WEIGHT => $form->form_field_weight($dbo),
 
             // value only fields
-            component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $style),
             component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
 
@@ -299,8 +307,8 @@ class component_exe extends component
             // related
             component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
-            component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
-            component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
+            component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
+            component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
             component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
             component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
             component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
@@ -332,7 +340,7 @@ class component_exe extends component
 
             // base
             component_type::PHRASE => $this->name_tip(),
-            component_type::LINK => $link->phrase_link($dbo, $form_name, $cfg->phrase_list()),
+            component_type::LINK => $link->phrase_link($dbo, $form_name, $cfg->phr_lst),
 
             // table
             component_type::VALUES_ALL => $base->all($dbo, $back),

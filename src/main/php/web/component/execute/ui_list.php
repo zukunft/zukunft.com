@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula.php';
@@ -51,6 +52,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
@@ -76,21 +78,23 @@ class ui_list extends ui_base
     /**
      * HTML for a list of words or triples
      * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
-    function parents_of_word(word|db_object $wrd): string
+    function parents_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::UP);
+        return $this->phrases($wrd->phrase(), foaf_direction::UP, $phr_lst);
     }
 
     /**
      * HTML for a list of words or triples
      * @param word|db_object $wrd the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
-    function children_of_word(word|db_object $wrd): string
+    function children_of_word(word|db_object $wrd, ?phrase_list $phr_lst = null): string
     {
-        return $this->phrases($wrd->phrase(), foaf_direction::DOWN);
+        return $this->phrases($wrd->phrase(), foaf_direction::DOWN, $phr_lst);
     }
 
     /**
@@ -152,10 +156,33 @@ class ui_list extends ui_base
         return $result;
     }
 
-    private function phrases(phrase $phr, foaf_direction $dir): string
+    /**
+     * TODO Prio 1 review at least the verb part
+     * @param phrase $phr
+     * @param foaf_direction $dir
+     * @param phrase_list|null $phr_lst
+     * @return string
+     */
+    private function phrases(
+        phrase $phr,
+        foaf_direction $dir,
+        ?phrase_list $phr_cac = null
+    ): string
     {
-        $phr_lst = new phrase_list();
-        $phr_lst->load_related($phr, $dir);
+        if ($phr_cac == null) {
+            $phr_lst = new phrase_list();
+            $phr_lst->load_related($phr, $dir);
+        } else {
+            //$vrb = new verb();
+            //$vrb->id = verbs::IS_ID;
+            if ($dir == foaf_direction::UP) {
+                $phr_lst = $phr_cac->parent_triples($phr);
+            } elseif ($dir == foaf_direction::DOWN) {
+                $phr_lst = $phr_cac->children($phr);
+            } else {
+                $phr_lst = $phr_cac;
+            }
+        }
         return $phr_lst->name_link();
     }
 

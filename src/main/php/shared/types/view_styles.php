@@ -48,6 +48,8 @@ class view_styles
     const string COL_SM_8 = 'col-md-8';
     const string COL_SM_10 = 'col-md-10';
     const string COL_SM_12 = 'col-md-12';
+    const string COL_SM_1 = 'col-md-1';
+    const string COL_SM_3 = 'col-md-3';
     const string BS_SM_2 = 'mr-sm-2';
 
 

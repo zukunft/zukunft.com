@@ -430,6 +430,18 @@ class triple_list extends list_dsp
     /**
      * @return phrase_list_dsp with all from phrases
      */
+    function phrase_list(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        foreach ($this->lst() as $trp) {
+            $lst->add($trp->phrase());
+        }
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_dsp with all from phrases
+     */
     function from_phrase_list(): phrase_list_dsp
     {
         $lst = new phrase_list_dsp();

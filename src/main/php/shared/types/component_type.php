@@ -176,6 +176,10 @@ class component_type
     const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
     const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
 
+    // triple only fields
+    const string FORM_FIELD_WEIGHT = "system_form_field_weight";
+    const int FORM_FIELD_WEIGHT_ID = 150;
+
     // value only fields
     const string FORM_FIELD_GROUP = "system_form_field_group";
     const int FORM_FIELD_GROUP_ID = 69;
@@ -425,6 +429,7 @@ class component_type
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
+        self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
         self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_SOURCE_GROUP,
@@ -540,6 +545,7 @@ class component_type
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
         [self::FORM_FIELD_NAME_IN_FORMULAS, self::FORM_FIELD_NAME_IN_FORMULAS_ID],
+        [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],

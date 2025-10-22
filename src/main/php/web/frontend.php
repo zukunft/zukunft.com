@@ -273,6 +273,7 @@ class frontend
     /**
      * load the frontend cache from the test resource
      * TODO move to test to avoid usage of backend in frontend
+     * @param user_backend $usr the backend user used for the import e.g. of the system views
      * @return void
      */
     function load_dummy_cache_from_test_resources(user_backend $usr): void

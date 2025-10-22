@@ -72,9 +72,76 @@ class data_object
      *  object vars
      */
 
-    private word_list $wrd_lst;
-    public triple_list $trp_lst;
-    private phrase_list $phr_lst;
+    // TODO measure and optimize memory versus speed
+    //      by keeping either separate lists
+    //      or generate always the word or triple list from the phrase list
+    //      or generate always the phrase list from the word or triple list
+
+    // the list of cached words
+    // using more memory instead of recreating the list every time
+    private bool $wrd_lst_dirty = false;
+    public word_list $wrd_lst {
+        get {
+            if ($this->wrd_lst_dirty) {
+                if (!$this->phr_lst_dirty) {
+                    $this->wrd_lst->merge($this->phr_lst->word_list());
+                }
+                $this->wrd_lst_dirty = false;
+            }
+            return $this->wrd_lst;
+        }
+        set(word_list $value) {
+            $this->wrd_lst = $value;
+            $this->wrd_lst_dirty = false;
+            $this->phr_lst_dirty = true;
+        }
+    }
+
+    // the list of cached triples
+    // using more memory instead of recreating the list every time
+    private bool $trp_lst_dirty = false;
+    public triple_list $trp_lst {
+        get {
+            if ($this->trp_lst_dirty) {
+                if (!$this->phr_lst_dirty) {
+                    $this->trp_lst->merge($this->phr_lst->triple_list());
+                }
+                $this->trp_lst_dirty = false;
+            }
+            return $this->trp_lst;
+        }
+        set(triple_list $value) {
+            $this->trp_lst = $value;
+            $this->trp_lst_dirty = false;
+            $this->phr_lst_dirty = true;
+        }
+    }
+
+    // the list of cached phrases
+    // using more memory instead of recreating the list every time
+    // true if the phrase list is not inline with the word and triple list
+    private bool $phr_lst_dirty = false;
+    public phrase_list $phr_lst {
+        get {
+            if ($this->phr_lst_dirty) {
+                if (!$this->wrd_lst_dirty) {
+                    $this->phr_lst->merge($this->wrd_lst->phrase_list());
+                }
+                if (!$this->trp_lst_dirty) {
+                    $this->phr_lst->merge($this->trp_lst->phrase_list());
+                }
+                $this->phr_lst_dirty = false;
+            }
+            return $this->phr_lst;
+        }
+        set(phrase_list $value) {
+            $this->phr_lst = $value;
+            $this->wrd_lst_dirty = true;
+            $this->trp_lst_dirty = true;
+            $this->phr_lst_dirty = false;
+        }
+    }
+
     public ref_list $ref_lst {
         set(ref_list $value) {
             $this->ref_lst = $value;
@@ -124,8 +191,11 @@ class data_object
     function reset(): void
     {
         $this->usr = new user();
+        $this->wrd_lst_dirty = true;
         $this->wrd_lst = new word_list();
+        $this->trp_lst_dirty = true;
         $this->trp_lst = new triple_list();
+        $this->phr_lst_dirty = true;
         $this->phr_lst = new phrase_list();
         $this->val_lst = new value_list();
         $this->ref_lst = new ref_list();
@@ -239,11 +309,8 @@ class data_object
         foreach ($phr_lst->lst() as $phr) {
             $this->phr_lst->add($phr);
         }
-    }
-
-    function phrase_list(): phrase_list
-    {
-        return $this->phr_lst;
+        $this->wrd_lst_dirty = true;
+        $this->trp_lst_dirty = true;
     }
 
     function ref_list_cloned(): ref_list

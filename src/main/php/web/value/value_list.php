@@ -51,6 +51,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
@@ -76,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -166,7 +168,7 @@ class value_list extends list_dsp
         return $result;
     }
 
-    function filter(word|data_object|null $dbo = null): value_list
+    function filter(word|triple|data_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class) {
@@ -837,7 +839,7 @@ class value_list extends list_dsp
             $common_phr_lst_new->load_by_ids($common_phr_ids);
         }
 
-        $common_phr_lst = $common_phr_lst->phrase_lst();
+        $common_phr_lst = $common_phr_lst->phrase_list();
 
         // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*

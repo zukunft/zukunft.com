@@ -298,6 +298,26 @@ class system_form extends component
     }
 
     /**
+     * edit field for the triple weight
+     * @param triple|db_object_dsp $trp the triple object
+     * @return string the html code to request the triple weight from the user
+     */
+    function form_field_weight(triple|db_object_dsp $trp): string
+    {
+        $html = new html_base();
+        $weight = $trp->weight;
+        if ($weight == null) {
+            $weight = '';
+        }
+        return $html->form_field(
+            url_var::WEIGHT,
+            $weight,
+            html_base::INPUT_PERCENT,
+            '',view_styles::COL_SM_1
+        );
+    }
+
+    /**
      * @param db_object_dsp $dbo the object
      * @return string the html code to request a numeric value from the user
      */

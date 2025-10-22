@@ -216,6 +216,7 @@ class view_exe extends view_base
                     or $tc_id == component_type::FORM_FIELD_REVERSE
                     or $tc_id == component_type::FORM_FIELD_PLURAL_REVERSE
                     or $tc_id == component_type::FORM_FIELD_NAME_IN_FORMULAS
+                    or $tc_id == component_type::FORM_FIELD_WEIGHT
                     or $tc_id == component_type::FORM_FIELD_VALUE) {
                     $style_id = null;
                 }

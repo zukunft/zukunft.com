@@ -122,11 +122,12 @@ class test_lib
     }
 
     /**
-     * create the dummy frontend cache entries for the unit tests
+     * create and frontend cache and fill it with all entries for the unit tests
+     * TODO use it for the global ui_cac var
      * @param user $usr the user for which the sample cache should be created
      * @return data_object_ui
      */
-    function dummy_test_cache(user $usr): data_object_ui
+    function ui_test_cache(user $usr): data_object_ui
     {
         global $ui_cac;
 
@@ -152,6 +153,7 @@ class test_lib
         $cto->usr1 = $usr;
 
         // set the value cache list based
+        $dto_dsp->wrd_lst = $cto->word_list_ui();
         $dto_dsp->trp_lst = $cto->triple_list_ui();
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
@@ -168,11 +170,12 @@ class test_lib
      * cast a backend list to a frontend list via api message
      * @param sandbox_list|type_list|change_log_list $lst the filled backend list
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @return triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+     * @return word_list_ui|triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
      */
     function list_to_ui(
-        sandbox_list|type_list|change_log_list $lst, api_type_list|array $typ_lst = []
-    ): triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+        sandbox_list|type_list|change_log_list $lst,
+        api_type_list|array                    $typ_lst = []
+    ): word_list_ui|triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);

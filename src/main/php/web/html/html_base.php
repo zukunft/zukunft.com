@@ -65,6 +65,8 @@ class html_base
     // the html input types used
     const string INPUT_TEXT = 'text';
     const string INPUT_NUMBER = 'text';
+    // TODO Prio 2 add frontend validation checks
+    const string INPUT_PERCENT = 'text';
     const string INPUT_SUBMIT = 'submit';
     const string INPUT_SEARCH = 'search';
     const string INPUT_CHECKBOX = 'checkbox';

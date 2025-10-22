@@ -148,3 +148,4 @@ component_type_id, type_name, description, code_id
 147, 'show description', 'show the object description without link or form field', 'system_show_field_description'
 148, 'formulas by verb', 'list of formulas which use a given verb', 'formulas_by_verb'
 149, 'form field formula name', 'form field the verb name used in formulas', 'system_form_field_name_in_formulas'
+150, 'form field weight', 'fixed form field the triple weight', 'system_form_field_weight'

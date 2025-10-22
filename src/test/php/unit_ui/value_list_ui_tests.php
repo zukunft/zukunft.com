@@ -50,7 +50,7 @@ class value_list_ui_tests
         $html = new html_base();
         $tl = new test_lib();
         $ui = new frontend('unit ui html reference list');
-        $dto = $tl->dummy_test_cache($t->usr1);
+        $dto = $tl->ui_test_cache($t->usr1);
         $ui->set_cache($dto);
 
         // start the test section (ts)

@@ -341,7 +341,7 @@ class type_list
     function type_selector(
         string $form,
         ?int   $selected = null,
-        string $name,
+        string $name = '',
         msg_id $label_id = msg_id::LABEL_TYPE,
         string $style = view_styles::COL_SM_4
     ): string

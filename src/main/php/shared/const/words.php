@@ -317,6 +317,8 @@ class words
     const int TRILLION_ID = 255;
     const string CHF = 'CHF';
     const int CHF_ID = 257;
+    const string EUR = 'Euro';
+    const int EUR_ID = 266;
     const string USD = 'USD';
     const int USD_ID = 258;
 

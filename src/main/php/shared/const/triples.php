@@ -85,7 +85,8 @@ class triples
     const string SYSTEM_TEST_ADD = 'System Test Triple';
     const string SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
     const string SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
-    const int SYSTEM_TEST_ADD_USAGE = 123;
+    const int SYSTEM_TEST_ADD_USAGE = 12;
+    const float SYSTEM_TEST_ADD_IMPACT = 23.4;
     const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
     const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';

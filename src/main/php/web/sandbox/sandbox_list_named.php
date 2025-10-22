@@ -43,6 +43,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -227,6 +229,21 @@ class sandbox_list_named extends sandbox_list
             $result = parent::add_obj($to_add, $allow_duplicates);
         }
         return $result;
+    }
+
+    /**
+     * add the object to the list without duplicate check
+     * and add the id to the id hash
+     *
+     * @param sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add
+     * @return void
+     */
+    protected function add_direct(sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
+    {
+        if (!$this->lst_name_dirty) {
+            $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
+        }
+        parent::add_direct($obj_to_add);
     }
 
     /**

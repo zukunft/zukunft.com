@@ -83,7 +83,7 @@ class word_list extends list_named
      * convert the word list object into a phrase list object
      * @return phrase_list with all words of this list
      */
-    function phrase_lst(): phrase_list
+    function phrase_list(): phrase_list
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -245,7 +245,7 @@ class word_list extends list_named
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list();
-            $val_lst->load_by_phr_lst($this->phrase_lst());
+            $val_lst->load_by_phr_lst($this->phrase_list());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();
