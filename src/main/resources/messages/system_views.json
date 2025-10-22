@@ -1621,17 +1621,18 @@
         {
           "position": "18",
           "name": "parents of word",
-          "style": "col-md-6"
+          "style": "col-md-4"
         },
         {
           "position": "19",
           "name": "children of word",
-          "position_type": "side",
-          "style": "col-md-6"
+          "position_type": "combine",
+          "style": "col-md-4"
         },
         {
           "position": "20",
           "name": "system sub title values",
+          "position_type": "column",
           "style": "col-md-4"
         },
         {
@@ -1737,17 +1738,18 @@
         {
           "position": "13",
           "name": "parents of word",
-          "style": "col-md-6"
+          "style": "col-md-4"
         },
         {
           "position": "14",
           "name": "children of word",
-          "position_type": "side",
-          "style": "col-md-6"
+          "position_type": "combine",
+          "style": "col-md-4"
         },
         {
           "position": "15",
           "name": "system sub title values",
+          "position_type": "column",
           "style": "col-md-4"
         },
         {
@@ -2267,60 +2269,69 @@
         },
         {
           "position": "25",
-          "name": "parents of word",
-          "style": "col-md-6"
+          "name": "system formatter row end"
         },
         {
           "position": "26",
-          "name": "children of word",
-          "position_type": "side",
-          "style": "col-md-6"
+          "name": "system formatter row start"
         },
         {
           "position": "27",
-          "name": "system sub title values",
+          "name": "parents of word",
           "style": "col-md-4"
         },
         {
           "position": "28",
-          "name": "value list of word",
-          "position_type": "combine"
+          "name": "children of word",
+          "position_type": "combine",
+          "style": "col-md-4"
         },
         {
           "position": "29",
-          "name": "system sub title references",
+          "name": "system sub title values",
+          "position_type": "column",
           "style": "col-md-4"
         },
         {
           "position": "30",
-          "name": "ref list word",
+          "name": "value list of word",
           "position_type": "combine"
         },
         {
           "position": "31",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "32",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "33",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "32",
+          "position": "34",
           "name": "system formatter row end"
         },
         {
-          "position": "33",
+          "position": "35",
           "name": "system formatter row start"
         },
         {
-          "position": "34",
+          "position": "36",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "35",
+          "position": "37",
           "name": "change log word",
           "position_type": "combine"
         },
         {
-          "position": "36",
+          "position": "38",
           "name": "system formatter row end"
         }
       ]
@@ -2371,60 +2382,69 @@
         },
         {
           "position": "10",
-          "name": "parents of word",
-          "style": "col-md-6"
+          "name": "system formatter row end"
         },
         {
           "position": "11",
-          "name": "children of word",
-          "position_type": "side",
-          "style": "col-md-6"
+          "name": "system formatter row start"
         },
         {
           "position": "12",
-          "name": "system sub title values",
+          "name": "parents of word",
           "style": "col-md-4"
         },
         {
           "position": "13",
-          "name": "value list of word",
-          "position_type": "combine"
+          "name": "children of word",
+          "position_type": "combine",
+          "style": "col-md-4"
         },
         {
           "position": "14",
-          "name": "system sub title references",
+          "name": "system sub title values",
+          "position_type": "column",
           "style": "col-md-4"
         },
         {
           "position": "15",
-          "name": "ref list word",
+          "name": "value list of word",
           "position_type": "combine"
         },
         {
           "position": "16",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "17",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "18",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "system formatter row end"
         },
         {
-          "position": "18",
+          "position": "20",
           "name": "system formatter row start"
         },
         {
-          "position": "19",
+          "position": "21",
           "name": "system sub title log",
           "style": "col-md-12"
         },
         {
-          "position": "20",
+          "position": "22",
           "name": "change log word",
           "position_type": "combine"
         },
         {
-          "position": "21",
+          "position": "23",
           "name": "system formatter row end"
         }
       ]

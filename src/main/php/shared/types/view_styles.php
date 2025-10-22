@@ -37,6 +37,8 @@ class view_styles
     // list of the view and component styles that have a coded functionality
     // where *_COM is the description for the tooltip
 
+    const string DEFAULT = self::COL_SM_4;
+    const string DEFAULT_ROW = self::COL_SM_12;
     const string COL_SM_2 = 'col-md-2';
     // just to display a fixed text
     const string COL_SM_4_COM = 'use 1/3 of the width (col-md-4)';

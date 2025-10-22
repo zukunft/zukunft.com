@@ -165,6 +165,12 @@ class view_exe extends view_base
             $this->log_debug('no components for ' . $this->dsp_id());
         } else {
             $row = '';
+            // the standard is that each component has its own row
+            // and the default style of the component is used
+            // the style of the component can be overwritten for each view link
+            // if the position type is side the component in the same row as the previous component
+            // if the position type is combine the component below the previous component but within an explicitly defined row
+
             // if a row contains only standard for elements
             // the row start and end can be set automatically
             // if a row contains buttons, hidden components, subheader or related tables
@@ -175,21 +181,24 @@ class view_exe extends view_base
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
-                    //
+                    // position the next component in a new row
                     if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
                         if ($auto_row) {
                             // the full page width row if a row contains only standard form elements
                             // TODO easy move code to HTML class
-                            $result .= '<div class="row ';
-                            $result .= view_styles::COL_SM_12;
-                            $result .= '">' . $row . ' </div>';
+                            $result .= $html->div_row($row, view_styles::DEFAULT_ROW);
                         } else {
                             // the component html code is added without adding a table row
-                            $result .= $html->add_style($row, $style_id);;
+                            $result .= $html->add_style($row, $style_id);
                             $style_id = null;
                         }
                         $row = '';
                         $auto_row = true;
+                    }
+                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::COLUMN) {
+                        // the component html code is added without adding a table row using the same style
+                        $result .= $html->add_style($row, $style_id);
+                        $row = '';
                     }
                 }
                 if ($cfg == null) {
@@ -210,6 +219,7 @@ class view_exe extends view_base
                 }
 
                 // Do not add the style if the style has been added by the component already
+                // TODO Prio 1 remove because it should always be possible to overwrite the style
                 $tc_id = $cmp->type_code_id($cfg->typ_lst_cache);
                 if ($tc_id == component_type::FORM_FIELD_NAME
                     or $tc_id == component_type::FORM_FIELD_PLURAL

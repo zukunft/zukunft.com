@@ -113,6 +113,10 @@ class system_view_ui_tests
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $usr_dsp = $tl->cast_user($t->usr1);
+            // TODO Prio 0 remove temp
+            //if ($id == 9) {
+            //    log_info('triple edit');
+            //}
             $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
             $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
             // create the filename of the expected result

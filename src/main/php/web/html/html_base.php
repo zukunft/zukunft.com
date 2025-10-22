@@ -1400,10 +1400,15 @@ class html_base
         return $this->div($text, 'form-group ' . $style);
     }
 
+    function div_row(string $text, string $style = ''): string
+    {
+        return $this->div($text, 'row ' . $style);
+    }
+
     function div(string $text, string $style = ''): string
     {
         if ($style == '') {
-            $style = view_styles::COL_SM_4;
+            $style = view_styles::DEFAULT;
         }
         return '<div class="' . $style . '">' . $text . '</div>';
     }
@@ -1411,12 +1416,21 @@ class html_base
     function add_style(string $text, ?int $style_id = null): string
     {
         if ($style_id != null and $text != '') {
-            global $msk_sty_cac;
-            $style = $msk_sty_cac->get($style_id);
-            $style_txt = $style->code_id();
+            $style_txt = $this->get_style_code($style_id);
             $text = $this->div($text, $style_txt);
         }
         return $text;
+    }
+
+    function get_style_code(?int $style_id = null): string
+    {
+        if ($style_id != null) {
+            global $msk_sty_cac;
+            $style = $msk_sty_cac->get($style_id);
+            return $style->code_id();
+        } else {
+            return '';
+        }
     }
 
     /**
