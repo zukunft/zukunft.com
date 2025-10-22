@@ -1236,6 +1236,18 @@
       "code_id": "value_list_word"
     },
     {
+      "name": "value list of triple",
+      "description": "list of values related to this triple",
+      "type": "values_by_triple",
+      "code_id": "values_by_triple"
+    },
+    {
+      "name": "value list of source",
+      "description": "list of values related to this source",
+      "type": "values_by_source",
+      "code_id": "values_by_source"
+    },
+    {
       "name": "ref list word",
       "description": "changeable list of reference of this word",
       "type": "ref_list",
@@ -2294,7 +2306,7 @@
         },
         {
           "position": "30",
-          "name": "value list of word",
+          "name": "value list of triple",
           "position_type": "combine"
         },
         {
@@ -2327,7 +2339,7 @@
         },
         {
           "position": "37",
-          "name": "change log word",
+          "name": "change log triple",
           "position_type": "combine"
         },
         {
@@ -2419,7 +2431,7 @@
         },
         {
           "position": "18",
-          "name": "value list of word",
+          "name": "value list of triple",
           "position_type": "combine"
         },
         {
@@ -2452,7 +2464,7 @@
         },
         {
           "position": "25",
-          "name": "change log word",
+          "name": "change log triple",
           "position_type": "combine"
         },
         {
@@ -2487,15 +2499,16 @@
         },
         {
           "position": "5",
-          "name": "system form field url"
+          "name": "system form select source type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form field url"
         },
         {
           "position": "7",
-          "name": "system form select source type"
+          "name": "system form field description"
         },
         {
           "position": "8",
@@ -2513,14 +2526,22 @@
         },
         {
           "position": "11",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "12",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "13",
+          "name": "system form button save"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
           "name": "system form end"
         }
       ]
@@ -2551,15 +2572,16 @@
         },
         {
           "position": "5",
-          "name": "system form field url"
+          "name": "system form select source type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form field description"
+          "name": "system form field url"
         },
         {
           "position": "7",
-          "name": "system form select source type"
+          "name": "system form field description"
         },
         {
           "position": "8",
@@ -2577,15 +2599,83 @@
         },
         {
           "position": "11",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "12",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "13",
+          "name": "system form button save"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
           "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "17",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "20",
+          "name": "system sub title values",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "21",
+          "name": "value list of source",
+          "position_type": "combine"
+        },
+        {
+          "position": "22",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "23",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "25",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "26",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "27",
+          "name": "change log source",
+          "position_type": "combine"
+        },
+        {
+          "position": "28",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -2614,15 +2704,87 @@
         },
         {
           "position": "5",
-          "name": "system form button cancel"
+          "name": "system show field description"
         },
         {
           "position": "6",
-          "name": "system form button del"
+          "name": "system formatter row right"
         },
         {
           "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
           "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "15",
+          "name": "system sub title values",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "16",
+          "name": "value list of source",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "18",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "20",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "21",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "22",
+          "name": "change log source",
+          "position_type": "combine"
+        },
+        {
+          "position": "23",
+          "name": "system formatter row end"
         }
       ]
     },

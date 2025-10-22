@@ -322,6 +322,10 @@ class component_type
     const int LIST_CHILDREN_OF_WORD_ID = 48;
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
+    const int LIST_VALUES_BY_TRIPLE_ID = 151;
+    const string LIST_VALUES_BY_SOURCE = "values_by_source";
+    const int LIST_VALUES_BY_SOURCE_ID = 152;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
@@ -638,6 +642,9 @@ class component_type
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
+        [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
+        [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],
+        [self::LIST_VALUES_BY_SOURCE, self::LIST_VALUES_BY_SOURCE_ID],
         [self::LIST_PHRASES_OF_FORMULA, self::LIST_PHRASES_OF_FORMULA_ID],
         [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],

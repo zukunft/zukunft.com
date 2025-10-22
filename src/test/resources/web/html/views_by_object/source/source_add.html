@@ -35,18 +35,6 @@
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name"></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="url">url</label><input class="form-control" type="text"
-                                                                                 name="url" id="url"></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"></div>
-        </div>
-        <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="source_type">source type</label><select class="form-control"
                                                                                                  name="source_type"
                                                                                                  form="source_add"
@@ -57,6 +45,16 @@
                 <option value="4">PDF</option>
                 <option value="5">API</option>
             </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="url">url</label><input class="form-control" type="text"
+                                                                                 name="url" id="url"></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"></div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
@@ -82,8 +80,11 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <a href="/http/view.php?m=47" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
-        <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        <br>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=47" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
     </form>
 </div>
 <footer>

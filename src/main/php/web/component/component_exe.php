@@ -310,6 +310,8 @@ class component_exe extends component
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
             component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
+            component_type::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
+            component_type::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
             component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
             component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
 
@@ -344,7 +346,7 @@ class component_exe extends component
 
             // table
             component_type::VALUES_ALL => $base->all($dbo, $back),
-            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg, $style_id),
+            component_type::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
             component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related

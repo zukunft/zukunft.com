@@ -47,6 +47,8 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -63,6 +65,8 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -164,9 +168,9 @@ class ui_list extends ui_base
      * @return string
      */
     private function phrases(
-        phrase $phr,
+        phrase         $phr,
         foaf_direction $dir,
-        ?phrase_list $phr_cac = null
+        ?phrase_list   $phr_cac = null
     ): string
     {
         if ($phr_cac == null) {
@@ -255,10 +259,73 @@ class ui_list extends ui_base
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @return string the html code to show the list of values
      */
-    function value_list(
+    function values_by_word(
         word|db_object|null $dbo,
         ?data_object        $dto = null,
         ?int                $style_id = null
+    ): string
+    {
+        $val_lst = $dto->value_list_cloned();
+        $val_lst->filter($dbo);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $this->value_list($val_lst, $phr_lst, $style_id);
+    }
+
+    /**
+     * show a list of values related to the given triple
+     *
+     * @param triple|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @return string the html code to show the list of values
+     */
+    function values_by_triple(
+        triple|db_object|null $dbo,
+        ?data_object          $dto = null,
+        ?int                  $style_id = null
+    ): string
+    {
+        $val_lst = $dto->value_list_cloned();
+        $val_lst->filter($dbo);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $this->value_list($val_lst, $phr_lst, $style_id);
+    }
+
+    /**
+     * show a list of values related to the given triple
+     *
+     * @param source|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @return string the html code to show the list of values
+     */
+    function values_by_source(
+        source|db_object|null $dbo,
+        ?data_object          $dto = null,
+        ?int                  $style_id = null
+    ): string
+    {
+        $val_lst = $dto->value_list_cloned();
+        $val_lst->filter($dbo);
+        $phr_lst = new phrase_list();
+        return $this->value_list($val_lst, $phr_lst, $style_id);
+    }
+
+    /**
+     * show a list of values related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param value_list $val_lst
+     * @param phrase_list $phr_lst
+     * @param int|null $style_id id
+     * @return string the html code to show the list of values
+     */
+    private function value_list(
+        value_list  $val_lst,
+        phrase_list $phr_lst,
+        ?int        $style_id = null
     ): string
     {
         global $msk_sty_cac;
@@ -267,10 +334,6 @@ class ui_list extends ui_base
             $style = $msk_sty_cac->get($style_id);
             $style_txt = $style->code_id();
         }
-        $val_lst = $dto->value_list_cloned();
-        $val_lst->filter($dbo);
-        $phr_lst = new phrase_list();
-        $phr_lst->add_phrase($dbo->phrase());
         return $val_lst->list($phr_lst, '', $style_txt);
     }
 

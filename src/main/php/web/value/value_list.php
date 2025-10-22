@@ -44,11 +44,12 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
-include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -168,7 +170,7 @@ class value_list extends list_dsp
         return $result;
     }
 
-    function filter(word|triple|data_object|null $dbo = null): value_list
+    function filter(word|triple|source|data_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
         if ($dbo::class == word::class) {

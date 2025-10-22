@@ -34,6 +34,16 @@
                                                                                   name="name" id="name"
                                                                                   value="The International System of Units">
             </div>
+            <div class="form-group col-md-4"><label for="source_type">source type</label><select class="form-control"
+                                                                                                 name="source_type"
+                                                                                                 form="source_edit"
+                                                                                                 id="source_type">
+                <option value="1">XML</option>
+                <option value="2">XBRL</option>
+                <option value="3">CSV</option>
+                <option value="4" selected>PDF</option>
+                <option value="5">API</option>
+            </select></div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-12"><label for="url">url</label><input class="form-control" type="text"
@@ -48,18 +58,6 @@
                                                                                                  id="description"
                                                                                                  value="Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards">
             </div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="source_type">source type</label><select class="form-control"
-                                                                                                 name="source_type"
-                                                                                                 form="source_edit"
-                                                                                                 id="source_type">
-                <option value="1">XML</option>
-                <option value="2">XBRL</option>
-                <option value="3">CSV</option>
-                <option value="4" selected>PDF</option>
-                <option value="5">API</option>
-            </select></div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
@@ -90,9 +88,24 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <a href="/http/view.php?m=47&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
-        <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        <br>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=47&id=1" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
     </form>
+    <div class="row col-md-12">
+        <div class="col-md-12"><h5>Used 0 times</h5></div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-4"><h5>Values</h5></div>
+        <div class="col-md-4"><h5>References</h5></div>
+    </div>
+    <div class="row col-md-12">
+        <div class="col-md-12"><h5>Changes</h5>26-12-2022 18:23 zukunft.com system added "The International System of
+            Units"
+        </div>
+    </div>
 </div>
 <footer>
     <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
