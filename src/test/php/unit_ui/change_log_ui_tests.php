@@ -64,18 +64,18 @@ class change_log_ui_tests
         $api_typ_lst = new api_type_list([api_type::TEST_MODE]);
 
         $test_page .= '<br>changes as a text<br>';
-        $chg = $t->change_log_named();
+        $chg = $t->log_word_add();
         $chg_dsp = new change_log_named($chg->api_json());
         $test_page .= $chg_dsp->dsp() .  '<br>';
 
 
         $test_page .= '<br>simple list of changes of a word<br>';
-        $log_lst = $t->change_log_list_named();
+        $log_lst = $t->log_list_named();
         $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back);
 
         $test_page .= '<br>condensed list of changes of a word<br>';
-        $log_lst = $t->change_log_list_named();
+        $log_lst = $t->log_list_named();
         $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);
 

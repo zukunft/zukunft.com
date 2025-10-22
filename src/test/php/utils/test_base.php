@@ -108,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -2061,10 +2062,11 @@ class test_base
     function assert_qp(
         sql_par $qp,
         string  $dialect = '',
-        string  $test_name = ''
+        string  $test_name = '',
+        string $file_name_ext = ''
     ): bool
     {
-        $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
+        $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
             $qp->sql . $qp->call_sql . ' ' . $qp->call,
@@ -2073,7 +2075,7 @@ class test_base
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
-            $result = $this->assert_sql_name_unique($qp->name);
+            $result = $this->assert_sql_name_unique($qp->name . $file_name_ext);
         }
 
         return $result;

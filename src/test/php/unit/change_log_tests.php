@@ -110,20 +110,20 @@ class change_log_tests
         $t->assert_sql_view_link_create($tbl_fld);
 
         $t->subheader($ts . 'named sql setup');
-        $log = $t->change_log_named();
+        $log = $t->log_word_add();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
         $t->subheader($ts . 'group name sql setup for values related to up to 16 phrases');
-        $log = $t->change_log_norm();
+        $log = $t->log_norm();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
         $t->subheader($ts . 'group name sql setup for values related to more than 16 phrases');
-        $log = $t->change_log_big();
+        $log = $t->log_big();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
@@ -137,47 +137,47 @@ class change_log_tests
         }
 
         $t->subheader($ts . 'link sql setup');
-        $log_lnk = $t->change_log_link();
+        $log_lnk = $t->log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
         $t->subheader($ts . 'named sql write');
-        $log = $t->change_log_named();
+        $log = $t->log_word_add();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
-        $log = $t->change_log_named_update();
+        $log = $t->log_word_update();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_named_delete();
+        $log = $t->log_word_delete();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_ref();
+        $log = $t->log_word_add_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_ref_update();
+        $log = $t->log_word_update_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_ref_delete();
+        $log = $t->log_word_delete_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_norm();
+        $log = $t->log_norm();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->change_log_big();
+        $log = $t->log_big();
         $t->assert_sql_insert($sc, $log);
 
         $t->subheader($ts . 'value sql write');
-        $log_val = $t->change_log_value();
+        $log_val = $t->log_value();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
-        $log_val = $t->change_log_value_update();
+        $log_val = $t->log_value_update();
         $t->assert_sql_insert($sc, $log_val);
-        $log_val = $t->change_log_value_delete();
+        $log_val = $t->log_value_delete();
         $t->assert_sql_insert($sc, $log_val);
-        $log_val = $t->change_log_value_prime();
+        $log_val = $t->log_value_prime();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
-        $log_val = $t->change_log_value_big();
+        $log_val = $t->log_value_big();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
 
         $t->subheader($ts . 'link sql write');
-        $log_lnk = $t->change_log_link();
+        $log_lnk = $t->log_link();
         $t->assert_sql_insert($sc, $log_lnk);
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
@@ -245,7 +245,7 @@ class change_log_tests
 
         $t->subheader($ts . 'api');
 
-        $log_lst = $t->change_log_list_named();
+        $log_lst = $t->log_list_named();
         $t->assert_api($log_lst);
 
     }

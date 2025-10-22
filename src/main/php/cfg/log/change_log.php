@@ -863,6 +863,12 @@ class change_log extends db_object_seq_id_user
         return true;
     }
 
+    function use_type_id(): bool
+    {
+        log_err('use_type_id not overwritten by ' . $this::class);
+        return false;
+    }
+
 
     /*
      * sql write
@@ -907,6 +913,25 @@ class change_log extends db_object_seq_id_user
                 $lib = new library();
                 $qp->name = $lib->class_to_name($this::class) . $ext;
             }
+
+            // TODO Prio 3 activate if needed
+            /*
+            $name_ext = '';
+            if ($this->action() == change_actions::ADD) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::ADD;
+            } elseif ($this->action() == change_actions::UPDATE) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::UPDATE;
+            } elseif ($this->action() == change_actions::DELETE) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::DELETE;
+            }
+            if ($this->use_type_id()) {
+                $name_ext .= $sc::SEP . $sc::ID;
+            }
+            if ($name_ext != '') {
+                $qp->name .= $name_ext;
+            }
+            */
+
             $sc->set_name($qp->name);
             $qp->sql = $sc->create_sql_insert(
                 $this->db_field_values_types(

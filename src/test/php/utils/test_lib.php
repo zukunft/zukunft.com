@@ -158,7 +158,7 @@ class test_lib
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
         $dto_dsp->frm_lst = $cto->formula_list_ui();
-        $dto_dsp->chg_log = $cto->change_log_list_named_ui();
+        $dto_dsp->chg_log = $cto->log_list_named_ui();
 
         // set the global cache var
         $ui_cac = $dto_dsp;

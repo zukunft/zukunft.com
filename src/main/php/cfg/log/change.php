@@ -414,6 +414,20 @@ class change extends change_log
 
 
     /*
+     * info
+     */
+
+    function use_type_id(): bool
+    {
+        if ($this->new_id != null or $this->old_id != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
      * save
      */
 

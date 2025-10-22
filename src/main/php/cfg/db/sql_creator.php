@@ -158,6 +158,15 @@ class sql_creator
     const string FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
     const string FILE_LOAD = 'load'; // for load unit test files
 
+    // name const used for the query name
+    // the separator between the query name parts
+    const string SEP = '_';
+    const string LOG = 'log';
+    const string ADD = 'add';
+    const string UPDATE = 'update';
+    const string DELETE = 'delete';
+    const string ID = 'id';
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const array DB_TYPES_NOT_NAMED = [

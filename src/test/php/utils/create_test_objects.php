@@ -4772,17 +4772,29 @@ class create_test_objects extends test_base
         return new language(language::DEFAULT, language::TN_READ, 'English is the default', 1);
     }
 
-    /**
-     * @return change an insert change log entry of a named user sandbox object with some dummy values
-     */
-    function change_log_named(): change
+    private function log_entry(): change
     {
         global $usr_sys;
-
         $chg = new change($usr_sys);
         $chg->id = $this->chg_log_seq();
         $chg->set_time_str(self::DUMMY_DATETIME);
+        return $chg;
+    }
+
+    private function log_entry_add(): change
+    {
+        $chg = $this->log_entry();
         $chg->set_action(change_actions::ADD);
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry of a adding named user sandbox object with some dummy values
+     * @return change with a change log entry of adding a word name as a sample
+     */
+    function log_word_add(): change
+    {
+        $chg = $this->log_entry_add();
         $chg->set_table(change_tables::WORD);
         $chg->set_field(change_fields::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
@@ -4791,32 +4803,76 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change an update change log entry of a named user sandbox object
+     * an insert change log entry of updating a named user sandbox object
+     * @return change with a change log entry of updating a word name as a sample
      */
-    function change_log_named_update(): change
+    function log_word_update(): change
     {
-        $chg = $this->change_log_named();
+        $chg = $this->log_word_add();
+        $chg->set_action(change_actions::UPDATE);
         $chg->old_value = words::TEST_RENAMED;
         return $chg;
     }
 
     /**
-     * @return change a delete change log entry of a named user sandbox object
+     * an insert change log entry of deleting a named user sandbox object
+     * @return change with a change log entry of deleting a word as a sample
      */
-    function change_log_named_delete(): change
+    function log_word_delete(): change
     {
-        $chg = $this->change_log_named_update();
+        $chg = $this->log_word_update();
+        $chg->set_action(change_actions::DELETE);
         $chg->new_value = null;
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for a reference value of a named user sandbox object
+     * @return change with a change log entry of adding a word type as a sample
+     */
+    function log_word_add_type(): change
+    {
+        global $phr_typ_cac;
+        $chg = $this->log_word_add();
+        $chg->set_field(change_fields::FLD_PHRASE_TYPE);
+        $chg->new_value = phrase_type_shared::TIME;
+        $chg->new_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for a reference of a named user sandbox object
+     * @return change with a change log entry of updating a word type as a sample
+     */
+    function log_word_update_type(): change
+    {
+        global $phr_typ_cac;
+        $chg = $this->log_word_add_type();
+        $chg->set_action(change_actions::UPDATE);
+        $chg->old_value = phrase_type_shared::MEASURE;
+        $chg->old_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        return $chg;
+    }
+
+    /**
+     * an insert change log entry for a reference of a named user sandbox object
+     * @return change with a change log entry of unsetting a word type as a sample
+     */
+    function log_word_delete_type(): change
+    {
+        $chg = $this->log_word_update_type();
+        $chg->set_action(change_actions::DELETE);
+        $chg->new_value = null;
+        $chg->new_id = null;
         return $chg;
     }
 
     /**
      * @return change log entry created by adding a verb
      */
-    function change_log_verb(): change
+    function log_verb_add(): change
     {
-        $chg = $this->change_log_named();
-        $chg->id = $this->chg_log_seq();
+        $chg = $this->log_entry_add();
         $chg->set_table(change_tables::VERB);
         $chg->set_field(change_fields::FLD_VERB_NAME);
         $chg->new_value = verbs::IS;
@@ -4825,25 +4881,52 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change an insert change log entry for a reference of a named user sandbox object
+     * @return change log entry created by adding a triple
      */
-    function change_log_ref(): change
+    function log_triple_add(): change
     {
-        global $phr_typ_cac;
-        $chg = $this->change_log_named();
-        $chg->set_field(change_fields::FLD_PHRASE_TYPE);
-        $chg->new_value = phrase_type_shared::TIME;
-        $chg->new_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::TRIPLE);
+        $chg->set_field(change_fields::FLD_TRIPLE_NAME);
+        $chg->new_value = triples::MATH_CONST;
+        $chg->row_id = triples::MATH_CONST_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a source
+     */
+    function log_source_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::SOURCE);
+        $chg->set_field(change_fields::FLD_SOURCE_NAME);
+        $chg->new_value = sources::SIB;
+        $chg->row_id = sources::SIB_ID;
         return $chg;
     }
 
     /**
      * @return change an insert change log entry for a reference of a named user sandbox object
      */
-    function change_log_ref_update(): change
+    function log_ref_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::REF);
+        $chg->set_field(change_fields::FLD_REF_KEY);
+        $chg->new_value = refs::PI_KEY;
+        $chg->row_id = refs::PI_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change an insert change log entry for a reference of a named user sandbox object
+     */
+    function log_ref_update(): change
     {
         global $phr_typ_cac;
-        $chg = $this->change_log_ref();
+        $chg = $this->log_ref_add();
+        $chg->set_action(change_actions::UPDATE);
         $chg->old_value = phrase_type_shared::MEASURE;
         $chg->old_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
         return $chg;
@@ -4852,18 +4935,74 @@ class create_test_objects extends test_base
     /**
      * @return change an insert change log entry for a reference of a named user sandbox object
      */
-    function change_log_ref_delete(): change
+    function log_ref_delete(): change
     {
-        $chg = $this->change_log_ref_update();
+        $chg = $this->log_ref_update();
         $chg->new_value = null;
         $chg->new_id = null;
         return $chg;
     }
 
     /**
+     * @return change_values_prime log entry created by adding a value
+     */
+    function log_value_add(): change_values_prime
+    {
+        global $usr_sys;
+        $chg = new change_values_prime($usr_sys);
+        $chg->id = $this->chg_log_seq();
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_actions::ADD);
+        $chg->set_table(change_tables::VALUE);
+        $chg->set_field(change_fields::FLD_NUMERIC_VALUE);
+        $chg->new_value = values::PI;
+        $chg->row_id = values::PI_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a formula
+     */
+    function log_formula_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::FORMULA);
+        $chg->set_field(change_fields::FLD_FORMULA_NAME);
+        $chg->new_value = formulas::SCALE_TO_SEC;
+        $chg->row_id = formulas::SCALE_TO_SEC_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a view
+     */
+    function log_view_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::VIEW);
+        $chg->set_field(change_fields::FLD_VIEW_NAME);
+        $chg->new_value = views::START;
+        $chg->row_id = views::START_ID;
+        return $chg;
+    }
+
+    /**
+     * @return change log entry created by adding a component
+     */
+    function log_component_add(): change
+    {
+        $chg = $this->log_entry_add();
+        $chg->set_table(change_tables::VIEW_COMPONENT);
+        $chg->set_field(change_fields::FLD_COMPONENT_NAME);
+        $chg->new_value = components::MATRIX_NAME;
+        $chg->row_id = components::MATRIX_ID;
+        return $chg;
+    }
+
+    /**
      * @return changes_norm a change log entry of a group where the id is a 512bit field and not an id
      */
-    function change_log_norm(): changes_norm
+    function log_norm(): changes_norm
     {
         global $usr_sys;
 
@@ -4880,7 +5019,7 @@ class create_test_objects extends test_base
     /**
      * @return changes_big a change log entry of a group where the id is a text field and not an id
      */
-    function change_log_big(): changes_big
+    function log_big(): changes_big
     {
         global $usr_sys;
 
@@ -5045,7 +5184,7 @@ class create_test_objects extends test_base
     /**
      * @return change_values_norm an insert change log entry of a value with some dummy values and a standard group id
      */
-    function change_log_value(): change_values_norm
+    function log_value(): change_values_norm
     {
         global $usr_sys;
 
@@ -5063,7 +5202,7 @@ class create_test_objects extends test_base
     /**
      * @return change_values_prime a change log entry of a value with some dummy values and a prime group id
      */
-    function change_log_value_prime(): change_values_prime
+    function log_value_prime(): change_values_prime
     {
         global $usr_sys;
 
@@ -5080,7 +5219,7 @@ class create_test_objects extends test_base
     /**
      * @return change_values_big a change log entry of a value with some dummy values and a big group id
      */
-    function change_log_value_big(): change_values_big
+    function log_value_big(): change_values_big
     {
         global $usr_sys;
 
@@ -5097,9 +5236,9 @@ class create_test_objects extends test_base
     /**
      * @return change_values_norm an update change log entry of a value
      */
-    function change_log_value_update(): change_values_norm
+    function log_value_update(): change_values_norm
     {
-        $chg = $this->change_log_value();
+        $chg = $this->log_value();
         $chg->old_value = values::SAMPLE_INT;
         return $chg;
     }
@@ -5107,9 +5246,9 @@ class create_test_objects extends test_base
     /**
      * @return change_values_norm a delete change log entry of a value
      */
-    function change_log_value_delete(): change_values_norm
+    function log_value_delete(): change_values_norm
     {
-        $chg = $this->change_log_value_update();
+        $chg = $this->log_value_update();
         $chg->new_value = null;
         return $chg;
     }
@@ -5117,7 +5256,7 @@ class create_test_objects extends test_base
     /**
      * @return change_link a change log entry of a link change
      */
-    function change_log_link(): change_link
+    function log_link(): change_link
     {
         global $usr_sys;
 
@@ -5188,18 +5327,42 @@ class create_test_objects extends test_base
      * TODO add at least one sample for rename and delete
      * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
-    function change_log_list_named(): change_log_list
+    function log_list_short(): change_log_list
     {
         $log_lst = new change_log_list();
-        $log_lst->add($this->change_log_named());
-        $log_lst->add($this->change_log_verb());
+        $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_verb_add());
+        $log_lst->add($this->log_triple_add());
         return $log_lst;
     }
 
-    function change_log_list_named_ui(): change_log_list_ui
+    /**
+     * @return change_log_list a list of change log entries with some dummy values
+     *
+     * TODO add at least one sample for rename and delete
+     * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
+     */
+    function log_list_named(): change_log_list
+    {
+        $log_lst = new change_log_list();
+        $log_lst->add($this->log_word_add());
+        $log_lst->add($this->log_word_update());
+        $log_lst->add($this->log_word_update_type());
+        $log_lst->add($this->log_word_delete());
+        $log_lst->add($this->log_verb_add());
+        $log_lst->add($this->log_triple_add());
+        $log_lst->add($this->log_source_add());
+        $log_lst->add($this->log_ref_add());
+        $log_lst->add($this->log_formula_add());
+        $log_lst->add($this->log_view_add());
+        $log_lst->add($this->log_component_add());
+        return $log_lst;
+    }
+
+    function log_list_named_ui(): change_log_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->change_log_list_named(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->log_list_named(), [api_type::INCL_PHRASES]);
     }
 
     /**
