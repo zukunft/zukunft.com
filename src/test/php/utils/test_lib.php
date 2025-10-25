@@ -99,6 +99,12 @@ use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 
 class test_lib
 {
@@ -125,9 +131,10 @@ class test_lib
      * create and frontend cache and fill it with all entries for the unit tests
      * TODO use it for the global ui_cac var
      * @param user $usr the user for which the sample cache should be created
+     * @param test_cleanup $t the test environment e.g. the collect the errors
      * @return data_object_ui
      */
-    function ui_test_cache(user $usr): data_object_ui
+    function ui_test_cache(user $usr, test_cleanup $t): data_object_ui
     {
         global $ui_cac;
 
@@ -149,16 +156,20 @@ class test_lib
         $dto_dsp->set_view_list($this->cast_view_list($dto->view_list()));
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
-        $cto = new create_test_objects();
-        $cto->usr1 = $usr;
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_ref = new test_refs($t);
+        $t_val = new test_values($t);
+        $t_frm = new test_formulas($t);
+        $t_log = new test_log($t);
 
         // set the value cache list based
-        $dto_dsp->wrd_lst = $cto->word_list_ui();
-        $dto_dsp->trp_lst = $cto->triple_list_ui();
-        $dto_dsp->ref_lst = $cto->ref_list_math_ui();
-        $dto_dsp->val_lst = $cto->value_list_math_ui();
-        $dto_dsp->frm_lst = $cto->formula_list_ui();
-        $dto_dsp->chg_log = $cto->log_list_named_ui();
+        $dto_dsp->wrd_lst = $t_wrd->word_list_ui();
+        $dto_dsp->trp_lst = $t_trp->triple_list_ui();
+        $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
+        $dto_dsp->val_lst = $t_val->value_list_math_ui();
+        $dto_dsp->frm_lst = $t_frm->formula_list_ui();
+        $dto_dsp->chg_log = $t_log->log_list_named_ui();
 
         // set the global cache var
         $ui_cac = $dto_dsp;
@@ -214,6 +225,17 @@ class test_lib
             change_log_list::class => new change_log_list_ui(),
             default => false,
         };
+    }
+
+    /**
+     * set the all values of the frontend object based on a backend object using the api object
+     * @param object $model_obj the frontend object with the values of the backend object
+     */
+    function dsp_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
+    {
+        $api_json = $model_obj->api_json();
+        $dsp_obj->set_from_json($api_json);
+        return $dsp_obj;
     }
 
 

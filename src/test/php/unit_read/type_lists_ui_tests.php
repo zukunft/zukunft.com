@@ -51,6 +51,9 @@ use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
 use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once html_paths::TYPES . 'type_list.php';
@@ -66,18 +69,20 @@ class type_lists_ui_tests
     {
 
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_typ = new test_types($t);
 
         // start the test section (ts)
         $ts = 'unit ui html preloaded lists ';
         $t->header($ts);
 
         // load the types from the api message
-        $api_msg = $t->type_lists_api($t->usr1);
+        $api_msg = $t_typ->type_lists_api($t->usr1);
         $ui_cache = new type_list_dsp($api_msg);
 
         // use the system view to start the HTML test page
         $msk = $ui_cache->html_system_views->get_by_code_id(views::START_CODE);
-        $wrd = $t->word_dsp();
+        $wrd = $t_wrd->word_dsp();
         $wrd->set_name('All type selectors');
         $cfg = new data_object();
         $cfg->typ_lst_cache = $ui->typ_lst_cache;

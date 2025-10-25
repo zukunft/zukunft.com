@@ -46,30 +46,20 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once html_paths::HELPER . 'data_object.php';
 include_once paths::MODEL_CONST . 'def.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::MODEL_SYSTEM . 'system_time_list.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
-include_once paths::MODEL_HELPER . 'db_object.php';
-include_once paths::MODEL_COMPONENT . 'component.php';
-include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::MODEL_WORD . 'word.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_users.php';
+include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -80,6 +70,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -92,23 +84,25 @@ class horizontal_tests
         // init
         $lib = new library();
         $tl = new test_lib();
+        $t_usr = new test_users();
+        $t_map = new test_mappers($t);
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
         $t->header($ts);
-        $t->usr1 = $t->user_sys_test();
+        $t->usr1 = $t_usr->user_sys_test();
 
         $t->subheader($ts . 'fill');
         foreach (def::MAIN_CLASSES as $class) {
-            $base_obj = $t->class_to_base_object($class);
-            $filled_obj = $t->class_to_filled_object($class);
+            $base_obj = $t_map->class_to_base_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
             $t->assert_fill($base_obj, $filled_obj);
         }
 
         $t->subheader($ts . 'reset');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'reset ' . $lib->class_to_name($class) . ' lead to an empty api_json';
-            $filled_obj = $t->class_to_filled_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
             $filled_obj->reset();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_json_string($test_name, $api_json, test_api::JSON_ID_ONLY);
@@ -118,7 +112,7 @@ class horizontal_tests
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'sql creation for ' . $lib->class_to_name($class);
             $t->resource_path = $lib->class_to_resource_path($class);
-            $obj = $t->class_to_base_object($class);
+            $obj = $t_map->class_to_base_object($class);
             $obj_changed = clone $obj;
             $obj_changed->reset();
             $t->assert_sql_table_create($obj);
@@ -136,7 +130,7 @@ class horizontal_tests
         $t->subheader($ts . 'frontend api');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'frontend of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $filled_obj = $t->class_to_filled_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
             if (in_array($class, def::SANDBOX_CLASSES)) {
                 $filled_obj->include();
             }
@@ -163,7 +157,7 @@ class horizontal_tests
             $dto = new data_object($t->usr1);
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
-            $filled_obj = $t->class_to_filled_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
             // remember the db id, because the db id is never included in the export
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests

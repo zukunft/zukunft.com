@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_write_tests
@@ -49,6 +50,8 @@ class verb_write_tests
     {
 
         global $vrb_cac;
+
+        $t_db = new test_db_load($t);
 
         $t->header('verb database write tests');
 
@@ -87,7 +90,7 @@ class verb_write_tests
         $t->header('verb list write tests');
 
         // check the loading of the "is a" verb
-        $wrd_ZH = $t->load_word(words::ZH);
+        $wrd_ZH = $t_db->load_word(words::ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::IS_NAME]);
     }

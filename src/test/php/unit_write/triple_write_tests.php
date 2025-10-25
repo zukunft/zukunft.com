@@ -49,6 +49,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use function Zukunft\ZukunftCom\test\php\utils\zu_test_time_setup;
@@ -60,30 +63,32 @@ class triple_write_tests
     {
 
         $lib = new library();
+        $t_trp = new test_triples($t);
+        $t_db = new test_db_load($t);
 
         $t->header('triple db write tests');
 
         $t->subheader('prepare triple write tests');
         $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
-        $t->test_word(words::TEST_ADD_VIA_SQL);
-        $t->test_word(words::TEST_ADD_VIA_FUNC);
+        $t_db->test_word(words::TEST_ADD_VIA_SQL);
+        $t_db->test_word(words::TEST_ADD_VIA_FUNC);
 
         $t->subheader('triple prepared write');
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_sql(), false);
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_func(), true);
 
         $t->subheader('triple write sandbox tests for ' . triples::SYSTEM_TEST_ADD);
-        //$t->assert_write_link($t->triple_filled_add(), triples::TN_ADD);
+        //$t->assert_write_link($t_trp->triple_filled_add(), triples::TN_ADD);
 
 
         // create the related objects for link objects
-        $wrd_from = $t->test_word(words::TEST_RENAMED);
-        $wrd_to = $t->test_word(words::TEST_PARENT);
+        $wrd_from = $t_db->test_word(words::TEST_RENAMED);
+        $wrd_to = $t_db->test_word(words::TEST_PARENT);
 
         // remove any remaining db entries from previous tests
-        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
+        $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp_del = new triple($t->usr1);
         $trp_del->load_by_id($trp->id());
         $trp_del->del();
@@ -91,7 +96,7 @@ class triple_write_tests
         $trp_del->load_by_id($trp->id());
         $trp_del->del();
 
-        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
+        $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_user($t->usr1);
         $trp->include();
         $trp->save();
@@ -197,7 +202,7 @@ class triple_write_tests
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
 
         // check if the name of a triple can be changed
-        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
+        $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_name(triples::SYSTEM_TEST_ADD);
         $result = $trp->save()->get_last_message();
         $t->assert('triple->save name to ' . triples::SYSTEM_TEST_ADD, $result);
@@ -294,6 +299,8 @@ class triple_write_tests
     {
         $t->header('Check if all base phrases are correct');
 
+        $t_db = new test_db_load($t);
+
         // activate the excluded objects to check the setup
         $trp = new triple($t->usr2);
         $trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
@@ -303,23 +310,23 @@ class triple_write_tests
         }
 
         // check if the standard samples for triples still exist and if not, create the samples
-        $t->test_triple(words::ZH, verbs::IS, words::CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
-        $t->test_triple(words::ZH, verbs::IS, words::CITY, triples::CITY_ZH, triples::CITY_ZH);
-        $t->test_triple(words::ZH, verbs::IS, words::COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
-        $t->test_triple(triples::CANTON_ZURICH, verbs::PART_NAME, words::CH);
-        $t->test_triple(triples::CITY_ZH, verbs::PART_NAME, triples::CANTON_ZURICH);
-        $t->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
+        $t_db->test_triple(words::ZH, verbs::IS, words::CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
+        $t_db->test_triple(words::ZH, verbs::IS, words::CITY, triples::CITY_ZH, triples::CITY_ZH);
+        $t_db->test_triple(words::ZH, verbs::IS, words::COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
+        $t_db->test_triple(triples::CANTON_ZURICH, verbs::PART_NAME, words::CH);
+        $t_db->test_triple(triples::CITY_ZH, verbs::PART_NAME, triples::CANTON_ZURICH);
+        $t_db->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
 
-        $t->test_triple(words::ABB, verbs::IS, words::COMPANY, triples::COMPANY_ABB);
+        $t_db->test_triple(words::ABB, verbs::IS, words::COMPANY, triples::COMPANY_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
         //$t->test_triple(words::TN_VESTAS, verbs::IS_A, TEST_WORD, words::TN_VESTAS, words::TN_VESTAS);
-        $t->test_triple(words::VESTAS, verbs::IS, words::COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
-        $t->test_triple(words::YEAR_2014, verbs::FOLLOW, words::YEAR_2013, triples::YEAR_2013_FOLLOW);
+        $t_db->test_triple(words::VESTAS, verbs::IS, words::COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
+        $t_db->test_triple(words::YEAR_2014, verbs::FOLLOW, words::YEAR_2013, triples::YEAR_2013_FOLLOW);
         // TODO check direction
-        $t->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
+        $t_db->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
-        $t->test_phrase(triples::COMPANY_ZURICH);
+        $t_db->test_phrase(triples::COMPANY_ZURICH);
 
         // exclude some to test the handling of exclude objects
         $trp = new triple($t->usr2);

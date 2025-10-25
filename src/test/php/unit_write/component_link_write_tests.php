@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_write_tests
@@ -51,18 +52,18 @@ class component_link_write_tests
 
     function run(test_cleanup $t): void
     {
-
+        $t_db = new test_db_load($t);
 
         $t->header('component link db write tests');
 
         $t->subheader('component link write sandbox tests for ' . views::TEST_ADD_NAME . ' and ' . components::TEST_ADD_NAME);
         // TODO activate (set object id instead of id)
-        // $t->assert_write_link($t->component_link_filled_add());
+        // $t->assert_write_link($t_cmp->component_link_filled_add());
 
 
         $t->subheader('prepare component link write');
-        $msk = $t->test_view(views::TEST_ADD_NAME);
-        $cmp = $t->test_component(components::TEST_ADD_NAME);
+        $msk = $t_db->test_view(views::TEST_ADD_NAME);
+        $cmp = $t_db->test_component(components::TEST_ADD_NAME);
 
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
         $order_nbr = $cmp->next_nbr($msk->id());
@@ -80,13 +81,13 @@ class component_link_write_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
-        $cmp = $t->load_component(components::TEST_ADD_NAME);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME);
         $dsp_lst = $cmp->assigned_msk_ids();
         $result = $msk->is_in_list($dsp_lst);
         $t->assert($test_name, $result, true);
 
         $test_name = 'check if the link is shown correctly also for the second user "' . $t->usr2->dsp_id() . '"';
-        $cmp = $t->load_component(components::TEST_ADD_NAME, $t->usr2);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
         $dsp_lst = $cmp->assigned_msk_ids();
         $result = $msk->is_in_list($dsp_lst);
         $t->assert($test_name, $result, true);
@@ -94,7 +95,7 @@ class component_link_write_tests
         // ... check if the value update has been triggered
 
         // if second user removes the new link
-        $cmp = $t->load_component(components::TEST_ADD_NAME, $t->usr2);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
         $msk = new view($t->usr2);
         $msk->load_by_name(views::TEST_ADD_NAME, view::class);
         $result = $cmp->unlink($msk);
@@ -114,7 +115,7 @@ class component_link_write_tests
 
 
         // ... check if the link is really not used any more for the second user
-        $cmp = $t->load_component(components::TEST_ADD_NAME, $t->usr2);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
         $dsp_lst = $cmp->assigned_msk_ids();
         $result = $msk->is_in_list($dsp_lst);
         $target = false;
@@ -124,7 +125,7 @@ class component_link_write_tests
         // ... check if the value update for the second user has been triggered
 
         // ... check if the link is still used for the first user
-        $cmp = $t->load_component(components::TEST_ADD_NAME);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME);
         $dsp_lst = $cmp->assigned_msk_ids();
         $result = $msk->is_in_list($dsp_lst);
         $target = true;
@@ -147,7 +148,7 @@ class component_link_write_tests
         $t->display('view component_link->unlink_dsp logged of "' . $msk->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users
-        $cmp = $t->load_component(components::TEST_ADD_NAME);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME);
         $dsp_lst = $cmp->assigned_msk_ids();
         $result = $msk->is_in_list($dsp_lst);
         $target = false;
@@ -158,9 +159,9 @@ class component_link_write_tests
         // --------------------------------------------------------------------
 
         // load the view and view component objects
-        $msk = $t->load_view(views::TEST_ADD_NAME);
-        $dsp2 = $t->load_view(views::TEST_ADD_NAME, $t->usr2);
-        $cmp = $t->load_component(components::TEST_ADD_NAME,);
+        $msk = $t_db->load_view(views::TEST_ADD_NAME);
+        $dsp2 = $t_db->load_view(views::TEST_ADD_NAME, $t->usr2);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME,);
         // create a second view element to be able to test the change of the view order
         $cmp2 = new component($t->usr1);
         $cmp2->set_name(components::TEST_ADD_2_NAME);
@@ -306,16 +307,18 @@ class component_link_write_tests
 
     function create_test_component_links(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('Check if all base view component links are existing');
 
-        $t->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME, 1);
-        $t->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME, 2);
-        $t->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_RESULTS_NAME, 3);
+        $t_db->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME, 1);
+        $t_db->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME, 2);
+        $t_db->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_RESULTS_NAME, 3);
 
-        $t->test_component_lnk(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME, 1);
+        $t_db->test_component_lnk(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME, 1);
 
-        $t->test_component_lnk(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME, 1);
-        $t->test_component_lnk(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME, 2);
+        $t_db->test_component_lnk(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME, 1);
+        $t_db->test_component_lnk(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME, 2);
     }
 
 }

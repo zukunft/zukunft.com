@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_read_tests
@@ -50,11 +51,9 @@ class triple_read_tests
     {
 
         global $vrb_cac;
-        global $db_con;
-        global $usr;
-        global $phr_typ_cac;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'triple read db->';
         $t->resource_path = 'db/triple/';
 
@@ -64,17 +63,17 @@ class triple_read_tests
         // load the verb used for testing
         $is_id = $vrb_cac->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
-        $wrd_zh = $t->load_word(words::ZH);
-        $wrd_canton = $t->load_word(words::CANTON);
+        $wrd_zh = $t_db->load_word(words::ZH);
+        $wrd_canton = $t_db->load_word(words::CANTON);
         // create the group test word
-        $wrd_company = $t->test_word(words::COMPANY);
+        $wrd_company = $t_db->test_word(words::COMPANY);
 
         $t->subheader('triple load tests');
         $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::MATH_CONST);
         $trp_by_id = new triple($t->usr1);
-        $trp_by_id->load_by_id($trp->id(), triple::class);
+        $trp_by_id->load_by_id($trp->id());
         $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
 

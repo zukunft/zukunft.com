@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_system_test(all_tests $t): void
@@ -45,10 +46,12 @@ function run_system_test(all_tests $t): void
 
     global $usr;
 
+    $t_db = new test_db_load($t);
+
     $t->header('Consistency check of the \"zukunft.com\" code');
 
     // load the main test word
-    $wrd_company = $t->test_word(words::COMPANY);
+    $wrd_company = $t_db->test_word(words::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->header('est mail sending');

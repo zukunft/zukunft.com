@@ -35,6 +35,9 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_write_tests
@@ -45,14 +48,17 @@ class ref_write_tests
 
         global $usr;
 
+        $t_ref = new test_refs($t);
+        $t_db = new test_db_load($t);
+
         $t->header('reference db write tests');
 
         $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
-        $t->assert_write_link($t->ref_filled_add());
+        $t->assert_write_link($t_ref->ref_filled_add());
 
         // create the test ref
-        $wrd = $t->test_word(words::TEST_ADD);
-        $t->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
+        $wrd = $t_db->test_word(words::TEST_ADD);
+        $t_db->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
         global $ref_typ_cac;

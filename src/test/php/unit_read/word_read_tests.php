@@ -46,6 +46,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_read_tests
@@ -58,6 +62,10 @@ class word_read_tests
         global $phr_typ_cac;
 
         // init
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
+        $t_db = new test_db_load($t);
         $t->name = 'word read->';
         $t->resource_path = 'db/word/';
 
@@ -89,13 +97,13 @@ class word_read_tests
         $t->subheader('word API object creation tests');
 
         $test_name = words::MATH;
-        $wrd = $t->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH, $t->usr1);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
         $t->subheader('Word frontend tests');
 
         $test_name = 'get the most useful view for a word';
-        $wrd = $t->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH, $t->usr1);
         $dsp_id = $wrd->calc_view_id();
         $t->assert($test_name, $dsp_id, 0);
 
@@ -114,7 +122,7 @@ class word_read_tests
         $wrd_scale->load_by_name(words::MIO);
         $phr = new phrase ($t->usr1);
         $phr->load_by_name(words::PI_SYMBOL);
-        $phr_grp = $t->load_phrase_group(array(words::PI_SYMBOL));
+        $phr_grp = $t_db->load_phrase_group(array(words::PI_SYMBOL));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
@@ -171,8 +179,8 @@ class word_read_tests
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $foaf_lst = $t->word_city()->are()->names();
-        $fixed_lst = $t->phrase_list_cities()->wrd_lst_all()->names();
+        $foaf_lst = $t_wrd->word_city()->are()->names();
+        $fixed_lst = $t_phr->phrase_list_cities()->wrd_lst_all()->names();
         $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
@@ -184,7 +192,7 @@ class word_read_tests
 
         $t->subheader($ts . 'export');
         $test_name = triples::PI_NAME;
-        $trp = $t->triple_pi();
+        $trp = $t_trp->triple_pi();
         $t->assert_export_reload($ts . $test_name, $trp);
     }
 

@@ -46,8 +46,10 @@ use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class element_group_write_tests
 {
@@ -56,16 +58,17 @@ class element_group_write_tests
     {
 
         global $usr;
-        $lib = new library();
+        $t_db = new test_db_load($t);
+        $tl = new test_lib();
 
         $t->header('Test the formula element group list class (classes/element_group_list.php)');
 
         // load the test ids
-        $frm_this = $t->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t->load_formula(formulas::PRIOR);
+        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formulas::PRIOR);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();
@@ -130,7 +133,7 @@ class element_group_write_tests
 
                 if (isset($fig)) {
                     $t = new test_api();
-                    $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+                    $fig_dsp = $tl->dsp_obj($fig, new figure_dsp());
                     $result = $fig_dsp->display();
                     $target = "8.51";
                     $t->display('figure->display', $target, $result);

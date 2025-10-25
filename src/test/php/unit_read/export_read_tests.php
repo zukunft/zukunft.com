@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::EXPORT . 'xml.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\export\xml;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class export_read_tests
@@ -47,13 +48,14 @@ class export_read_tests
         global $usr;
 
         // init
+        $t_phr = new test_phrases($t);
         $t->name = 'export->';
 
         $t->header('Unit tests of export');
 
         $t->subheader('Test the xml export class (classes/xml.php)');
 
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $xml_exp = new xml($t->usr1);
         $result = $xml_exp->export_by_phrase_list($phr_lst);
         $target = 'Mathematics';

@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_read_tests
@@ -53,6 +54,7 @@ class formula_read_tests
         global $frm_typ_cac;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'formula read db->';
 
         // start the test section (ts)
@@ -100,7 +102,7 @@ class formula_read_tests
         $t->subheader('Frontend API tests');
 
         $test_name = formulas::INCREASE;
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         if ($frm->name() != '') {
             $t->assert_export_reload($ts . $test_name, $frm);
         } else {

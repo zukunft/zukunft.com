@@ -57,6 +57,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -69,6 +71,8 @@ class word_write_tests
 
         // init
         $lib = new library();
+        $t_wrd = new test_words($t);
+        $t_db = new test_db_load($t);
         $t->name = 'word db write->';
 
         // start the test section (ts)
@@ -77,15 +81,15 @@ class word_write_tests
 
         $t->subheader('word prepared write');
         $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_sql(), false);
         $test_name = 'add word ' . words::TEST_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 
         $t->subheader('word write sandbox tests for ' . words::TEST_ADD);
-        $t->assert_write_named($t->word_filled_add(), words::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
 
         $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
-        $wrd_time = $t->test_word(words::TEST_2021, phrase_type_shared::TIME);
+        $wrd_time = $t_db->test_word(words::TEST_2021, phrase_type_shared::TIME);
         $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
@@ -98,7 +102,7 @@ class word_write_tests
         $t->assert('word->is_measure for ' . words::TEST_2021, $result, false);
 
         // is measure
-        $wrd_measure = $t->test_word(words::TEST_CHF, phrase_type_shared::MEASURE);
+        $wrd_measure = $t_db->test_word(words::TEST_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . words::TEST_CHF, $result, true);
 
@@ -107,7 +111,7 @@ class word_write_tests
         $t->assert('word->is_scaling for ' . words::TEST_CHF, $result, false);
 
         // is scaling
-        $wrd_scaling = $t->test_word(words::MIO, phrase_type_shared::SCALING);
+        $wrd_scaling = $t_db->test_word(words::MIO, phrase_type_shared::SCALING);
         $result = $wrd_scaling->is_scaling();
         $t->assert('word->is_scaling for ' . words::MIO, $result, true);
 
@@ -116,13 +120,13 @@ class word_write_tests
         $t->assert('word->is_percent for ' . words::MIO, $result, false);
 
         // is percent
-        $wrd_pct = $t->test_word(words::PCT, phrase_type_shared::PERCENT);
+        $wrd_pct = $t_db->test_word(words::PCT, phrase_type_shared::PERCENT);
         $result = $wrd_pct->is_percent();
         $t->assert('word->is_percent for ' . words::PCT, $result, true);
 
         // next word
-        $wrd_time_next = $t->test_word(words::TEST_2022, phrase_type_shared::TIME);
-        $t->test_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
+        $wrd_time_next = $t_db->test_word(words::TEST_2022, phrase_type_shared::TIME);
+        $t_db->test_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
         $target = $wrd_time_next->name();
         $wrd_next = $wrd_time->next();
         $result = $wrd_next->name();
@@ -134,10 +138,10 @@ class word_write_tests
         $t->assert('word->prior for ' . words::TEST_2022, $result, $target);
 
         // load the main test words
-        $wrd_read = $t->load_word(words::MATH);
+        $wrd_read = $t_db->load_word(words::MATH);
 
         // create a parent test word
-        $wrd_parent = $t->test_word(words::TEST_PARENT);
+        $wrd_parent = $t_db->test_word(words::TEST_PARENT);
         $wrd_parent->add_child($wrd_read);
 
         // word children, so get all children of a parent
@@ -209,11 +213,11 @@ class word_write_tests
         // which implies that Canton contains Zurich and City contains Zurich
         // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
         // and 'System Test Word Member e.g. Zurich' as member
-        $wrd_canton = $t->test_word(words::CANTON);
-        $wrd_city = $t->test_word(words::CITY);
-        $wrd_ZH = $t->test_word(words::ZH);
-        $t->test_triple(words::ZH, verbs::IS, words::CANTON);
-        $t->test_triple(words::ZH, verbs::IS, words::CITY);
+        $wrd_canton = $t_db->test_word(words::CANTON);
+        $wrd_city = $t_db->test_word(words::CITY);
+        $wrd_ZH = $t_db->test_word(words::ZH);
+        $t_db->test_triple(words::ZH, verbs::IS, words::CANTON);
+        $t_db->test_triple(words::ZH, verbs::IS, words::CITY);
 
         // word is e.g. Zurich as a Canton ...
         $target = $wrd_canton->name();
@@ -246,30 +250,30 @@ class word_write_tests
 
         // create the test words and relations for a parent child relation without inheritance
         // e.g. ...
-        $wrd_cf = $t->test_word(words::TEST_CASH_FLOW);
-        $wrd_tax = $t->test_word(words::TEST_TAX_REPORT);
-        $t->test_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
+        $wrd_cf = $t_db->test_word(words::TEST_CASH_FLOW);
+        $wrd_tax = $t_db->test_word(words::TEST_TAX_REPORT);
+        $t_db->test_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
-        $t->test_word(words::TEST_FIN_REPORT);
-        $t->test_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
+        $t_db->test_word(words::TEST_FIN_REPORT);
+        $t_db->test_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
-        $t->test_word(words::TEST_ASSETS);
-        $t->test_word(words::TEST_ASSETS_CURRENT);
-        $t->test_word(words::TEST_CASH);
-        $t->test_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
-        $t->test_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
+        $t_db->test_word(words::TEST_ASSETS);
+        $t_db->test_word(words::TEST_ASSETS_CURRENT);
+        $t_db->test_word(words::TEST_CASH);
+        $t_db->test_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
+        $t_db->test_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector
-        $t->test_word(words::TEST_SECTOR);
-        $t->test_word(words::TEST_ENERGY);
-        $t->test_word(words::TEST_WIND_ENERGY);
-        $t->test_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
-        $t->test_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
+        $t_db->test_word(words::TEST_SECTOR);
+        $t_db->test_word(words::TEST_ENERGY);
+        $t_db->test_word(words::TEST_WIND_ENERGY);
+        $t_db->test_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
+        $t_db->test_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
 
         // word is part
         $target = $wrd_cf->name();
@@ -338,7 +342,7 @@ class word_write_tests
         $t->display('word->save logged for "' . words::TEST_ADD . '"', $target, $result);
 
         // ... test if the new word has been created
-        $wrd_added = $t->load_word(words::TEST_ADD);
+        $wrd_added = $t_db->load_word(words::TEST_ADD);
         $wrd_added->load_by_name(words::TEST_ADD);
         if ($wrd_added->id() > 0) {
             $result = $wrd_added->name();
@@ -372,7 +376,7 @@ class word_write_tests
             $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the word parameters have been added
-        $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
+        $wrd_reloaded = $t_db->load_word(words::TEST_RENAMED);
         $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
@@ -419,7 +423,7 @@ class word_write_tests
         $t->display('word->load type_id for "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check the word for the original user remains unchanged
-        $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
+        $wrd_reloaded = $t_db->load_word(words::TEST_RENAMED);
         $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
@@ -463,14 +467,14 @@ class word_write_tests
         $t->display('word->display "' . words::MATH . '"', $target, $result);
 
         // check if user 2 can exclude a word without influencing user 1
-        $wrd_usr1 = $t->load_word(words::TEST_RENAMED, $t->usr1);
-        $wrd_usr2 = $t->load_word(words::TEST_RENAMED, $t->usr2);
+        $wrd_usr1 = $t_db->load_word(words::TEST_RENAMED, $t->usr1);
+        $wrd_usr2 = $t_db->load_word(words::TEST_RENAMED, $t->usr2);
         $wrd_usr2->del();
-        $wrd_usr2_reloaded = $t->load_word(words::TEST_RENAMED, $t->usr2);
+        $wrd_usr2_reloaded = $t_db->load_word(words::TEST_RENAMED, $t->usr2);
         $target = '';
         $result = $wrd_usr2_reloaded->name_dsp();
         $t->display('user 2 has deleted word "' . words::TEST_RENAMED . '"', $target, $result);
-        $wrd_usr1_reloaded = $t->load_word(words::TEST_RENAMED, $t->usr1);
+        $wrd_usr1_reloaded = $t_db->load_word(words::TEST_RENAMED, $t->usr1);
         $target = $wrd_usr1->name_dsp();
         $result = $wrd_usr1_reloaded->name_dsp();
         $t->display('but the word "' . words::TEST_RENAMED . '" is still the same for user 1', $target, $result);
@@ -525,29 +529,31 @@ class word_write_tests
      */
     function create_test_words(all_tests $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('Check if all base words are correct');
 
         foreach (words::TEST_WORDS_CREATE as $word_name) {
-            $t->test_word($word_name);
+            $t_db->test_word($word_name);
         }
         foreach (words::TEST_WORDS_MEASURE as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::MEASURE);
+            $t_db->test_word($word_name, phrase_type_shared::MEASURE);
         }
         foreach (words::TEST_WORDS_SCALING as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::SCALING);
+            $t_db->test_word($word_name, phrase_type_shared::SCALING);
         }
         foreach (words::TEST_WORDS_SCALING_HIDDEN as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
+            $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
         }
         foreach (words::TEST_WORDS_PERCENT as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::PERCENT);
+            $t_db->test_word($word_name, phrase_type_shared::PERCENT);
         }
         $prev_word_name = null;
         foreach (words::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t->test_triple($word_name, verbs::IS, words::YEAR_CAP);
-            $t->test_word($word_name, phrase_type_shared::TIME);
+            $t_db->test_triple($word_name, verbs::IS, words::YEAR_CAP);
+            $t_db->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
-                $t->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
+                $t_db->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
             }
             $prev_word_name = $word_name;
         }

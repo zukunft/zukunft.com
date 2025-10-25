@@ -45,6 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -57,6 +59,8 @@ class group_write_tests
         global $usr;
 
         // init
+        $t_db = new test_db_load($t);
+        $t_phr = new test_phrases($t);
         $grp_add_lst = [
             [groups::TN_ADD_PRIME_FUNC, true, words::TEST_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TEST_RENAMED_GROUP_PRIME_FUNC],
             [groups::TN_ADD_PRIME_SQL, false, words::TEST_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TEST_RENAMED_GROUP_PRIME_SQL],
@@ -72,7 +76,7 @@ class group_write_tests
         $t->subheader('group add the system test words to avoid dependencies on group testing');
         $wrd_add_lst = [];
         foreach ($grp_add_lst as $grp_add) {
-            $wrd_add_lst[] = $t->test_word($grp_add[2]);
+            $wrd_add_lst[] = $t_db->test_word($grp_add[2]);
         }
 
         $t->subheader('group add');
@@ -81,11 +85,11 @@ class group_write_tests
             $grp_name = $grp_add[0];
             $test_name = 'add prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
             if ($grp_add[3] == sql_type::PRIME) {
-                $phr_lst = $t->phrase_list_small();
+                $phr_lst = $t_phr->phrase_list_small();
             } elseif ($grp_add[3] == sql_type::MOST) {
-                $phr_lst = $t->phrase_list();
+                $phr_lst = $t_phr->phrase_list();
             } else {
-                $phr_lst = $t->phrase_list_17_plus();
+                $phr_lst = $t_phr->phrase_list_17_plus();
             }
             $this->group_add($wrd_add_lst[$i], $grp_name, $grp_add[1], $phr_lst, $test_name, $t);
             $i++;
@@ -118,6 +122,8 @@ class group_write_tests
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
         // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group
+        // TODO Prio 0 review
+        $target = '';
         if (is_numeric($result)) {
             if ($result > 0) {
                 $target = $result;
@@ -199,12 +205,14 @@ class group_write_tests
      */
     function create_test_groups(all_tests $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('group check test group names');
 
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
-            $t->test_group($phr_names, $grp_name, $t->usr1);
+            $t_db->test_group($phr_names, $grp_name, $t->usr1);
         }
     }
 

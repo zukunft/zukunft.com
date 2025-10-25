@@ -42,6 +42,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_ui_tests
@@ -50,22 +53,25 @@ class phrase_list_ui_tests
     {
 
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html phrase list ';
         $t->header($ts);
 
         // fill the phrase list based on the api message
-        $db_lst = $t->phrase_list();
+        $db_lst = $t_phr->phrase_list();
         $lst = new phrase_list_dsp($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
         // create the phrase list test set
         $form = 'phrase_list_ui_test';
         $lst = new phrase_list_dsp();
-        $phr_city = $t->zh_city()->phrase();
-        $phr_canton = $t->zh_canton()->phrase();
-        $phr_ch = $t->word_ch()->phrase();
+        $phr_city = $t_trp->zh_city()->phrase();
+        $phr_canton = $t_trp->zh_canton()->phrase();
+        $phr_ch = $t_wrd->word_ch()->phrase();
         $phr_city_dsp = new phrase_dsp($phr_city->api_json());
         $phr_canton_dsp = new phrase_dsp($phr_canton->api_json());
         $phr_ch_dsp = new phrase_dsp($phr_ch->api_json());

@@ -34,20 +34,22 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
+        $t_src = new test_sources($t);
 
         // start the test section (ts)
         $ts = 'unit ui html source ';
         $t->header($ts);
 
-        $src = new source_dsp($t->source()->api_json());
+        $src = new source_dsp($t_src->source()->api_json());
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';

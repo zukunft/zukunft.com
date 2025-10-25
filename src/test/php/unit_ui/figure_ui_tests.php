@@ -34,6 +34,9 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class figure_ui_tests
@@ -41,12 +44,13 @@ class figure_ui_tests
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_fig = new test_figures($t);
 
         // start the test section (ts)
         $ts = 'unit ui html figure ';
         $t->header($ts);
 
-        $fig = new figure_dsp($t->figure_value()->api_json());
+        $fig = new figure_dsp($t_fig->figure_value()->api_json());
         $test_page = $html->text_h2('Figure display test');
         $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked() . '<br>';

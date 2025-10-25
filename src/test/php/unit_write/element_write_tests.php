@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -51,21 +52,22 @@ class element_write_tests
         global $vrb_cac;
 
         $back = 0;
+        $t_db = new test_db_load($t);
 
         $t->header('Test the formula element class (classes/element.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 
         // get the test word ids
-        $wrd_country = $t->load_word(words::COUNTRY);
-        $wrd_canton = $t->load_word(words::CANTON);
+        $wrd_country = $t_db->load_word(words::COUNTRY);
+        $wrd_canton = $t_db->load_word(words::CANTON);
         $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -133,16 +135,16 @@ class element_write_tests
     function run_list(test_cleanup $t): void
     {
 
-        $back = 0;
+        $t_db = new test_db_load($t);
 
         $t->header('Test the formula element list class (classes/element_list.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 

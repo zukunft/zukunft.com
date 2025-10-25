@@ -39,6 +39,8 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -47,10 +49,14 @@ class value_list_ui_tests
     function run(test_cleanup $t): void
     {
         global $usr;
+
+        // init
         $html = new html_base();
         $tl = new test_lib();
+        $t_wrd = new test_words($t);
+        $t_val = new test_values($t);
         $ui = new frontend('unit ui html reference list');
-        $dto = $tl->ui_test_cache($t->usr1);
+        $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
 
         // start the test section (ts)
@@ -58,7 +64,7 @@ class value_list_ui_tests
         $t->header($ts);
 
         // create a test set of phrase
-        $phr_inhabitant = $t->word_inhabitant()->phrase();
+        $phr_inhabitant = $t_wrd->word_inhabitant()->phrase();
 
         // create a test set of phrase groups
         $phr_lst_context = new phrase_list($usr);
@@ -75,8 +81,8 @@ class value_list_ui_tests
         // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
         // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
         // TODO add buttons to or empty cells for easy adding new related values
-        $lst_zh_ui = $t->value_list_zh_ui();
-        $lst_math_ui = $t->value_list_math_ui();
+        $lst_zh_ui = $t_val->value_list_zh_ui();
+        $lst_math_ui = $t_val->value_list_math_ui();
 
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 

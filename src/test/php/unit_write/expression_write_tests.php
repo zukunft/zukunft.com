@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class expression_write_tests
@@ -46,24 +47,25 @@ class expression_write_tests
         global $usr;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'expression->';
 
         $t->header('Test the expression class (src/main/php/model/formula/expression.php)');
 
         $t->subheader('prepare expression write');
-        $wrd_price = $t->test_word(words::TEST_PRICE);
-        $wrd_earning = $t->test_word(words::TEST_EARNING);
-        $wrd_pe = $t->test_word(words::TEST_PE);
-        $frm_ratio = $t->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
-        $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $wrd_price = $t_db->test_word(words::TEST_PRICE);
+        $wrd_earning = $t_db->test_word(words::TEST_EARNING);
+        $wrd_pe = $t_db->test_word(words::TEST_PE);
+        $frm_ratio = $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
+        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         $back = '';
 
         // load formulas for expression testing
-        $frm_this = $t->load_formula(formulas::SYSTEM_TEST_THIS);
-        $frm = $t->load_formula(formulas::INCREASE);
-        $frm_pe = $t->load_formula(formulas::SYSTEM_TEST_RATIO);
+        $frm_this = $t_db->load_formula(formulas::SYSTEM_TEST_THIS);
+        $frm = $t_db->load_formula(formulas::INCREASE);
+        $frm_pe = $t_db->load_formula(formulas::SYSTEM_TEST_RATIO);
 
         $result = $frm_sector->usr_text;
         $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TEST_TOTAL . '"';
@@ -80,9 +82,9 @@ class expression_write_tests
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
-        $wrd_percent = $t->load_word(words::PCT);
-        $frm_this = $t->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t->load_formula(formulas::PRIOR);
+        $wrd_percent = $t_db->load_word(words::PCT);
+        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formulas::PRIOR);
 
         // test the expression processing of the user readable part
         $target = '"' . words::PCT . '"';

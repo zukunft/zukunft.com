@@ -33,12 +33,15 @@
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_math_test(all_tests $t): void
 {
 
     global $usr;
+
+    $t_db = new test_db_load($t);
 
     $t->header('Test the internal math function (which should be replaced by RESTful R-Project call)');
 
@@ -101,7 +104,7 @@ function run_math_test(all_tests $t): void
     $t->display(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result);
     */
 
-    $time_phr = $t->load_phrase(words::YEAR_2020);
+    $time_phr = $t_db->load_phrase(words::YEAR_2020);
 
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";

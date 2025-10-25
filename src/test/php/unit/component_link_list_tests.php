@@ -40,6 +40,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_list_tests
@@ -91,7 +93,8 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $msk = $t->view();
+        $t_msk = new test_views($t);
+        $msk = $t_msk->view();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -119,7 +122,8 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $cmp = $t->component();
+        $t_cmp = new test_components($t);
+        $cmp = $t_cmp->component();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

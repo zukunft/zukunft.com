@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_tests
@@ -61,6 +62,7 @@ class triple_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_trp = new test_triples($t);
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
@@ -114,10 +116,10 @@ class triple_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->triple_list_short();
+        $trp_lst = $t_trp->triple_list_short();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
-        $trp_lst = $t->triple_list_short();
+        $trp_lst = $t_trp->triple_list_short();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp(), [api_type::WITH_EXCLUDED]);
 
     }

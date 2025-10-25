@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_tests
@@ -60,6 +61,7 @@ class formula_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
@@ -93,7 +95,7 @@ class formula_list_tests
 
         $t->subheader($ts . 'api');
 
-        $frm_lst = $t->formula_list_short();
+        $frm_lst = $t_frm->formula_list_short();
         $t->assert_api($frm_lst);
 
 
@@ -104,7 +106,7 @@ class formula_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->formula_list_short();
+        $trp_lst = $t_frm->formula_list_short();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
     }

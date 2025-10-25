@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_list_read_tests
@@ -42,6 +44,7 @@ class element_list_read_tests
     {
 
         // init
+        $t_frm = new test_formulas($t);
         $t->name = 'element list read db->';
         $elm_lst = new element_list($t->usr1);
 
@@ -49,7 +52,7 @@ class element_list_read_tests
         $t->header('element list db read tests');
 
         $test_name = 'load the elements of the scale minute to second formula and check if it contains the word second';
-        $elm_lst->load_by_frm($t->formula()->id());
+        $elm_lst->load_by_frm($t_frm->formula()->id());
         // TODO activate
         //$t->assert_contains($test_name, $elm_lst->names(), words::TN_SECOND);
 

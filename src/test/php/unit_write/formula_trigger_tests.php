@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_trigger_tests
@@ -48,6 +49,8 @@ class formula_trigger_tests
     {
 
         global $usr;
+
+        $t_db = new test_db_load($t);
 
         $t->header('Test the formula calculation triggers');
 
@@ -65,7 +68,7 @@ class formula_trigger_tests
         $phr_lst2 = clone $phr_lst1;
         $phr_lst1->add_name(words::YEAR_2019);
         $phr_lst2->add_name(words::YEAR_2020);
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
 
         // add a number to the test word
         $val_add1 = new value($usr);

@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -53,7 +54,8 @@ class reference_list_ui_tests
         $html = new html_base();
         $tl = new test_lib();
         $ui = new frontend('unit ui html reference list');
-        $dto = $tl->ui_test_cache($t->usr1);
+        $t_ref = new test_refs($t);
+        $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
 
         // start the test section (ts)
@@ -61,7 +63,7 @@ class reference_list_ui_tests
         $t->header($ts);
 
         // test the result list display functions
-        $lst = $t->ref_list_math_ui();
+        $lst = $t_ref->ref_list_math_ui();
         $test_page = $html->text_h2('reference list display test');
         $test_page .= 'short list of reference names with tooltip: ' . $lst->name_text() . '<br>';
         $test_page .= 'vertical list of reference with link:<br>' . $lst->list() . '<br>';

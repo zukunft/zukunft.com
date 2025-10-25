@@ -69,6 +69,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class change_log_tests
@@ -82,6 +86,10 @@ class change_log_tests
         $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_log = new test_log($t);
+        $t_grp = new test_groups($t);
+        $t_val = new test_values($t);
+        $t_wrd = new test_words($t);
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
 
@@ -110,74 +118,74 @@ class change_log_tests
         $t->assert_sql_view_link_create($tbl_fld);
 
         $t->subheader($ts . 'named sql setup');
-        $log = $t->log_word_add();
+        $log = $t_log->log_word_add();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
         $t->subheader($ts . 'group name sql setup for values related to up to 16 phrases');
-        $log = $t->log_norm();
+        $log = $t_log->log_norm();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
         $t->subheader($ts . 'group name sql setup for values related to more than 16 phrases');
-        $log = $t->log_big();
+        $log = $t_log->log_big();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
         foreach (change_log::LOG_CLASSES as $class) {
             $t->subheader($ts . '' . $lib->class_to_name($class) . ' sql setup');
-            $log = $t->log_obj_from_class($class);
+            $log = $t_log->log_obj_from_class($class);
             $t->assert_sql_table_create($log);
             $t->assert_sql_index_create($log);
             $t->assert_sql_foreign_key_create($log);
         }
 
         $t->subheader($ts . 'link sql setup');
-        $log_lnk = $t->log_link();
+        $log_lnk = $t_log->log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
         $t->subheader($ts . 'named sql write');
-        $log = $t->log_word_add();
+        $log = $t_log->log_word_add();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
-        $log = $t->log_word_update();
+        $log = $t_log->log_word_update();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_word_delete();
+        $log = $t_log->log_word_delete();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_word_add_type();
+        $log = $t_log->log_word_add_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_word_update_type();
+        $log = $t_log->log_word_update_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_word_delete_type();
+        $log = $t_log->log_word_delete_type();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_norm();
+        $log = $t_log->log_norm();
         $t->assert_sql_insert($sc, $log);
-        $log = $t->log_big();
+        $log = $t_log->log_big();
         $t->assert_sql_insert($sc, $log);
 
         $t->subheader($ts . 'value sql write');
-        $log_val = $t->log_value();
+        $log_val = $t_log->log_value();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
-        $log_val = $t->log_value_update();
+        $log_val = $t_log->log_value_update();
         $t->assert_sql_insert($sc, $log_val);
-        $log_val = $t->log_value_delete();
+        $log_val = $t_log->log_value_delete();
         $t->assert_sql_insert($sc, $log_val);
-        $log_val = $t->log_value_prime();
+        $log_val = $t_log->log_value_prime();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
-        $log_val = $t->log_value_big();
+        $log_val = $t_log->log_value_big();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
 
         $t->subheader($ts . 'link sql write');
-        $log_lnk = $t->log_link();
+        $log_lnk = $t_log->log_link();
         $t->assert_sql_insert($sc, $log_lnk);
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
@@ -201,19 +209,19 @@ class change_log_tests
         $test_name = 'get the name changes of a word';
         $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
         $this->assert_sql_list_by_field(triple::class, triple_db::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_17_plus()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t->value()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t->value_16()->id(), $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t->value_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group_16()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t_grp->group_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_16()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
         $log_dsp->type = $lib->class_to_name(user::class);
         $log_dsp->size = sql_db::ROW_LIMIT;
         $db_con->db_type = sql_db::POSTGRES;
-        // TODO activate
+        // TODO Prio 1 activate
         //$created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         //$expected_sql = $t->file('db/log/change_log.sql');
         //$t->display('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $lib->trim($expected_sql), $lib->trim($created_sql));
@@ -238,14 +246,14 @@ class change_log_tests
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
-        $wrd = $t->word();
+        $wrd = $t_wrd->word();
         $trp = new triple($usr);
         $trp->set(triples::PI_ID, triples::PI_NAME);
 
 
         $t->subheader($ts . 'api');
 
-        $log_lst = $t->log_list_named();
+        $log_lst = $t_log->log_list_named();
         $t->assert_api($log_lst);
 
     }

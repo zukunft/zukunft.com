@@ -80,6 +80,10 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sandbox_tests
@@ -90,6 +94,10 @@ class sandbox_tests
         global $usr;
 
         // init
+        $t_wrd = new test_words($t);
+        $t_vrb = new test_verbs($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
         $lib = new library();
 
         // start the test section (ts)
@@ -98,14 +106,14 @@ class sandbox_tests
 
         $t->subheader($ts . 'name list');
         $test_name = 'names match cached names';
-        $wrd_lst = $t->word_list();
+        $wrd_lst = $t_wrd->word_list();
         // call the names function with a high limit to force the usage of the slow loop
         $name_list = implode('.', $wrd_lst->names(false, 100));
         $name_list_cache = implode('.', array_keys($wrd_lst->name_pos_lst()));
         $t->assert($test_name, $name_list_cache, $name_list);
         $test_name = 'names match not cached names including excluded';
         $name_list_ex = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
-        $wrd_ex = $t->word_education();
+        $wrd_ex = $t_wrd->word_education();
         $wrd_ex->exclude();
         $wrd_lst->add_by_name($wrd_ex);
         $name_list_ex_cache = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
@@ -117,16 +125,16 @@ class sandbox_tests
 
         $t->subheader($ts . 'link');
         $test_name = 'name with key separator can be used';
-        $wrd = $t->word();
-        $to = $t->word();
-        $vrb = $t->verb();
+        $wrd = $t_wrd->word();
+        $to = $t_wrd->word();
+        $vrb = $t_vrb->verb();
         $wrd->set_name($wrd->name() . sandbox_link::KEY_SEP . $vrb->name());
         $trp = new triple($usr);
         $trp->set_from($wrd->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($to->phrase());
         $key_vrb = $trp->key();
-        $wrd->set_name($t->word()->name());
+        $wrd->set_name($t_wrd->word()->name());
         $to->set_name($vrb->name() . sandbox_link::KEY_SEP . $to->name());
         $key_to = $trp->key();
         $t->assert_not($test_name, $key_vrb, $key_to);
@@ -134,16 +142,16 @@ class sandbox_tests
         //      which implies that the changing of the verb name is updating the cache
         //      so a requirement is that the cache update trigger is implemented
         /*
-        $wrd = $t->word();
-        $to = $t->word();
-        $vrb = $t->verb();
+        $wrd = $t_wrd->word();
+        $to = $t_wrd->word();
+        $vrb = $t_vrb->verb();
         $vrb->set_name($vrb->name() . sandbox_link::KEY_SEP . $wrd->name());
         $trp = new triple($usr);
         $trp->set_from($wrd->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($to->phrase());
         $key_vrb = $trp->key();
-        $vrb->set_name($t->verb()->name());
+        $vrb->set_name($t_vrb->verb()->name());
         $to->set_name($to->name() . sandbox_link::KEY_SEP . $to->name());
         $key_to = $trp->key();
         $t->assert_not($test_name, $key_vrb, $key_to);
@@ -153,26 +161,26 @@ class sandbox_tests
         $t->subheader($ts . 'link list');
         $lst = new component_link_list($usr);
         $test_name = 'add link is fine';
-        $result = $lst->add_link($t->component_link());
+        $result = $lst->add_link($t_cmp->component_link());
         $t->assert_true($test_name, $result);
         $test_name = 'adding link twice is rejected';
-        $result = $lst->add_link($t->component_link());
+        $result = $lst->add_link($t_cmp->component_link());
         $t->assert_false($test_name, $result);
         $lst = new component_link_list($usr);
         $test_name = 'add component is fine';
-        $result = $lst->add(1, $t->view(), $t->component(), 1);
+        $result = $lst->add(1, $t_msk->view(), $t_cmp->component(), 1);
         $t->assert_true($test_name, $result);
         $test_name = 'add component at the same position is rejected';
-        $result = $lst->add(1, $t->view(), $t->component(), 1);
+        $result = $lst->add(1, $t_msk->view(), $t_cmp->component(), 1);
         $t->assert_false($test_name, $result);
         $test_name = 'add component at a different position is fine';
-        $result = $lst->add(2, $t->view(), $t->component(), 2);
+        $result = $lst->add(2, $t_msk->view(), $t_cmp->component(), 2);
         $t->assert_true($test_name, $result);
         $test_name = 'add same component at different position without db id is fine';
-        $result = $lst->add(0, $t->view(), $t->component(), 3);
+        $result = $lst->add(0, $t_msk->view(), $t_cmp->component(), 3);
         $t->assert_true($test_name, $result);
         $test_name = 'add same component at different position with same db id is rejected';
-        $result = $lst->add(1, $t->view(), $t->component(), 3);
+        $result = $lst->add(1, $t_msk->view(), $t_cmp->component(), 3);
         $t->assert_false($test_name, $result);
 
         // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above

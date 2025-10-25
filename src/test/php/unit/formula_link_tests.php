@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -59,6 +60,7 @@ class formula_link_tests
         $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
@@ -72,7 +74,7 @@ class formula_link_tests
         $frm_lnk_typ = new formula_link_type('');
         $t->assert_sql_table_create($frm_lnk_typ);
         $t->assert_sql_index_create($frm_lnk_typ);
-        $frm_lnk = $t->formula_link();
+        $frm_lnk = $t_frm->formula_link();
         $t->assert_sql_table_create($frm_lnk);
         $t->assert_sql_index_create($frm_lnk);
         $t->assert_sql_foreign_key_create($frm_lnk);
@@ -100,12 +102,12 @@ class formula_link_tests
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $t->subheader($ts . 'formula link sql write');
-        $lnk = $t->formula_link();
+        $lnk = $t_frm->formula_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $lnk_filled = $t->formula_link_filled();
+        $lnk_filled = $t_frm->formula_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 1;
@@ -115,7 +117,7 @@ class formula_link_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'formula link base object handling');
-        $lnk = $t->formula_link();
+        $lnk = $t_frm->formula_link();
         $t->assert_reset($lnk);
 
         /*

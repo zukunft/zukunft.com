@@ -73,6 +73,10 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -85,6 +89,10 @@ class base_ui_tests
         global $usr;
         $lib = new library();
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_phr = new test_phrases($t);
+        $t_src = new test_sources($t);
+        $t_frm = new test_formulas($t);
 
         // start the test section (ts)
         $ts = 'unit ui html base ';
@@ -129,19 +137,19 @@ class base_ui_tests
         $t->subheader('unit html table tests');
 
         // create a test set of phrase groups
-        $t->phrase_list_zh_mio();
+        $t_phr->phrase_list_zh_mio();
         $grp_city = new group($t->usr1);
-        $grp_city->set_phrase_list($t->phrase_list_zh_city_2019());
+        $grp_city->set_phrase_list($t_phr->phrase_list_zh_city_2019());
         $grp_canton = new group($t->usr1);
-        $grp_canton->set_phrase_list($t->phrase_list_canton_mio());
+        $grp_canton->set_phrase_list($t_phr->phrase_list_canton_mio());
         $grp_ch = new group($t->usr1);
-        $grp_ch->set_phrase_list($t->phrase_list_ch_mio());
+        $grp_ch->set_phrase_list($t_phr->phrase_list_ch_mio());
         $grp_city_pct = new group($t->usr1);
-        $grp_city_pct->set_phrase_list($t->phrase_list_zh_city_pct());
+        $grp_city_pct->set_phrase_list($t_phr->phrase_list_zh_city_pct());
         $grp_canton_pct = new group($t->usr1);
-        $grp_canton_pct->set_phrase_list($t->phrase_list_canton_pct());
+        $grp_canton_pct->set_phrase_list($t_phr->phrase_list_canton_pct());
         $phr_lst_context = new phrase_list($t->usr1);
-        $phr_lst_context->add($t->word_inhabitant()->phrase());
+        $phr_lst_context->add($t_wrd->word_inhabitant()->phrase());
 
         // create the value for the inhabitants of the city of zurich
         $val_city = new value($t->usr1);
@@ -220,7 +228,7 @@ class base_ui_tests
         $t->html_page_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
 
         $test_name = 'sort a named list by the name';
-        $lst = $t->phrase_list_zh_mio();
+        $lst = $t_phr->phrase_list_zh_mio();
         $names_unsorted = $lst->names();
         $lst->sort_by_name();
         $names = $lst->names();
@@ -276,13 +284,13 @@ class base_ui_tests
         $test_name = 'a sandbox object e.g. source change button html code';
         $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t->source()->api_json());
+        $src->set_from_json($t_src->source()->api_json());
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="/http/view.php?m=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
-        $frm->set_from_json($t->formula()->api_json());
+        $frm->set_from_json($t_frm->formula()->api_json());
         $t->assert($test_name, $frm->btn_del('1'), $target);
 
 

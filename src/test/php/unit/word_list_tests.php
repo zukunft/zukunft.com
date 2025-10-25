@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -68,6 +69,7 @@ class word_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
@@ -251,7 +253,7 @@ class word_list_tests
 
         // filter by name
         $test_name = 'filtered word list by name does not contain ' . words::E_SYMBOL . ' any more';
-        $wrd_lst = $t->word_list();
+        $wrd_lst = $t_wrd->word_list();
         $filtered = $wrd_lst->filter_by_name([words::E_SYMBOL]);
         $t->assert_contains_not($test_name, $filtered->names(), words::E_SYMBOL);
         $test_name = 'filtered word list by name still contains ' . words::PI_SYMBOL;
@@ -307,7 +309,7 @@ class word_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $wrd_lst = $t->word_list();
+        $wrd_lst = $t_wrd->word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
 
     }

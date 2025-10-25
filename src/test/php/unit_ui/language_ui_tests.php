@@ -43,20 +43,21 @@ include_once html_paths::SYSTEM . 'language.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_dsp;
+use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
+        $t_lan = new test_languages($t);
 
         // start the test section (ts)
         $ts = 'unit ui html language ';
         $t->header($ts);
 
-        $src = new language_dsp($t->language()->api_json());
+        $src = new language_dsp($t_lan->language()->api_json());
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
         $test_page .= 'with link: ' . $src->name_link() . '<br>';

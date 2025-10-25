@@ -79,6 +79,9 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -243,8 +246,9 @@ class api_tests
      */
     function test_api_write_no_rest_all(test_cleanup $t): void
     {
-        $this->test_api_write_no_rest(word::class, $t->word_put_json(), $t->word_post_json(), $t);
-        $this->test_api_write_no_rest(source::class, $t->source_put_json(), $t->source_post_json(), $t);
+        $t_db = new test_db_load($t);
+        $this->test_api_write_no_rest(word::class, $t_db->word_put_json(), $t_db->word_post_json(), $t);
+        $this->test_api_write_no_rest(source::class, $t_db->source_put_json(), $t_db->source_post_json(), $t);
     }
 
     /**
@@ -253,8 +257,9 @@ class api_tests
      */
     function test_api_write_all(test_cleanup $t): void
     {
-        $this->test_api_write(word::class, $t->word_put_json(), $t->word_post_json(), $t);
-        $this->test_api_write(source::class, $t->source_put_json(), $t->source_post_json(), $t);
+        $t_db = new test_db_load($t);
+        $this->test_api_write(word::class, $t_db->word_put_json(), $t_db->word_post_json(), $t);
+        $this->test_api_write(source::class, $t_db->source_put_json(), $t_db->source_post_json(), $t);
     }
 
     /**
@@ -286,11 +291,16 @@ class api_tests
      * @param array $upd_data the json that should be used to update the user sandbox object
      * @return void
      */
-    function test_api_write(string $class, array $add_data, array $upd_data, test_cleanup $t): void
+    function test_api_write(
+        string $class,
+        array $add_data,
+        array $upd_data,
+        test_cleanup $t
+    ): void
     {
         // create a new source via api call
         // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source",user_db::FLD_ID:2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
-        $id = $t->assert_api_put($class, $add_data, true);
+        $id = $t->assert_api_put($class, $t, $add_data, true);
         if ($id != 0) {
             // check if the source has been created
             $t->assert_api_get($class, $id, 0, $add_data, true);

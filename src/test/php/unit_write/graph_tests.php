@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class graph_tests
@@ -48,6 +49,7 @@ class graph_tests
 
         global $usr;
 
+        $t_vrb = new test_verbs($t);
         $back = 0;
 
         $t->header('Test the graph class (classes/triple_list.php)');
@@ -116,7 +118,7 @@ class graph_tests
         $ZH->load_by_name(words::ZH);
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($usr);
-        $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
+        $zh_lst->load_by_phr($ZH->phrase(), $t_vrb->verb_is(), foaf_direction::UP);
         // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();
         $zh_types = $trp_lst->phrase_parts();

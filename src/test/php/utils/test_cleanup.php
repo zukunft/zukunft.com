@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 
 class test_cleanup extends test_api
 {
@@ -90,6 +91,8 @@ class test_cleanup extends test_api
 
         global $test_val_lst;
 
+        $t_db = new test_db_load($this);
+
         $result = ''; // the combine error message of all cleanup actions
 
         // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
@@ -115,42 +118,42 @@ class test_cleanup extends test_api
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
 
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME);
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME);
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_RESULTS_NAME);
-        $result .= $this->test_component_unlink(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME);
-        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME);
-        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_RESULTS_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME);
+        $result .= $t_db->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME);
 
         // load the test view
-        $msk = $this->load_view(views::TEST_ADD_NAME);
+        $msk = $t_db->load_view(views::TEST_ADD_NAME);
         if ($msk->id() <= 0) {
-            $msk = $this->load_view(views::TEST_RENAMED_NAME);
+            $msk = $t_db->load_view(views::TEST_RENAMED_NAME);
         }
 
         // load the test view for user 2
-        $dsp_usr2 = $this->load_view(views::TEST_ADD_NAME, $this->usr2);
+        $dsp_usr2 = $t_db->load_view(views::TEST_ADD_NAME, $this->usr2);
         if ($dsp_usr2->id() <= 0) {
-            $dsp_usr2 = $this->load_view(views::TEST_RENAMED_NAME, $this->usr2);
+            $dsp_usr2 = $t_db->load_view(views::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // load the first test view component
-        $cmp = $this->load_component(components::TEST_ADD_NAME);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_component(components::TEST_RENAMED_NAME);
+            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME);
         }
 
         // load the first test view component for user 2
-        $cmp_usr2 = $this->load_component(components::TEST_ADD_NAME, $this->usr2);
+        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_component(components::TEST_RENAMED_NAME, $this->usr2);
+            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // load the second test view component
-        $cmp2 = $this->load_component(components::TEST_ADD_2_NAME);
+        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME);
 
         // load the second test view component for user 2
-        $cmp2_usr2 = $this->load_component(components::TEST_ADD_2_NAME, $this->usr2);
+        $cmp2_usr2 = $t_db->load_component(components::TEST_ADD_2_NAME, $this->usr2);
 
         // check if the test components have been unlinked for user 2
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
@@ -185,7 +188,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (components::TEST_COMPONENTS as $cmp_name) {
-            $cmp = $this->load_component($cmp_name);
+            $cmp = $t_db->load_component($cmp_name);
             if ($cmp->id() > 0) {
                 $msg = $cmp->del();
                 $result .= $msg->get_last_message();
@@ -196,7 +199,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (views::TEST_VIEWS as $dsp_name) {
-            $msk = $this->load_view($dsp_name);
+            $msk = $t_db->load_view($dsp_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
@@ -206,9 +209,9 @@ class test_cleanup extends test_api
         }
 
         // reload the first test view component for user 2
-        $cmp_usr2 = $this->load_component(components::TEST_ADD_NAME, $this->usr2);
+        $cmp_usr2 = $t_db->load_component(components::TEST_ADD_NAME, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_component(components::TEST_RENAMED_NAME, $this->usr2);
+            $cmp_usr2 = $t_db->load_component(components::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // request to delete the test view component for user 2
@@ -220,9 +223,9 @@ class test_cleanup extends test_api
         }
 
         // reload the first test view component
-        $cmp = $this->load_component(components::TEST_ADD_NAME);
+        $cmp = $t_db->load_component(components::TEST_ADD_NAME);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_component(components::TEST_RENAMED_NAME);
+            $cmp = $t_db->load_component(components::TEST_RENAMED_NAME);
         }
 
         // request to delete the test view component
@@ -234,7 +237,7 @@ class test_cleanup extends test_api
         }
 
         // reload the second test view component
-        $cmp2 = $this->load_component(components::TEST_ADD_2_NAME);
+        $cmp2 = $t_db->load_component(components::TEST_ADD_2_NAME);
 
         // request to delete the second added test view component
         if ($cmp2->id() > 0) {
@@ -253,9 +256,9 @@ class test_cleanup extends test_api
         }
 
         // reload the test view for user 2
-        $dsp_usr2 = $this->load_view(views::TEST_ADD_NAME, $this->usr2);
+        $dsp_usr2 = $t_db->load_view(views::TEST_ADD_NAME, $this->usr2);
         if ($dsp_usr2->id() <= 0) {
-            $dsp_usr2 = $this->load_view(views::TEST_RENAMED_NAME, $this->usr2);
+            $dsp_usr2 = $t_db->load_view(views::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // request to delete the added test view for user 2 first
@@ -267,9 +270,9 @@ class test_cleanup extends test_api
         }
 
         // reload the test view
-        $msk = $this->load_view(views::TEST_ADD_NAME);
+        $msk = $t_db->load_view(views::TEST_ADD_NAME);
         if ($msk->id() <= 0) {
-            $msk = $this->load_view(views::TEST_RENAMED_NAME);
+            $msk = $t_db->load_view(views::TEST_RENAMED_NAME);
         }
 
         // request to delete the added test view
@@ -282,7 +285,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (views::TEST_VIEWS as $dsp_name) {
-            $msk = $this->load_view($dsp_name);
+            $msk = $t_db->load_view($dsp_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
@@ -292,7 +295,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the renamed test source
-        $src = $this->load_source(sources::SYSTEM_TEST_RENAMED);
+        $src = $t_db->load_source(sources::SYSTEM_TEST_RENAMED);
         if ($src->id() > 0) {
             $msg = $src->del();
             $result .= $msg->get_last_message();
@@ -303,7 +306,7 @@ class test_cleanup extends test_api
         // request to delete the added test sources
         foreach (sources::TEST_SOURCES as $src_name) {
             if ($src_name != sources::WIKIDATA) {
-                $src = $this->load_source($src_name);
+                $src = $t_db->load_source($src_name);
                 if ($src->id() > 0) {
                     $msg = $src->del();
                     $result .= $msg->get_last_message();
@@ -314,7 +317,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test reference
-        $ref = $this->load_ref(words::TEST_ADD, ref_type::WIKIDATA);
+        $ref = $t_db->load_ref(words::TEST_ADD, ref_type::WIKIDATA);
         if ($ref->id() > 0) {
             $msg = $ref->del();
             $result .= $msg->get_last_message();
@@ -324,7 +327,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test formulas
         foreach (formulas::TEST_FORMULAS as $frm_name) {
-            $msk = $this->load_formula($frm_name);
+            $msk = $t_db->load_formula($frm_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
@@ -335,7 +338,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test phrases
         foreach (triples::TEST_TRIPLE_STANDARD as $phr_name) {
-            $phr = $this->load_phrase($phr_name);
+            $phr = $t_db->load_phrase($phr_name);
             if ($phr->id() <> 0) {
                 $msg = $phr->del();
                 $result .= $msg->get_last_message();
@@ -345,23 +348,23 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(words::YEAR_2019, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TEST_2021, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TEST_2022, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
-        $this->del_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
-        $this->del_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
-        $this->del_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
-        $this->del_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
-        $this->del_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
-        $this->del_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
-        $this->del_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
-        $this->del_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
+        $t_db->del_triple(words::YEAR_2019, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(words::TEST_2021, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(words::TEST_2022, verbs::IS, words::YEAR_CAP);
+        $t_db->del_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
+        $t_db->del_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
+        $t_db->del_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
+        $t_db->del_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
+        $t_db->del_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
+        $t_db->del_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
+        $t_db->del_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
+        $t_db->del_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
+        $t_db->del_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
-        $wrd = $this->load_word(words::TEST_ADD);
+        $wrd = $t_db->load_word(words::TEST_ADD);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
@@ -370,7 +373,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the renamed test word
-        $wrd = $this->load_word(words::TEST_RENAMED);
+        $wrd = $t_db->load_word(words::TEST_RENAMED);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
@@ -382,7 +385,7 @@ class test_cleanup extends test_api
         foreach (words::TEST_WORDS as $wrd_name) {
             // ... but keep the read only test word
             if ($wrd_name != words::MATH) {
-                $wrd = $this->load_word($wrd_name);
+                $wrd = $t_db->load_word($wrd_name);
                 if ($wrd->id() > 0) {
                     $msg = $wrd->del();
                     $result .= $msg->get_last_message();

@@ -59,6 +59,9 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -81,6 +84,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -92,24 +97,26 @@ class system_view_ui_tests
         // init
         $lib = new library();
         $tl = new test_lib();
+        $t_usr = new test_users();
+        $t_map = new test_mappers($t);
 
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
-        $t->usr1 = $t->user_sys_test();
+        $t->usr1 = $t_usr->user_sys_test();
 
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');
         $ui = new frontend('unit test');
-        $dto = $tl->ui_test_cache($t->usr1);
+        $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
             $dbo = $this->view_id_to_dbo($id, $t->usr1);
             $action = $this->view_id_to_url_action($id);
-            $url = $t->class_to_filled_url($dbo::class, $id, $action);
+            $url = $t_map->class_to_filled_url($dbo::class, $id, $action);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $usr_dsp = $tl->cast_user($t->usr1);

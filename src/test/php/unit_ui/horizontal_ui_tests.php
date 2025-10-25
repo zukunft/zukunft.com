@@ -40,14 +40,23 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED . 'library.php';
+include_once html_paths::HTML . 'button.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class horizontal_ui_tests
@@ -57,6 +66,7 @@ class horizontal_ui_tests
 
         // init
         $lib = new library();
+        $t_map = new test_mappers($t);
 
         // start the test section (ts)
         $ts = 'unit ui horizontal ';
@@ -64,7 +74,7 @@ class horizontal_ui_tests
 
         $t->subheader($ts . 'button');
         foreach (def::MAIN_CLASSES as $class) {
-            $ui_obj = $t->class_to_ui_object($class);
+            $ui_obj = $t_map->class_to_ui_object($class);
             $test_name = 'add ' . $lib->class_to_name($class) . ' html code';
             if ($class != result::class) {
                 // it should not be possible to add result via an ui button
@@ -79,11 +89,11 @@ class horizontal_ui_tests
         $t->subheader($ts . 'url');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'add url of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $url = $t->class_to_url_add($class, 1);
+            $url = $t_map->class_to_url_add($class, 1);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
-            $ui_obj = $t->class_to_ui_object($class);
-            $filled_obj = $t->class_to_filled_object($class);
+            $ui_obj = $t_map->class_to_ui_object($class);
+            $filled_obj = $t_map->class_to_filled_object($class);
             $ui_obj->url_mapper($url_array);
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;

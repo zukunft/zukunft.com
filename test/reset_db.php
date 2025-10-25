@@ -40,6 +40,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 // path for the general tests and test setup
+// TODO Prio 0 used test_paths:: instead
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 
 // load the base testing functions
@@ -48,8 +49,17 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
+
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once test_paths::CREATE . 'test_db_load.php';
+include_once test_paths::UTILS . 'test_base.php';
+// load the main test control class
+include_once test_paths::UTILS . 'all_tests.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 
@@ -86,7 +96,8 @@ if ($db_con->is_open()) {
             // from the type_list created by the test.php differs
             // most likely new fields have not yet been added to the
             // src/main/resources/db_code_links/change_fields.csv of the predefined fields
-            $t->type_list_recreate($t);
+            $t_db = new test_db_load($t);
+            $t_db->type_list_recreate($t);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

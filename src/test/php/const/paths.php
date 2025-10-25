@@ -40,6 +40,7 @@ namespace Zukunft\ZukunftCom\test\php\const;
 class paths
 {
 
+    const string CREATE = TEST_PHP_PATH . 'create' . DIRECTORY_SEPARATOR;
     const string UTILS = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 
     // path for unit tests

@@ -35,6 +35,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once paths::WEB . 'frontend.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CREATE . 'test_db_load.php';
+
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
@@ -42,15 +50,11 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_tests;
-
-include_once paths::WEB . 'frontend.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_CONST . 'words.php';
 
 class all_unit_read_tests extends all_unit_tests
 {
@@ -59,6 +63,10 @@ class all_unit_read_tests extends all_unit_tests
     {
         global $db_con;
         global $usr;
+
+        // init
+        $t_db = new test_db_load($t);
+        $t_typ = new test_types($t);
 
         // start the test section (ts)
         $ts = 'read db ';
@@ -74,14 +82,15 @@ class all_unit_read_tests extends all_unit_tests
         $usr = $this->usr1;
 
         // check that the main database test entries are still active
-        $this->create_test_db_entries($t);
+        $t_db->create_test_db_entries($t);
 
         // run the unit database tests
-        $this->init_unit_db_tests();
+        $this->init_unit_db_tests($t);
         $this->usr1->load_usr_data();
 
         // do the database unit tests
         $t->subheader($ts . 'general');
+        // TODO Prio 0 use $t instead of $this ?
         (new system_read_tests)->run($this);
         (new system_views_read_tests)->run($t);
         (new sql_db_read_tests)->run($this);
@@ -119,7 +128,7 @@ class all_unit_read_tests extends all_unit_tests
         (new job_read_tests)->run($this);
 
         // load the types from the api message
-        $api_msg = $this->type_lists_api($this->usr1);
+        $api_msg = $t_typ->type_lists_api($this->usr1);
         new type_list_dsp($api_msg);
 
         $api_test = new api_tests();
@@ -140,22 +149,23 @@ class all_unit_read_tests extends all_unit_tests
 
     }
 
-    private function init_unit_db_tests(): void
+    private function init_unit_db_tests(all_tests $t): void
     {
+        $t_db = new test_db_load($t);
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
-        $this->test_triple(
+        $t_db->test_triple(
             triples::PI, verbs::IS, words::MATH,
             triples::PI_NAME, triples::PI_NAME
         );
-        $phr_grp = $this->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, values::PI_LONG);
+        $phr_grp = $t_db->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
+        $t_db->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
-        $this->test_triple(
+        $t_db->test_triple(
             triples::E, verbs::IS, words::MATH,
             triples::E, triples::E
         );
-        $phr_grp = $this->add_phrase_group(array(triples::E), groups::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, values::E);
+        $phr_grp = $t_db->add_phrase_group(array(triples::E), groups::TN_READ);
+        $t_db->test_value_by_phr_grp($phr_grp, values::E);
     }
 
     /**

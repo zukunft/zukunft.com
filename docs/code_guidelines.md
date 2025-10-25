@@ -78,7 +78,7 @@ backend - internal
   (useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
-- cac (CAChe)              - preload lists
+- cac (CAChe)              - preloaded lists
 
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user
@@ -97,6 +97,15 @@ frontend:
 - tbl (TaBLe)              - HTML code for a table
 - lan (LANguage)           - the language used for the frontend
 - for (FORm)               - the language form of a word e.g. plural
+
+testing
+- t (Test)                 - class with the test execution functions
+- t_cac (Test CAChe)       - the test environment that includes all vars for testing e.g. to count the number of errors and the execution time
+- t_wrd                    - class to create test words
+- t_vrb                    - class to create test verbs
+- t_trp                    - ... dito for the main objects
+- ...
+- t_obj
 
 to be deprecated:
 - glst (Get LiST)          - is used to name the private internal functions that can also create the user list

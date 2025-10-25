@@ -144,6 +144,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Exception;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -195,7 +196,6 @@ include_once TEST_CONST_PATH . 'files.php';
 include_once paths::SERVICE . 'config.php';
 
 // load the other test utility modules (beside this base configuration module)
-include_once test_paths::UTILS . 'create_test_objects.php';
 include_once test_paths::UTILS . 'test_system.php';
 include_once test_paths::UTILS . 'test_db_link.php';
 include_once test_paths::UTILS . 'test_user.php';
@@ -414,7 +414,7 @@ class test_base
     public string $name;
     public string $resource_path;
 
-    private int $seq_nbr;
+    public int $seq_nbr;
 
     public text_log_format $format = text_log_format::TEXT;
     public text_log_level $level = text_log_level::TIMEOUT;
@@ -3936,7 +3936,7 @@ class test_base
     /**
      * @return int the next sequence number to simulate database auto increase for unit testing
      */
-    protected function next_seq_nbr(): int
+    public function next_seq_nbr(): int
     {
         $this->seq_nbr++;
         return $this->seq_nbr;
@@ -4141,11 +4141,13 @@ class test_base
 // testing functions to create the main time value
 // -----------------------------------------------
 
+// TODO Prio 0 review
 function zu_test_time_setup(test_cleanup $t): string
 {
     global $db_con;
 
     $cfg = new config();
+    $t_db = new test_db_load($t);
     $result = '';
     $this_year = intval(date('Y'));
     $prev_year = '';
@@ -4157,11 +4159,11 @@ function zu_test_time_setup(test_cleanup $t): string
         $end_year = $this_year + $test_years;
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
-            $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
+            $t_db->test_word(strval($this_year));
+            $wrd_lnk = $t_db->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
-                $t->test_triple($prev_year, verbs::FOLLOW, $this_year);
+                $t_db->test_triple($prev_year, verbs::FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }

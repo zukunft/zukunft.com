@@ -35,51 +35,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
-use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
-use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
-use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\formula_type_list as formula_type_list_web;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
-use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\unit\import_tests as import_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_write\api_write_tests;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -129,7 +86,54 @@ include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once test_paths::CREATE . 'test_types.php';
 include_once TEST_CONST_PATH . 'files.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\types\formula_type_list as formula_type_list_web;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\unit\import_tests as import_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -145,6 +149,8 @@ class all_unit_tests extends test_cleanup
         global $db_con;
         global $sql_names;
         global $usr;
+
+        $t_db = new test_db_load($t);
 
         /*
          * unit testing - prepare
@@ -217,7 +223,7 @@ class all_unit_tests extends test_cleanup
              * prepare db testing
              */
 
-            $t->type_list_recreate($t);
+            $t_db->type_list_recreate($t);
 
             //$this->create_test_db_entries($t);
 
@@ -338,6 +344,8 @@ class all_unit_tests extends test_cleanup
         $global_sql_names = $sql_names;
         $global_usr = $usr;
 
+        $t_typ = new test_types($this);
+
         // create a dummy db connection for testing
         $this->db_con_for_unit_tests();
 
@@ -411,7 +419,7 @@ class all_unit_tests extends test_cleanup
         new base_ui_tests()->run($this);
 
         // load the types from the api message
-        $api_msg = $this->type_lists_api($this->usr1);
+        $api_msg = $t_typ->type_lists_api($this->usr1);
         new type_list_dsp($api_msg);
 
         // test the html ui on localhost without api

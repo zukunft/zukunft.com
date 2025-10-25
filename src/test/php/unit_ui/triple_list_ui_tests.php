@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_ui_tests
@@ -50,20 +51,21 @@ class triple_list_ui_tests
     {
 
         $html = new html_base();
+        $t_trp = new test_triples($t);
 
         // start the test section (ts)
         $ts = 'unit ui html triple list ';
         $t->header($ts);
 
         // fill the triple list based on the api message
-        $db_lst = $t->triple_list_short();
+        $db_lst = $t_trp->triple_list_short();
         $lst = new triple_list_dsp($db_lst->api_json());
         $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
 
         // create the triple list test set
         $lst = new triple_list_dsp();
-        $phr_city = $t->zh_city();
-        $phr_canton = $t->zh_canton();
+        $phr_city = $t_trp->zh_city();
+        $phr_canton = $t_trp->zh_canton();
         $phr_city_dsp = new triple($phr_city->api_json());
         $phr_canton_dsp = new triple($phr_canton->api_json());
         $lst->add($phr_city_dsp);

@@ -60,6 +60,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,6 +74,7 @@ class user_write_tests
         global $phr_typ_cac;
 
         // init
+        $t_usr = new test_users($t);
         $t->name = 'user db write->';
 
         // start the test section (ts)
@@ -78,17 +82,17 @@ class user_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'add');
-        $usr = $t->user_ip();
+        $usr = $t_usr->user_ip();
         $t->assert_write($usr, $usr->unique_value(), $usr->key_field());
 
         /*
 
         $t->subheader('user prepared write');
         $test_name = 'add user ' . users::TEST_NAME;
-        $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 
         $t->subheader('user write sandbox tests for ' . words::TEST_ADD);
-        $t->assert_write_named($t->word_filled_add(), words::TEST_ADD);
+        $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
 
         $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
         $wrd_time = $t->test_word(words::TEST_2021, phrase_type_shared::TIME);
@@ -191,29 +195,31 @@ class user_write_tests
      */
     function create_test_words(all_tests $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('Check if all base words are correct');
 
         foreach (words::TEST_WORDS_CREATE as $word_name) {
-            $t->test_word($word_name);
+            $t_db->test_word($word_name);
         }
         foreach (words::TEST_WORDS_MEASURE as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::MEASURE);
+            $t_db->test_word($word_name, phrase_type_shared::MEASURE);
         }
         foreach (words::TEST_WORDS_SCALING as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::SCALING);
+            $t_db->test_word($word_name, phrase_type_shared::SCALING);
         }
         foreach (words::TEST_WORDS_SCALING_HIDDEN as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
+            $t_db->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
         }
         foreach (words::TEST_WORDS_PERCENT as $word_name) {
-            $t->test_word($word_name, phrase_type_shared::PERCENT);
+            $t_db->test_word($word_name, phrase_type_shared::PERCENT);
         }
         $prev_word_name = null;
         foreach (words::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t->test_triple($word_name, verbs::IS, words::YEAR_CAP);
-            $t->test_word($word_name, phrase_type_shared::TIME);
+            $t_db->test_triple($word_name, verbs::IS, words::YEAR_CAP);
+            $t_db->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
-                $t->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
+                $t_db->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
             }
             $prev_word_name = $word_name;
         }

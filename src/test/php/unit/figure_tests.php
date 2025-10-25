@@ -43,12 +43,19 @@ use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class figure_tests
 {
     function run(test_cleanup $t): void
     {
+
+        // init
+        $tl = new test_lib();
+        $t_fig = new test_figures($t);
 
         // start the test section (ts)
         $ts = 'unit figure ';
@@ -69,42 +76,42 @@ class figure_tests
 
         $t->subheader($ts . 'set and get');
 
-        $fig = $t->figure_value();
+        $fig = $t_fig->figure_value();
         $t->assert('figure value id', $fig->id(), values::PI_ID);
         $t->assert('figure value obj id', $fig->obj_id(), values::PI_ID);
         $t->assert('figure value number', $fig->number(), values::PI_SHORT);
-        $fig = $t->figure_result();
+        $fig = $t_fig->figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);
         $t->assert('figure result number', $fig->number(), results::TV_INT);
 
-        $fig = $t->figure_value();
+        $fig = $t_fig->figure_value();
         $t->assert('figure value symbol', $fig->symbol(), "");
-        $fig = $t->figure_result();
+        $fig = $t_fig->figure_result();
         // TODO review
         //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
 
 
         $t->subheader($ts . 'api');
 
-        $fig = $t->figure_value();
+        $fig = $t_fig->figure_value();
         $t->assert_api($fig, 'figure_value_without_phrases');
         $t->assert_api($fig, 'figure_value_with_phrases', [api_type::INCL_PHRASES]);
 
-        $fig = $t->figure_result();
+        $fig = $t_fig->figure_result();
         $t->assert_api($fig, 'figure_result_without_phrases');
         $t->assert_api($fig, 'figure_result_with_phrases', [api_type::INCL_PHRASES]);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $fig = $t->figure_value();
+        $fig = $t_fig->figure_value();
         $t->assert_api_to_dsp($fig, new figure_dsp());
-        $fig = $t->figure_result();
+        $fig = $t_fig->figure_result();
         $t->assert_api_to_dsp($fig, new figure_dsp());
 
-        $fig = $t->figure_value();
-        $dsp = $t->dsp_obj($fig, new figure_dsp());
+        $fig = $t_fig->figure_value();
+        $dsp = $tl->dsp_obj($fig, new figure_dsp());
         $html_link = $dsp->display_linked();
         $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
 

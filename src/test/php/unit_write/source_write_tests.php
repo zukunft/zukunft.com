@@ -38,6 +38,9 @@ include_once paths::SHARED_CONST . 'sources.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_write_tests
@@ -46,16 +49,18 @@ class source_write_tests
     function run(test_cleanup $t): void
     {
 
+        $t_src = new test_sources($t);
+
         $t->header('source db write tests');
 
         $t->subheader('source prepared write');
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_sql(), false);
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 
         $t->subheader('source write sandbox tests for ' . sources::SYSTEM_TEST_ADD);
-        $t->assert_write_named($t->source_filled_add(), sources::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD);
 
         /*
         TODO remove but check upfront the replacement
@@ -101,10 +106,11 @@ class source_write_tests
 
     function create_test_sources(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
 
         $t->header('Check if all base sources are exist');
 
-        $t->test_source(sources::WIKIDATA);
+        $t_db->test_source(sources::WIKIDATA);
 
     }
 

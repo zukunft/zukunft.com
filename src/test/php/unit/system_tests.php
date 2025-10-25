@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
@@ -42,6 +43,25 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CREATE . 'test_components.php';
+include_once test_paths::CREATE . 'test_figures.php';
+include_once test_paths::CREATE . 'test_formulas.php';
+include_once test_paths::CREATE . 'test_groups.php';
+include_once test_paths::CREATE . 'test_jobs.php';
+include_once test_paths::CREATE . 'test_languages.php';
+include_once test_paths::CREATE . 'test_log.php';
+include_once test_paths::CREATE . 'test_phrases.php';
+include_once test_paths::CREATE . 'test_refs.php';
+include_once test_paths::CREATE . 'test_results.php';
+include_once test_paths::CREATE . 'test_sources.php';
+include_once test_paths::CREATE . 'test_sys_log.php';
+include_once test_paths::CREATE . 'test_terms.php';
+include_once test_paths::CREATE . 'test_triples.php';
+include_once test_paths::CREATE . 'test_values.php';
+include_once test_paths::CREATE . 'test_verbs.php';
+include_once test_paths::CREATE . 'test_views.php';
+include_once test_paths::CREATE . 'test_words.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\service\config;
@@ -59,8 +79,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use DateTime;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -71,8 +89,27 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_jobs;
+use Zukunft\ZukunftCom\test\php\create\test_languages;
+use Zukunft\ZukunftCom\test\php\create\test_log;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_sys_log;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use DateTime;
 
 class system_tests
 {
@@ -81,7 +118,8 @@ class system_tests
     const array PATH_NO_INCLUDE = [
         'PgSql\Connection',
         'Zukunft\ZukunftCom\main\php\cfg\const\paths',
-        'Zukunft\ZukunftCom\main\php\web\const\paths'
+        'Zukunft\ZukunftCom\main\php\web\const\paths',
+        'Zukunft\ZukunftCom\test\php\const\paths'
     ];
 
     function run(test_cleanup $t): void
@@ -126,50 +164,68 @@ class system_tests
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
         // TODO check that all objects are included in this list
-        $t->assert_dsp_id($t->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,2,100) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
-        $t->assert_dsp_id($t->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-94,-95,-96) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32819) as "Pi (math)" for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group_list(), 'Pi (math)');
-        $t->assert_dsp_id($t->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
-        $t->assert_dsp_id($t->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
-        $t->assert_dsp_id($t->term_list(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
-        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / 213,196,139,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
-        $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->formula_link(), 'from "scale minute to sec" (formula_id 1) to "mathematics" (word_id 1) as phrase as  (formula_link_id 1)');
-        $t->assert_dsp_id($t->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
-        $t->assert_dsp_id($t->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
-        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32819,-1)');
-        $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
-        $t->assert_dsp_id($t->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->language(), 'English/english (language_id 1)');
-        $t->assert_dsp_id($t->log_word_add(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
-        $t->assert_dsp_id($t->log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
-        $t->assert_dsp_id($t->log_value_prime(), 'log add words,word_name  3.1415927');
-        $t->assert_dsp_id($t->log_value_big(), 'log add words,word_name  3.1415927');
-        $t->assert_dsp_id($t->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
-        $t->assert_dsp_id($t->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
+        $t_wrd = new test_words($t);
+        $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
+        $t_grp = new test_groups($t);
+        $t_trm = new test_terms($t);
+        $t_val = new test_values($t);
+        $t_src = new test_sources($t);
+        $t_ref = new test_refs($t);
+        $t_frm = new test_formulas($t);
+        $t_res = new test_results($t);
+        $t_fig = new test_figures($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
+        $t_lan = new test_languages();
+        $t_log = new test_log($t);
+        $t_sys = new test_sys_log();
+        $t_job = new test_jobs();
+        $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple_list_short(), '"π (unit symbol)","global warming potential" (triple_id 1,2,100) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_trp->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
+        $t->assert_dsp_id($t_phr->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_phr->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-94,-95,-96) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_grp->group(), '"Pi (math)" (group_id 32819) as "Pi (math)" for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_grp->group_list(), 'Pi (math)');
+        $t->assert_dsp_id($t_grp->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
+        $t->assert_dsp_id($t_trm->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
+        $t->assert_dsp_id($t_trm->term_list_short(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
+        $t->assert_dsp_id($t_val->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_val->value_list_short(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / 213,196,139,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_src->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_ref->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
+        $t->assert_dsp_id($t_frm->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "mathematics" (word_id 1) as phrase as  (formula_link_id 1)');
+        $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
+        $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_fig->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
+        $t->assert_dsp_id($t_fig->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32819,-1)');
+        $t->assert_dsp_id($t_msk->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_msk->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
+        $t->assert_dsp_id($t_cmp->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_lan->language(), 'English/english (language_id 1)');
+        $t->assert_dsp_id($t_log->log_word_add(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t_log->log_list_short(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00 / log add verbs,verb_name is (id ) in row 2 at 2022-12-26T18:23:45+01:00 / log add triples,triple_name mathematical constant (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t_log->log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
+        $t->assert_dsp_id($t_log->log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
+        $t->assert_dsp_id($t_log->log_value_prime(), 'log add words,word_name  3.1415927');
+        $t->assert_dsp_id($t_log->log_value_big(), 'log add words,word_name  3.1415927');
+        $t->assert_dsp_id($t_sys->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
+        $t->assert_dsp_id($t_job->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
 
 
         $ts = 'unit translation ';
@@ -380,6 +436,7 @@ class system_tests
         $this->php_include_tests($t, paths::MODEL);
         $this->php_include_tests($t, paths::API);
         $this->php_include_tests($t, paths::WEB);
+        $this->php_include_tests($t, test_paths::CREATE);
         $this->php_class_section_tests($t, paths::MODEL_COMPONENT);
 
         // ... and check if the prepared sql name is unique
@@ -457,8 +514,8 @@ class system_tests
 
         $t->subheader($ts . 'system log frontend API');
 
-
-        $log = $t->sys_log();
+        $t_sys = new test_sys_log();
+        $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
         $log_dsp = new sys_log_dsp($api_msg);
         $created = $log_dsp->api_json();

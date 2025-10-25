@@ -39,6 +39,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_tests
@@ -51,6 +54,8 @@ class view_tests
 
         // init
         $sc = new sql_creator();
+        $t_msk = new test_views($t);
+        $t_trm = new test_terms($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -59,7 +64,7 @@ class view_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $msk = $t->view();
+        $msk = $t_msk->view();
         $t->assert_sql_table_create($msk);
         $t->assert_sql_index_create($msk);
         $t->assert_sql_foreign_key_create($msk);
@@ -69,7 +74,7 @@ class view_tests
         $t->assert_sql_by_id($sc, $msk);
         $t->assert_sql_by_name($sc, $msk);
         $t->assert_sql_by_code_id($sc, $msk);
-        $t->assert_sql_by_term($sc, $msk, $t->term());
+        $t->assert_sql_by_term($sc, $msk, $t_trm->term());
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $msk = new view($usr);
@@ -85,18 +90,18 @@ class view_tests
         $t->assert_sql_standard($sc, $msk);
 
         $t->subheader($ts . 'sql write insert');
-        $msk = $t->view_added();
+        $msk = $t_msk->view_added();
         $t->assert_sql_insert($sc, $msk);
         $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $msk = $t->view(); // a view with a code_id as it might be imported
+        $msk = $t_msk->view(); // a view with a code_id as it might be imported
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
-        $msk = $t->view_added();
+        $msk = $t_msk->view_added();
         $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
@@ -112,26 +117,26 @@ class view_tests
         $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'base object handling');
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
         $t->assert_reset($msk);
 
         $t->subheader($ts . 'api');
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
         // remove the code id for the api compare test because the code id should not be updated over the api
         $msk->set_code_id_db(null);
         $t->assert_api_json($msk);
-        $msk = $t->view_protected();
+        $msk = $t_msk->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_dsp($msk, new view_dsp());
 
         $t->subheader($ts . 'with components api');
-        $msk = $t->view_with_components();
+        $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_components');
         $t->assert_api_to_dsp($msk, new view_dsp());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->view(), $usr_sys);
-        $t->assert_ex_and_import($t->view_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_msk->view(), $usr_sys);
+        $t->assert_ex_and_import($t_msk->view_filled(), $usr_sys);
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 

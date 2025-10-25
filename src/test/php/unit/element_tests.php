@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_tests
@@ -51,6 +52,7 @@ class element_tests
 
         // init
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
@@ -62,14 +64,14 @@ class element_tests
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_sql_table_create($elm);
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
         $t->subheader($ts . 'formula sql read');
 
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_sql_by_id($sc, $elm);
 
         $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
@@ -85,7 +87,7 @@ class element_tests
 
 
         $t->subheader($ts . 'element api');
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_api_json($elm);
 
         // JSON export list

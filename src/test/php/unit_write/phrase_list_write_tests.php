@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_write_tests
@@ -59,18 +60,20 @@ class phrase_list_write_tests
         global $usr;
         global $vrb_cac;
 
+        $t_db = new test_db_load($t);
+
         $t->header('phrase list database write tests');
 
         // TODO make prepare not needed any more
-        $t->test_word(words::CHF, phrase_type_shared::MEASURE);
-        $t->test_word(words::SALES);
+        $t_db->test_word(words::CHF, phrase_type_shared::MEASURE);
+        $t_db->test_word(words::SALES);
 
         // load the main test word and verb
-        $wrd_company = $t->test_word(words::MATH);
+        $wrd_company = $t_db->test_word(words::MATH);
         $is_id = $vrb_cac->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
-        $wrd_zh = $t->load_word(words::ZH);
+        $wrd_zh = $t_db->load_word(words::ZH);
         $lnk_company = new triple($usr);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $triple_sample_id = $lnk_company->id();

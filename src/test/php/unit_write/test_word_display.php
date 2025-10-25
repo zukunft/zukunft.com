@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_word_display_test(all_tests $t): void
@@ -55,6 +56,7 @@ function run_word_display_test(all_tests $t): void
     global $usr;
 
     $lib = new library();
+    $t_db = new test_db_load($t);
 
     $t->header('Test the word display class (classes/word_display.php)');
 
@@ -90,7 +92,7 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
     $wrd_2021->load_by_name(words::TEST_2021);
-    $lnk_20_to_21 = $t->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
+    $lnk_20_to_21 = $t_db->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
@@ -110,10 +112,10 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $direction = foaf_direction::UP;
-    $wrd_2019 = $t->load_word(words::YEAR_2019);
-    $wrd_year = $t->load_word(words::YEAR_CAP);
-    $lnk_20_is_year = $t->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
-    $lnk_19_to_20 = $t->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
+    $wrd_2019 = $t_db->load_word(words::YEAR_2019);
+    $wrd_year = $t_db->load_word(words::YEAR_CAP);
+    $lnk_20_is_year = $t_db->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
+    $lnk_19_to_20 = $t_db->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
     $link_types_dsp = new verb_list_dsp($link_types->api_json());
@@ -166,8 +168,8 @@ function run_word_display_test(all_tests $t): void
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
-    $phr_corp = $t->load_phrase(words::COMPANY);
-    $phr_ZH_INS = $t->load_phrase(triples::COMPANY_ZURICH);
+    $phr_corp = $t_db->load_phrase(words::COMPANY);
+    $phr_ZH_INS = $t_db->load_phrase(triples::COMPANY_ZURICH);
     /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';

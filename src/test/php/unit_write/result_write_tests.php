@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\results;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_write_tests
@@ -51,6 +52,8 @@ class result_write_tests
     {
 
         global $usr;
+
+        $t_db = new test_db_load($t);
 
         $t->header('result database write tests');
 
@@ -70,7 +73,7 @@ class result_write_tests
         $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm->save()->get_last_message();
         $target = '';
@@ -204,10 +207,12 @@ class result_write_tests
 
         global $usr;
 
+        $t_db = new test_db_load($t);
+
         $t->header('result list database write tests');
 
         // load results by formula
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_RENAMED);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
@@ -215,7 +220,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
@@ -223,14 +228,14 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K, words::YEAR_2020));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K, words::YEAR_2020));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by source phrase group
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::MIO));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::MIO));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
@@ -238,14 +243,14 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $time_phr = $t->load_phrase(words::YEAR_2020);
+        $time_phr = $t_db->load_phrase(words::YEAR_2020);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by word id
-        $wrd = $t->load_word(words::INHABITANTS);
+        $wrd = $t_db->load_word(words::INHABITANTS);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($wrd);
         $result = $res_lst->dsp_id();
@@ -253,8 +258,8 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // TODO add PE frm test
-        //$frm = $t->load_formula(TF_PE);
-        $frm = $t->load_formula(formulas::INCREASE);
+        //$frm = $t_db->load_formula(TF_PE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();

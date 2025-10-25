@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -56,15 +57,16 @@ class phrase_write_tests
         global $usr;
         global $vrb_cac;
         $lib = new library();
+        $t_db = new test_db_load($t);
 
         $t->header('phrase database write tests');
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
-        $wrd = $t->test_word(words::COMPANY);
+        $wrd = $t_db->test_word(words::COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
-        $wrd = $t->test_word(words::ZH);
+        $wrd = $t_db->test_word(words::ZH);
         $zh_id = $wrd->id();
         $is_id = $vrb_cac->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
@@ -103,7 +105,7 @@ class phrase_write_tests
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas
-        $phr = $t->load_phrase(words::VESTAS);
+        $phr = $t_db->load_phrase(words::VESTAS);
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();

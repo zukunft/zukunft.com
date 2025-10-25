@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_list_ui_tests
@@ -44,6 +45,7 @@ class term_list_ui_tests
     {
 
         $html = new html_base();
+        $t_trm = new test_terms($t);
 
         // start the test section (ts)
         $ts = 'unit ui html term list ';
@@ -51,7 +53,7 @@ class term_list_ui_tests
 
         // test the term list display functions
         $form = 'term_list_ui_test';
-        $lst = new term_list_dsp($t->term_list()->api_json());
+        $lst = new term_list_dsp($t_trm->term_list()->api_json());
         $test_page = $html->text_h2('term list display test');
         $test_page .= 'term list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'term list with link: ' . $lst->name_link() . '<br>';

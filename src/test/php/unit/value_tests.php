@@ -56,6 +56,8 @@ use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_tests
@@ -70,6 +72,8 @@ class value_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_val = new test_values($t);
+        $t_grp = new test_groups($t);
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
@@ -92,28 +96,28 @@ class value_tests
         $t->assert($test_name, $val::class, value_geo::class);
 
         $t->subheader($ts . 'sql setup');
-        $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
+        $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
         $t->subheader($ts . 'sql read');
-        $val = $t->value();
-        $val_16 = $t->value_16();
-        $val_txt = $t->text_value();
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_prime_3());
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_16());
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
-        $this->assert_sql_by_grp($t, $db_con, $val_txt, $t->group_pod_url());
+        $val = $t_val->value();
+        $val_16 = $t_val->value_16();
+        $val_txt = $t_val->text_value();
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_16());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_17_plus());
+        $this->assert_sql_by_grp($t, $db_con, $val_txt, $t_grp->group_pod_url());
         $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $val = $t->value();
-        $val_3 = $t->value_prime_3();
-        $val_16 = $t->value_16();
-        $val_17 = $t->value_17_plus();
-        $val_txt = $t->text_value();
-        $val_txt_4 = $t->text_value();
+        $val = $t_val->value();
+        $val_3 = $t_val->value_prime_3();
+        $val_16 = $t_val->value_16();
+        $val_17 = $t_val->value_17_plus();
+        $val_txt = $t_val->text_value();
+        $val_txt_4 = $t_val->text_value();
         $t->assert_sql_not_changed($sc, $val_3);
         $t->assert_sql_not_changed($sc, $val_17);
         $t->assert_sql_user_changes($sc, $val_3);
@@ -130,22 +134,22 @@ class value_tests
 
         // TODO activate db write
         $t->subheader($ts . 'sql write insert');
-        $val = $t->value();
+        $val = $t_val->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
-        $val_0 = $t->value_zero();
-        $val_3 = $t->value_prime_3();
+        $val_0 = $t_val->value_zero();
+        $val_3 = $t_val->value_prime_3();
         $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
-        $db_val_3_share = $t->value_shared($val_3);
-        $val_4 = $t->value_prime_max();
-        $val_main = $t->value_main();
-        $db_val_main_share = $t->value_shared($val_3);
-        $val_16 = $t->value_16();
+        $db_val_3_share = $t_val->value_shared($val_3);
+        $val_4 = $t_val->value_prime_max();
+        $val_main = $t_val->value_main();
+        $db_val_main_share = $t_val->value_shared($val_3);
+        $val_16 = $t_val->value_16();
         $db_val_16 = $val_16->cloned(values::SAMPLE_FLOAT);
-        $val_fill = $t->value_16_filled();
-        $val_17 = $t->value_17_plus();
+        $val_fill = $t_val->value_16_filled();
+        $val_17 = $t_val->value_17_plus();
         $db_val_17 = $val_17->cloned(values::SAMPLE_FLOAT);
-        $val_txt = $t->text_value();
+        $val_txt = $t_val->text_value();
         $db_val_txt = $val_txt->cloned(values::DB_TEXT);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val);
@@ -211,19 +215,19 @@ class value_tests
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
         $t->subheader($ts . 'value base object handling');
-        $val = $t->value_16_filled();
+        $val = $t_val->value_16_filled();
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t->value(), $usr_sys);
-        $t->assert_ex_and_import($t->value_16_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value_16_filled(), $usr_sys);
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $val = $t->value();
+        $val = $t_val->value();
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
@@ -234,17 +238,17 @@ class value_tests
         $t->subheader($ts . 'convert and api');
 
         // casting API
-        $grp = $t->group();
+        $grp = $t_grp->group();
         $val = new value($usr, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->time_value();
+        $val = $t_val->time_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->text_value();
+        $val = $t_val->text_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->geo_value();
+        $val = $t_val->geo_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
 
@@ -262,7 +266,7 @@ class value_tests
 
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
-        $vts->set_grp($t->group_16());
+        $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
 
         // ... and the related default time series
@@ -275,7 +279,7 @@ class value_tests
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
 
         $t->subheader($ts . 'data sql setup');
-        $tsn = $t->value_ts_data();
+        $tsn = $t_val->value_ts_data();
         $t->assert_sql_table_create($tsn);
         $t->assert_sql_index_create($tsn);
         // TODO activate

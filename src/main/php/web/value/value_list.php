@@ -173,9 +173,16 @@ class value_list extends list_dsp
     function filter(word|triple|source|data_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
-        if ($dbo::class == word::class) {
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
             foreach ($this->lst() as $val) {
                 if ($val->has_phrase($dbo->phrase())) {
+                    $val_lst->add($val);
+                }
+            }
+        }
+        if ($dbo::class == source::class) {
+            foreach ($this->lst() as $val) {
+                if ($val->source_id() == $dbo->id()) {
                     $val_lst->add($val);
                 }
             }

@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_write_tests
@@ -49,12 +50,12 @@ class job_write_tests
     {
 
         global $usr;
-        global $job_typ_cac;
+        $t_db = new test_db_load($t);
 
         $t->header('job database write tests');
 
         // make sure that the test value is set independent of any previous database tests
-        $t->test_value(array(
+        $t_db->test_value(array(
             words::CH,
             words::INHABITANTS,
             words::MIO,
@@ -90,10 +91,12 @@ class job_write_tests
 
         global $usr;
 
+        $t_db = new test_db_load($t);
+
         $t->header('job list database write tests');
 
         // prepare test adding a batch job via a list
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
 

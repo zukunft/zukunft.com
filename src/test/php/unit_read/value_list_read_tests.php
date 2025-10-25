@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_read_tests
@@ -52,6 +54,7 @@ class value_list_read_tests
 
         // init
         $t->header('value list database read tests');
+        $t_phr = new test_phrases($t);
         $t->name = 'value list_read db->';
         $t->resource_path = 'db/value/';
 
@@ -60,7 +63,7 @@ class value_list_read_tests
         // load by phrase
         $test_name = 'Load a value list by phrase pi';
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_phr($t->phrase_pi());
+        $val_lst->load_by_phr($t_phr->phrase_pi());
         $result = $val_lst->dsp_id();
         $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
@@ -90,7 +93,7 @@ class value_list_read_tests
         // load values related to all phrases of a list
         $test_name = 'Load the the inhabitants of Canton Zurich over time';
         $val_lst = new value_list($t->usr1);
-        $phr_lst = $t->ch_inhabitant_phrase_list();
+        $phr_lst = $t_phr->ch_inhabitant_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
         // TODO check why not all years are loaded
@@ -102,7 +105,7 @@ class value_list_read_tests
         // load values related to any phrase of a list
         $test_name = 'Load the list of math const';
         $val_lst = new value_list($t->usr1);
-        $phr_lst = $t->phrase_list_math_const();
+        $phr_lst = $t_phr->phrase_list_math_const();
         $val_lst->load_by_phr_lst($phr_lst, true);
         $result = $val_lst->dsp_id();
         $target = '3.1415926535898 / 2.718281828459 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / -3,,,) for user 3 (zukunft.com system test)';
@@ -126,7 +129,7 @@ class value_list_read_tests
         //$t->assert_contains($test_name, $val_lst->numbers(), [$target]);
 
         // ... based on the phrase list
-        $phr_lst = $t->phrase_list_pi_const();
+        $phr_lst = $t_phr->phrase_list_pi_const();
         $val_lst = $phr_lst->val_lst();
         $result = $val_lst->dsp_id();
         $target = '3.1415926535898 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 4,,,) for user 3 (zukunft.com system test)';

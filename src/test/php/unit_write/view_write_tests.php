@@ -47,6 +47,8 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_write_tests
@@ -58,6 +60,7 @@ class view_write_tests
         global $msk_typ_cac;
 
         // init
+        $t_msk = new test_views($t);
         $t->name = 'view db write->';
 
         // start the test section (ts)
@@ -66,12 +69,12 @@ class view_write_tests
 
         $t->subheader('view prepared write');
         $test_name = 'add view ' . views::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_sql(), false);
         $test_name = 'add view ' . views::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_func(), true);
 
         $t->subheader('view write sandbox tests for ' . views::TEST_ADD_NAME);
-        $t->assert_write_named($t->view_filled_add(), views::TEST_ADD_NAME);
+        $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME);
 
 
         $db_con->import_system_views($t->usr1);
@@ -260,10 +263,12 @@ class view_write_tests
 
     function create_test_views(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('add test views');
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t->test_view($view_name);
+            $t_db->test_view($view_name);
         }
 
         // modify the special test cases
@@ -276,10 +281,12 @@ class view_write_tests
 
     function delete_test_views(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('del test views');
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
-            $t->del_view($view_name);
+            $t_db->del_view($view_name);
         }
     }
 

@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\unit\lib_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
@@ -64,6 +65,8 @@ class all_unit_write_tests extends all_unit_read_tests
         global $usr;
         global $db_con;
         global $errors;
+
+        $t_db = new test_db_load($this);
 
         $this->header('Start the zukunft.com database write tests');
 
@@ -110,7 +113,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // create the test dataset to check the basic write functions
                 $t->set_users();
-                $t->create_test_db_entries($t);
+                $t_db->create_test_db_entries($t);
                 // run the db write tests
                 new user_write_tests()->run($t);
                 new word_write_tests()->run($t);
@@ -236,6 +239,8 @@ class all_unit_write_tests extends all_unit_read_tests
         global $db_con;
         global $errors;
 
+        $t_db = new test_db_load($this);
+
         // use the system user for the database updates
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
@@ -280,7 +285,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // create the test dataset to check the basic write functions
         $t = new all_tests();
         $t->set_users();
-        $t->create_test_db_entries($t);
+        $t_db->create_test_db_entries($t);
 
         // remove the test dataset for a clean database
         // TODO use the user message object instead of a string

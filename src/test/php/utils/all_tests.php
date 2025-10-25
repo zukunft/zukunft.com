@@ -151,6 +151,7 @@ const WRITE_TEST = true; // perform also the db write tests
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests;
 
 class all_tests extends all_unit_write_tests
@@ -162,6 +163,7 @@ class all_tests extends all_unit_write_tests
 
         // init tests
         $errors = 0;
+        $t_db = new test_db_load($this);
         $this->header('Start of all zukunft.com tests');
 
         if (QUICK_TEST_ONLY) {
@@ -188,7 +190,7 @@ class all_tests extends all_unit_write_tests
 
         // recreate the type list api message based on the updated db
         // because this json is used for the unit tests
-        $this->type_list_recreate($this);
+        $t_db->type_list_recreate($this);
 
         // display the test results
         if ($this->format == text_log_format::HTML) {

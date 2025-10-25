@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_write_tests
@@ -56,11 +57,12 @@ class term_write_tests
         global $usr;
         $lib = new library();
         $html = new html_base();
+        $t_db = new test_db_load($t);
 
         $t->header('term database write tests');
 
         // load the main test word
-        $wrd_zh = $t->test_word(words::ZH);
+        $wrd_zh = $t_db->test_word(words::ZH);
 
         // check that adding the predefined word "company" creates an error message
         $term = new term($usr);

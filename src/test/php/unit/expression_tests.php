@@ -44,6 +44,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class expression_tests
@@ -52,11 +54,12 @@ class expression_tests
     {
 
         global $usr;
+        $t_trm = new test_terms($t);
         $lib = new library();
 
         // init
         $t->name = 'expression->';
-        $trm_lst = $t->term_list_all();
+        $trm_lst = $t_trm->term_list_all();
 
         // start the test section (ts)
         $ts = 'unit expression ';
@@ -203,7 +206,7 @@ class expression_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
-        $exp->set_user_text(formulas::DIAMETER, $t->term_list_all());
+        $exp->set_user_text(formulas::DIAMETER, $t_trm->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);

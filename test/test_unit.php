@@ -41,6 +41,7 @@ include_once PHP_PATH . 'init.php';
 
 // path for the general tests and test setup
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+const TEST_PHP_CREATE_PATH = TEST_PHP_PATH . 'create' . DIRECTORY_SEPARATOR;
 
 // load the base testing functions
 include_once TEST_PHP_UTIL_PATH . 'test_base.php';
@@ -67,10 +68,9 @@ if ($db_con->is_open()) {
     if ($start_usr->id() > 0) {
         if ($start_usr->is_admin()) {
 
-            global $errors;
+            global $t_cac;
 
             // init tests
-            $errors = 0;
             $t = new all_tests();
             $t->header('Start zukunft.com unit tests');
 

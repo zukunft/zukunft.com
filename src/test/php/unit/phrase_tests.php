@@ -34,10 +34,14 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::PHRASE . 'phrase.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once test_paths::CREATE . 'test_phrases.php';
+include_once test_paths::CREATE . 'test_triples.php';
+include_once test_paths::CREATE . 'test_words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -47,6 +51,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -60,6 +67,9 @@ class phrase_tests
 
         // init
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
 
@@ -68,7 +78,7 @@ class phrase_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $phr = $t->phrase();
+        $phr = $t_phr->phrase();
         $t->assert_sql_view_create($phr);
 
         $t->subheader($ts . 'sql read');
@@ -77,23 +87,23 @@ class phrase_tests
         $t->assert_sql_by_name($sc, $phr);
 
         $t->subheader($ts . 'type api');
-        $phr = $t->phrase();
+        $phr = $t_phr->phrase();
         $t->assert_api_json($phr);
-        $phr = $t->word_filled()->phrase();
+        $phr = $t_wrd->word_filled()->phrase();
         $t->assert_api_json($phr);
-        $phr = $t->word_filled()->phrase();
+        $phr = $t_wrd->word_filled()->phrase();
         $phr->include();
         $t->assert_api($phr, 'phrase_word_full');
-        $phr = $t->triple_filled_add()->phrase();
+        $phr = $t_trp->triple_filled_add()->phrase();
         $phr->include();
         $t->assert_api($phr, 'phrase_triple_full');
-        $phr = $t->phrase();
+        $phr = $t_phr->phrase();
         $t->assert_api($phr, 'phrase_body');
 
         $t->subheader($ts . 'html frontend');
-        $phr = $t->word()->phrase();
+        $phr = $t_wrd->word()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->triple_pi()->phrase();
+        $phr = $t_trp->triple_pi()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
 
         // check the Postgres query syntax

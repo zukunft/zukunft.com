@@ -46,6 +46,9 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_tests
@@ -63,6 +66,8 @@ class value_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_val = new test_values($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
@@ -72,15 +77,15 @@ class value_list_tests
 
         $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
-        $val_ids = $t->value_list()->grp_ids()->dsp_id();
+        $val_ids = $t_val->value_list()->grp_ids()->dsp_id();
         $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
 
         $t->subheader($ts . 'modify value list');
-        $time_val_lst = $t->value_list()->filter_by_time($t->phrase_list());
+        $time_val_lst = $t_val->value_list()->filter_by_time($t_phr->phrase_list());
 
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
-        $api_json = $t->value_list()->api_json();
+        $api_json = $t_val->value_list()->api_json();
         $val_lst_dsp = new value_list_dsp($api_json);
         $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
 
@@ -88,13 +93,13 @@ class value_list_tests
         $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
-        $phr = $t->phrase_zh_city();
+        $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich but only text values';
-        $phr = $t->phrase_zh_city();
+        $phr = $t_phr->phrase_zh_city();
         $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr, value_types::TEXT);
         $test_name = $test_names . 'a list of ids';
-        $val_ids = $t->value_list()->id_lst();
+        $val_ids = $t_val->value_list()->id_lst();
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);
         $test_name = 'a list of ids including text values';
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::TEXT);
@@ -103,19 +108,19 @@ class value_list_tests
         $test_name = 'a list of ids including geo values';
         $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::GEO);
         $test_name = $test_names . 'a list of groups';
-        $grp_lst = $t->phrase_list_small();
+        $grp_lst = $t_phr->phrase_list_small();
         $this->assert_sql_by_grp_lst($test_name, $t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
-        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->canton_zh_phrase_list());
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->canton_zh_phrase_list());
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
         // temp line until the function usage is checked correctly by the ide
-        $sql = $t->value_list()->load_sql_by_phr_lst($sc, $t->phrase_list_math_const());
-        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
+        $sql = $t_val->value_list()->load_sql_by_phr_lst($sc, $t_phr->phrase_list_math_const());
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
-        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list(), true);
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t_phr->phrase_list(), true);
 
 
         $t->subheader($ts . 'im- and export');
@@ -125,7 +130,7 @@ class value_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->value_list();
+        $trp_lst = $t_val->value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
 
     }

@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type as view_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_read_tests
@@ -65,6 +66,7 @@ class view_read_tests
         global $cmp_typ_cac;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'view read->';
         $t->resource_path = 'db/view/';
 
@@ -94,7 +96,7 @@ class view_read_tests
         $test_name = 'load view by term "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
-        //$msk->load_by_term($t->formula()->term());
+        //$msk->load_by_term($t_frm->formula()->term());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
         $t->subheader('View types tests');
@@ -121,7 +123,7 @@ class view_read_tests
         $t->subheader('View API object creation tests');
 
         $test_name = views::START_NAME;
-        $cmp = $t->load_word(views::START_NAME, $t->usr1);
+        $cmp = $t_db->load_word(views::START_NAME, $t->usr1);
         $t->assert_export_reload($ts . $test_name, $cmp);
 
 

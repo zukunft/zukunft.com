@@ -35,7 +35,9 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 function run_legacy_test(all_tests $t): void
 {
 
-    $t->header('Test calc functions');
+    // start the test section (ts)
+    $ts = 'legacy ';
+    $t->header($ts);
 
 
     /*
@@ -168,11 +170,11 @@ function run_legacy_test(all_tests $t): void
     */
 
 
-    $t->header('Old test functions');
+    // start the test section (ts)
+    $ts = 'legacy database ';
+    $t->header($ts);
 
     // load the database records used for testing
-    $t->header('check database records');
-
     function test_show_db_id($test_text, $result)
     {
         if ($result > 0) {

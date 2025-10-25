@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_read_tests
@@ -58,6 +59,7 @@ class phrase_list_read_tests
 
         // init
         $t->header('phrase list database read tests');
+        $t_db = new test_db_load($t);
         $t->name = 'phrase list_read db->';
         $t->resource_path = 'db/phrase/';
 
@@ -115,7 +117,7 @@ class phrase_list_read_tests
         $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich
-        $phr_canton = $t->load_phrase(words::CANTON);
+        $phr_canton = $t_db->load_phrase(words::CANTON);
         $phr_lst = $phr_canton->all_related();
         $test_name = 'The word Canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company

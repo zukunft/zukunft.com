@@ -52,6 +52,10 @@ use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_write_tests
@@ -63,6 +67,10 @@ class formula_write_tests
         global $frm_typ_cac;
 
         // init
+        $t_wrd = new test_words($t);
+        $t_frm = new test_formulas($t);
+        $t_trm = new test_terms($t);
+        $t_db = new test_db_load($t);
         $t->name = 'formula->';
         $back = 0;
 
@@ -70,16 +78,16 @@ class formula_write_tests
 
         $t->subheader('formula prepared write');
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_sql(), false);
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_func(), true);
 
         // TODO remove
         $t->write_named_cleanup(new formula($t->usr1), formulas::SYSTEM_TEST_ADD);
 
         $t->subheader('formula write sandbox tests for ' . formulas::SYSTEM_TEST_ADD);
         // TODO Prio 0 activate
-        //$t->assert_write_named($t->formula_filled_add(), formulas::SYSTEM_TEST_ADD);
+        //$t->assert_write_named($t_frm->formula_filled_add(), formulas::SYSTEM_TEST_ADD);
 
         // TODO remove
         $t->write_named_cleanup(new formula($t->usr1), formulas::SYSTEM_TEST_ADD);
@@ -87,8 +95,8 @@ class formula_write_tests
 
         // prepare
         $this->create_test_formulas($t);
-        $frm = $t->add_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
-        $phr = $t->add_word(words::YEAR_CAP)->phrase();
+        $frm = $t_db->add_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
+        $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
         $frm->link_phr($phr);
 
         // test loading of one formula
@@ -117,7 +125,7 @@ class formula_write_tests
                 $time_phr = $phr_lst->time_useful();
                 // TODO review
                 if ($time_phr == null) {
-                    $time_phr = $t->word_2019()->phrase();
+                    $time_phr = $t_wrd->word_2019()->phrase();
                 }
                 $val = $elm_frm->special_result($phr_lst, $time_phr);
                 $result = $val->number();
@@ -166,12 +174,12 @@ class formula_write_tests
         $t->display('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
         // loading another formula (Price Earning ratio ) to have more test cases
-        $t->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
-        $t->test_formula_link(formulas::SYSTEM_TEST_RATIO, words::TEST_SHARE);
-        $frm_pe = $t->load_formula(formulas::SYSTEM_TEST_RATIO);
+        $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
+        $t_db->test_formula_link(formulas::SYSTEM_TEST_RATIO, words::TEST_SHARE);
+        $frm_pe = $t_db->load_formula(formulas::SYSTEM_TEST_RATIO);
 
-        $wrd_share = $t->test_word(words::TEST_SHARE);
-        $wrd_chf = $t->test_word(words::TEST_CHF);
+        $wrd_share = $t_db->test_word(words::TEST_SHARE);
+        $wrd_chf = $t_db->test_word(words::TEST_CHF);
 
         $frm_pe->assign_phrase($wrd_share->phrase());
 
@@ -194,7 +202,7 @@ class formula_write_tests
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::MIO));
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $res_lst = $frm->to_num($phr_lst);
         if ($res_lst->lst() != null) {
             $res = $res_lst->lst()[0];
@@ -225,7 +233,7 @@ class formula_write_tests
         // test the scaling mainly to check the scaling handling of the results later
         // TODO remove any scaling words from the phrase list if the result word is of type scaling
         // TODO automatically check the fastest way to scale and avoid double scaling calculations
-        $frm_scale_mio_to_one = $t->load_formula(formulas::SYSTEM_TEST_SCALE_MIO);
+        $frm_scale_mio_to_one = $t_db->load_formula(formulas::SYSTEM_TEST_SCALE_MIO);
         $res_lst = $frm_scale_mio_to_one->calc($phr_lst);
         if ($res_lst != null) {
             $result = $res_lst[0]->number();
@@ -240,7 +248,7 @@ class formula_write_tests
         // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::ONE));
-        $frm_scale_one_to_k = $t->load_formula(formulas::SYSTEM_TEST_SCALE_TO_K);
+        $frm_scale_one_to_k = $t_db->load_formula(formulas::SYSTEM_TEST_SCALE_TO_K);
         // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
@@ -254,12 +262,12 @@ class formula_write_tests
         //$t->display('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
         // load the test ids
-        $wrd_percent = $t->load_word('percent');
-        $frm_this = $t->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t->load_formula(formulas::PRIOR);
+        $wrd_percent = $t_db->load_word('percent');
+        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formulas::PRIOR);
 
         // test the formula display functions
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm_html = new formula_dsp($frm->api_json());
         $exp = $frm->expression();
         $result = $exp->dsp_id();
@@ -273,14 +281,14 @@ class formula_write_tests
 
         // ... in HTML format
         // TODO test without preloaded term list
-        $trm_lst = $t->term_list_increase();
+        $trm_lst = $t_trm->term_list_increase();
         $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
         $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
         $t->display('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
         // ... in HTML format with link
-        $frm_increase = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm_increase = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $result = $frm_html->edit_link($back);
         $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formulas::SYSTEM_TEST_ADD . '">' . formulas::SYSTEM_TEST_ADD . '</a>';
         $t->display('formula->display for ' . $frm->dsp_id(), $target, $result);
@@ -345,7 +353,7 @@ class formula_write_tests
         $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula name has been saved
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $result = $frm->usr_text;
         $target = formulas::INCREASE_EXP;
         $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI); // time limit???
@@ -366,7 +374,7 @@ class formula_write_tests
         $t->display('formula->save adding "' . $frm->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm->save()->get_last_message();
         $target = '';
@@ -396,7 +404,7 @@ class formula_write_tests
         $t->display('formula->save all formula fields beside the name for "' . formulas::SYSTEM_TEST_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if the formula parameters have been added
-        $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEST_RENAMED);
+        $frm_reloaded = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm_reloaded->usr_text;
         $target = '= "' . words::THIS_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $target, $result);
@@ -468,7 +476,7 @@ class formula_write_tests
         $t->display('formula->load need_all_val for "' . formulas::SYSTEM_TEST_RENAMED . '"', $target, $result);
 
         // ... and the formula for the original user remains unchanged
-        $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEST_RENAMED);
+        $frm_reloaded = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm_reloaded->usr_text;
         $target = '= "' . words::THIS_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $target, $result);
@@ -532,11 +540,12 @@ class formula_write_tests
 
     function run_list(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
 
         $t->header('formula list database write tests');
 
         // load the main test word
-        $wrd_share = $t->test_word(words::TEST_SHARE);
+        $wrd_share = $t_db->test_word(words::TEST_SHARE);
 
         $wrd = new word($t->usr1);
         $wrd->load_by_id($wrd_share->id(), word::class);
@@ -552,25 +561,27 @@ class formula_write_tests
 
     function create_test_formulas(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('Check if all base formulas are correct');
 
-        $t->test_word(words::TEST_EARNING);
-        $t->test_word(words::TEST_PRICE);
-        $t->test_word(words::TEST_PE);
-        $t->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
-        $t->test_word(words::TEST_TOTAL);
-        $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $t_db->test_word(words::TEST_EARNING);
+        $t_db->test_word(words::TEST_PRICE);
+        $t_db->test_word(words::TEST_PE);
+        $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
+        $t_db->test_word(words::TEST_TOTAL);
+        $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
         //$t->test_formula(formulas::TN_THIS, formulas::TF_THIS);
-        $t->test_word(words::TEST_THIS);
-        $t->test_word(words::TEST_PRIOR);
-        $t->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
-        $t->test_formula(formulas::SYSTEM_TEST_EXCLUDED, formulas::INCREASE_EXP);
-        $t->test_word(words::TEST_IN_K);
-        $t->test_word(words::TEST_BIL);
-        $t->test_formula(formulas::SYSTEM_TEST_SCALE_K, formulas::SYSTEM_TEST_SCALE_K_EXP);
-        $t->test_formula(formulas::SYSTEM_TEST_SCALE_TO_K, formulas::SYSTEM_TEST_SCALE_TO_K_EXP);
-        $t->test_formula(formulas::SYSTEM_TEST_SCALE_MIO, formulas::SYSTEM_TEST_SCALE_MIO_EXP);
-        $t->test_formula(formulas::SYSTEM_TEST_SCALE_BIL, formulas::SYSTEM_TEST_SCALE_BIL_EXP);
+        $t_db->test_word(words::TEST_THIS);
+        $t_db->test_word(words::TEST_PRIOR);
+        $t_db->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
+        $t_db->test_formula(formulas::SYSTEM_TEST_EXCLUDED, formulas::INCREASE_EXP);
+        $t_db->test_word(words::TEST_IN_K);
+        $t_db->test_word(words::TEST_BIL);
+        $t_db->test_formula(formulas::SYSTEM_TEST_SCALE_K, formulas::SYSTEM_TEST_SCALE_K_EXP);
+        $t_db->test_formula(formulas::SYSTEM_TEST_SCALE_TO_K, formulas::SYSTEM_TEST_SCALE_TO_K_EXP);
+        $t_db->test_formula(formulas::SYSTEM_TEST_SCALE_MIO, formulas::SYSTEM_TEST_SCALE_MIO_EXP);
+        $t_db->test_formula(formulas::SYSTEM_TEST_SCALE_BIL, formulas::SYSTEM_TEST_SCALE_BIL_EXP);
 
         // modify the special test cases
         global $usr;

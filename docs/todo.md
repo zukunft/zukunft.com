@@ -15,6 +15,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
+    TODO use only these global vars:
+         - $db_con for the database connection
+         - $cac for the backend cache  
+         - $ui_cac for the frontend cache including the session user
+         - $t_cac for the test environment 
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
@@ -81,6 +86,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
     TODO add a frontend cache that includes the most often used terms, values and views 
+    TODO create pure tuple export and import according the the W3C definition
     TODO in the config api return the user cache frontend json 1-to-1 if the trigger date is valid 
     TODO add parent to source and ref
     TODO include code_id for all terms 

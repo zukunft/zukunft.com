@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_tests
@@ -86,7 +87,8 @@ class sys_log_tests
 
         $t->subheader($ts . 'api');
 
-        $log_lst = $t->sys_log_list();
+        $t_sys = new test_sys_log();
+        $log_lst = $t_sys->sys_log_list();
         $t->assert_api($log_lst, '', [api_type::HEADER]);
 
 

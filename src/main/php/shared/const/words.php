@@ -442,6 +442,7 @@ class words
     const string TEST_UPD_API = 'System Test Word API Renamed';
     const string TEST_UPD_API_COM = 'System Test Word API Description Renamed';
     const string TEST_ADD_VALUE = 'System Test Word for value curl testing';
+    const string TEST_SPEED_PREFIX = 'System Test Word for speed testing ';
 
 
     // list of often used words used as a default selection e.g. for the phrase selection

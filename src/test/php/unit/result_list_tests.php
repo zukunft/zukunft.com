@@ -42,6 +42,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_dsp;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_list_tests
@@ -55,6 +58,9 @@ class result_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_res = new test_results($t);
+        $t_phr = new test_phrases($t);
+        $t_frm = new test_formulas($t);
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($usr);
@@ -67,13 +73,13 @@ class result_list_tests
 
         $test_name = 'load a list of results that are a related to all phrases of a list '
             . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
-        $t->assert_sql_by_phr_lst($test_name, $res_lst, $t->canton_zh_phrase_list());
+        $t->assert_sql_by_phr_lst($test_name, $res_lst, $t_phr->canton_zh_phrase_list());
         $test_name = 'load a list of results that are a related a formula '
             . 'e.g. to update the results if the formula has been updated';
-        $this->assert_sql_by_frm($test_name, $t->formula(), $t);
+        $this->assert_sql_by_frm($test_name, $t_frm->formula(), $t);
         $test_name = 'load a list of results that are a based on all phrases of a list '
             . 'e.g. to update the results if the value has been updated';
-        $this->assert_sql_by_src($test_name, $t->canton_zh_phrase_list(), $t);
+        $this->assert_sql_by_src($test_name, $t_phr->canton_zh_phrase_list(), $t);
 
         $grp = new group($usr);
         $grp->set_id(2);
@@ -96,16 +102,16 @@ class result_list_tests
 
         // sql to load a list of results by the word id
         $res_lst = new result_list($usr);
-        $wrd = new word($usr);
-        $wrd->id = 2;
         // TODO activate Prio 1
+        //$wrd = new word($usr);
+        //$wrd->id = 2;
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $wrd);
 
         // sql to load a list of results by the triple id
         $res_lst = new result_list($usr);
-        $trp = new triple($usr);
-        $trp->id = 3;
         // TODO activate Prio 1
+        //$trp = new triple($usr);
+        //$trp->id = 3;
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $trp);
 
 
@@ -117,7 +123,7 @@ class result_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->result_list();
+        $trp_lst = $t_res->result_list();
         $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
 
     }

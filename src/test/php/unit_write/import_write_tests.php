@@ -67,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -77,12 +78,14 @@ class import_write_tests
         global $usr;
         global $db_con;
 
+        $t_usr = new test_users();
+
         // start the test section (ts)
         $ts = 'db write import ';
         $t->header($ts);
 
         $this->assert_import_json_named($t, $ts, new user(),
-            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS, $t->system_user());
+            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS, $t_usr->system_user());
 
         $this->assert_import_json_named($t, $ts, new word($usr),
             words::TEST_ADD, words::TEST_ADD_COM, test_files::IMPORT_WORDS);

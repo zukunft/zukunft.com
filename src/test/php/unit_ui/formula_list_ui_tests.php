@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_ui_tests
@@ -50,6 +51,7 @@ class formula_list_ui_tests
     {
 
         $html = new html_base();
+        $t_frm = new test_formulas($t);
 
         // start the test section (ts)
         $ts = 'unit ui html formula list ';
@@ -57,7 +59,7 @@ class formula_list_ui_tests
 
         // test the formula list display functions
         $form = 'formula_list_ui_test';
-        $lst = new formula_list_dsp($t->formula_list_short()->api_json());
+        $lst = new formula_list_dsp($t_frm->formula_list_short()->api_json());
         $test_page = $html->text_h2('formula list display test');
         $test_page .= 'formula list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->name_link() . '<br>';

@@ -50,6 +50,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_tests
@@ -72,6 +75,9 @@ class phrase_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
@@ -131,7 +137,7 @@ class phrase_list_tests
         $t->display('phrase_list->ex_time names', $target, $result);
 
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
         $t->assert($test_name, $wrd_lst->count(), 4);
 
@@ -141,26 +147,26 @@ class phrase_list_tests
         $t->subheader($ts . 'FOAF');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
-        $wrd_city = $t->word_city();
-        $city_lst = $wrd_city->are($t->phrase_list_all());
-        $target = $t->phrase_list_cities();
+        $wrd_city = $t_wrd->word_city();
+        $city_lst = $wrd_city->are($t_phr->phrase_list_all());
+        $target = $t_phr->phrase_list_cities();
         // TODO activate Prio 2
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
         $t->subheader($ts . 'api');
 
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $t->assert_api($phr_lst);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
 
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
-        $phr_lst_dsp = $t->phrase_list_dsp();
+        $phr_lst_dsp = $t_phr->phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
         if ($phr != null) {
             $t->assert_text_contains('Main word is "math"', $phr->name(), words::MATH);

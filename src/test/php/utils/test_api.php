@@ -70,6 +70,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -80,7 +83,7 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
-class test_api extends create_test_objects
+class test_api extends test_base
 {
     // path
     const string API_PATH = 'api';
@@ -234,11 +237,17 @@ class test_api extends create_test_objects
      * @param array $data the database id of the db row that should be used for testing
      * @return int the id of the added user sandbox object
      */
-    function assert_api_put(string $class, array $data = [], bool $ignore_id = false): int
+    function assert_api_put(
+        string $class,
+        test_cleanup $t,
+        array $data = [],
+        bool $ignore_id = false
+    ): int
     {
+        $t_db = new test_db_load($t);
         // get default data
         if ($data == array()) {
-            $data = $this->source_put_json();
+            $data = $t_db->source_put_json();
         }
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
@@ -658,15 +667,17 @@ class test_api extends create_test_objects
      * @return bool true if the json has no relevant differences
      */
     function assert_api_post(
-        string $class
+        string $class,
+        test_cleanup $t
     ): bool
     {
         $lib = new library();
+        $t_map = new test_mappers($t);
         $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
 
-        $dbo = $this->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_object($class);
         $name = $dbo->name();
-        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo_dsp = $t_map->class_to_ui_object($class);
         $dbo_dsp->set_from_json($dbo->api_json());
         $add_result = $dbo_dsp->add_via_api();
 
@@ -687,16 +698,18 @@ class test_api extends create_test_objects
     function assert_api_post_direct(
         string $class,
         user   $usr,
+        test_cleanup $t,
         string $msg = ''
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
+        $t_map = new test_mappers($t);
 
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
-        $dbo = $this->class_to_add_object($class);
-        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo = $t_map->class_to_add_object($class);
+        $dbo_dsp = $t_map->class_to_ui_object($class);
         $dbo_dsp->set_from_json($dbo->api_json());
         // replacement for the api call
         $name = $dbo->name();
@@ -716,17 +729,19 @@ class test_api extends create_test_objects
     function assert_api_del_direct(
         string $class,
         user   $usr,
+        test_cleanup $t,
         string $msg = ''
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
+        $t_map = new test_mappers($t);
 
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
-        $dbo = $this->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_object($class);
         $dbo->load_by_name($dbo->name());
-        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo_dsp = $t_map->class_to_ui_object($class);
         $dbo_dsp->set_from_json($dbo->api_json());
         $ctrl->delete($dbo_dsp->id(), $dbo, $usr, $msg);
 
@@ -837,12 +852,16 @@ class test_api extends create_test_objects
      * @param string $class the class name that should be used
      * @return string the api url
      */
-    private function class_to_put_msg(string $class): array
+    private function class_to_put_msg(
+        string $class,
+        test_cleanup $t
+    ): array
     {
+        $t_db = new test_db_load($t);
         $put_msg = array();
         switch ($class) {
             case source::class:
-                $put_msg = $this->source_put_json();
+                $put_msg = $t_db->source_put_json();
                 break;
             default:
                 break;

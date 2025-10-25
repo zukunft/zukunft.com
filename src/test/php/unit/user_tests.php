@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_tests
@@ -51,9 +52,10 @@ class user_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_usr = new test_users();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
-        $t->usr_admin = $t->user_sys_admin();
+        $t->usr_admin = $t_usr->user_sys_admin();
 
 
         // start the test section (ts)
@@ -77,9 +79,9 @@ class user_tests
         $this->assert_sql_by_profile($t, $db_con, $usr_test);
 
         $t->subheader($ts . 'sql write insert');
-        $usr_ip = $t->user_ip();
+        $usr_ip = $t_usr->user_ip();
         $t->assert_sql_insert($sc, $usr_ip, [sql_type::LOG]);
-        $usr_test = $t->user_sys_test();
+        $usr_test = $t_usr->user_sys_test();
         $t->assert_sql_insert($sc, $usr_test, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
@@ -97,7 +99,7 @@ class user_tests
 
         $t->subheader($ts . 'api');
 
-        $usr_test = $t->user_sys_test();
+        $usr_test = $t_usr->user_sys_test();
         $t->assert_api($usr_test);
 
 

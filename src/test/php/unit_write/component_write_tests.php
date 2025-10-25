@@ -45,6 +45,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_write_tests
@@ -54,16 +56,18 @@ class component_write_tests
     {
         global $cmp_typ_cac;
 
+        $t_cmp = new test_components($t);
+
         $t->header('component db write tests');
 
         $t->subheader('component prepared write');
         $test_name = 'add component ' . components::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->component_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_sql(), false);
         $test_name = 'add component ' . components::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->component_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 
         $t->subheader('component write sandbox tests for ' . components::TEST_ADD_NAME);
-        $t->assert_write_named($t->component_filled_add(), components::TEST_ADD_NAME);
+        $t->assert_write_named($t_cmp->component_filled_add(), components::TEST_ADD_NAME);
 
         /*
         // test loading of one component
@@ -248,13 +252,15 @@ class component_write_tests
 
     function create_test_components(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
+
         $t->header('Check if all base view components are existing');
 
-        $t->test_component(components::TEST_TITLE_NAME, comp_type_shared::PHRASE_NAME);
-        $t->test_component(components::TEST_VALUES_NAME, comp_type_shared::VALUES_ALL);
-        $t->test_component(components::TEST_RESULTS_NAME, comp_type_shared::FORMULA_RESULTS);
-        $t->test_component(components::TEST_EXCLUDED_NAME, comp_type_shared::PHRASE_NAME);
-        $t->test_component(components::TEST_TABLE_NAME, comp_type_shared::NUMERIC_VALUE);
+        $t_db->test_component(components::TEST_TITLE_NAME, comp_type_shared::PHRASE_NAME);
+        $t_db->test_component(components::TEST_VALUES_NAME, comp_type_shared::VALUES_ALL);
+        $t_db->test_component(components::TEST_RESULTS_NAME, comp_type_shared::FORMULA_RESULTS);
+        $t_db->test_component(components::TEST_EXCLUDED_NAME, comp_type_shared::PHRASE_NAME);
+        $t_db->test_component(components::TEST_TABLE_NAME, comp_type_shared::NUMERIC_VALUE);
 
         // modify the special test cases
         global $usr;

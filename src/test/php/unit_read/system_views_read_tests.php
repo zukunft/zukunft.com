@@ -50,6 +50,10 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_read_tests
@@ -64,6 +68,10 @@ class system_views_read_tests
      */
     function run(test_cleanup $t): void
     {
+        $t_frm = new test_formulas($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
+
         // create the stable test context that is not based on the database so that the test results rarely change
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         $ui = new frontend('system_views_read_tests');
@@ -71,9 +79,9 @@ class system_views_read_tests
         $cfg = new data_object_dsp();
         $cfg->typ_lst_cache = $ui->typ_lst_cache;
         //$cfg = new data_object_dsp();
-        $cfg->set_formula_list($t->formula_list_dsp());
-        $cfg->set_view_list($t->view_list_dsp());
-        $cfg->set_component_list($t->component_list_dsp());
+        $cfg->set_formula_list($t_frm->formula_list_ui());
+        $cfg->set_view_list($t_msk->view_list_dsp());
+        $cfg->set_component_list($t_cmp->component_list_dsp());
         // create the test pages
         $t->assert_view(views::WORD_CODE_ID, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));

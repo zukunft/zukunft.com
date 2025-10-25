@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_ui_tests
@@ -49,13 +51,15 @@ class triple_ui_tests
     function run(test_cleanup $t, frontend $ui): void
     {
         $html = new html_base();
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html triple ';
         $t->header($ts);
 
-        $trp = new triple($t->triple()->api_json());
-        $phr_lst = new phrase_list($t->phrase_list()->api_json());
+        $trp = new triple($t_trp->triple()->api_json());
+        $phr_lst = new phrase_list($t_phr->phrase_list()->api_json());
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';

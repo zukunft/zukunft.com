@@ -43,6 +43,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_tests
@@ -56,6 +59,8 @@ class verb_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
 
@@ -93,14 +98,14 @@ class verb_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $vrb = $t->verb();
+        $vrb = $t_vrb->verb();
         $t->assert_api_to_dsp($vrb, new verb_dsp());
 
 
         $t->subheader($ts . 'triple usage');
 
-        $this->assert_verb($t, verbs::IS, $t->triple_pi(), words::PI . ' (' . triples::MATH_CONST . ')');
-        $this->assert_verb($t, verbs::PART, $t->triple(), words::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . words::MATH);
+        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi(), words::PI . ' (' . triples::MATH_CONST . ')');
+        $this->assert_verb($t, verbs::PART, $t_trp->triple(), words::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . words::MATH);
 
 
         // start the test section (ts)
