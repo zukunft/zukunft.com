@@ -163,6 +163,16 @@ class test_verbs
     }
 
     /**
+     * @return verb e.g. for meter per second
+     */
+    function verb_per(): verb
+    {
+        $vrb = new verb(verbs::PER_ID, verbs::PER, verbs::PER);
+        $vrb->set_user($this->env->usr1);
+        return $vrb;
+    }
+
+    /**
      * @return verb that indicates a status change e.g. water can get warmer
      */
     function verb_can_get(): verb
@@ -186,6 +196,11 @@ class test_verbs
     function verb_can_be(): verb
     {
         return new verb(verbs::CAN_BE_ID, verbs::CAN_BE_NAME, verbs::CAN_BE);
+    }
+
+    function verb_has(): verb
+    {
+        return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
     }
 
 

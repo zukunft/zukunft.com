@@ -294,6 +294,89 @@ class test_words
         return $wrd;
     }
 
+    /*
+     * si units
+     */
+
+    function speed(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::SPEED_ID, words::SPEED);
+        return $wrd;
+    }
+
+    function light(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::LIGHT_ID, words::LIGHT);
+        return $wrd;
+    }
+
+    function meter(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::METER_ID, words::METER);
+        return $wrd;
+    }
+
+    function definition(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::DEFINITION_ID, words::DEFINITION);
+        return $wrd;
+    }
+
+    function hyperfine(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::HYPERFINE_ID, words::HYPERFINE);
+        return $wrd;
+    }
+
+    function transition(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::TRANSITION_ID, words::TRANSITION);
+        return $wrd;
+    }
+
+    function frequency(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::FREQUENCY_ID, words::FREQUENCY);
+        return $wrd;
+    }
+
+    function cs_133(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::CS_133_ID, words::CS_133);
+        return $wrd;
+    }
+
+    function hz(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::HZ_ID, words::HZ);
+        return $wrd;
+    }
+
+    function word_1967(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::YEAR_1967_ID, words::YEAR_1967);
+        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        return $wrd;
+    }
+
+    function word_1983(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(words::YEAR_1983_ID, words::YEAR_1983);
+        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        return $wrd;
+    }
+
     /**
      * @return word year e.g. to test the table row selection
      */
@@ -437,7 +520,7 @@ class test_words
         return $wrd;
     }
 
-    function word_second(): word
+    function second(): word
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::SECOND_ID, words::SECOND);
@@ -713,7 +796,7 @@ class test_words
         $lst->add($this->word_one());
         $lst->add($this->word_mio());
         $lst->add($this->word_minute());
-        $lst->add($this->word_second());
+        $lst->add($this->second());
         $lst->add($this->word_ch());
         $lst->add($this->word_city());
         $lst->add($this->word_canton());

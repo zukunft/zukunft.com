@@ -170,7 +170,7 @@ class test_lib
         $dto_dsp->wrd_lst = $t_wrd->word_list_ui();
         $dto_dsp->trp_lst = $t_trp->triple_list_ui();
         $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
-        $dto_dsp->val_lst = $t_val->value_list_math_ui();
+        $dto_dsp->val_lst = $t_val->value_list_all_ui();
         $dto_dsp->frm_lst = $t_frm->formula_list_ui();
         $dto_dsp->chg_log = $t_log->log_list_named_ui();
 

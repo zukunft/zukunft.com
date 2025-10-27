@@ -101,6 +101,30 @@ class test_groups
     }
 
     /**
+     * @return group for the si unit speed of light
+     */
+    function group_speed_of_light(): group
+    {
+        $t_phr = new test_phrases($this->env);
+        $lst = $t_phr->si_unit_speed_of_light();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::LENGTH_DEFINITION;
+        return $grp;
+    }
+
+    /**
+     * @return group for the si unit hyperfine transition frequency of Cs
+     */
+    function transition_cs_133(): group
+    {
+        $t_phr = new test_phrases($this->env);
+        $lst = $t_phr->si_unit_transition_cs_133();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::TIME_DEFINITION;
+        return $grp;
+    }
+
+    /**
      * @return group with the phrases of the launch date of this pod
      */
     function group_pod_launch(): group

@@ -197,6 +197,139 @@ class test_triples
         return $trp;
     }
 
+
+    /*
+     * si units
+     */
+
+    /**
+     * @return triple hyperfine transition frequency of Cs for unit testing of source values
+     */
+    function transition_cs_133(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::TRANSITION_CS_ID, triples::TRANSITION_CS);
+        $trp->set_from($t_trp->hyperfine_transition_frequency()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->cs_133()->phrase());
+        return $trp;
+    }
+
+    function hyperfine_transition_frequency(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::TRANSITION_FREQUENCY_ID, triples::TRANSITION_FREQUENCY);
+        $trp->set_from($t_trp->hyperfine_transition()->phrase());
+        $trp->set_verb($t_vrb->verb_has());
+        $trp->set_to($t_wrd->frequency()->phrase());
+        return $trp;
+    }
+
+    function hyperfine_transition(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::HYPERFINE_TRANSITION_ID, triples::HYPERFINE_TRANSITION);
+        $trp->set_from($t_wrd->transition()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($t_wrd->hyperfine()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple speed of light for unit testing of source values
+     */
+    function speed_of_light(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::SPEED_OF_LIGHT_ID, triples::SPEED_OF_LIGHT);
+        $trp->set_from($t_wrd->speed()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->light()->phrase());
+        return $trp;
+    }
+
+    function meter_per_second(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::M_PER_S_ID, triples::M_PER_S);
+        $trp->set_from($t_wrd->meter()->phrase());
+        $trp->set_verb($t_vrb->verb_per());
+        $trp->set_to($t_wrd->second()->phrase());
+        return $trp;
+    }
+
+    function definition_year_1983(): triple
+    {
+        $t_trp = new test_triples($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::DEFINITION_YEAR_1983_ID, triples::DEFINITION_YEAR_1983);
+        $trp->set_from($t_trp->year_1983()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_trp->definition_year()->phrase());
+        return $trp;
+    }
+
+    function definition_year_1967(): triple
+    {
+        $t_trp = new test_triples($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::DEFINITION_YEAR_1967_ID, triples::DEFINITION_YEAR_1967);
+        $trp->set_from($t_trp->year_1967()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_trp->definition_year()->phrase());
+        return $trp;
+    }
+
+    function definition_year(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::DEFINITION_YEAR_ID, triples::DEFINITION_YEAR);
+        $trp->set_from($t_wrd->word_year()->phrase());
+        $trp->set_verb($t_vrb->verb_of());
+        $trp->set_to($t_wrd->definition()->phrase());
+        return $trp;
+    }
+
+    function year_1983(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::YEAR_1983_ID, triples::YEAR_1983);
+        $trp->set_from($t_wrd->word_1983()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_year()->phrase());
+        return $trp;
+    }
+
+    function year_1967(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::YEAR_1967_ID, triples::YEAR_1967);
+        $trp->set_from($t_wrd->word_1967()->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_year()->phrase());
+        return $trp;
+    }
+
     /**
      * @return triple Global Warming Potential used for unit testing
      */

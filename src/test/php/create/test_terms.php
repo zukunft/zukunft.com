@@ -166,7 +166,7 @@ class test_terms
     {
         $t_wrd = new test_words($this->env);
         $lst = new term_list($this->env->usr1);
-        $lst->add($t_wrd->word_second()->term());
+        $lst->add($t_wrd->second()->term());
         $lst->add($t_wrd->word_minute()->term());
         return $lst;
     }

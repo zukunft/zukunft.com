@@ -48,6 +48,8 @@ class values
     const int E_ID = 32771;
     CONST float E_CONST = 0.57721566490153; // Euler const
     const int E_CONST_ID = 32771;
+    const int TRANSITION_OF_CS = 9192631770;
+    const int SPEED_OF_LIGHT = 299792458;
     CONST int SAMPLE_INT = 123456;
     CONST string SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
     CONST float SAMPLE_FLOAT = 123.456;

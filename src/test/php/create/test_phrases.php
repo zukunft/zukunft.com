@@ -211,6 +211,27 @@ class test_phrases
         return $lst;
     }
 
+    function si_unit_transition_cs_133(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->transition_cs_133()->phrase());
+        $lst->add($t_wrd->hz()->phrase());
+        $lst->add($t_trp->definition_year_1967()->phrase());
+        return $lst;
+    }
+
+    function si_unit_speed_of_light(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->speed_of_light()->phrase());
+        $lst->add($t_trp->meter_per_second()->phrase());
+        $lst->add($t_trp->definition_year_1983()->phrase());
+        return $lst;
+    }
+
     function phrase_list_const(): phrase_list
     {
         $t_wrd = new test_words($this->env);

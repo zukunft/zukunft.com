@@ -191,7 +191,6 @@ class words
     // to group the user data and configuration within the system configuration
     const string PASSWORD = 'password';
     const string OPEN_API = 'OpenAPI';
-    const string DEFINITION = 'definition';
 
 
     /*
@@ -238,6 +237,30 @@ class words
     const string YEAR_2020 = '2020';
     const int YEAR_2020_ID = 140;
     const string YEAR_2020_COM = 'the year 2020';
+
+    // SI units for testing
+    const string LIGHT = 'light';
+    const int LIGHT_ID = 86;
+    const string SPEED = 'speed';
+    const int SPEED_ID = 87;
+    const string METER = 'meter';
+    const int METER_ID = 1132;
+    const string HYPERFINE = 'hyperfine';
+    const int HYPERFINE_ID = 131;
+    const string TRANSITION = 'transition';
+    const int TRANSITION_ID = 132;
+    const string FREQUENCY = 'frequency';
+    const int FREQUENCY_ID = 98;
+    const string CS_133 = 'Caesium-133';
+    const int CS_133_ID = 134;
+    const string HZ = 'Hz';
+    const int HZ_ID = 42;
+    const string DEFINITION = 'definition';
+    const int DEFINITION_ID = 135;
+    const string YEAR_1983 = '1983';
+    const int YEAR_1983_ID = 138;
+    const string YEAR_1967 = '1967';
+    const int YEAR_1967_ID = 136;
 
     // words from import file scaling.json in order of appearance
     const string MIO = 'million';
@@ -757,6 +780,17 @@ class words
         [self::YEAR_2018_ID, self::YEAR_2018],
         [self::YEAR_2019_ID, self::YEAR_2019],
         [self::YEAR_2020_ID, self::YEAR_2020],
+        [self::LIGHT_ID, self::LIGHT],
+        [self::SPEED_ID, self::SPEED],
+        [self::METER_ID, self::METER],
+        [self::HYPERFINE_ID, self::HYPERFINE],
+        [self::TRANSITION_ID, self::TRANSITION],
+        [self::FREQUENCY_ID, self::FREQUENCY],
+        [self::CS_133_ID, self::CS_133],
+        [self::HZ_ID, self::HZ],
+        [self::DEFINITION_ID, self::DEFINITION],
+        [self::YEAR_1983_ID, self::YEAR_1983],
+        [self::YEAR_1967_ID, self::YEAR_1967],
         [self::YEAR_CAP_ID, self::YEAR_CAP],
         [self::ZH_ID, self::ZH],
     );

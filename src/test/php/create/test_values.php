@@ -216,6 +216,31 @@ class test_values
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
+
+    /*
+     * si units
+     */
+
+    function transition_cs_133(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $t_src = new test_sources($this->env);
+        $grp = $t_grp->transition_cs_133();
+        $val = new value($this->env->usr1, round(values::TRANSITION_OF_CS, 13), $grp);
+        $val->set_source($t_src->source());
+        return $val;
+    }
+
+    function value_light_speed(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $t_src = new test_sources($this->env);
+        $grp = $t_grp->group_speed_of_light();
+        $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
+        $val->set_source($t_src->source());
+        return $val;
+    }
+
     /**
      * @return value with the inhabitants of the city of zurich
      */
@@ -280,6 +305,8 @@ class test_values
         $lst->add($this->value_ch());
         $lst->add($this->value_pi());
         $lst->add($this->value_e());
+        $lst->add($this->transition_cs_133());
+        $lst->add($this->value_light_speed());
         return $lst;
     }
 
@@ -321,6 +348,12 @@ class test_values
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_math(), [api_type::INCL_PHRASES]);
+    }
+
+    function value_list_all_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_all(), [api_type::INCL_PHRASES]);
     }
 
     /**

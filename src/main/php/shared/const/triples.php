@@ -82,6 +82,30 @@ class triples
     const string E = '𝑒 (unit symbol)';
     const int E_ID = 3;
     const string E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
+
+    // si units
+    const string SPEED_OF_LIGHT = 'speed of light';
+    const int SPEED_OF_LIGHT_ID = 26;
+    const string M_PER_S = 'm/s';
+    const int M_PER_S_ID = 63;
+    const string TRANSITION_CS = 'hyperfine transition frequency of Cs';
+    const int TRANSITION_CS_ID = 78;
+    const string TRANSITION_FREQUENCY = 'hyperfine transition frequency';
+    const int TRANSITION_FREQUENCY_ID = 66;
+    const string HYPERFINE_TRANSITION = 'hyperfine transition';
+    const int HYPERFINE_TRANSITION_ID = 45;
+    const string DEFINITION_YEAR_1983 = '1983 (year of definition)';
+    const int DEFINITION_YEAR_1983_ID = 69;
+    const string DEFINITION_YEAR_1967 = '1967 (year of definition)';
+    const int DEFINITION_YEAR_1967_ID = 67;
+    const string DEFINITION_YEAR = 'year of definition';
+    const int DEFINITION_YEAR_ID = 50;
+    const string YEAR_1983 = '1983 (year)';
+    const int YEAR_1983_ID = 48;
+    const string YEAR_1967 = '1967 (year)';
+    const int YEAR_1967_ID = 46;
+
+
     const string SYSTEM_TEST_ADD = 'System Test Triple';
     const string SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
     const string SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
@@ -198,6 +222,17 @@ class triples
         [self::CITY_GE_ID, self::CITY_GE],
         [self::CITY_ZH_ID, self::CITY_ZH],
         [self::E_ID, self::E],
+        [self::SPEED_OF_LIGHT_ID, self::SPEED_OF_LIGHT],
+        [self::M_PER_S_ID, self::M_PER_S],
+        [self::TRANSITION_CS_ID, self::TRANSITION_CS],
+        [self::TRANSITION_FREQUENCY_ID, self::TRANSITION_FREQUENCY],
+        [self::HYPERFINE_TRANSITION_ID, self::HYPERFINE_TRANSITION],
+        [self::DEFINITION_YEAR_1983_ID, self::DEFINITION_YEAR_1983],
+        [self::DEFINITION_YEAR_1967_ID, self::DEFINITION_YEAR_1967],
+        [self::DEFINITION_YEAR_ID, self::DEFINITION_YEAR],
+        [self::YEAR_1983_ID, self::YEAR_1983],
+        [self::YEAR_1967_ID, self::YEAR_1967],
+        [self::DEFINITION_YEAR_1983_ID, self::DEFINITION_YEAR_1983],
         [self::GLOBAL_PROBLEM_ID, self::GLOBAL_PROBLEM],
         [self::GLOBAL_WARMING_ID, self::GLOBAL_WARMING],
         [self::GLOBAL_WARMING_PROBLEM_ID, self::GLOBAL_WARMING_PROBLEM],
