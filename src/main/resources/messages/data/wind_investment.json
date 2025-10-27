@@ -694,16 +694,22 @@
       "number": "12000"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
   "views": [
     {
-      "name": "Personal Travel Score",
-      "comment": "view the personal travel score",
+      "name": "Wind investment",
+      "comment": "show is a investment in a wind park or a producer of wind turbines is better",
       "type": "detail_view",
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }
