@@ -72,7 +72,7 @@ function run_word_display_test(all_tests $t): void
     $link_types_dsp = new verb_list_dsp($link_types->api_json());
     $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
     $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types_dsp, 0);
-    // TODO activate Prio 1
+    // TODO Prio 1 activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
@@ -100,10 +100,10 @@ function run_word_display_test(all_tests $t): void
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has follower', $result, $target_part_is_followed);
     // TODO use complete link instead of id and name
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has 2020 id', $result, $wrd_2020->id());
     //$t->assert_text_contains($t->name . ' has 2020 name', $result, words::TN_2020);
     //$t->assert_text_contains($t->name . ' has 2021 id', $result, $wrd_2021->id());
@@ -121,7 +121,7 @@ function run_word_display_test(all_tests $t): void
     $link_types_dsp = new verb_list_dsp($link_types->api_json());
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
     $result = $lib->trim_html($result);
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());
     //$t->assert_text_contains($t->name . ' has year name', $result, words::TN_YEAR);
     //$t->assert_text_contains($t->name . ' has 2019 id', $result, $wrd_2019->id());

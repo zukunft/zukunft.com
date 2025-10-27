@@ -23,7 +23,7 @@
 25,1,scale pence to Pound,,"""Pound sterling"" = ""pence"" * 100",,1,,2025-07-24 14:24:30.144000,,,,,
 26,1,population in the city of Zurich in percent of Switzerland,,"""percent"" = ""inhabitants"" ""Zurich (City)"" / ""inhabitants"" ""Switzerland""",,1,,2025-07-24 14:24:31.025861,,,,,
 16,1,scale million to one,,"""one"" = ""million"" * 1000000",,1,,2025-07-24 14:24:17.814232,,,,,3
-27,1,yearly increase,,"""percent"" = ( ""is a"" ""Year"" - ""prior"" ""Year"" ) / ""prior"" ""Year""",,1,,2025-07-24 14:25:17.971238,,,,,
+27,1,yearly increase,,"""percent"" = ( ""is a"" ""year"" - ""prior"" ""year"" ) / ""prior"" ""year""",,1,,2025-07-24 14:25:17.971238,,,,,
 28,1,Operating income,,"=""Revenues""",,1,,2025-07-24 14:25:17.972769,,,,,
 29,1,Operating expenses,,"=""Selling expenses"" + ""General administrative expenses"" + ""Other operating expense""",,1,,2025-07-24 14:25:17.973820,,,,,
 30,1,Other trading net,,"= ""Other trading income"" + ""Other trading expenses"" + ""Other revenues""",,1,,2025-07-24 14:25:17.974892,,,,,

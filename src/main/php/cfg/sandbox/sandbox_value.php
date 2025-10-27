@@ -338,10 +338,12 @@ class sandbox_value extends sandbox_multi
      * set and get
      */
 
-    function set_grp(group $grp): void
+    function set_grp(?group $grp): void
     {
-        $this->grp = $grp;
-        $this->id = $grp->id();
+        if ($grp != null) {
+            $this->grp = $grp;
+            $this->id = $grp->id();
+        }
     }
 
     function grp(): group

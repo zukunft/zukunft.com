@@ -253,16 +253,16 @@ class view extends sandbox_code_id
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit testing object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         // TODO use a requesting user because the object user might differ from the user who is requesting the import
         // TODO all objects wit a code id must have a requesting user
@@ -273,7 +273,7 @@ class view extends sandbox_code_id
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
@@ -291,10 +291,11 @@ class view extends sandbox_code_id
             $cmp_pos = 1;
             foreach ($json_lst as $json_cmp) {
                 $lnk = new component_link($usr);
-                $lnk->import_mapper($json_cmp, $dto, $test_obj);
-                $this->add_component($lnk, $cmp_pos);
-                $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);
-                $cmp_pos++;
+                if ($lnk->import_mapper($json_cmp, $usr_msg, $dto)) {
+                    $this->add_component($lnk, $cmp_pos);
+                    $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);
+                    $cmp_pos++;
+                }
             }
         }
 
@@ -319,7 +320,11 @@ class view extends sandbox_code_id
             $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -395,19 +400,20 @@ class view extends sandbox_code_id
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit testing object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
+        global $db_con;
+        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
 
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             if ($this->name == '') {
                 $usr_msg->add_id(msg_id::VIEW_NAME_MISSING);
             } else {
@@ -425,6 +431,7 @@ class view extends sandbox_code_id
 
         // TODO add the assigned terms
         // after the view has it's components assign the view to the terms
+        // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::ASSIGNED) {
                 foreach ($value as $trm_name) {
@@ -449,7 +456,11 @@ class view extends sandbox_code_id
             ]);
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -721,7 +732,7 @@ class view extends sandbox_code_id
             view_db::FLD_ID,
             view_db::FLD_ID);
         $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
-        // TODO activate
+        // TODO Prio 2 activate
         //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

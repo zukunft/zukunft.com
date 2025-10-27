@@ -8,3 +8,4 @@ view_type_id, type_name, description, code_id
 7, 'system', 'views used by the system that should only be adjusted by an admin', 'system'
 8, 'sub', 'a sub view cannot be linked to a term and is used to group some components and like the same group to several views', 'sub'
 9, 'child', 'a child view extends the parent view and add, overwrite or remove some components of the parent view', 'child'
+10, 'export', 'export data to other pods or systems', 'export'

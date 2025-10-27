@@ -30,6 +30,14 @@
 
 */
 
+// set all path for the backend program code here at once
+const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once CONST_PATH . 'paths.php';
+
+// set all path for the frontend program code here at once
+const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once WEB_CONST_PATH . 'paths.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
@@ -69,20 +77,6 @@ const LIST_MIN_NAMES = 4; // number of object names that should at least be show
 const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
-// set all path for the backend program code here at once
-const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
-include_once CONST_PATH . 'paths.php';
-
-// set all path for the frontend program code here at once
-const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
-include_once WEB_CONST_PATH . 'paths.php';
-
-// test path for the initial load of the test files
-const TEST_PATH = paths::SRC . 'test' . DIRECTORY_SEPARATOR;
-// the test code path
-const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
-// the test const path
-const TEST_CONST_PATH = TEST_PHP_PATH . 'const' . DIRECTORY_SEPARATOR;
 
 
 // the main global vars to shorten the code by avoiding them in many function calls as parameter

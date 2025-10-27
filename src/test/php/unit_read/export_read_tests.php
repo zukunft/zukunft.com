@@ -63,7 +63,7 @@ class export_read_tests
 
         $t->header('Test the json export class (classes/json.php)');
 
-        // TODO activate
+        // TODO Prio 2 activate
         //$json_export = new json_io($usr, $phr_lst);
         //$result = $json_export->export();
         //$target = 'Mathematics';

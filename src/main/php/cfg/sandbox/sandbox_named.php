@@ -225,13 +225,17 @@ class sandbox_named extends sandbox
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
@@ -243,7 +247,11 @@ class sandbox_named extends sandbox
         }
         // the usage is set by an internal batch and cannot be set via import
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -1042,7 +1050,7 @@ class sandbox_named extends sandbox
 
             $log->row_id = $this->id();
             if ($log->add()) {
-                // TODO activate when the prepared SQL is ready to use
+                // TODO Prio 2 activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
                 if ($this->sql_write_prepared()) {
                     $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list());

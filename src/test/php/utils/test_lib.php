@@ -36,11 +36,8 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
@@ -50,8 +47,12 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'files.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -74,6 +75,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -97,7 +101,6 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
@@ -237,6 +240,45 @@ class test_lib
         $dsp_obj->set_from_json($api_json);
         return $dsp_obj;
     }
+
+    /**
+     * just to test the database abstraction layer, but without real connection to any database
+     * @return sql_db dummy database connection for internal unit testing
+     */
+    function unit_test_db_con(): sql_db
+    {
+        $db_con = new sql_db();
+        $db_con->db_type = SQL_DB_TYPE;
+        return $db_con;
+    }
+
+    /*
+     * TODO Prio 0 review
+     */
+
+    /**
+     * create the dummy users for internal unit testing
+     * @return user the normal test user
+     */
+    function users_for_unit_tests(): user
+    {
+        global $usr_sys;
+        global $usr;
+
+        // create a dummy system user for unit testing
+        $usr_sys = new user;
+        $usr_sys->id = users::SYSTEM_ID;
+        $usr_sys->name = users::SYSTEM_NAME;
+
+        // create a dummy user for testing
+        $usr = new user;
+        $usr->id = users::SYSTEM_TEST_ID;
+        $usr->name = users::SYSTEM_TEST_NAME;
+        $usr->set_profile(user_profiles::EMAIL);
+
+        return $usr;
+    }
+
 
 
 }

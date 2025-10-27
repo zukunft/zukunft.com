@@ -100,7 +100,7 @@ class result_write_tests
         }
         // TODO review
         $target = results::TV_INCREASE_LONG;
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // test load result with time
@@ -120,7 +120,7 @@ class result_write_tests
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
-            // TODO activate Prio 1
+            // TODO Prio 1 activate
             //$t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
         } else {
             $t->display('value->val_formatted incl time for ', $target, $result);
@@ -151,7 +151,7 @@ class result_write_tests
             $result = '';
         }
         $target = 8505.251;
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value

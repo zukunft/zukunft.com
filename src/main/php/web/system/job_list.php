@@ -62,7 +62,7 @@ class job_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        // TODO activate Prio 3
+        // TODO Prio 3 activate
         //$ctrl = new controller();
         //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
         return parent::api_mapper_list($json_array, new job());

@@ -866,38 +866,38 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
-        log_debug();
-        $usr_msg = new user_message();
         $lib = new library();
 
         $val = new value($this->user());
         $phr_lst = new phrase_list($this->user());
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
         foreach ($json_obj as $key => $value) {
 
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->import_lst($value, $test_obj));
-                $val->set_grp($phr_lst->get_grp_id($do_save));
+                if ($phr_lst->import_lst($value, $usr_msg)) {
+                    $val->set_grp($phr_lst->get_grp_id($do_save));
+                }
             }
 
             if ($key == json_fields::TIMESTAMP) {
@@ -922,9 +922,7 @@ class value_list extends sandbox_value_list
             if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 $src->set_name($value);
-                if ($test_obj) {
-                    $src->id = $test_obj->seq_id();
-                } else {
+                if ($do_save) {
                     if ($usr_msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
@@ -945,8 +943,7 @@ class value_list extends sandbox_value_list
                                 $val,
                                 $phr_lst,
                                 $do_save,
-                                $usr_msg,
-                                $test_obj);
+                                $usr_msg);
                         }
                     } else {
                         $usr_msg = $this->add_value(
@@ -955,14 +952,17 @@ class value_list extends sandbox_value_list
                             $val,
                             $phr_lst,
                             $do_save,
-                            $usr_msg,
-                            $test_obj);
+                            $usr_msg);
                     }
                 }
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function add_value(
@@ -971,28 +971,35 @@ class value_list extends sandbox_value_list
         value $val,
         phrase_list $phr_lst,
         bool $do_save,
-        user_message $usr_msg,
-        ?object $test_obj = null
+        user_message $usr_msg
     ): user_message
     {
+        global $db_con;
         $val_to_add = clone $val;
         $phr_lst_to_add = clone $phr_lst;
         $val_phr = new phrase($this->user());
-        if ($test_obj) {
-            $val_phr->set_name($val_key, word::class);
-            $val_phr->set_id($test_obj->seq_id());
-        } else {
+        if ($db_con->is_open()) {
             $val_phr->load_by_name($val_key);
-        }
-        $phr_lst_to_add->add($val_phr);
-        $val_to_add->set_number($val_number);
-        $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
-        if ($test_obj) {
-            $val_to_add->set_id($test_obj->seq_id());
+            $phr_lst_to_add->add($val_phr);
         } else {
-            $usr_msg->add($val_to_add->save());
+            $val_phr->set_name($val_key, word::class);
+            $phr_lst_to_add->add_by_name($val_phr);
         }
-        $this->add_obj($val_to_add);
+        $val_to_add->set_number($val_number);
+        $grp = $phr_lst_to_add->get_grp_id($do_save);
+        if ($grp != null) {
+            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
+            if ($db_con->is_open()) {
+                $usr_msg->add($val_to_add->save());
+                $this->add_obj($val_to_add);
+            } else {
+                // TODO Prio 2 maybe use add_by_phr_names
+                $this->add_direct($val_to_add);
+            }
+        } else {
+            // TODO Prio 0 review error
+            log_warning('');
+        }
         return $usr_msg;
     }
 

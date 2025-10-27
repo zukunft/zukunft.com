@@ -25,9 +25,10 @@
     { "name": "2018", "type": "time"},
     { "name": "2019", "type": "time"},
     { "name": "2020", "type": "time"},
-    { "name": "Year", "type": "time"},
+    { "name": "year", "type": "time"},
     { "name": "countryside"},
     { "name": "suburb"},
+    { "name": "total"},
     {
       "name": "one",
       "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
@@ -85,14 +86,14 @@
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
     {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "company"},
     {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
-    {"from": "2013", "verb": "is a", "to": "Year"},
-    {"from": "2014", "verb": "is a", "to": "Year"},
-    {"from": "2015", "verb": "is a", "to": "Year"},
-    {"from": "2016", "verb": "is a", "to": "Year"},
-    {"from": "2017", "verb": "is a", "to": "Year"},
-    {"from": "2018", "verb": "is a", "to": "Year"},
-    {"from": "2019", "verb": "is a", "to": "Year"},
-    {"from": "2020", "verb": "is a", "to": "Year"},
+    {"from": "2013", "verb": "is a", "to": "year"},
+    {"from": "2014", "verb": "is a", "to": "year"},
+    {"from": "2015", "verb": "is a", "to": "year"},
+    {"from": "2016", "verb": "is a", "to": "year"},
+    {"from": "2017", "verb": "is a", "to": "year"},
+    {"from": "2018", "verb": "is a", "to": "year"},
+    {"from": "2019", "verb": "is a", "to": "year"},
+    {"from": "2020", "verb": "is a", "to": "year"},
     {"from": "2014", "verb": "is follower of", "to": "2013"},
     {"from": "2015", "verb": "is follower of", "to": "2014"},
     {"from": "2016", "verb": "is follower of", "to": "2015"},
@@ -171,38 +172,45 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "assigned_word": "\"inhabitants\""
+      "assigned_word": "inhabitants"
     },
     {
       "name": "city population",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"City\" )",
-      "assigned_word": "\"Country\""
+      "assigned_word": "Country"
     },
     {
       "name": "countryside population",
       "expression": "\"total\" = \"total\" \"inhabitants\" - \"city population\"",
-      "assigned_word": "\"Country\""
+      "assigned_word": "Country"
     },
     {
       "name": "suburb population",
       "expression": "\"total\" = &sum; ( \"inhabitants\" \"of all\" \"suburb\" )",
-      "assigned_word": "\"Country\""
+      "assigned_word": "Country"
     },
     {
       "name": "countryside population without suburb",
       "expression": "\"total\" = \"countryside population\" - \"suburb population\"",
-      "assigned_word": "\"Country\""
+      "assigned_word": "Country"
     },
     {
       "name": "population in the city of Zurich in percent of Switzerland",
       "expression": "\"percent\" = \"inhabitants\" \"Zurich (City)\" / \"inhabitants\" \"Switzerland\"",
-      "assigned_word": "\"Switzerland\""
+      "assigned_word": "Switzerland"
     }
   ],
   "sources": [
     {
       "name": "Bundesamt für Statistik",
       "url": "https://dam-api.bfs.admin.ch/hub/api/dam/assets/23328853/master"
+    }
+  ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
     }
   ],
   "views": [
@@ -212,8 +220,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }

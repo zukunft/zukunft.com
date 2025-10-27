@@ -9,7 +9,7 @@
   "words": [
     {
       "name": "Currency",
-      "view": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state.",
+      "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state.",
       "protection": "admin_protection"
     },
     {
@@ -110,6 +110,9 @@
     },
     {
       "name": "weekly"
+    },
+    {
+      "name": "monthly"
     },
     {
       "name": "yearly"
@@ -284,7 +287,7 @@
     {
       "name": "yearly average turnover",
       "expression": "\"yearly\" = sum ( \"monthly average turnover\" ) / count ( \"monthly average turnover\" )",
-      "assigned_word": "\"monthly average turnover\""
+      "assigned_word": "turnover"
     }
   ],
   "sources": [

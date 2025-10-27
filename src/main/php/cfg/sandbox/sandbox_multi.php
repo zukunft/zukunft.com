@@ -424,16 +424,20 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $shr_typ_cac->id(
@@ -458,7 +462,11 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -1057,20 +1065,31 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        $usr_msg = new user_message();
+
+        $this->import_mapper($in_ex_json, $usr_msg);
+
+
+        // try to get the ownership if requested
+        // TODO Prio 2 check where and in which cases this is needed probably if json_fields::PROTECTION != protect_type_shared::NO_PROTECT
+        //if ($get_ownership) {
+        //    $this->take_ownership();
+        //}
+
+        // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::SHARE) {
                 $this->share_id = $shr_typ_cac->id($value);
@@ -1093,7 +1112,11 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
         }
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1243,9 +1266,9 @@ class sandbox_multi extends db_object_multi_user
         log_debug($this->dsp_id());
 
         if ($this->user()->is_admin()) {
-            // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
+            // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
             $result = $this->set_owner($this->user()->id); // TODO remove double getting of the user object
-            // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
+            // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
 
         log_debug($this->dsp_id() . ' done');

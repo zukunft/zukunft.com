@@ -122,8 +122,8 @@ class words
     const int TIME_ID = 103;
     const string YEAR = 'year';
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
-    const string YEAR_CAP = 'Year';
-    const int YEAR_CAP_ID = 134;
+    const string YEAR_CAP = 'year';
+    const int YEAR_CAP_ID = 109;
     const string CALCULATION = 'calculation';
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string MIN = 'min';

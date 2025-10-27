@@ -272,17 +272,21 @@ class sandbox_list_named extends sandbox_list
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        return new user_message();
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -715,7 +719,8 @@ class sandbox_list_named extends sandbox_list
                     }
                 } elseif ($obj_to_add->name() != '') {
                     if (!in_array($obj_to_add->name(), $this->names())) {
-                        $usr_msg->add(parent::add_obj($obj_to_add));
+                        $usr_msg->add($this->add_user_check($obj_to_add));
+                        parent::add_direct($obj_to_add);
                     } else {
                         $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
                             [

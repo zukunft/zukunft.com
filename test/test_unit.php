@@ -2,7 +2,7 @@
 
 /*
 
-    test_unit.php - run the interlal unit tests without db read or write
+    test_unit.php - run the internal unit tests without db read or write
     -------------
 
     checks that only developers and local admin can start the tests
@@ -32,22 +32,15 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
-const TEST_PHP_CREATE_PATH = TEST_PHP_PATH . 'create' . DIRECTORY_SEPARATOR;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+include_once test_paths::UTILS . 'test_base.php';
 
 // load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;

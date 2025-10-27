@@ -377,22 +377,23 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user $usr_req if it is a system user the import can also set the code_id
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        array        $in_ex_json,
+        user         $usr_req,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $phr_typ_cac;
         global $vrb_cac;
+        global $db_con;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
             $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID]);
@@ -410,7 +411,7 @@ class triple extends sandbox_link_named
             } else {
                 if (is_string($value)) {
                     if ($dto == null) {
-                        $this->set_from($this->import_phrase($value, $test_obj));
+                        $this->set_from($this->import_phrase($value));
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
@@ -438,7 +439,7 @@ class triple extends sandbox_link_named
                 $usr_msg->add_id_with_vars(msg_id::TO_NAME_NOT_EMPTY, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
             } else {
                 if ($dto == null) {
-                    $this->set_to($this->import_phrase($value, $test_obj));
+                    $this->set_to($this->import_phrase($value));
                 } else {
                     $phr = $dto->get_phrase_by_name($value);
                     if ($phr == null) {
@@ -462,12 +463,15 @@ class triple extends sandbox_link_named
             $vrb = $vrb_cac->get_by_name($name);
             if ($vrb == null) {
                 if ($name <> '') {
-                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
                     $vrb = new verb();
                     $vrb->set_name($name);
-                    $vrb->set_user($this->user());
-                    // TODO remove this exception
-                    $vrb->save();
+                    // TODO Prio 0 move saving from the mapper to the import_obj to avoid db interaction during the mapping
+                    if ($db_con->is_open()) {
+                        $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
+                        $vrb->set_user($this->user());
+                        // TODO remove this exception
+                        $vrb->save();
+                    }
                     $dto?->add_verb($vrb);
                 } else {
                     $vrb = $vrb_cac->get_verb(verbs::NOT_SET);
@@ -487,11 +491,15 @@ class triple extends sandbox_link_named
         if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
             $this->weight = $in_ex_json[json_fields::WEIGHT];
         }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+        }
+
 
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $value = $in_ex_json[json_fields::VIEW];
             $trp_view = new view($this->user());
-            if (!$test_obj) {
+            if ($db_con->is_open()) {
                 // TODO replace all load in the import mapper with get functions
                 $trp_view->load_by_name($value);
                 if ($trp_view->id() == 0) {
@@ -508,7 +516,11 @@ class triple extends sandbox_link_named
             $this->name_generated = $this->generate_name();
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -629,13 +641,14 @@ class triple extends sandbox_link_named
      * get a phrase based on the name (and save it if needed and requested)
      *
      * @param string $name the name of the phrase
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name, ?object $test_obj): phrase
+    private function import_phrase(string $name): phrase
     {
+        global $db_con;
+
         $result = new phrase($this->user());
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             $result->load_by_name($name);
             if ($result->id() == 0) {
                 // if there is no word or triple with the name yet, automatically create a word
@@ -658,17 +671,19 @@ class triple extends sandbox_link_named
      * import a triple from a json object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
+        global $db_con;
+
+        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
 
         // add related parameters to the triple object
         if ($usr_msg->is_ok()) {
@@ -677,13 +692,31 @@ class triple extends sandbox_link_named
                 foreach ($ref_json as $ref_data) {
                     $ref_obj = new ref($this->user());
                     $ref_obj->set_phrase($this->phrase());
-                    $usr_msg->add($ref_obj->import_obj($ref_data, $dto, $test_obj));
-                    $this->ref_lst[] = $ref_obj;
+                    if ($ref_obj->import_obj($ref_data, $usr_msg, $dto)) {
+                        $this->ref_lst[] = $ref_obj;
+                    }
                 }
             }
         }
 
-        return $usr_msg;
+        // save the triple in the database
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -786,8 +819,8 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * set the "from" phrase of this triple
-     * e.g. "Zurich" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
+     * set the predicate of this triple
+     * e.g. "Zurich" for "Zurich (city)" based on "Zurich" (from) "is a" (verb/predicate) "city" (to)
      *
      * @param verb $vrb the verb
      * @return void
@@ -2736,7 +2769,7 @@ class triple extends sandbox_link_named
         $usr_msg = new user_message();
 
         // collect all phrase groups where this triple is used
-        // TODO activate
+        // TODO Prio 2 activate
         //$grp_lst = new group_list($this->user());
         //$grp_lst->load_by_phr($this->phrase());
 
@@ -2750,7 +2783,7 @@ class triple extends sandbox_link_named
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
-        // TODO activate
+        // TODO Prio 2 activate
         //$usr_msg->add($grp_lst->del());
 
         return $usr_msg;

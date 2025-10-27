@@ -43,13 +43,11 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
-include_once TEST_CONST_PATH . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -147,7 +145,7 @@ class import_file
                 if ($direct) {
                     $import_result = $imp->put_json_direct($json_str);
                 } else {
-                    $import_result = $imp->put_json($json_str);
+                    $import_result = $imp->put_json($json_str, $usr_msg);
                 }
 
                 // show the summery to the user
@@ -173,6 +171,12 @@ class import_file
                     }
                 } else {
                     $usr_msg->add($import_result);
+
+                    // TODO Prio 0 activate
+                    // TODO Prio 1 move to calling function and include save
+                    //if (!$usr_msg->is_ok()) {
+                    //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                    //}
                     //$usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
@@ -391,7 +395,7 @@ class import_file
             $usr, true
         );
 
-        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

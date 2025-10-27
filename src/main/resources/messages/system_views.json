@@ -611,6 +611,27 @@
       "ui_msg_code_id": "system_paste_table"
     },
     {
+      "name": "system form field context",
+      "description": "show the context used to import a data table",
+      "type": "system_paste_table_context",
+      "code_id": "system_paste_table_context",
+      "ui_msg_code_id": "system_paste_table_context"
+    },
+    {
+      "name": "system form body paste table",
+      "description": "show the drop fields to import a data table",
+      "type": "system_paste_table_body",
+      "code_id": "system_paste_table_body",
+      "ui_msg_code_id": "system_paste_table_body"
+    },
+    {
+      "name": "system form field selection text",
+      "description": "show the description of a named selection",
+      "type": "system_selection_text",
+      "code_id": "system_selection_text",
+      "ui_msg_code_id": "system_selection_text"
+    },
+    {
       "name": "system title import",
       "description": "show the language specific title for the import page",
       "type": "system_title",
@@ -1047,6 +1068,13 @@
       "ui_msg_code_id": "form_select_component_link_type"
     },
     {
+      "name": "system form select component position type",
+      "description": "selector for the position type of a component to a view",
+      "type": "system_form_select_component_position_type",
+      "code_id": "form_field_component_position_type",
+      "ui_msg_code_id": "form_select_component_pos"
+    },
+    {
       "name": "system form component link order number",
       "description": "position of the linked component in the view",
       "type": "system_form_select_component_link_order_number",
@@ -1129,10 +1157,28 @@
       "code_id": "show_field_description"
     },
     {
+      "name": "system show field formula name",
+      "description": "the formula name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_formula_name"
+    },
+    {
+      "name": "system show field phrase name",
+      "description": "the phrase name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_phrase_name"
+    },
+    {
       "name": "system show value usage",
       "description": "the value usage as read only",
       "type": "system_show_field_usage",
       "code_id": "show_field_value_usage"
+    },
+    {
+      "name": "system show result diff list",
+      "description": "list of results that changes if the user confirms the change",
+      "type": "system_show_result_diff",
+      "code_id": "system_show_result_diff"
     },
     {
       "name": "system show view new",
@@ -1182,6 +1228,33 @@
       "ui_msg_code_id": "system_button_export"
     },
     {
+      "name": "system form title confirm update",
+      "description": "for the universal confirmation popup show title of the action e.g. update",
+      "type": "system_popup_title",
+      "ui_msg_code_id": "system_popup_title_update"
+    },
+    {
+      "name": "system form title confirm delete",
+      "description": "for the universal confirmation popup show title of the action e.g. delete",
+      "type": "system_popup_title",
+      "ui_msg_code_id": "system_popup_title_delete"
+    },
+    {
+      "name": "system form class",
+      "description": "for the universal confirmation popup show e.g. word, value, formula depending on the object that is changed",
+      "type": "form_class"
+    },
+    {
+      "name": "system form changes",
+      "description": "for the universal confirmation popup show the changes",
+      "type": "form_changes"
+    },
+    {
+      "name": "system form impact",
+      "description": "for the universal confirmation popup show the impact of the changes",
+      "type": "form_impact"
+    },
+    {
       "name": "system form end",
       "type": "form_end",
       "code_id": "form_end"
@@ -1210,6 +1283,11 @@
       "type": "select_view",
       "code_id": "system_form_select_view_default",
       "ui_msg_code_id": "system_form_select_view_default"
+    },
+    {
+      "name": "system show view diff list",
+      "description": "highlight the differences due to a change to the user",
+      "type": "system_show_view_diff"
     },
     {
       "name": "link list word",
@@ -4170,7 +4248,7 @@
         },
         {
           "position": "8",
-          "name": "system form component link priority"
+          "name": "system form component link order number"
         },
         {
           "position": "9",
@@ -4572,7 +4650,7 @@
         },
         {
           "position": "8",
-          "name": "system form formula link prio"
+          "name": "system form formula link priority"
         },
         {
           "position": "9",
@@ -4627,11 +4705,11 @@
         },
         {
           "position": "4",
-          "name": "system show field formula"
+          "name": "system show field formula name"
         },
         {
           "position": "5",
-          "name": "system show field phrase"
+          "name": "system show field phrase name"
         },
         {
           "position": "6",
@@ -5026,11 +5104,11 @@
       "components": [
         {
           "position": "1",
-          "name": "system form title result explain"
+          "name": "system title result explain"
         },
         {
           "position": "2",
-          "name": "system form body result explain"
+          "name": "system body result explain"
         }
       ]
     },
@@ -5043,11 +5121,11 @@
       "components": [
         {
           "position": "1",
-          "name": "system form title formula test"
+          "name": "system title formula test"
         },
         {
           "position": "2",
-          "name": "system form body formula test"
+          "name": "system body formula test"
         }
       ]
     },

@@ -241,7 +241,7 @@ class formula_tests
         */
 
 
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_true($ts . 'with at least one predefined formula', $t_frm->formula_increase()->is_special());
         $t->assert_false($ts . 'without predefined formula', $t_frm->formula()->is_special());
 
@@ -287,7 +287,7 @@ class formula_tests
         $phr_lst = $t_phr->phrase_list_increase();
 
         $frm = $t_frm->formula_increase();
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
         //$result = $res->num_text;

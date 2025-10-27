@@ -78,7 +78,7 @@ class phrase_list_read_tests
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
         $lst->load_names(formulas::SCALE_TO_SEC);
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$t->assert_contains_not($test_name, $lst->names(), formulas::TN_READ);
         $test_name = 'api message of phrases list';
         $lst = new phrase_list($t->usr1);

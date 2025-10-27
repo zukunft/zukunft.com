@@ -1028,7 +1028,7 @@ class value extends sandbox_value
             // display similar values as a sample for the user to force a consistent type of entry e.g. cost should always be a negative number
             if (isset($main_wrd)) {
                 $main_wrd->load();
-                // TODO activate based on a group load
+                // TODO Prio 2 activate based on a group load
                 /*
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");

@@ -63,6 +63,7 @@ include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
@@ -265,18 +267,28 @@ class result extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        if ($dto != null) {
+            $frm_lst = $dto->formula_list();
+        } else {
+            $frm_lst = new formula_list($this->user());
+        }
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $usr_msg, $dto);
             if ($usr_msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
@@ -285,15 +297,17 @@ class result extends sandbox_value
 
         if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
             $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
-            $frm = $dto->formula_list()->get_by_name($frm_name);
+            $frm = $frm_lst->get_by_name($frm_name);
             if ($frm == null) {
-                $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
-                    msg_id::VAR_FORMULA => $frm_name,
-                    msg_id::VAR_JSON_TEXT => $in_ex_json
-                ]);
+                if ($db_con->is_open()) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                        msg_id::VAR_FORMULA => $frm_name,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                }
                 $frm = new formula($this->user());
                 $frm->set_name($frm_name);
-                $dto->source_list()->add_by_name($frm);
+                $frm_lst->add_by_name($frm);
             }
             $this->frm = $frm;
         }
@@ -307,12 +321,12 @@ class result extends sandbox_value
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
-     * @return user_message the enriched user message
+     * @return bool true if everything was fine
      */
     private function common_mapper(
         array        $in_ex_json,
         user_message $usr_msg
-    ): user_message
+    ): bool
     {
         $lib = new library();
 
@@ -338,7 +352,11 @@ class result extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -920,32 +938,35 @@ class result extends sandbox_value
      * validate a formulas value by comparing the external object result with the calculated result
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        log_debug();
-        $result = parent::import_db_obj($this, $test_obj);
+        global $db_con;
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        $usr_msg = new user_message();
+
+        $this->import_mapper($in_ex_json, $usr_msg);
+
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
+        // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $res) {
 
             // the phrases of the result
             if ($key == json_fields::WORDS) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($res, $test_obj));
-                if ($result->is_ok()) {
+                if ($phr_lst->import_lst($res, $usr_msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
@@ -956,8 +977,7 @@ class result extends sandbox_value
             // the phrases used to calculate the result
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($res, $test_obj));
-                if ($result->is_ok()) {
+                if ($phr_lst->import_lst($res, $usr_msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got context ' . $phr_grp->dsp_id());
                     $this->set_src_grp($phr_grp);
@@ -982,16 +1002,20 @@ class result extends sandbox_value
         }
 
         // save the result in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
                 $this->save()->get_last_message();
                 log_debug($this->dsp_id());
             } else {
-                log_debug($result->all_message_text());
+                log_debug($usr_msg->all_message_text());
             }
         }
 
-        return $result;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

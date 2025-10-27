@@ -464,15 +464,19 @@ class db_id_object_non_sandbox extends db_object_seq_id
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         $msg = 'import_mapper_user used but not overwritten in ' . $this::class;
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_message_text($msg);
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

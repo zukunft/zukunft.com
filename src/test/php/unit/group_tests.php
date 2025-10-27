@@ -212,7 +212,7 @@ class group_tests
         $t->assert_sql_insert($sc, $grp);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         $grp->set_phrase_list($t_phr->phrase_list_prime());
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_16());
@@ -234,11 +234,11 @@ class group_tests
 
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
-        // TODO activate Prio 3 or use group id
+        // TODO Prio 3 activate or use group id
         //$t->assert_sql_by_id($sc, $grp_lnk);
 
         $grp->set_id(14);
-        // TODO activate Prio 3 or use group id
+        // TODO Prio 3 activate or use group id
         //$this->assert_sql_load_by_group_id($t, $db_con, $grp_lnk, $grp);
 
     }

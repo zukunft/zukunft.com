@@ -673,24 +673,28 @@ class result_list extends sandbox_value_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $res_json) {
             $res = new result($this->user());
-            $usr_msg->add($res->import_obj($res_json, $dto, $test_obj));
-            $this->add($res);
+            if ($res->import_obj($res_json, $usr_msg, $dto)) {
+                $this->add($res);
+            }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -958,7 +962,7 @@ class result_list extends sandbox_value_list
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
-            // e.g. if the formula text contains the special word "prior" and the formula is linked to "Year" and "2016" is a "Year"
+            // e.g. if the formula text contains the special word "prior" and the formula is linked to "year" and "2016" is a "year"
             //      than the "prior" of "2016" is "2015", so the word "2015" should be included in the value selection
             $frm_phr_ids = array_unique (array_merge ($frm_phr_ids, $special_frm_phr_ids));
             $frm_phr_ids = array_filter($frm_phr_ids);
@@ -982,7 +986,7 @@ class result_list extends sandbox_value_list
             -> calculate the formula result for each word list (zuc_frm)
             -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
             -> r) check in which formula the formula results are used
-            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a Year
+            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a year
             -> calculate the formula result for each word list of the formula result
             -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2019" "estimate"
             -> repeat at r)
@@ -1014,7 +1018,7 @@ class result_list extends sandbox_value_list
         $result = null;
 
         // get a list of all words and triples where the formula should be used (assigned words)
-        // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"
+        // including all child phrases that should also be included in the assignment e.g. for "year" include "2018"
         // e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $frm->assign_phr_lst();
@@ -1048,7 +1052,7 @@ class result_list extends sandbox_value_list
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
 
-        // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
+        // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "year"
         foreach ($frm_lst_preset_following->lst() as $frm_special) {
             $frm_special->load();
             log_debug('get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());

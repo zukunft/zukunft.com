@@ -124,8 +124,9 @@ if ($usr->id() > 0) {
             if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK
                 && is_uploaded_file($_FILES['fileToUpload']['tmp_name'])) {
                 $json_str = file_get_contents($_FILES['fileToUpload']['tmp_name']);
+                $json_array = json_decode($json_str, true);
                 $import = new import;
-                $import_result = $import->put($json_str, $usr);
+                $import_result = $import->put($json_array, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '

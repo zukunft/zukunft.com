@@ -194,7 +194,7 @@ class test_components
         $cmp->set_row_phrase($t_phr->year());
         $cmp->set_col_phrase($t_phr->canton());
         $cmp->set_col_sub_phrase($t_phr->city());
-        // TODO activate
+        // TODO Prio 2 activate
         //$cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();

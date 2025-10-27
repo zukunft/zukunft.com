@@ -171,14 +171,21 @@ class phrase_list extends sandbox_list_named
      * import a phrase list from an inner part of a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $json_obj, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $json_obj,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        $phr_lst = $dto->phrase_list();
+        if ($dto != null) {
+            $phr_lst = $dto->phrase_list();
+        } else {
+            $phr_lst = new phrase_list($this->user());
+        }
 
         foreach ($json_obj as $phr_name) {
             if ($phr_name == '') {
@@ -187,17 +194,28 @@ class phrase_list extends sandbox_list_named
                 if ($usr_msg->is_ok()) {
                     $phr = $phr_lst->get_by_name($phr_name);
                     if ($phr == null) {
-                        $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
+                        // TODO Prio 3 check if in some cases a warning message might be useful
+                        // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
                         $phr = new phrase($this->user());
                         $phr->set_name($phr_name);
                         $phr_lst->add_by_name($phr);
+                        $this->add_by_name($phr);
+                    } else {
+                        if ($phr->id() != 0) {
+                            $this->add($phr);
+                        } elseif ($phr->name() != '') {
+                            $this->add_by_name($phr);
+                        }
                     }
-                    $this->add_by_name($phr);
                 }
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -503,21 +521,25 @@ class phrase_list extends sandbox_list_named
 
     /**
      * import a phrase list from an inner part of a JSON array object
+     * TODO replace it with the phrase list save function
      *
      * @param array $json_obj an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @return bool true if everything was fine
      */
-    function import_lst(array $json_obj, ?object $test_obj = null): user_message
+    function import_lst(
+        array        $json_obj,
+        user_message $usr_msg
+    ): bool
     {
         global $phr_typ_cac;
+        global $db_con;
 
-        $usr_msg = new user_message();
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
                 $phr = new phrase($this->user());
                 if ($usr_msg->is_ok()) {
-                    if (!$test_obj) {
+                    if ($db_con->is_open()) {
                         // TODO prevent that this happens at all
                         if (is_array($phr_name)) {
                             $lib = new library();
@@ -547,23 +569,27 @@ class phrase_list extends sandbox_list_named
                                 }
                             }
                         }
+                        $this->add($phr);
                     } else {
                         // fallback for unit tests
                         $phr->set_name($phr_name, word::class);
-                        $phr->set_id($test_obj->seq_id());
+                        $this->add_by_name($phr);
                     }
                 }
-                $this->add($phr);
             }
         }
 
         // save the word in the database
         // TODO check why this is needed
-        if ($usr_msg == '' and $test_obj == null) {
+        if ($usr_msg == '' and $db_con->is_open()) {
             $usr_msg->add($this->save());
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -624,16 +650,16 @@ class phrase_list extends sandbox_list_named
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
-                    $import_result = $wrd->import_mapper_user($word, $usr);
-                    $this->add_by_name($wrd->phrase());
-                    $usr_msg->add($import_result);
+                    if ($wrd->import_mapper_user($word, $usr, $usr_msg)) {
+                        $this->add_by_name($wrd->phrase());
+                    }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr);
-                    $import_result = $trp->import_mapper($triple);
-                    $this->add_by_name($trp->phrase());
-                    $usr_msg->add($import_result);
+                    if ($trp->import_mapper($triple, $usr_msg)) {
+                        $this->add_by_name($trp->phrase());
+                    }
                 }
             }
         }
@@ -2050,7 +2076,8 @@ class phrase_list extends sandbox_list_named
     {
         $grp = null;
         if ($this->is_empty()) {
-            log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+            // TODO Prio 0 switch back to error
+            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new group($this->user());
             $grp_id = new group_id();
@@ -2525,7 +2552,12 @@ class phrase_list extends sandbox_list_named
         $wrd_lst = new word_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_word()) {
-                $wrd_lst->add($phr->obj());
+                $wrd = $phr->obj();
+                if ($wrd->id() == 0 and $wrd->name() != '') {
+                    $wrd_lst->add_by_name($wrd);
+                } else {
+                    $wrd_lst->add($wrd);
+                }
             }
         }
         return $wrd_lst;
@@ -2540,7 +2572,12 @@ class phrase_list extends sandbox_list_named
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
-                $trp_lst->add($phr->obj());
+                $trp = $phr->obj();
+                if ($trp->id() == 0 and $trp->name() != '') {
+                    $trp_lst->add_by_name($trp);
+                } else {
+                    $trp_lst->add($trp);
+                }
             }
         }
         return $trp_lst;

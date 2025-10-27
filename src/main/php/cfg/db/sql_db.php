@@ -1377,7 +1377,7 @@ class sql_db
         global $sys_log_sta_cac;
         global $job_typ_cac;
 
-        // TODO activate or remove
+        // TODO Prio 2 activate or remove
         //$system_users =[];
         //$usr_pro_cac =[];
         $phr_typ_cac = new phrase_types();

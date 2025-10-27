@@ -1250,7 +1250,7 @@ class library
             'Zukunft\ZukunftCom\test\php\unit_write' => 'test_paths::UNIT_WRITE',
             'Zukunft\ZukunftCom\test\php\unit' => 'test_paths::UNIT',
             'Zukunft\ZukunftCom\test\php\utils' => 'test_paths::UTILS',
-            'Zukunft\ZukunftCom\test\php\const' => 'TEST_CONST_PATH',
+            'Zukunft\ZukunftCom\test\php\const' => 'test_paths::CONST',
             default => 'missing path for ' . $use_path,
         };
     }

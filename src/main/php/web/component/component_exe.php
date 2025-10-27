@@ -216,6 +216,7 @@ class component_exe extends component
             component_type::FORM_SELECT_VIEW_LINK_TYPE => $form->form_view_link_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VIEW_LINK_PRIORITY => $form->form_field_view_link_priority($dbo),
             component_type::FORM_SELECT_COMPONENT_LINK_TYPE => $form->form_component_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_COMPONENT_POS_TYPE => $form->form_component_pos_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
 
             // other select fields
@@ -269,6 +270,18 @@ class component_exe extends component
 
             // simple close the form section
             component_type::FORM_END => $form->form_end(),
+
+            // show changes due to a pending user change
+            component_type::SYSTEM_SHOW_RESULT_DIFF => $list->result_changes($dbo),
+
+            component_type::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
+            component_type::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
+            component_type::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
+            component_type::SYSTEM_POPUP_TITLE => $preview->popup_title(),
+            component_type::FORM_CLASS => $preview->popup_class(),
+            component_type::FORM_CHANGES => $preview->popup_changes(),
+            component_type::FORM_IMPACT => $preview->popup_impact(),
+            component_type::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
@@ -331,7 +344,7 @@ class component_exe extends component
 
 
             // view only -
-            component_type::SHOW_NAME => $form->show_name($dbo),
+            component_type::SHOW_NAME => $form->show_name($dbo, $this->code_id()),
             component_type::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_type::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_type::WORD_RESULTS => $form->result($dbo),

@@ -382,7 +382,7 @@ class group_list extends sandbox_list
     add all phrase groups to the list that have a value with at least one word in each word list
 
     add all formula results to the list for ONE formula based on
-    - $frm_linked: the words and triples assigned to the formula e.g. "Year" for "increase"
+    - $frm_linked: the words and triples assigned to the formula e.g. "year" for "increase"
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
     the function is should be based on the group table which is supposed to be always up to date
@@ -408,8 +408,8 @@ class group_list extends sandbox_list
     - if a formula is only uses normal words e.g. "Net profit"           only the group selection should be used and all times          should be included
     - if a formula is only uses both         e.g. "Net profit next year" only the group selection should be used and the time selection should be used
 
-    - if a formula is assigned to "Year" and "2018" all value and result that have "Year" OR "2018" should be updated
-    - if a formula is assigned to the triple "2018 (Year)" only the value and result for the "Year" "2018" should be updated
+    - if a formula is assigned to "year" and "2018" all value and result that have "year" OR "2018" should be updated
+    - if a formula is assigned to the triple "2018 (year)" only the value and result for the "year" "2018" should be updated
 
     - if a normal phrase is assigned but not used no value should be selected
     - if a   time word   is assigned but not used no value should be selected

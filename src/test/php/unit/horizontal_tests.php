@@ -46,6 +46,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -155,6 +156,7 @@ class horizontal_tests
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
+            $usr_msg = new user_message();
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);
@@ -184,9 +186,9 @@ class horizontal_tests
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
                 $sys_usr = $t->user_system();
-                $filled_obj->import_mapper_user($ex_json, $sys_usr, $dto);
+                $filled_obj->import_mapper_user($ex_json, $sys_usr, $usr_msg, $dto);
             } else {
-                $filled_obj->import_mapper($ex_json, $dto);
+                $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
             }
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;

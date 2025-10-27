@@ -294,19 +294,23 @@ class component_link extends sandbox_link
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported components
-     * @param object|null $test_obj if not null the unit testing object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        log_debug();
+        global $db_con;
 
         // reset the all parameters for the view object but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         // if for the component only the position and name is defined
         // do not overwrite an existing component
@@ -331,10 +335,12 @@ class component_link extends sandbox_link
             // get component from dto by name
             $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME]);
             if ($cmp == null) {
-                $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
-                    msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
-                    msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
-                ]);
+                if ($db_con->is_open()) {
+                    $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
+                        msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                }
                 $cmp = new component($usr);
                 $cmp->set_name($in_ex_json[json_fields::NAME]);
             }
@@ -345,7 +351,7 @@ class component_link extends sandbox_link
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
             $cmp = new component($usr);
-            $cmp->import_obj($in_ex_json, $dto, $test_obj);
+            $cmp->import_mapper($in_ex_json, $usr_msg, $dto);
         }
 
         // set the link position and type
@@ -359,7 +365,11 @@ class component_link extends sandbox_link
             $this->set_style($in_ex_json[json_fields::STYLE]);
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

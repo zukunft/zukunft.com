@@ -66,7 +66,7 @@ class refs
     const string SYSTEM_TEST_API_ADD_URL = 'https://api.zukunft.com/';
 
     // reference group for testing
-    // TODO activate Prio 3
+    // TODO Prio 3 activate
     const array RESERVED_REFERENCES_TYPES = array(
         self::SYSTEM_TEST_ADD_COM
     );

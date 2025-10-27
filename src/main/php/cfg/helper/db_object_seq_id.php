@@ -49,6 +49,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::API_OBJECT . 'api_message.php';
@@ -58,6 +59,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 //include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -332,19 +334,76 @@ class db_object_seq_id extends db_object
      */
 
     /**
-     * general part to import a database object from a JSON array object
+     * the import_mapper fills the vars with this object based on the given im-/export json array
+     * the import_mapper never reads of writes to the database which is done by dto_save() or import_obj()
+     * instead the given data object cache is used and filled
+     * the data object cache is given as a parameter to be able to test different used cases
      *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * this is the general part to import a database object from a JSON array object
+     * has been the setting of a dummy sequence id
+     * kept for future use
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_db_obj(db_object_seq_id $db_obj, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->id = $test_obj->seq_id();
+        $usr_msg->start_time = microtime(true);
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
         }
-        return $usr_msg;
+    }
+
+    /**
+     * import a single json object
+     *
+     * @param array $in_ex_json an array with the data of the json object but without any database ids
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_obj(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        global $db_con;
+        global $usr; // must always be the user who has initiated the import
+
+        // map the json to the object
+        if (in_array($this::class, def::CODE_ID_CLASSES)) {
+            $this->import_mapper_user($in_ex_json, $usr, $usr_msg, $dto);
+        } else {
+            $this->import_mapper($in_ex_json, $usr_msg, $dto);;
+        }
+
+        // save the object and the related objects in the database
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -423,8 +482,33 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * to overwrite
+     * overwrite
      */
+
+    /**
+     * set the vars of this view object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_mapper_user(
+        array        $in_ex_json,
+        user         $usr_req,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        log_err('overwrite of import_mapper_user missing in ' . $this::class);
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * get the name of the database object (only used by named objects)

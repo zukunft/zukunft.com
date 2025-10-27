@@ -287,27 +287,28 @@ class ref extends sandbox_link
      * set the vars of this reference object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         global $ref_typ_cac;
+        global $db_con;
 
         // reset of object not needed, because the calling function has just created the object
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            if ($dto != null) {
-                $src = $dto->get_source_by_name($src_name);
-            } else {
-                $src = null;
-            }
+            $src = $dto?->get_source_by_name($src_name);
             if ($src == null) {
                 $src = new source($this->user());
-                if (!$test_obj) {
+                if ($db_con->is_open()) {
                     $src->load_by_name($src_name);
                     if ($src->id() == 0) {
                         $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
@@ -342,14 +343,10 @@ class ref extends sandbox_link
         }
         if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
             $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
-            if ($dto != null) {
-                $phr = $dto->get_phrase_by_name($phr_name);
-            } else {
-                $phr = null;
-            }
+            $phr = $dto?->get_phrase_by_name($phr_name);
             if ($phr == null) {
                 $phr = new phrase($this->user());
-                if (!$test_obj) {
+                if ($db_con->is_open()) {
                     $phr->load_by_name($phr_name);
                     if ($phr->id() == 0) {
                         $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
@@ -364,7 +361,11 @@ class ref extends sandbox_link
             $this->set_phrase($phr);
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

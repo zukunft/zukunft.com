@@ -57,7 +57,7 @@ class component_link_write_tests
         $t->header('component link db write tests');
 
         $t->subheader('component link write sandbox tests for ' . views::TEST_ADD_NAME . ' and ' . components::TEST_ADD_NAME);
-        // TODO activate (set object id instead of id)
+        // TODO Prio 2 activate (set object id instead of id)
         // $t->assert_write_link($t_cmp->component_link_filled_add());
 
 
@@ -108,7 +108,7 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        // TODO activate
+        // TODO Prio 2 activate
         $target = $t->usr2->name() . ' unlinked ' . views::TEST_ADD_NAME . ' from ' . components::TEST_ADD_NAME;
         $target = $t->usr2->name() . ' ';
         $t->display('view component_link->unlink_dsp logged for "' . $msk->name() . '" to "' . $cmp->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
@@ -224,7 +224,7 @@ class component_link_write_tests
             $result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
             $target = true;
-            // TODO activate Prio 2
+            // TODO Prio 2 activate
             //$t->display('view component order changed for user 2', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         }
 

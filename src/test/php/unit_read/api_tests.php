@@ -187,10 +187,10 @@ class api_tests
         $cfg_all = new config();
         $cfg_all->load(api::CONFIG_ALL);
         $test_name = 'there must be more configuration values than the frontend configuration values';
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_greater($test_name, $cfg->count(), $cfg_all->count());
         $test_name = 'the complete configuration api message must at least contain the pod name';
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
 
         // TODO get frontend configuration values and check if frontend and user config contains less values
@@ -204,13 +204,13 @@ class api_tests
         $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0);
         $test_name = 'the frontend configuration must at least contain some user number format settings';
-        // TODO activate
+        // TODO Prio 2 activate
         // $t->assert($test_name, $cfg->get_by([words::USER, triples::NUMBER_FORMAT]), null);
         $test_name = 'the frontend configuration must at least contain the user settings for the decimal places';
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert($test_name, $cfg->get_by([triples::NUMBER_FORMAT, triples::PERCENT_DECIMAL]), shared_config::DEFAULT_PERCENT_DECIMALS);
         $test_name = 'the frontend configuration should not contain the database block size settings';
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert($test_name, $cfg->get_by([words::DATABASE, triples::BLOCK_SIZE]), null);
 
 

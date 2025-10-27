@@ -168,18 +168,18 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
@@ -187,7 +187,11 @@ class sandbox_code_id extends sandbox_typed
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

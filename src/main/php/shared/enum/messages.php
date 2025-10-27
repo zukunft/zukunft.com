@@ -1172,6 +1172,12 @@ enum messages: string
     case FORM_SELECT_VIEW_STYLE = 'form_select_view_style';
     case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
     case FORM_SELECT_COMPONENT_STYLE = 'form_select_component_style';
+    case FORM_SELECT_COMPONENT_POS = 'form_select_component_pos';
+    case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
+    case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
+    case SYSTEM_SELECTION_TEXT = 'system_selection_text';
+    case SYSTEM_POPUP_TITLE_UPDATE = 'system_popup_title_update';
+    case SYSTEM_POPUP_TITLE_DELETE = 'system_popup_title_delete';
     case SELECT_VIEW = 'select_view';
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';

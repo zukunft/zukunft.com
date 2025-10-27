@@ -110,7 +110,7 @@ class phrase_write_tests
         if ($is_phr != null) {
             $result = $is_phr->name();
         } else {
-            // TODO activate
+            // TODO Prio 2 activate
             //log_err('Vestas type test failed');
             log_warning('Vestas type test failed');
         }

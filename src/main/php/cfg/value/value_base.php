@@ -445,18 +445,41 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $lib = new library();
+
+        if ($dto == null) {
+            $dto = new data_object($this->user());
+        }
+
+        if (key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
+                    msg_id::VAR_VALUE => $value
+                ]);
+            }
+        }
+
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
 
         if (key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $usr_msg, $dto);
             if ($usr_msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
@@ -465,19 +488,34 @@ class value_base extends sandbox_value
 
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto->source_list()->get_by_name($src_name);
+            $src = $dto->source_list()?->get_by_name($src_name);
             if ($src == null) {
-                $usr_msg->add_id_with_vars(msg_id::SOURCE_MISSING_IMPORT,
-                    [
-                        msg_id::VAR_SOURCE_NAME => $src_name,
-                        msg_id::VAR_JSON_TEXT => $in_ex_json
-                    ],
-                );
+                if ($db_con->is_open()) {
+                    $usr_msg->add_id_with_vars(msg_id::SOURCE_MISSING_IMPORT,
+                        [
+                            msg_id::VAR_SOURCE_NAME => $src_name,
+                            msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                        ],
+                    );
+                }
                 $src = new source($this->user());
                 $src->set_name($src_name);
                 $dto->source_list()->add_by_name($src);
             }
             $this->source = $src;
+        }
+
+        if (key_exists(json_fields::TIMESTAMP, $in_ex_json)) {
+            $time_txt = $in_ex_json[json_fields::TIMESTAMP];
+            if (strtotime($time_txt)) {
+                $this->time_stamp = $lib->get_datetime($time_txt, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                        msg_id::VAR_VALUE => $time_txt,
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]
+                );
+            }
         }
 
         return $this->common_mapper($in_ex_json, $usr_msg);
@@ -489,12 +527,12 @@ class value_base extends sandbox_value
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
-     * @return user_message the enriched user message
+     * @return bool true if everything was fine
      */
     private function common_mapper(
         array        $in_ex_json,
         user_message $usr_msg
-    ): user_message
+    ): bool
     {
         $lib = new library();
 
@@ -520,7 +558,11 @@ class value_base extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -1273,54 +1315,39 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        log_debug();
-        $result = parent::import_obj($in_ex_json, $dto, $test_obj);
+        global $db_con;
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
-        $get_ownership = false;
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == json_fields::WORDS) {
-                $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($value, $test_obj));
-                if ($result->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
-                    $this->set_grp($phr_grp);
-                }
-            }
-
-            $result->add($this->set_fields_from_json($key, $value, $result, $do_save));
-
-        }
 
         // save the value in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
+        if ($do_save) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             }
         }
 
-        // try to get the ownership if requested
-        if ($get_ownership) {
-            $this->take_ownership();
-        }
 
-        return $result;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

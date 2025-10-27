@@ -197,7 +197,7 @@ class change_log_tests
 
         $t->subheader($ts . 'load list');
         $log_lst = new change_log_list();
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_sql_by_user($sc, $log_lst);
         //$this->assert_sql_list_last(word::class, word_db::FLD_NAME, $log_lst, $db_con, $t);
         $test_name = 'get the latest changes of an user';

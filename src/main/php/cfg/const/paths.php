@@ -116,11 +116,4 @@ class paths
     const string REL_RES = self::REL_MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string REL_IMAGE = self::REL_RES . 'images' . DIRECTORY_SEPARATOR;
 
-    // test path for the initial load of the test files
-    const string TEST = self::SRC . 'test' . DIRECTORY_SEPARATOR;
-    // the test code path
-    const string TEST_PHP = self::TEST . 'php' . DIRECTORY_SEPARATOR;
-    // the test const string path
-    const string TEST_CONST = self::TEST_PHP . 'const' . DIRECTORY_SEPARATOR;
-
 }

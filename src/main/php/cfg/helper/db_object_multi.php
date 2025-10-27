@@ -214,19 +214,25 @@ class db_object_multi extends db_object_key
      */
 
     /**
-     * general part to import a database object from a JSON array object
+     * general part to import a database multi table object from a JSON array object
      *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_db_obj(db_object_multi $db_obj, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->id = $test_obj->seq_id();
+        $usr_msg->start_time = microtime(true);
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
         }
-        return $usr_msg;
     }
 
     /*

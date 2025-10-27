@@ -48,6 +48,7 @@ include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -360,23 +362,33 @@ class ui_list extends ui_base
      */
     function list_sort(
         phrase      $phr,
-        data_object $dbo
+        data_object $dto
     ): string
     {
         $lst = new list_sort();
-        return $lst->list_sort($phr, $dbo);
+        return $lst->list_sort($phr, $dto);
     }
 
     /**
      * @return string the html code for the start view as a sortable list
      */
     function start_list(
-        data_object $dbo
+        data_object $dto
     ): string
     {
         $phr = new phrase();
         $phr->load_by_name(triples::GLOBAL_PROBLEM);
-        return $this->list_sort($phr, $dbo);
+        return $this->list_sort($phr, $dto);
+    }
+
+    /**
+     * @return string the html code of the results that changes if the pending user change is confirmed
+     */
+    function result_changes(
+        result_list|db_object $dbo
+    ): string
+    {
+        return $dbo->display();
     }
 
 }

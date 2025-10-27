@@ -1136,7 +1136,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "year",
           "type": "wikipedia"
         }
       ]
@@ -1341,22 +1341,21 @@
       ]
     },
     {
-      "name": "Caesium-133",
+      "name": "Caesium",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Isotopes_of_caesium#Caesium-133",
+          "name": "Caesium",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Year",
-      "type": "time",
+      "name": "Caesium-133",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "Isotopes_of_caesium#Caesium-133",
           "type": "wikipedia"
         }
       ]
@@ -2103,32 +2102,32 @@
       ]
     },
     {
-      "name": "1967 (Year)",
+      "name": "1967 (year)",
       "from": "1967",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "1979 (Year)",
+      "name": "1979 (year)",
       "from": "1979",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "1983 (Year)",
+      "name": "1983 (year)",
       "from": "1983",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "2019 (Year)",
+      "name": "2019 (year)",
       "from": "2019",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
       "name": "year of definition",
-      "from": "Year",
+      "from": "year",
       "verb": "of",
       "to": "definition"
     },

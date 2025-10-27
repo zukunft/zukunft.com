@@ -142,7 +142,7 @@ class system_views_read_tests
         $t->dsp_contains(", dsp_header", $target, $result);
 
         // check if the about page contains at least some basic keywords
-        // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
+        // TODO Prio 3 activate: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
         $target = 'zukunft.com AG';
         if (strpos($result, $target) > 0) {
             $result = $target;

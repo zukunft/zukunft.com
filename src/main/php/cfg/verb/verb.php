@@ -257,18 +257,18 @@ class verb extends type_object
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
@@ -286,7 +286,11 @@ class verb extends type_object
 
         // the usage and impact var is not expected to be changed via import
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -591,27 +595,29 @@ class verb extends type_object
     /**
      * add a verb in the database from an imported json object of external database from
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
         global $vrb_cac;
 
-        log_debug();
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this verb object but keep the user
         $usr = $this->usr;
         $this->reset();
         $this->set_user($usr);
-        foreach ($json_obj as $key => $value) {
+
+        // TODO Prio 0 switch to a key_exists
+        foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
@@ -640,13 +646,23 @@ class verb extends type_object
         }
 
         // save the verb in the database
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
                 $usr_msg->add($this->save());
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

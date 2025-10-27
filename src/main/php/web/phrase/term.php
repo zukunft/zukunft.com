@@ -573,7 +573,7 @@ class term extends combine_named_dsp
                 $label = "Word:";
             }
         }
-        // TODO activate Prio 3
+        // TODO Prio 3 activate
         // $sel->bs_class = $class;
 
         return $trm_lst->selector($form, $this->id(), $name);

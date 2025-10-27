@@ -119,7 +119,7 @@ class value_list_read_tests
         $phr->load_by_name(triples::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         // TODO add the word "System configuration" to the list of index word for each pod
         //      and for fast value selection and always the word in the group
         //      so that a selection of the complete system configuration can be done with one phrase

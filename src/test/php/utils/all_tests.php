@@ -152,6 +152,7 @@ include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 use Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests;
 
 class all_tests extends all_unit_write_tests
@@ -167,7 +168,8 @@ class all_tests extends all_unit_write_tests
         $this->header('Start of all zukunft.com tests');
 
         if (QUICK_TEST_ONLY) {
-            $this->run_single($this);
+            $t_sel = new a_selected_test();
+            $t_sel->run();
         }
 
         // run the unit tests without database connection

@@ -34,27 +34,39 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once paths::SHARED_ENUM . 'user_profiles.php';
-include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED . 'library.php';
+include_once test_paths::CONST . 'files.php';
+include_once test_paths::CREATE . 'test_db_load.php';
+include_once test_paths::UTILS . 'all_tests.php';
+include_once test_paths::UNIT . 'lib_tests.php';
+include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\unit\lib_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
 
 class all_unit_write_tests extends all_unit_read_tests
@@ -99,7 +111,7 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             // test the api write functionality
-            // TODO activate Prio 2
+            // TODO Prio 2 activate
             //$this->test_api_write_no_rest_all();
             //$this->test_api_write_all();
 
@@ -137,7 +149,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 new formula_link_write_tests()->run_list($t);
                 new formula_trigger_tests()->run($t);
                 new result_write_tests()->run($t);
-                // TODO activate Prio 1
+                // TODO Prio 1 activate
                 //new result_write_tests()->run_list($t);
                 new element_write_tests()->run($t);
                 new element_write_tests()->run_list($t);
@@ -152,7 +164,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
 
-                // TODO activate Prio 2
+                // TODO Prio 2 activate
                 // run_export_test($t);
                 // run_permission_test ($t);
 
@@ -163,7 +175,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 //run_value_ui_test($t);
                 //run_formula_ui_test($t);
 
-                // TODO activate Prio 2
+                // TODO Prio 2 activate
                 //$this->run_api_test();
                 //run_word_ui_test($t);
                 // TODO add a test to merge a separate opened phrase Canton Zürich with Zurich (Canton)
@@ -178,7 +190,7 @@ class all_unit_write_tests extends all_unit_read_tests
             $t->cleanup();
 
             // start the integration tests by loading the base and sample data
-            // TODO activate Prio 1
+            // TODO Prio 1 activate
             //run_import_test(unserialize(TEST_IMPORT_FILE_LIST), $t);
 
         }
@@ -333,7 +345,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         $imf = new import_file();
 
-        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {

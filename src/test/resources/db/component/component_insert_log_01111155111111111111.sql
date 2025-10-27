@@ -163,7 +163,7 @@ SELECT component_insert_log_01111155111111111111 (
                795::smallint,
                0::numeric,
                143::smallint,
-               134::bigint,
+               109::bigint,
                146::smallint,
                185::bigint,
                147::smallint,

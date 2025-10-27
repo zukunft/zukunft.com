@@ -245,7 +245,7 @@ class button
                 } else {
                     $this->title = "add new value";
                 }
-                // TODO activate
+                // TODO Prio 2 activate
                 //$url_phr = $phr_lst->id_url_long();
             }
         }

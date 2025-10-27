@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 include_once paths::SHARED_CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class files
 {
@@ -55,6 +56,7 @@ class files
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
+    const string DATA_PATH = self::MESSAGE_PATH . 'data' . DIRECTORY_SEPARATOR;
     const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
@@ -129,6 +131,14 @@ class files
     // temp setup files that are loaded at the end not to change the id of objects used by the system tests
     const string MATH_EXTRA_FILE = 'math_extra' . self::JSON;
 
+    // initial data import
+    CONST string IMPORT_COUNTRIES = self::DATA_PATH . 'countries' . self::JSON;
+    CONST string IMPORT_COUNTRY_ISO = self::DATA_PATH . 'country-ISO-3166' . self::JSON;
+    CONST string IMPORT_DEMOCRACY_INDEX = self::DATA_PATH . 'democracy_index_table' . self::JSON;
+    CONST string IMPORT_CURRENCY = self::DATA_PATH . 'currency' . self::JSON;
+    CONST string IMPORT_CURRENCIES = self::DATA_PATH . 'currencies' . self::JSON;
+    CONST string IMPORT_WIND_INVESTMENT = self::DATA_PATH . 'wind_investment' . self::JSON;
+    CONST string IMPORT_COMPANIES = self::DATA_PATH . 'companies' . self::JSON;
 
     /*
      * file lists
@@ -148,6 +158,17 @@ class files
         self::COMPANY_FILE,
         self::COUNTRY_FILE,
         self::MATH_EXTRA_FILE,
+    ];
+
+    const array BASE_IMPORT_FILE_LIST = [
+        self::IMPORT_COUNTRIES,
+        self::IMPORT_COUNTRY_ISO,
+        self::IMPORT_DEMOCRACY_INDEX,
+        self::IMPORT_CURRENCY,
+        self::IMPORT_COMPANIES,
+        // TODO Prio 1 activate
+        //self::IMPORT_CURRENCIES,
+        self::IMPORT_WIND_INVESTMENT
     ];
 
     // to load the default data for all pods

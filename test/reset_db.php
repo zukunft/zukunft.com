@@ -32,30 +32,17 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
-
-// path for the general tests and test setup
-// TODO Prio 0 used test_paths:: instead
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
-
-// load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
-
-// load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
-
+include_once 'test_const.php';
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once test_paths::CREATE . 'test_db_load.php';
+// load the base testing functions
 include_once test_paths::UTILS . 'test_base.php';
+
 // load the main test control class
 include_once test_paths::UTILS . 'all_tests.php';
+
+include_once test_paths::CREATE . 'test_db_load.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;

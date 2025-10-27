@@ -236,6 +236,23 @@
       "assigned_word": "pence"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    },
+    {
+      "name": "Cash Flow Statement",
+      "description": "for company show the standard cash flow statement",
+      "type": "calc_sheet"
+    },
+    {
+      "name": "company with ratios",
+      "description": "the main rations of companies",
+      "type": "calc_sheet"
+    }
+  ],
   "views": [
     {
       "name": "company sheet",
@@ -243,8 +260,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",

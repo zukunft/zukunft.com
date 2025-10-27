@@ -393,20 +393,17 @@ class user extends db_id_object_non_sandbox
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        // set the object vars based on the json
-        $usr_msg = new user_message();
-
         // map the fields that are common for import and api json messages
         $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
 
@@ -418,7 +415,11 @@ class user extends db_id_object_non_sandbox
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1443,18 +1444,19 @@ class user extends db_id_object_non_sandbox
     /**
      * import a user from a json data user object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
+        array        $in_ex_json,
+        user_message $usr_msg,
         ?data_object $dto = null,
         ?object      $test_obj = null,
         ?user        $usr_req = null
-    ): user_message
+    ): bool
     {
         global $usr_pro_cac;
         global $usr;
@@ -1464,18 +1466,16 @@ class user extends db_id_object_non_sandbox
         }
         $profile_id = $usr_req->profile_id;
 
-        log_debug();
-
         // reset all parameters of this user object
         $this->reset();
 
-        $usr_msg = $this->import_mapper_user($json_obj, $usr_req, $dto);
+        $this->import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         // reset all parameters of this user object
         $this->reset();
 
         // TODO Prio 1 move to import_mapper
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
@@ -1514,11 +1514,20 @@ class user extends db_id_object_non_sandbox
                 if ($profile_id >= $this->profile_id) {
                     $usr_msg->add($this->save_user($usr_req));
                 }
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
         }
 
-
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

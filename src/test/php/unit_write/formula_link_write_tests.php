@@ -176,7 +176,7 @@ class formula_link_write_tests
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = true;
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         // $t->display('formula->assign_phr_ulst still contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
 
         // ... check if the values for the first user are still the same

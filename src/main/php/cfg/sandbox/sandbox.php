@@ -422,16 +422,20 @@ class sandbox extends db_object_seq_id_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
             $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
@@ -457,7 +461,11 @@ class sandbox extends db_object_seq_id_user
             }
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -495,46 +503,6 @@ class sandbox extends db_object_seq_id_user
     /*
      * im- and export
      */
-
-    /**
-     * set the vars of this sandbox object based on an import json array
-     *
-     * @param array $in_ex_json an array with the data of the json object but without any database ids
-     * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(
-        array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
-    {
-        global $usr; // must always be the user who has initiated the import
-
-        log_debug();
-
-        if (in_array($this::class, def::CODE_ID_CLASSES)) {
-            $usr_msg = $this->import_mapper_user($in_ex_json, $usr, $dto, $test_obj);
-        } else {
-            $usr_msg = $this->import_mapper($in_ex_json, $dto, $test_obj);
-        }
-
-        // save this object in the database
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            } else {
-                $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
-                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
-                    msg_id::VAR_ID => $this->dsp_id()
-                ]);
-            }
-        }
-
-        return $usr_msg;
-    }
 
     /**
      * create an array with the export json fields
@@ -1243,11 +1211,11 @@ class sandbox extends db_object_seq_id_user
 
         if ($this->user()->is_admin()) {
             // create a user db row for the current owner
-            // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
+            // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
             // take over the ownership by an admin
             $result = $this->set_owner($usr->id); // TODO remove double getting of the user object
             // set the protection to avoid that the admin is losing the ownership
-            // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
+            // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
 
         log_debug($this->dsp_id() . ' done');
@@ -2789,6 +2757,20 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
+    /**
+     * store the related objects to the database
+     * or fill missing data based on the database entry
+     * e.g. for triples that have only the to and from name get the db id
+     * TODO Prio 0 use it for import
+     *
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param bool|null $use_func true if the predefined sql function should be used
+     * @return bool true if everything has been successful
+     */
+    function save_related(user_message $usr_msg, ?bool $use_func = null): bool
+    {
+        return true;
+    }
 
     /*
      * delete
@@ -4209,27 +4191,6 @@ class sandbox extends db_object_seq_id_user
     /*
      * overwrite
      */
-
-    /**
-     * set the vars of this view object based on the given json without writing to the database
-     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit testing object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_mapper_user(
-        array        $in_ex_json,
-        user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
-    {
-        log_err('overwrite of import_mapper_user missing in ' . $this::class);
-        return new user_message();
-    }
 
     function set_code_id(?string $code_id, user $usr): user_message
     {

@@ -62,6 +62,9 @@ class user_message
     private int $msg_status;
     private int|null $checksum = null;
 
+    // the start time for longer processes
+    public ?float $start_time;
+
     // array of the information only messages that should be shown to the user
     // to explain the result of a process
     private array $info_text;
@@ -112,6 +115,7 @@ class user_message
             $this->msg_text[] = $msg_text;
             $this->msg_status = self::NOK;
         }
+        $this->start_time = null;
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->added_depending = false;

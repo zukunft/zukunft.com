@@ -44,7 +44,7 @@ class view_link_write_tests
         $t->header('view link db write tests');
 
         $t->subheader('view link write sandbox tests for ' . views::TEST_ADD_NAME);
-        // TODO activate (set object id instead of id)
+        // TODO Prio 2 activate (set object id instead of id)
         //$t->assert_write_link($t_msk->view_link_filled_add());
 
 

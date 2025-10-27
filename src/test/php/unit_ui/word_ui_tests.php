@@ -44,11 +44,12 @@ class word_ui_tests
 {
     function run(test_cleanup $t, type_lists $cfg): void
     {
+        // init
         $html = new html_base();
-
-        // start the test section (ts)
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
+
+        // start the test section (ts)
         $ts = 'unit ui html word ';
         $t->header($ts);
 

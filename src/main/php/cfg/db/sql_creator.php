@@ -306,7 +306,7 @@ class sql_creator
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
     private ?array $join_usr_geo_field_lst;    // list of fields that should be returned to the next select query that are taken from a joined table
-    // TODO activate or review
+    // TODO Prio 2 activate or review
     //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
     //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
     //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join

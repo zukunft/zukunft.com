@@ -117,7 +117,7 @@ class sandbox_tests
         $wrd_ex->exclude();
         $wrd_lst->add_by_name($wrd_ex);
         $name_list_ex_cache = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
-        // TODO activate and add the handling of excluded named objects
+        // TODO Prio 2 activate and add the handling of excluded named objects
         //$t->assert_not($test_name, $name_list_ex_cache, $name_list);
         $test_name = 'cached names match cached names including excluded';
         //$t->assert($test_name, $name_list_ex_cache, $name_list_ex);
@@ -138,7 +138,7 @@ class sandbox_tests
         $to->set_name($vrb->name() . sandbox_link::KEY_SEP . $to->name());
         $key_to = $trp->key();
         $t->assert_not($test_name, $key_vrb, $key_to);
-        // TODO activate this test based on changing the verb
+        // TODO Prio 2 activate this test based on changing the verb
         //      which implies that the changing of the verb name is updating the cache
         //      so a requirement is that the cache update trigger is implemented
         /*

@@ -129,12 +129,23 @@ class system_form extends component
     }
 
     /**
+     * show the name of an object to the user
      * @param db_object_dsp $dbo the object
+     * @param string $code_id e.g. to select the name in case of a link object
      * @return string the html code to show the object name to the user
      */
-    function show_name(db_object_dsp $dbo): string
+    function show_name(db_object_dsp $dbo, string $code_id = ''): string
     {
-        return $dbo->name();
+        if ($code_id == '') {
+            return $dbo->name();
+        } elseif ($code_id == 'show_field_formula_name') {
+            return $dbo->formula_name();
+        } elseif ($code_id == 'show_field_phrase_name') {
+            return $dbo->phrase_name();
+        } else {
+            log_warning('code id ' . $code_id . ' not yet defined in show_name');
+            return $dbo->name();
+        }
     }
 
     /**
@@ -1096,6 +1107,18 @@ class system_form extends component
      * @return string the html code to select the component link type
      */
     function form_component_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->component_link_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the component position type
+     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component link type
+     */
+    function form_component_pos_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_link_type_selector($form_name, $typ_lst);
     }

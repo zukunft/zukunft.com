@@ -62,7 +62,7 @@ include_once test_paths::CREATE . 'test_verbs.php';
 include_once test_paths::CREATE . 'test_views.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -128,7 +128,6 @@ class system_tests
         global $usr;
         // TODO move system user to a test object vars
         global $usr_sys;
-        global $sql_names;
         global $sys_log_sta_cac;
         global $mtr;
 
@@ -276,9 +275,9 @@ class system_tests
         // ... and check if the prepared sql name is unique
         $result = false;
         $sql_name = $ip_range->load_sql_by_vars($db_con)->name;
-        if (!in_array($sql_name, $sql_names)) {
+        if (!in_array($sql_name, $t->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $t->unique_sql_names[] = $sql_name;
         }
         $t->assert_true('ip_range->load_sql by id range', $result);
 
@@ -372,6 +371,7 @@ class system_tests
 
         $t->subheader($ts . 'im- and export');
 
+        $usr_msg = new user_message();
 
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
@@ -379,13 +379,12 @@ class system_tests
         // switch to system user for import
         $usr_tmp = $usr;
         $usr = $usr_sys;
-        $ip_range->import_obj($json_in, new data_object($usr), $t);
+        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
         // switch back to original user
         $usr = $usr_tmp;
         $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
-
 
 
         /*
@@ -401,7 +400,7 @@ class system_tests
         // switch to system user for import
         $usr_tmp = $usr;
         $usr = $usr_sys;
-        $ip_range->import_obj($json_in, new data_object($usr), $t);
+        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
         // switch back to original user
         $usr = $usr_tmp;
         $test_ip = '66.249.64.95';
@@ -440,9 +439,9 @@ class system_tests
         $this->php_class_section_tests($t, paths::MODEL_COMPONENT);
 
         // ... and check if the prepared sql name is unique
-        if (!in_array($qp->name, $sql_names)) {
+        if (!in_array($qp->name, $t->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $t->unique_sql_names[] = $sql_name;
         }
         $t->assert_true('system_consistency->missing_owner_sql by formula', $result);
 
@@ -465,9 +464,9 @@ class system_tests
         $t->assert('database_upgrade->remove_prefix of verb code_id', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
-        if (!in_array($qp->name, $sql_names)) {
+        if (!in_array($qp->name, $t->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $t->unique_sql_names[] = $sql_name;
         }
         $t->assert_true('database_upgrade->remove_prefix of verb code_id name', $result);
 
@@ -496,9 +495,9 @@ class system_tests
         // ... and check if the prepared sql name is unique
         $result = false;
         $sql_name = $log_lst->load_sql($db_con)->name;
-        if (!in_array($sql_name, $sql_names)) {
+        if (!in_array($sql_name, $t->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $t->unique_sql_names[] = $sql_name;
         }
         $t->assert_true('sys_log_list->load_sql all', $result);
 

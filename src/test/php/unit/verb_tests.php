@@ -79,11 +79,11 @@ class verb_tests
         $t->assert_sql_by_code_id($sc, $vrb);
 
         $t->subheader($ts . 'sql write');
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_insert($sc, $vrb);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_update($sc, $vrb);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_delete($sc, $vrb);
 
 

@@ -121,7 +121,7 @@ class phrase_list_tests
         $phr_lst->add($wrd->phrase());
         $vrb = $vrb_cac->get_verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
@@ -150,7 +150,7 @@ class phrase_list_tests
         $wrd_city = $t_wrd->word_city();
         $city_lst = $wrd_city->are($t_phr->phrase_list_all());
         $target = $t_phr->phrase_list_cities();
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 

@@ -57,4 +57,76 @@ class ui_preview extends ui_base
         return $this->name();
     }
 
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function paste_table(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function table_body(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function selection_text(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function popup_title(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function popup_class(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function popup_changes(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function popup_impact(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO add code and maybe move
+     * @return string a dummy text
+     */
+    function view_diff(): string
+    {
+        return $this->name();
+    }
+
 }

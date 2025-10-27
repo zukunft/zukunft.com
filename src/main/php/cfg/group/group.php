@@ -1600,7 +1600,7 @@ class group extends sandbox_multi
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(group::class);
-                // TODO activate Prio 2
+                // TODO Prio 2 activate
                 /*
                 if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;

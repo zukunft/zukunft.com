@@ -34,10 +34,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
-include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view.php';
@@ -309,7 +309,7 @@ function log_msg(string  $msg_text,
         $used_db_con = new sql_db();
     }
     // try to reconnect to the database
-    // TODO activate Prio 3
+    // TODO Prio 3 activate
     /*
     if (!$used_db_con->connected()) {
         if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {

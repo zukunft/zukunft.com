@@ -315,18 +315,19 @@ class word extends sandbox_code_id
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $phr_typ_cac;
+        global $db_con;
 
         // reset all parameters for the word object but keep the user
         $usr = $this->user();
@@ -334,7 +335,7 @@ class word extends sandbox_code_id
         $this->set_user($usr);
 
         // set the object vars based on the json
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -352,7 +353,7 @@ class word extends sandbox_code_id
                 foreach ($ref_json as $ref_data) {
                     $ref_obj = new ref($this->user());
                     $ref_obj->set_phrase($this->phrase());
-                    $usr_msg->add($ref_obj->import_mapper($ref_data, $dto, $test_obj));
+                    $ref_obj->import_mapper($ref_data, $usr_msg, $dto);
                     // TODO $dto should never be null if no direct import is used
                     $dto?->add_reference($ref_obj);
                     if ($usr_msg->is_ok()) {
@@ -366,7 +367,7 @@ class word extends sandbox_code_id
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $msk_name = $in_ex_json[json_fields::VIEW];
             $wrd_view = new view($this->user());
-            if (!$test_obj) {
+            if ($db_con->is_open()) {
                 $wrd_view->load_by_name($msk_name);
                 if ($wrd_view->id() == 0) {
                     $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
@@ -384,7 +385,11 @@ class word extends sandbox_code_id
             $this->type_id = $phr_typ_cac->default_id();
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -1347,8 +1352,8 @@ class word extends sandbox_code_id
         // TODO recreate based on the group
         /*
         $sql = 'UPDATE words t
-             SET ' . $db_con->sf("values") . ' = ( 
-          SELECT COUNT(group_id) 
+             SET ' . $db_con->sf("values") . ' = (
+          SELECT COUNT(group_id)
             FROM group g
            WHERE g.phrase_id = t.word_id);';
         $db_con->exe_try('Calculate word usage', $sql);
@@ -1397,7 +1402,8 @@ class word extends sandbox_code_id
     /**
      * return a list of upward related verbs e.g. 'is a' for Zurich because Zurich is a City
      */
-    private function verb_list_up(): verb_list
+    private
+    function verb_list_up(): verb_list
     {
         return $this->link_types(foaf_direction::UP);
     }
@@ -1405,18 +1411,21 @@ class word extends sandbox_code_id
     /**
      * return a list of downward related verbs e.g. 'contains' for mathematical constant because mathematical constant contains Pi
      */
-    private function verb_list_down(): verb_list
+    private
+    function verb_list_down(): verb_list
     {
         return $this->link_types(foaf_direction::DOWN);
     }
 
-    private function phrase_list_up(): phrase_list
+    private
+    function phrase_list_up(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         return $phr_lst->parents();
     }
 
-    private function phrase_list_down(): phrase_list
+    private
+    function phrase_list_down(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         return $phr_lst->direct_children();
@@ -1630,7 +1639,8 @@ class word extends sandbox_code_id
      * set the update parameters for the word code_id
      * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_code_id(sql_db $db_con, word $db_rec, word $std_rec): user_message
+    private
+    function save_field_code_id(sql_db $db_con, word $db_rec, word $std_rec): user_message
     {
         $usr_msg = new user_message();
         // if the code_id is not set, don't overwrite any db entry
@@ -1652,7 +1662,8 @@ class word extends sandbox_code_id
      * set the update parameters for the word plural
      * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): user_message
+    private
+    function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): user_message
     {
         $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
@@ -1676,7 +1687,8 @@ class word extends sandbox_code_id
      * @return user_message the message that should be shown to the user in case something went wrong
      * TODO replace string by usr_msg to include more infos e.g. suggested solutions
      */
-    private function save_field_view(word|sandbox $db_rec): user_message
+    private
+    function save_field_view(word|sandbox $db_rec): user_message
     {
         $usr_msg = new user_message();
         if ($db_rec->view_id() <> $this->view_id()) {
@@ -1712,7 +1724,8 @@ class word extends sandbox_code_id
     /**
      * @return array with the reserved word names
      */
-    protected function reserved_names(): array
+    protected
+    function reserved_names(): array
     {
         return words::RESERVED_NAMES;
     }
@@ -1720,7 +1733,8 @@ class word extends sandbox_code_id
     /**
      * @return array with the fixed word names for db read testing
      */
-    protected function fixed_names(): array
+    protected
+    function fixed_names(): array
     {
         return words::FIXED_NAMES;
     }
@@ -1741,7 +1755,7 @@ class word extends sandbox_code_id
         $usr_msg = new user_message();
 
         // collect all phrase groups where this word is used
-        // TODO activate
+        // TODO Prio 2 activate
         //$grp_lst = new group_list($this->user());
         //$grp_lst->load_by_phr($this->phrase());
 
@@ -1764,7 +1778,7 @@ class word extends sandbox_code_id
         }
 
         // delete the phrase groups
-        // TODO activate
+        // TODO Prio 2 activate
         //$usr_msg->add($grp_lst->del());
 
         return $usr_msg;

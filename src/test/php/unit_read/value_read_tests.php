@@ -99,7 +99,7 @@ class value_read_tests
             words::INHABITANTS,
             words::MIO
         ));
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert($ts . $test_name, $val->number(), values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         $test_name = 'value of a words group can be accessed by the triple e.g. '
@@ -108,7 +108,7 @@ class value_read_tests
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         $val = $t_db->load_value(array(
             triples::CANTON_ZURICH,
             words::INHABITANTS,
@@ -124,7 +124,7 @@ class value_read_tests
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         $val = $t_db->load_value(array(
             words::CANTON,
             words::ZH,

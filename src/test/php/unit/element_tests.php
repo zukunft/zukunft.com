@@ -75,13 +75,13 @@ class element_tests
         $t->assert_sql_by_id($sc, $elm);
 
         $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_insert($sc, $elm);
         //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_update($sc, $elm);
         //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_delete($sc, $elm);
         //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 

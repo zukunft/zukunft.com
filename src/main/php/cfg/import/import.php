@@ -160,6 +160,9 @@ class import
     // the adjusted expected time to finish this import
     public float $time_exp_act;
 
+    // seq id for dummy import without db connection
+    private int $seq_id = 0;
+
 
     // timestamp of the last message shown to the user
     public float $last_display_time;
@@ -377,10 +380,12 @@ class import
      * and check the consistency upfront
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @return user_message the result of the import
      */
     function put_json(
-        string $json_str
+        string $json_str,
+        user_message $usr_msg
     ): user_message
     {
         global $cfg;
@@ -394,8 +399,6 @@ class import
             triples::OBJECT_STORING,
             triples::BYTES_PER_SECOND,
             triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        $usr_msg = new user_message();
 
         $size = strlen($json_str);
 
@@ -478,8 +481,7 @@ class import
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr_import = new user;
-                        $import_result = $usr_import->import_obj($user, null, null, $this->usr);
-                        if ($import_result->is_ok()) {
+                        if ($usr_import->import_obj($user, $usr_msg, null, null, $this->usr)) {
                             $this->users_done++;
                         } else {
                             $this->users_failed++;
@@ -533,8 +535,7 @@ class import
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
                     $vrb->set_user($this->usr);
-                    $import_result = $vrb->import_obj($verb);
-                    if ($import_result->is_ok()) {
+                    if ($vrb->import_obj($verb, $usr_msg)) {
                         $this->verbs_done++;
                     } else {
                         $this->verbs_failed++;
@@ -548,13 +549,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
                 foreach ($json_obj as $json_wrd) {
                     $wrd = new word($this->usr);
-                    $import_result = $wrd->import_obj($json_wrd);
-                    if ($import_result->is_ok()) {
+                    if ($wrd->import_obj($json_wrd, $usr_msg)) {
                         $this->words_done++;
                     } else {
                         $this->words_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->words_done);
                     $pos++;
                 }
@@ -577,13 +576,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, triple::class);
                 foreach ($json_obj as $json_trp) {
                     $wrd_lnk = new triple($this->usr);
-                    $import_result = $wrd_lnk->import_obj($json_trp);
-                    if ($import_result->is_ok()) {
+                    if ($wrd_lnk->import_obj($json_trp, $usr_msg)) {
                         $this->triples_done++;
                     } else {
                         $this->triples_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->triples_done);
                     $pos++;
                 }
@@ -591,14 +588,12 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, formula::class);
                 foreach ($json_obj as $json_frm) {
                     $frm = new formula($this->usr);
-                    $import_result = $frm->import_obj($json_frm);
-                    if ($import_result->is_ok()) {
+                    if ($frm->import_obj($json_frm, $usr_msg)) {
                         $this->formulas_done++;
                         $frm_to_calc->add($frm);
                     } else {
                         $this->formulas_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->formulas_done);
                     $pos++;
                 }
@@ -606,13 +601,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, source::class);
                 foreach ($json_obj as $json_src) {
                     $src = new source($this->usr);
-                    $import_result = $src->import_obj($json_src);
-                    if ($import_result->is_ok()) {
+                    if ($src->import_obj($json_src, $usr_msg)) {
                         $this->sources_done++;
                     } else {
                         $this->sources_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->sources_done);
                     $pos++;
                 }
@@ -620,13 +613,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, ref::class);
                 foreach ($json_obj as $json_ref) {
                     $ref = new ref($this->usr);
-                    $import_result = $ref->import_obj($json_ref);
-                    if ($import_result->is_ok()) {
+                    if ($ref->import_obj($json_ref, $usr_msg)) {
                         $this->refs_done++;
                     } else {
                         $this->refs_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->refs_done);
                     $pos++;
                 }
@@ -648,13 +639,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, value::class);
                 foreach ($json_obj as $json_val) {
                     $val = new value($this->usr);
-                    $import_result = $val->import_obj($json_val);
-                    if ($import_result->is_ok()) {
+                    if ($val->import_obj($json_val, $usr_msg)) {
                         $this->values_done++;
                     } else {
                         $this->values_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->values_done);
                     $pos++;
                 }
@@ -663,13 +652,11 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($this->usr);
-                    $import_result = $val->import_obj($value);
-                    if ($import_result->is_ok()) {
+                    if ($val->import_obj($value, $usr_msg)) {
                         $this->list_values_done++;
                     } else {
                         $this->list_values_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->list_values_done);
                     $pos++;
                 }
@@ -677,13 +664,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, view::class);
                 foreach ($json_obj as $json_msk) {
                     $view_obj = new view($this->usr);
-                    $import_result = $view_obj->import_obj($json_msk);
-                    if ($import_result->is_ok()) {
+                    if ($view_obj->import_obj($json_msk, $usr_msg)) {
                         $this->views_done++;
                     } else {
                         $this->views_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->views_done);
                     $pos++;
                 }
@@ -691,13 +676,11 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, component::class);
                 foreach ($json_obj as $json_cmp) {
                     $cmp_obj = new component($this->usr);
-                    $import_result = $cmp_obj->import_obj($json_cmp);
-                    if ($import_result->is_ok()) {
+                    if ($cmp_obj->import_obj($json_cmp, $usr_msg)) {
                         $this->components_done++;
                     } else {
                         $this->components_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->components_done);
                     $pos++;
                 }
@@ -706,14 +689,12 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $json_res) {
                     $res = new result($this->usr);
-                    $import_result = $res->import_obj($json_res);
-                    if ($import_result->is_ok()) {
+                    if ($res->import_obj($json_res, $usr_msg)) {
                         $this->calc_validations_done++;
                         $res_to_validate->add($res);
                     } else {
                         $this->calc_validations_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->calc_validations_done);
                     $pos++;
                 }
@@ -723,14 +704,12 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $msk = new view($this->usr);
-                    $import_result = $msk->import_obj($value);
-                    if ($import_result->is_ok()) {
+                    if ($msk->import_obj($value, $usr_msg)) {
                         $this->view_validations_done++;
                         $dsp_to_validate->add($msk);
                     } else {
                         $this->view_validations_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->view_validations_done);
                     $pos++;
                 }
@@ -739,13 +718,11 @@ class import
                 foreach ($json_obj as $ip_range) {
                     $ip_obj = new ip_range;
                     $ip_obj->set_user($this->usr);
-                    $import_result = $ip_obj->import_obj($ip_range);
-                    if ($import_result->is_ok()) {
+                    if ($ip_obj->import_obj($ip_range, $usr_msg)) {
                         $this->system_done++;
                     } else {
                         $this->system_failed++;
                     }
-                    $usr_msg->add($import_result);
                     $this->display_progress($this->system_done);
                     $pos++;
                 }
@@ -819,58 +796,58 @@ class import
             if (key_exists(json_fields::IP_BLACKLIST, $json_array)) {
                 $ip_array = $json_array[json_fields::IP_BLACKLIST];
                 $this->step_start(msg_id::COUNT, ip_range::class, count($ip_array), $step_time);
-                $usr_msg->add($this->dto_get_ip_ranges($ip_array, $dto, $ip_per_sec));
+                $usr_msg->add($this->dto_get_ip_ranges($ip_array, $dto, $usr_msg, $ip_per_sec));
                 $this->step_end($dto->ip_range_list()->count(), $ip_per_sec);
             }
             if (key_exists(json_fields::USERS, $json_array)) {
                 $usr_array = $json_array[json_fields::USERS];
                 $this->step_start(msg_id::COUNT, user::class, count($usr_array), $step_time);
-                $usr_msg->add($this->dto_get_users($usr_array, $dto, $usr_per_sec));
+                $usr_msg->add($this->dto_get_users($usr_array, $dto, $usr_msg, $usr_per_sec));
                 $this->step_end($dto->word_list()->count(), $usr_per_sec);
             }
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $this->step_start(msg_id::COUNT, word::class, count($wrd_array), $step_time);
-                $usr_msg->add($this->dto_get_words($wrd_array, $dto, $wrd_per_sec));
+                $usr_msg->add($this->dto_get_words($wrd_array, $dto, $usr_msg, $wrd_per_sec));
                 $this->step_end($dto->word_list()->count(), $wrd_per_sec);
             }
             if (key_exists(json_fields::LIST_VERBS, $json_array)) {
                 $vrb_lst_array = $json_array[json_fields::LIST_VERBS];
                 $this->step_start(msg_id::COUNT, verb::class, count($vrb_lst_array), $step_time);
-                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $dto, $vrb_per_sec));
+                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $dto, $usr_msg, $vrb_per_sec));
                 $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
             }
             // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $this->step_start(msg_id::COUNT, triple::class, count($trp_array), $step_time);
-                $usr_msg->add($this->dto_get_triples($trp_array, $dto, $trp_per_sec));
+                $usr_msg->add($this->dto_get_triples($trp_array, $dto, $usr_msg, $trp_per_sec));
                 $this->step_end($dto->triple_list()->count(), $trp_per_sec);
             }
             if (key_exists(json_fields::SOURCES, $json_array)) {
                 $src_array = $json_array[json_fields::SOURCES];
                 $this->step_start(msg_id::COUNT, source::class, count($src_array), $step_time);
-                $usr_msg->add($this->dto_get_sources($src_array, $dto, $src_per_sec));
+                $usr_msg->add($this->dto_get_sources($src_array, $dto, $usr_msg, $src_per_sec));
                 $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
             if (key_exists(json_fields::REFERENCES, $json_array)) {
                 $ref_array = $json_array[json_fields::SOURCES];
                 $this->step_start(msg_id::COUNT, ref::class, count($ref_array), $step_time);
-                $usr_msg->add($this->dto_get_references($ref_array, $dto, $ref_per_sec));
+                $usr_msg->add($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
             // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
-                $usr_msg->add($this->dto_get_values($val_array, $dto, $val_per_sec));
+                $usr_msg->add($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
                 $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
             // TODO add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
-                $usr_msg->add($this->dto_get_formulas($frm_array, $dto, $frm_per_sec));
+                $usr_msg->add($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
                 $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
             // TODO add json_fields::RESULTS
@@ -878,13 +855,13 @@ class import
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
-                $usr_msg->add($this->dto_get_components($cmp_array, $dto, $cmp_per_sec));
+                $usr_msg->add($this->dto_get_components($cmp_array, $dto, $usr_msg, $cmp_per_sec));
                 $this->step_end($dto->component_list()->count(), $cmp_per_sec);
             }
             if (key_exists(json_fields::VIEWS, $json_array)) {
                 $msk_array = $json_array[json_fields::VIEWS];
                 $this->step_start(msg_id::COUNT, view::class, count($msk_array), $step_time);
-                $usr_msg->add($this->dto_get_views($msk_array, $dto, $msk_per_sec));
+                $usr_msg->add($this->dto_get_views($msk_array, $dto, $usr_msg, $msk_per_sec));
                 $this->step_end($dto->view_list()->count(), $msk_per_sec);
             }
             // TODO add json_fields::VIEW_VALIDATION
@@ -1099,19 +1076,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_words(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $wrd_json) {
             $wrd = new word($this->usr);
-            $usr_msg->add($wrd->import_mapper_user($wrd_json, $this->usr, $dto));
-            $dto->add_word($wrd);
-            $i++;
+            if ($wrd->import_mapper_user($wrd_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_word($wrd);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $wrd->dsp_id());
         }
         return $usr_msg;
@@ -1125,20 +1102,20 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_verbs(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $vrb_json) {
             $vrb = new verb();
-            $usr_msg->add($vrb->import_mapper_user($vrb_json, $this->usr, $dto));
-            $vrb->set_user($this->usr);
-            $dto->add_verb($vrb);
-            $i++;
+            if ($vrb->import_mapper_user($vrb_json, $this->usr, $usr_msg, $dto)) {
+                $vrb->set_user($this->usr);
+                $dto->add_verb($vrb);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $vrb->dsp_id());
         }
         return $usr_msg;
@@ -1152,19 +1129,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_triples(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $trp_json) {
             $trp = new triple($this->usr);
-            $usr_msg->add($trp->import_mapper_user($trp_json, $this->usr, $dto));
-            $dto->add_triple_without_ready_check($trp);
-            $i++;
+            if ($trp->import_mapper_user($trp_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_triple_without_ready_check($trp);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $trp->dsp_id());
         }
         return $usr_msg;
@@ -1178,19 +1155,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_sources(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $src_json) {
             $src = new source($this->usr);
-            $usr_msg->add($src->import_mapper_user($src_json, $this->usr, $dto));
-            $dto->add_source($src);
-            $i++;
+            if ($src->import_mapper_user($src_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_source($src);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $src->dsp_id());
         }
         return $usr_msg;
@@ -1204,19 +1181,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_references(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $ref_json) {
             $ref = new ref($this->usr);
-            $usr_msg->add($ref->import_mapper_user($ref_json, $this->usr, $dto));
-            $dto->add_reference($ref);
-            $i++;
+            if ($ref->import_mapper_user($ref_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_reference($ref);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $ref->dsp_id());
         }
         return $usr_msg;
@@ -1230,19 +1207,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_values(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $val_json) {
             $val = new value($this->usr);
-            $usr_msg->add($val->import_mapper($val_json, $dto));
-            $dto->add_value($val);
-            $i++;
+            if ($val->import_mapper($val_json, $usr_msg, $dto)) {
+                $dto->add_value($val);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $val->dsp_id());
         }
         return $usr_msg;
@@ -1256,19 +1233,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_formulas(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $frm_json) {
             $frm = new formula($this->usr);
-            $usr_msg->add($frm->import_mapper($frm_json, $dto));
-            $dto->add_formula_without_ready_check($frm);
-            $i++;
+            if ($frm->import_mapper($frm_json, $usr_msg, $dto)) {
+                $dto->add_formula_without_ready_check($frm);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $frm->dsp_id());
         }
         return $usr_msg;
@@ -1278,23 +1255,24 @@ class import
      * add the views from the json array to the data object
      * @param array $json_array the view part of the import json
      * @param data_object $dto the data object that should be filled
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param float $per_sec the expected number of formulas that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_views(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $msk_json) {
             $msk = new view($this->usr);
-            $usr_msg->add($msk->import_mapper_user($msk_json, $this->usr, $dto));
-            $dto->add_view($msk);
-            $i++;
+            if ($msk->import_mapper_user($msk_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_view($msk);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $msk->dsp_id());
         }
         return $usr_msg;
@@ -1308,19 +1286,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_components(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $cmp_json) {
             $cmp = new component($this->usr);
-            $usr_msg->add($cmp->import_mapper_user($cmp_json, $this->usr, $dto));
-            $dto->add_component($cmp);
-            $i++;
+            if ($cmp->import_mapper_user($cmp_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_component($cmp);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $cmp->dsp_id());
         }
         return $usr_msg;
@@ -1334,19 +1312,19 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_users(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $usr_json) {
             $usr = new user();
-            $usr_msg->add($usr->import_mapper_user($usr_json, $this->usr, $dto));
-            $dto->add_user($usr);
-            $i++;
+            if ($usr->import_mapper_user($usr_json, $this->usr, $usr_msg, $dto)) {
+                $dto->add_user($usr);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $usr->dsp_id());
         }
         return $usr_msg;
@@ -1360,20 +1338,20 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function dto_get_ip_ranges(
-        array       $json_array,
-        data_object $dto,
-        float       $per_sec = 0
+        array        $json_array,
+        data_object  $dto,
+        user_message $usr_msg,
+        float        $per_sec = 0
     ): user_message
     {
-        $usr_msg = new user_message();
-
         $i = 0;
         foreach ($json_array as $ip_json) {
             $ip = new ip_range();
             $ip->set_user($this->usr);
-            $usr_msg->add($ip->import_mapper($ip_json));
-            $dto->add_ip_range($ip);
-            $i++;
+            if ($ip->import_mapper($ip_json, $usr_msg)) {
+                $dto->add_ip_range($ip);
+                $i++;
+            }
             $this->display_progress($i, $per_sec, $ip->dsp_id());
         }
         return $usr_msg;
@@ -1631,5 +1609,13 @@ class import
         return $msg_txt;
     }
 
+    /**
+     * @return int the next dummy id for unit testing
+     */
+    function seq_id(): int
+    {
+        $this->seq_id++;
+        return $this->seq_id;
+    }
 
 }

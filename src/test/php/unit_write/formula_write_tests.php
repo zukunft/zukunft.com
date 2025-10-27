@@ -161,7 +161,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->dsp_name();
         }
-        $target = '"Year"';
+        $target = '"year"';
         $t->display('formula->assign_phr_lst_direct for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst = $frm->assign_phr_ulst_direct();
@@ -170,7 +170,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->dsp_name();
         }
-        $target = '"Year"';
+        $target = '"year"';
         $t->display('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
         // loading another formula (Price Earning ratio ) to have more test cases
@@ -249,7 +249,7 @@ class formula_write_tests
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::ONE));
         $frm_scale_one_to_k = $t_db->load_formula(formulas::SYSTEM_TEST_SCALE_TO_K);
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
             $result = $res_lst[0]->number();
@@ -257,7 +257,7 @@ class formula_write_tests
             $result = '';
         }
         $target = 8505.251;
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         // TODO if possible move as many tests as possible to unit tests
         //$t->display('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
@@ -313,7 +313,7 @@ class formula_write_tests
         $page = 1;
         $size = 20;
         $call = '/http/test.php';
-        // TODO activate
+        // TODO Prio 2 activate
         //$result = $frm_html->dsp_hist($page, $size, $call, $back);
         //$target = 'changed to';
         //$t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id(), $target, $result);

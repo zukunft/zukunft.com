@@ -155,6 +155,8 @@ class component_type
     const int FORM_SELECT_VIEW_LINK_PRIORITY_ID = 125;
     const string FORM_SELECT_COMPONENT_LINK_TYPE = "system_form_select_component_link_type";
     const int FORM_SELECT_COMPONENT_LINK_TYPE_ID = 99;
+    const string FORM_SELECT_COMPONENT_POS_TYPE = "system_form_select_component_position_type";
+    const int FORM_SELECT_COMPONENT_POS_TYPE_ID = 153;
     const string FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER = "system_form_select_component_link_order_number";
     const int FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID = 126;
 
@@ -238,6 +240,27 @@ class component_type
     const string FORM_END = "form_end";
     const int FORM_END_ID = 32;
 
+    // show changes if confirmed
+    const string SYSTEM_SHOW_RESULT_DIFF = "system_show_result_diff";
+    const int SYSTEM_SHOW_RESULT_DIFF_ID = 154;
+
+    // TODO Prio 0 group and move the lines below
+    const string SYSTEM_PASTE_TABLE_CONTEXT = "system_paste_table_context";
+    const int SYSTEM_PASTE_TABLE_CONTEXT_ID = 155;
+    const string SYSTEM_PASTE_TABLE_BODY = "system_paste_table_body";
+    const int SYSTEM_PASTE_TABLE_BODY_ID = 156;
+    const string SYSTEM_SELECTION_TEXT = "system_selection_text";
+    const int SYSTEM_SELECTION_TEXT_ID = 157;
+    const string SYSTEM_POPUP_TITLE = "system_popup_title";
+    const int SYSTEM_POPUP_TITLE_ID = 158;
+    const string FORM_CLASS = "form_class";
+    const int FORM_CLASS_ID = 159;
+    const string FORM_CHANGES = "form_changes";
+    const int FORM_CHANGES_ID = 160;
+    const string FORM_IMPACT = "form_impact";
+    const int FORM_IMPACT_ID = 161;
+    const string SYSTEM_SHOW_VIEW_DIFF = "system_show_view_diff";
+    const int SYSTEM_SHOW_VIEW_DIFF_ID = 162;
 
     /*
      * fixed system pages
@@ -480,6 +503,7 @@ class component_type
         self::FORM_SELECT_VIEW_LINK_TYPE,
         self::FORM_SELECT_VIEW_LINK_PRIORITY,
         self::FORM_SELECT_COMPONENT_LINK_TYPE,
+        self::FORM_SELECT_COMPONENT_POS_TYPE,
         self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
@@ -498,6 +522,15 @@ class component_type
         self::SHOW_NAME,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
+        self::SYSTEM_SHOW_RESULT_DIFF,
+        self::SYSTEM_PASTE_TABLE_CONTEXT,
+        self::SYSTEM_PASTE_TABLE_BODY,
+        self::SYSTEM_SELECTION_TEXT,
+        self::SYSTEM_POPUP_TITLE,
+        self::FORM_CLASS,
+        self::FORM_CHANGES,
+        self::FORM_IMPACT,
+        self::SYSTEM_SHOW_VIEW_DIFF,
         self::VIEW_AFTER_CHANGE,
         self::VIEW_BEFORE_CHANGE,
         self::WORD_RESULTS,
@@ -598,6 +631,7 @@ class component_type
         [self::FORM_SELECT_VIEW_LINK_TYPE, self::FORM_SELECT_VIEW_LINK_TYPE_ID],
         [self::FORM_SELECT_VIEW_LINK_PRIORITY, self::FORM_SELECT_VIEW_LINK_PRIORITY_ID],
         [self::FORM_SELECT_COMPONENT_LINK_TYPE, self::FORM_SELECT_COMPONENT_LINK_TYPE_ID],
+        [self::FORM_SELECT_COMPONENT_POS_TYPE, self::FORM_SELECT_COMPONENT_POS_TYPE_ID],
         [self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER, self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
@@ -661,6 +695,15 @@ class component_type
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::SYSTEM_SHOW_RESULT_DIFF, self::SYSTEM_SHOW_RESULT_DIFF_ID],
+        [self::SYSTEM_PASTE_TABLE_CONTEXT, self::SYSTEM_PASTE_TABLE_CONTEXT_ID],
+        [self::SYSTEM_PASTE_TABLE_BODY, self::SYSTEM_PASTE_TABLE_BODY_ID],
+        [self::SYSTEM_SELECTION_TEXT, self::SYSTEM_SELECTION_TEXT_ID],
+        [self::SYSTEM_POPUP_TITLE, self::SYSTEM_POPUP_TITLE_ID],
+        [self::FORM_CLASS, self::FORM_CLASS_ID],
+        [self::FORM_CHANGES, self::FORM_CHANGES_ID],
+        [self::FORM_IMPACT, self::FORM_IMPACT_ID],
+        [self::SYSTEM_SHOW_VIEW_DIFF, self::SYSTEM_SHOW_VIEW_DIFF_ID],
         [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
         [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],
         [self::WORD_RESULTS, self::WORD_RESULTS_ID],

@@ -339,22 +339,28 @@ class formula extends sandbox_code_id
      * import a formula and its links from an import JSON object
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
             if ($in_ex_json[json_fields::USR_TEXT] <> '') {
                 $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
+            }
+        }
+        // TODO Prio 2 decide if either it should be named expression or user text or if expression is used for im and export and user text for api
+        if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::EXPRESSION] <> '') {
+                $this->set_user_text($in_ex_json[json_fields::EXPRESSION]);
             }
         }
 
@@ -363,18 +369,26 @@ class formula extends sandbox_code_id
             $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * set the vars of this formula object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         global $frm_typ_cac;
 
@@ -382,7 +396,7 @@ class formula extends sandbox_code_id
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -420,7 +434,11 @@ class formula extends sandbox_code_id
             $this->type_id = $frm_typ_cac->default_id();
         }
 
-        return $usr_msg;
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -1628,29 +1646,46 @@ class formula extends sandbox_code_id
      * import a formula from a JSON object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
+        global $db_con;
+
+        // map the json to the object
+        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
 
         // assign the formula to the words and triple
+        // TODO check if it is done via mapper and save_related
         $this->assign_phrases($usr_msg);
 
-        return $usr_msg;
+        // save the object and the related objects in the database
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            }
+        }
+
+        if ($usr_msg->is_ok()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private function assign_name(string $phr_name, ?object $test_obj = null): string
+    private function assign_name(string $phr_name): string
     {
+        global $db_con;
+
         $result = '';
         $phr = new phrase($this->user());
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             $phr->load_by_name($phr_name);
             $result .= $this->assign_phrase($phr);
         }

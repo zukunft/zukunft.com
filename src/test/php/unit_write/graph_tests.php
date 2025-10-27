@@ -86,7 +86,7 @@ class graph_tests
         }
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         $lnk_lst = new triple_list($usr);
         //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         //$result = $lnk_lst->name();

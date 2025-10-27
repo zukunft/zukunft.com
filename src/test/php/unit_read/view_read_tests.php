@@ -89,13 +89,13 @@ class view_read_tests
 
         $test_name = 'load view by phrase "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
-        // TODO activate
+        // TODO Prio 2 activate
         //$msk->load_by_phrase($t->phrase_pi());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
         $test_name = 'load view by term "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
-        // TODO activate
+        // TODO Prio 2 activate
         //$msk->load_by_term($t_frm->formula()->term());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
@@ -145,7 +145,7 @@ class view_read_tests
         $t->assert('check view with code id ' . view_shared::WORD_CODE_ID, $result, $target);
 
         // check all system views
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);
         //$t->assert_view(view_shared::DSP_COMPONENT_EDIT, $t->usr1);
         //$t->assert_view(view_shared::DSP_COMPONENT_DEL, $t->usr1);

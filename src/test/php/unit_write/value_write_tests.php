@@ -257,7 +257,7 @@ class value_write_tests
             $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert(', value->save logged for "' . $phr_grp->name() . '"', $result, $target);
 
         // ... check if the value has been added
@@ -296,7 +296,7 @@ class value_write_tests
             $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
         $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert(', value->save logged for "' . $phr_grp2->name() . '"', $result, $target);
 
         // ... check if the value has been added
@@ -325,7 +325,7 @@ class value_write_tests
         if ($result != $target) {
             $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
         }
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
 
         // ... check if the value has really been updated
@@ -352,7 +352,7 @@ class value_write_tests
                 true);
         }
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been updated

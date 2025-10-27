@@ -54,6 +54,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -185,10 +186,10 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
-include_once TEST_CONST_PATH . 'paths.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'paths.php';
+include_once test_paths::CONST . 'files.php';
 
-// TODO activate
+// TODO Prio 2 activate
 //use html\group\group as group_dsp;
 
 
@@ -414,6 +415,9 @@ class test_base
     public string $name;
     public string $resource_path;
 
+    // list with all prepared sql queries to check if the name is unique
+    public array $unique_sql_names;
+
     public int $seq_nbr;
 
     public text_log_format $format = text_log_format::TEXT;
@@ -431,6 +435,8 @@ class test_base
         $this->error_counter = 0;
         $this->timeout_counter = 0;
         $this->total_tests = 0;
+
+        $this->unique_sql_names = [];
 
         $this->seq_nbr = 0;
 
@@ -917,16 +923,23 @@ class test_base
             $usr = $this->user_system();
         }
 
+        $usr_msg = new user_message();
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        $dto = new data_object($usr);
-        $usr_obj->import_obj($json_in, $dto, $this);
-        $this->set_id_for_unit_tests($usr_obj);
-        $json_ex = $usr_obj->export_json(false);
-        // TODO remove, for faster debugging only
-        $json_in_txt = json_encode($json_in);
-        $json_ex_txt = json_encode($json_ex);
-        return $this->assert_json($this->name . 'import check name', $json_ex, $json_in);
+        // TODO move to a lib function that fills an usr_msg object
+        if ($json_in !== null) {
+            $dto = new data_object($usr);
+            $usr_obj->import_obj($json_in, $usr_msg, $dto);
+            //$this->set_id_for_unit_tests($usr_obj);
+            $json_ex = $usr_obj->export_json(false);
+            // TODO remove, for faster debugging only
+            $json_in_txt = json_encode($json_in);
+            $json_ex_txt = json_encode($json_ex);
+            return $this->assert_json($this->name . 'import check name', $json_ex, $json_in);
+        } else {
+            log_err('json decode of file ' . $json_file_name . ' failed');
+            return false;
+        }
     }
 
     /**
@@ -939,12 +952,13 @@ class test_base
      */
     function assert_ex_and_import(object $obj, user $usr_req): bool
     {
+        $usr_msg = new user_message();
         $json_before = $obj->api_json([api_type::TEST_MODE]);
         $json_ex = $obj->export_json(false);
         $new_obj = $obj->clone_all();
         $new_obj->reset();
         $dto = new data_object($usr_req);
-        $new_obj->import_obj($json_ex, $dto, $this);
+        $new_obj->import_obj($json_ex, $usr_msg, $dto);
         $json_after = $obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);
@@ -2142,12 +2156,10 @@ class test_base
      */
     function assert_sql_name_unique(string $sql_name): bool
     {
-        global $sql_names;
-
         $result = false;
-        if (!in_array($sql_name, $sql_names)) {
+        if (!in_array($sql_name, $this->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $this->unique_sql_names[] = $sql_name;
         }
         return $this->assert('is SQL name ' . $sql_name . ' unique', $result, true);
     }

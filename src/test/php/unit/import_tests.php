@@ -33,16 +33,16 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_CONST . 'files.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -124,7 +124,7 @@ class import_tests
         $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
             ['Democracy Index'],
             'Country', 1,
-            'Year', 'time', 3);
+            'year', 'time', 3);
         $result = json_decode($conv_str, true);
         $target = json_decode($json_str, true);
         $t->assert_json($test_name, $result, $target);

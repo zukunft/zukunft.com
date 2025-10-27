@@ -20,7 +20,7 @@
     so                       -> next["time jump"->,         "follower of"->"Now"]
     1. find_missing_phrase_types: next["time jump"->"company","follower of"->"Now"]
     2. calc word:               next["YoY",                 "follower of"->"Now"]
-    3. calc word:               next["YoY",                 "follower of"->"This Year"]
+    3. calc word:               next["YoY",                 "follower of"->"This year"]
     4. calc word:               next["YoY",                 "follower of"->"2013"]
     5. calc word:               next["YoY",                 "2014"]
 
@@ -72,8 +72,8 @@
             -> result increase("Nestlé", "turnover", "YoY")
     -> zu_calc("next(Nestlé, turnover, YoY)")
        -> increase formula: (next() - last()) / last()
-       -> add_word("Next Year")
-          -> zu_calc("get_value(Nestlé, turnover, YoY, Next Year)")
+       -> add_word("Next year")
+          -> zu_calc("get_value(Nestlé, turnover, YoY, Next year)")
 
     Sample 2
     zu_calc("countryweight("Nestlé")")
