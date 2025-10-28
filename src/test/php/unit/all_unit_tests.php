@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class all_unit_tests extends test_cleanup
 {
@@ -95,6 +96,8 @@ class all_unit_tests extends test_cleanup
         $this->users_for_unit_tests();
 
         // prepare the unit tests
+        $tl = new test_lib();
+        $tl->ui_test_cache($this->usr1, $this);
         $u_env = new unit_env();
         $u_env->init_unit_tests();
 

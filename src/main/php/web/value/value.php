@@ -460,8 +460,11 @@ class value extends sandbox_value
     function has_phrase(phrase $phr): bool
     {
         $result = false;
-        foreach ($this->grp->phr_lst() as $val_phr) {
-            if ($val_phr->id() == $phr->id()) {
+        $phr_lst = $this->grp->phr_lst();
+        foreach ($phr_lst->lst() as $val_phr) {
+            if ($val_phr->is_same($phr)) {
+                $result = true;
+            } elseif ($val_phr->is_type_phrase($phr)) {
                 $result = true;
             }
         }

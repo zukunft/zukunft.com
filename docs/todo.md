@@ -20,6 +20,12 @@ A proper issue ticket should be created for these TODOs notes:
          - $cac for the backend cache  
          - $ui_cac for the frontend cache including the session user
          - $t_cac for the test environment 
+         pro using a global var:
+           - less parameters for functions, so easier to read and maybe faster
+         cont:
+           - parameters make it easier to simulate test scenaries
+         result:
+           - use the global vars if not a test scenario is needed
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects

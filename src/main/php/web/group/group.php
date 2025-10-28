@@ -173,9 +173,9 @@ class group extends sandbox_named
      */
     function phr_lst(): phrase_list
     {
-        $result = new phrase_list();
-        $result->set_lst($this->lst());
-        return $result;
+        $phr_lst = new phrase_list();
+        $phr_lst->set_lst($this->lst());
+        return $phr_lst;
     }
 
 

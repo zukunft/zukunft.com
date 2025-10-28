@@ -242,6 +242,47 @@ class phrase extends combine_named
      * info
      */
 
+    function is_same(phrase $phr): bool
+    {
+        $result = false;
+        $this_id = $this->id();
+        $phr_id = $phr->id();
+        if ($this_id != 0 and $phr_id != 0) {
+            if ($this_id == $phr_id) {
+                $result = true;
+            }
+        } else {
+            $this_name = $this->name();
+            $phr_name = $phr->name();
+            if ($this_name == $phr_name) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    function is_type_phrase(phrase $phr): bool
+    {
+        global $ui_cac;
+
+        $result = false;
+        $typ_id = $this->type_id();
+        if ($typ_id != null) {
+            $typ = $ui_cac?->typ_lst_cache?->html_phrase_types?->get($this->type_id());
+            if ($typ != null) {
+                $typ_phr_lst = $typ->type_phrases();
+                foreach ($typ_phr_lst->lst() as $typ_phr) {
+                    if ($phr->is_same($typ_phr)) {
+                        $result = true;
+                    }
+                }
+            } else {
+                log_err('type for ' . $this->dsp_id() . ' not found');
+            }
+        }
+        return $result;
+    }
+
     /**
      * @return bool true if this phrase is of type percent
      */

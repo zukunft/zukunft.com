@@ -905,6 +905,19 @@ class word extends sandbox_code_id
     }
 
     /*
+     * fixed
+     */
+
+    function math(): word
+    {
+        $wrd = new word();
+        $wrd->id = words::MATH_ID;
+        $wrd->name = words::MATH;
+        return $wrd;
+    }
+
+
+    /*
      * internal
      */
 

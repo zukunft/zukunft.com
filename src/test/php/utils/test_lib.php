@@ -131,7 +131,7 @@ class test_lib
     }
 
     /**
-     * create and frontend cache and fill it with all entries for the unit tests
+     * create the frontend cache and fill it with all entries for the unit tests
      * TODO use it for the global ui_cac var
      * @param user $usr the user for which the sample cache should be created
      * @param test_cleanup $t the test environment e.g. the collect the errors

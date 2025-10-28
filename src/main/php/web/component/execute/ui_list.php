@@ -267,8 +267,7 @@ class ui_list extends ui_base
         ?int                $style_id = null
     ): string
     {
-        $val_lst = $dto->value_list_cloned();
-        $val_lst = $val_lst->filter($dbo);
+        $val_lst = $dto->val_lst?->filter($dbo);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);
@@ -287,8 +286,7 @@ class ui_list extends ui_base
         ?int                  $style_id = null
     ): string
     {
-        $val_lst = $dto->value_list_cloned();
-        $val_lst = $val_lst->filter($dbo);
+        $val_lst = $dto->val_lst?->filter($dbo);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         return $this->value_list($val_lst, $phr_lst, $style_id);
@@ -307,8 +305,7 @@ class ui_list extends ui_base
         ?int                  $style_id = null
     ): string
     {
-        $val_lst = $dto->value_list_cloned();
-        $val_lst = $val_lst->filter($dbo);
+        $val_lst = $dto->val_lst?->filter($dbo);
         $phr_lst = new phrase_list();
         return $this->value_list($val_lst, $phr_lst, $style_id);
     }
