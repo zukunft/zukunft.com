@@ -120,7 +120,7 @@ if ($usr->id() > 0) {
 
             // show the source and its relations, so that the user can change it
             $scr_dsp = new source_dsp($src->api_json());
-            $result .= $scr_dsp->dsp_edit($back);
+            //$result .= $scr_dsp->dsp_edit($back);
         }
     }
 }

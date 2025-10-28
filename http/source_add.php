@@ -134,7 +134,7 @@ if ($usr->id() > 0) {
 
         // display the add source view
         $scr_dsp = new source_dsp($src->api_json());
-        $result .= $scr_dsp->dsp_edit($back);
+        //$result .= $scr_dsp->dsp_edit($back);
     }
 }
 
