@@ -170,6 +170,12 @@ class value_list extends list_dsp
         return $result;
     }
 
+    /**
+     * get a list with the values related directly to the given word, triple or source
+     *
+     * @param word|triple|source|data_object|null $dbo to filter the values
+     * @return value_list with only the direct linked values
+     */
     function filter(word|triple|source|data_object|null $dbo = null): value_list
     {
         $val_lst = new value_list();
