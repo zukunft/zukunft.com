@@ -214,20 +214,16 @@ class view_exe extends view_base
                 $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
 
                 // remember the style to apply it to the complete row or column
+                // TODO Prio 1 use a row / col explicit style parameter instead
                 if ($cmp->style_id != null) {
                     $style_id = $cmp->style_id;
                 }
 
-                // Do not add the style if the style has been added by the component already
-                // TODO Prio 1 remove because it should always be possible to overwrite the style
+                // Do not add the row or column style
+                // if the style has been added by the component already
+                // TODO Prio 1 find a more strait forward way to define it
                 $tc_id = $cmp->type_code_id($cfg->typ_lst_cache);
-                if ($tc_id == component_type::FORM_FIELD_NAME
-                    or $tc_id == component_type::FORM_FIELD_PLURAL
-                    or $tc_id == component_type::FORM_FIELD_REVERSE
-                    or $tc_id == component_type::FORM_FIELD_PLURAL_REVERSE
-                    or $tc_id == component_type::FORM_FIELD_NAME_IN_FORMULAS
-                    or $tc_id == component_type::FORM_FIELD_WEIGHT
-                    or $tc_id == component_type::FORM_FIELD_VALUE) {
+                if ($cmp->no_row_style($tc_id)) {
                     $style_id = null;
                 }
 

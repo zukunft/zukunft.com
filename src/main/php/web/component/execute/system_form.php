@@ -46,6 +46,8 @@ include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -66,6 +68,8 @@ use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
@@ -155,6 +159,46 @@ class system_form extends component
     function show_description(db_object_dsp $dbo): string
     {
         return $dbo->description();
+    }
+
+    /**
+     * @param ref|db_object_dsp $dbo the object
+     * @return string the html code to show the object reference type to the user
+     */
+    function show_ref_type(ref|db_object_dsp $dbo): string
+    {
+        return $dbo->type_name();
+    }
+
+    /**
+     * @param ref|db_object_dsp $dbo the object
+     * @return string the html code to show the object reference type to the user
+     */
+    function show_ref_key(ref|db_object_dsp $dbo): string
+    {
+        return $dbo->external_key();
+    }
+
+    /**
+     * @param ref|db_object_dsp $dbo the object
+     * @return string the html code to show the object reference type to the user
+     */
+    function show_ref_source(ref|db_object_dsp $dbo): string
+    {
+        $src_txt = $dbo->source_name();
+        if ($src_txt == null) {
+            $src_txt = '';
+        }
+        return $src_txt;
+    }
+
+    /**
+     * @param ref|db_object_dsp $dbo the object
+     * @return string the html code to show the object reference type to the user
+     */
+    function show_ref_url(ref|db_object_dsp $dbo): string
+    {
+        return $dbo->url();
     }
 
     /**
@@ -309,6 +353,26 @@ class system_form extends component
     }
 
     /**
+     * request the external kay of a reference
+     * @param ref|db_object_dsp $dbo the reference object
+     * @return string the html code to request the verb name used in a formula
+     */
+    function form_field_ref_key(ref|db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $ref_key = $dbo->external_key();
+        if ($ref_key == null) {
+            $ref_key = '';
+        }
+        return $html->form_field(
+            url_var::EXTERNAL_KEY,
+            $ref_key,
+            html_base::INPUT_TEXT,
+            '', $style_text
+        );
+    }
+
+    /**
      * edit field for the triple weight
      * @param triple|db_object_dsp $trp the triple object
      * @return string the html code to request the triple weight from the user
@@ -350,19 +414,22 @@ class system_form extends component
     /**
      * @return string the html code to request a url from the user
      */
-    function form_field_url(db_object_dsp $dbo): string
+    function form_field_url(db_object_dsp $dbo, string $style_text = ''): string
     {
         $html = new html_base();
         $url = $dbo->url();
         if ($url == null) {
             $url = '';
         }
+        if ($style_text == '') {
+            $style_text = view_styles::COL_SM_12;
+        }
         return $html->form_field(
             url_var::URL,
             $url,
             html_base::INPUT_TEXT,
             '',
-            view_styles::COL_SM_12
+            $style_text
         );
     }
 
@@ -557,6 +624,8 @@ class system_form extends component
             $id = $dbo->to()?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::LABEL_PHRASE_TO;
+        } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
+            $id = $dbo->from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -619,6 +688,8 @@ class system_form extends component
             $id = $dbo->to()?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::LABEL_PHRASE_TO;
+        } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
+            $id = $dbo->from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -766,25 +837,25 @@ class system_form extends component
      * create the html code for the form element to select the source
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the source
      */
-    function form_source(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
+    function form_source(db_object_dsp $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
     {
-        return $dbo->source_selector($form_name, $pattern);
+        return $dbo->source_selector($form_name, $pattern, $src_lst);
     }
 
     /**
      * create the html code for the form element to select one or many sources
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source
      */
-    function form_sources(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_sources(db_object_dsp $dbo, string $form_name, ?source_list $src_lst): string
     {
-        return $dbo->source_selector($form_name, $typ_lst);
+        return $dbo->source_selector($form_name, '', $src_lst);
     }
 
     /**

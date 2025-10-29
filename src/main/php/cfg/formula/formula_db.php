@@ -64,6 +64,7 @@ class formula_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
+    // TODO Prio 2 add a status with simulate for formulas that are not yet saved and active, but where the results should be simulated
     const string FLD_ID = 'formula_id';
     const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';

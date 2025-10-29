@@ -452,7 +452,7 @@ class type_lists
         return $msk->show($wrd);
     }
 
-    function get_view_by_id(int $id): view
+    function get_view_by_id(int $id): ?view
     {
         return $this->html_system_views->get_by_id($id);
     }

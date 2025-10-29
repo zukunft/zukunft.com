@@ -188,13 +188,16 @@ class source extends sandbox_code_id
     /**
      * @param string $form
      * @param string $pattern
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @return string
      */
-    function source_selector(string $form, string $pattern): string
+    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
-        $src_lst = new source_list();
-        $src_lst->load_like($pattern);
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $src_lst->load_like($pattern);
+        }
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_SOURCE);
     }
 
     /**

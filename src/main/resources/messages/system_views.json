@@ -739,6 +739,13 @@
       "ui_msg_code_id": "form_field_description"
     },
     {
+      "name": "system form select reference phrase",
+      "description": "selector for the phrase of a reference",
+      "type": "system_form_select_phrase",
+      "code_id": "form_field_ref_phrase",
+      "ui_msg_code_id": "form_select_phrase_ref"
+    },
+    {
       "name": "system form triple phrase from",
       "description": "selector for the from phrase of a triple",
       "type": "system_form_select_phrase",
@@ -1169,6 +1176,30 @@
       "code_id": "show_field_phrase_name"
     },
     {
+      "name": "system show field reference type",
+      "description": "the reference type as read only",
+      "type": "system_show_field_ref_type",
+      "code_id": "show_field_ref_type"
+    },
+    {
+      "name": "system show field external key",
+      "description": "the external key of a reference as read only",
+      "type": "system_show_field_ref_key",
+      "code_id": "show_field_ref_key"
+    },
+    {
+      "name": "system show field source",
+      "description": "the source name of a reference as read only",
+      "type": "system_show_field_ref_source",
+      "code_id": "show_field_ref_source"
+    },
+    {
+      "name": "system show field url",
+      "description": "the url of a reference as read only",
+      "type": "system_show_field_ref_url",
+      "code_id": "show_field_ref_url"
+    },
+    {
       "name": "system show value usage",
       "description": "the value usage as read only",
       "type": "system_show_field_usage",
@@ -1458,10 +1489,16 @@
       "code_id": "change_log_source"
     },
     {
-      "name": "change log reference",
-      "description": "show the change log of this reference",
+      "name": "change log ref settings",
+      "description": "show the change log of this reference settings",
       "type": "change_log",
       "code_id": "change_log_reference"
+    },
+    {
+      "name": "change log ref automatic",
+      "description": "show the changes caused by the automatic updates based on the reference settings",
+      "type": "change_log",
+      "code_id": "change_log_reference_caused"
     },
     {
       "name": "change log value",
@@ -1519,6 +1556,13 @@
       "type": "system_form_field_plural_reverse",
       "code_id": "form_field_plural_reverse",
       "ui_msg_code_id": "form_field_plural_reverse"
+    },
+    {
+      "name": "system form field external key",
+      "description": "the reference external key form field in a form",
+      "type": "system_form_field_external_key",
+      "code_id": "form_field_external_key",
+      "ui_msg_code_id": "form_field_external_key"
     },
     {
       "name": "system form field name in formulas",
@@ -2887,27 +2931,63 @@
         },
         {
           "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
+          "name": "system form select reference phrase",
+          "style": "col-md-4"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select reference type",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select reference type"
+          "name": "system form field external key",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "7",
-          "name": "system form button cancel"
+          "name": "system form select source",
+          "style": "col-md-4"
         },
         {
           "position": "8",
-          "name": "system form button save"
+          "name": "system form field url",
+          "style": "col-md-8",
+          "position_type": "side"
         },
         {
           "position": "9",
+          "name": "system form field description"
+        },
+        {
+          "position": "10",
+          "name": "system form select share type"
+        },
+        {
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
           "name": "system form end"
         }
       ]
@@ -2933,28 +3013,87 @@
         },
         {
           "position": "4",
-          "name": "system form field name",
-          "style": "col-md-8"
+          "name": "system form select reference phrase",
+          "style": "col-md-4"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select reference type",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select reference type"
+          "name": "system form field external key",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "7",
-          "name": "system form button cancel"
+          "name": "system form select source",
+          "style": "col-md-4"
         },
         {
           "position": "8",
-          "name": "system form button save"
+          "name": "system form field url",
+          "style": "col-md-8",
+          "position_type": "side"
         },
         {
           "position": "9",
+          "name": "system form field description"
+        },
+        {
+          "position": "10",
+          "name": "system form select share type"
+        },
+        {
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
           "name": "system form end"
+        },
+        {
+          "position": "17",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "18",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "19",
+          "name": "change log ref settings",
+          "position_type": "combine"
+        },
+        {
+          "position": "20",
+          "name": "change log ref automatic",
+          "position_type": "combine"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -2967,7 +3106,7 @@
       "components": [
         {
           "position": "1",
-          "name": "system form title source del"
+          "name": "system form title reference del"
         },
         {
           "position": "2",
@@ -2979,19 +3118,78 @@
         },
         {
           "position": "4",
-          "name": "system show field name"
+          "name": "system form select reference phrase",
+          "style": "col-md-4"
         },
         {
           "position": "5",
-          "name": "system form button cancel"
+          "name": "system show field reference type",
+          "style": "col-md-4",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form button del"
+          "name": "system show field external key",
+          "style": "col-md-8",
+          "position_type": "side"
         },
         {
           "position": "7",
+          "name": "system show field source",
+          "style": "col-md-4"
+        },
+        {
+          "position": "8",
+          "name": "system show field url",
+          "style": "col-md-8",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form field description"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "11",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "12",
+          "name": "system form button del"
+        },
+        {
+          "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "16",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "17",
+          "name": "change log ref settings",
+          "position_type": "combine"
+        },
+        {
+          "position": "18",
+          "name": "change log ref automatic",
+          "position_type": "combine"
+        },
+        {
+          "position": "19",
+          "name": "system formatter row end"
         }
       ]
     },

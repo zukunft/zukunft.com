@@ -1150,11 +1150,13 @@ enum messages: string
     case FORM_FIELD_PLURAL = 'form_field_plural';
     case FORM_FIELD_REVERSE = 'form_field_reverse';
     case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
+    case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
     case FORM_FIELD_NAME_IN_FORMULAS = 'form_field_name_in_formulas';
     case FORM_FIELD_WEIGHT = 'form_field_weight';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
     case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
+    case FORM_TRIPLE_PHRASE_REF = 'form_select_phrase_ref';
     case FORM_TRIPLE_PHRASE_FROM = 'form_select_phrase_from';
     case FORM_TRIPLE_PHRASE_TO = 'form_select_phrase_to';
     case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';

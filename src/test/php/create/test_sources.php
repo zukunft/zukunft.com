@@ -33,20 +33,27 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
+include_once html_paths::REF . 'source_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_sources
@@ -153,6 +160,19 @@ class test_sources
         $msk = new source($this->env->usr1);
         $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_SQL);
         return $msk;
+    }
+
+    function source_list(): source_list
+    {
+        $lst = new source_list($this->env->usr1);
+        $lst->add($this->source_filled_included());
+        return $lst;
+    }
+
+    function source_list_ui(): source_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->source_list());
     }
 
 }

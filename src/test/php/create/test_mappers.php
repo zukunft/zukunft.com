@@ -218,7 +218,7 @@ class test_mappers
                 $obj = $t_src->source_filled();
                 break;
             case ref::class;
-                $obj = $t_ref->reference_plus();
+                $obj = $t_ref->ref_filled();
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
@@ -571,16 +571,8 @@ class test_mappers
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case ref::class;
-                $obj = $t_ref->reference_plus();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
-                $url .= $this->url_par(url_var::PHRASE_LONG, $obj->from_id());
-                $url .= $this->url_par(url_var::TYPE, $obj->predicate_id());
-                $url .= $this->url_par(url_var::URL, $obj->url());
-                $url .= $this->url_par(url_var::EXTERNAL_KEY, $obj->external_key());
-                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
-                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
-                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $obj = $t_ref->ref_filled();
+                $url .= $this->ref_url($obj);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
@@ -722,16 +714,8 @@ class test_mappers
                 $url .= $this->url_par(url_var::USAGE, $obj->usage());
                 break;
             case ref::class;
-                $obj = $t_ref->reference_plus();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
-                $url .= $this->url_par(url_var::PHRASE_LONG, $obj->from_id());
-                $url .= $this->url_par(url_var::TYPE, $obj->predicate_id());
-                $url .= $this->url_par(url_var::URL, $obj->url());
-                $url .= $this->url_par(url_var::EXTERNAL_KEY, $obj->external_key());
-                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
-                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
-                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $obj = $t_ref->ref_filled();
+                $url .= $this->ref_url($obj);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
@@ -859,9 +843,8 @@ class test_mappers
                 $url .= $this->url_par(url_var::USAGE, $obj->usage());
                 break;
             case ref::class;
-                $obj = $t_ref->reference_plus();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $obj = $t_ref->ref_filled();
+                $url .= $this->ref_url($obj);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
@@ -919,5 +902,17 @@ class test_mappers
         }
     }
 
+    private function ref_url(ref $ref): string
+    {
+        $url = $this->url_par(url_var::PHRASE_LONG, $ref->from_id());
+        $url .= $this->url_par(url_var::EXTERNAL_KEY, $ref->external_key());
+        $url .= $this->url_par(url_var::TYPE, $ref->predicate_id());
+        $url .= $this->url_par(url_var::URL, $ref->url());
+        $url .= $this->url_par(url_var::SOURCE_LONG, $ref->source_id());
+        $url .= $this->url_par(url_var::DESCRIPTION, $ref->description());
+        $url .= $this->url_par(url_var::SHARE, $ref->share_id());
+        $url .= $this->url_par(url_var::PROTECTION, $ref->protection_id());
+        return $url;
+    }
 
 }

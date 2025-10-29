@@ -34,7 +34,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -42,6 +41,7 @@ include_once paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
 
 class db_object extends TextIdObject
 {
@@ -930,9 +932,10 @@ class db_object extends TextIdObject
      * create the html code to select a source
      * @param string $form the name of the html form
      * @param string $pattern
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @return string the html code to select a source
      */
-    public function source_selector(string $form, string $pattern): string
+    public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
         $msg = 'source selector not defined for ' . $this::class;
         log_err($msg);

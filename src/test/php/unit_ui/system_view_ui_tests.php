@@ -121,8 +121,8 @@ class system_view_ui_tests
             parse_str($url_part["query"], $url_array);
             $usr_dsp = $tl->cast_user($t->usr1);
             // TODO Prio 0 remove temp
-            //if ($id == 9) {
-            //    log_info('triple edit');
+            //if ($id == 14) {
+            //    log_info('ref add');
             //}
             $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
             $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';

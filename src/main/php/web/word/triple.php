@@ -43,7 +43,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
@@ -57,7 +56,6 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
-include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -70,17 +68,13 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -112,9 +106,9 @@ class triple extends sandbox_code_id
 
     // the triple components
     // they can be null to allow front end error messages to the user
-    private ?phrase_dsp $from = null;
-    private ?verb_dsp $verb = null;
-    private ?phrase_dsp $to = null;
+    private ?phrase $from = null;
+    private ?verb $verb = null;
+    private ?phrase $to = null;
     public ?float $weight = null;
     public ?string $plural = null {
         get {
@@ -180,7 +174,7 @@ class triple extends sandbox_code_id
         if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
             $value = $json_array[json_fields::FROM_PHRASE];
             if (is_array($value)) {
-                $phr = new phrase_dsp();
+                $phr = new phrase();
                 $phr->api_mapper($value);
                 $this->set_from($phr);
             } else {
@@ -189,31 +183,31 @@ class triple extends sandbox_code_id
         } elseif (array_key_exists(json_fields::FROM, $json_array)) {
             $value = $json_array[json_fields::FROM];
             if (is_array($value)) {
-                $phr = new phrase_dsp();
+                $phr = new phrase();
                 $phr->api_mapper($value);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
             }
         } else {
-            $this->set_from(new phrase_dsp());
+            $this->set_from(new phrase());
         }
         if (array_key_exists(json_fields::VERB, $json_array)) {
             $value = $json_array[json_fields::VERB];
             if (is_array($value)) {
-                $vrb = new verb_dsp();
+                $vrb = new verb();
                 $vrb->api_mapper($value);
                 $this->set_verb($vrb);
             } else {
                 $this->set_verb_by_id($value);
             }
         } else {
-            $this->set_verb(new verb_dsp());
+            $this->set_verb(new verb());
         }
         if (array_key_exists(json_fields::TO_PHRASE, $json_array)) {
             $value = $json_array[json_fields::TO_PHRASE];
             if (is_array($value)) {
-                $phr = new phrase_dsp();
+                $phr = new phrase();
                 $phr->api_mapper($value);
                 $this->set_to($phr);
             } else {
@@ -222,14 +216,14 @@ class triple extends sandbox_code_id
         } elseif (array_key_exists(json_fields::TO, $json_array)) {
             $value = $json_array[json_fields::TO];
             if (is_array($value)) {
-                $phr = new phrase_dsp();
+                $phr = new phrase();
                 $phr->api_mapper($value);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);
             }
         } else {
-            $this->set_to(new phrase_dsp());
+            $this->set_to(new phrase());
         }
         if (array_key_exists(json_fields::WEIGHT, $json_array)) {
             $this->weight = $json_array[json_fields::WEIGHT];
@@ -277,12 +271,12 @@ class triple extends sandbox_code_id
 
     function set(string $from, string $verb, string $to): void
     {
-        $this->set_from(new word_dsp($from)->phrase());
-        $this->set_verb(new verb_dsp($verb));
-        $this->set_to(new word_dsp($to)->phrase());
+        $this->set_from(new word($from)->phrase());
+        $this->set_verb(new verb($verb));
+        $this->set_to(new word($to)->phrase());
     }
 
-    function set_from(phrase_dsp $from): void
+    function set_from(phrase $from): void
     {
         $this->from = $from;
     }
@@ -292,19 +286,19 @@ class triple extends sandbox_code_id
         $this->from = $this->set_phrase_by_id($id);
     }
 
-    function set_verb(verb_dsp $vrb): void
+    function set_verb(verb $vrb): void
     {
         $this->verb = $vrb;
     }
 
     function set_verb_by_id(int $id): void
     {
-        $vrb = new verb_dsp();
+        $vrb = new verb();
         $vrb->set_id($id);
         $this->verb = $vrb;
     }
 
-    function set_to(phrase_dsp $to): void
+    function set_to(phrase $to): void
     {
         $this->to = $to;
     }
@@ -314,35 +308,35 @@ class triple extends sandbox_code_id
         $this->to = $this->set_phrase_by_id($id);
     }
 
-    private function set_phrase_by_id(int $id): phrase_dsp
+    private function set_phrase_by_id(int $id): phrase
     {
         if ($id > 0) {
-            $wrd = new word_dsp();
+            $wrd = new word();
             $wrd->set_id($id);
             $phr = $wrd->phrase();
         } elseif ($id < 0) {
-            $trp = new triple_dsp();
+            $trp = new triple();
             $trp->set_id($id * -1);
             $phr = $trp->phrase();
         } else {
-            $wrd = new word_dsp();
+            $wrd = new word();
             $wrd->set_id(0);
             $phr = $wrd->phrase();
         }
         return $phr;
     }
 
-    function from(): ?phrase_dsp
+    function from(): ?phrase
     {
         return $this->from;
     }
 
-    function verb(): verb_dsp
+    function verb(): verb
     {
         return $this->verb;
     }
 
-    function to(): ?phrase_dsp
+    function to(): ?phrase
     {
         return $this->to;
     }
@@ -398,18 +392,18 @@ class triple extends sandbox_code_id
      */
 
     /**
-     * @returns phrase_dsp the phrase display object base on this triple object
+     * @returns phrase the phrase display object base on this triple object
      */
-    function phrase(): phrase_dsp
+    function phrase(): phrase
     {
-        $phr = new phrase_dsp();
+        $phr = new phrase();
         $phr->set_obj($this);
         return $phr;
     }
 
-    function term(): term_dsp
+    function term(): term
     {
-        $trm = new term_dsp();
+        $trm = new term();
         $trm->set_obj($this);
         return $trm;
     }
@@ -501,7 +495,7 @@ class triple extends sandbox_code_id
 
     /**
      * to select the word or triple
-     * @param phrase_list_dsp $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
+     * @param phrase_list $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
      * @param string $form the name of the html form
      * @param int|null $selected the row id of the suggested phrase or the already selected phrase

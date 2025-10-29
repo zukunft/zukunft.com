@@ -83,6 +83,9 @@ class components
     const string FORM_PHRASE_COL = 'form_field_select_phrase_col';
     const string FORM_PHRASE_COL_SUB = 'form_field_select_phrase_col_sub';
 
+    // ref only fields
+    const string FORM_PHRASE_REF_CODE_ID = 'form_field_triple_phrase_ref';
+
     const string FORM_SHARE_TYPE = 'form_field_share_type';
     const string FORM_SHARE_TYPE_NAME = 'form field share type';
     const string FORM_SHARE_TYPE_COM = 'the share type field in a form';

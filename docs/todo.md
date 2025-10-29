@@ -90,6 +90,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO code review
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
+    TODO change the screen header background color based on the impact of the pensing changes 
+         e.g. if a formula or value with a high impact is changed but save is not yet pressed the background should be red
+         if nothing is changed the background should be a neutral e.g. light grey
+    TODO for the dev and test environment the background should have a diagonal DEV or TEST text pattern
+
 
     TODO add a frontend cache that includes the most often used terms, values and views 
     TODO create pure tuple export and import according the the W3C definition

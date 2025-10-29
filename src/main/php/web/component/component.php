@@ -369,11 +369,24 @@ class component extends sandbox_code_id
     }
 
     /**
+     * TODO Prio 1 can be removed due to the explicit combine position type
      * @return bool true if the component is a subheader to combine several lists
      */
     function is_list_group(?type_lists $typ_lst): bool
     {
         if (in_array($this->type_code_id($typ_lst), component_type::LIST_GROUP)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the component uses the style for the component not the row
+     */
+    function no_row_style(string $typ_code_id): bool
+    {
+        if (in_array($typ_code_id, component_type::LIST_HAS_STYLE)) {
             return true;
         } else {
             return false;

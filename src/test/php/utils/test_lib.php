@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
@@ -88,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -107,6 +109,7 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -185,6 +188,7 @@ class test_lib
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);
         $t_trp = new test_triples($t);
+        $t_src = new test_sources($t);
         $t_ref = new test_refs($t);
         $t_val = new test_values($t);
         $t_frm = new test_formulas($t);
@@ -193,6 +197,7 @@ class test_lib
         // set the value cache list based
         $dto_dsp->wrd_lst = $t_wrd->word_list_ui();
         $dto_dsp->trp_lst = $t_trp->triple_list_ui();
+        $dto_dsp->src_lst = $t_src->source_list_ui();
         $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
         $dto_dsp->val_lst = $t_val->list_all_ui();
         $dto_dsp->frm_lst = $t_frm->formula_list_ui();
@@ -208,12 +213,12 @@ class test_lib
      * cast a backend list to a frontend list via api message
      * @param sandbox_list|type_list|change_log_list $lst the filled backend list
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @return word_list_ui|triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+     * @return word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
      */
     function list_to_ui(
         sandbox_list|type_list|change_log_list $lst,
         api_type_list|array                    $typ_lst = []
-    ): word_list_ui|triple_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);
@@ -246,8 +251,9 @@ class test_lib
             user::class => new user_ui(),
             word_list::class => new word_list_ui(),
             triple_list::class => new triple_list_ui(),
-            value_list::class => new value_list_ui(),
             ref_list::class => new ref_list_ui(),
+            source_list::class => new source_list_ui(),
+            value_list::class => new value_list_ui(),
             formula_list::class => new formula_list_ui(),
             change_log_list::class => new change_log_list_ui(),
             default => false,

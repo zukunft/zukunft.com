@@ -178,6 +178,18 @@ class component_type
     const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
     const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
 
+    // verb only fields
+    const string SYSTEM_SHOW_REF_TYPE = "system_show_field_ref_type";
+    const int FORM_FIELD_REF_TYPE_ID = 163;
+    const string SYSTEM_SHOW_REF_KEY = "system_show_field_ref_key";
+    const int FORM_FIELD_REF_KEY_ID = 164;
+    const string SYSTEM_SHOW_REF_SOURCE = "system_show_field_ref_source";
+    const int FORM_FIELD_REF_SOURCE_ID = 165;
+    const string SYSTEM_SHOW_REF_URL = "system_show_field_ref_url";
+    const int FORM_FIELD_REF_URL_ID = 166;
+    const string FORM_FIELD_EXTERNAL_KEY = "system_form_field_external_key";
+    const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
+
     // triple only fields
     const string FORM_FIELD_WEIGHT = "system_form_field_weight";
     const int FORM_FIELD_WEIGHT_ID = 150;
@@ -568,6 +580,20 @@ class component_type
         self::LIST_REF,
     );
 
+    // list of component types that are used to combine lists
+    const array LIST_HAS_STYLE = array(
+        self::FORM_FIELD_NAME,
+        self::FORM_FIELD_PLURAL,
+        self::FORM_FIELD_REVERSE,
+        self::FORM_FIELD_PLURAL_REVERSE,
+        self::FORM_FIELD_NAME_IN_FORMULAS,
+        self::FORM_FIELD_WEIGHT,
+        self::FORM_FIELD_VALUE,
+        self::ROW_START,
+        self::ROW_RIGHT,
+        self::ROW_END,
+    );
+
     // list of the component types used for unit testing
     // in order of const definition which should be also the thematic order
     // TODO align with component_types.csv
@@ -582,6 +608,11 @@ class component_type
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
         [self::FORM_FIELD_NAME_IN_FORMULAS, self::FORM_FIELD_NAME_IN_FORMULAS_ID],
+        [self::SYSTEM_SHOW_REF_TYPE, self::FORM_FIELD_REF_TYPE_ID],
+        [self::SYSTEM_SHOW_REF_KEY, self::FORM_FIELD_REF_KEY_ID],
+        [self::SYSTEM_SHOW_REF_SOURCE, self::FORM_FIELD_REF_SOURCE_ID],
+        [self::SYSTEM_SHOW_REF_URL, self::FORM_FIELD_REF_URL_ID],
+        [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
         [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],

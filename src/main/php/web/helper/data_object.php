@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source_list.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -142,6 +144,11 @@ class data_object
         }
     }
 
+    public source_list $src_lst {
+        set(source_list $value) {
+            $this->src_lst = $value;
+        }
+    }
     public ref_list $ref_lst {
         set(ref_list $value) {
             $this->ref_lst = $value;
@@ -180,6 +187,7 @@ class data_object
     {
         if ($api_json != null) {
             $this->val_lst = new value_list();
+            $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
             $this->set_from_json($api_json);
             $this->usr = new user();
@@ -197,8 +205,9 @@ class data_object
         $this->trp_lst = new triple_list();
         $this->phr_lst_dirty = true;
         $this->phr_lst = new phrase_list();
-        $this->val_lst = new value_list();
+        $this->src_lst = new source_list();
         $this->ref_lst = new ref_list();
+        $this->val_lst = new value_list();
         $this->frm_lst = new formula_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();

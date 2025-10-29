@@ -161,3 +161,8 @@ component_type_id, type_name, description, code_id
 160, 'popup changes', 'for the universal confirmation popup show the changes', 'form_changes'
 161, 'popup impact', 'for the universal confirmation popup show the impact of the changes', 'form_impact'
 162, 'view differences', 'highlight the differences due to a change to the user', 'system_show_view_diff'
+163, 'show reference type', 'show the reference type as read only', 'system_show_field_ref_type'
+164, 'show external key', 'show the external key of a reference as read only', 'system_show_field_ref_key'
+165, 'show reference source', 'show the reference source name of a reference as read only', 'system_show_field_ref_source'
+166, 'show reference url', 'show the reference url of a reference as read only', 'system_show_field_ref_url'
+167, 'form field external key of reference', 'the reference external key form field in a form', 'system_form_field_external_key'

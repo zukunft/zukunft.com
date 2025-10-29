@@ -482,21 +482,26 @@ class frontend
             // TODO get the system view from the preloaded cache
             // TODO use the frontend not the backend cache
             $msk_dsp = $this->dto->typ_lst_cache->get_view_by_id($view_id);
-            $title = $msk_dsp->title($dbo);
-            $dsp_text = $msk_dsp->show($dbo, $dto, $back);
-
-            // use a fallback if the view is empty
-            if ($dsp_text == '' or $msk_dsp->name() == '') {
-                $msk_dsp = $this->dto->typ_lst_cache->get_view(views::START);
-                $dsp_text = $msk_dsp->name_tip($dbo, $back);
-            }
-            if ($dsp_text == '') {
-                $result .= 'Please add a component to the view by clicking on Edit on the top right.';
+            if ($msk_dsp == null) {
+                $result .= log_err('No view for "' . $view_id . '" found.',
+                    "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                $html = new html_base();
-                $result .= $html->header($title, '');
-                $result .= $dsp_text;
-                $result .= $html->footer();
+                $title = $msk_dsp->title($dbo);
+                $dsp_text = $msk_dsp->show($dbo, $dto, $back);
+
+                // use a fallback if the view is empty
+                if ($dsp_text == '' or $msk_dsp->name() == '') {
+                    $msk_dsp = $this->dto->typ_lst_cache->get_view(views::START);
+                    $dsp_text = $msk_dsp->name_tip($dbo, $back);
+                }
+                if ($dsp_text == '') {
+                    $result .= 'Please add a component to the view by clicking on Edit on the top right.';
+                } else {
+                    $html = new html_base();
+                    $result .= $html->header($title, '');
+                    $result .= $dsp_text;
+                    $result .= $html->footer();
+                }
             }
         } else {
             $result .= log_err('No view for "' . $dbo->name() . '" found.',

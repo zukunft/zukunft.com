@@ -421,7 +421,7 @@ class ref extends sandbox_link
      */
     function export_json(bool $do_load = true): array
     {
-        $vars = [];
+        $vars = parent::export_json($do_load);
 
         if ($this->source() != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source()->name();
