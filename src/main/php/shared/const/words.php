@@ -255,6 +255,7 @@ class words
     const int CS_133_ID = 134;
     const string HZ = 'Hz';
     const int HZ_ID = 42;
+    const string HZ_COM = 'Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second';
     const string DEFINITION = 'definition';
     const int DEFINITION_ID = 135;
     const string YEAR_1983 = '1983';

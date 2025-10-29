@@ -33,11 +33,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 
+//include_once test_paths::UNIT . 'all_unit_tests.php';
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 //include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
 include_once test_paths::UNIT_UI . 'user_ui_tests.php';
@@ -73,6 +70,11 @@ include_once test_paths::UNIT_UI . 'job_ui_tests.php';
 include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+
 class all_ui_tests extends all_unit_tests
 {
 
@@ -91,7 +93,7 @@ class all_ui_tests extends all_unit_tests
 
         $t->subheader($ts . 'page');
         // test all interface functions of the frontend classes
-        new word_ui_tests()->run($t, $ui->typ_lst_cache);
+        new word_ui_tests()->run($t, $ui->dto->typ_lst_cache);
         new word_list_ui_tests()->run($t);
         new verb_ui_tests()->run($t);
         new triple_ui_tests()->run($t, $ui);

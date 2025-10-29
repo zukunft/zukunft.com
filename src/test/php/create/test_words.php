@@ -358,6 +358,8 @@ class test_words
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(words::HZ_ID, words::HZ);
+        $wrd->set_type(phrase_type::MEASURE, $this->env->usr1);
+        $wrd->set_description(words::HZ_COM);
         return $wrd;
     }
 

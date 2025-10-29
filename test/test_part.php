@@ -34,6 +34,10 @@
 
 include_once 'test_const.php';
 
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;

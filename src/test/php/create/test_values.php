@@ -231,11 +231,21 @@ class test_values
         return $val;
     }
 
-    function value_light_speed(): value
+    function light_speed(): value
     {
         $t_grp = new test_groups($this->env);
         $t_src = new test_sources($this->env);
         $grp = $t_grp->group_speed_of_light();
+        $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
+        $val->set_source($t_src->source());
+        return $val;
+    }
+
+    function light_speed_with_two_units(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $t_src = new test_sources($this->env);
+        $grp = $t_grp->group_speed_of_light_with_two_units();
         $val = new value($this->env->usr1, round(values::SPEED_OF_LIGHT, 13), $grp);
         $val->set_source($t_src->source());
         return $val;
@@ -306,7 +316,7 @@ class test_values
         $lst->add($this->value_pi());
         $lst->add($this->value_e());
         $lst->add($this->transition_cs_133());
-        $lst->add($this->value_light_speed());
+        $lst->add($this->light_speed());
         return $lst;
     }
 
@@ -350,7 +360,7 @@ class test_values
         return $tl->list_to_ui($this->value_list_math(), [api_type::INCL_PHRASES]);
     }
 
-    function value_list_all_ui(): value_list_ui
+    function list_all_ui(): value_list_ui
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_all(), [api_type::INCL_PHRASES]);

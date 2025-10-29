@@ -71,7 +71,7 @@ class start_ui_read_tests
         $dto_dsp = new data_object_dsp();
         $dto_dsp->set_offline();
         $dto_dsp->add_phrases($t_phr->phrase_list_start_view_dsp());
-        $dto_dsp->typ_lst_cache = $ui->typ_lst_cache;
+        $dto_dsp->typ_lst_cache = $ui->dto->typ_lst_cache;
 
 
         $msk = new list_sort();

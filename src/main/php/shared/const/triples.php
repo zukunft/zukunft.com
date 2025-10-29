@@ -86,8 +86,10 @@ class triples
     // si units
     const string SPEED_OF_LIGHT = 'speed of light';
     const int SPEED_OF_LIGHT_ID = 26;
+    const string SPEED_OF_LIGHT_COM = 'The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.';
     const string M_PER_S = 'm/s';
     const int M_PER_S_ID = 63;
+    const string M_PER_S_COM = 'The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.';
     const string TRANSITION_CS = 'hyperfine transition frequency of Cs';
     const int TRANSITION_CS_ID = 78;
     const string TRANSITION_FREQUENCY = 'hyperfine transition frequency';

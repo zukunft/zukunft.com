@@ -474,7 +474,7 @@
     },
     {
       "name": "Hz",
-      "description": "Is a symbol for hertz",
+      "description": "Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -1784,6 +1784,7 @@
     },
     {
       "name": "speed of light",
+      "description": "The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.",
       "from": "speed",
       "verb": "of",
       "to": "light",
@@ -1950,6 +1951,7 @@
     },
     {
       "name": "m/s",
+      "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
       "from": "m/s",
       "verb": "is alias of",
       "to": "metre per second",

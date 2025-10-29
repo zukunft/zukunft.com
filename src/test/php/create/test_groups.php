@@ -113,6 +113,20 @@ class test_groups
     }
 
     /**
+     * @return group for the si unit speed of light
+     */
+    function group_speed_of_light_with_two_units(): group
+    {
+        $t_wrd = new test_words($this->env);
+        $t_phr = new test_phrases($this->env);
+        $lst = $t_phr->si_unit_speed_of_light();
+        $lst->add($t_wrd->Hz());
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::LENGTH_DEFINITION;
+        return $grp;
+    }
+
+    /**
      * @return group for the si unit hyperfine transition frequency of Cs
      */
     function transition_cs_133(): group

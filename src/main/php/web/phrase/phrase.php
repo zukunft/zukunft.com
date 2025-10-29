@@ -291,6 +291,16 @@ class phrase extends combine_named
         return $this->obj()->is_percent();
     }
 
+    function is_measure(): bool
+    {
+        return $this->obj()->is_measure();
+    }
+
+    function is_info(): bool
+    {
+        return $this->obj()->is_info();
+    }
+
 
     /*
      * base

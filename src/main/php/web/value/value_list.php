@@ -57,7 +57,10 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -83,7 +86,10 @@ use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
@@ -203,6 +209,7 @@ class value_list extends list_dsp
 
     /**
      * create the html code to show a list of values
+     * TODO use a more general parent function
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
      * @param string $back list of the last view to suggest the best follow-up view
@@ -223,12 +230,75 @@ class value_list extends list_dsp
 
         $result = '';
 
-        foreach ($this->lst() as $val) {
-            $row = $val->grp->name_link_list($context_phr_lst);
-            $row .= ' ';
-            $row .= $val->value_edit($back);
-            $row .= $html->lf();
-            $result .= $row;
+        if (!$this->is_empty()) {
+            if ($limit == null) {
+                global $cfg;
+                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+            }
+
+            $i = 0;
+            foreach ($this->lst() as $val) {
+                if ($i <= $limit) {
+                    if ($i < $limit) {
+                        $row = $val->grp->name_link_list($context_phr_lst);
+                        $row .= ' ';
+                        $row .= $val->value_edit($back);
+                        $row .= $html->lf();
+                        $result .= $row;
+                    } else {
+                        $diff = $this->count() - $i;
+                        if ($diff > 0) {
+                            // TODO Prio 1 base the translation on the $mtr object
+                            $result .= ' ... and ' . $diff . ' more';
+                        }
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the html code to show a list of values where the unit is behind the value
+     * TODO use a more general parent function
+     *
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
+     * @return string the html code to display the values to the user
+     */
+    function list_unit(
+        ?int $limit = null,
+        ?int $page = null
+    ): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        if (!$this->is_empty()) {
+            if ($limit == null) {
+                global $cfg;
+                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+            }
+
+            $i = 0;
+            foreach ($this->lst() as $val) {
+                if ($i <= $limit) {
+                    if ($i < $limit) {
+                        $row = $val->with_unit_and_info();
+                        $row .= $html->lf();
+                        $result .= $row;
+                    } else {
+                        $diff = $this->count() - $i;
+                        if ($diff > 0) {
+                            // TODO Prio 1 base the translation on the $mtr object
+                            $result .= ' ... and ' . $diff . ' more';
+                        }
+                    }
+                    $i++;
+                }
+            }
         }
         return $result;
     }
@@ -823,19 +893,19 @@ class value_list extends list_dsp
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(view_shared::VALUE_ADD, $val->id(), $back);
+                    $url = $html->url(views::VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
                     $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(view_shared::VALUE_EDIT, $val->id(), $back);
+                $url = $html->url(views::VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(view_shared::VALUE_DEL, $val->id(), $back);
+                $url = $html->url(views::VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';

@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_ui_tests
 {
@@ -44,6 +45,7 @@ class value_ui_tests
     {
         $html = new html_base();
         $t_val = new test_values($t);
+        $tl = new test_lib();
 
         $t->subheader('value html ui tests');
 
@@ -54,6 +56,7 @@ class value_ui_tests
         $test_page .= 'with tooltip: ' . $val->value() . '<br>';
         $test_page .= 'with detail link: ' . $val->value_link() . '<br>';
         $test_page .= 'with edit link: ' . $val->value_edit() . '<br>';
+        $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info() . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';

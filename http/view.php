@@ -2,8 +2,8 @@
 
 /*
 
-    view.php - create the HTML code to display a zukunft.com view
-    --------
+    /http/view.php - create the HTML code to display a zukunft.com view
+    --------------
 
     - the view contains the overall formatting like page size
     - the view component links to words, values or formulas
@@ -33,16 +33,7 @@
 
 */
 
-// for callable php files the standard zukunft.com header to load all classes and allow debugging
-// to allow debugging of errors in the library that only appear on the server
-$debug = $_GET['debug'] ?? 0;
-// get the root path from the path of this file (relative path)
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-
-// set the other path once for all scripts
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-// load once the common const and vars used almost every time
-include_once PHP_PATH . 'init.php';
+include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -82,7 +73,7 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
         $ui->load_cache();
-        $html_str .= $ui->url_to_html($_GET, $usr_dsp);
+        $html_str .= $ui->url_to_html($_GET, $usr_dsp, $ui->dto);
     }
 
     // close the database

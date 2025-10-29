@@ -2,8 +2,8 @@
 
 /*
 
-    shared/helper/Config.php - const fallback configuration settings
-    ------------------------
+    /api/api_const.php - set the main const for the api
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,29 +23,19 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace Zukunft\ZukunftCom\main\php\shared\helper;
+// add as first step a global debug var to allow also interactive debugging
+// of php script loading by adding &debug=9 to the url
+global $debug;
+$debug = $_GET['debug'] ?? 0;
 
-class Config
-{
-
-    // fallback config values e.g. if the backend connection is lost
-    const int ROW_LIMIT = 20;
-    const string DEFAULT_DEC_POINT = ".";
-    const int DEFAULT_PERCENT_DECIMALS = 2;
-    const string DEFAULT_THOUSAND_SEP = "'";
-    const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
-
-    // number of entries initial to show in a named list
-    const int LIMIT_NAME_LIST = 4;
-
-    // number of entries initial to show in a value list
-    const int LIMIT_VALUE_LIST = 6;
-
-}
+// set the path const for the initial backend and frontend settings
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'init.php';

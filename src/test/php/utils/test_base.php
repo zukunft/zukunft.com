@@ -205,7 +205,7 @@ include_once test_paths::UTILS . 'test_api.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 // load the unit testing modules
-include_once test_paths::UNIT . 'all_unit_tests.php';
+//include_once test_paths::UNIT . 'all_unit_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT . 'math_tests.php';
 include_once test_paths::UNIT . 'system_tests.php';
@@ -257,13 +257,13 @@ include_once test_paths::UNIT . 'import_tests.php';
 include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
-include_once test_paths::UNIT_UI . 'all_ui_tests.php';
+//include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
 
 // load the unit testing modules with database read only
-include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
+//include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 include_once test_paths::UNIT_READ . 'api_tests.php';
 include_once test_paths::UNIT_READ . 'system_read_tests.php';
 include_once test_paths::UNIT_READ . 'system_views_read_tests.php';
@@ -303,7 +303,7 @@ include_once test_paths::UNIT_READ . 'export_read_tests.php';
 include_once test_paths::UNIT_READ . 'type_lists_ui_tests.php';
 
 // load the testing functions that save data to the database
-include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+//include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'api_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'user_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
@@ -337,7 +337,7 @@ include_once test_paths::UNIT_WRITE . 'test_word_display.php';
 include_once test_paths::UNIT_WRITE . 'test_math.php';
 
 //
-include_once test_paths::UTILS . 'all_tests.php';
+//include_once test_paths::UTILS . 'all_tests.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 
@@ -895,7 +895,7 @@ class test_base
             $ui = new frontend('');
             $ui->load_cache();
             $cfg = new data_object_dsp();
-            $cfg->typ_lst_cache = $ui->typ_lst_cache;
+            $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 

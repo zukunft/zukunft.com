@@ -72,7 +72,7 @@ class value_list_ui_tests
         $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
-        // TODO link phrases
+        // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
         // TODO format numbers
         // TODO use one phrase for City of Zurich
         // TODO optional "(in mio)" formatting for scale words
@@ -88,6 +88,9 @@ class value_list_ui_tests
 
         $test_page = $html->text_h2('Value list display test');
         $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
+        $test_page .= 'as long list: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_dsp) . '<br>';
+        $test_page .= 'as long list with small page: ' . $html->lf() .  $t_val->list_all_ui()->list($phr_lst_context_dsp, '', '', 4) . '<br><br>';
+        $test_page .= 'with units: ' . $html->lf() .  $t_val->list_all_ui()->list_unit(7) . '<br><br>';
         $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_dsp->headline();

@@ -363,18 +363,7 @@ class group extends sandbox_named
             if ($this->name <> '') {
                 $result .= $this->name_link();
             } else {
-                $lst_to_show = $this->phr_lst();
-                if ($phr_lst_header != null) {
-                    if (!$phr_lst_header->is_empty()) {
-                        $lst_to_show->remove($phr_lst_header);
-                    }
-                }
-                foreach ($lst_to_show->lst() as $phr) {
-                    if ($result <> '') {
-                        $result .= ', ';
-                    }
-                    $result .= $phr->name_link();
-                }
+                $result .= $this->phr_lst()->name_link_list($phr_lst_header);
             }
             $this->name_link = $result;
             $this->name_link_dirty = false;

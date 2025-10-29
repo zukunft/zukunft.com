@@ -36,6 +36,8 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -124,6 +126,28 @@ class test_lib
         return $usr_dsp;
     }
 
+    function ui_value(value $val): value_ui
+    {
+        $api_msg = $val->api_json([api_type::INCL_PHRASES]);
+        return new value_ui($api_msg);
+    }
+
+    /**
+     * get the pure text from a html string
+     * @return string the pure text of the html code
+     */
+    function text_from_html(string $html): string
+    {
+        $lib = new library();
+        $result = $html;
+        $code = $lib->str_between($result, '<', '>');
+        while ($code != '') {
+            $result = str_replace('<' . $code . '>', '', $result);
+            $code = $lib->str_between($result, '<', '>');
+        }
+        return $result;
+    }
+
     function cast_view_list(view_list $msk_lst): view_list_ui
     {
         $api_msg = $msk_lst->api_json();
@@ -170,7 +194,7 @@ class test_lib
         $dto_dsp->wrd_lst = $t_wrd->word_list_ui();
         $dto_dsp->trp_lst = $t_trp->triple_list_ui();
         $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
-        $dto_dsp->val_lst = $t_val->value_list_all_ui();
+        $dto_dsp->val_lst = $t_val->list_all_ui();
         $dto_dsp->frm_lst = $t_frm->formula_list_ui();
         $dto_dsp->chg_log = $t_log->log_list_named_ui();
 
@@ -234,7 +258,7 @@ class test_lib
      * set the all values of the frontend object based on a backend object using the api object
      * @param object $model_obj the frontend object with the values of the backend object
      */
-    function dsp_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
+    function ui_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
     {
         $api_json = $model_obj->api_json();
         $dsp_obj->set_from_json($api_json);

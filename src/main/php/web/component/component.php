@@ -265,7 +265,7 @@ class component extends sandbox_code_id
     {
 
         $type_code_id = '';
-        if ($typ_lst->html_component_types == null) {
+        if ($typ_lst?->html_component_types == null) {
             $this->log_err('html_component_types are empty');
         } else {
             $err_msg = 'Component type code id for ' . $this->dsp_id()
@@ -286,7 +286,7 @@ class component extends sandbox_code_id
     function pos_type_code_id(?type_lists $typ_lst): string
     {
         $pos_type_code_id = '';
-        if ($typ_lst->html_position_types == null) {
+        if ($typ_lst?->html_position_types == null) {
             $this->log_err('html_position_types are empty');
         } else {
             $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
@@ -329,7 +329,7 @@ class component extends sandbox_code_id
     function style_code_id(?type_lists $typ_lst): string
     {
         $style_name = '';
-        if ($typ_lst->html_view_styles == null) {
+        if ($typ_lst?->html_view_styles == null) {
             $this->log_err('html_view_styles are empty');
         } else {
             if ($this->style_id != null) {

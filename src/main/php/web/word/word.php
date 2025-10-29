@@ -581,6 +581,15 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
+     * if used for a value these phrases are shown only as a tooltip
+     */
+    function is_info(): bool
+    {
+        return $this->is_type(phrase_type::INFO);
+    }
+
+    /**
      * @return bool true if the word has the type "scaling" (e.g. "million", "million" or "one"; "one" is a hidden scaling type)
      */
     function is_scaling(): bool

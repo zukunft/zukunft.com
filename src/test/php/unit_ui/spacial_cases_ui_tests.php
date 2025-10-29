@@ -63,9 +63,9 @@ class spacial_cases_ui_tests
         $wrd = $t_wrd->word_dsp();
 
         // check if the system views have set
-        $msk = $ui->typ_lst_cache->html_system_views->get_by_code_id(view_shared::WORD_ADD);
+        $msk = $ui->dto->typ_lst_cache->html_system_views->get_by_code_id(view_shared::WORD_ADD);
         $cfg = new data_object();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page .= $msk->show($wrd, $cfg, $back) . '<br>';
 
         // TODO review and combine with read db tests

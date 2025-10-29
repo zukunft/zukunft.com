@@ -166,10 +166,6 @@ class frontend
     // the main data cache of the frontend
     public ?data_object $dto = null;
 
-    // TODO deprecate old cache objects
-    public ?type_lists $typ_lst_cache = null;
-    public ?view_list $msk_lst_cache = null;
-
 
     /*
      * construct and map
@@ -187,8 +183,7 @@ class frontend
 
     function reset_cache(): void
     {
-        $this->typ_lst_cache = null;
-        $this->msk_lst_cache = null;
+        $this->dtc = null;
     }
 
 
@@ -253,7 +248,7 @@ class frontend
     function load_cache(): user_message
     {
         $usr_msg = new user_message();
-        if ($this->typ_lst_cache == null) {
+        if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
             if ($api_msg == '' or $api_msg == null) {
                 $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
@@ -279,11 +274,11 @@ class frontend
      */
     function load_dummy_cache_from_test_resources(user_backend $usr): void
     {
-        if ($this->typ_lst_cache == null) {
+        if ($this->dto?->typ_lst_cache == null) {
             $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
             $this->set_type_cache($api_msg);
         }
-        if ($this->msk_lst_cache == null) {
+        if ($this->dto->msk_lst == null) {
             $imp = new import();
             $imp->usr = $usr;
             $usr_msg = new backend_user_message();
@@ -305,8 +300,11 @@ class frontend
      */
     function set_type_cache(?string $api_msg = null): void
     {
-        if ($this->typ_lst_cache == null) {
-            $this->typ_lst_cache = new type_lists($api_msg);
+        if ($this->dto?->typ_lst_cache == null) {
+            if ($this->dto == null) {
+                $this->dto = new data_object();
+            }
+            $this->dto->typ_lst_cache = new type_lists($api_msg);
         }
     }
 
@@ -319,8 +317,11 @@ class frontend
      */
     function set_view_cache(?string $api_msg = null): void
     {
-        if ($this->msk_lst_cache == null) {
-            $this->msk_lst_cache = new view_list($api_msg);
+        if ($this->dto?->msk_lst == null) {
+            if ($this->dto == null) {
+                $this->dto = new data_object();
+            }
+            $this->dto->msk_lst = new view_list($api_msg);
         }
     }
 
@@ -400,7 +401,7 @@ class frontend
         if (is_numeric($view)) {
             $view_id = $view;
         } else {
-            $msk = $this->typ_lst_cache->get_view($view);
+            $msk = $this->dto->typ_lst_cache->get_view($view);
             $view_id = $msk->id();
         }
 
@@ -462,7 +463,7 @@ class frontend
                             $view_id = $dbo->calc_view_id();
                             if ($view_id <= 0) {
                                 // if no one has set a view for this word, use the fallback view
-                                $msk = $this->typ_lst_cache->get_view(views::WORD);
+                                $msk = $this->dto->typ_lst_cache->get_view(views::WORD);
                                 $view_id = $msk->id();
                             }
                         }
@@ -480,13 +481,13 @@ class frontend
             // TODO for system views avoid the backend call by using the cache from the frontend
             // TODO get the system view from the preloaded cache
             // TODO use the frontend not the backend cache
-            $msk_dsp = $this->typ_lst_cache->get_view_by_id($view_id);
+            $msk_dsp = $this->dto->typ_lst_cache->get_view_by_id($view_id);
             $title = $msk_dsp->title($dbo);
             $dsp_text = $msk_dsp->show($dbo, $dto, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk_dsp->name() == '') {
-                $msk_dsp = $this->typ_lst_cache->get_view(views::START);
+                $msk_dsp = $this->dto->typ_lst_cache->get_view(views::START);
                 $dsp_text = $msk_dsp->name_tip($dbo, $back);
             }
             if ($dsp_text == '') {
@@ -507,7 +508,7 @@ class frontend
 
     function show_view(int $id): string
     {
-        return $this->typ_lst_cache->get_html_by_id($id);
+        return $this->dto->typ_lst_cache->get_html_by_id($id);
     }
 
 

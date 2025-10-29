@@ -111,7 +111,7 @@ class figure_tests
         $t->assert_api_to_dsp($fig, new figure_dsp());
 
         $fig = $t_fig->figure_value();
-        $dsp = $tl->dsp_obj($fig, new figure_dsp());
+        $dsp = $tl->ui_obj($fig, new figure_dsp());
         $html_link = $dsp->display_linked();
         $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
 

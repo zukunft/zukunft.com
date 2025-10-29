@@ -77,7 +77,7 @@ class system_views_read_tests
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache();
         $cfg = new data_object_dsp();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         //$cfg = new data_object_dsp();
         $cfg->set_formula_list($t_frm->formula_list_ui());
         $cfg->set_view_list($t_msk->view_list_dsp());

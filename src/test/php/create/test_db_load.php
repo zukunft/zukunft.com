@@ -82,7 +82,7 @@ include_once test_paths::UNIT_WRITE . 'triple_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
-include_once test_paths::UTILS . 'all_tests.php';
+//include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -1191,4 +1191,5 @@ class test_db_load
         $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
 
     }
+
 }

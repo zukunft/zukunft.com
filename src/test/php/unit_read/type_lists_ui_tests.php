@@ -85,7 +85,7 @@ class type_lists_ui_tests
         $wrd = $t_wrd->word_dsp();
         $wrd->set_name('All type selectors');
         $cfg = new data_object();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page = $msk->show($wrd, $cfg, '') . '<br><br>';
 
         // test the type list selectors

@@ -70,7 +70,7 @@ class word_ui_read_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, '', $ui->typ_lst_cache) . '<br>';
+        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, '', $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_dsp()) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), 'view_long') . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);

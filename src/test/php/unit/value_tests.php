@@ -52,6 +52,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use DateTime;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -59,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_tests
 {
@@ -72,6 +75,7 @@ class value_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $tl = new test_lib();
         $t_val = new test_values($t);
         $t_grp = new test_groups($t);
         $t->name = 'value->';
@@ -83,16 +87,16 @@ class value_tests
 
         $t->subheader($ts . 'value object selection');
         $test_name = 'create a numeric value object';
-        $val = (new value_obj())->get($usr, values::PI_LONG);
+        $val = new value_obj()->get($usr, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
         $test_name = 'create a time value object';
-        $val = (new value_obj())->get($usr, (new DateTime(values::TIME)));
+        $val = new value_obj()->get($usr, new DateTime(values::TIME));
         $t->assert($test_name, $val::class, value_time::class);
         $test_name = 'create a text value object';
-        $val = (new value_obj())->get($usr, values::TEXT);
+        $val = new value_obj()->get($usr, values::TEXT);
         $t->assert($test_name, $val::class, value_text::class);
         $test_name = 'create a geolocation value object';
-        $val = (new value_obj())->get($usr, values::GEO);
+        $val = new value_obj()->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
         $t->subheader($ts . 'sql setup');
@@ -224,6 +228,23 @@ class value_tests
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
+
+        $t->subheader($ts . 'ui formatting');
+
+        $test_case = 'show the unit after the value';
+        $val = $tl->ui_value($t_val->light_speed());
+        $result = $tl->text_from_html($val->with_unit_and_info());
+        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triples::M_PER_S;
+        $t->assert($test_case, $result, $target);
+
+        $t->subheader($ts . 'ui validation');
+
+        $test_case = 'check the warning message if a value has more than one unit phrase';
+        $val = $tl->ui_value($t_val->light_speed_with_two_units());
+        $result = $val->warning_text();
+        // TODO add warning
+        $target = '';
+        $t->assert($test_case, $result, $target);
 
         $t->subheader($ts . 'html frontend');
 

@@ -39,6 +39,7 @@ const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECT
 include_once WEB_CONST_PATH . 'paths.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -612,7 +613,9 @@ function prg_start_api($code_name): sql_db
 {
     global $sys_time_start, $sys_script, $usr_pro_cac;
     global $sys_times;
+    global $mtr;
 
+    $code_name = 'api/' . $code_name;
     log_debug($code_name . ' ..');
 
     $sys_time_start = time();
@@ -628,43 +631,18 @@ function prg_start_api($code_name): sql_db
     $db_con->open();
     log_debug($code_name . ' ... database link open');
 
-    return $db_con;
-}
+    // for the api only english is used
+    $mtr = new Translator(language_codes::SYS);
 
-/**
- *
- * @param $code_name
- * @return sql_db
- */
-function prg_start_system($code_name): sql_db
-{
-    global $sys_time_start, $sys_script, $usr_pro_cac;
-    global $sys_times;
+    // create a virtual one-time system user to load the system users
+    $usr_sys = new user();
+    $usr_sys->id = users::SYSTEM_ID;
+    $usr_sys->name = users::SYSTEM_NAME;
 
-    log_debug($code_name . ' ..');
-
-    $sys_time_start = time();
-    $sys_times = new system_time_list();
-    $sys_script = $code_name;
-
-    // resume session (based on cookies)
-    session_start();
-
-    // link to database
-    $db_con = new sql_db;
-    $db_con->db_type = SQL_DB_TYPE;
-    $db_con->open();
-    log_debug($code_name . ' ... database link open');
-
-    // load user profiles
-    $usr_pro_cac = new user_profile_list();
-    $lib = new library();
-    $tbl_name = $lib->class_to_name(user_profile::class);
-    if ($db_con->has_table($tbl_name)) {
-        $usr_pro_cac->load($db_con);
-    } else {
-        $usr_pro_cac->load_dummy();
-    }
+    // preload all types from the database
+    // TODO Prio 3 try to speed up
+    $sys_typ_lst = new type_lists();
+    $sys_typ_lst->load($db_con, $usr_sys);
 
     return $db_con;
 }
@@ -772,6 +750,23 @@ function resource_file(string $resource_path): string
     return $result;
 }
 
+/**
+ * TODO to be move to a class
+ * update the cache files
+ * called upfront also from the reset db run because this is used for the unit tests
+ *
+ * @param user $usr the test object to collect the errors and calculate the execution times
+ * @return void
+ */
+function cache_recreate(user $usr): void
+{
+    global $db_con;
+
+    log_debug('update cache');
+    $sys_typ_lst = new type_lists();
+    $sys_typ_lst->load($db_con, $usr);
+
+}
 
 /*
  * display functions

@@ -252,6 +252,7 @@ class test_triples
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triples::SPEED_OF_LIGHT_ID, triples::SPEED_OF_LIGHT);
+        $trp->description = triples::SPEED_OF_LIGHT_COM;
         $trp->set_from($t_wrd->speed()->phrase());
         $trp->set_verb($t_vrb->verb_of());
         $trp->set_to($t_wrd->light()->phrase());
@@ -264,9 +265,11 @@ class test_triples
         $t_vrb = new test_verbs($this->env);
         $trp = new triple($this->env->usr1);
         $trp->set(triples::M_PER_S_ID, triples::M_PER_S);
+        $trp->description = triples::M_PER_S_COM;
         $trp->set_from($t_wrd->meter()->phrase());
         $trp->set_verb($t_vrb->verb_per());
         $trp->set_to($t_wrd->second()->phrase());
+        $trp->set_type(phrase_type::MEASURE, $this->env->usr1);
         return $trp;
     }
 
@@ -279,6 +282,7 @@ class test_triples
         $trp->set_from($t_trp->year_1983()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
+        $trp->set_type(phrase_type::INFO, $this->env->usr1);
         return $trp;
     }
 
@@ -291,6 +295,7 @@ class test_triples
         $trp->set_from($t_trp->year_1967()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($t_trp->definition_year()->phrase());
+        $trp->set_type(phrase_type::INFO, $this->env->usr1);
         return $trp;
     }
 

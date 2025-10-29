@@ -345,6 +345,46 @@ class value extends sandbox_value
     }
 
     /**
+     * create the html code to show the value formatted based on the user settings
+     * and the unit after the value
+     * and with the information only phrases move the tooltip of the group name
+     * and with the group name as a link to see the details of the value
+     * @return string the description with links and the formatted value
+     */
+    function with_unit_and_info(string $back = ''): string
+    {
+        $html = new html_base();
+        $lib = new library();
+        $phr_lst = $this->grp->phr_lst();
+        $unit_phr_lst = $phr_lst->measure_list();
+        $info_phr_lst = $phr_lst->info_list();
+        $phr_lst = $phr_lst->ex_measure_list();
+        $phr_lst = $phr_lst->ex_info_list();
+        if ($unit_phr_lst->count() > 1) {
+            log_err($this->dsp_id() . ' is not expected to have more than one unit');
+        }
+        $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
+        $name_txt = $phr_lst->name_link_list();
+        $val_txt = $this->value();
+        if (!$info_phr_lst->is_empty()) {
+            $val_txt = $html->ref($url, $val_txt, $info_phr_lst->name_pur());
+        } else {
+            $val_txt = $html->span($val_txt, '', $info_phr_lst->name_pur());
+        }
+        $unit_txt = $unit_phr_lst->name_link_list();
+        return $name_txt . ' ' . $val_txt . ' ' . $unit_txt;
+    }
+
+    /**
+     * perform the fixed validation tests that are never expected to be changes e.g. a value has only one unit
+     * @return string the warning text translated to the frontend language as defined by the user
+     */
+    function warning_text(): string
+    {
+        return '';
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function name(): string

@@ -306,8 +306,7 @@ class ui_list extends ui_base
     ): string
     {
         $val_lst = $dto->val_lst?->filter($dbo);
-        $phr_lst = new phrase_list();
-        return $this->value_list($val_lst, $phr_lst, $style_id);
+        return $this->value_list_unit($val_lst, $style_id);
     }
 
     /**
@@ -334,6 +333,30 @@ class ui_list extends ui_base
             $style_txt = $style->code_id();
         }
         return $val_lst->list($phr_lst, '', $style_txt);
+    }
+
+    /**
+     * show a list of values related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param value_list $val_lst
+     * @param int|null $style_id id
+     * @return string the html code to show the list of values
+     */
+    private function value_list_unit(
+        value_list  $val_lst,
+        ?int        $style_id = null
+    ): string
+    {
+        global $msk_sty_cac;
+        $style_txt = '';
+        if ($style_id != null) {
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+        }
+        return $val_lst->list_unit();
     }
 
     /**

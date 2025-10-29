@@ -133,7 +133,7 @@ class element_group_write_tests
 
                 if (isset($fig)) {
                     $t = new test_api();
-                    $fig_dsp = $tl->dsp_obj($fig, new figure_dsp());
+                    $fig_dsp = $tl->ui_obj($fig, new figure_dsp());
                     $result = $fig_dsp->display();
                     $target = "8.51";
                     $t->display('figure->display', $target, $result);

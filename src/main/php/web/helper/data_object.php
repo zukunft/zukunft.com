@@ -153,7 +153,7 @@ class data_object
         }
     }
     public formula_list $frm_lst;
-    private view_list $msk_lst;
+    public view_list $msk_lst;
     private component_list $cmp_lst;
     public ?type_lists $typ_lst_cache = null;
 

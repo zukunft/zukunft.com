@@ -1729,6 +1729,13 @@ class user extends db_id_object_non_sandbox
         log_debug();
         $result = false;
 
+        // TODO Prio 1 should never happen, so create a log_err instead of a log_warning
+        if ($usr_pro_cac == null) {
+            log_warning('unexpected creation of a user profile list because it has been empty');
+            $usr_pro_cac = new user_profile_list();
+            $usr_pro_cac->load_dummy();
+        }
+
         if ($this->is_profile_valid()) {
             if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
                 or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {

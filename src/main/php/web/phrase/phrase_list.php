@@ -393,6 +393,23 @@ class phrase_list extends sandbox_list_named
      * display
      */
 
+    function name_link_list(?phrase_list $phr_lst_header = null): string
+    {
+        $result = '';
+        if ($phr_lst_header != null) {
+            if (!$phr_lst_header->is_empty()) {
+                $this->remove($phr_lst_header);
+            }
+        }
+        foreach ($this->lst() as $phr) {
+            if ($result <> '') {
+                $result .= ', ';
+            }
+            $result .= $phr->name_link();
+        }
+        return $result;
+    }
+
     /**
      * @returns string the html code to display the plural of the phrases with the most useful link
      * TODO replace adding the s with a language specific functions that can include exceptions
@@ -427,6 +444,67 @@ class phrase_list extends sandbox_list_named
     {
         $lib = new library();
         return $lib->ids_to_url($this->id_lst(), "phrase");
+    }
+
+
+    /*
+     * filter
+     */
+
+    /**
+     * @return phrase_list list of the measure / unit phrases e.g. m/s
+     */
+    function measure_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_measure()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the measure / unit phrases e.g. speed of light
+     */
+    function ex_measure_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_measure()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of information only phrases
+     */
+    function info_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_info()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of phrases without the info phrases e.g. without 1967 (year of definition)
+     */
+    function ex_info_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_info()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
     }
 
 
