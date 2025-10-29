@@ -98,7 +98,7 @@ SELECT word_update_log_0022224322222
         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
         null::text,
         84::smallint,
-        2::bigint,
+        3::bigint,
         null::bigint,
         307::smallint,
         'mathematics'::text,

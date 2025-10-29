@@ -186,7 +186,7 @@ class test_components
         $cmp->set_type(component_type::TEXT, $this->env->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->env->usr_system);
-        $cmp->set_usage(test_const::DUMMY_USAGE);
+        $cmp->set_usage(test_const::DUMMY_USAGE_COMPONENT);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
         $cmp->ui_msg_code_id_vars = msg_id::DONE;
         $cmp->ui_msg_code_id_exception = msg_id::ERROR;

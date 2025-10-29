@@ -38,8 +38,12 @@ class test_const
     // the timestamp used for unit testing
     const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
     // usage used for unit testing
-    const int DUMMY_USAGE = 2;
+    const int DUMMY_USAGE_WORD = 3;
     const int DUMMY_USAGE_VERB = 23;
+    const int DUMMY_USAGE_SOURCE = 2;
+    const int DUMMY_USAGE_FORMULA = 7;
+    const int DUMMY_USAGE_VIEW = 1;
+    const int DUMMY_USAGE_COMPONENT = 2;
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
     const float DUMMY_IMPACT_VERB = 123.4;

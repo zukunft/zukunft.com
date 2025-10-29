@@ -91,7 +91,7 @@ SELECT view_insert_log_01111155111 (
                43::smallint,
                'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text,
                805::smallint,
-               2::bigint,
+               1::bigint,
                44::smallint,
                'entry_view'::text,
                45::smallint,

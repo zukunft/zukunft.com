@@ -149,7 +149,7 @@ class test_words
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
-        $wrd->set_usage(test_const::DUMMY_USAGE);
+        $wrd->set_usage(test_const::DUMMY_USAGE_WORD);
         $wrd->set_impact(test_const::DUMMY_IMPACT);
         $wrd->exclude();
         $wrd->set_share_id($shr_typ_cac->id(share_type::GROUP));

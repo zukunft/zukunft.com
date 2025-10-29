@@ -89,6 +89,17 @@ class test_sources
         $src->exclude();
         $src->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $src->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
+        $src->set_usage(test_const::DUMMY_USAGE_SOURCE);
+        return $src;
+    }
+
+    /**
+     * @return source with all fields set for testing the sql function creation
+     */
+    function source_filled_included(): source
+    {
+        $src = $this->source_filled();
+        $src->include();
         return $src;
     }
 
@@ -97,8 +108,7 @@ class test_sources
      */
     function source_filled_add(): source
     {
-        $src = $this->source_filled();
-        $src->include();
+        $src = $this->source_filled_included();
         $src->id = 0;
         $src->set_name(sources::SYSTEM_TEST_ADD);
         return $src;

@@ -97,7 +97,7 @@ SELECT formula_insert_log_0111101111151111 (
                34::smallint,
                'to convert times in minutes to seconds and the other way round'::text,
                656::smallint,
-               2::bigint,
+               7::bigint,
                31::smallint,
                1::smallint,
                33::smallint,

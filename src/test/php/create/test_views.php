@@ -198,7 +198,7 @@ class test_views
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->env->usr1);
         $msk->set_style(view_styles::COL_SM_4);
-        $msk->set_usage(test_const::DUMMY_USAGE);
+        $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type::GROUP));
         $msk->set_protection_id($ptc_typ_cac->id(protection_type::USER));

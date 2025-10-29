@@ -92,7 +92,7 @@ SELECT formula_insert_log_0111101111151111 (
                34,
                'to convert times in minutes to seconds and the other way round',
                656,
-               2,
+               7,
                31,
                1,
                33,
