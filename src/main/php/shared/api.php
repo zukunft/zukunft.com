@@ -63,7 +63,8 @@ class api
     const string CONFIG_USER = 'user';
 
     // the url name of the main script that is used in combination with the host url
-    const string MAIN_SCRIPT = 'http/view.php';
+    const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
+    const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
     const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 

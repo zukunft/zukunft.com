@@ -1500,7 +1500,7 @@ class sandbox_value extends sandbox_multi
             $vars[json_fields::DESCRIPTION] = $this->description();
         }
 
-        if ($typ_lst->include_phrases()) {
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->grp()->phrase_list();
             $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
         }

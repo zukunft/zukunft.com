@@ -142,6 +142,7 @@ class type_lists
         return $result;
     }
 
+    // TODO Prio 0 use the dto object and cache the type data
     function load(sql_db $db_con, ?user $usr): bool
     {
         // TODO Prio 1 use one type_list object instead

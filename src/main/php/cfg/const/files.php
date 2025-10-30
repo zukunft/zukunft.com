@@ -48,6 +48,7 @@ class files
     const string YAML = '.yaml';
     const string CODE_LINK_TYPE = '.csv';
     const string SQL = '.sql';
+    const string SEP = '_';
 
 
     /*
@@ -86,6 +87,12 @@ class files
     // initial configuration of some views that the user can change
     const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
 
+
+    /*
+     * cache
+     */
+
+    const string CACHE_CONFIG = 'cfg';
 
     /*
      * db config

@@ -284,13 +284,13 @@ class group extends sandbox_multi
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::ID] = $this->id();
-            if ($this->name != null or !$typ_lst->include_phrases()) {
+            if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
             }
             if ($this->description() != null) {
                 $vars[json_fields::DESCRIPTION] = $this->description();
             }
-            if ($typ_lst->include_phrases()) {
+            if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
                 $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
             }

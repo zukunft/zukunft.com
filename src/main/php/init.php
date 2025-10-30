@@ -556,7 +556,7 @@ function prg_restart(string $code_name): sql_db
     global $sys_times;
 
     // link to database
-    $sys_times->switch(system_time_type::DEFAULT);
+    $sys_times->switch(system_time_type::DB_OPEN);
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     $sc = new sql_creator();

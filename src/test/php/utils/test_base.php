@@ -359,8 +359,8 @@ include_once html_paths::USER . 'user_display_old.php';
 
 class test_base
 {
-    // the url which should be used for testing (maybe later https://test.zukunft.com/)
-    const string URL = 'https://zukunft.com/';
+    // the url which should be used for testing (maybe later api::HOST_UAT)
+    const string URL = api::HOST_PROD;
 
     const string TEST_TYPE_CONTAINS = 'contains';
     const string TEST_TYPE_NOT = 'not';

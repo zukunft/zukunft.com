@@ -103,6 +103,14 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message should include the phrase names
+     */
+    public function phrase_names(): bool
+    {
+        return in_array(api_type::PHRASE_NAMES, $this->lst);
+    }
+
+    /**
      * @return bool true if the api message should contain excluded objects with all details
      */
     public function with_excluded(): bool

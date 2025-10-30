@@ -540,41 +540,46 @@ class triple extends sandbox_link_named
     {
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            $from = $this->from()->obj();
-            if ($from != null) {
-                if ($from->id() <> 0 or $from->name() != '') {
-                    //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
-                    $vars[json_fields::FROM] = $this->from_id();
-                    if ($typ_lst->include_phrases()) {
-                        // create the json based on the phrase not the object to include the class type
-                        $vars[json_fields::FROM_PHRASE] = $this->from()->api_json_array($typ_lst);
+            if ($typ_lst->phrase_names()) {
+                $vars[json_fields::ID] = $this->id();
+                $vars[json_fields::NAME] = $this->name();
+            } else {
+                $vars = parent::api_json_array($typ_lst, $usr);
+                $from = $this->from()->obj();
+                if ($from != null) {
+                    if ($from->id() <> 0 or $from->name() != '') {
+                        //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
+                        $vars[json_fields::FROM] = $this->from_id();
+                        if ($typ_lst->include_phrases()) {
+                            // create the json based on the phrase not the object to include the class type
+                            $vars[json_fields::FROM_PHRASE] = $this->from()->api_json_array($typ_lst);
+                        }
                     }
                 }
-            }
-            if ($this->verb() != null) {
-                //$vars[json_fields::VERB] = $this->verb()->api_json_array($typ_lst);
-                $vars[json_fields::VERB] = $this->verb()->id();
-            }
-            $to = $this->to()->obj();
-            if ($to != null) {
-                if ($to->id() <> 0 or $to->name() != '') {
-                    //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
-                    $vars[json_fields::TO] = $this->to_id();
-                    if ($typ_lst->include_phrases()) {
-                        // create the json based on the phrase not the object to include the class type
-                        $vars[json_fields::TO_PHRASE] = $this->to()->api_json_array($typ_lst);
+                if ($this->verb() != null) {
+                    //$vars[json_fields::VERB] = $this->verb()->api_json_array($typ_lst);
+                    $vars[json_fields::VERB] = $this->verb()->id();
+                }
+                $to = $this->to()->obj();
+                if ($to != null) {
+                    if ($to->id() <> 0 or $to->name() != '') {
+                        //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
+                        $vars[json_fields::TO] = $this->to_id();
+                        if ($typ_lst->include_phrases()) {
+                            // create the json based on the phrase not the object to include the class type
+                            $vars[json_fields::TO_PHRASE] = $this->to()->api_json_array($typ_lst);
+                        }
                     }
                 }
+                // add the generated name if there is no given name
+                if (!array_key_exists(json_fields::NAME, $vars)) {
+                    $vars[json_fields::NAME] = $this->generate_name();
+                } elseif ($vars[json_fields::NAME] == '') {
+                    $vars[json_fields::NAME] = $this->generate_name();
+                }
+                $vars[json_fields::USAGE] = $this->usage();
+                $vars[json_fields::IMPACT] = $this->impact();
             }
-            // add the generated name if there is no given name
-            if (!array_key_exists(json_fields::NAME, $vars)) {
-                $vars[json_fields::NAME] = $this->generate_name();
-            } elseif ($vars[json_fields::NAME] == '') {
-                $vars[json_fields::NAME] = $this->generate_name();
-            }
-            $vars[json_fields::USAGE] = $this->usage();
-            $vars[json_fields::IMPACT] = $this->impact();
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;

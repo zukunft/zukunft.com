@@ -33,6 +33,21 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -42,17 +57,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-
-include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_VALUE . 'value_list.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_ENUM . 'language_codes.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 
 class config_numbers extends value_list
@@ -214,24 +220,73 @@ class config_numbers extends value_list
     function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
         $usr_msg = new user_message();
-        $phr_sys_cfg = new phrase($usr);
-        $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
-        // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-        $this->load_by_phr($phr_sys_cfg);
-        // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
-        if ($phr != null) {
-            // TODO Prio 1 activate
-            //$this->filter_by_phrase($phr);
-            log_debug('filter by phrase');
-        }
-        if (!$this->is_empty()) {
-            log_debug($this->count() . ' config values loaded');
-            $this->load_phrases();
+        if ($this->is_cache_valid($usr, $phr)) {
+            $this->read_cache($usr, $phr);
         } else {
-            log_debug('no config values loaded');
-            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            $phr_sys_cfg = new phrase($usr);
+            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
+            // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
+            $this->load_by_phr($phr_sys_cfg);
+            // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
+            if ($phr != null) {
+                // TODO Prio 1 activate
+                //$this->filter_by_phrase($phr);
+                log_debug('filter by phrase');
+            }
+            if (!$this->is_empty()) {
+                log_debug($this->count() . ' config values loaded');
+                $this->load_phrases();
+            } else {
+                log_debug('no config values loaded');
+                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            }
+            if ($usr_msg->is_ok()) {
+                $this->write_cache($usr, $phr);
+            }
         }
         return $usr_msg;
+    }
+
+    private function is_cache_valid(user $usr, ?phrase $phr = null): bool
+    {
+        $file_path = $this->cache_file($usr, $phr);
+        if (file_exists($file_path)) {
+            $cac_time = filemtime($file_path);
+            $cfg_time = filemtime(files::SYSTEM_CONFIG);
+            if ($cfg_time < $cac_time) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function write_cache(user $usr, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $array = $this->cache_array();
+        $json = json_encode($array);
+        file_put_contents($file_name, $json);
+    }
+
+    private function read_cache(user $usr, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $json = file_get_contents($file_name);
+        $array = json_decode($json, true);
+        $this->api_mapper($array);
+    }
+
+    private function cache_file(user $usr, ?phrase $phr = null): string
+    {
+        $file_path = paths::CACHE . files::CACHE_CONFIG . files::SEP . $usr->name();
+        if ($phr != null) {
+            $file_path .= files::SEP . $phr->name();
+        }
+        $file_path .= files::JSON;
+        return $file_path;
     }
 
     /**
@@ -260,6 +315,15 @@ class config_numbers extends value_list
         return $this->load_cfg($usr, $phr);
     }
 
+
+    /*
+     * mapping
+     */
+
+    private function cache_array(): array
+    {
+        return $this->api_json_array(new api_type_list([api_type::PHRASE_NAMES]));
+    }
 
     /*
      * default

@@ -75,6 +75,7 @@ if ($db_con->is_open()) {
         $ui->load_cache();
         $url_array = $_GET;
         // TODO Prio 1 remove temp overwrite for debug
+        //$url = api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID;
         //$url = 'http://localhost/http/view.php?m=3&id=1';
         //$url_part = parse_url($url);
         //parse_str($url_part["query"], $url_array);

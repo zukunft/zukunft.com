@@ -376,7 +376,7 @@ class result extends sandbox_value
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the source phrases if requested
-        if ($typ_lst->include_phrases()) {
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->source_group()->phrase_list();
             $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst);
         }

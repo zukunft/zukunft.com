@@ -38,6 +38,9 @@ enum api_type: string
     // include the phrases in the value list api message
     case INCL_PHRASES = 'incl_phrases';
 
+    // include only the phrase names for a short list that is at least somehow user human-readable
+    case PHRASE_NAMES = 'phrase_names';
+
     // include objects that have been excluded by the user e.g. so that the user can include the objects again
     // by default excluded objects are not send to the frontend
     case WITH_EXCLUDED = 'with_excluded';

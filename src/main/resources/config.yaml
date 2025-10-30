@@ -34,6 +34,14 @@ zukunft.com:
             time:
               days: 100
               tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
+      cache:
+        config:
+          limit:
+            days: 150
+            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues to to potential refresh bugs"
+          validate:
+            type: "names"
+            tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"

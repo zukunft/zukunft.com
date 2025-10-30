@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -153,15 +154,15 @@ class system_views_read_tests
         // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $is_connected = $t->dsp_web_test(
-            'http/privacy_policy.html',
+            api::MAIN_SCRIPT_PATH . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
         $is_connected = $t->dsp_web_test(
-            'http/error_update.php?id=1',
+            api::MAIN_SCRIPT_PATH . 'error_update.php?id=1',
             'not permitted',
             ', frontend error_update.php contains at least', $is_connected);
         $t->dsp_web_test(
-            'http/find.php?pattern=' . words::ABB,
+            api::MAIN_SCRIPT_PATH . 'find.php?pattern=' . words::ABB,
             words::ABB,
             ', frontend find.php contains at least', $is_connected);
 

@@ -73,6 +73,9 @@ class paths
     const string MODEL_COMPONENT = self::MODEL . 'component' . DIRECTORY_SEPARATOR;
     const string MODEL_SHEET = self::MODEL_COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
 
+    // for the backend cache
+    const string CACHE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR;
+
     const string SHARED = self::PHP_LIB . 'shared' . DIRECTORY_SEPARATOR;
     const string SHARED_CALC = self::SHARED . 'calc' . DIRECTORY_SEPARATOR;
     const string SHARED_CONST = self::SHARED . 'const' . DIRECTORY_SEPARATOR;
