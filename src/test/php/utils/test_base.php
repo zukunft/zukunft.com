@@ -394,6 +394,9 @@ class test_base
     const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
     const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
     const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+    const float TIMEOUT_TEST_INIT = 0.7;  // time limit to switch to a new test (maily to reset the timer)
+    // TODO Prio 1 reduce!
+    const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
@@ -405,7 +408,8 @@ class test_base
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_system; // a user with the system profile to test allow of system functionality
 
-    private float $exe_start_time; // time when the single test has started (end the end time of all tests)
+    private float $exe_start_time; // time when the test run has started (end the end time of all tests)
+    private float $section_start_time; // time when the test section has been started
 
     // the counter of the error for the summery
     private int $error_counter;
@@ -430,6 +434,7 @@ class test_base
 
         // init the times to be able to detect potential timeouts
         $this->exe_start_time = microtime(true);
+        $this->section_start_time = microtime(true);
 
         // reset the error counters
         $this->error_counter = 0;
@@ -496,7 +501,81 @@ class test_base
     function header(string $header_text): void
     {
         global $log_txt;
+        global $sys_times;
         $log_txt->header($header_text);
+
+        // reset the test timer to avoid timeouts due to a delay in previous tests
+        $new_start_time = microtime(true);
+        $since_start = $new_start_time - $this->section_start_time;
+        $exe_max_time = test_base::TIMEOUT_TEST_INIT;
+        if ($this->is_timeout($since_start, $exe_max_time)) {
+            $msg = $this->time_msg('in switch from previous test', $since_start, $exe_max_time);
+            $msg .= $this->duration_text($since_start);
+            $log_txt->echo_log($msg);
+        }
+        $this->section_start_time = $new_start_time;
+    }
+
+    private function time_msg(
+        string $test_name,
+        float $duration,
+        float $exe_max_time
+    ): string
+    {
+        $msg = '';
+        if ($this->is_timeout($duration, $exe_max_time)) {
+            $msg .= $this->timeout_msg(). $test_name . ' ' . $this->timeout_explain($duration);
+            $this->timeout_counter++;
+        } else {
+            $msg .= $this->ok_msg($test_name);
+        }
+        return $msg;
+    }
+
+    private function timeout_msg(): string
+    {
+        $msg = '';
+        if ($this->format == text_log_format::TEXT) {
+            $msg .= 'timeout: ';
+        } else {
+            $msg .= '<p style="color:orange">timeout</p><p>';
+        }
+        return $msg;
+    }
+
+    private function timeout_explain(float $expected): string
+    {
+        global $sys_times;
+        return $sys_times->section_report($expected);
+    }
+
+    private function ok_msg(string $test_name): string
+    {
+        $msg = '';
+        if ($this->level == text_log_level::ALL) {
+            if ($this->format == text_log_format::TEXT) {
+                $msg .= 'ok ' . $test_name;
+            } else {
+                $msg .= '<p style="color:green">ok</p><p>' . $test_name;
+            }
+        }
+        return $msg;
+    }
+
+    private
+    function is_timeout(float $duration, float $exe_max_time): bool
+    {
+        if ($duration > $exe_max_time) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private
+    function duration_text(float $duration): string
+    {
+        return ', took ' . round($duration, 4) . ' seconds';
     }
 
     /**
@@ -668,7 +747,7 @@ class test_base
         if ($pos !== false) {
             $needle = $haystack;
         }
-        return $this->display(', ' . $msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
+        return $this->display($msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -727,7 +806,7 @@ class test_base
         }
         // the array keys are not relevant if only a few elements should be checked
         $haystack = array_values(array_intersect($haystack, $needles));
-        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->display($msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -755,7 +834,7 @@ class test_base
             $needles = $needle;
         }
         $haystack = array_diff($needles, $haystack);
-        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->display($msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
     }
 
 
@@ -2077,7 +2156,7 @@ class test_base
         sql_par $qp,
         string  $dialect = '',
         string  $test_name = '',
-        string $file_name_ext = ''
+        string  $file_name_ext = ''
     ): bool
     {
         $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
@@ -3023,7 +3102,8 @@ class test_base
      *                    e.g. to detect incomplete cleanup of previous tests
      * @return void
      */
-    private function write_named_cleanup_one(
+    private
+    function write_named_cleanup_one(
         sandbox_named|sandbox_link_named|phrase $sbx,
         user                                    $usr,
         string                                  $name,
@@ -3081,7 +3161,8 @@ class test_base
      * @param user $usr the user who has requested the change
      * @return int the id of the added object
      */
-    private function write_add(user|ip_range $obj, user $usr): int
+    private
+    function write_add(user|ip_range $obj, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($obj::class);
@@ -3104,7 +3185,8 @@ class test_base
      * @param user $usr
      * @return int the id of the added object
      */
-    private function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
+    private
+    function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -3119,7 +3201,8 @@ class test_base
         }
     }
 
-    private function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
+    private
+    function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -3142,7 +3225,8 @@ class test_base
         }
     }
 
-    private function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
+    private
+    function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -3178,7 +3262,8 @@ class test_base
      * @param string|null $old_name
      * @return bool
      */
-    private function write_log(
+    private
+    function write_log(
         user|db_id_object_non_sandbox $sbx,
         user                          $usr_req,
         string                        $fld,
@@ -3210,7 +3295,8 @@ class test_base
      * @param string|null $old_name
      * @return bool
      */
-    private function write_named_log(
+    private
+    function write_named_log(
         sandbox_named|sandbox_link_named $sbx,
         string                           $fld,
         string                           $name,
@@ -3231,7 +3317,8 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_named_link_log(
+    private
+    function write_named_link_log(
         triple $lnk,
         string $action
     ): bool
@@ -3250,7 +3337,8 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_link_log(
+    private
+    function write_link_log(
         sandbox_link $lnk,
         string       $action
     ): bool
@@ -3277,7 +3365,8 @@ class test_base
      * @param user $usr
      * @return string
      */
-    private function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
+    private
+    function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3305,7 +3394,8 @@ class test_base
         }
     }
 
-    private function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    private
+    function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -3322,7 +3412,8 @@ class test_base
         }
     }
 
-    private function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
+    private
+    function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -3341,7 +3432,8 @@ class test_base
         }
     }
 
-    private function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
+    private
+    function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -3356,7 +3448,8 @@ class test_base
         }
     }
 
-    private function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    private
+    function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -3371,7 +3464,8 @@ class test_base
         }
     }
 
-    private function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
+    private
+    function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3390,7 +3484,8 @@ class test_base
         }
     }
 
-    private function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
+    private
+    function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3405,7 +3500,8 @@ class test_base
         }
     }
 
-    private function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
+    private
+    function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3424,7 +3520,8 @@ class test_base
         }
     }
 
-    private function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
+    private
+    function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3439,7 +3536,8 @@ class test_base
         }
     }
 
-    private function write_link_log_field(
+    private
+    function write_link_log_field(
         sandbox_link $sbx,
         string       $fld,
         string       $name,
@@ -3460,7 +3558,8 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    private
+    function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
         $id = $sbx->id();
         $name = $sbx->name();
@@ -3478,7 +3577,8 @@ class test_base
         }
     }
 
-    private function write_named_changed_by_noone(
+    private
+    function write_named_changed_by_noone(
         sandbox_named|sandbox_link_named $sbx
     ): bool
     {
@@ -3492,7 +3592,8 @@ class test_base
         }
     }
 
-    private function write_named_check_changed_by(
+    private
+    function write_named_check_changed_by(
         sandbox_named|sandbox_link_named $sbx,
         user                             $usr
     ): bool
@@ -3502,7 +3603,8 @@ class test_base
         return $this->assert_contains($test_name, $usr_lst->names(), $usr->name());
     }
 
-    private function write_named_ownership(
+    private
+    function write_named_ownership(
         sandbox_named|sandbox_link_named $sbx,
         user                             $admin,
         user                             $usr
@@ -3768,7 +3870,8 @@ class test_base
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @return bool true if the test result is fine
      */
-    private function assert_dsp(
+    private
+    function assert_dsp(
         string            $test_name,
         bool              $test_result,
         string|array|null $target = '',
@@ -3780,27 +3883,14 @@ class test_base
 
         // calculate the execution time
         $new_start_time = microtime(true);
-        $since_start = $new_start_time - $this->exe_start_time;
+        $since_start = $new_start_time - $this->section_start_time;
 
         // display the result
         $final_msg = '';
         if ($test_result) {
             // check if executed in a reasonable time and if the result is fine
-            if ($since_start > $exe_max_time) {
-                if ($this->format == text_log_format::TEXT) {
-                    $final_msg .= 'timeout ' . $test_name;
-                } else {
-                    $final_msg .= '<p style="color:orange">timeout</p><p>' . $test_name;
-                }
-                $this->timeout_counter++;
-            } else {
-                if ($this->level == text_log_level::ALL) {
-                    if ($this->format == text_log_format::TEXT) {
-                        $final_msg .= 'ok ' . $test_name;
-                    } else {
-                        $final_msg .= '<p style="color:green">ok</p><p>' . $test_name;
-                    }
-                }
+            $final_msg .= $this->time_msg($test_name, $since_start, $exe_max_time);
+            if (!$this->is_timeout($since_start, $exe_max_time)) {
                 $test_result = true;
             }
         } else {
@@ -3829,14 +3919,13 @@ class test_base
 
         // show the execution time
         if ($final_msg != '') {
-            $final_msg .= ', took ';
-            $final_msg .= round($since_start, 4) . ' seconds';
+            $final_msg .= $this->duration_text($since_start);
             $log_txt->echo_log($final_msg);
         }
         flush();
 
         $this->total_tests++;
-        $this->exe_start_time = $new_start_time;
+        $this->section_start_time = $new_start_time;
 
         return $test_result;
     }
@@ -3916,7 +4005,7 @@ class test_base
             echo $this->error_counter . ' errors<br>';
         }
         echo "<br>";
-        $since_start = microtime(true) - $this->exe_start_time;
+        $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
         echo '<br>';
         echo '<br>';
@@ -3931,7 +4020,7 @@ class test_base
         global $sys_times;
 
         echo "\n";
-        $since_start = microtime(true) - $this->exe_start_time;
+        $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
         echo ' (' . $sys_times->report($since_start) . ')';
         echo "\n";
@@ -3948,7 +4037,8 @@ class test_base
     /**
      * @return int the next sequence number to simulate database auto increase for unit testing
      */
-    public function next_seq_nbr(): int
+    public
+    function next_seq_nbr(): int
     {
         $this->seq_nbr++;
         return $this->seq_nbr;
@@ -3959,7 +4049,8 @@ class test_base
      * @param object $usr_obj
      * @return void
      */
-    private function set_id_for_unit_tests(object $usr_obj): void
+    private
+    function set_id_for_unit_tests(object $usr_obj): void
     {
         // set the id for simple db objects without related objects
         if ($usr_obj::class == user::class) {
@@ -4007,7 +4098,8 @@ class test_base
      * @param value_base|result $val the value or result object that
      * @return void nothing because the value object a modified
      */
-    private function set_val_id_for_unit_tests(value_base|result $val): void
+    private
+    function set_val_id_for_unit_tests(value_base|result $val): void
     {
         if (!$val->is_id_set()) {
             $val->set_id($this->next_seq_nbr());
@@ -4032,14 +4124,16 @@ class test_base
      * @param formula $frm the formula object that
      * @return void nothing because the formula object a modified
      */
-    private function set_frm_id_for_unit_tests(formula $frm): void
+    private
+    function set_frm_id_for_unit_tests(formula $frm): void
     {
         if ($frm->id() == 0) {
             $frm->id = $this->next_seq_nbr();
         }
     }
 
-    private function html_page(string $body): string
+    private
+    function html_page(string $body): string
     {
         $html = new html_base();
         return $html->header_test('test') . $body . $html->footer();

@@ -73,7 +73,12 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
         $ui->load_cache();
-        $html_str .= $ui->url_to_html($_GET, $usr_dsp, $ui->dto);
+        $url_array = $_GET;
+        // TODO Prio 1 remove temp overwrite for debug
+        //$url = 'http://localhost/http/view.php?m=3&id=1';
+        //$url_part = parse_url($url);
+        //parse_str($url_part["query"], $url_array);
+        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
     }
 
     // close the database

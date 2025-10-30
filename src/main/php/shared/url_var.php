@@ -51,6 +51,7 @@ class url_var
     const string EQ = '=';
     const string API_PATH = 'api/';
     const string ID = 'id'; // the internal database id of the main view object
+    const string ADD_ID = self::ADD . self::ID . self::EQ;
 
 
     /*

@@ -60,7 +60,10 @@ class system_time_list
      */
 
     // the protected main var
+    // list of the total execution times
     private array $lst = [];
+    // list of the execution times of the last section
+    private array $section_lst = [];
     private float $start_time = 0;
 
     private string $cur_cat = '';
@@ -109,10 +112,51 @@ class system_time_list
             if ($time_report != '') {
                 $time_report .= ', ';
             }
-            $time_report .= $cat . ': ' .  round($time, 4) . ' sec';
+            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
             $total = $total + $time;
         }
-        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expected - $total, 4);
+        $time_report .= ' -> measured ' . round($total, 4) .
+            ' / unmeasured ' . round($expected - $total, 4);
+        return $time_report;
+    }
+
+    /**
+     * @return string description of the execution times by category of the last section
+     */
+    function section_report(float $expected = 0): string
+    {
+        $total = 0.0;
+        $time_report = '';
+        foreach ($this->section_lst as $cat => $time) {
+            if ($time_report != '') {
+                $time_report .= ', ';
+            } else {
+                $time_report .= 'section ';
+            }
+            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
+            $total = $total + $time;
+        }
+        $unmeasured = $expected - $total;
+        // show only how much has been measured if this is relevant
+        $measured_relevant = false;
+        if (abs($total) > 0.1 and abs($unmeasured) > 0.01) {
+            $measured_relevant = true;
+        }
+        // if a relevant amount of time has not been measured, report it
+        $unmeasured_relevant = false;
+        if ($measured_relevant and abs($unmeasured) > 0.1) {
+            $unmeasured_relevant = true;
+        }
+        if ($measured_relevant) {
+            $time_report .= ' -> measured ' . round($total, 4);
+        }
+        if ($measured_relevant and $unmeasured_relevant) {
+            $time_report .= ' / ';
+        }
+        if ($unmeasured_relevant) {
+            $time_report .= 'unmeasured ' . round($expected - $total, 4);
+        }
+        $this->section_lst = [];
         return $time_report;
     }
 
@@ -137,6 +181,11 @@ class system_time_list
                 $this->lst[$key] = $this->lst[$key] + $duration;
             } else {
                 $this->lst[$key] = $duration;
+            }
+            if (array_key_exists($key, $this->section_lst)) {
+                $this->section_lst[$key] = $this->section_lst[$key] + $duration;
+            } else {
+                $this->section_lst[$key] = $duration;
             }
         }
     }

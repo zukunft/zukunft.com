@@ -43,6 +43,7 @@ include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
+include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -128,8 +130,8 @@ class a_selected_test extends test_cleanup
 
             $sys_usr = new user;
             $sys_usr->load_by_id(users::SYSTEM_ID);
-            $import = new import_file();
-            $import->import_config_yaml($sys_usr);
+            //$import = new import_file();
+            //$import->import_config_yaml($sys_usr);
 
 
             /*
@@ -172,6 +174,13 @@ class a_selected_test extends test_cleanup
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
+
+
+            /*
+             * ui via api
+             */
+
+            new localhost_ui_tests()->run($this);
 
 
             /*

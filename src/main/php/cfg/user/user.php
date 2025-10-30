@@ -87,6 +87,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
 //include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -137,6 +138,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Exception;
@@ -1073,13 +1075,16 @@ class user extends db_id_object_non_sandbox
         global $db_con;
         global $vrb_cac;
         global $sys_msk_cac;
+        global $sys_times;
 
+        $sys_times->switch(system_time_type::LOAD_USER_DATA);
         $vrb_cac = new verb_list($this);
         $vrb_cac->load($db_con);
 
         $sys_msk_cac = new view_sys_list($this);
         $sys_msk_cac->load($db_con);
 
+        $sys_times->switch(system_time_type::DEFAULT);
     }
 
     function has_any_user_this_profile(string $profile_code_id): bool

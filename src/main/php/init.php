@@ -553,8 +553,10 @@ function prg_restart(string $code_name): sql_db
     global $db_con;
     global $cfg;
     global $mtr;
+    global $sys_times;
 
     // link to database
+    $sys_times->switch(system_time_type::DEFAULT);
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     $sc = new sql_creator();
@@ -572,6 +574,7 @@ function prg_restart(string $code_name): sql_db
         log_debug($code_name . ': db open');
 
         // check the system setup
+        $sys_times->switch(system_time_type::DB_CHECK);
         $db_chk = new db_check();
         $usr_msg = $db_chk->db_check($db_con);
         if (!$usr_msg->is_ok()) {
@@ -587,12 +590,14 @@ function prg_restart(string $code_name): sql_db
         $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
+        $sys_times->switch(system_time_type::LOAD_CONFIG);
         // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
         $mtr = new Translator($cfg->language());
 
         // preload all types from the database
+        $sys_times->switch(system_time_type::LOAD_TYPES);
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, $usr_sys);
 
@@ -606,6 +611,7 @@ function prg_restart(string $code_name): sql_db
         }
 
     }
+    $sys_times->switch(system_time_type::DEFAULT);
     return $db_con;
 }
 

@@ -182,7 +182,7 @@ class sandbox_named extends sandbox
             $this->set_name($url_array[url_var::NAME]);
         } else {
             $this->set_name('');
-            log_err('Mandatory field name missing in form array ' . json_encode($url_array));
+            log_warning('Mandatory field name missing in form array ' . json_encode($url_array));
         }
         if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
             $this->set_description($url_array[url_var::DESCRIPTION]);

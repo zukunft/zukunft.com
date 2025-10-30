@@ -80,6 +80,7 @@ class paths
     // path for resources to test the frontend
     const string WEB_RES = self::RESOURCE . 'web' . DIRECTORY_SEPARATOR;
     const string WEB_SYSTEM_RES = self::WEB_RES . 'system' . DIRECTORY_SEPARATOR;
+    const string HTTP_PATH = 'http' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the user interface
     const string UI_RES = self::WEB_RES . 'ui' . DIRECTORY_SEPARATOR;
