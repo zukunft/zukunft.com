@@ -29,7 +29,7 @@
 
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\system;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -52,10 +52,15 @@ class system_time_type extends type_object
     const string DB_SETUP = "db_setup";
     const string DB_OPEN = "db_open";
     const string DB_CHECK = "db_check";
+    const string LOAD_SYS_CONFIG = "load_sys_config";
     const string LOAD_CONFIG = "load_config";
+    const string LOAD_CONFIG_CACHE = "load_config_cache";
+    const string LOAD_FRONTEND = "load_frontend";
     const string LOAD_TYPES = "load_types";
     const string LOAD_USER_DATA = "load_user_data";
     const string LOCALHOST_VIEWS = "localhost view";
+    const string URL_TO_HTML = "url to html";
+    const string CLOSE = "close";
 
 
     /*

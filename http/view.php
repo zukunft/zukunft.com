@@ -33,6 +33,8 @@
 
 */
 
+$start_time = microtime(true);
+
 include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
@@ -40,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
@@ -50,6 +53,9 @@ $html_str = '';
 
 // open database
 $db_con = prg_start("view", '', false);
+
+global $debug;
+global $sys_times;
 
 if ($db_con->is_open()) {
 
@@ -76,16 +82,25 @@ if ($db_con->is_open()) {
         $url_array = $_GET;
         // TODO Prio 1 remove temp overwrite for debug
         //$url = api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID;
-        //$url = 'http://localhost/http/view.php?m=3&id=1';
+        //$url = 'http://localhost/http/view.php?m=3&id=1&debug=-1';
         //$url_part = parse_url($url);
         //parse_str($url_part["query"], $url_array);
+        $sys_times->switch(system_time_type::URL_TO_HTML);
         $html_str .= $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
+        $sys_times->switch(system_time_type::CLOSE);
     }
 
     // close the database
-    prg_end($db_con);
+    prg_end($db_con, false);
 } else {
     $html_str .= 'database connection lost';
+}
+
+if ($debug == -1) {
+    // TODO Prio 2 remove temp overwrite for debug
+    $end_time = microtime(true);
+    $duration = $end_time - $start_time;
+    $html_str .= '<br>Execution times for debugging: ' . $sys_times->report($duration);
 }
 
 // show the page

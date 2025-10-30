@@ -42,7 +42,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_FORMULA . 'formula.php';

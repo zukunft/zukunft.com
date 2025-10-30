@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\main\php\web;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -92,6 +93,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::CONST . 'files.php';
 include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'files.php';
@@ -247,6 +249,9 @@ class frontend
      */
     function load_cache(): user_message
     {
+        global $sys_times;
+
+        $sys_times->switch(system_time_type::LOAD_FRONTEND);
         $usr_msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
@@ -258,6 +263,7 @@ class frontend
                 $this->set_type_cache($api_msg);
             }
         }
+        $sys_times->switch(system_time_type::DEFAULT);
         return $usr_msg;
     }
 

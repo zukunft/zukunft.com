@@ -39,8 +39,6 @@ const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECT
 include_once WEB_CONST_PATH . 'paths.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -60,17 +58,18 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 // parameters for internal testing and debugging
@@ -138,7 +137,6 @@ include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
@@ -166,6 +164,7 @@ include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 
 // used at the moment, but to be replaced with R-Project call
@@ -590,7 +589,7 @@ function prg_restart(string $code_name): sql_db
         $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
-        $sys_times->switch(system_time_type::LOAD_CONFIG);
+        $sys_times->switch(system_time_type::LOAD_SYS_CONFIG);
         // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);

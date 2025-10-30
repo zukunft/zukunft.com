@@ -36,23 +36,29 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\value\value_list;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 
 class config extends value_list
 {
@@ -103,7 +109,10 @@ class config extends value_list
      */
     function load(string $part = api::CONFIG_FRONTEND): user_message
     {
+        global $sys_times;
+
         $usr_msg = new user_message();
+        $sys_times->switch(system_time_type::LOAD_CONFIG);
 
         $data = [];
         $data[url_var::CONFIG_PART] = $part;
@@ -119,6 +128,7 @@ class config extends value_list
                 $usr_msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
+        $sys_times->switch(system_time_type::DEFAULT);
         return $usr_msg;
     }
 

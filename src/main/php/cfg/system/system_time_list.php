@@ -32,23 +32,8 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'sql_par.php';
-include_once paths::DB . 'sql_par_type.php';
-include_once paths::MODEL_HELPER . 'db_object.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once html_paths::SYSTEM . 'sys_log_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
@@ -108,6 +93,7 @@ class system_time_list
     {
         $total = 0.0;
         $time_report = '';
+        arsort($this->lst);
         foreach ($this->lst as $cat => $time) {
             if ($time_report != '') {
                 $time_report .= ', ';
@@ -203,7 +189,6 @@ class system_time_list
 
     private function save(): user_message
     {
-        $us_msg = new user_message();
-        return $us_msg;
+        return new user_message();
     }
 }
