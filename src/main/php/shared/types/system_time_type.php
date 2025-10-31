@@ -55,12 +55,18 @@ class system_time_type extends type_object
     const string LOAD_SYS_CONFIG = "load_sys_config";
     const string LOAD_CONFIG = "load_config";
     const string LOAD_CONFIG_CACHE = "load_config_cache";
+    const string WRITE_CONFIG_CACHE = "write_config_cache";
     const string LOAD_FRONTEND = "load_frontend";
     const string LOAD_TYPES = "load_types";
     const string LOAD_USER_DATA = "load_user_data";
     const string LOCALHOST_VIEWS = "localhost view";
     const string URL_TO_HTML = "url to html";
     const string CLOSE = "close";
+
+    // time unit the db connection is open e.g. reading the scripts
+    const string INIT = "INIT";
+    const string MAP_JSON = "map_json";
+    const string API_CTRL = "api_ctrl";
 
 
     /*

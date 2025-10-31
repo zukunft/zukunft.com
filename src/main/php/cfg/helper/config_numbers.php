@@ -46,6 +46,7 @@ include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
 
 class config_numbers extends value_list
@@ -219,10 +221,13 @@ class config_numbers extends value_list
      */
     function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
+        global $sys_times;
         $usr_msg = new user_message();
         if ($this->is_cache_valid($usr, $phr)) {
+            $sys_times->switch(system_time_type::LOAD_CONFIG_CACHE);
             $this->read_cache($usr, $phr);
         } else {
+            $sys_times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
             // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
@@ -241,6 +246,7 @@ class config_numbers extends value_list
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
             if ($usr_msg->is_ok()) {
+                $sys_times->switch(system_time_type::WRITE_CONFIG_CACHE);
                 $this->write_cache($usr, $phr);
             }
         }

@@ -614,6 +614,37 @@ function prg_restart(string $code_name): sql_db
     return $db_con;
 }
 
+function prg_start_api_core($code_name): sql_db
+{
+    global $sys_time_start, $sys_script;
+    global $sys_times;
+    global $mtr;
+
+    $code_name = 'api/' . $code_name;
+
+    $sys_time_start = time();
+    $sys_times = new system_time_list();
+    $sys_times->switch(system_time_type::INIT);
+    $sys_script = $code_name;
+
+    // resume session (based on cookies)
+    session_start();
+
+    // link to database
+    $db_con = new sql_db;
+    $db_con->db_type = SQL_DB_TYPE;
+    $db_con->open();
+
+    // for the api only english is used
+    $mtr = new Translator(language_codes::SYS);
+
+    // preload all types from the database
+    $sys_typ_lst = new type_lists();
+    $sys_typ_lst->load_core($db_con);
+
+    return $db_con;
+}
+
 function prg_start_api($code_name): sql_db
 {
     global $sys_time_start, $sys_script, $usr_pro_cac;

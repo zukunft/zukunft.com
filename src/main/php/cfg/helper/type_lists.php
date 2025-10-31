@@ -142,6 +142,20 @@ class type_lists
         return $result;
     }
 
+    /**
+     * load the core type lists needed for the api
+     * @param sql_db $db_con
+     * @return void
+     */
+    function load_core(sql_db $db_con): void
+    {
+        global $phr_typ_cac;
+
+        $phr_typ_cac = new phrase_types();
+        $phr_typ_cac->load($db_con);
+
+    }
+
     // TODO Prio 0 use the dto object and cache the type data
     function load(sql_db $db_con, ?user $usr): bool
     {
