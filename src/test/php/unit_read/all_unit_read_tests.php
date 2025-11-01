@@ -143,7 +143,7 @@ class all_unit_read_tests extends all_unit_tests
         (new start_ui_read_tests)->run($t, $ui);
 
         $t->subheader($ts . 'export');
-        (new export_read_tests())->run($this);
+        new export_read_tests()->run($this);
 
         // cleanup also before testing to remove any leftovers
         $this->clean_up_unit_db_tests();

@@ -115,8 +115,8 @@ if ($usr->id > 0) {
             if (isset($_GET[url_var::NAME])) {
                 $cmp->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[url_var::COMMENT])) {
-                $cmp->description = $_GET[url_var::COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $cmp->description = $_GET[url_var::DESCRIPTION];
             }
             if (isset($_GET['type'])) {
                 $cmp->type_id = $_GET['type'];

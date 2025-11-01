@@ -210,7 +210,7 @@ class sandbox extends db_object_dsp
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW_ID
+        string    $name = url_var::VIEW
     ): string
     {
         $view_id = $this->view_id();

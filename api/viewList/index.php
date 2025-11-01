@@ -51,7 +51,7 @@ $db_con = prg_start_api("viewList", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $cmp_id = $_GET[url_var::VIEW_ID] ?? '';
+    $cmp_id = $_GET[url_var::MASK] ?? '';
     $pattern = $_GET[url_var::PATTERN] ?? '';
 
     $msg = '';

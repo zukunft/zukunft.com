@@ -514,7 +514,7 @@ class test_api extends test_base
         $url = $this->class_to_url($class);
         if ($levels > 0) {
             $url .= '?' . url_var::ID . '=' . $id;
-            $url .= '&' . url_var::CHILDREN . '=' . $levels;
+            $url .= '&' . url_var::LEVELS . '=' . $levels;
         }
         // Check if backend is reading the id
         $data = array(url_var::ID => $id);
@@ -844,7 +844,7 @@ class test_api extends test_base
     {
         $lib = new library();
         if ($class == ref::class) {
-            $class = url_var::REFERENCE;
+            $class = url_var::REF;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
         return api::HOST_TESTING . url_var::API_PATH . $url_class;

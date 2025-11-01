@@ -197,7 +197,7 @@ class source extends sandbox_code_id
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::LABEL_SOURCE);
     }
 
     /**

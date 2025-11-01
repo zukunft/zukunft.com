@@ -136,14 +136,14 @@ class triple extends sandbox_code_id
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(url_var::FROM_ID_LONG, $url_array)) {
-                $this->set_from_by_id($url_array[url_var::FROM_ID_LONG]);
+            if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
+                $this->set_from_by_id($url_array[url_var::PHRASE_FROM]);
             }
-            if (array_key_exists(url_var::VERB_LONG, $url_array)) {
-                $this->set_verb_by_id($url_array[url_var::VERB_LONG]);
+            if (array_key_exists(url_var::VERB, $url_array)) {
+                $this->set_verb_by_id($url_array[url_var::VERB]);
             }
-            if (array_key_exists(url_var::TO_ID_LONG, $url_array)) {
-                $this->set_to_by_id($url_array[url_var::TO_ID_LONG]);
+            if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
+                $this->set_to_by_id($url_array[url_var::PHRASE_TO]);
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
                 $this->weight = $url_array[url_var::WEIGHT];
@@ -538,7 +538,7 @@ class triple extends sandbox_code_id
         } else {
             $id = 0;
         }
-        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB_LONG, $style);
+        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB, $style);
     }
 
 

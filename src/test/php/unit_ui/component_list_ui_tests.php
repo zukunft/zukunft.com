@@ -65,7 +65,7 @@ class component_list_ui_tests
         $test_page .= 'component list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector($form, 0, url_var::COMPONENT_LONG, msg_id::LABEL_COMPONENT) . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::COMPONENT, msg_id::LABEL_COMPONENT) . '<br>';
 
         $t->html_page_test($test_page, 'component_list', 'component_list', $t);
     }

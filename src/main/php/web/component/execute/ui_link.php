@@ -55,7 +55,7 @@ class ui_link
         phrase_list $phr_lst
     ): string
     {
-        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE, $form_name, $phr->id());
     }
 
 }

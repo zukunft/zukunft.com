@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -99,6 +100,7 @@ class system_view_ui_tests
         $tl = new test_lib();
         $t_usr = new test_users();
         $t_map = new test_mappers($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit ui system views ';
@@ -113,39 +115,46 @@ class system_view_ui_tests
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
-        for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
-            $dbo = $this->view_id_to_dbo($id, $t->usr1);
-            $action = $this->view_id_to_url_action($id);
-            $url = $t_map->class_to_filled_url($dbo::class, $id, $action);
-            $url_part = parse_url($url);
-            parse_str($url_part["query"], $url_array);
-            $usr_dsp = $tl->cast_user($t->usr1);
-            // TODO Prio 0 remove temp
-            //if ($id == 14) {
-            //    log_info('ref add');
-            //}
-            $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
-            $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
-            // create the filename of the expected result
-            $dbo_name = $id . '_';
-            if ($dbo::class == db_object::class) {
-                $folder = 'start_page' . DIRECTORY_SEPARATOR;
-                $dbo_name .= 'start_page';
-                $test_name = 'start_page view';
-            } else {
-                $class = $lib->class_to_name($dbo::class);
-                $folder = $class . DIRECTORY_SEPARATOR;
-                $dbo_name .= $class;
-                $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
-                if ($action != change_actions::SHOW) {
-                    $dbo_name .= '_' . $action;
+        for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
+            for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
+                $dbo = $this->view_id_to_dbo($id, $t->usr1);
+                $action = $this->view_id_to_url_action($id);
+                // TODO Prio 3 review and use random?
+                if ($msk_typ == 1) {
+                    $url = $t_map->class_to_filled_url($dbo::class, $id, $action);
+                } else {
+                    $url = $t_map->class_to_filled_url($dbo::class, $id, $action, url_var::MASK);
                 }
-                if ($dbo_id != 0) {
-                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                $url_part = parse_url($url);
+                parse_str($url_part["query"], $url_array);
+                $usr_dsp = $tl->cast_user($t->usr1);
+                // TODO Prio 0 remove temp
+                //if ($id == 14) {
+                //    log_info('ref add');
+                //}
+                $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+                $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
+                // create the filename of the expected result
+                $dbo_name = $id . '_';
+                if ($dbo::class == db_object::class) {
+                    $folder = 'start_page' . DIRECTORY_SEPARATOR;
+                    $dbo_name .= 'start_page';
+                    $test_name = 'start_page view';
+                } else {
+                    $class = $lib->class_to_name($dbo::class);
+                    $folder = $class . DIRECTORY_SEPARATOR;
+                    $dbo_name .= $class;
+                    $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+                    if ($action != change_actions::SHOW) {
+                        $dbo_name .= '_' . $action;
+                    }
+                    if ($dbo_id != 0) {
+                        $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                    }
                 }
+                $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+                $t->assert_html_page($test_name, $html, $file_path);
             }
-            $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-            $t->assert_html_page($test_name, $html, $file_path);
         }
 
     }

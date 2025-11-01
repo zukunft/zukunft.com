@@ -113,15 +113,15 @@ class sandbox_value extends sandbox
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(url_var::PHRASE_LIST_LONG, $url_array)) {
-                $id_lst = explode(',', $url_array[url_var::PHRASE_LIST_LONG]);
+            if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
+                $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
                     $this->set_phrases_by_is_list($id_lst);
                 }
             }
-            if (array_key_exists(url_var::NUMERIC_VALUE_LONG, $url_array)) {
-                if ($url_array[url_var::NUMERIC_VALUE_LONG] != null) {
-                    $this->number = $url_array[url_var::NUMERIC_VALUE_LONG];
+            if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
+                if ($url_array[url_var::NUMERIC_VALUE] != null) {
+                    $this->number = $url_array[url_var::NUMERIC_VALUE];
                 }
             }
         }

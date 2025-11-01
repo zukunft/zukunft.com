@@ -559,9 +559,9 @@ class term extends combine_named_dsp
         $trm_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $name = url_var::TERM_POS_LONG . $pos;
+            $name = url_var::TERM_POS . $pos;
         } else {
-            $name = url_var::TERM_LONG;
+            $name = url_var::TERM;
         }
         $label = "";
         if ($form != "value_add" and $form != "value_edit") {

@@ -136,9 +136,9 @@ class change_log_list extends list_dsp
         $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $class = $lib->class_to_api_name($class);
         $data = [];
-        $data[url_var::CLASS_NAME] = $class;
+        $data[url_var::LOG_CLASS] = $class;
         $data[url_var::ID] = $id;
-        $data[url_var::FIELD] = $fld;
+        $data[url_var::LOG_FIELD] = $fld;
         $ctrl = new rest_call();
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
     }

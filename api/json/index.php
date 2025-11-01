@@ -54,7 +54,7 @@ $db_con = prg_start_api("json", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $wrd_id = $_GET[url_var::WORD_ID] ?? 0;
+    $wrd_id = $_GET[url_var::WORD] ?? 0;
 
     $wrd_id = 1;
 

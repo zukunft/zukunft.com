@@ -138,6 +138,8 @@ enum messages: string
     const string VAR_ERROR_TEXT = 'VarErrorText';
     const string VAR_MESSAGE_ID = 'VarMsgId';
     const string VAR_LANGUAGE = 'VarLanguage';
+    // the key of an url
+    const string VAR_URL_KEY = 'VarUrlKey';
 
     // for the object main parameters created by the dsp_id function
     const string VAR_FORMULA = 'VarObjFormula';
@@ -387,6 +389,12 @@ enum messages: string
         . ' '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be saved';
+    case URL_KEY_MISSING = 'url key "'
+        . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
+        . '" is missing';
+    case URL_MAP_MISSING = 'url mapper for "'
+        . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
+        . '" is missing';
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';

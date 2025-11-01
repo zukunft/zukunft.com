@@ -53,7 +53,7 @@ if ($db_con->is_open()) {
     // get the parameters
     $dsp_id = $_GET[url_var::ID] ?? 0;
     $dsp_name = $_GET[url_var::NAME] ?? '';
-    $cmp_lvl = $_GET[url_var::CHILDREN] ?? 0;
+    $cmp_lvl = $_GET[url_var::LEVELS] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string

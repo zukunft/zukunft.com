@@ -76,8 +76,8 @@ if ($usr->id() > 0) {
     if (isset($_GET[url_var::NAME])) {
         $msk_add->set_name($_GET[url_var::NAME]);
     }    // name of the new view to add
-    if (isset($_GET[url_var::COMMENT])) {
-        $msk_add->description = $_GET[url_var::COMMENT];
+    if (isset($_GET[url_var::DESCRIPTION])) {
+        $msk_add->description = $_GET[url_var::DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $msk_add->type_id = $_GET['type'];

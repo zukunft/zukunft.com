@@ -2626,6 +2626,13 @@ class library
         return $result;
     }
 
+    function url_array(string $url): array
+    {
+        $url_part = parse_url($url);
+        parse_str($url_part["query"], $url_array);
+        return $url_array;
+    }
+
     /*
      * shorten a list of fields for sql query naming
      */

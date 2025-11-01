@@ -55,13 +55,13 @@ $db_con = prg_start_api("log", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $class = $_GET[url_var::CLASS_NAME] ?? '';
+    $class = $_GET[url_var::LOG_CLASS] ?? '';
     $id = $_GET[url_var::ID] ?? 0;
-    $fld = $_GET[url_var::FIELD] ?? '';
+    $fld = $_GET[url_var::LOG_FIELD] ?? '';
 
     // TODO deprecate
-    $wrd_id = $_GET[url_var::WORD_ID] ?? 0;
-    $wrd_fld = $_GET[url_var::WORD_FLD] ?? '';
+    $wrd_id = $_GET[url_var::WORD] ?? 0;
+    $wrd_fld = $_GET[url_var::LOG_FIELD] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string

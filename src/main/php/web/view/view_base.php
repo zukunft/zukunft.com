@@ -229,7 +229,7 @@ class view_base extends sandbox_code_id
     function load_by_id_with(int $id): bool
     {
         $data = [];
-        $data[url_var::CHILDREN] = 1;
+        $data[url_var::LEVELS] = 1;
         return parent::load_by_id($id, $data);
     }
 

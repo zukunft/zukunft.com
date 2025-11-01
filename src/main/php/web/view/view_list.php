@@ -122,7 +122,7 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(url_var::CMP_ID => $id);
+        $data = array(url_var::COMPONENT => $id);
         $rest = new rest_call();
         $json_body = $rest->api_get(view_base::class, $data);
         $this->api_mapper($json_body);

@@ -85,8 +85,8 @@ if ($usr->id() > 0) {
     if (isset($_GET[url_var::URL])) {
         $src->set_url($_GET[url_var::URL]);
     }     // url of the new source to add
-    if (isset($_GET[url_var::COMMENT])) {
-        $src->description = $_GET[url_var::COMMENT];
+    if (isset($_GET[url_var::DESCRIPTION])) {
+        $src->description = $_GET[url_var::DESCRIPTION];
     }
 
     // if the user has pressed save at least once

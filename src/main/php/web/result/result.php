@@ -177,7 +177,7 @@ class result extends sandbox_value
     public function formula_selector(
         string       $form,
         formula_list $frm_lst,
-        string       $name = url_var::VIEW_ID
+        string       $name = url_var::FORMULA
     ): string
     {
         $frm_id = $this->formula_id();

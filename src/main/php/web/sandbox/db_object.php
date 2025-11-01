@@ -153,8 +153,8 @@ class db_object extends TextIdObject
                 $is_add = true;
             }
         }
-        if (array_key_exists(url_var::ACTION_LONG, $url_array)) {
-            if ($url_array[url_var::ACTION_LONG] == url_var::CRUD_CREATE) {
+        if (array_key_exists(url_var::ACTION, $url_array)) {
+            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
                 $is_add = true;
             }
         }
@@ -853,7 +853,7 @@ class db_object extends TextIdObject
     public function formula_selector(
         string       $form,
         formula_list $frm_lst,
-        string       $name = url_var::VIEW_ID
+        string       $name = url_var::FORMULA
     ): string
     {
         $msg = 'formula selector not defined for ' . $this::class;
@@ -887,7 +887,7 @@ class db_object extends TextIdObject
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW_ID
+        string    $name = url_var::VIEW
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;

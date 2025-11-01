@@ -440,7 +440,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -455,7 +455,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -470,7 +470,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -485,7 +485,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -545,7 +545,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -560,7 +560,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -575,7 +575,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            url_var::GROUP_NAME_LONG,
+            url_var::GROUP_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -614,7 +614,7 @@ class system_form extends component
 
         // get the selected phrase id
         $id = $dbo->id();
-        $name = url_var::PHRASE_LONG;
+        $name = url_var::PHRASE;
         $label_id = msg_id::LABEL_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
@@ -678,7 +678,7 @@ class system_form extends component
 
         // get the selected phrase id
         $id = $dbo->id();
-        $name = url_var::PHRASE_LONG;
+        $name = url_var::PHRASE;
         $label_id = msg_id::LABEL_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
@@ -742,7 +742,7 @@ class system_form extends component
 
         // get the selected phrase id
         $id = $dbo->id();
-        $name = url_var::PHRASE_LONG;
+        $name = url_var::PHRASE;
         $label_id = msg_id::LABEL_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
@@ -788,7 +788,7 @@ class system_form extends component
 
         // get the selected phrase id
         $id = $dbo->id();
-        $name = url_var::PHRASE_LONG;
+        $name = url_var::PHRASE;
         $label_id = msg_id::LABEL_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();

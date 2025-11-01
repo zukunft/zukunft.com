@@ -57,9 +57,9 @@ $db_con = prg_start("component_add");
 $cmp_id = $_GET[url_var::ID] ?? 0;
 $cmp_name = $_GET[url_var::NAME] ?? null;
 $cmp_type = $_GET[url_var::TYPE] ?? 0;
-$cmp_comment = $_GET[url_var::COMMENT] ?? null;
+$cmp_comment = $_GET[url_var::DESCRIPTION] ?? null;
 $wrd_id = $_GET[url_var::WORD] ?? 0;
-$dsp_link_id = $_GET[url_var::LINK_VIEW] ?? 0;    // to link the view component to another view
+$dsp_link_id = $_GET[url_var::VIEW_LINK] ?? 0;    // to link the view component to another view
 $dsp_unlink_id = $_GET[url_var::UNLINK_VIEW];  // to unlink a view component from the view
 $back = $_GET[url_var::BACK] = ''; // the calling stack to move back to page where the user has come from after adding the view component is done
 

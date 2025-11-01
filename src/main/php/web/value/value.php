@@ -127,9 +127,9 @@ class value extends sandbox_value
                     $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
-            if (array_key_exists(url_var::SOURCE_LONG, $url_array)) {
-                if ($url_array[url_var::SOURCE_LONG] != null) {
-                    $this->set_source_id($url_array[url_var::SOURCE_LONG]);
+            if (array_key_exists(url_var::SOURCE, $url_array)) {
+                if ($url_array[url_var::SOURCE] != null) {
+                    $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
         }
@@ -470,7 +470,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::LABEL_SOURCE);
     }
 
     /**

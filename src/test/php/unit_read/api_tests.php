@@ -124,7 +124,7 @@ class api_tests
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, url_var::WORD_ID);
+        $t->assert_api_get_json(word::class, url_var::WORD);
         $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);

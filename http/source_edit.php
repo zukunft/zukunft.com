@@ -89,8 +89,8 @@ if ($usr->id() > 0) {
             if (isset($_GET[url_var::URL])) {
                 $src->set_url($_GET[url_var::URL]);
             }
-            if (isset($_GET[url_var::COMMENT])) {
-                $src->description = $_GET[url_var::COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $src->description = $_GET[url_var::DESCRIPTION];
             }
 
             // save the changes

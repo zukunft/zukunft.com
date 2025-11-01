@@ -51,7 +51,7 @@ $db_con = prg_start_api("componentList", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $msk_id = $_GET[url_var::VIEW_ID] ?? '';
+    $msk_id = $_GET[url_var::MASK] ?? '';
     $pattern = $_GET[url_var::PATTERN] ?? '';
 
     $msg = '';

@@ -42,14 +42,17 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $html_str = '';
+$usr_msg = new user_message();
 
 // open database
 $db_con = prg_start("view", '', false);
@@ -81,12 +84,13 @@ if ($db_con->is_open()) {
         $ui->load_cache();
         $url_array = $_GET;
         // TODO Prio 1 remove temp overwrite for debug
+        $lib = new library();
         //$url = api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID;
         //$url = 'http://localhost/http/view.php?m=3&id=1&debug=-1';
-        //$url_part = parse_url($url);
-        //parse_str($url_part["query"], $url_array);
+        $url = 'http://localhost/http/view.php?m=2&id=1&back=1&confirm=1&name=add+word&phrase_type=1&plural=&share=1&protection=3';
+        $url_array = $lib->url_array($url);
         $sys_times->switch(system_time_type::URL_TO_HTML);
-        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
+        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
         $sys_times->switch(system_time_type::CLOSE);
     }
 

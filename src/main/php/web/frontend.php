@@ -32,7 +32,6 @@
 namespace Zukunft\ZukunftCom\main\php\web;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -130,6 +129,7 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -356,38 +356,33 @@ class frontend
      *
      * @param array $url_array the parsed url as an array
      * @param user_dsp $usr the session user who has requested the view
+     * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
-    function url_to_html(array $url_array, user_dsp $usr, data_object $dto = new data_object()): string
+    function url_to_html(
+        array        $url_array,
+        user_dsp     $usr,
+        user_message $usr_msg,
+        data_object  $dto = new data_object()
+    ): string
     {
         // init the view
         $result = ''; // reset the html code var
         $msg = ''; // to collect all messages that should be shown to the user immediately
 
-        // detect the url format and get the view id or code id
-        $human_url = false;
-        $pod_url = false;
-        if (array_key_exists(url_var::MASK_HUMAN, $url_array)) {
-            $human_url = true;
-            $view = $url_array[url_var::MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
-        } elseif (array_key_exists(url_var::MASK_POD, $url_array)) {
-            $pod_url = true;
-            $view = $url_array[url_var::MASK_POD] ?? views::START_CODE; // the database id of the view to display
-        } else {
-            $view = $url_array[url_var::MASK] ?? views::START_ID; // the database id of the view to display
+        // detect the url format and map it to standard keys
+        // TODO Prio 0 remove temp
+        $url_old = $url_array;
+        $url_array = $this->url_to_standard($url_array, $usr_msg);
+        if (!$usr_msg->is_ok()) {
+            $msg_txt = $usr_msg->var_message_text();
         }
 
-        // get the general vars from the url
+        // get vars for the main entries just to make code more readable
+        $view = $url_array[url_var::MASK];
+        $step = $url_array[url_var::STEP];
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
-        // TODO Prio 1 complete all url vars mappings for $human_url, $pod_url and $short_url
-        if ($human_url) {
-            $step = $url_array[url_var::STEP_LONG] ?? 0; // the enum of the user process step to perform next
-        } elseif ($pod_url) {
-            $step = $url_array[url_var::STEP_POD] ?? 0; // the enum of the user process step to perform next
-        } else {
-            $step = $url_array[url_var::STEP] ?? 0; // the enum of the user process step to perform next
-        }
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         $view_words = $url_array[url_var::WORDS] ?? '';
@@ -522,6 +517,168 @@ class frontend
         return $this->dto->typ_lst_cache->get_html_by_id($id);
     }
 
+
+    /*
+     * helper
+     */
+
+    /**
+     * get the standard url array from all allowed url formats
+     * the url string can be the short form or in human-readable format or in pod independent format
+     * @param array $url_array in any possible format of the array keys
+     * @param user_message $usr_msg to enrich with potential errors
+     * @return array with the standard keys
+     */
+    function url_to_standard(array $url_array, user_message $usr_msg): array
+    {
+        // detect the url format and get the view id or code id
+        if (array_key_exists(url_var::MASK_HUMAN, $url_array)) {
+            $std_array = $this->human_url_to_standard($url_array, $usr_msg);
+        } elseif (array_key_exists(url_var::MASK_POD, $url_array)) {
+            $std_array = $this->pod_url_to_standard($url_array, $usr_msg);
+        } else {
+            $std_array = $this->add_url_default($url_array, $usr_msg);
+        }
+        return $std_array;
+    }
+
+    private function human_url_to_standard(array $url_array, user_message $usr_msg): array
+    {
+        return $this->map_url_to_standard(
+            $url_array,
+            $usr_msg,
+            url_var::HUMAN_TO_STD,
+            'url_var::HUMAN_TO_STD'
+        );
+    }
+
+    private function pod_url_to_standard(array $url_array, user_message $usr_msg): array
+    {
+        return $this->map_url_to_standard(
+            $url_array,
+            $usr_msg,
+            url_var::POD_TO_STD,
+            'url_var::POD_TO_STD'
+        );
+    }
+
+    private function map_url_to_standard(
+        array        $url_array,
+        user_message $usr_msg,
+        array        $map_lst,
+        string       $map_name
+    ): array
+    {
+        $std_array = [];
+        foreach ($map_lst as $map) {
+            if (array_key_exists(3, $map)) {
+                if ($map[3]) {
+                    if (array_key_exists($map[0], $url_array)) {
+                        $std_array[$map[1]] = $url_array[$map[0]] ?? $map[2];
+                    } else {
+                        $usr_msg->add_id_with_vars(msg_id::URL_KEY_MISSING, [
+                            msg_id::VAR_URL_KEY => $map[0]
+                        ]);
+                    }
+                } else {
+                    if (array_key_exists($map[0], $url_array)) {
+                        $std_array[$map[1]] = $url_array[$map[0]] ?? $map[2];
+                    }
+                }
+            } elseif (array_key_exists(2, $map)) {
+                if (array_key_exists($map[0], $url_array)) {
+                    $std_array[$map[1]] = $url_array[$map[0]] ?? $map[2];
+                }
+            } elseif (array_key_exists(1, $map)) {
+                if (array_key_exists($map[0], $url_array)) {
+                    $std_array[$map[1]] = $url_array[$map[0]];
+                }
+            } else {
+                log_err($map_name . ' array had not at least two col');
+            }
+        }
+        // detect missing mappings
+        if (count($std_array) < count($url_array)) {
+            $diff = array_diff($url_array, $std_array);
+            foreach ($diff as $key => $val) {
+                $usr_msg->add_id_with_vars(msg_id::URL_MAP_MISSING, [
+                    msg_id::VAR_URL_KEY => $key
+                ]);
+            }
+        }
+        return $std_array;
+    }
+
+    private function add_url_default(
+        array        $url_array,
+        user_message $usr_msg
+    ): array
+    {
+        $std_array = [];
+        $map_keys = [];
+        $map_lst = url_var::STD_DEFAULT;
+        foreach ($map_lst as $map) {
+            if (array_key_exists(0, $map)) {
+                $map_keys[] = $map[0];
+            } else {
+                log_err('url map array must have at leat one col');
+            }
+        }
+        $map_pos = array_flip($map_keys);
+        foreach ($url_array as $key => $val) {
+            if (in_array($key, $map_keys)) {
+                $pos = $map_pos[$key];
+                $map = $map_lst[$pos];
+                if (array_key_exists(2, $map)) {
+                    if ($map[2]) {
+                        if (array_key_exists($key, $url_array)) {
+                            $std_array[$key] = $val ?? $map[1];
+                        } else {
+                            $usr_msg->add_id_with_vars(msg_id::URL_KEY_MISSING, [
+                                msg_id::VAR_URL_KEY => $key
+                            ]);
+                        }
+                    } else {
+                        if (array_key_exists($key, $url_array)) {
+                            $std_array[$key] = $val ?? $map[1];
+                        }
+                    }
+                } elseif (array_key_exists(1, $map)) {
+                    if (array_key_exists($key, $url_array)) {
+                        $std_array[$key] = $val ?? $map[1];
+                    }
+                } else {
+                    $std_array[$key] = $val;
+                }
+            } else {
+                $std_array[$key] = $val;
+            }
+        }
+        // add missing default values
+        foreach ($map_lst as $map) {
+            if (array_key_exists(0, $map) and array_key_exists(1, $map)) {
+                if (!array_key_exists($map[0], $std_array)) {
+                    $std_array[$map[0]] = $map[1];
+                }
+            }
+        }
+        return $std_array;
+    }
+
+
+    /*
+     * execute
+     */
+
+    private function exe_process_step(
+        sandbox_dsp|sandbox_named_dsp|db_object_dsp $sbx,
+        array                                       $url_array,
+        user_message                                $usr_msg
+    ): bool
+    {
+
+        return $usr_msg->is_ok();
+    }
 
     /*
      * log

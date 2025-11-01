@@ -173,9 +173,9 @@ class word extends sandbox_code_id
                     $this->impact = $url_array[url_var::IMPACT];
                 }
             }
-            if (array_key_exists(url_var::VIEW_LONG, $url_array)) {
-                if ($url_array[url_var::VIEW_LONG] != null) {
-                    $this->set_view_id($url_array[url_var::VIEW_LONG]);
+            if (array_key_exists(url_var::VIEW, $url_array)) {
+                if ($url_array[url_var::VIEW] != null) {
+                    $this->set_view_id($url_array[url_var::VIEW]);
                 }
             }
         }
@@ -838,7 +838,7 @@ class word extends sandbox_code_id
         $phr_lst = new word_list();
         $phr_lst->load_like($pattern);
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, url_var::WORD_LONG, msg_id::LABEL_WORD);
+        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::LABEL_WORD);
     }
 
     /*
@@ -855,9 +855,9 @@ class word extends sandbox_code_id
         $phr_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $name = url_var::WORD_POS_LONG . $pos;
+            $name = url_var::WORD_POS . $pos;
         } else {
-            $name = url_var::WORD_LONG;
+            $name = url_var::WORD;
         }
         return $phr_lst->selector($form, $id, $name, msg_id::LABEL_WORD);
     }

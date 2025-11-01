@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>test (zukunft.com)</title>
+<head><title>Change word mathematics (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
     <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <script defer src="/external_lib/fontawesome/js/all.js"></script>
 </head>
 <body>
 <div class="container">
@@ -16,7 +18,9 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=64" title=""></a></li>
+                <li class="active"><a href="/http/view.php?m=64&id=3"
+                                      title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
+                    system test</a></li>
                 <li class="active"></li>
                 <li class="active"><a href="/http/view.php?m=view_edit&id=3" title="adjust the view"><i
                         class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=3"
@@ -29,19 +33,16 @@
     <form action="/http/view.php" id="word_edit"><input class="form-control" type="hidden" name="m" id="m"
                                                         value="3"><input class="form-control" type="hidden" name="id"
                                                                          id="id" value="1"><input class="form-control"
-                                                                                                  type="hidden"
-                                                                                                  name="back" id="back"
+                                                                                                  type="hidden" name="_"
+                                                                                                  id="_"
                                                                                                   value="1"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
-                                                                                  name="name" id="name"
-                                                                                  value="mathematics"></div>
-            <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
-                                                                                          name="phrase_type"
-                                                                                          form="word_edit"
-                                                                                          id="phrase_type">
-                <option value="1" selected>standard</option>
+            <div class="form-group col-md-8"><label for="k">k</label><input class="form-control" type="text" name="k"
+                                                                            id="k" value="mathematics"></div>
+            <div class="form-group col-md-4"><label for="py">type</label><select class="form-control" name="py"
+                                                                                 form="word_edit" id="py">
+                <option value="1">standard</option>
                 <option value="0"> ---</option>
                 <option value="5">calc</option>
                 <option value="11">differentiator filler</option>
@@ -62,7 +63,7 @@
                 <option value="14">prior</option>
                 <option value="26">rank</option>
                 <option value="16">scaled measure</option>
-                <option value="7">scaling</option>
+                <option value="7" selected>scaling</option>
                 <option value="15">scaling word percent</option>
                 <option value="25">symbol</option>
                 <option value="12">this</option>
@@ -72,43 +73,35 @@
             </select></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"
-                                                                                                 value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+            <div class="form-group col-md-12"><label for="o">o</label><input class="form-control" type="text" name="o"
+                                                                             id="o"
+                                                                             value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="plural">plural</label><input class="form-control" type="text"
-                                                                                      name="plural" id="plural"></div>
+            <div class="form-group col-md-8"><label for="lp">lp</label><input class="form-control" type="text" name="lp"
+                                                                              id="lp" value="mathematics"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
-                                                                                      name="view_id" form="word_edit"
-                                                                                      id="view_id">
-                <option value="50">science</option>
-                <option value="51">Historic</option>
-                <option value="53">Education</option>
-                <option value="54">Touristic</option>
+            <div class="form-group col-md-4"><label for="d">view</label><select class="form-control" name="d"
+                                                                                form="word_edit" id="d">
+                <option value="0">complete</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                     form="word_edit" id="share">
-                <option value="1" selected>public</option>
+            <div class="form-group col-md-4"><label for="ds">share</label><select class="form-control" name="ds"
+                                                                                  form="word_edit" id="ds">
+                <option value="1">public</option>
                 <option value="2">personal</option>
-                <option value="3">group</option>
+                <option value="3" selected>group</option>
                 <option value="4">private</option>
                 <option value="5">personal log</option>
                 <option value="6">group log</option>
                 <option value="7">private log</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
-                                                                                               name="protection"
-                                                                                               form="word_edit"
-                                                                                               id="protection">
+            <div class="form-group col-md-4"><label for="dt">protection</label><select class="form-control" name="dt"
+                                                                                       form="word_edit" id="dt">
                 <option value="1">no protection</option>
-                <option value="2">user</option>
-                <option value="3" selected>admin</option>
+                <option value="2" selected>user</option>
+                <option value="3">admin</option>
                 <option value="4">no change</option>
             </select></div>
         </div>
@@ -119,9 +112,16 @@
         </div>
     </form>
     <div class="row col-md-12">
-        <div class="col-md-12"><h5>Used 0 times</h5></div>
-        <div class="col-md-4"><h5>Values</h5></div>
-        <div class="col-md-4"><h5>References</h5>mathematics is ranked by time of discovery</div>
+        <div class="col-md-12"><h5>Used 3 times</h5></div>
+        <div class="col-md-4"><a href="/http/view.php?m=46&id=1"
+                                 title="A mathematical constant that never changes e.g. Pi">mathematical constant</a>
+        </div>
+        <div class="col-md-4"><h5>Values</h5><a href="/http/view.php?m=44&id=5"
+                                                title="Symbol for the ratio of the circumference of a circle to its diameter">π</a>
+            <a href="/http/view.php?m=value_edit&id=5" title="3.14">3.14</a><br></div>
+        <div class="col-md-4"><h5>References</h5><a href="https://www.wikidata.org/wiki/Q395" title="field of study">wikidata</a><br>mathematics
+            is ranked by time of discovery
+        </div>
     </div>
     <div class="row col-md-12">
         <div class="col-md-12"><h5>Changes</h5>26-12-2022 18:23 zukunft.com system added "mathematics"</div>

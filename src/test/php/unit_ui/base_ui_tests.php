@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_type.php';
@@ -53,8 +54,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -338,7 +341,39 @@ class base_ui_tests
         $result = (new button($url, $back))->back();
         //$t->display(", btn_back", $target, $result);
 
+        $lib = new library();
+        $usr_msg = new user_message();
 
+        $t->subheader($ts . 'url mapper');
+        $ui = new frontend('test url mapper');
+        $test_name = 'add default value of view';
+        $url = 'http://localhost/http/view.php?id=1';
+        $url_array = $ui->url_to_standard($lib->url_array($url), $usr_msg);
+        $view = $url_array[url_var::MASK];
+        $t->assert($test_name, $view, 0);
+        $test_name = 'add default value of step';
+        $url = 'http://localhost/http/view.php?m=3&id=1&debug=-1';
+        $url_array = $ui->url_to_standard($lib->url_array($url), $usr_msg);
+        $step = $url_array[url_var::STEP];
+        $t->assert($test_name, $step, 0);
+        $test_name = 'add default value of view for human-readable url';
+        $url = 'http://localhost/http/view.php?mask_id=&verb_id=3';
+        $url_array = $ui->url_to_standard($lib->url_array($url), $usr_msg);
+        $view = $url_array[url_var::MASK];
+        $t->assert($test_name, $view, views::START_ID);
+        $test_name = 'convert to standard url key from human-readable url';
+        $verb = $url_array[url_var::VERB];
+        $t->assert($test_name, $verb, 3);
+        $test_name = 'add default value of view for pod independent url';
+        $url = 'http://localhost/http/view.php?mask=';
+        $url_array = $ui->url_to_standard($lib->url_array($url), $usr_msg);
+        $view = $url_array[url_var::MASK];
+        $t->assert($test_name, $view, views::START_CODE);
+        $test_name = 'error message if mapping is missing';
+        $url = 'http://localhost/http/view.php?mask_id=&mapping_missing=3';
+        $url_array = $ui->url_to_standard($lib->url_array($url), $usr_msg);
+        $err_msg = $usr_msg->var_message_text();
+        $t->assert($test_name, $err_msg, 'mapping_missing');
 
 
     }

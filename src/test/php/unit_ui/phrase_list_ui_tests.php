@@ -88,7 +88,7 @@ class phrase_list_ui_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector($form, 0, url_var::PHRASE_LONG, msg_id::LABEL_PHRASE) . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::PHRASE, msg_id::LABEL_PHRASE) . '<br>';
 
         $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $t);
 

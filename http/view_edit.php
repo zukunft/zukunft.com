@@ -145,8 +145,8 @@ if ($usr->id() > 0) {
             if (isset($_GET[url_var::NAME])) {
                 $msk_edit->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[url_var::COMMENT])) {
-                $msk_edit->description = $_GET[url_var::COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $msk_edit->description = $_GET[url_var::DESCRIPTION];
             }
             if (isset($_GET['type'])) {
                 $msk_edit->type_id = $_GET['type'];
