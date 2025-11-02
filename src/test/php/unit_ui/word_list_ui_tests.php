@@ -67,8 +67,9 @@ class word_list_ui_tests
         $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->name_link() . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst_long->selector(views::WORD_LIST) . '<br>';
-        $test_page .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
+        $from_rows = $lst_long->selector(views::WORD_LIST, 0, 'nothing_selected') . '<br>';
+        $from_rows .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
+        $test_page .= $html->form(views::WORD_LIST, $from_rows);
 
         $t->html_page_test($test_page, '', 'word_list', $t);
     }

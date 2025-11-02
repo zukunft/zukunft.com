@@ -17,10 +17,8 @@
     button: <a href="/http/view.php?m=triple_del&id=1" title="delete word"><i class="far fa-times-circle"></i></a><br>
     <h4>select</h4>
     <form action="/http/view.php" id="triple_edit">
-        <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
-                                                                                      name="phrase_type"
-                                                                                      form="triple_edit"
-                                                                                      id="phrase_type">
+        <div class="form-group col-md-4"><label for="py">Type</label><select class="form-control" name="py"
+                                                                             form="triple_edit" id="py">
             <option value="1">standard</option>
             <option value="0"> ---</option>
             <option value="5">calc</option>
@@ -51,8 +49,8 @@
             <option value="9">view / layer</option>
         </select></div>
         <br>
-        <div class="form-group col-md-3"><label for="verb_id">verb</label><select class="form-control" name="verb_id"
-                                                                                  form="triple_edit" id="verb_id">
+        <div class="form-group col-md-3"><label for="b">verb</label><select class="form-control" name="b"
+                                                                            form="triple_edit" id="b">
             <option value="1">not set</option>
             <option value="2">is a</option>
             <option value="3" selected>is part of</option>
@@ -89,13 +87,10 @@
             <option value="34">is ranked by</option>
         </select></div>
         <br>
-        <div class="form-group col-md-4"><label for="phrase_row">word / triple</label><input type="text"
-                                                                                             list="phrase_row_list"
-                                                                                             class="form-control"
-                                                                                             name="phrase_row"
-                                                                                             form="triple_edit"
-                                                                                             id="phrase_row">
-            <datalist id="phrase_row_list">
+        <div class="form-group col-md-4"><label for="pf">word / triple</label><input type="text" list="pf_list"
+                                                                                     class="form-control" name="pf"
+                                                                                     form="triple_edit" id="pf">
+            <datalist id="pf_list">
                 <option data-value="1">mathematics</option>
                 <option data-value="2" selected>constant</option>
                 <option data-value="5">π</option>
@@ -104,13 +99,10 @@
             </datalist>
         </div>
         <br>
-        <div class="form-group col-md-4"><label for="phrase_row">word / triple</label><input type="text"
-                                                                                             list="phrase_row_list"
-                                                                                             class="form-control"
-                                                                                             name="phrase_row"
-                                                                                             form="triple_edit"
-                                                                                             id="phrase_row">
-            <datalist id="phrase_row_list">
+        <div class="form-group col-md-4"><label for="pt">word / triple</label><input type="text" list="pt_list"
+                                                                                     class="form-control" name="pt"
+                                                                                     form="triple_edit" id="pt">
+            <datalist id="pt_list">
                 <option data-value="1" selected>mathematics</option>
                 <option data-value="2">constant</option>
                 <option data-value="5">π</option>

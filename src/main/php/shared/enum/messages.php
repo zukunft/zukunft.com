@@ -37,6 +37,24 @@ use ValueError;
 enum messages: string
 {
 
+    /*
+     * GENERAL TARGET:
+     * use the most specific const name so that the translation can be specific
+     *
+     * the prefix naming convention for the translations is
+     * form_title_* for the main titles of the system forms
+     * system_title_* for subtitles of system forms that might be used also in user views
+     * form_field_* for normal input fields of system forms
+     * form_select_* for select input fields of system forms
+     *
+     * TODO Prio 2
+     * - rename system_form_* to form_field_*
+     *
+     * the const name may have a different name order for easier code reading
+     * e.g. URL_FORM_FIELD for 'form_field_url'
+     * use LABEL_* const only for fallback
+    */
+
     // start and end maker for message id within a text to allow changing the order of vars within a message
     const string VAR_START = 'z$';
     const string VAR_END = '$z';
@@ -138,7 +156,7 @@ enum messages: string
     const string VAR_ERROR_TEXT = 'VarErrorText';
     const string VAR_MESSAGE_ID = 'VarMsgId';
     const string VAR_LANGUAGE = 'VarLanguage';
-    // the key of an url
+    // the key of a url
     const string VAR_URL_KEY = 'VarUrlKey';
 
     // for the object main parameters created by the dsp_id function
@@ -168,10 +186,12 @@ enum messages: string
     case NONE = '';
 
     // labels used for views
+    // TODO Prio 2 target is to use the most specific const name
+    // e.g. form_field_name instead of just name
+    //      for the label of an input form field label
     // the fallback label for selections
     case LABEL = 'name';
     // the label for type selections
-    case LABEL_TYPE = 'type';
     case LABEL_WORD = 'word';
     case LABEL_VERB = 'verb';
     // the label for style selections
@@ -199,8 +219,6 @@ enum messages: string
     case LABEL_REF_TYPE = 'reference type';
     case LABEL_LANGUAGE = 'language';
     case LABEL_USER_PROFILE = 'user profile';
-    case LABEL_SHARE = 'share';
-    case LABEL_PROTECTION = 'protection';
 
     // messages with vars
 
@@ -395,6 +413,11 @@ enum messages: string
     case URL_MAP_MISSING = 'url mapper for "'
         . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
         . '" is missing';
+    case URL_MAP_VALUE_MISSING = 'url value mapper for "'
+        . self::VAR_START . self::VAR_URL_KEY . self::VAR_END
+        . '" is missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '.';
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
@@ -1033,6 +1056,8 @@ enum messages: string
     case USER_EDIT = 'user_edit';
     case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
+
+    // view titles: form_title_*
     case FORM_WORD_ADD_TITLE = 'form_title_word_add';
     case FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
     case FORM_WORD_DEL_TITLE = 'form_title_word_del';
@@ -1115,11 +1140,15 @@ enum messages: string
     case FORM_TITLE_PROCESS = 'system_title_process';
     case FORM_FIELD_NAME = 'form_field_name';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
+    case FORM_FIELD_TYPE = 'form_field_type';
     case FORM_FIELD_GROUP = 'form_field_group';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
     case FORM_FIELD_URL = 'form_field_url';
     case FORM_FIELD_VALUE = 'form_field_value';
+    case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
+    case FORM_FIELD_VIEW_TERM_LINK_PRIO = 'form_field_view_term_link_prio';
+    case FORM_FIELD_COMPONENT_LINK = 'form_field_component_link';
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
     case FORM_FIELD_SELECTION_DESCRIPTION = 'system_form_selection_description';
     case FORM_FIELD_SELECTION_TEXT = 'system_form_selection_text';

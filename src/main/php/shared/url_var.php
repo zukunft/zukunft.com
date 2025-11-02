@@ -72,7 +72,8 @@ class url_var
 
     // the var names for the short technical url (in alphabetic order to detect duplicates)
     const string EXCLUDED = '0';
-    const string CONFIG_PART = '1';
+    const string CONFIRM = '1';
+    const string CONFIG_PART = '2';
     const string ACTION = 'a'; // the crud action
     const string VERB = 'b'; // the verB id
     const string VERBS = 'bl';  // to select the verbs that should be displayed
@@ -171,13 +172,13 @@ class url_var
      */
 
     // action values
-    const string CRUD_CREATE = 'aa'; // the crud add / create action
-    const string CRUD_READ = 'ar'; // the crud read action
-    const string CRUD_UPDATE = 'au'; // the crud update action
-    const string CRUD_DELETE = 'ad'; // the crud delete action
-    const string SHOW_FULL = 'af'; // to show object with all fields
-    const string SHOW_POPUP = 'ap'; // to show object with only a few fields as a popup window
-    const string SHOW_CREATE = 'ac'; // to show object with only the name or key as table cell
+    const string CRUD_CREATE = 'a'; // the crud add / create action
+    const string CRUD_READ = 'r'; // the crud read action
+    const string CRUD_UPDATE = 'u'; // the crud update action
+    const string CRUD_DELETE = 'd'; // the crud delete action
+    const string SHOW_FULL = 'f'; // to show object with all fields
+    const string SHOW_POPUP = 'p'; // to show object with only a few fields as a popup window
+    const string SHOW_CREATE = 's'; // to show object with only the name or key as table cell
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
@@ -187,6 +188,7 @@ class url_var
      */
 
     // init
+    const string CONFIRM_HUMAN = 'confirm';
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
 
@@ -373,6 +375,7 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::MSG_HUMAN, self::MSG],
+        [self::CONFIRM_HUMAN, self::CONFIRM],
 
         // user
         [self::USER_HUMAN, self::USER],
@@ -510,13 +513,13 @@ class url_var
 
     // map human-readable url values to standard url values
     const array HUMAN_TO_STD_ACTIONS_VAL = [
-        [self::CRUD_CREATE_HUMAN, self::CRUD_CREATE],
-        [self::CRUD_UPDATE_HUMAN, self::CRUD_READ],
-        [self::CRUD_REMOVE_HUMAN, self::CRUD_UPDATE],
-        [self::CRUD_READ_HUMAN, self::CRUD_DELETE],
-        [self::CRUD_FULL_HUMAN, self::SHOW_FULL],
-        [self::CRUD_POPUP_HUMAN, self::SHOW_POPUP],
-        [self::CRUD_CELL_HUMAN, self::SHOW_CREATE],
+        self::CRUD_CREATE => self::CRUD_CREATE_HUMAN,
+        self::CRUD_UPDATE => self::CRUD_READ_HUMAN,
+        self::CRUD_DELETE => self::CRUD_REMOVE_HUMAN,
+        self::CRUD_READ => self::CRUD_READ_HUMAN,
+        self::SHOW_FULL => self::CRUD_FULL_HUMAN,
+        self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
+        self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
     ];
 
     const array POD_TO_STD = [

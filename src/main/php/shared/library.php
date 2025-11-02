@@ -2633,6 +2633,21 @@ class library
         return $url_array;
     }
 
+    /**
+     * allow to add a thirs col with the default value to the url array
+     * @param string $url
+     * @return array
+     */
+    function url_array_with(string $url): array
+    {
+        $url_array = $this->url_array($url);
+        $array_with = [];
+        foreach ($url_array as $key => $val) {
+            $array_with[] = [$key, $val];
+        }
+        return $array_with;
+    }
+
     /*
      * shorten a list of fields for sql query naming
      */

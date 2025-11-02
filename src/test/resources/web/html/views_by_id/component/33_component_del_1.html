@@ -12,8 +12,8 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -29,21 +29,20 @@
         </div>
     </nav>
     <br><br><br><br><br><h4>Add a view element</h4>
-    <form action="/http/view.php" id="component_add"><input class="form-control" type="hidden" name="m" id="m"
+    <form action="/http/view.php" id="component_add"><input class="form-control" type="hidden" name="mask_id" id="m"
                                                             value="33"><input class="form-control" type="hidden"
                                                                               name="id" id="id" value="1"><input
-            class="form-control" type="hidden" name="back" id="back" value="1"><input class="form-control" type="hidden"
-                                                                                      name="confirm" id="confirm"
-                                                                                      value="1">
+            class="form-control" type="hidden" name="back" id="_" value="1"><input class="form-control" type="hidden"
+                                                                                   name="confirm" id="1" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
-                                                                                  name="name" id="name" value="Word">
-            </div>
-            <div class="form-group col-md-4"><label for="component_type">component type</label><select
-                    class="form-control" name="component_type" form="component_add" id="component_type">
+            <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
+                                                                               name="Name" id="k" value="Word"></div>
+            <div class="form-group col-md-4"><label for="ct">component type</label><select class="form-control"
+                                                                                           name="ct"
+                                                                                           form="component_add" id="ct">
                 <option value="1">word selector</option>
                 <option value="2">view selector</option>
-                <option value="3">text</option>
+                <option value="3" selected>text</option>
                 <option value="4">fixed word</option>
                 <option value="5">linked word</option>
                 <option value="6">formula results</option>
@@ -60,7 +59,7 @@
                 <option value="17">system form title</option>
                 <option value="18">system form hidden back stack</option>
                 <option value="19">system form confirm status</option>
-                <option value="20" selected>show name</option>
+                <option value="20">show name</option>
                 <option value="21">form field name</option>
                 <option value="22">form field description</option>
                 <option value="23">form select phrase</option>
@@ -211,21 +210,16 @@
             </select></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"
-                                                                                                 value="simply show the word or triple name">
+            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
+                                                                                       name="Description" id="o"
+                                                                                       value="simply show the word or triple name">
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="phrase_row">take rows from</label><input type="text"
-                                                                                                  list="phrase_row_list"
-                                                                                                  class="form-control"
-                                                                                                  name="phrase_row"
-                                                                                                  form="component_add"
-                                                                                                  id="phrase_row">
-                <datalist id="phrase_row_list">
+            <div class="form-group col-md-4"><label for="c1">take rows from</label><input type="text" list="c1_list"
+                                                                                          class="form-control" name="c1"
+                                                                                          form="component_add" id="c1">
+                <datalist id="c1_list">
                     <option data-value="1" selected>mathematics</option>
                     <option data-value="2">constant</option>
                     <option data-value="17">Pi</option>
@@ -289,13 +283,12 @@
                     <option data-value="-96">Geneva (City)</option>
                 </datalist>
             </div>
-            <div class="form-group col-md-4"><label for="phrase_col">take columns from</label><input type="text"
-                                                                                                     list="phrase_col_list"
-                                                                                                     class="form-control"
-                                                                                                     name="phrase_col"
-                                                                                                     form="component_add"
-                                                                                                     id="phrase_col">
-                <datalist id="phrase_col_list">
+            <div class="form-group col-md-4"><label for="c2">take columns from</label><input type="text" list="c2_list"
+                                                                                             class="form-control"
+                                                                                             name="c2"
+                                                                                             form="component_add"
+                                                                                             id="c2">
+                <datalist id="c2_list">
                     <option data-value="1" selected>mathematics</option>
                     <option data-value="2">constant</option>
                     <option data-value="17">Pi</option>
@@ -359,13 +352,13 @@
                     <option data-value="-96">Geneva (City)</option>
                 </datalist>
             </div>
-            <div class="form-group col-md-4"><label for="phrase_col_sub">take sub columns from</label><input type="text"
-                                                                                                             list="phrase_col_sub_list"
-                                                                                                             class="form-control"
-                                                                                                             name="phrase_col_sub"
-                                                                                                             form="component_add"
-                                                                                                             id="phrase_col_sub">
-                <datalist id="phrase_col_sub_list">
+            <div class="form-group col-md-4"><label for="c3">take sub columns from</label><input type="text"
+                                                                                                 list="c3_list"
+                                                                                                 class="form-control"
+                                                                                                 name="c3"
+                                                                                                 form="component_add"
+                                                                                                 id="c3">
+                <datalist id="c3_list">
                     <option data-value="1" selected>mathematics</option>
                     <option data-value="2">constant</option>
                     <option data-value="17">Pi</option>
@@ -431,45 +424,40 @@
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
-                                                                                     form="component_add" id="style">
-                <option value="0" selected>please select ...</option>
+            <div class="form-group col-md-4"><label for="cs">style</label><select class="form-control" name="cs"
+                                                                                  form="component_add" id="cs">
                 <option value="1">1/3 width</option>
                 <option value="2">2/3 width</option>
-                <option value="3">half width</option>
+                <option value="3" selected>half width</option>
                 <option value="4">full width</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                     form="component_add" id="share">
-                <option value="1" selected>public</option>
+            <div class="form-group col-md-4"><label for="ds">Share</label><select class="form-control" name="ds"
+                                                                                  form="component_add" id="ds">
+                <option value="1">public</option>
                 <option value="2">personal</option>
-                <option value="3">group</option>
+                <option value="3" selected>group</option>
                 <option value="4">private</option>
                 <option value="5">personal log</option>
                 <option value="6">group log</option>
                 <option value="7">private log</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
-                                                                                               name="protection"
-                                                                                               form="component_add"
-                                                                                               id="protection">
-                <option value="1" selected>no protection</option>
-                <option value="2">user</option>
+            <div class="form-group col-md-4"><label for="dt">Protection</label><select class="form-control" name="dt"
+                                                                                       form="component_add" id="dt">
+                <option value="1">no protection</option>
+                <option value="2" selected>user</option>
                 <option value="3">admin</option>
                 <option value="4">no change</option>
             </select></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
-                                                                                      name="view_id"
-                                                                                      form="component_add" id="view_id">
+            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                                form="component_add" id="d">
                 <option value="0">complete</option>
             </select></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
-                                                                                      name="view_id"
-                                                                                      form="component_add" id="view_id">
+            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                                form="component_add" id="d">
                 <option value="0">complete</option>
             </select></div>
         </div>

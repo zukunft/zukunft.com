@@ -80,8 +80,9 @@ class triple_list_ui_tests
         $test_page .= $lst->tbl();
         */
 
-        $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector($form, 0, url_var::TRIPLE, msg_id::LABEL_FORMULA) . '<br>';
+        $from_rows = 'selector: ' . '<br>';
+        $from_rows .= $lst->selector($form, 0, url_var::TRIPLE, msg_id::LABEL_FORMULA) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'triple_list', 'triple_list', $t);
     }

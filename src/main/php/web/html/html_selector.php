@@ -99,6 +99,8 @@ class html_selector
     {
         global $mtr;
 
+        $html = new html_base();
+
         $result = '';
         // 06.11.2019: removed, check the calling functions
         /*
@@ -111,7 +113,7 @@ class html_selector
         if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->style . '">';
             if ($label != "") {
-                $result .= '<label for="' . $this->name . '">' . $label . '</label>';
+                $result .= $html->label($label, $this->name);
             }
             $bs_class = 'form-control';
             /*

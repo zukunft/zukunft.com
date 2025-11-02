@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\result;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_value.php';
@@ -184,7 +185,7 @@ class result extends sandbox_value
         if ($frm_id == null) {
             $frm_id = $frm_lst->default_id($this);
         }
-        return $frm_lst->selector($form, $frm_id, $name, msg_id::LABEL_VIEW);
+        return $frm_lst->selector($form, $frm_id, $name, msg_id::FORM_FIELD_SELECT_VIEW);
     }
 
 

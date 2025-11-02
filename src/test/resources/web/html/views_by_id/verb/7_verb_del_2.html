@@ -12,8 +12,8 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -30,13 +30,13 @@
         </div>
     </nav>
     <br><br><br><br><br><h4>Delete verb</h4>
-    <form action="/http/view.php" id="verb_del"><input class="form-control" type="hidden" name="m" id="m"
+    <form action="/http/view.php" id="verb_del"><input class="form-control" type="hidden" name="mask_id" id="m"
                                                        value="7"><input class="form-control" type="hidden" name="id"
                                                                         id="id" value="2"><input class="form-control"
                                                                                                  type="hidden"
-                                                                                                 name="back" id="back"
+                                                                                                 name="back" id="_"
                                                                                                  value="2"><input
-            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+            class="form-control" type="hidden" name="confirm" id="1" value="1">
         <div class="row col-md-12">is a</div>
         <div class="row col-md-12">the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and
             usually plural is used e.g. Cantons are Zurich, Bern, ...

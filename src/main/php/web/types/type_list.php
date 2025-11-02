@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED . 'api.php';
@@ -342,12 +343,12 @@ class type_list
         string $form,
         ?int   $selected = null,
         string $name = '',
-        msg_id $label_id = msg_id::LABEL_TYPE,
+        msg_id $label_id = msg_id::FORM_FIELD_TYPE,
         string $style = view_styles::COL_SM_4
     ): string
     {
         $sel = new html_selector();
-        if ($label_id == msg_id::LABEL_TYPE) {
+        if ($label_id == msg_id::FORM_FIELD_TYPE) {
             $std = $this->get_by_code_id(phrase_type::DEFAULT);
             $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
         } else {

@@ -14,17 +14,20 @@
     list with link: <a href="/http/view.php?m=48&id=21" title="increase">increase</a>, <a
             href="/http/view.php?m=45&id=2" title="is a">is a</a>, <a href="/http/view.php?m=44&id=1"
                                                                       title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">mathematics</a>,
-    <a href="/http/view.php?m=46&id=51" title="ratio of the circumference of a circle to its diameter">Pi (math)</a><br><br>
-    <h4>Selector tests</h4>
-    <div class="form-group col-md-4"><label for="term_id">word, verb, triple or formula</label><select
-            class="form-control" name="term_id" form="term_list_ui_test" id="term_id">
-        <option value="0" selected>please select ...</option>
-        <option value="42">increase</option>
-        <option value="-4">is a</option>
-        <option value="1">mathematics</option>
-        <option value="-101">Pi (math)</option>
-    </select></div>
-    <br></div>
+    <a href="/http/view.php?m=46&id=51" title="ratio of the circumference of a circle to its diameter">Pi (math)</a><br>
+    <form action="/http/view.php" id="term_list_ui_test"><br><h4>Selector tests</h4>
+        <div class="form-group col-md-4"><label for="e">word, verb, triple or formula</label><select
+                class="form-control" name="e" form="term_list_ui_test" id="e">
+            <option value="0" selected>please select ...</option>
+            <option value="42">increase</option>
+            <option value="-4">is a</option>
+            <option value="1">mathematics</option>
+            <option value="-101">Pi (math)</option>
+        </select></div>
+        <br>
+        <button type="submit" class="btn btn-outline-success btn-space">Save</button>
+    </form>
+</div>
 <footer>
     <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
             href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is

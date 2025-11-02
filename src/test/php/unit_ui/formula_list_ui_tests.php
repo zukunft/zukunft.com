@@ -64,8 +64,9 @@ class formula_list_ui_tests
         $test_page .= 'formula list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->name_link() . '<br>';
 
-        $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector($form, 0, url_var::FORMULA, msg_id::LABEL_FORMULA) . '<br>';
+        $from_rows = '<br>' . $html->text_h2('Selector tests');
+        $from_rows .= $lst->selector($form, 0, url_var::FORMULA, msg_id::LABEL_FORMULA) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'formula_list', 'formula_list', $t);
     }

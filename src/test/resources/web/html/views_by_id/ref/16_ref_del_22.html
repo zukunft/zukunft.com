@@ -12,8 +12,8 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -29,21 +29,18 @@
         </div>
     </nav>
     <br><br><br><br><br><h4>Delete ref</h4>
-    <form action="/http/view.php" id="ref_del"><input class="form-control" type="hidden" name="m" id="m"
+    <form action="/http/view.php" id="ref_del"><input class="form-control" type="hidden" name="mask_id" id="m"
                                                       value="16"><input class="form-control" type="hidden" name="id"
                                                                         id="id" value="22"><input class="form-control"
                                                                                                   type="hidden"
-                                                                                                  name="back" id="back"
+                                                                                                  name="back" id="_"
                                                                                                   value="22"><input
-            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+            class="form-control" type="hidden" name="confirm" id="1" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="phrase_id">word / triple</label><input type="text"
-                                                                                                list="phrase_id_list"
-                                                                                                class="form-control"
-                                                                                                name="phrase_id"
-                                                                                                form="ref_del"
-                                                                                                id="phrase_id">
-                <datalist id="phrase_id_list">
+            <div class="form-group col-md-4"><label for="p">word / triple</label><input type="text" list="p_list"
+                                                                                        class="form-control" name="p"
+                                                                                        form="ref_del" id="p">
+                <datalist id="p_list">
                     <option data-value="1">mathematics</option>
                     <option data-value="2">constant</option>
                     <option data-value="17">Pi</option>
@@ -111,11 +108,9 @@
         </div>
         <div class="row col-md-12">https://www.wikidata.org/wiki/Special:EntityData/Q167.json</div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"
-                                                                                                 value="pi - ratio of the circumference of a circle to its diameter">
+            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
+                                                                                       name="Description" id="o"
+                                                                                       value="pi - ratio of the circumference of a circle to its diameter">
             </div>
         </div>
         <br>

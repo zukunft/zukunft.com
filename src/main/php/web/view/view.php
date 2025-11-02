@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
@@ -124,6 +125,7 @@ class view extends view_exe
     }
 
     /**
+     * TODO Prio 1 use const and html functions where ever possible
      * same as dsp_navbar_html, but using bootstrap
      * JavaScript functions using bootstrap
      */
@@ -134,7 +136,7 @@ class view extends view_exe
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
         $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
-        $result .= '<label for="pattern"></label>';
+        $result .= $html->label('', url_var::PATTERN );
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
@@ -244,7 +246,7 @@ class view extends view_exe
     {
         $html = new html_base();
         return $html->input(
-            'pattern', '',
+            url_var::PATTERN, url_var::PATTERN_HUMAN, '',
             html_base::INPUT_SEARCH,
             view_styles::BS_SM_2,
             'word or formula');
@@ -506,7 +508,7 @@ class view extends view_exe
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
-                $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
+                $result .= $html->input(url_var::NAME, url_var::NAME_HUMAN, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);

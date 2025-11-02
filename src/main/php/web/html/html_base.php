@@ -1254,7 +1254,7 @@ class html_base
         }
         if (self::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $class . '">';
-            $result .= '<label for="' . $field . '">' . $label . '</label>';
+            $result .= $this->label($label, $field);
             $result .= '<input class="form-control" name="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
             $result .= '</div>';
         } else {
@@ -1347,6 +1347,13 @@ class html_base
         return '<button' . $class . $type . '>' . $text . '</button>';
     }
 
+    /**
+     * create the html code for a label
+     * TODO Prio 1
+     * @param string $text the translated text to be shown as a label
+     * @param string $for the url id of the html form field
+     * @return string the html code to show the label
+     */
     function label(string $text, string $for = ''): string
     {
         if ($for == '') {
@@ -1356,8 +1363,22 @@ class html_base
     }
 
     /**
+     * translate and create the html code for a label
+     * TODO use if if possible
+     * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
+     * @param string $for the url id of the html form field
+     * @return string the html code to show the label
+     */
+    function label_lan(msg_id $msg_id, string $for = ''): string
+    {
+        global $mtr;
+        return $this->label($mtr->txt($msg_id), $for);
+    }
+
+    /**
      * create the HTML code for an input field
-     * @param string $name the title and id of the input field e.g. Name
+     * @param string $url_id the url id of the input field e.g. Name
+     * @param string $name the title of the input field e.g. Name
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
@@ -1365,6 +1386,7 @@ class html_base
      * @return string the HTML code for the field
      */
     function input(
+        string $url_id = '',
         string $name = '',
         string $value = '',
         string $type = '',
@@ -1372,8 +1394,10 @@ class html_base
         string $placeholder = ''): string
     {
         if ($name != '') {
-            $id = strtolower($name);
             $name = ' name="' . $name . '"';
+        }
+        if ($url_id != '') {
+            $id = strtolower($url_id);
         } else {
             $id = '1';
         }
@@ -1449,7 +1473,8 @@ class html_base
 
     /**
      * create the HTML code for an input field including the label
-     * @param string $name the title and id of the input field e.g. Name
+     * @param string $url_id the id of the input field e.g. n
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
@@ -1457,14 +1482,17 @@ class html_base
      * @return string the HTML code for the field with the label
      */
     function form_field(
-        string $name,
+        string $url_id,
+        msg_id $msg_id,
         string $value,
         string $type = '',
         string $input_class = '',
         string $col_class = ''
     ): string
     {
-        $text = $this->label($name) . $this->input($name, $value, $type, $input_class);
+        global $mtr;
+        $name = $mtr->txt($msg_id);
+        $text = $this->label($name, $url_id) . $this->input($url_id, $name, $value, $type, $input_class);
         return $this->div_form($text, $col_class);
     }
 

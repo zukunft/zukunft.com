@@ -58,11 +58,13 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
@@ -92,11 +94,13 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -114,7 +118,8 @@ class test_mappers
     // use the global test environment
     private test_cleanup $env;
 
-    function __construct(test_cleanup $env) {
+    function __construct(test_cleanup $env)
+    {
         $this->env = $env;
     }
 
@@ -354,24 +359,41 @@ class test_mappers
      * @param int $msk_id the id of the mask
      * @param string $action
      * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
-    function class_to_filled_url(string $class, int $msk_id, string $action, string $type = url_var::MASK_HUMAN): string
+    function class_to_filled_url(
+        string       $class,
+        int          $msk_id,
+        string       $action,
+        string       $type = url_var::MASK_HUMAN,
+        user_message $usr_msg = new user_message()
+    ): string
     {
         if ($action == change_actions::SHOW) {
-            $result = $this->class_to_url_show($class, $msk_id, $type);
+            $url = $this->class_to_url_show($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::ADD) {
-            $result = $this->class_to_url_add($class, $msk_id, $type);
+            $url = $this->class_to_url_add($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::UPDATE) {
-            $result = $this->class_to_url_edit($class, $msk_id, $type);
+            $url = $this->class_to_url_edit($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::DELETE) {
-            $result = $this->class_to_url_del($class, $msk_id, $type);
+            $url = $this->class_to_url_del($class, $msk_id, $type, $usr_msg);
         } else {
             $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
             log_err($msg);
-            $result = $msg;
+            $url = $msg;
         }
-        return $result;
+        return $this->test_url($url);
+    }
+
+    /**
+     * add the test server to a url query string
+     * @param string $url_part the url query string
+     * @return string the complete url for the test server
+     */
+    function test_url(string $url_part): string
+    {
+        return api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR . $url_part;
     }
 
     /**
@@ -379,12 +401,18 @@ class test_mappers
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
-    function class_to_url_show(string $class, int $msk_id, string $type): string
+    function class_to_url_show(
+        string       $class,
+        int          $msk_id,
+        string       $type,
+        user_message $usr_msg
+    ): string
     {
-        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
-        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        $url_array[] = [url_var::MASK => $msk_id];
         $t_usr = new test_users();
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -399,48 +427,58 @@ class test_mappers
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
+                $url_array[] = [url_var::NAME, $obj->name()];
+                $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $url .= $this->word_url($obj, $type);
+                $obj_array = $this->word_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
                 $obj = $t_vrb->verb_is();
-                $url .= $this->verb_url($obj, $type);
+                $obj_array = $this->verb_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case triple::class;
                 $obj = $t_trp->triple_filled();
-                $url .= $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case source::class;
                 $obj = $t_src->source_filled();
-                $url .= $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case ref::class;
                 $obj = $t_ref->reference_plus();
-                $url .= $this->ref_url($obj, $type);
+                $obj_array = $this->ref_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
-                $url .= $this->value_url($obj, $type);
+                $obj_array = $this->value_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case formula::class;
                 $obj = $t_frm->formula_filled();
-                $url .= $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();
-                $url .= $this->result_url($obj, $type);
+                $obj_array = $this->result_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case view::class;
                 $obj = $t_msk->view_filled();
-                $url .= $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
-                $url .= $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
@@ -450,21 +488,27 @@ class test_mappers
                 $obj = $t_wrd->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_HUMAN, url_var::CRUD_READ_HUMAN, true);
-        return $url;
+        $url_array[] = [url_var::ID, $obj->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_READ, true];
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
     }
 
     /**
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
-    function class_to_url_add(string $class, int $msk_id, string $type): string
+    function class_to_url_add(
+        string       $class,
+        int          $msk_id,
+        string       $type = url_var::MASK_HUMAN,
+        user_message $usr_msg = new user_message()
+    ): string
     {
-        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
-        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users();
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -480,52 +524,63 @@ class test_mappers
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
+                $url_array[] = [url_var::NAME, $obj->name()];
+                $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $url .= $this->word_url($obj, $type);
+                $obj_array = $this->word_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
                 $obj = $t_vrb->verb_filled();
-                $url .= $this->verb_url($obj, $type);
+                $obj_array = $this->verb_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case triple::class;
                 $obj = $t_trp->triple_filled();
-                $url .= $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case source::class;
                 $obj = $t_src->source_filled();
-                $url .= $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case ref::class;
                 $obj = $t_ref->ref_filled();
-                $url .= $this->ref_url($obj, $type);
+                $obj_array = $this->ref_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
-                $url .= $this->value_url($obj, $type);
+                $obj_array = $this->value_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case group::class;
                 $obj = $t_grp->group_zh_2020();
-                $url .= $this->group_url($obj, $type);
+                $obj_array = $this->group_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case formula::class;
                 $obj = $t_frm->formula_filled();
-                $url .= $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();
-                $url .= $this->result_url($obj, $type);
+                $obj_array = $this->result_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case view::class;
                 $obj = $t_msk->view_filled();
-                $url .= $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
-                $url .= $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
@@ -535,9 +590,9 @@ class test_mappers
                 $obj = $t_wrd->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_HUMAN, url_var::CRUD_CREATE_HUMAN, true);
-        return $url;
+        $url_array[] = [url_var::ID, $obj->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_CREATE, true];
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
     }
 
     /**
@@ -545,12 +600,18 @@ class test_mappers
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
-    function class_to_url_edit(string $class, int $msk_id, string $type): string
+    function class_to_url_edit(
+        string       $class,
+        int          $msk_id,
+        string       $type,
+        user_message $usr_msg
+    ): string
     {
-        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
-        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users();
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -566,52 +627,63 @@ class test_mappers
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
-                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
+                $url_array[] = [url_var::NAME, $obj->name()];
+                $url_array[] = [url_var::IP, $obj->ip_addr];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $url .= $this->word_url($obj, $type);
+                $obj_array = $this->word_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
                 $obj = $t_vrb->verb_is_filled();
-                $url .= $this->verb_url($obj, $type);
+                $obj_array = $this->verb_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case triple::class;
                 $obj = $t_trp->triple_filled();
-                $url .= $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case source::class;
                 $obj = $t_src->source_filled_included();
-                $url .= $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case ref::class;
                 $obj = $t_ref->ref_filled();
-                $url .= $this->ref_url($obj, $type);
+                $obj_array = $this->ref_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
-                $url .= $this->value_url($obj, $type);
+                $obj_array = $this->value_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case group::class;
                 $obj = $t_grp->group_zh_2020();
-                $url .= $this->group_url($obj, $type);
+                $obj_array = $this->group_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case formula::class;
                 $obj = $t_frm->formula_filled();
-                $url .= $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();
-                $url .= $this->result_url($obj, $type);
+                $obj_array = $this->result_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case view::class;
                 $obj = $t_msk->view_filled();
-                $url .= $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
-                $url .= $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
@@ -621,9 +693,9 @@ class test_mappers
                 $obj = $t_wrd->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_HUMAN, url_var::CRUD_UPDATE_HUMAN, true);
-        return $url;
+        $url_array[] = [url_var::ID, $obj->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_UPDATE, true];
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
     }
 
     /**
@@ -631,12 +703,19 @@ class test_mappers
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
+     * @param string $type the url type that should be created
+     * @param user_message $usr_msg to enhance with messages to the user
      * @return string with only a few vars filled
      */
-    function class_to_url_del(string $class, int $msk_id, string $type): string
+    function class_to_url_del(
+        string       $class,
+        int          $msk_id,
+        string       $type,
+        user_message $usr_msg
+    ): string
     {
-        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
-        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        $url_array = [];
+        $url_array[] = [url_var::MASK, $msk_id];
         $t_usr = new test_users();
         $t_wrd = new test_words($this->env);
         $t_vrb = new test_verbs($this->env);
@@ -652,51 +731,62 @@ class test_mappers
         switch ($class) {
             case user::class;
                 $obj = $t_usr->user_filled();
-                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url_array[] = [url_var::NAME, $obj->name()];
                 break;
             case word::class;
                 $obj = $t_wrd->word_filled();
-                $url .= $this->word_url($obj, $type);
+                $obj_array = $this->word_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case verb::class;
                 $obj = $t_vrb->verb_is_filled();
-                $url .= $this->verb_url($obj, $type);
+                $obj_array = $this->verb_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case triple::class;
                 $obj = $t_trp->triple_filled();
-                $url .= $this->triple_url($obj, $type);
+                $obj_array = $this->triple_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case source::class;
                 $obj = $t_src->source_filled();
-                $url .= $this->source_url($obj, $type);
+                $obj_array = $this->source_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case ref::class;
                 $obj = $t_ref->ref_filled();
-                $url .= $this->ref_url($obj, $type);
+                $obj_array = $this->ref_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case value::class;
                 $obj = $t_val->value_16_filled();
-                $url .= $this->value_url($obj, $type);
+                $obj_array = $this->value_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case group::class;
                 $obj = $t_grp->group_zh_2020();
-                $url .= $this->group_url($obj, $type);
+                $obj_array = $this->group_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case formula::class;
                 $obj = $t_frm->formula_filled();
-                $url .= $this->formula_url($obj, $type);
+                $obj_array = $this->formula_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case result::class;
                 $obj = $t_res->result_main_filled();
-                $url .= $this->result_url($obj, $type);
+                $obj_array = $this->result_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case view::class;
                 $obj = $t_msk->view_filled();
-                $url .= $this->view_url($obj, $type);
+                $obj_array = $this->view_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case component::class;
                 $obj = $t_cmp->component_filled();
-                $url .= $this->component_url($obj, $type);
+                $obj_array = $this->component_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
@@ -706,263 +796,177 @@ class test_mappers
                 $obj = $t_wrd->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_HUMAN, url_var::CRUD_REMOVE_HUMAN, true);
-        return $url;
+        $url_array[] = [url_var::ID, $obj->id()];
+        $url_array[] = [url_var::ACTION, url_var::CRUD_DELETE, true];
+        return $this->array_to_url_type($url_array, $type, $usr_msg);
     }
 
-    private function url_par(string $name, ?string $par, bool $last = false): string
+    private function array_to_url_type(
+        array        $url_array,
+        string       $type,
+        user_message $usr_msg
+    ): string
     {
-        if ($par == null) {
-            return '';
-        } else {
-            if ($last) {
-                return $name . url_var::EQ . urlencode($par);
-            } else {
-                return $name . url_var::EQ . urlencode($par) . url_var::ADD;
-            }
-        }
-    }
-
-    private function word_url(word $wrd, string $type): string
-    {
+        $url_map = new url_mapper();
         if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $wrd->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $wrd->description());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $wrd->type_id());
-            $url .= $this->url_par(url_var::PLURAL_HUMAN, $wrd->plural);
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $wrd->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $wrd->protection_id());
-            $url .= $this->url_par(url_var::VIEW_HUMAN, $wrd->view_id());
-            $url .= $this->url_par(url_var::USAGE_HUMAN, $wrd->usage());
-            $url .= $this->url_par(url_var::IMPACT_HUMAN, $wrd->impact());
+            $url = $url_map->standard_url_to_human($url_array, $usr_msg);
+        } elseif ($type == url_var::MASK_POD) {
+            $url = $url_map->standard_url_to_pod($url_array, $usr_msg);
         } else {
-            $url = $this->url_par(url_var::NAME, $wrd->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $wrd->description());
-            $url .= $this->url_par(url_var::TYPE, $wrd->type_id());
-            $url .= $this->url_par(url_var::PLURAL, $wrd->plural);
-            $url .= $this->url_par(url_var::SHARE, $wrd->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $wrd->protection_id());
-            $url .= $this->url_par(url_var::VIEW, $wrd->view_id());
-            $url .= $this->url_par(url_var::USAGE, $wrd->usage());
-            $url .= $this->url_par(url_var::IMPACT, $wrd->impact());
+            $url = $url_map->array_to_url($url_array);
         }
         return $url;
     }
 
-    private function verb_url(verb $vrb, string $type): string
+    private function word_url(word $wrd, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $vrb->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $vrb->description());
-            $url .= $this->url_par(url_var::PLURAL_HUMAN, $vrb->plural());
-            $url .= $this->url_par(url_var::REVERSE_HUMAN, $vrb->reverse());
-            $url .= $this->url_par(url_var::REVERSE_PLURAL_HUMAN, $vrb->reverse_plural());
-            $url .= $this->url_par(url_var::FORMULA_HUMAN, $vrb->formula_name());
-            $url .= $this->url_par(url_var::USAGE_HUMAN, $vrb->usage());
-            $url .= $this->url_par(url_var::IMPACT_HUMAN, $vrb->impact());
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $wrd->name()];
+        $url_array[] = [url_var::DESCRIPTION, $wrd->description()];
+        // TODO Prio 2 activate
+        /*
+        if ($type == url_var::MASK_POD) {
+            $url_array[] = [url_var::TYPE, $wrd->type_id()];
         } else {
-            $url = $this->url_par(url_var::NAME, $vrb->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $vrb->description());
-            $url .= $this->url_par(url_var::PLURAL, $vrb->plural());
-            $url .= $this->url_par(url_var::REVERSE, $vrb->reverse());
-            $url .= $this->url_par(url_var::REVERSE_PLURAL, $vrb->reverse_plural());
-            $url .= $this->url_par(url_var::FORMULA, $vrb->formula_name());
-            $url .= $this->url_par(url_var::USAGE, $vrb->usage());
-            $url .= $this->url_par(url_var::IMPACT, $vrb->impact());
+            $url_array[] = [url_var::TYPE, $wrd->type_name()];
         }
-        return $url;
+        */
+        $url_array[] = [url_var::TYPE, $wrd->type_id()];
+        $url_array[] = [url_var::PLURAL, $wrd->plural];
+        $url_array[] = [url_var::SHARE, $wrd->share_id()];
+        $url_array[] = [url_var::PROTECTION, $wrd->protection_id()];
+        $url_array[] = [url_var::VIEW, $wrd->view_id()];
+        $url_array[] = [url_var::USAGE, $wrd->usage()];
+        $url_array[] = [url_var::IMPACT, $wrd->impact()];
+        return $url_array;
     }
 
-    private function triple_url(triple $trp, string $type): string
+    private function verb_url(verb $vrb, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $trp->name());
-            $url .= $this->url_par(url_var::PHRASE_FROM_HUMAN, $trp->from_id());
-            $url .= $this->url_par(url_var::VERB_HUMAN, $trp->verb_id());
-            $url .= $this->url_par(url_var::PHRASE_TO_HUMAN, $trp->to_id());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $trp->description());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $trp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $trp->protection_id());
-            $url .= $this->url_par(url_var::VIEW_HUMAN, $trp->view_id());
-            $url .= $this->url_par(url_var::USAGE_HUMAN, $trp->usage());
-            $url .= $this->url_par(url_var::IMPACT_HUMAN, $trp->impact());
-        } else {
-            $url = $this->url_par(url_var::NAME, $trp->name());
-            $url .= $this->url_par(url_var::PHRASE_FROM, $trp->from_id());
-            $url .= $this->url_par(url_var::VERB, $trp->verb_id());
-            $url .= $this->url_par(url_var::PHRASE_TO, $trp->to_id());
-            $url .= $this->url_par(url_var::NAME, $trp->name_given());
-            $url .= $this->url_par(url_var::DESCRIPTION, $trp->description());
-            $url .= $this->url_par(url_var::SHARE, $trp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $trp->protection_id());
-            $url .= $this->url_par(url_var::VIEW, $trp->view_id());
-            $url .= $this->url_par(url_var::USAGE, $trp->usage());
-            $url .= $this->url_par(url_var::IMPACT, $trp->impact());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $vrb->name()];
+        $url_array[] = [url_var::DESCRIPTION, $vrb->description()];
+        $url_array[] = [url_var::PLURAL, $vrb->plural()];
+        $url_array[] = [url_var::REVERSE, $vrb->reverse()];
+        $url_array[] = [url_var::REVERSE_PLURAL, $vrb->reverse_plural()];
+        $url_array[] = [url_var::FORMULA, $vrb->formula_name()];
+        $url_array[] = [url_var::USAGE, $vrb->usage()];
+        $url_array[] = [url_var::IMPACT, $vrb->impact()];
+        return $url_array;
     }
 
-    private function source_url(source $src, string $type): string
+    private function triple_url(triple $trp, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $src->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $src->description());
-            $url .= $this->url_par(url_var::URL_HUMAN, $src->url());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $src->type_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $src->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $src->protection_id());
-            $url .= $this->url_par(url_var::USAGE_HUMAN, $src->usage());
-        } else {
-            $url = $this->url_par(url_var::NAME, $src->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $src->description());
-            $url .= $this->url_par(url_var::URL, $src->url());
-            $url .= $this->url_par(url_var::TYPE, $src->type_id());
-            $url .= $this->url_par(url_var::SHARE, $src->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $src->protection_id());
-            $url .= $this->url_par(url_var::USAGE, $src->usage());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $trp->name()];
+        $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
+        $url_array[] = [url_var::VERB, $trp->verb_id()];
+        $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
+        $url_array[] = [url_var::NAME, $trp->name_given()];
+        $url_array[] = [url_var::DESCRIPTION, $trp->description()];
+        $url_array[] = [url_var::SHARE, $trp->share_id()];
+        $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
+        $url_array[] = [url_var::VIEW, $trp->view_id()];
+        $url_array[] = [url_var::USAGE, $trp->usage()];
+        $url_array[] = [url_var::IMPACT, $trp->impact()];
+        return $url_array;
     }
 
-    private function ref_url(ref $ref, string $type): string
+    private function source_url(source $src, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::PHRASE_HUMAN, $ref->from_id());
-            $url .= $this->url_par(url_var::EX_KEY_HUMAN, $ref->external_key());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $ref->predicate_id());
-            $url .= $this->url_par(url_var::URL_HUMAN, $ref->url());
-            $url .= $this->url_par(url_var::SOURCE_HUMAN, $ref->source_id());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $ref->description());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $ref->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $ref->protection_id());
-        } else {
-            $url = $this->url_par(url_var::PHRASE, $ref->from_id());
-            $url .= $this->url_par(url_var::EXTERNAL_KEY, $ref->external_key());
-            $url .= $this->url_par(url_var::TYPE, $ref->predicate_id());
-            $url .= $this->url_par(url_var::URL, $ref->url());
-            $url .= $this->url_par(url_var::SOURCE, $ref->source_id());
-            $url .= $this->url_par(url_var::DESCRIPTION, $ref->description());
-            $url .= $this->url_par(url_var::SHARE, $ref->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $ref->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $src->name()];
+        $url_array[] = [url_var::DESCRIPTION, $src->description()];
+        $url_array[] = [url_var::URL, $src->url()];
+        $url_array[] = [url_var::TYPE, $src->type_id()];
+        $url_array[] = [url_var::SHARE, $src->share_id()];
+        $url_array[] = [url_var::PROTECTION, $src->protection_id()];
+        $url_array[] = [url_var::USAGE, $src->usage()];
+        return $url_array;
     }
 
-    private function value_url(value $val, string $type): string
+    private function ref_url(ref $ref, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $val->name());
-            $url .= $this->url_par(url_var::PHRASE_LIST_HUMAN, implode(',',$val->ids()));
-            $url .= $this->url_par(url_var::NUMERIC_VALUE_HUMAN, $val->value());
-            $url .= $this->url_par(url_var::SOURCE_HUMAN, $val->source_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $val->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $val->protection_id());
-        } else {
-            $url = $this->url_par(url_var::NAME, $val->name());
-            $url .= $this->url_par(url_var::PHRASE_LIST, implode(',',$val->ids()));
-            $url .= $this->url_par(url_var::NUMERIC_VALUE, $val->value());
-            $url .= $this->url_par(url_var::SOURCE, $val->source_id());
-            $url .= $this->url_par(url_var::SHARE, $val->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $val->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::PHRASE, $ref->from_id()];
+        $url_array[] = [url_var::EXTERNAL_KEY, $ref->external_key()];
+        $url_array[] = [url_var::TYPE, $ref->predicate_id()];
+        $url_array[] = [url_var::URL, $ref->url()];
+        $url_array[] = [url_var::SOURCE, $ref->source_id()];
+        $url_array[] = [url_var::DESCRIPTION, $ref->description()];
+        $url_array[] = [url_var::SHARE, $ref->share_id()];
+        $url_array[] = [url_var::PROTECTION, $ref->protection_id()];
+        return $url_array;
     }
 
-    private function group_url(group $grp, string $type): string
+    private function value_url(value $val, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $grp->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $grp->description());
-            $url .= $this->url_par(url_var::SOURCE_HUMAN, $grp->source_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $grp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $grp->protection_id());
-        } else {
-            $url = $this->url_par(url_var::NAME, $grp->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $grp->description());
-            $url .= $this->url_par(url_var::SOURCE, $grp->source_id());
-            $url .= $this->url_par(url_var::SHARE, $grp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $grp->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $val->name()];
+        $url_array[] = [url_var::PHRASE_LIST, implode(',', $val->ids())];
+        $url_array[] = [url_var::NUMERIC_VALUE, $val->value()];
+        $url_array[] = [url_var::SOURCE, $val->source_id()];
+        $url_array[] = [url_var::SHARE, $val->share_id()];
+        $url_array[] = [url_var::PROTECTION, $val->protection_id()];
+        return $url_array;
     }
 
-    private function formula_url(formula $frm, string $type): string
+    private function group_url(group $grp, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $frm->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $frm->description());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $frm->type_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $frm->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $frm->protection_id());
-            $url .= $this->url_par(url_var::USAGE_HUMAN, $frm->usage());
-            $url .= $this->url_par(url_var::IMPACT_HUMAN, $frm->impact());
-        } else {
-            $url = $this->url_par(url_var::NAME, $frm->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $frm->description());
-            $url .= $this->url_par(url_var::TYPE, $frm->type_id());
-            $url .= $this->url_par(url_var::SHARE, $frm->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $frm->protection_id());
-            $url .= $this->url_par(url_var::USAGE, $frm->usage());
-            $url .= $this->url_par(url_var::IMPACT, $frm->impact());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $grp->name()];
+        $url_array[] = [url_var::DESCRIPTION, $grp->description()];
+        $url_array[] = [url_var::SOURCE, $grp->source_id()];
+        $url_array[] = [url_var::SHARE, $grp->share_id()];
+        $url_array[] = [url_var::PROTECTION, $grp->protection_id()];
+        return $url_array;
     }
 
-    private function result_url(result $res, string $type): string
+    private function formula_url(formula $frm, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $res->name());
-            $url .= $this->url_par(url_var::PHRASE_LIST_HUMAN, implode(',',$res->ids()));
-            $url .= $this->url_par(url_var::NUMERIC_VALUE_HUMAN, $res->value());
-            $url .= $this->url_par(url_var::FORMULA_HUMAN, $res->formula_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $res->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $res->protection_id());
-        } else {
-            $url = $this->url_par(url_var::NAME, $res->name());
-            $url .= $this->url_par(url_var::PHRASE_LIST, implode(',',$res->ids()));
-            $url .= $this->url_par(url_var::NUMERIC_VALUE, $res->value());
-            $url .= $this->url_par(url_var::FORMULA, $res->formula_id());
-            $url .= $this->url_par(url_var::SHARE, $res->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $res->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $frm->name()];
+        $url_array[] = [url_var::DESCRIPTION, $frm->description()];
+        $url_array[] = [url_var::TYPE, $frm->type_id()];
+        $url_array[] = [url_var::SHARE, $frm->share_id()];
+        $url_array[] = [url_var::PROTECTION, $frm->protection_id()];
+        $url_array[] = [url_var::USAGE, $frm->usage()];
+        $url_array[] = [url_var::IMPACT, $frm->impact()];
+        return $url_array;
     }
 
-    private function view_url(view $msk, string $type): string
+    private function result_url(result $res, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $msk->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $msk->description());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $msk->type_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $msk->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $msk->protection_id());
-        } else {
-            $url = $this->url_par(url_var::NAME, $msk->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $msk->description());
-            $url .= $this->url_par(url_var::TYPE, $msk->type_id());
-            $url .= $this->url_par(url_var::SHARE, $msk->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $msk->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $res->name()];
+        $url_array[] = [url_var::PHRASE_LIST, implode(',', $res->ids())];
+        $url_array[] = [url_var::NUMERIC_VALUE, $res->value()];
+        $url_array[] = [url_var::FORMULA, $res->formula_id()];
+        $url_array[] = [url_var::SHARE, $res->share_id()];
+        $url_array[] = [url_var::PROTECTION, $res->protection_id()];
+        return $url_array;
     }
 
-    private function component_url(component $cmp, string $type): string
+    private function view_url(view $msk, string $type): array
     {
-        if ($type == url_var::MASK_HUMAN) {
-            $url = $this->url_par(url_var::NAME_HUMAN, $cmp->name());
-            $url .= $this->url_par(url_var::DESCRIPTION_HUMAN, $cmp->description());
-            $url .= $this->url_par(url_var::TYPE_HUMAN, $cmp->type_id());
-            $url .= $this->url_par(url_var::SHARE_HUMAN, $cmp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION_HUMAN, $cmp->protection_id());
-        } else {
-            $url = $this->url_par(url_var::NAME, $cmp->name());
-            $url .= $this->url_par(url_var::DESCRIPTION, $cmp->description());
-            $url .= $this->url_par(url_var::TYPE, $cmp->type_id());
-            $url .= $this->url_par(url_var::SHARE, $cmp->share_id());
-            $url .= $this->url_par(url_var::PROTECTION, $cmp->protection_id());
-        }
-        return $url;
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $msk->name()];
+        $url_array[] = [url_var::DESCRIPTION, $msk->description()];
+        $url_array[] = [url_var::TYPE, $msk->type_id()];
+        $url_array[] = [url_var::SHARE, $msk->share_id()];
+        $url_array[] = [url_var::PROTECTION, $msk->protection_id()];
+        return $url_array;
+    }
+
+    private function component_url(component $cmp, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $cmp->name()];
+        $url_array[] = [url_var::DESCRIPTION, $cmp->description()];
+        $url_array[] = [url_var::TYPE, $cmp->type_id()];
+        $url_array[] = [url_var::SHARE, $cmp->share_id()];
+        $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
+        return $url_array;
     }
 
 }

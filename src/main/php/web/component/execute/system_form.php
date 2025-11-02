@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -117,9 +118,9 @@ class system_form extends component
     {
         $result = '';
         $html = new html_base();
-        $result .= $html->input(url_var::MASK, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::ID, $id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::BACK, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::MASK, url_var::MASK_HUMAN, $msk_id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::ID, url_var::ID, $id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, url_var::BACK_HUMAN, $back, html_base::INPUT_HIDDEN);
         return $result;
     }
 
@@ -129,7 +130,7 @@ class system_form extends component
     function form_confirm(): string
     {
         $html = new html_base();
-        return $html->input('confirm', '1', html_base::INPUT_HIDDEN);
+        return $html->input(url_var::CONFIRM, url_var::CONFIRM_HUMAN, '1', html_base::INPUT_HIDDEN);
     }
 
     /**
@@ -250,6 +251,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::NAME,
+            msg_id::FORM_FIELD_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '', $style_text
@@ -264,6 +266,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
             $dbo->description(),
             html_base::INPUT_TEXT,
             '',
@@ -284,6 +287,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::PLURAL,
+            msg_id::FORM_FIELD_PLURAL,
             $plural,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -305,6 +309,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::REVERSE,
+            msg_id::FORM_FIELD_REVERSE,
             $reverse,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -326,6 +331,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::REVERSE_PLURAL,
+            msg_id::FORM_FIELD_PLURAL_REVERSE,
             $reverse,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -346,6 +352,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::NAME_IN_FORMULA,
+            msg_id::FORM_FIELD_PLURAL_REVERSE,
             $frm_name,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -366,6 +373,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::EXTERNAL_KEY,
+            msg_id::FORM_FIELD_EXTERNAL_KEY,
             $ref_key,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -386,6 +394,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::WEIGHT,
+            msg_id::FORM_FIELD_WEIGHT,
             $weight,
             html_base::INPUT_PERCENT,
             '',view_styles::COL_SM_1
@@ -405,6 +414,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::VALUE,
+            msg_id::FORM_FIELD_VALUE,
             $val_txt,
             html_base::INPUT_NUMBER,
             '', $style_text
@@ -426,6 +436,7 @@ class system_form extends component
         }
         return $html->form_field(
             url_var::URL,
+            msg_id::FORM_FIELD_URL,
             $url,
             html_base::INPUT_TEXT,
             '',
@@ -441,6 +452,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -456,6 +468,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -471,6 +484,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -486,6 +500,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -501,6 +516,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->url(),
             html_base::INPUT_TEXT,
             '',
@@ -516,6 +532,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::VIEW_TERM_LINK_PRIO,
+            msg_id::FORM_FIELD_VIEW_TERM_LINK_PRIO,
             $dbo->url(),
             html_base::INPUT_TEXT,
             '',
@@ -531,6 +548,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::COMPONENT_LINK,
+            msg_id::FORM_FIELD_COMPONENT_LINK,
             $dbo->url(),
             html_base::INPUT_TEXT,
             '',
@@ -546,6 +564,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -561,6 +580,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',
@@ -576,6 +596,7 @@ class system_form extends component
         $html = new html_base();
         return $html->form_field(
             url_var::GROUP_NAME,
+            msg_id::FORM_FIELD_GROUP,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '',

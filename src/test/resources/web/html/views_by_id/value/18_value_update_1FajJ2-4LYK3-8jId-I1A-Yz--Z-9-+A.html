@@ -12,8 +12,8 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -29,34 +29,28 @@
         </div>
     </nav>
     <br><br><br><br><br><h4>Change value</h4>
-    <form action="/http/view.php" id="value_edit"><input class="form-control" type="hidden" name="m" id="m"
+    <form action="/http/view.php" id="value_edit"><input class="form-control" type="hidden" name="mask_id" id="m"
                                                          value="18"><input class="form-control" type="hidden" name="id"
                                                                            id="id"
                                                                            value="1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+"><input
-            class="form-control" type="hidden" name="back" id="back"
+            class="form-control" type="hidden" name="back" id="_"
             value="1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+"><input
-            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+            class="form-control" type="hidden" name="confirm" id="1" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="group_name">group_name</label><input class="form-control"
-                                                                                              type="text"
-                                                                                              name="group_name"
-                                                                                              id="group_name"></div>
+            <div class="form-group col-md-8"><label for="gn">group</label><input class="form-control" type="text"
+                                                                                 name="group" id="gn"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group "><label for="v">v</label><input class="form-control" type="text" name="v" id="v"
-                                                                    value="3.14"></div>
+            <div class="form-group "><label for="v">Value</label><input class="form-control" type="text" name="Value"
+                                                                        id="v" value="3.14"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"></div>
+            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
+                                                                                       name="Description" id="o"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="source_id">source</label><select class="form-control"
-                                                                                          name="source_id"
-                                                                                          form="value_edit"
-                                                                                          id="source_id">
+            <div class="form-group col-md-4"><label for="s">source</label><select class="form-control" name="s"
+                                                                                  form="value_edit" id="s">
                 <option value="1">The International System of Units</option>
             </select></div>
         </div>
@@ -68,13 +62,12 @@
         <div class="row col-md-12">reference type selector not defined for Zukunft\ZukunftCom\main\php\web\value\value
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
-                                                                                      name="view_id" form="value_edit"
-                                                                                      id="view_id">
+            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
+                                                                                form="value_edit" id="d">
                 <option value="0">complete</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                     form="value_edit" id="share">
+            <div class="form-group col-md-4"><label for="ds">Share</label><select class="form-control" name="ds"
+                                                                                  form="value_edit" id="ds">
                 <option value="1">public</option>
                 <option value="2">personal</option>
                 <option value="3" selected>group</option>
@@ -83,10 +76,8 @@
                 <option value="6">group log</option>
                 <option value="7">private log</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
-                                                                                               name="protection"
-                                                                                               form="value_edit"
-                                                                                               id="protection">
+            <div class="form-group col-md-4"><label for="dt">Protection</label><select class="form-control" name="dt"
+                                                                                       form="value_edit" id="dt">
                 <option value="1">no protection</option>
                 <option value="2" selected>user</option>
                 <option value="3">admin</option>
