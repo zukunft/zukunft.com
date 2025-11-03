@@ -70,8 +70,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -574,11 +576,13 @@ class test_api extends test_base
     function assert_api_get_list(
         string       $class,
         array|string $ids = [1, 2],
-        string       $id_fld = 'ids',
+        string       $id_fld = url_var::ID_LST,
         string       $filename = '',
         bool         $contains = false): bool
     {
         $lib = new library();
+        $url_map = new url_mapper();
+        $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
         $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
@@ -591,8 +595,9 @@ class test_api extends test_base
 
         // TODO remove
         if ($class == $lib->class_to_name(phrase_list::class)) {
-            if ($filename == '' and $id_fld != 'ids') {
-                $filename = $class . '_without_link' . '_by_' . $id_fld;
+            if ($filename == '' and $id_fld != url_var::ID_LST) {
+                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $filename = $class . '_without_link' . '_by_' . $file_by_name;
             } else {
                 $filename = $class . '_without_link';
             }
@@ -604,8 +609,9 @@ class test_api extends test_base
             $filename = $class . '_without_link';
         }
 
-        if ($filename == '' and $id_fld != 'ids') {
-            $filename = $class . '_by_' . $id_fld;
+        if ($filename == '' and $id_fld != url_var::ID_LST) {
+            $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+            $filename = $class . '_by_' . $file_by_name;
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
@@ -844,7 +850,7 @@ class test_api extends test_base
     {
         $lib = new library();
         if ($class == ref::class) {
-            $class = url_var::REF;
+            $class = url_var::REF_API;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
         return api::HOST_TESTING . url_var::API_PATH . $url_class;

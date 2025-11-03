@@ -228,6 +228,7 @@ class component_list extends sandbox_list_named
         int         $offset = 0
     ): sql_par
     {
+        // TODO Prio 1 move the query name to a const
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(component::FLD_ID, $ids);
         $sc->set_order(component::FLD_ID, sql::ORDER_ASC);

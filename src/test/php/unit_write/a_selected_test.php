@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
+use Zukunft\ZukunftCom\test\php\unit_read\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
@@ -121,15 +122,15 @@ class a_selected_test extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            new word_list_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
              */
 
-            $sys_usr = new user;
-            $sys_usr->load_by_id(users::SYSTEM_ID);
+            //$sys_usr = new user;
+            //$sys_usr->load_by_id(users::SYSTEM_ID);
             //$import = new import_file();
             //$import->import_config_yaml($sys_usr);
 
@@ -179,6 +180,9 @@ class a_selected_test extends test_cleanup
             /*
              * ui via api
              */
+
+            $api_test = new api_tests();
+            $api_test->run($this);
 
             new localhost_ui_tests()->run($this);
 

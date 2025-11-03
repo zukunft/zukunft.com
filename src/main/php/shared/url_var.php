@@ -54,6 +54,9 @@ class url_var
     const string API_PATH = 'api/';
     const string ADD_ID = self::ADD . self::ID . self::EQ;
 
+    // exception for the reference api path
+    const string REF_API = 'reference';
+
 
     /*
      * url type

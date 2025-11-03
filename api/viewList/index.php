@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
             $lst = new view_list($usr);
             $lst->load_by_component_id($cmp_id);
             $result = $lst->api_json();
-        } elseif ($_GET[url_var::PATTERN] != null) {
+        } elseif ($pattern != null) {
             $lst = new view_list($usr);
             $lst->load_names(($pattern));
             $result = $lst->api_json();

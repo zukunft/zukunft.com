@@ -604,6 +604,26 @@ class library
     }
 
     /**
+     * if an array contains an array get the first two columns and create a key / value array
+     * e.g. if the original array entry ['key','value','default'] the result is 'key' => 'value'
+     *
+     * @param array $array an array that has an array for each entry with at least two entries
+     * @return array an array with the first two columns of the array where the first is the key
+     */
+    function array_get_first_two_col(array $array): array
+    {
+        $return = [];
+        foreach ($array as $row) {
+            if (array_key_exists(0, $row) and array_key_exists(1, $row)) {
+                $return[$row[0]] = $row[1];
+            } else {
+                log_err(implode(',', $array) . ' must have at least two col');
+            }
+        }
+        return $return;
+    }
+
+    /**
      * merge two array and ignore if the key is numeric
      * @param array $array1
      * @param array $array2
