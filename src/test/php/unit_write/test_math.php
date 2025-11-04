@@ -41,10 +41,12 @@ function run_math_test(all_tests $t): void
 
     global $usr;
 
+    // init
     $t_db = new test_db_load($t);
 
-    $t->header('Test the internal math function (which should be replaced by RESTful R-Project call)');
-
+    // start the test section (ts)
+    $ts = 'db write math ';
+    $t->header($ts);
 
     // calculate the target price for nestle:
     // if there is a word with the formula name assume that this word is added to the result
@@ -163,7 +165,7 @@ function run_math_test(all_tests $t): void
     */
 
 
-    $t->header('Calculate value update ...');
+    $t->subheader($ts . 'value update');
 
     /*$val_ids_upd = array(348);
     zuc_upd_val_lst($val_ids_upd, 14); */

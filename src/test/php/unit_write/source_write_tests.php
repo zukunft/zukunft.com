@@ -49,17 +49,20 @@ class source_write_tests
     function run(test_cleanup $t): void
     {
 
+        // init
         $t_src = new test_sources($t);
 
-        $t->header('source db write tests');
+        // start the test section (ts)
+        $ts = 'db write source ';
+        $t->header($ts);
 
-        $t->subheader('source prepared write');
+        $t->subheader($ts . 'prepared');
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_sql(), false);
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 
-        $t->subheader('source write sandbox tests for ' . sources::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'for ' . sources::SYSTEM_TEST_ADD);
         $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD);
 
         /*
@@ -108,7 +111,9 @@ class source_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base sources are exist');
+        // start the test section (ts)
+        $ts = 'db create test sources ';
+        $t->header($ts);
 
         $t_db->test_source(sources::WIKIDATA);
 

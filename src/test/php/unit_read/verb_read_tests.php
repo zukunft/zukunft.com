@@ -57,9 +57,11 @@ class verb_read_tests
         // init
         $t->name = 'verb read db->';
 
-        $t->header('verb database read tests');
+        // start the test section (ts)
+        $ts = 'db read verb ';
+        $t->header($ts);
 
-        $t->subheader('Verb tests');
+        $t->subheader($ts . 'load');
 
         // test if loading by code id and id result in the same name
         $vrb = new verb();
@@ -107,7 +109,7 @@ class verb_read_tests
         //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done
 
 
-        $t->subheader('Verb list tests');
+        $t->subheader($ts . 'list');
         $t->name = 'verb list read db->';
 
         // load the verbs

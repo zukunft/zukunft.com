@@ -71,7 +71,7 @@ class view_read_tests
         $t->resource_path = 'db/view/';
 
         // start the test section (ts)
-        $ts = 'read view ';
+        $ts = 'db read view ';
         $t->header($ts);
 
         $t->subheader($ts . 'load');
@@ -99,7 +99,7 @@ class view_read_tests
         //$msk->load_by_term($t_frm->formula()->term());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
-        $t->subheader('View types tests');
+        $t->subheader($ts . 'types');
 
         // load the view types
         $lst = new view_type_list();
@@ -120,14 +120,14 @@ class view_read_tests
         $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
 
 
-        $t->subheader('View API object creation tests');
+        $t->subheader($ts . 'api creation');
 
         $test_name = views::START_NAME;
         $cmp = $t_db->load_word(views::START_NAME, $t->usr1);
         $t->assert_export_reload($ts . $test_name, $cmp);
 
 
-        $t->subheader('System view tests');
+        $t->subheader($ts . 'system');
         $t->name = 'view list read db->';
 
         // load the views used by the system e.g. change word
@@ -152,7 +152,7 @@ class view_read_tests
 
 
 
-        $t->subheader('view component db read tests');
+        $t->subheader($ts . 'component');
 
         $test_name = 'load view component ' . components::WORD_NAME . ' by name and id';
         $cmp = new component($t->usr1);
@@ -163,7 +163,7 @@ class view_read_tests
         $t->assert($test_name, $cmp_by_id->description, components::WORD_COM);
 
 
-        $t->subheader('view component types tests');
+        $t->subheader($ts . 'component types');
         $t->name = 'view component read db->';
 
         // load the view component types

@@ -45,11 +45,12 @@ class element_list_read_tests
 
         // init
         $t_frm = new test_formulas($t);
-        $t->name = 'element list read db->';
         $elm_lst = new element_list($t->usr1);
+        $t->name = 'element list read db->';
 
-
-        $t->header('element list db read tests');
+        // start the test section (ts)
+        $ts = 'db read element list ';
+        $t->header($ts);
 
         $test_name = 'load the elements of the scale minute to second formula and check if it contains the word second';
         $elm_lst->load_by_frm($t_frm->formula()->id());

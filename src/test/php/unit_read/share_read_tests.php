@@ -52,9 +52,11 @@ class share_read_tests
         // init
         $t->name = 'share read db->';
 
-        $t->header('Unit database tests of the share handling');
+        // start the test section (ts)
+        $ts = 'db read share ';
+        $t->header($ts);
 
-        $t->subheader('Share types tests');
+        $t->subheader($ts . 'types');
 
         // load the share types
         $lst = new share_type_list();

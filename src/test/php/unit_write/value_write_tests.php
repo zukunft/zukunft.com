@@ -79,7 +79,7 @@ class value_write_tests
         $lib = new library();
 
         // start the test section (ts)
-        $ts = 'write value ';
+        $ts = 'db write value ';
         $t->header($ts);
 
         // test another rebuild_grp_id by value id
@@ -448,7 +448,9 @@ class value_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base values exist or create them if needed');
+        // start the test section (ts)
+        $ts = 'db create test values ';
+        $t->header($ts);
 
         // add a number with a concrete time value
         // e.g. inhabitants in the canton of zurich in the year 2020

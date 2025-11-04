@@ -32,6 +32,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -49,9 +51,6 @@ use Zukunft\ZukunftCom\main\php\web\types\user_profile;
 use Zukunft\ZukunftCom\main\php\web\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
 use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -73,7 +72,7 @@ class type_lists_ui_tests
         $t_typ = new test_types($t);
 
         // start the test section (ts)
-        $ts = 'unit ui html preloaded lists ';
+        $ts = 'db read type list ui ';
         $t->header($ts);
 
         // load the types from the api message

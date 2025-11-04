@@ -87,11 +87,11 @@ class user_write_tests
 
         /*
 
-        $t->subheader('user prepared write');
+        $t->subheader($ts . 'user prepared write');
         $test_name = 'add user ' . users::TEST_NAME;
         $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 
-        $t->subheader('user write sandbox tests for ' . words::TEST_ADD);
+        $t->subheader($ts . 'user write sandbox tests for ' . words::TEST_ADD);
         $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
 
         $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
@@ -197,7 +197,9 @@ class user_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base words are correct');
+        // start the test section (ts)
+        $ts = 'db validate test words ';
+        $t->header($ts);
 
         foreach (words::TEST_WORDS_CREATE as $word_name) {
             $t_db->test_word($word_name);

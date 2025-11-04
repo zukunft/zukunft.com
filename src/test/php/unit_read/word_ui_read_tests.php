@@ -49,7 +49,7 @@ class word_ui_read_tests
         $t_msk = new test_views($t);
 
         // start the test section (ts)
-        $ts = 'unit ui html word ';
+        $ts = 'db read word ui ';
         $t->header($ts);
 
         // TODO add a list of differences between the user word and the standard word

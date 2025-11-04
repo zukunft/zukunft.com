@@ -62,24 +62,27 @@ class triple_write_tests
     function run(test_cleanup $t): void
     {
 
+        // init
         $lib = new library();
         $t_trp = new test_triples($t);
         $t_db = new test_db_load($t);
 
-        $t->header('triple db write tests');
+        // start the test section (ts)
+        $ts = 'db write triple ';
+        $t->header($ts);
 
-        $t->subheader('prepare triple write tests');
+        $t->subheader($ts . 'prepare');
         $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
         $t_db->test_word(words::TEST_ADD_VIA_SQL);
         $t_db->test_word(words::TEST_ADD_VIA_FUNC);
 
-        $t->subheader('triple prepared write');
+        $t->subheader($ts . 'triple prepared write');
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_sql(), false);
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_trp->triple_add_by_func(), true);
 
-        $t->subheader('triple write sandbox tests for ' . triples::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'sandbox for ' . triples::SYSTEM_TEST_ADD);
         //$t->assert_write_link($t_trp->triple_filled_add(), triples::TN_ADD);
 
 
@@ -262,7 +265,7 @@ class triple_write_tests
         $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        $t->subheader('triple test cleanup');
+        $t->subheader($ts . 'cleanup');
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $msg = $trp->del();
@@ -297,7 +300,9 @@ class triple_write_tests
 
     function create_test_triples(all_tests $t): void
     {
-        $t->header('Check if all base phrases are correct');
+        // start the test section (ts)
+        $ts = 'db create test create_test_triples ';
+        $t->header($ts);
 
         $t_db = new test_db_load($t);
 
@@ -325,7 +330,7 @@ class triple_write_tests
         // TODO check direction
         $t_db->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
 
-        $t->header('Check if all base phrases are correct');
+        $t->subheader($ts . 'base phrases');
         $t_db->test_phrase(triples::COMPANY_ZURICH);
 
         // exclude some to test the handling of exclude objects
@@ -337,7 +342,9 @@ class triple_write_tests
 
     function create_base_times(test_cleanup $t): void
     {
-        $t->header('Check if base time words are correct');
+        // start the test section (ts)
+        $ts = 'db create test words ';
+        $t->header($ts);
 
         zu_test_time_setup($t);
     }

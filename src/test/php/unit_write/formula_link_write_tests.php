@@ -58,15 +58,18 @@ class formula_link_write_tests
 
     function run(test_cleanup $t): void
     {
+        // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
 
-        $t->header('formula link db write tests');
+        // start the test section (ts)
+        $ts = 'db write formula link ';
+        $t->header($ts);
 
-        $t->subheader('formula link write sandbox tests for ' . formulas::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'for ' . formulas::SYSTEM_TEST_ADD);
         $t->assert_write_link($t_frm->formula_link_filled_add());
 
-        $t->subheader('prepare formula link specific write tests');
+        $t->subheader($ts . 'specific');
         $frm = $t_db->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
         $wrd = $t_db->test_word(words::TEST_ADD);
 
@@ -227,7 +230,7 @@ class formula_link_write_tests
 
         // the code changes and tests for formula link should be moved the component_link
 
-        $t->subheader('cleanup formula link write');
+        $t->subheader($ts . 'cleanup formula link write');
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $wrd = new word($t->usr1);
@@ -251,7 +254,9 @@ class formula_link_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Test the formula link list class (classes/formula_link_list.php)');
+        // start the test section (ts)
+        $ts = 'db write formula link list ';
+        $t->header($ts);
 
         // prepare
         $frm = $t_db->add_formula(formulas::INCREASE, formulas::INCREASE_EXP);
@@ -276,7 +281,9 @@ class formula_link_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base formulas link correctly');
+        // start the test section (ts)
+        $ts = 'db create formula links ';
+        $t->header($ts);
 
         $t_db->test_formula_link(formulas::SYSTEM_TEST_RATIO, words::TEST_SHARE);
         $t_db->test_formula_link(formulas::SYSTEM_TEST_SECTOR, words::TEST_SHARE);

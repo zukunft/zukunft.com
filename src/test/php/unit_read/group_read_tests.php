@@ -50,9 +50,11 @@ class group_read_tests
         $t_wrd = new test_words($t);
         $t->name = 'phrase_group->';
 
-        $t->header('group db read tests');
+        // start the test section (ts)
+        $ts = 'db read group ';
+        $t->header($ts);
 
-        $t->subheader('load');
+        $t->subheader($ts . 'load');
 
         $test_name = 'group by word names';
         $wrd_lst = new word_list($usr);

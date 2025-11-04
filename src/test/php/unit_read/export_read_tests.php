@@ -51,9 +51,11 @@ class export_read_tests
         $t_phr = new test_phrases($t);
         $t->name = 'export->';
 
-        $t->header('Unit tests of export');
+        // start the test section (ts)
+        $ts = 'db read export ';
+        $t->header($ts);
 
-        $t->subheader('Test the xml export class (classes/xml.php)');
+        $t->subheader($ts . 'xml');
 
         $phr_lst = $t_phr->phrase_list();
         $xml_exp = new xml($t->usr1);
@@ -61,7 +63,7 @@ class export_read_tests
         $target = 'Mathematics';
         $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-        $t->header('Test the json export class (classes/json.php)');
+        $t->subheader($ts . 'json');
 
         // TODO Prio 2 activate
         //$json_export = new json_io($usr, $phr_lst);

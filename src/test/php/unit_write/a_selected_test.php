@@ -72,9 +72,14 @@ class a_selected_test extends test_cleanup
         global $db_con;
         global $usr;
 
+        // init
         $tl = new test_lib();
         $t_db = new test_db_load($this);
         $u_env = new unit_env();
+
+        // start the test section (ts)
+        $ts = 'db write job ';
+        $this->header($ts);
 
         /*
          * unit testing - prepare

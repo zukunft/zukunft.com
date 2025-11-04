@@ -70,16 +70,17 @@ class group_write_tests
             [groups::TN_ADD_BIG_SQL, false, words::TEST_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TEST_RENAMED_GROUP_BIG_SQL],
         ];
 
+        // start the test section (ts)
+        $ts = 'db write group ';
+        $t->header($ts);
 
-        $t->header('group db write tests');
-
-        $t->subheader('group add the system test words to avoid dependencies on group testing');
+        $t->subheader($ts . 'add the system test words to avoid dependencies on group testing');
         $wrd_add_lst = [];
         foreach ($grp_add_lst as $grp_add) {
             $wrd_add_lst[] = $t_db->test_word($grp_add[2]);
         }
 
-        $t->subheader('group add');
+        $t->subheader($ts . 'add');
         $i = 0;
         foreach ($grp_add_lst as $grp_add) {
             $grp_name = $grp_add[0];
@@ -95,7 +96,7 @@ class group_write_tests
             $i++;
         }
 
-        $t->subheader('group rename');
+        $t->subheader($ts . 'rename');
         $i = 0;
         foreach ($grp_add_lst as $grp_add) {
             $test_case = rand(1, 2);
@@ -105,7 +106,7 @@ class group_write_tests
             //$this->group_rename($grp_name, $new_name, $grp_add[1], $test_case, $test_name, $t);
         }
 
-        $t->subheader('group del');
+        $t->subheader($ts . 'del');
         foreach ($grp_add_lst as $grp_add) {
             $grp_name = $grp_add[0];
             $test_name = 'del prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
@@ -207,7 +208,9 @@ class group_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('group check test group names');
+        // start the test section (ts)
+        $ts = 'db create test groups ';
+        $t->header($ts);
 
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];

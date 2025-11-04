@@ -47,7 +47,11 @@ class value_ui_tests
         $t_val = new test_values($t);
         $tl = new test_lib();
 
-        $t->subheader('value html ui tests');
+        // start the test section (ts)
+        $ts = 'unit ui value ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'html');
 
         $val = new value($t_val->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
@@ -115,7 +119,7 @@ class value_ui_tests
         $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
-        $t->header('Test the value list class (classes/value_list.php)');
+        $t->subheader($ts . 'Test the value list class (classes/value_list.php)');
 
         // check the database consistency for all values
         $val_lst = new value_list($usr);
@@ -202,7 +206,7 @@ class value_ui_tests
         $t->display('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name(), true, $result);
 
 
-        $t->header('Test the value list display class (classes/value_list_display.php)');
+        $t->subheader($ts . 'Test the value list display class (classes/value_list_display.php)');
 
         // test the value table
         $wrd = new word($usr);

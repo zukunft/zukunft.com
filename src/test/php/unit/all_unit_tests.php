@@ -79,7 +79,9 @@ class all_unit_tests extends test_cleanup
      */
     function run_unit(): void
     {
-        $this->header('unit');
+        // start the test section (ts)
+        $ts = 'unit ';
+        $this->header($ts);
 
         // remember the global var for restore after the unit tests
         global $db_con;

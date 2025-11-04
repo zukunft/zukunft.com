@@ -49,10 +49,13 @@ class graph_tests
 
         global $usr;
 
+        // init
         $t_vrb = new test_verbs($t);
         $back = 0;
 
-        $t->header('Test the graph class (classes/triple_list.php)');
+        // start the test section (ts)
+        $ts = 'db write graph ';
+        $t->header($ts);
 
         // get values related to a phrase list
         // e.g. to get top 10 cities by the number of inhabitants

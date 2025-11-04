@@ -67,13 +67,13 @@ class view_write_tests
         $ts = 'db write view ';
         $t->header($ts);
 
-        $t->subheader('view prepared write');
+        $t->subheader($ts . 'prepared');
         $test_name = 'add view ' . views::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_sql(), false);
         $test_name = 'add view ' . views::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_msk->view_add_by_func(), true);
 
-        $t->subheader('view write sandbox tests for ' . views::TEST_ADD_NAME);
+        $t->subheader($ts . 'for ' . views::TEST_ADD_NAME);
         $t->assert_write_named($t_msk->view_filled_add(), views::TEST_ADD_NAME);
 
 
@@ -265,7 +265,9 @@ class view_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('add test views');
+        // start the test section (ts)
+        $ts = 'db create test views ';
+        $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
             $t_db->test_view($view_name);
@@ -283,7 +285,9 @@ class view_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('del test views');
+        // start the test section (ts)
+        $ts = 'db del test views ';
+        $t->header($ts);
 
         foreach (views::TEST_VIEWS_AUTO_CREATE as $view_name) {
             $t_db->del_view($view_name);

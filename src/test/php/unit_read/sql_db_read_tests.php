@@ -48,9 +48,11 @@ class sql_db_read_tests
         // init
         $t->name = 'sql read db->';
 
-        $t->header('Unit database tests of the SQL abstraction layer class (database/sql_db.php)');
+        // start the test section (ts)
+        $ts = 'db read SQL abstraction layer ';
+        $t->header($ts);
 
-        $t->subheader('Database upgrade functions');
+        $t->subheader($ts . 'upgrade');
 
         $result = $db_con->has_column('user_values', 'user_value');
         $t->assert('change_column_name', $result, false);

@@ -58,7 +58,7 @@ class formula_read_tests
         $t->name = 'formula read db->';
 
         // start the test section (ts)
-        $ts = 'read formula ';
+        $ts = 'db read formula ';
         $t->header($ts);
 
         $t->subheader($ts . 'load' );
@@ -66,7 +66,7 @@ class formula_read_tests
         $frm = new formula($t->usr1);
         $t->assert_load($frm, formulas::SCALE_TO_SEC);
 
-        $t->subheader('formula tests');
+        $t->subheader($ts . 'by name');
 
         /*
         // ... check if the link is shown correctly also for the second user
@@ -83,7 +83,7 @@ class formula_read_tests
         */
 
 
-        $t->subheader('formula types tests');
+        $t->subheader($ts . 'types');
 
         // load the formula types
         $lst = new formula_type_list();
@@ -99,7 +99,7 @@ class formula_read_tests
         $calc_blocks = (new formula_list($t->usr1))->calc_blocks($db_con);
         $t->assert_greater_zero('calc_blocks', $calc_blocks);
 
-        $t->subheader('Frontend API tests');
+        $t->subheader($ts . 'api');
 
         $test_name = formulas::INCREASE;
         $frm = $t_db->load_formula(formulas::INCREASE);

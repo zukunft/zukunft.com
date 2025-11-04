@@ -58,12 +58,15 @@ class phrase_list_read_tests
         global $usr;
 
         // init
-        $t->header('phrase list database read tests');
         $t_db = new test_db_load($t);
         $t->name = 'phrase list_read db->';
         $t->resource_path = 'db/phrase/';
 
-        $t->subheader('Load phrases');
+        // start the test section (ts)
+        $ts = 'db read phrase list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'load');
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new phrase_list($t->usr1);
@@ -95,7 +98,7 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $lst->names(), $switzerland->name());
 
 
-        $t->subheader('Get related phrases');
+        $t->subheader($ts . 'get related');
 
         // direct children
         $test_name = 'Switzerland is a country';

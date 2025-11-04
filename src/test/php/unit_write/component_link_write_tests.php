@@ -52,16 +52,19 @@ class component_link_write_tests
 
     function run(test_cleanup $t): void
     {
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('component link db write tests');
+        // start the test section (ts)
+        $ts = 'db write component link ';
+        $t->header($ts);
 
-        $t->subheader('component link write sandbox tests for ' . views::TEST_ADD_NAME . ' and ' . components::TEST_ADD_NAME);
+        $t->subheader($ts . 'component link write sandbox tests for ' . views::TEST_ADD_NAME . ' and ' . components::TEST_ADD_NAME);
         // TODO Prio 2 activate (set object id instead of id)
         // $t->assert_write_link($t_cmp->component_link_filled_add());
 
 
-        $t->subheader('prepare component link write');
+        $t->subheader($ts . 'prepare');
         $msk = $t_db->test_view(views::TEST_ADD_NAME);
         $cmp = $t_db->test_component(components::TEST_ADD_NAME);
 
@@ -294,7 +297,7 @@ class component_link_write_tests
 
         // the code changes and tests for view component link should be moved the component_link
 
-        $t->subheader('cleanup component link write');
+        $t->subheader($ts . 'cleanup component link write');
         $msk->del();
         $cmp->del();
 
@@ -309,7 +312,9 @@ class component_link_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base view component links are existing');
+        // start the test section (ts)
+        $ts = 'db create component links ';
+        $t->header($ts);
 
         $t_db->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME, 1);
         $t_db->test_component_lnk(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME, 2);

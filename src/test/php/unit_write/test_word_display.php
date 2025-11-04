@@ -55,10 +55,14 @@ function run_word_display_test(all_tests $t): void
 
     global $usr;
 
+    // init
     $lib = new library();
     $t_db = new test_db_load($t);
 
-    $t->header('Test the word display class (classes/word_display.php)');
+    // start the test section (ts)
+    // TODO Prio 1 to be move to the ui tests?
+    $ts = 'db write ui word ';
+    $t->header($ts);
 
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
@@ -164,7 +168,7 @@ function run_word_display_test(all_tests $t): void
     */
 
 
-    $t->header('Test the display selector class (web/html/selector.php)');
+    $t->subheader($ts . 'selector');
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run

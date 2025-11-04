@@ -41,9 +41,11 @@ class view_link_write_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('view link db write tests');
+        // start the test section (ts)
+        $ts = 'db write view link ';
+        $t->header($ts);
 
-        $t->subheader('view link write sandbox tests for ' . views::TEST_ADD_NAME);
+        $t->subheader($ts . 'sandbox for ' . views::TEST_ADD_NAME);
         // TODO Prio 2 activate (set object id instead of id)
         //$t->assert_write_link($t_msk->view_link_filled_add());
 

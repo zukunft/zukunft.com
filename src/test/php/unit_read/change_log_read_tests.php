@@ -79,9 +79,11 @@ class change_log_read_tests
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
 
-        $t->header('Unit database tests of the user log classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read log ';
+        $t->header($ts);
 
-        $t->subheader('Load user log tests');
+        $t->subheader($ts . 'user load');
 
         // prepare the objects for the tests
         // TODO use these test functions for all dummy object creations
@@ -189,7 +191,7 @@ class change_log_read_tests
 
         // TODO add ref
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'API unit db tests');
 
         $wrd = new word($t->usr1);
         $wrd->load_by_id(1);

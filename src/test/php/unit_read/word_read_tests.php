@@ -70,7 +70,7 @@ class word_read_tests
         $t->resource_path = 'db/word/';
 
         // start the test section (ts)
-        $ts = 'read word ';
+        $ts = 'db read word ';
         $t->header($ts);
 
         $t->subheader($ts . 'load');
@@ -82,7 +82,7 @@ class word_read_tests
         // TODO load plural, type and view
 
 
-        $t->subheader('word types tests');
+        $t->subheader($ts . 'types');
 
         $test_name = 'load the phrase types';
         $lst = new phrase_types();
@@ -94,13 +94,13 @@ class word_read_tests
         $t->assert($test_name, $result, 1);
 
 
-        $t->subheader('word API object creation tests');
+        $t->subheader($ts . 'api creation');
 
         $test_name = words::MATH;
         $wrd = $t_db->load_word(words::MATH, $t->usr1);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
-        $t->subheader('Word frontend tests');
+        $t->subheader($ts . 'frontend');
 
         $test_name = 'get the most useful view for a word';
         $wrd = $t_db->load_word(words::MATH, $t->usr1);
@@ -109,11 +109,11 @@ class word_read_tests
 
 
         // TODO move to the other word list tests
-        $t->header('word list database unit tests');
+        $t->subheader($ts . 'list');
         $t->name = 'word list read db->';
 
 
-        $t->subheader('Word list load and modification tests');
+        $t->subheader($ts . 'list modification');
 
         // create word objects for testing
         $wrd = new word ($t->usr1);
@@ -175,7 +175,7 @@ class word_read_tests
         $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
 
-        $t->subheader('FOAF read tests');
+        $t->subheader($ts . 'FOAF read tests');
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';

@@ -53,13 +53,16 @@ class term_write_tests
 
     function run(test_cleanup $t): void
     {
-
         global $usr;
+
+        // init
         $lib = new library();
         $html = new html_base();
         $t_db = new test_db_load($t);
 
-        $t->header('term database write tests');
+        // start the test section (ts)
+        $ts = 'db write term ';
+        $t->header($ts);
 
         // load the main test word
         $wrd_zh = $t_db->test_word(words::ZH);

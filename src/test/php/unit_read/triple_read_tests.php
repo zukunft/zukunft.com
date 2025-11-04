@@ -57,9 +57,11 @@ class triple_read_tests
         $t->name = 'triple read db->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple db read tests');
+        // start the test section (ts)
+        $ts = 'db read triple ';
+        $t->header($ts);
 
-        $t->subheader('triple prepare read tests');
+        $t->subheader($ts . 'prepare');
         // load the verb used for testing
         $is_id = $vrb_cac->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
@@ -68,7 +70,7 @@ class triple_read_tests
         // create the group test word
         $wrd_company = $t_db->test_word(words::COMPANY);
 
-        $t->subheader('triple load tests');
+        $t->subheader($ts . 'load');
         $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::MATH_CONST);

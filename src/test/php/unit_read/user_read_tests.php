@@ -51,11 +51,13 @@ class user_read_tests
         global $db_con;
 
         // init
-        $t->header('Unit database tests of the user handling');
         $t->name = 'unit read db->';
 
+        // start the test section (ts)
+        $ts = 'db read user ';
+        $t->header($ts);
 
-        $t->subheader('User db read tests');
+        $t->subheader($ts . 'load');
 
         $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
@@ -75,7 +77,7 @@ class user_read_tests
         // TODO test type and view
 
 
-        $t->subheader('User profile tests');
+        $t->subheader($ts . 'profile');
 
         // load the user_profile types
         $lst = new user_profile_list();

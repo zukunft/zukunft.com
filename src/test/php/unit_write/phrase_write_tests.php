@@ -56,10 +56,14 @@ class phrase_write_tests
 
         global $usr;
         global $vrb_cac;
+
+        // init
         $lib = new library();
         $t_db = new test_db_load($t);
 
-        $t->header('phrase database write tests');
+        // start the test section (ts)
+        $ts = 'db write phrase ';
+        $t->header($ts);
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company

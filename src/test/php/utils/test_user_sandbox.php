@@ -46,9 +46,11 @@ function run_sandbox_test(all_tests $t): void
 
     global $phr_typ_cac;
 
-    $t->header('sandbox unit tests');
+    // start the test section (ts)
+    $ts = 'db write sandbox ';
+    $t->header($ts);
 
-    $t->subheader('Test the is_same and is_similar function');
+    $t->subheader($ts . 'is_same and is_similar');
 
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
@@ -66,7 +68,7 @@ function run_sandbox_test(all_tests $t): void
     $result = $wrd1->is_similar_named($wrd2);
     $t->display("... but it is similar", $target, $result);
 
-    $t->subheader('Test the saving function');
+    $t->subheader($ts . 'saving');
 
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);

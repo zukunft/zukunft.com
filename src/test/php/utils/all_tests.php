@@ -162,10 +162,13 @@ class all_tests extends all_unit_write_tests
     {
         global $errors;
 
-        // init tests
+        // init
         $errors = 0;
         $t_db = new test_db_load($this);
-        $this->header('Start of all zukunft.com tests');
+
+        // start the test section (ts)
+        $ts = 'Start of all zukunft.com tests ';
+        $this->header($ts);
 
         if (QUICK_TEST_ONLY) {
             $t_sel = new a_selected_test();

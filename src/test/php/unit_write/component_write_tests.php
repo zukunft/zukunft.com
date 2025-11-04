@@ -56,17 +56,20 @@ class component_write_tests
     {
         global $cmp_typ_cac;
 
+        // init
         $t_cmp = new test_components($t);
 
-        $t->header('component db write tests');
+        // start the test section (ts)
+        $ts = 'db write component ';
+        $t->header($ts);
 
-        $t->subheader('component prepared write');
+        $t->subheader($ts . 'component prepared write');
         $test_name = 'add component ' . components::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_sql(), false);
         $test_name = 'add component ' . components::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 
-        $t->subheader('component write sandbox tests for ' . components::TEST_ADD_NAME);
+        $t->subheader($ts . 'add ' . components::TEST_ADD_NAME);
         $t->assert_write_named($t_cmp->component_filled_add(), components::TEST_ADD_NAME);
 
         /*
@@ -254,7 +257,9 @@ class component_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base view components are existing');
+        // start the test section (ts)
+        $ts = 'db create test components ';
+        $t->header($ts);
 
         $t_db->test_component(components::TEST_TITLE_NAME, comp_type_shared::PHRASE_NAME);
         $t_db->test_component(components::TEST_VALUES_NAME, comp_type_shared::VALUES_ALL);

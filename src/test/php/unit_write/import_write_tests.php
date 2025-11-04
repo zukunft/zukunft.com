@@ -79,6 +79,7 @@ class import_write_tests
         global $usr;
         global $db_con;
 
+        // init
         $t_usr = new test_users();
 
         // start the test section (ts)

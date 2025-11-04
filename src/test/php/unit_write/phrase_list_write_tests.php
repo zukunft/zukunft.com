@@ -60,9 +60,12 @@ class phrase_list_write_tests
         global $usr;
         global $vrb_cac;
 
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('phrase list database write tests');
+        // start the test section (ts)
+        $ts = 'db write phrase list ';
+        $t->header($ts);
 
         // TODO make prepare not needed any more
         $t_db->test_word(words::CHF, phrase_type_shared::MEASURE);

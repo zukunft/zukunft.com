@@ -58,7 +58,7 @@ class value_read_tests
         $t->name = 'value->';
 
         // start the test section (ts)
-        $ts = 'read value ';
+        $ts = 'db read value ';
         $t->header($ts);
 
         $t->subheader($ts . 'by id');

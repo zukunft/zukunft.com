@@ -48,12 +48,15 @@ class ref_write_tests
 
         global $usr;
 
+        // init
         $t_ref = new test_refs($t);
         $t_db = new test_db_load($t);
 
-        $t->header('reference db write tests');
+        // start the test section (ts)
+        $ts = 'db write reference ';
+        $t->header($ts);
 
-        $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
+        $t->subheader($ts . 'for ' . ref::TEST_REF_NAME);
         $t->assert_write_link($t_ref->ref_filled_add());
 
         // create the test ref

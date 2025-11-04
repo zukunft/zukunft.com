@@ -49,7 +49,6 @@ class ref_read_tests
 
     function run(test_cleanup $t): void
     {
-
         global $db_con;
         global $phr_typ_cac;
 
@@ -57,9 +56,11 @@ class ref_read_tests
         $lib = new library();
         $t->name = 'ref db read->';
 
-        $t->header('Reference db read tests');
+        // start the test section (ts)
+        $ts = 'db read reference ';
+        $t->header($ts);
 
-        $t->subheader('Reference types tests');
+        $t->subheader($ts . 'types');
 
         // load the ref types
         $lst = new ref_type_list();
@@ -71,7 +72,7 @@ class ref_read_tests
         $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'apis');
 
         $ref = new ref($t->usr1);
         $ref->load_by_id(refs::PI_ID);

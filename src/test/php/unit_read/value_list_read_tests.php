@@ -53,12 +53,15 @@ class value_list_read_tests
     {
 
         // init
-        $t->header('value list database read tests');
         $t_phr = new test_phrases($t);
         $t->name = 'value list_read db->';
         $t->resource_path = 'db/value/';
 
-        $t->subheader('Get related');
+        // start the test section (ts)
+        $ts = 'db read value list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'related');
 
         // load by phrase
         $test_name = 'Load a value list by phrase pi';

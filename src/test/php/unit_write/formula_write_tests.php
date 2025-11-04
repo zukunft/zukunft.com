@@ -74,9 +74,11 @@ class formula_write_tests
         $t->name = 'formula->';
         $back = 0;
 
-        $t->header('formula db write tests');
+        // start the test section (ts)
+        $ts = 'db write formula ';
+        $t->header($ts);
 
-        $t->subheader('formula prepared write');
+        $t->subheader($ts . 'formula prepared write');
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_sql(), false);
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
@@ -85,7 +87,7 @@ class formula_write_tests
         // TODO remove
         $t->write_named_cleanup(new formula($t->usr1), formulas::SYSTEM_TEST_ADD);
 
-        $t->subheader('formula write sandbox tests for ' . formulas::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'sandbox for ' . formulas::SYSTEM_TEST_ADD);
         // TODO Prio 0 activate
         //$t->assert_write_named($t_frm->formula_filled_add(), formulas::SYSTEM_TEST_ADD);
 
@@ -542,7 +544,9 @@ class formula_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('formula list database write tests');
+        // start the test section (ts)
+        $ts = 'db write formula list ';
+        $t->header($ts);
 
         // load the main test word
         $wrd_share = $t_db->test_word(words::TEST_SHARE);
@@ -563,7 +567,9 @@ class formula_write_tests
     {
         $t_db = new test_db_load($t);
 
-        $t->header('Check if all base formulas are correct');
+        // start the test section (ts)
+        $ts = 'db create test formulas ';
+        $t->header($ts);
 
         $t_db->test_word(words::TEST_EARNING);
         $t_db->test_word(words::TEST_PRICE);

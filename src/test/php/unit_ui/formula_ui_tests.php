@@ -63,7 +63,8 @@ class formula_ui_tests
 
         /*
         global $usr;
-        $t->header('Test the formula frontend scripts (e.g. /formula_add.php)');
+        $ts = 'unit ui html formula user ';
+        $t->header($ts);
 
         // load the main test word
         $wrd_company = $t->test_word(words::TN_COMPANY);

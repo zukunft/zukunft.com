@@ -59,9 +59,11 @@ class system_read_tests
         // init
         $t->name = 'system read db->';
 
-        $t->header('Unit database tests of the system functions');
+        // start the test section (ts)
+        $ts = 'db read system ';
+        $t->header($ts);
 
-        $t->subheader('System error log tests');
+        $t->subheader($ts . 'error log');
 
         // load the log status list
         $lst = new sys_log_status_list();
@@ -72,7 +74,7 @@ class system_read_tests
         $result = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
         $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
 
-        $t->subheader('System batch job type tests');
+        $t->subheader($ts . 'batch job type');
 
         // load the batch job type list
         $lst = new job_type_list();
@@ -88,7 +90,7 @@ class system_read_tests
          * SQL database read unit tests
          */
 
-        $t->subheader('SQL database read tests');
+        $t->subheader($ts . 'SQL database read');
 
         $t->assert_greater_zero('sql_db->count', $db_con->count(formula::class));
 
@@ -96,7 +98,7 @@ class system_read_tests
          * SQL database consistency tests
          */
 
-        $t->subheader('SQL database consistency tests');
+        $t->subheader($ts . 'SQL database consistency');
 
         $result = $db_con->db_check_missing_owner();
         $t->assert('db_consistency->check ', $result, true);

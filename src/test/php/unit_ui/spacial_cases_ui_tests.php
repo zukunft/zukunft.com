@@ -72,6 +72,8 @@ class spacial_cases_ui_tests
         $t->html_view_test($test_page, view_shared::WORD_ADD);
 
         // TODO add a word edit page with no usage to test the switch to the exception message
+
+        $test_name = 'view with message';
     }
 
 }

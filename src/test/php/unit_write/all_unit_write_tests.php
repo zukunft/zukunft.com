@@ -78,9 +78,12 @@ class all_unit_write_tests extends all_unit_read_tests
         global $db_con;
         global $errors;
 
+        // init
         $t_db = new test_db_load($this);
 
-        $this->header('Start the zukunft.com database write tests');
+        // start the test section (ts)
+        $ts = 'db write start ';
+        $this->header($ts);
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
@@ -207,7 +210,9 @@ class all_unit_write_tests extends all_unit_read_tests
         global $db_con;
         global $usr;
 
-        $this->header('Start database recreation');
+        // start the test section (ts)
+        $ts = 'db write database recreation ';
+        $this->header($ts);
 
         // create the testing users (needed for the reset db only run)
         $this->set_users();

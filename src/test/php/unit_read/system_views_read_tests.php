@@ -69,9 +69,14 @@ class system_views_read_tests
      */
     function run(test_cleanup $t): void
     {
+        // init
         $t_frm = new test_formulas($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
+
+        // start the test section (ts)
+        $ts = 'db read system view by object ';
+        $t->header($ts);
 
         // create the stable test context that is not based on the database so that the test results rarely change
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases

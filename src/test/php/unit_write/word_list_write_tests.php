@@ -266,7 +266,7 @@ class word_list_write_tests
         $t->assert('word_list->keep_only_specific "' . implode('","', $wrd_lst->names()) . '", which contains not ' . words::CANTON . ' ', $result, false);
 
 
-        $t->subheader('Test info functions');
+        $t->subheader($ts . 'info');
 
         // test "has time" for 2020 is supposed to be true
         $wrd_lst = new word_list($usr);

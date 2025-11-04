@@ -51,12 +51,15 @@ class element_write_tests
     {
         global $vrb_cac;
 
+        // init
         $back = 0;
         $t_db = new test_db_load($t);
 
-        $t->header('Test the formula element class (classes/element.php)');
+        // start the test section (ts)
+        $ts = 'db write formula element ';
+        $t->header($ts);
 
-        $t->subheader('prepare formula element write');
+        $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(words::TEST_TOTAL);
         $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
@@ -126,7 +129,7 @@ class element_write_tests
             $t->display('expression->element_lst', $target, $result);
         }
 
-        $t->subheader('cleanup formula element write');
+        $t->subheader($ts . 'cleanup formula element write');
         $frm_sector->del();
         $wrd_total->del();
 
@@ -137,9 +140,11 @@ class element_write_tests
 
         $t_db = new test_db_load($t);
 
-        $t->header('Test the formula element list class (classes/element_list.php)');
+        // start the test section (ts)
+        $ts = 'db write formula element list ';
+        $t->header($ts);
 
-        $t->subheader('prepare formula element write');
+        $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(words::TEST_TOTAL);
         $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
@@ -158,7 +163,7 @@ class element_write_tests
             $t->display('element_list->dsp_id', $target, $result);
         }
 
-        $t->subheader('cleanup formula element write');
+        $t->subheader($ts . 'cleanup');
         $frm_sector->del();
         $wrd_total->del();
 

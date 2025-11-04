@@ -45,11 +45,14 @@ class language_read_tests
         global $usr;
 
         // init
-        $t->header('language database unit');
         $t->name = 'language read db->';
         $t->resource_path = 'db/language/';
 
-        $t->subheader('Language db read tests');
+        // start the test section (ts)
+        $ts = 'db read language ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'by');
 
         $test_name = 'load language ' . language::DEFAULT . ' by name and id';
         $lan = new language(language::DEFAULT);
@@ -59,7 +62,7 @@ class language_read_tests
         $t->assert($test_name, $lan_by_id->name(), language::TN_READ);
         
 
-        $t->subheader('Language type db read tests');
+        $t->subheader($ts . 'type');
 
         // test reading a language form via API that is not yet included in the preloaded language form
         // e.g. because it has been just added by the user to request e new language form

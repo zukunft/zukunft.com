@@ -139,7 +139,7 @@ class base_ui_tests
         $url = $html->url(views::WORD_ADD);
         $t->html_page_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
-        $t->subheader('unit html table tests');
+        $t->subheader($ts . 'unit html table tests');
 
         // create a test set of phrase groups
         $t_phr->phrase_list_zh_mio();
@@ -209,7 +209,7 @@ class base_ui_tests
         $t->html_page_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
-        $t->subheader('unit html view component tests');
+        $t->subheader($ts . 'unit html view component tests');
 
         $cmp = new component($usr);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
@@ -218,7 +218,7 @@ class base_ui_tests
         $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
 
 
-        $t->header('unit html list tests');
+        $t->subheader($ts . 'list');
 
         // TODO create and set the model objects and
         //      create the api object using the api_obj() function
@@ -254,7 +254,7 @@ class base_ui_tests
 
         $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
 
-        $t->header('unit html view tests');
+        $t->subheader($ts . 'unit html view tests');
 
         // test the usage of a view to create the HTML code
         /*
@@ -267,7 +267,7 @@ class base_ui_tests
         */
 
 
-        $t->header('unit view component unit test');
+        $t->subheader($ts . 'component');
 
         // test if a simple text component can be created
         $cmp = new component($usr);

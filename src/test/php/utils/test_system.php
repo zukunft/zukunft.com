@@ -48,13 +48,15 @@ function run_system_test(all_tests $t): void
 
     $t_db = new test_db_load($t);
 
-    $t->header('Consistency check of the \"zukunft.com\" code');
+    // start the test section (ts)
+    $ts = 'db read code consistency ';
+    $t->header($ts);
 
     // load the main test word
     $wrd_company = $t_db->test_word(words::COMPANY);
 
     if ($t::TEST_EMAIL) {
-        $t->header('est mail sending');
+        $t->subheader($ts . 'est mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';
         $mail_body = 'Hello';
@@ -70,7 +72,7 @@ function run_system_test(all_tests $t): void
     //$sbx = New _sandbox;
     //$chk_txt = $sbx->chk_owner(sql_db::TBL_TRIPLE, False); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
 
-    $t->header('Test the blocked IP addresses');
+    $t->subheader($ts . 'blocked IP addresses');
 
     // check the first predefined word "company"
     // load by id
@@ -84,7 +86,7 @@ function run_system_test(all_tests $t): void
     $t->display('IP blocking for ' . $usr_test->ip_addr, $target, $result);
 
     // TODO combine with the other user unit tests
-    $t->header('user unit tests');
+    $t->subheader($ts . 'user unit tests');
 
     // load by name
     $usr_by_id = new user;
@@ -96,7 +98,7 @@ function run_system_test(all_tests $t): void
     $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
 
 
-    $t->header('Test the user list class (classes/user_list.php)');
+    $t->subheader('user list');
 
     $usr_lst = new user_list($usr);
     $usr_lst->load_active();

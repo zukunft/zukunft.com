@@ -96,8 +96,10 @@ class test_cleanup extends test_api
 
         $result = ''; // the combine error message of all cleanup actions
 
+        // start the test section (ts)
         // make sure that all test elements are removed even if some tests have failed to have a clean setup for the next test
-        $this->header('Cleanup the test');
+        $ts = 'db cleanup ';
+        $this->header($ts);
 
         if ($test_val_lst != null) {
             foreach ($test_val_lst as $val_id) {

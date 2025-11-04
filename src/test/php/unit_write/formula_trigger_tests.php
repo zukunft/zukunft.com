@@ -50,9 +50,12 @@ class formula_trigger_tests
 
         global $usr;
 
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('Test the formula calculation triggers');
+        // start the test section (ts)
+        $ts = 'db write formula trigger ';
+        $t->header($ts);
 
         // prepare the calculation trigger test
         $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019];

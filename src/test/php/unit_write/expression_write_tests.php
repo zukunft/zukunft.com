@@ -50,9 +50,11 @@ class expression_write_tests
         $t_db = new test_db_load($t);
         $t->name = 'expression->';
 
-        $t->header('Test the expression class (src/main/php/model/formula/expression.php)');
+        // start the test section (ts)
+        $ts = 'db write expression ';
+        $t->header($ts);
 
-        $t->subheader('prepare expression write');
+        $t->subheader($ts . 'prepare');
         $wrd_price = $t_db->test_word(words::TEST_PRICE);
         $wrd_earning = $t_db->test_word(words::TEST_EARNING);
         $wrd_pe = $t_db->test_word(words::TEST_PE);
@@ -154,7 +156,7 @@ class expression_write_tests
         $target = '' . formulas::THIS_NAME . ',' . formulas::PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
-        $t->subheader('cleanup expression write');
+        $t->subheader($ts . 'cleanup');
         $frm_ratio->del();
         $wrd_price->del();
         $wrd_earning->del();

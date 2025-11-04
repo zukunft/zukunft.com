@@ -61,7 +61,7 @@ class word_list_read_tests
         $t->name = 'word list read db';
 
         $ts = 'db read word list ';
-        $t->header('word list database read unit tests');
+        $t->header($ts);
 
         // test loading word names
         $wrd_lst = new word_list($t->usr1);

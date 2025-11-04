@@ -49,9 +49,11 @@ class job_read_tests
         // init
         $t->name = 'batch job read db->';
 
-        $t->header('Unit database tests of the batch job classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read job ';
+        $t->header($ts);
 
-        $t->subheader('Load batch job tests');
+        $t->subheader($ts . 'load batch');
 
         // use the system user for the database updates
         $sys_usr = new user;
@@ -64,7 +66,7 @@ class job_read_tests
         $t->assert('first batch job change is adding', $first_job->type_id(), '11');
 
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'api');
 
         $t->assert_api($job_lst);
 

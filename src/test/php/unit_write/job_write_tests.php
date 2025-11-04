@@ -50,9 +50,13 @@ class job_write_tests
     {
 
         global $usr;
+
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('job database write tests');
+        // start the test section (ts)
+        $ts = 'db write job ';
+        $t->header($ts);
 
         // make sure that the test value is set independent of any previous database tests
         $t_db->test_value(array(
@@ -91,9 +95,12 @@ class job_write_tests
 
         global $usr;
 
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('job list database write tests');
+        // start the test section (ts)
+        $ts = 'db write job list ';
+        $t->header($ts);
 
         // prepare test adding a batch job via a list
         $frm = $t_db->load_formula(formulas::INCREASE);

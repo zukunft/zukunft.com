@@ -1185,7 +1185,10 @@ class test_db_load
     {
         global $db_con;
 
-        $t->subheader('API unit db tests of preloaded types');
+        // start the test section (ts)
+        $ts = 'db read type ';
+
+        $t->subheader($ts . 'api');
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, $t->usr1);
         $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);

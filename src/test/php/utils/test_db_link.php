@@ -41,7 +41,9 @@ function run_db_link_test(all_tests $t): void
 {
     global $cng_tbl_cac;
 
-    $t->header('Test database link functions');
+    // start the test section (ts)
+    $ts = 'db write link ';
+    $t->header($ts);
 
     // test code link
     $id = change_tables::WORD;

@@ -53,9 +53,12 @@ class result_write_tests
 
         global $usr;
 
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('result database write tests');
+        // start the test section (ts)
+        $ts = 'db write result ';
+        $t->header($ts);
 
         /*
          * prepare
@@ -209,7 +212,9 @@ class result_write_tests
 
         $t_db = new test_db_load($t);
 
-        $t->header('result list database write tests');
+        // start the test section (ts)
+        $ts = 'db write result list ';
+        $t->header($ts);
 
         // load results by formula
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);

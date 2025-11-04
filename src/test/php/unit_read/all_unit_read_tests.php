@@ -35,7 +35,19 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 include_once test_paths::UNIT . 'all_unit_tests.php';
 include_once paths::WEB . 'frontend.php';
@@ -43,19 +55,6 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CREATE . 'test_db_load.php';
-
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\groups;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
-use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_types;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
-use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {
@@ -70,7 +69,7 @@ class all_unit_read_tests extends all_unit_tests
         $t_typ = new test_types($t);
 
         // start the test section (ts)
-        $ts = 'read db ';
+        $ts = 'db read ';
         $t->header($ts);
 
         // reload the setting lists after using dummy list for the unit tests

@@ -58,10 +58,14 @@ class element_group_write_tests
     {
 
         global $usr;
+
+        // init
         $t_db = new test_db_load($t);
         $tl = new test_lib();
 
-        $t->header('Test the formula element group list class (classes/element_group_list.php)');
+        // start the test section (ts)
+        $ts = 'db write formula element group ';
+        $t->header($ts);
 
         // load the test ids
         $frm_this = $t_db->load_formula(formulas::THIS_NAME);
@@ -80,7 +84,7 @@ class element_group_write_tests
         $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 
-        $t->header('Test the formula element group class (classes/element_group.php)');
+        $t->subheader($ts . 'element group');
 
         // define the element group object to retrieve the value
         if (count($elm_grp_lst->lst()) > 0) {
@@ -119,7 +123,7 @@ class element_group_write_tests
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
 
-            $t->header('figure database write tests');
+            $t->subheader($ts . 'figure');
 
             // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
             $fig_count = 0;
@@ -150,7 +154,7 @@ class element_group_write_tests
             }
 
 
-            $t->header('Test the figure list class (classes/figure_lst.php)');
+            $t->subheader($ts . 'figure list');
 
             // TODO fix it
             $fig_lst->load_phrases();

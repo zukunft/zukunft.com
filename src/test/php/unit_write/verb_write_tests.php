@@ -48,12 +48,14 @@ class verb_write_tests
 
     function run(test_cleanup $t): void
     {
-
         global $vrb_cac;
 
+        // init
         $t_db = new test_db_load($t);
 
-        $t->header('verb database write tests');
+        // start the test section (ts)
+        $ts = 'db write verb ';
+        $t->header($ts);
 
         // check the loading of the "is a" verb
         $vrb = new verb;
@@ -87,7 +89,7 @@ class verb_write_tests
         // TODO add more tests e.g. that a verb name cannot be used for a word any more
 
 
-        $t->header('verb list write tests');
+        $t->subheader($ts . 'list');
 
         // check the loading of the "is a" verb
         $wrd_ZH = $t_db->load_word(words::ZH);

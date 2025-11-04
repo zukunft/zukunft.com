@@ -49,7 +49,9 @@ class view_list_read_tests
         // init
         $t->name = 'view list read db->';
 
-        $t->header('view list database read unit tests');
+        // start the test section (ts)
+        $ts = 'db read view list ';
+        $t->header($ts);
 
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';

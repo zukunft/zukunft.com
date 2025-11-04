@@ -51,7 +51,9 @@ function run_user_test(all_tests $t): void
     $back = 0;
 
     // test the user display after the word changes to have a sample case
-    $t->header('Test the user display class (classes/user_display.php)');
+    // start the test section (ts)
+    $ts = 'db write user ';
+    $t->header($ts);
 
     $usr_dsp = new user_dsp($usr->api_json());
     $result = $usr_dsp->form_edit($back);
@@ -68,7 +70,7 @@ function run_user_test(all_tests $t): void
     }
     echo 'user id: ' . $usr->id . '<br>';
 
-    $t->header('user permission tests');
+    $t->subheader($ts . 'permission');
 
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);

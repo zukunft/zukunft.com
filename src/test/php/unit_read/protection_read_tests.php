@@ -52,9 +52,11 @@ class protection_read_tests
         // init
         $t->name = 'protection read db->';
 
-        $t->header('Unit database tests of the protection handling');
+        // start the test section (ts)
+        $ts = 'db read protection ';
+        $t->header($ts);
 
-        $t->subheader('Protection types tests');
+        $t->subheader($ts . 'types');
 
         // load the protection types
         $lst = new protection_type_list();
