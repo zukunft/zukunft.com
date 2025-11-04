@@ -47,6 +47,10 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
+    // the messages that should be shown to the user e.g. name already used. please use another name
+    // TODO Prio 0 add unit test case
+    const string MSG = 'message';
+
 
     // the unique name of the object which is also a database index
     const string NAME = 'name';

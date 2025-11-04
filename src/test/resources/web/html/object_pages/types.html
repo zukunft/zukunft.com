@@ -10,8 +10,8 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -88,11 +88,9 @@
         </tbody>
     </table>
     <br><br>
-    <form action="/http/view.php" id="view"><label for="user_profile">user_profile</label>
-        <div class="form-group col-md-4"><label for="user_profile">user profile</label><select class="form-control"
-                                                                                               name="user_profile"
-                                                                                               form="view"
-                                                                                               id="user_profile">
+    <form action="/http/view.php" id="view"><label for="up">up</label>
+        <div class="form-group col-md-4"><label for="up">user profile</label><select class="form-control" name="up"
+                                                                                     form="view" id="up">
             <option value="0" selected>please select ...</option>
             <option value="1">ip only</option>
             <option value="2">username selected</option>
@@ -150,10 +148,9 @@
             <option value="33">to</option>
             <option value="34">is ranked by</option>
         </select></div>
-        <br><label for="phrase_type">phrase_type</label>
-        <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
-                                                                                      name="phrase_type" form="view"
-                                                                                      id="phrase_type">
+        <br><label for="py">py</label>
+        <div class="form-group col-md-4"><label for="py">Type</label><select class="form-control" name="py" form="view"
+                                                                             id="py">
             <option value="1" selected>standard</option>
             <option value="0"> ---</option>
             <option value="5">calc</option>
@@ -196,19 +193,16 @@
             <option value="5">reversible</option>
             <option value="6">scaling</option>
         </select></div>
-        <br><label for="formula_type">formula_type</label>
-        <div class="form-group col-md-4"><label for="formula_type">formula link</label><select class="form-control"
-                                                                                               name="formula_type"
-                                                                                               form="view"
-                                                                                               id="formula_type">
+        <br><label for="ft">ft</label>
+        <div class="form-group col-md-4"><label for="ft">formula link</label><select class="form-control" name="ft"
+                                                                                     form="view" id="ft">
             <option value="0" selected>please select ...</option>
             <option value="1">default</option>
             <option value="2">time period based</option>
         </select></div>
-        <br><label for="view_type">view_type</label>
-        <div class="form-group col-md-4"><label for="view_type">view type</label><select class="form-control"
-                                                                                         name="view_type" form="view"
-                                                                                         id="view_type">
+        <br><label for="dt">dt</label>
+        <div class="form-group col-md-4"><label for="dt">view type</label><select class="form-control" name="dt"
+                                                                                  form="view" id="dt">
             <option value="0" selected>please select ...</option>
             <option value="1">standard</option>
             <option value="2">entry view</option>
@@ -221,18 +215,16 @@
             <option value="9">child</option>
             <option value="10">export</option>
         </select></div>
-        <br><label for="style">style</label>
-        <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
-                                                                                 form="view" id="style">
+        <br><label for="cs">cs</label>
+        <div class="form-group col-md-4"><label for="cs">style</label><select class="form-control" name="cs" form="view"
+                                                                              id="cs">
             <option value="0" selected>please select ...</option>
             <option value="1">col-md-4</option>
             <option value="2">col-md-8</option>
         </select></div>
-        <br><label for="component_type">component_type</label>
-        <div class="form-group col-md-4"><label for="component_type">component type</label><select class="form-control"
-                                                                                                   name="component_type"
-                                                                                                   form="view"
-                                                                                                   id="component_type">
+        <br><label for="ct">ct</label>
+        <div class="form-group col-md-4"><label for="ct">component type</label><select class="form-control" name="ct"
+                                                                                       form="view" id="ct">
             <option value="0" selected>please select ...</option>
             <option value="1">select_phrase</option>
             <option value="8">phrase_name</option>
@@ -377,39 +369,35 @@
             <option value="131">export_ods</option>
             <option value="45">change_log</option>
         </select></div>
-        <br><label for="ref_type">ref_type</label>
-        <div class="form-group col-md-4"><label for="ref_type">reference type</label><select class="form-control"
-                                                                                             name="ref_type" form="view"
-                                                                                             id="ref_type">
+        <br><label for="lt">lt</label>
+        <div class="form-group col-md-4"><label for="lt">reference type</label><select class="form-control" name="lt"
+                                                                                       form="view" id="lt">
             <option value="0" selected>please select ...</option>
             <option value="1">wikipedia</option>
             <option value="2">wikidata</option>
             <option value="3">conceptnet</option>
         </select></div>
-        <br><label for="source_type">source_type</label>
-        <div class="form-group col-md-4"><label for="source_type">source type</label><select class="form-control"
-                                                                                             name="source_type"
-                                                                                             form="view"
-                                                                                             id="source_type">
+        <br><label for="st">st</label>
+        <div class="form-group col-md-4"><label for="st">source type</label><select class="form-control" name="st"
+                                                                                    form="view" id="st">
             <option value="0" selected>please select ...</option>
             <option value="1">System Test Type Name</option>
             <option value="2">xbrl</option>
             <option value="3">csv</option>
             <option value="4">pdf</option>
         </select></div>
-        <br><label for="protection">protection</label>
-        <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
-                                                                                           name="protection" form="view"
-                                                                                           id="protection">
+        <br><label for="dt">dt</label>
+        <div class="form-group col-md-4"><label for="dt">Protection</label><select class="form-control" name="dt"
+                                                                                   form="view" id="dt">
             <option value="0" selected>please select ...</option>
             <option value="1">no protection</option>
             <option value="2">user</option>
             <option value="3">admin</option>
             <option value="4">no change</option>
         </select></div>
-        <br><label for="share">share</label>
-        <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                 form="view" id="share">
+        <br><label for="ds">ds</label>
+        <div class="form-group col-md-4"><label for="ds">Share</label><select class="form-control" name="ds" form="view"
+                                                                              id="ds">
             <option value="0" selected>please select ...</option>
             <option value="1">public</option>
             <option value="2">personal</option>

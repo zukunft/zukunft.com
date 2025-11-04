@@ -35,21 +35,24 @@
 namespace Zukunft\ZukunftCom\main\php\api;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_REF . 'source.php';
-include_once paths::MODEL_WORD . 'word.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
 
 class controller
 {
@@ -250,7 +253,7 @@ class controller
 
             // tell the user no products found
             echo json_encode(
-                array(url_var::MSG => $msg)
+                array(json_fields::MSG => $msg)
             );
         }
     }
@@ -305,7 +308,7 @@ class controller
                     // set response code - 400 Bad Request
                     http_response_code(400);
                     echo json_encode(
-                        array(url_var::MSG => $result)
+                        array(json_fields::MSG => $result)
                     );
                 }
                 break;
@@ -326,7 +329,7 @@ class controller
 
                     // tell the user no object found
                     echo json_encode(
-                        array(url_var::MSG => $msg)
+                        array(json_fields::MSG => $msg)
                     );
                 }
                 break;
@@ -352,7 +355,7 @@ class controller
                         // set response code - 400 Bad Request
                         http_response_code(400);
                         echo json_encode(
-                            array(url_var::MSG => $result)
+                            array(json_fields::MSG => $result)
                         );
                     }
                 }
@@ -386,7 +389,7 @@ class controller
 
                     // tell the user no products found
                     echo json_encode(
-                        array(url_var::MSG => $msg)
+                        array(json_fields::MSG => $msg)
                     );
                 }
                 break;
