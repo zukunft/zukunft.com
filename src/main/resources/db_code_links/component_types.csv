@@ -166,3 +166,6 @@ component_type_id, type_name, description, code_id
 165, 'show reference source', 'show the reference source name of a reference as read only', 'system_show_field_ref_source'
 166, 'show reference url', 'show the reference url of a reference as read only', 'system_show_field_ref_url'
 167, 'form field external key of reference', 'the reference external key form field in a form', 'system_form_field_external_key'
+168, 'admin form field username', 'the user name in admin form so that the name can be overwritten', 'admin_form_field_username'
+169, 'admin form field user email', 'the user email in admin form so that the email can be overwritten', 'admin_form_field_user_email'
+170, 'admin form field user password', 'the user password in admin form so that the password can be overwritten', 'admin_form_field_user_password'

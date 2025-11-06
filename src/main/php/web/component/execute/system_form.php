@@ -38,7 +38,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -53,6 +52,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once paths::SHARED_CONST . 'components.php';
@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -118,9 +119,9 @@ class system_form extends component
     {
         $result = '';
         $html = new html_base();
-        $result .= $html->input(url_var::MASK, url_var::MASK_HUMAN, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::ID, url_var::ID, $id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::BACK, url_var::BACK_HUMAN, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::MASK, msg_id::FORM_FIELD_MASK, $msk_id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
         return $result;
     }
 
@@ -130,7 +131,46 @@ class system_form extends component
     function form_confirm(): string
     {
         $html = new html_base();
-        return $html->input(url_var::CONFIRM, url_var::CONFIRM_HUMAN, '1', html_base::INPUT_HIDDEN);
+        return $html->input(url_var::STEP, msg_id::FORM_FIELD_CONFIRM, url_var::STEP_CONFIRM, html_base::INPUT_HIDDEN);
+    }
+
+    /**
+     * @return string the html code so that an admin user can overwrite the username
+     */
+    function admin_form_username(user|db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->input(
+            url_var::USERNAME,
+            msg_id::FORM_FIELD_USERNAME,
+            $dbo->name(),
+            html_base::INPUT_TEXT);
+    }
+
+    /**
+     * @return string the html code so that an admin user can overwrite the user email
+     */
+    function admin_form_user_email(user|db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->input(
+            url_var::EMAIL,
+            msg_id::FORM_FIELD_USER_EMAIL,
+            $dbo->email,
+            html_base::INPUT_EMAIL);
+    }
+
+    /**
+     * @return string the html code so that an admin user can overwrite the user password
+     */
+    function admin_form_user_password(user|db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->input(
+            url_var::USER_PASSWORD,
+            msg_id::FORM_FIELD_USER_PASSWORD,
+            $dbo->password(),
+            html_base::INPUT_PASSWORD);
     }
 
     /**

@@ -43,6 +43,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\group;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_named.php';
@@ -52,6 +53,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list;
@@ -207,6 +209,22 @@ class group extends sandbox_named
         }
         return $usr_msg;
     }
+
+    /**
+     * set the vars of this group frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        // even if the group is added set already the id
+        if (array_key_exists(url_var::ID, $url_array)) {
+            $this->set_id($url_array[url_var::ID]);
+        }
+        return $usr_msg;
+    }
+
 
     /**
      * @param array $phr_json the json array of a phrase

@@ -305,10 +305,10 @@ class button
         $result .= '        <div class="modal-body">';
         $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
-        $result .= $html->input(url_var::PHRASE_LIST, url_var::PHRASE_LIST_HUMAN, implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::BACK, url_var::BACK_HUMAN, $back, html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::CONFIRM, url_var::CONFIRM_HUMAN,'1', html_base::INPUT_HIDDEN);
-        $result .= $html->input(url_var::VALUE, url_var::VALUE_HUMAN,  '0', html_base::INPUT_TEXT);
+        $result .= $html->input(url_var::PHRASE_LIST, msg_id::FORM_FIELD_PHRASE_LIST, implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_STEP,'1', html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::VALUE, msg_id::FORM_FIELD_VALUE,  '0', html_base::INPUT_TEXT);
         $result .= '            ' . $common_lst_ex_main->name_dsp();
         $result .= '          </form>';
         $result .= '        </div>';

@@ -32,7 +32,7 @@ SELECT word_insert_log_1100000300002_user
          1,
          85,
          '',
-         51,
+         92,
          null,
          null,
          188,

@@ -47,6 +47,7 @@ include_once paths::SHARED . 'url_var.php';
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
+include_once html_paths::GROUP . 'group.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'url_mapper.php';
@@ -104,12 +105,14 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
+// TODO Prio 0 rename _dsp to _ui
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_dsp;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
@@ -347,9 +350,58 @@ class frontend
 
 
     /*
-     * view
+     * execute
      */
 
+    /**
+     * execute database updates via api
+     *
+     * @param string $action the standard action
+     * @param user_dsp $usr the session user who has requested the view
+     * @param user_message $usr_msg to enrich with potential errors
+     * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
+     * @return string the html code to show the page to the user
+     */
+    function url_to_action(
+        string        $action,
+        string        $step,
+        db_object_dsp $dbo,
+        array         $url_array,
+        user_message  $usr_msg,
+        string $back
+    ): string
+    {
+        $url = ''; // the follow-up url
+
+        // save form action
+        // if the save bottom has been pressed
+        if ($step > 0 and $action == url_var::CRUD_CREATE) {
+            $dbo->url_mapper($url_array);
+            $upd_result = $dbo->add_via_api();
+
+            // if update was fine ...
+            if ($upd_result->is_ok()) {
+                // TODO Prio 0 get the id from the result
+                //$id = $dbo->id();
+                $id = 0;
+                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
+                // switched off because maybe staying on the edit page is the expected behaviour
+                if ($back == '' or $back == 0) {
+                    $view_id = views::START_ID;
+                }
+                //$result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg = $upd_result->get_last_message();
+            }
+        }
+
+        return $url;
+    }
+
+    /*
+     * view
+     */
 
     /**
      * create the HTML code based on the given url
@@ -376,8 +428,6 @@ class frontend
 
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
-        // TODO Prio 0 remove temp
-        $url_old = $url_array;
         $url_array = $url_map->url_to_standard($url_array, $usr_msg);
         if (!$usr_msg->is_ok()) {
             $msg_txt = $usr_msg->var_message_text();
@@ -386,6 +436,7 @@ class frontend
         // get vars for the main entries just to make code more readable
         $view = $url_array[url_var::MASK];
         $step = $url_array[url_var::STEP];
+        $action = $url_array[url_var::ACTION] ?? null;
         $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
@@ -403,6 +454,7 @@ class frontend
         }
 
         // get the view id if the view code id is used
+        // TODO Prio 1 move to url_to_standard
         if (is_numeric($view)) {
             $view_id = $view;
         } else {
@@ -415,7 +467,7 @@ class frontend
 
         // save form action
         // if the save bottom has been pressed
-        if ($step > 0) {
+        if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array);
             $upd_result = $dbo->add_via_api();
 
@@ -604,6 +656,8 @@ class frontend
             $dbo_dsp = new ref_dsp();
         } elseif (in_array($view_id, views::VALUE_MASKS_IDS)) {
             $dbo_dsp = new value_dsp();
+        } elseif (in_array($view_id, views::GROUP_MASKS_IDS)) {
+            $dbo_dsp = new group_dsp();
         } elseif (in_array($view_id, views::FORMULA_MASKS_IDS)) {
             $dbo_dsp = new formula_dsp();
         } elseif (in_array($view_id, views::RESULT_MASKS_IDS)) {

@@ -82,6 +82,7 @@ class user extends db_object
     public ?string $email;
     public ?string $first_name;
     public ?string $last_name;
+    private ?string $password; // private to restrict the access to the unhashed password e.g. admin user can only overwrite it without seeing the old
 
     // speed up cache
     // the last term that the user has been looking at
@@ -193,6 +194,12 @@ class user extends db_object
     function last_term(): term|null
     {
         return $this->last_term;
+    }
+
+    // TODO restrict the access to the unhashed password
+    function password(): string
+    {
+        return $this->password;
     }
 
 

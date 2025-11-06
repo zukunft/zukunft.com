@@ -153,11 +153,6 @@ class db_object extends TextIdObject
                 $is_add = true;
             }
         }
-        if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
-                $is_add = true;
-            }
-        }
         return $is_add;
     }
 

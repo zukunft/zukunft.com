@@ -246,7 +246,7 @@ class view extends view_exe
     {
         $html = new html_base();
         return $html->input(
-            url_var::PATTERN, url_var::PATTERN_HUMAN, '',
+            url_var::PATTERN, msg_id::FORM_FIELD_PATTERN, '',
             html_base::INPUT_SEARCH,
             view_styles::BS_SM_2,
             'word or formula');
@@ -501,14 +501,14 @@ class view extends view_exe
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
+                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
-                $result .= $html->input(url_var::NAME, url_var::NAME_HUMAN, '', html_base::INPUT_TEXT);
+                $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);

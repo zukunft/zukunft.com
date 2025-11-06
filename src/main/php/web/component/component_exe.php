@@ -268,6 +268,11 @@ class component_exe extends component
             component_type::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_HIDDEN_STEP => $form->form_confirm(),
 
+            // admin - components that only admin user can use
+            component_type::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
+            component_type::ADMIN_FORM_FIELD_USER_EMAIL => $form->admin_form_user_email($dbo),
+            component_type::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
+
             // buttons
             component_type::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
             component_type::FORM_BUTTON_SAVE => $form->button_save(),

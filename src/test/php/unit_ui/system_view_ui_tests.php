@@ -129,8 +129,8 @@ class system_view_ui_tests
                 parse_str($url_part["query"], $url_array);
                 $usr_dsp = $tl->cast_user($t->usr1);
                 // TODO Prio 0 remove temp
-                //if ($id == 14) {
-                //    log_info('ref add');
+                //if ($id == 27) {
+                //    log_info('group add');
                 //}
                 $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
                 $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
@@ -162,6 +162,13 @@ class system_view_ui_tests
     private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
     {
         // select the backend object to display
+        // TODO add any missing system views like
+        //      term_view_links, formula_link, component_links, styles, view_types,
+        //      time_series, geo and text values, ip ranges, language, pod,
+        //      add types (phrase_type, formula_type, formula_link_types, source_types,
+        //                 ref_types, position_types, view_types, view_link_types,
+        //                 component_types, component_link_types, pod_types, pod_status)
+        //     (at least all curl views)
         if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
             $dbo = new word($usr);
         } elseif (in_array($view_id, view_shared::VERB_MASKS_IDS)) {

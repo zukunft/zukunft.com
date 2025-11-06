@@ -112,6 +112,13 @@ class sandbox_value extends sandbox
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
+        // even if the value is added set already the id if possible because if might contain the phrase list
+        if ($this->url_is_add_action($url_array)) {
+            if (array_key_exists(url_var::ID, $url_array)) {
+                $this->set_id($url_array[url_var::ID]);
+            }
+        }
+        // the other normal fields
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
                 $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);

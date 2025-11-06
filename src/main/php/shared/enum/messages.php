@@ -1100,6 +1100,9 @@ enum messages: string
     case FORM_FORMULA_LINK_ADD_TITLE = 'form_title_formula_link_add';
     case FORM_FORMULA_LINK_EDIT_TITLE = 'form_title_formula_link_edit';
     case FORM_FORMULA_LINK_DEL_TITLE = 'form_title_formula_link_del';
+    case ADMIN_FORM_USED_ADD_TITLE = 'form_title_admin_user_add';
+    case ADMIN_FORM_USED_EDIT_TITLE = 'form_title_admin_user_edit';
+    case ADMIN_FORM_USED_DEL_TITLE = 'form_title_admin_user_del';
     case FORM_TITLE_CONFIRM_ADD = 'form_title_confirm_add';
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
@@ -1138,6 +1141,15 @@ enum messages: string
     case FORM_TITLE_PROCESS_ASYNC = 'system_title_process_async';
     case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
     case FORM_TITLE_PROCESS = 'system_title_process';
+    case FORM_FIELD_STEP = 'form_field_step';
+    case FORM_FIELD_CONFIRM = 'form_field_confirm';
+    case FORM_FIELD_MASK = 'form_field_mask';
+    case FORM_FIELD_ID = 'form_field_id';
+    case FORM_FIELD_BACK = 'form_field_back';
+    case FORM_FIELD_PATTERN = 'form_field_pattern';
+    case FORM_FIELD_USERNAME = 'form_field_username';
+    case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
+    case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
     case FORM_FIELD_NAME = 'form_field_name';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
     case FORM_FIELD_TYPE = 'form_field_type';
@@ -1172,7 +1184,7 @@ enum messages: string
     case FORM_FIELD_SELECT_MULTI_VIEWS = 'system_form_select_multi_views';
     case FORM_FIELD_SELECT_COMPONENT = 'system_form_select_component';
     case FORM_FIELD_SELECT_MULTI_COMPONENTS = 'system_form_select_multi_components';
-    case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
+    case FORM_FIELD_PREVIEW_CHANGE_CfOMPONENTS = 'system_form_preview_change_component';
     case FORM_SELECT_VIEW_LINK_TYPE = 'form_select_view_link_type';
     case FORM_SELECT_VIEW_LINK_PRIORITY = 'form_select_view_link_priority';
     case FORM_SELECT_COMPONENT_LINK_TYPE = 'form_select_component_link_type';
@@ -1192,6 +1204,7 @@ enum messages: string
     case FORM_FIELD_WEIGHT = 'form_field_weight';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
+    case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
     case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
     case FORM_TRIPLE_PHRASE_REF = 'form_select_phrase_ref';
     case FORM_TRIPLE_PHRASE_FROM = 'form_select_phrase_from';

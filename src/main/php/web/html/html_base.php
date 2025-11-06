@@ -72,7 +72,7 @@ class html_base
     const string INPUT_FILE = 'file';
     const string INPUT_HIDDEN = 'hidden';
     const string INPUT_PASSWORD = 'password';
-    const string INPUT_EMAIL = 'email';
+    const string INPUT_EMAIL = 'email'; // to validate the email in the frontend
 
     // bootstrap const string used in zukunft.com
     const string BS_FORM = 'form-control';
@@ -1377,7 +1377,7 @@ class html_base
     /**
      * create the HTML code for an input field
      * @param string $url_id the url id of the input field e.g. Name
-     * @param string $name the title of the input field e.g. Name
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
@@ -1385,13 +1385,15 @@ class html_base
      * @return string the HTML code for the field
      */
     function input(
-        string $url_id = '',
-        string $name = '',
+        string $url_id,
+        msg_id $msg_id,
         string $value = '',
         string $type = '',
         string $class_add = '',
         string $placeholder = ''): string
     {
+        global $mtr;
+        $name = $mtr->txt($msg_id);
         if ($name != '') {
             $name = ' name="' . $name . '"';
         }
@@ -1489,9 +1491,10 @@ class html_base
         string $col_class = ''
     ): string
     {
+        // TODO move mtr to label
         global $mtr;
         $name = $mtr->txt($msg_id);
-        $text = $this->label($name, $url_id) . $this->input($url_id, $name, $value, $type, $input_class);
+        $text = $this->label($name, $url_id) . $this->input($url_id, $msg_id, $value, $type, $input_class);
         return $this->div_form($text, $col_class);
     }
 

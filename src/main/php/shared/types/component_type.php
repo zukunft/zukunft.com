@@ -236,6 +236,14 @@ class component_type
     const string FORM_HIDDEN_STEP = "system_form_confirm_status";
     const int FORM_HIDDEN_STEP_ID = 19;
 
+    // admin user edit form fields
+    const string ADMIN_FORM_FIELD_USER_NAME = "admin_form_field_username";
+    const int ADMIN_FORM_FIELD_USER_NAME_ID = 168;
+    const string ADMIN_FORM_FIELD_USER_EMAIL = "admin_form_field_user_email";
+    const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 168;
+    const string ADMIN_FORM_FIELD_USER_PASSWORD = "admin_form_field_user_password";
+    const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 170;
+
     // buttons
     const string FORM_BUTTON_CANCEL = "system_button_cancel";
     const int FORM_BUTTON_CANCEL_ID = 29;
@@ -531,6 +539,9 @@ class component_type
         self::ROW_END,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
+        self::ADMIN_FORM_FIELD_USER_NAME,
+        self::ADMIN_FORM_FIELD_USER_EMAIL,
+        self::ADMIN_FORM_FIELD_USER_PASSWORD,
         self::SHOW_NAME,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
@@ -675,6 +686,9 @@ class component_type
         [self::FORM_PREVIEW, self::FORM_PREVIEW_ID],
         [self::FORM_HIDDEN_BACK, self::FORM_HIDDEN_BACK_ID],
         [self::FORM_HIDDEN_STEP, self::FORM_HIDDEN_STEP_ID],
+        [self::ADMIN_FORM_FIELD_USER_NAME, self::ADMIN_FORM_FIELD_USER_NAME_ID],
+        [self::ADMIN_FORM_FIELD_USER_EMAIL, self::ADMIN_FORM_FIELD_USER_EMAIL_ID],
+        [self::ADMIN_FORM_FIELD_USER_PASSWORD, self::ADMIN_FORM_FIELD_USER_PASSWORD_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],

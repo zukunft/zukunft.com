@@ -311,6 +311,27 @@
       "ui_msg_code_id": "form_title_formula_link_del"
     },
     {
+      "name": "system form title admin user add",
+      "description": "show the language specific title for the system admin form to add a user",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_user_add",
+      "ui_msg_code_id": "form_title_admin_user_add"
+    },
+    {
+      "name": "system form title admin user edit",
+      "description": "show the language specific title for the system admin form to change a user",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_user_edit",
+      "ui_msg_code_id": "form_title_admin_user_edit"
+    },
+    {
+      "name": "system form title admin user del",
+      "description": "show the language specific title for the system admin form to delete or exclude a user",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_user_del",
+      "ui_msg_code_id": "form_title_admin_user_del"
+    },
+    {
       "name": "system form title confirm add",
       "description": "show the language specific title for the system form to confirm adding a new entry",
       "type": "system_form_title",
@@ -723,6 +744,27 @@
       "description": "switch on that the form saving needs an extra confirm by the user",
       "type": "system_form_confirm_status",
       "code_id": "form_confirm_status"
+    },
+    {
+      "name": "admin form field username",
+      "description": "the username field in a form",
+      "type": "admin_form_field_username",
+      "code_id": "form_field_username",
+      "ui_msg_code_id": "form_field_username"
+    },
+    {
+      "name": "admin form field user email",
+      "description": "the user email field in a form",
+      "type": "admin_form_field_user_email",
+      "code_id": "form_field_user_email",
+      "ui_msg_code_id": "form_field_user_email"
+    },
+    {
+      "name": "admin form field user password",
+      "description": "the user password field in a form",
+      "type": "admin_form_field_user_password",
+      "code_id": "form_field_user_password",
+      "ui_msg_code_id": "form_field_user_password"
     },
     {
       "name": "system form field name",
@@ -4034,51 +4076,6 @@
       ]
     },
     {
-      "name": "Change confirm view",
-      "description": "show the old and the new view and let the user confirm the change",
-      "code_id": "view_preview",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title confirm edit"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select view"
-        },
-        {
-          "position": "5",
-          "name": "system show view new"
-        },
-        {
-          "position": "6",
-          "name": "system show view old"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button del"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
       "name": "Delete view",
       "description": "Exclude or delete a view",
       "code_id": "view_del",
@@ -4928,6 +4925,160 @@
       ]
     },
     {
+      "name": "Admin add user",
+      "description": "View for administrators to create a new user",
+      "code_id": "admin_user_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin user add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "admin form field username"
+        },
+        {
+          "position": "5",
+          "name": "admin form field user email",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "admin form field user password"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button save"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Admin change user",
+      "description": "View for administrators to update a user",
+      "code_id": "admin_user_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin user edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "admin form field username"
+        },
+        {
+          "position": "5",
+          "name": "admin form field user email",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "admin form field user password"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button save"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Admin delete user",
+      "description": "View for administrators to delete or exclude a new user",
+      "code_id": "admin_user_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin user del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "admin form field username"
+        },
+        {
+          "position": "5",
+          "name": "admin form field user email",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
       "name": "Confirm adding",
       "description": "Ask the user for confirmation of the changes to be written to the database",
       "code_id": "confirm_add",
@@ -5096,6 +5247,51 @@
         },
         {
           "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change confirm view",
+      "description": "show the old and the new view and let the user confirm the change",
+      "code_id": "view_preview",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title confirm edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select view"
+        },
+        {
+          "position": "5",
+          "name": "system show view new"
+        },
+        {
+          "position": "6",
+          "name": "system show view old"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
           "name": "system form end"
         }
       ]

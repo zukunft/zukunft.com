@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Change confirm view Word (zukunft.com)</title>
+<head><title>Delete view Start view (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -18,7 +18,7 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=64&id=3"
+                <li class="active"><a href="/http/view.php?m=67&id=3"
                                       title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
                     system test</a></li>
                 <li class="active"></li>
@@ -28,20 +28,12 @@
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br><h4>Confirm adding</h4>
-    <form action="/http/view.php" id="view_preview"><input class="form-control" type="hidden" name="mask_id" id="m"
-                                                           value="31"><input class="form-control" type="hidden"
-                                                                             name="id" id="id" value="1"><input
-            class="form-control" type="hidden" name="back" id="_" value="1"><input class="form-control" type="hidden"
-                                                                                   name="confirm" id="1" value="1">
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="d">View</label><select class="form-control" name="d"
-                                                                                form="view_preview" id="d">
-                <option value="0">complete</option>
-            </select></div>
-        </div>
-        <div class="row col-md-12">Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview</div>
-        <div class="row col-md-12">Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview</div>
+    <br><br><br><br><br><h4>Delete view</h4>
+    <form action="/http/view.php" id="view_del"><input class="form-control" type="hidden" name="mask" id="m" value="31"><input
+            class="form-control" type="hidden" name="id" id="id" value="1"><input class="form-control" type="hidden"
+                                                                                  name="back" id="_" value="1"><input
+            class="form-control" type="hidden" name="confirm" id="z" value="1">
+        <div class="row col-md-12">Start view</div>
         <a href="/http/view.php?m=0&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-secondary" type="submit">Delete</button>
     </form>

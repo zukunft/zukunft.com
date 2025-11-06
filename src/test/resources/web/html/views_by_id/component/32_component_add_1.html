@@ -18,22 +18,22 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=64&id=3"
+                <li class="active"><a href="/http/view.php?m=67&id=3"
                                       title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
                     system test</a></li>
                 <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=33" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=33" title="create a new view"><i
+                <li class="active"><a href="/http/view.php?m=view_edit&id=32" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=32" title="create a new view"><i
                         class="far fa-plus-square"></i></a></li>
             </ul>
         </div>
     </nav>
     <br><br><br><br><br><h4>Add a view element</h4>
-    <form action="/http/view.php" id="component_add"><input class="form-control" type="hidden" name="mask_id" id="m"
-                                                            value="33"><input class="form-control" type="hidden"
-                                                                              name="id" id="id" value="1"><input
-            class="form-control" type="hidden" name="back" id="_" value="1"><input class="form-control" type="hidden"
-                                                                                   name="confirm" id="1" value="1">
+    <form action="/http/view.php" id="component_add"><input class="form-control" type="hidden" name="mask" id="m"
+                                                            value="32"><input class="form-control" type="hidden"
+                                                                              name="id" id="id" value="0"><input
+            class="form-control" type="hidden" name="back" id="_" value="0"><input class="form-control" type="hidden"
+                                                                                   name="confirm" id="z" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
                                                                                name="Name" id="k" value="Word"></div>
@@ -207,6 +207,9 @@
                 <option value="165">show reference source</option>
                 <option value="166">show reference url</option>
                 <option value="167">form field external key of reference</option>
+                <option value="168">admin form field username</option>
+                <option value="169">admin form field user email</option>
+                <option value="170">admin form field user password</option>
             </select></div>
         </div>
         <div class="row col-md-12">
@@ -462,7 +465,7 @@
             </select></div>
         </div>
         <br>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0&id=1" title="Cancel"
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
                                                           class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
             <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
         </div>

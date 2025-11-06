@@ -811,8 +811,8 @@ class value extends sandbox_value
         if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
-            $result .= $html->input(url_var::ID, url_var::ID, $this->id(), html_base::INPUT_HIDDEN);
-            $result .= $html->input(url_var::CONFIRM, url_var::CONFIRM_HUMAN, '1', html_base::INPUT_HIDDEN);
+            $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $this->id(), html_base::INPUT_HIDDEN);
+            $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_CONFIRM, '1', html_base::INPUT_HIDDEN);
 
             // reset the phrase sample settings
             $main_wrd = null;

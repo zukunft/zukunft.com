@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Delete result Start view (zukunft.com)</title>
+<head><title>Delete view component Word (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -18,27 +18,23 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=64&id=3"
+                <li class="active"><a href="/http/view.php?m=67&id=3"
                                       title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
                     system test</a></li>
                 <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=28" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=28" title="create a new view"><i
+                <li class="active"><a href="/http/view.php?m=view_edit&id=34" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=34" title="create a new view"><i
                         class="far fa-plus-square"></i></a></li>
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br><h4>Delete result</h4>
-    <form action="/http/view.php" id="result_del"><input class="form-control" type="hidden" name="mask_id" id="m"
-                                                         value="28"><input class="form-control" type="hidden" name="id"
-                                                                           id="id" value="1"><input class="form-control"
-                                                                                                    type="hidden"
-                                                                                                    name="back" id="_"
-                                                                                                    value="1"><input
-            class="form-control" type="hidden" name="confirm" id="1" value="1">
-        <div class="row col-md-12">Start view</div>
-        <div class="row col-md-12">0</div>
-        <div class="row col-md-12">Start view</div>
+    <br><br><br><br><br><h4>Delete element</h4>
+    <form action="/http/view.php" id="component_del"><input class="form-control" type="hidden" name="mask" id="m"
+                                                            value="34"><input class="form-control" type="hidden"
+                                                                              name="id" id="id" value="1"><input
+            class="form-control" type="hidden" name="back" id="_" value="1"><input class="form-control" type="hidden"
+                                                                                   name="confirm" id="z" value="1">
+        <div class="row col-md-12">Word</div>
         <a href="/http/view.php?m=0&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-secondary" type="submit">Delete</button>
     </form>

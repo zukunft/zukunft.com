@@ -135,6 +135,9 @@ class url_mapper
                     if ($std_key == url_var::ACTION) {
                         $value = $this->map_std_action_to($value, $usr_msg);
                     }
+                    if ($std_key == url_var::STEP) {
+                        $value = $this->map_std_step_to($value, $usr_msg);
+                    }
                     if (array_key_exists(2, $std)) {
                         if (array_key_exists(3, $std)) {
                             $url_array[] = [$target_key, $value, $std[2], $std[3]];
@@ -156,6 +159,32 @@ class url_mapper
         return $url_array;
     }
 
+    private function map_human_action_to_std(
+        string       $std_value,
+        user_message $usr_msg
+    ): string
+    {
+        return $this->map_value_to_std(
+            $std_value,
+            $usr_msg,
+            url_var::HUMAN_TO_STD_ACTIONS_VAL,
+            'url_var::HUMAN_TO_STD_ACTIONS_VAL'
+        );
+    }
+
+    private function map_human_step_to_std(
+        string       $std_value,
+        user_message $usr_msg
+    ): string
+    {
+        return $this->map_value_to_std(
+            $std_value,
+            $usr_msg,
+            url_var::HUMAN_TO_STD_STEP_VAL,
+            'url_var::HUMAN_TO_STD_STEP_VAL'
+        );
+    }
+
     private function map_std_action_to(
         string       $std_value,
         user_message $usr_msg
@@ -167,6 +196,29 @@ class url_mapper
             url_var::HUMAN_TO_STD_ACTIONS_VAL,
             'url_var::HUMAN_TO_STD_ACTIONS_VAL'
         );
+    }
+
+    private function map_std_step_to(
+        string       $std_value,
+        user_message $usr_msg
+    ): string
+    {
+        return $this->map_std_value_to(
+            $std_value,
+            $usr_msg,
+            url_var::HUMAN_TO_STD_STEP_VAL,
+            'url_var::HUMAN_TO_STD_STEP_VAL'
+        );
+    }
+
+    private function map_value_to_std(
+        string       $non_std_value,
+        user_message $usr_msg,
+        array        $map_lst,
+        string       $map_name
+    ): string
+    {
+        return $this->map_std_value_to($non_std_value, $usr_msg, array_flip($map_lst), $map_name . '_REVERSE');
     }
 
     private function map_std_value_to(
@@ -231,6 +283,15 @@ class url_mapper
                     msg_id::VAR_URL_KEY => $key
                 ]);
             }
+        }
+        // map the values
+        $key = url_var::ACTION;
+        if (array_key_exists($key, $std_array)) {
+            $std_array[$key] = $this->map_human_action_to_std($std_array[$key], $usr_msg);
+        }
+        $key = url_var::STEP;
+        if (array_key_exists($key, $std_array)) {
+            $std_array[$key] = $this->map_human_step_to_std($std_array[$key], $usr_msg);
         }
         return $std_array;
     }

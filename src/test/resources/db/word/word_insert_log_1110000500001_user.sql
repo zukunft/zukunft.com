@@ -39,6 +39,6 @@ SELECT word_insert_log_1110000500001_user
          188::bigint,
          85::smallint,
          ''::text,
-         51::bigint,
+         92::bigint,
          87::smallint,
          3::smallint);

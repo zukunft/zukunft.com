@@ -96,40 +96,63 @@ class views
     const int FORMULA_EDIT_ID = 24;
     const string FORMULA_DEL = 'formula_del';
     const int FORMULA_DEL_ID = 25;
-    const string FORMULA_EXPLAIN = 'formula_explain';
-    const string FORMULA_TEST = 'formula_test';
     const string RESULT_ADD = 'result_add';
     const int RESULT_ADD_ID = 26;
     const string RESULT_EDIT = 'result_edit';
-    const int RESULT_EDIT_ID = 26;
+    const int RESULT_EDIT_ID = 27;
     const string RESULT_DEL = 'result_del';
-    const int RESULT_DEL_ID = 27;
-
-    const string VERBS = 'verbs';
-    const string USER = 'user';
-    const int USER_ID = 64;
-    const string USER_ADD = 'user_add';
-    const string USER_EDIT = 'user_edit';
-    const string USER_DEL = 'user_del';
-    const string ERR_LOG = 'error_log';
-    const string ERR_UPD = 'error_update';
-    const string IMPORT = 'import';
+    const int RESULT_DEL_ID = 28;
 
     // views to edit views
     const string VIEW_ADD = 'view_add';
-    const int VIEW_ADD_ID = 28;
+    const int VIEW_ADD_ID = 29;
     const string VIEW_EDIT = 'view_edit';
-    const int VIEW_EDIT_ID = 29;
+    const int VIEW_EDIT_ID = 30;
     const string VIEW_DEL = 'view_del';
-    const int VIEW_DEL_ID = 30;
+    const int VIEW_DEL_ID = 31;
     const string COMPONENT_ADD = 'component_add';
-    const int COMPONENT_ADD_ID = 31;
+    const int COMPONENT_ADD_ID = 32;
     const string COMPONENT_EDIT = 'component_edit';
-    const int COMPONENT_EDIT_ID = 32;
+    const int COMPONENT_EDIT_ID = 33;
     const string COMPONENT_DEL = 'component_del';
-    const int COMPONENT_DEL_ID = 33;
-    const string COMPONENT_LINK = 'component_link';
-    const string COMPONENT_UNLINK = 'component_unlink';
+    const int COMPONENT_DEL_ID = 34;
+    const string VIEW_LINK_ADD = 'view_link_add';
+    const int VIEW_LINK_ADD_ID = 35;
+    const string VIEW_LINK_EDIT = 'view_link_edit';
+    const int VIEW_LINK_EDIT_ID = 36;
+    const string VIEW_LINK_DEL = 'view_link_del';
+    const int VIEW_LINK_DEL_ID = 37;
+    const string COMPONENT_LINK_ADD = 'component_link_add';
+    const int COMPONENT_LINK_ADD_ID = 38;
+    const string COMPONENT_LINK_EDIT = 'component_link_edit';
+    const int COMPONENT_LINK_EDIT_ID = 39;
+    const string COMPONENT_LINK_DEL = 'component_link_del';
+    const int COMPONENT_LINK_DEL_ID = 40;
+    const string FORMULA_LINK_ADD = 'formula_link_add';
+    const int FORMULA_LINK_ADD_ID = 41;
+    const string FORMULA_LINK_EDIT = 'formula_link_edit';
+    const int FORMULA_LINK_EDIT_ID = 42;
+    const string FORMULA_LINK_DEL = 'formula_link_del';
+    const int FORMULA_LINK_DEL_ID = 43;
+
+    const string FORMULA_EXPLAIN = 'formula_explain';
+    const string FORMULA_TEST = 'formula_test';
+
+    const string VERBS = 'verbs';
+    const string USER = 'user';
+    const int USER_ID = 67;
+    const string USER_ADD = 'user_add';
+    const string USER_EDIT = 'user_edit';
+    const string USER_DEL = 'user_del';
+    const string USER_ADMIN_ADD = 'admin_user_add';
+    const int USER_ADMIN_ADD_ID = 44;
+    const string USER_ADMIN_EDIT = 'admin_user_edit';
+    const int USER_ADMIN_EDIT_ID = 45;
+    const string USER_ADMIN_DEL = 'admin_user_del';
+    const int USER_ADMIN_DEL_ID = 46;
+    const string ERR_LOG = 'error_log';
+    const string ERR_UPD = 'error_update';
+    const string IMPORT = 'import';
 
     // types
     const string LANGUAGE_ADD = 'language_add';
@@ -142,27 +165,27 @@ class views
     // the id of the last system view that should be included in the unit testing
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
-    const int MAX_TEST_ID = 33;
+    const int MAX_TEST_ID = 34;
 
     // default views
     // TODO easy add missing default views e.g. for formula
     const string WORD = 'Word';
-    const int WORD_ID = 44;
+    const int WORD_ID = 81;
     const string WORD_CODE_ID = 'word';
     const string VERB = 'Verb';
-    const int VERB_ID = 45;
+    const int VERB_ID = 82;
     const string VERB_CODE_ID = 'verb';
     const string TRIPLE = 'Triple';
-    const int TRIPLE_ID = 46;
+    const int TRIPLE_ID = 83;
     const string SOURCE = 'Source';
-    const int SOURCE_ID = 47;
+    const int SOURCE_ID = 84;
     const string REF = 'Reference';
-    const int REF_ID = 48;
+    const int REF_ID = 85;
     const string VALUE_DISPLAY = 'Display Number';
     const string FORMULA = 'source';
-    const int FORMULA_ID = 48;
+    const int FORMULA_ID = 88;
     const string LANGUAGE = 'Language';
-    const int LANGUAGE_ID = 49;
+    const int LANGUAGE_ID = 86;
 
     // functional views
     const string WORD_FIND = 'word_find';
@@ -198,25 +221,25 @@ class views
     const int TEST_FORM_ID = 3;
     const string SCIENCE = 'science';
     const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
-    const int SCIENCE_ID = 50;
+    const int SCIENCE_ID = 91;
     const string HISTORIC_NAME = 'Historic';
     const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
-    const int HISTORIC_ID = 51;
+    const int HISTORIC_ID = 92;
     const string BIOLOGICAL_NAME = 'Biological';
     const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
-    const int BIOLOGICAL_ID = 52;
+    const int BIOLOGICAL_ID = 93;
     const string EDUCATION_NAME = 'Education';
     const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
     const int EDUCATION_ID = 53;
     const string TOURISTIC_NAME = 'Touristic';
     const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
-    const int TOURISTIC_ID = 54;
+    const int TOURISTIC_ID = 95;
     const string GRAPH_NAME = 'Graph';
     const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
-    const int GRAPH_ID = 55;
+    const int GRAPH_ID = 96;
     const string SIMPLE_NAME = 'Simple';
     const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
-    const int SIMPLE_ID = 56;
+    const int SIMPLE_ID = 97;
 
     const string COMPANY_RATIO_NAME = 'company ratios';
     const string NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
@@ -256,6 +279,13 @@ class views
         self::TEST_TABLE_NAME
     );
 
+    // system masks that have a user as the main object
+    // TODO add the login views e.g. to detect the correct object for the url mapper
+    const array USER_MASKS_IDS = [
+        self::USER_ADMIN_ADD_ID,
+        self::USER_ADMIN_EDIT_ID,
+        self::USER_ADMIN_DEL_ID
+    ];
 
     // system masks that have a word as the main object
     const array WORD_MASKS_IDS = [

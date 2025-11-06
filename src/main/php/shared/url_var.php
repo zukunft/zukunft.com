@@ -75,7 +75,6 @@ class url_var
 
     // the var names for the short technical url (in alphabetic order to detect duplicates)
     const string EXCLUDED = '0';
-    const string CONFIRM = '1';
     const string CONFIG_PART = '2';
     const string ACTION = 'a'; // the crud action
     const string VERB = 'b'; // the verB id
@@ -154,7 +153,9 @@ class url_var
     const string TRIPLES = 'tl'; // to select the triples that should be displayed
     const string USER = 'u';
     const string EMAIL = 'um'; // the user email form field
+    const string USERNAME = 'un';
     const string USER_PROFILE = 'up';
+    const string USER_PASSWORD = 'uw';
     const string USAGE = 'uu'; // the usage value a form field
     const string IMPACT = 'ui'; // the impact value a form field
     const string URL = 'ur';
@@ -186,22 +187,31 @@ class url_var
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
 
+    // enum for self::STEP and the next step of the action
+    const string STEP_BASE = '0'; // no action process has been started
+    const string STEP_CONFIRM = '1'; // the change must be confirmed by the user
+    const string STEP_CONFIRMED = '2'; // the change has been confirmed by the user
+    const string STEP_DONE = '3'; // the change has been processed successful
+    const string STEP_CANCEL = '-1'; // the user has requested to stop the process
+    const string STEP_CANCELED = '-2'; // the process has been canceled
+    const string STEP_FAILED = '-3'; // the process cannot be processed
+
+
     /*
      * human readable url
      */
 
     // init
-    const string CONFIRM_HUMAN = 'confirm';
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
 
     // the var names for the easy human-readable url (in content related order)
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url
-    const string STEP_HUMAN = 'step_id';  // the action status for the long url
+    const string STEP_HUMAN = 'step';  // the action status for the long url
     const string BACK_HUMAN = 'back';
     const string MSG_HUMAN = 'message';
 
-    // enum for next step the action for ACTION
+    // enum for self::ACTION and the database change process that should be stared
     const string CRUD_CREATE_HUMAN = 'add'; // the CRUD action code to add an object
     const string CRUD_UPDATE_HUMAN = 'edit'; // the CRUD action to change an object
     const string CRUD_REMOVE_HUMAN = 'del'; // the CRUD action to delete an object
@@ -210,9 +220,20 @@ class url_var
     const string CRUD_POPUP_HUMAN = 'popup'; // to show object with only a few fields as a popup window
     const string CRUD_CELL_HUMAN = 'cell'; // to show object with only the name or key as table cell
 
+    // enum for self::STEP and the next step of the action
+    const string STEP_BASE_HUMAN = 'no'; // no action process has been started
+    const string STEP_CONFIRM_HUMAN = 'confirm'; // the change must be confirmed by the user
+    const string STEP_CONFIRMED_HUMAN = 'confirmed'; // the change has been confirmed by the user
+    const string STEP_DONE_HUMAN = 'done'; // the change has been processed successful
+    const string STEP_CANCEL_HUMAN = 'cancel'; // the user has requested to stop the process
+    const string STEP_CANCELED_HUMAN = 'canceled'; // the process has been canceled
+    const string STEP_FAILED_HUMAN = 'failed'; // the process cannot be processed
+
     // user
     const string USER_HUMAN = 'user';
+    const string USERNAME_HUMAN = 'username';
     const string EMAIL_HUMAN = 'email';
+    const string USER_PASSWORD_HUMAN = 'password';
     const string USER_PROFILE_HUMAN = 'user_profile';
 
     // id & name
@@ -378,11 +399,12 @@ class url_var
         [self::STEP_HUMAN, self::STEP],
         [self::BACK_HUMAN, self::BACK],
         [self::MSG_HUMAN, self::MSG],
-        [self::CONFIRM_HUMAN, self::CONFIRM],
 
         // user
         [self::USER_HUMAN, self::USER],
+        [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
+        [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
 
         // id & name
@@ -523,6 +545,17 @@ class url_var
         self::SHOW_FULL => self::CRUD_FULL_HUMAN,
         self::SHOW_POPUP => self::CRUD_POPUP_HUMAN,
         self::SHOW_CREATE => self::CRUD_CELL_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_STEP_VAL = [
+        self::STEP_BASE => self::STEP_BASE_HUMAN,
+        self::STEP_CONFIRM => self::STEP_CONFIRM_HUMAN,
+        self::STEP_CONFIRMED => self::STEP_CONFIRMED_HUMAN,
+        self::STEP_DONE => self::STEP_DONE_HUMAN,
+        self::STEP_CANCEL => self::STEP_CANCEL_HUMAN,
+        self::STEP_CANCELED => self::STEP_CANCELED_HUMAN,
+        self::STEP_FAILED => self::STEP_FAILED_HUMAN,
     ];
 
     const array POD_TO_STD = [
