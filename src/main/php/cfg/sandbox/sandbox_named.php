@@ -230,22 +230,33 @@ class sandbox_named extends sandbox
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
+        // the usage is set by an internal batch and cannot be set via import
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
         }
+
+        // fill up the object if it has only the id of the name
+        if ($this->no_id_but_name()) {
+            if ($dto != null) {
+                $cac_obj = $dto->get_object_by_name($this);
+                if ($cac_obj != null) {
+                    $this->fill($cac_obj, $this->user());
+                }
+            }
+        }
+
         if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
             if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
                 $this->description = $in_ex_json[json_fields::DESCRIPTION];
             }
         }
-        // the usage is set by an internal batch and cannot be set via import
 
         if ($usr_msg->is_ok()) {
             return true;
@@ -299,7 +310,9 @@ class sandbox_named extends sandbox
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
         // the usage is only included in the export as an indication to validate the consistency
-        $vars[json_fields::USAGE] = $this->usage();
+        if ($this->usage() != null) {
+            $vars[json_fields::USAGE] = $this->usage();
+        }
         return $vars;
     }
 

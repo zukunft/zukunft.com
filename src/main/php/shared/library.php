@@ -68,6 +68,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -120,10 +122,11 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\type\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
@@ -2266,6 +2269,7 @@ class library
         $result = $this->str_right_of_or_all($class, '\\');
         // for some lists and exceptions
         switch ($class) {
+            case view_relation_types::class;
             case phrase_types::class;
                 $result = str_replace('_types', '_type', $result);
                 break;
@@ -2407,6 +2411,7 @@ class library
             case verb::class:
             case triple::class:
             case ref::class;
+            case view_relation::class;
                 $json = test_api::JSON_ARRAY_ONLY;
                 break;
             default:
@@ -2590,6 +2595,7 @@ class library
             case $this->class_to_name(view_type::class):
             case $this->class_to_name(view_style::class):
             case $this->class_to_name(view_link_type::class):
+            case $this->class_to_name(view_relation_type::class):
                 $result = 'type';
                 break;
         }

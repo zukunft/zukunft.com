@@ -75,6 +75,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO activate the class section test
     TODO include owner and user in im- and export
     TODO add a test case for all verbs
+    TODO add sample of a portfolio split where the target is e.g. 40, 20, 20, 20 split but not comma values for equity are allowed
+         create a compare test for a group of peoples with a spreadsheet where in the middle of the work the client changes the request, so that some equities are fixed assigned 
     TODO end all function that might create a message to the user with return $urs_msg->is_ok(); if there is not a good reason
     TODO use message seq number error detection also for pod to pod messages to detect man in the middle issues
 

@@ -54,86 +54,95 @@ class views
     const int WORD_EDIT_ID = 3;
     const string WORD_DEL = 'word_del';
     const int WORD_DEL_ID = 4;
+    const string WORD_LOG = 'word_usage';
+    const int WORD_LOG_ID = 5;
+    const string WORD_LOG_COM = 'child view that groups the usage and log components of a word so that it can be added to the word edit and word del view without repeating the list';
     const string VERB_ADD = 'verb_add';
-    const int VERB_ADD_ID = 5;
+    const int VERB_ADD_ID = 6;
     const string VERB_EDIT = 'verb_edit';
-    const int VERB_EDIT_ID = 6;
+    const int VERB_EDIT_ID = 7;
     const string VERB_DEL = 'verb_del';
-    const int VERB_DEL_ID = 7;
+    const int VERB_DEL_ID = 8;
     const string TRIPLE_ADD = 'triple_add';
-    const int TRIPLE_ADD_ID = 8;
+    const int TRIPLE_ADD_ID = 9;
     const string TRIPLE_EDIT = 'triple_edit';
-    const int TRIPLE_EDIT_ID = 9;
+    const int TRIPLE_EDIT_ID = 10;
     const string TRIPLE_DEL = 'triple_del';
-    const int TRIPLE_DEL_ID = 10;
+    const int TRIPLE_DEL_ID = 11;
     const string SOURCE_ADD = 'source_add';
-    const int SOURCE_ADD_ID = 11;
+    const int SOURCE_ADD_ID = 12;
     const string SOURCE_EDIT = 'source_edit';
-    const int SOURCE_EDIT_ID = 12;
+    const int SOURCE_EDIT_ID = 13;
     const string SOURCE_DEL = 'source_del';
-    const int SOURCE_DEL_ID = 13;
+    const int SOURCE_DEL_ID = 14;
     const string REF_ADD = 'ref_add';
-    const int REF_ADD_ID = 14;
+    const int REF_ADD_ID = 15;
     const string REF_EDIT = 'ref_edit';
-    const int REF_EDIT_ID = 15;
+    const int REF_EDIT_ID = 16;
     const string REF_DEL = 'ref_del';
-    const int REF_DEL_ID = 16;
+    const int REF_DEL_ID = 17;
     const string VALUE_ADD = 'value_add';
-    const int VALUE_ADD_ID = 17;
+    const int VALUE_ADD_ID = 18;
     const string VALUE_EDIT = 'value_edit';
-    const int VALUE_EDIT_ID = 18;
+    const int VALUE_EDIT_ID = 19;
     const string VALUE_DEL = 'value_del';
-    const int VALUE_DEL_ID = 19;
+    const int VALUE_DEL_ID = 20;
     const string GROUP_ADD = 'group_add';
-    const int GROUP_ADD_ID = 20;
+    const int GROUP_ADD_ID = 21;
     const string GROUP_EDIT = 'group_edit';
-    const int GROUP_EDIT_ID = 21;
+    const int GROUP_EDIT_ID = 22;
     const string GROUP_DEL = 'group_del';
-    const int GROUP_DEL_ID = 22;
+    const int GROUP_DEL_ID = 23;
     const string FORMULA_ADD = 'formula_add';
-    const int FORMULA_ADD_ID = 23;
+    const int FORMULA_ADD_ID = 24;
     const string FORMULA_EDIT = 'formula_edit';
-    const int FORMULA_EDIT_ID = 24;
+    const int FORMULA_EDIT_ID = 25;
     const string FORMULA_DEL = 'formula_del';
-    const int FORMULA_DEL_ID = 25;
+    const int FORMULA_DEL_ID = 26;
     const string RESULT_ADD = 'result_add';
-    const int RESULT_ADD_ID = 26;
+    const int RESULT_ADD_ID = 27;
     const string RESULT_EDIT = 'result_edit';
-    const int RESULT_EDIT_ID = 27;
+    const int RESULT_EDIT_ID = 28;
     const string RESULT_DEL = 'result_del';
-    const int RESULT_DEL_ID = 28;
+    const int RESULT_DEL_ID = 29;
 
     // views to edit views
     const string VIEW_ADD = 'view_add';
-    const int VIEW_ADD_ID = 29;
+    const int VIEW_ADD_ID = 30;
     const string VIEW_EDIT = 'view_edit';
-    const int VIEW_EDIT_ID = 30;
+    const int VIEW_EDIT_ID = 31;
     const string VIEW_DEL = 'view_del';
-    const int VIEW_DEL_ID = 31;
+    const int VIEW_DEL_ID = 32;
     const string COMPONENT_ADD = 'component_add';
-    const int COMPONENT_ADD_ID = 32;
+    const int COMPONENT_ADD_ID = 33;
     const string COMPONENT_EDIT = 'component_edit';
-    const int COMPONENT_EDIT_ID = 33;
+    const int COMPONENT_EDIT_ID = 34;
     const string COMPONENT_DEL = 'component_del';
-    const int COMPONENT_DEL_ID = 34;
+    const int COMPONENT_DEL_ID = 35;
     const string VIEW_LINK_ADD = 'view_link_add';
-    const int VIEW_LINK_ADD_ID = 35;
+    const int VIEW_LINK_ADD_ID = 36;
     const string VIEW_LINK_EDIT = 'view_link_edit';
-    const int VIEW_LINK_EDIT_ID = 36;
+    const int VIEW_LINK_EDIT_ID = 37;
     const string VIEW_LINK_DEL = 'view_link_del';
-    const int VIEW_LINK_DEL_ID = 37;
+    const int VIEW_LINK_DEL_ID = 38;
     const string COMPONENT_LINK_ADD = 'component_link_add';
-    const int COMPONENT_LINK_ADD_ID = 38;
+    const int COMPONENT_LINK_ADD_ID = 39;
     const string COMPONENT_LINK_EDIT = 'component_link_edit';
-    const int COMPONENT_LINK_EDIT_ID = 39;
+    const int COMPONENT_LINK_EDIT_ID = 40;
     const string COMPONENT_LINK_DEL = 'component_link_del';
-    const int COMPONENT_LINK_DEL_ID = 40;
+    const int COMPONENT_LINK_DEL_ID = 41;
     const string FORMULA_LINK_ADD = 'formula_link_add';
-    const int FORMULA_LINK_ADD_ID = 41;
+    const int FORMULA_LINK_ADD_ID = 42;
     const string FORMULA_LINK_EDIT = 'formula_link_edit';
-    const int FORMULA_LINK_EDIT_ID = 42;
+    const int FORMULA_LINK_EDIT_ID = 43;
     const string FORMULA_LINK_DEL = 'formula_link_del';
-    const int FORMULA_LINK_DEL_ID = 43;
+    const int FORMULA_LINK_DEL_ID = 44;
+    const string VIEW_RELATION_ADD = 'view_relation_add';
+    const int VIEW_RELATION_ADD_ID = 45;
+    const string VIEW_RELATION_EDIT = 'view_relation_edit';
+    const int VIEW_RELATION_EDIT_ID = 46;
+    const string VIEW_RELATION_DEL = 'view_relation_del';
+    const int VIEW_RELATION_DEL_ID = 47;
 
     const string FORMULA_EXPLAIN = 'formula_explain';
     const string FORMULA_TEST = 'formula_test';
@@ -155,6 +164,7 @@ class views
     const string IMPORT = 'import';
 
     // types
+    // TODO add in system_views.json
     const string LANGUAGE_ADD = 'language_add';
     const int LANGUAGE_ADD_ID = 29;
     const string LANGUAGE_EDIT = 'language_edit';
@@ -165,7 +175,8 @@ class views
     // the id of the last system view that should be included in the unit testing
     // TODO Prio 1 set to 1
     const int MIN_TEST_ID = 2;
-    const int MAX_TEST_ID = 34;
+    // TODO Prio 0 set to 37
+    const int MAX_TEST_ID = 35;
 
     // default views
     // TODO easy add missing default views e.g. for formula
@@ -291,7 +302,8 @@ class views
     const array WORD_MASKS_IDS = [
         self::WORD_ADD_ID,
         self::WORD_EDIT_ID,
-        self::WORD_DEL_ID
+        self::WORD_DEL_ID,
+        self::WORD_LOG_ID,
     ];
 
     // system masks that have a verb as the main object
@@ -364,6 +376,34 @@ class views
         self::COMPONENT_DEL_ID
     ];
 
+    // system masks that have a term to view link as the main object
+    const array VIEW_LINK_MASKS_IDS = [
+        self::VIEW_LINK_ADD_ID,
+        self::VIEW_LINK_EDIT_ID,
+        self::VIEW_LINK_DEL_ID
+    ];
+
+    // system masks that have a component to view link as the main object
+    const array COMPONENT_LINK_MASKS_IDS = [
+        self::COMPONENT_LINK_ADD_ID,
+        self::COMPONENT_LINK_EDIT_ID,
+        self::COMPONENT_LINK_DEL_ID
+    ];
+
+    // system masks that have a phrase to formula link as the main object
+    const array FORMULA_LINK_MASKS_IDS = [
+        self::FORMULA_LINK_ADD_ID,
+        self::FORMULA_LINK_EDIT_ID,
+        self::FORMULA_LINK_DEL_ID
+    ];
+
+    // system masks that have a view to view link as the main object
+    const array VIEW_RELATION_MASKS_IDS = [
+        self::VIEW_RELATION_ADD_ID,
+        self::VIEW_RELATION_EDIT_ID,
+        self::VIEW_RELATION_DEL_ID
+    ];
+
     // system masks that only used to display a sandbox object
     const array SHOW_MASKS_IDS = [
         self::START_ID,
@@ -382,6 +422,10 @@ class views
         self::RESULT_ADD_ID,
         self::VIEW_ADD_ID,
         self::COMPONENT_ADD_ID,
+        self::VIEW_LINK_ADD_ID,
+        self::COMPONENT_LINK_ADD_ID,
+        self::FORMULA_LINK_ADD_ID,
+        self::VIEW_RELATION_ADD_ID,
     ];
 
     // system masks that change a sandbox object
@@ -397,6 +441,10 @@ class views
         self::RESULT_EDIT_ID,
         self::VIEW_EDIT_ID,
         self::COMPONENT_EDIT_ID,
+        self::VIEW_LINK_EDIT_ID,
+        self::COMPONENT_LINK_EDIT_ID,
+        self::FORMULA_LINK_EDIT_ID,
+        self::VIEW_RELATION_EDIT_ID,
     ];
 
     // system masks that delete a sandbox object
@@ -412,12 +460,72 @@ class views
         self::RESULT_DEL_ID,
         self::VIEW_DEL_ID,
         self::COMPONENT_DEL_ID,
+        self::VIEW_LINK_DEL_ID,
+        self::COMPONENT_LINK_DEL_ID,
+        self::FORMULA_LINK_DEL_ID,
+        self::VIEW_RELATION_DEL_ID,
+    ];
+
+    // system masks that are used to modify other system masks
+    const array SUB_MASKS_IDS = [
+        self::WORD_LOG_ID,
     ];
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
     const array EDIT_DEL_MASKS_IDS = [
         self::EDIT_MASKS_IDS,
         self::DEL_MASKS_IDS,
+    ];
+
+    // list of views where the id is used for system testing
+    const array TEST_VIEW_IDS = [
+        [self::START_ID, self::START_CODE],
+        [self::WORD_ADD_ID, self::WORD_ADD],
+        [self::WORD_EDIT_ID, self::WORD_EDIT],
+        [self::WORD_DEL_ID, self::WORD_DEL],
+        [self::WORD_LOG_ID, self::WORD_LOG],
+        [self::VERB_ADD_ID, self::VERB_ADD],
+        [self::VERB_EDIT_ID, self::VERB_EDIT],
+        [self::VERB_DEL_ID, self::VERB_DEL],
+        [self::TRIPLE_ADD_ID, self::TRIPLE_ADD],
+        [self::TRIPLE_EDIT_ID, self::TRIPLE_EDIT],
+        [self::TRIPLE_DEL_ID, self::TRIPLE_DEL],
+        [self::SOURCE_ADD_ID, self::SOURCE_ADD],
+        [self::SOURCE_EDIT_ID, self::SOURCE_EDIT],
+        [self::SOURCE_DEL_ID, self::SOURCE_DEL],
+        [self::REF_ADD_ID, self::REF_ADD],
+        [self::REF_EDIT_ID, self::REF_EDIT],
+        [self::REF_DEL_ID, self::REF_DEL],
+        [self::VALUE_ADD_ID, self::VALUE_ADD],
+        [self::VALUE_EDIT_ID, self::VALUE_EDIT],
+        [self::VALUE_DEL_ID, self::VALUE_DEL],
+        [self::GROUP_ADD_ID, self::GROUP_ADD],
+        [self::GROUP_EDIT_ID, self::GROUP_EDIT],
+        [self::GROUP_DEL_ID, self::GROUP_DEL],
+        [self::FORMULA_ADD_ID, self::FORMULA_ADD],
+        [self::FORMULA_EDIT_ID, self::FORMULA_EDIT],
+        [self::FORMULA_DEL_ID, self::FORMULA_DEL],
+        [self::RESULT_ADD_ID, self::RESULT_ADD],
+        [self::RESULT_EDIT_ID, self::RESULT_EDIT],
+        [self::RESULT_DEL_ID, self::RESULT_DEL],
+        [self::VIEW_ADD_ID, self::VIEW_ADD],
+        [self::VIEW_EDIT_ID, self::VIEW_EDIT],
+        [self::VIEW_DEL_ID, self::VIEW_DEL],
+        [self::COMPONENT_ADD_ID, self::COMPONENT_ADD],
+        [self::COMPONENT_EDIT_ID, self::COMPONENT_EDIT],
+        [self::COMPONENT_DEL_ID, self::COMPONENT_DEL],
+        [self::VIEW_LINK_ADD_ID, self::VIEW_LINK_ADD],
+        [self::VIEW_LINK_EDIT_ID, self::VIEW_LINK_EDIT],
+        [self::VIEW_LINK_DEL_ID, self::VIEW_LINK_DEL],
+        [self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_ADD],
+        [self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_EDIT],
+        [self::COMPONENT_LINK_DEL_ID, self::COMPONENT_LINK_DEL],
+        [self::FORMULA_LINK_ADD_ID, self::FORMULA_LINK_ADD],
+        [self::FORMULA_LINK_EDIT_ID, self::FORMULA_LINK_EDIT],
+        [self::FORMULA_LINK_DEL_ID, self::FORMULA_LINK_DEL],
+        [self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_ADD],
+        [self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_EDIT],
+        [self::VIEW_RELATION_DEL_ID, self::VIEW_RELATION_DEL],
     ];
 
     /**
@@ -482,6 +590,18 @@ class views
             self::COMPONENT_ADD => self::COMPONENT_ADD_ID,
             self::COMPONENT_EDIT => self::COMPONENT_EDIT_ID,
             self::COMPONENT_DEL => self::COMPONENT_DEL_ID,
+            self::VIEW_LINK_ADD => self::VIEW_LINK_ADD_ID,
+            self::VIEW_LINK_EDIT => self::VIEW_LINK_EDIT_ID,
+            self::VIEW_LINK_DEL => self::VIEW_LINK_DEL_ID,
+            self::COMPONENT_LINK_ADD => self::COMPONENT_LINK_ADD_ID,
+            self::COMPONENT_LINK_EDIT => self::COMPONENT_LINK_EDIT_ID,
+            self::COMPONENT_LINK_DEL => self::COMPONENT_LINK_DEL_ID,
+            self::FORMULA_LINK_ADD => self::FORMULA_LINK_ADD_ID,
+            self::FORMULA_LINK_EDIT => self::FORMULA_LINK_EDIT_ID,
+            self::FORMULA_LINK_DEL => self::FORMULA_LINK_DEL_ID,
+            self::USER_ADMIN_ADD => self::USER_ADMIN_ADD_ID,
+            self::USER_ADMIN_EDIT => self::USER_ADMIN_EDIT_ID,
+            self::USER_ADMIN_DEL => self::USER_ADMIN_DEL_ID,
             self::WORD => self::WORD_ID,
             self::VERB => self::VERB_ID,
             self::TRIPLE => self::TRIPLE_ID,
@@ -527,6 +647,18 @@ class views
             self::COMPONENT_ADD_ID => self::COMPONENT_ADD,
             self::COMPONENT_EDIT_ID => self::COMPONENT_EDIT,
             self::COMPONENT_DEL_ID => self::COMPONENT_DEL,
+            self::VIEW_LINK_ADD_ID  => self::VIEW_LINK_ADD,
+            self::VIEW_LINK_EDIT_ID  => self::VIEW_LINK_EDIT,
+            self::VIEW_LINK_DEL_ID  => self::VIEW_LINK_DEL,
+            self::COMPONENT_LINK_ADD_ID  => self::COMPONENT_LINK_ADD,
+            self::COMPONENT_LINK_EDIT_ID  => self::COMPONENT_LINK_EDIT,
+            self::COMPONENT_LINK_DEL_ID  => self::COMPONENT_LINK_DEL,
+            self::FORMULA_LINK_ADD_ID  => self::FORMULA_LINK_ADD,
+            self::FORMULA_LINK_EDIT_ID  => self::FORMULA_LINK_EDIT,
+            self::FORMULA_LINK_DEL_ID  => self::FORMULA_LINK_DEL,
+            self::USER_ADMIN_ADD_ID  => self::USER_ADMIN_ADD,
+            self::USER_ADMIN_EDIT_ID  => self::USER_ADMIN_EDIT,
+            self::USER_ADMIN_DEL_ID  => self::USER_ADMIN_DEL,
             self::WORD_ID => self::WORD,
             self::VERB_ID => self::VERB,
             self::TRIPLE_ID => self::TRIPLE,

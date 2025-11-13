@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_list.php';
 include_once paths::DB . 'sql_par_type.php';
@@ -70,6 +71,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -88,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -222,6 +225,24 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * load a list by the code_id
+     * @param array $code_id_lst a named object used for selection e.g. a word type
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
+     * @return bool true if at least one found
+     */
+    function load_by_code_ids(array $code_id_lst = [], bool $load_all = false): bool
+    {
+        global $db_con;
+        if (count($code_id_lst) > 0) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_code_id_list($sc, $code_id_lst);
+            return $this->load($qp, $load_all);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * set the SQL query parameters to load a list by the names
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the names
@@ -237,6 +258,30 @@ class sandbox_list_named extends sandbox_list
         $qp = $this->load_sql($sc, 'names');
         if (count($names) > 0) {
             $sc->add_where($fld, $names, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list by a list of code id
+     * @param sql_creator $sc with the target db_type set
+     * @param array $code_id_lst a list of strings with the names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id_list(
+        sql_creator $sc,
+        array       $code_id_lst,
+        string      $fld = sql_db::FLD_CODE_ID
+    ): sql_par
+    {
+        $qp = $this->load_sql($sc, 'code_ids');
+        if (count($code_id_lst) > 0) {
+            $sc->add_where($fld, $code_id_lst, sql_par_type::TEXT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -598,9 +643,9 @@ class sandbox_list_named extends sandbox_list
      *
      * @param string $name the unique name of the object that should be returned
      * @param bool $use_all force to include also the excluded names e.g. for import
-     * @return phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return word|phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name, bool $use_all = false): phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name, bool $use_all = false): word|phrase|term|CombineObject|IdObject|TextIdObject|null
     {
         if ($use_all) {
             $key_lst = $this->name_pos_lst_all();
@@ -754,6 +799,15 @@ class sandbox_list_named extends sandbox_list
         $result = array();
         foreach ($this->lst() as $obj) {
             $result[$obj->id()] = $obj->name();
+        }
+        return $result;
+    }
+
+    function code_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst() as $obj) {
+            $result[$obj->id()] = $obj->code_id();
         }
         return $result;
     }

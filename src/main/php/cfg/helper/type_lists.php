@@ -54,6 +54,7 @@ include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::MODEL_COMPONENT . 'view_style_list.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
@@ -105,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
@@ -113,6 +115,23 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class type_lists
 {
+
+
+    /*
+     *  object vars
+     */
+
+    public view_relation_type_list $mrl_lst;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct()
+    {
+        $this->mrl_lst = new view_relation_type_list();
+    }
 
 
     /*
@@ -239,6 +258,13 @@ class type_lists
         $cng_tbl_cac->load($db_con);
         $cng_fld_cac = new change_field_list();
         $cng_fld_cac->load($db_con);
+
+        // preload type lists vars of this object
+        $this->mrl_lst = new view_relation_type_list();
+        $this->mrl_lst->load($db_con);
+        if ($this->mrl_lst->is_empty()) {
+            $this->mrl_lst->load_dummy();
+        }
 
         // preload the little more complex objects
         $vrb_cac = new verb_list();

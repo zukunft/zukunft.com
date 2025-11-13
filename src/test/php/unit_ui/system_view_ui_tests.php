@@ -32,7 +32,10 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -54,6 +57,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -77,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -191,6 +196,14 @@ class system_view_ui_tests
             $dbo = new view($usr);
         } elseif (in_array($view_id, view_shared::COMPONENT_MASKS_IDS)) {
             $dbo = new component($usr);
+        } elseif (in_array($view_id, view_shared::VIEW_LINK_MASKS_IDS)) {
+            $dbo = new term_view($usr);
+        } elseif (in_array($view_id, view_shared::COMPONENT_LINK_MASKS_IDS)) {
+            $dbo = new component_link($usr);
+        } elseif (in_array($view_id, view_shared::FORMULA_LINK_MASKS_IDS)) {
+            $dbo = new formula_link($usr);
+        } elseif (in_array($view_id, view_shared::VIEW_RELATION_MASKS_IDS)) {
+            $dbo = new view_relation($usr);
         } else {
             $dbo = new db_object();
         }
@@ -209,6 +222,8 @@ class system_view_ui_tests
             $action = change_actions::UPDATE;
         } elseif (in_array($view_id, view_shared::DEL_MASKS_IDS)) {
             $action = change_actions::DELETE;
+        } elseif (in_array($view_id, view_shared::SUB_MASKS_IDS)) {
+            $action = change_actions::SUB;
         } else {
             $action = 'unknown';
         }

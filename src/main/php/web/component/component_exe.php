@@ -192,6 +192,8 @@ class component_exe extends component
             component_type::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
             component_type::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
+            component_type::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
+            component_type::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $cfg->view_list()),
             component_type::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
             component_type::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
 
@@ -209,6 +211,8 @@ class component_exe extends component
             component_type::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_COMPONENT_STYLE => $form->form_component_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_RELATION_TYPE => $form->form_view_relation_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FIELD_VIEW_RELATION_START_POS => $form->form_view_relation_pos($dbo, $form_name, $cfg->typ_lst_cache),
 
             // select link types and priority
             component_type::FORM_SELECT_FORMULA_LINK_TYPE => $form->form_formula_link_type($dbo, $form_name, $cfg->typ_lst_cache),
@@ -364,6 +368,12 @@ class component_exe extends component
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_type::RANK_PHRASE => $rank->system_phrases($dbo),
             component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
+
+            // view relation only -
+            component_type::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),
+            component_type::SYSTEM_FIELD_CHILD_VIEW => $form->show_child_view($dbo),
+            component_type::SHOW_FIELD_RELATION_TYPE => $form->show_relation_type($dbo),
+            component_type::SHOW_FIELD_START_POS => $form->show_start_pos($dbo),
 
             // base
             component_type::PHRASE => $this->name_tip(),

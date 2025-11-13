@@ -157,14 +157,14 @@ class component_link extends sandbox_link
         [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
     );
-    // list of MANDATORY fields that CAN be CHANGED by the user
+    // list of MANDATORY fields that CANNOT be CHANGED by the user
     const array FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, position_type::class, self::FLD_POS_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
-    // list of fields that CAN be CHANGEd by the user
+    // list of fields that CAN be CHANGED by the user
     const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
@@ -273,8 +273,8 @@ class component_link extends sandbox_link
     {
         $msg = parent::api_mapper($api_json);
 
-        if (array_key_exists(json_fields::POS, $api_json)) {
-            $this->order_nbr = $api_json[json_fields::POS];
+        if (array_key_exists(json_fields::POSITION, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::POSITION];
         }
         if (array_key_exists(json_fields::TYPE, $api_json)) {
             $this->set_predicate_id($api_json[json_fields::TYPE]);
@@ -395,7 +395,7 @@ class component_link extends sandbox_link
                 $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
             }
             if ($this->order_nbr != component_link::START_ORDER_NBR or $this->id() != 0) {
-                $vars[json_fields::POS] = $this->order_nbr;
+                $vars[json_fields::POSITION] = $this->order_nbr;
             }
             // TODO Prio 2 activate
             //$vars[json_fields::TYPE] = $this->type_id();

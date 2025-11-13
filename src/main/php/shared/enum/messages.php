@@ -211,6 +211,7 @@ enum messages: string
     case LABEL_TERM = 'word, verb, triple or formula';
     case LABEL_VIEW_TYPE = 'view type';
     case LABEL_VIEW_LINK_TYPE = 'view link type';
+    case LABEL_VIEW_RELATION_TYPE = 'view relation type';
     case LABEL_COMPONENT = 'component';
     case LABEL_COMPONENT_TYPE = 'component type';
     case LABEL_COMPONENT_LINK_TYPE = 'link type';
@@ -1052,6 +1053,18 @@ enum messages: string
     case COMPONENT_DEL = 'component_del';
     case COMPONENT_LINK = 'component_link';
     case COMPONENT_UNLINK = 'component_unlink';
+    case VIEW_LINK_ADD = 'view_link_add';
+    case VIEW_LINK_EDIT = 'view_link_edit';
+    case VIEW_LINK_DEL = 'view_link_del';
+    case COMPONENT_LINK_ADD = 'component_link_add';
+    case COMPONENT_LINK_EDIT = 'component_link_edit';
+    case COMPONENT_LINK_DEL = 'component_link_del';
+    case FORMULA_LINK_ADD = 'formula_link_add';
+    case FORMULA_LINK_EDIT = 'formula_link_edit';
+    case FORMULA_LINK_DEL = 'formula_link_del';
+    case VIEW_RELATION_ADD = 'view_relation_add';
+    case VIEW_RELATION_EDIT = 'view_relation_edit';
+    case VIEW_RELATION_DEL = 'view_relation_del';
     case USER_ADD = 'user_add';
     case USER_EDIT = 'user_edit';
     case USER_DEL = 'user_del';
@@ -1100,6 +1113,9 @@ enum messages: string
     case FORM_FORMULA_LINK_ADD_TITLE = 'form_title_formula_link_add';
     case FORM_FORMULA_LINK_EDIT_TITLE = 'form_title_formula_link_edit';
     case FORM_FORMULA_LINK_DEL_TITLE = 'form_title_formula_link_del';
+    case FORM_VIEW_RELATION_ADD_TITLE = 'form_title_view_relation_add';
+    case FORM_VIEW_RELATION_EDIT_TITLE = 'form_title_view_relation_edit';
+    case FORM_VIEW_RELATION_DEL_TITLE = 'form_title_view_relation_del';
     case ADMIN_FORM_USED_ADD_TITLE = 'form_title_admin_user_add';
     case ADMIN_FORM_USED_EDIT_TITLE = 'form_title_admin_user_edit';
     case ADMIN_FORM_USED_DEL_TITLE = 'form_title_admin_user_del';
@@ -1181,6 +1197,8 @@ enum messages: string
     case FORM_FIELD_SELECT_RESULT = 'system_form_select_result';
     case FORM_FIELD_SELECT_MULTI_RESULTS = 'system_form_select_multi_results';
     case FORM_FIELD_SELECT_VIEW = 'system_form_select_view';
+    case FORM_FIELD_SELECT_PARENT_VIEW = 'system_form_select_parent_view';
+    case FORM_FIELD_SELECT_CHILD_VIEW = 'system_form_select_child_view';
     case FORM_FIELD_SELECT_MULTI_VIEWS = 'system_form_select_multi_views';
     case FORM_FIELD_SELECT_COMPONENT = 'system_form_select_component';
     case FORM_FIELD_SELECT_MULTI_COMPONENTS = 'system_form_select_multi_components';
@@ -1225,6 +1243,8 @@ enum messages: string
     case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
     case FORM_SELECT_COMPONENT_STYLE = 'form_select_component_style';
     case FORM_SELECT_COMPONENT_POS = 'form_select_component_pos';
+    case FORM_SELECT_VIEW_RELATION_TYPE = 'form_select_view_relation_type';
+    case FORM_FIELD_VIEW_RELATION_START_POS = 'form_field_view_relation_start_pos';
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';

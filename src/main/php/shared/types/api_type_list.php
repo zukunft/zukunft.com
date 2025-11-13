@@ -111,6 +111,15 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message should include the details of the view
+     *              otherwise just the view id is included in the apu message
+     */
+    public function include_views(): bool
+    {
+        return in_array(api_type::INCL_VIEWS, $this->lst);
+    }
+
+    /**
      * @return bool true if the api message should contain excluded objects with all details
      */
     public function with_excluded(): bool

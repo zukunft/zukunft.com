@@ -93,6 +93,7 @@ include_once paths::DB . 'sql.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 //include_once paths::MODEL_VALUE . 'value_time_series.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
@@ -137,6 +138,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
@@ -181,6 +183,7 @@ class sql_creator
         element::class,
         component_link::class,
         term_view::class,
+        view_relation::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
@@ -5186,6 +5189,9 @@ class sql_creator
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_link_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'view_relation_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {

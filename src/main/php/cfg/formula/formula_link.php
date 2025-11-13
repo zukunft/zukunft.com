@@ -128,7 +128,7 @@ class formula_link extends sandbox_link
         formula_db::FLD_ID,
         phrase::FLD_ID
     );
-    // all database field names excluding the id
+    // all numeric database field names that the user can change
     const array FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,

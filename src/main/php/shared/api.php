@@ -90,6 +90,7 @@ class api
     const string JSON_LIST_VIEW_TYPES = 'view_types';
     const string JSON_LIST_VIEW_STYLES = 'view_styles';
     const string JSON_LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const string JSON_LIST_VIEW_RELATION_TYPES = 'view_relation_types';
     const string JSON_LIST_COMPONENT_TYPES = 'component_types';
     // const string JSON_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const string JSON_LIST_COMPONENT_POSITION_TYPES = 'position_types';

@@ -47,6 +47,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -173,6 +174,9 @@ class horizontal_tests
                 $dto->add_source($filled_obj->source());
             } elseif ($class == result::class) {
                 $dto->add_formula($filled_obj->frm);
+            } elseif ($class == view_relation::class) {
+                $dto->add_view($filled_obj->fob());
+                $dto->add_view($filled_obj->tob());
             }
             $ex_json = $filled_obj->export_json(false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);

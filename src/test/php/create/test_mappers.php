@@ -46,16 +46,15 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED_ENUM . 'change_actions.php';
-include_once paths::SHARED . 'url_var.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'url_mapper.php';
@@ -68,9 +67,14 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -82,14 +86,17 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
@@ -104,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -131,9 +139,9 @@ class test_mappers
     /**
      * get the base test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
+     * @return sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_base_object(string $class): sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_base_object(string $class): sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users();
@@ -180,6 +188,9 @@ class test_mappers
                 break;
             case component::class;
                 $obj = $t_cmp->component();
+                break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation();
                 break;
             default:
                 log_err('no base object defined for ' . $class);
@@ -240,6 +251,9 @@ class test_mappers
             case component::class;
                 $obj = $t_cmp->component_filled();
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_filled();
+                break;
             default:
                 log_err('no filled object defined for ' . $class);
         }
@@ -299,6 +313,9 @@ class test_mappers
             case component::class;
                 $obj = $t_cmp->component_filled();
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_filled();
+                break;
             default:
                 log_err('no add object defined for ' . $class);
         }
@@ -347,6 +364,9 @@ class test_mappers
             case component::class;
                 $obj = new component_ui();
                 break;
+            case view_relation::class;
+                $obj = new view_relation_ui();
+                break;
             default:
                 log_err('no frontend object defined for ' . $class);
         }
@@ -378,6 +398,8 @@ class test_mappers
             $url = $this->class_to_url_edit($class, $msk_id, $type, $usr_msg);
         } elseif ($action == change_actions::DELETE) {
             $url = $this->class_to_url_del($class, $msk_id, $type, $usr_msg);
+        } elseif ($action == change_actions::SUB) {
+            $url = $this->class_to_url_edit($class, $msk_id, $type, $usr_msg);
         } else {
             $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
             log_err($msg);
@@ -582,9 +604,19 @@ class test_mappers
                 $obj_array = $this->component_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_filled();
+                $obj_array = $this->view_relation_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case db_object::class;
-                // for the start page no additional vars in the url are needed
-                $obj = new db_object();
+                if ($msk_id == views::START_ID) {
+                    // for the start page no additional vars in the url are needed
+                    $obj = new db_object();
+                } else {
+                    $obj = $t_wrd->word_filled();
+                    log_err('no filled url object defined for ' . $class);
+                }
                 break;
             default:
                 $obj = $t_wrd->word_filled();
@@ -966,6 +998,17 @@ class test_mappers
         $url_array[] = [url_var::TYPE, $cmp->type_id()];
         $url_array[] = [url_var::SHARE, $cmp->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp->protection_id()];
+        return $url_array;
+    }
+
+    private function view_relation_url(view_relation $mrl, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::NAME, $mrl->name()];
+        $url_array[] = [url_var::DESCRIPTION, $mrl->description];
+        $url_array[] = [url_var::TYPE, $mrl->predicate_id()];
+        $url_array[] = [url_var::SHARE, $mrl->share_id()];
+        $url_array[] = [url_var::PROTECTION, $mrl->protection_id()];
         return $url_array;
     }
 

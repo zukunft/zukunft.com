@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -167,6 +168,41 @@ class view_tests
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
+
+
+        /*
+         * view relation
+         */
+
+        // init
+        $t->name = 'view_relation->';
+        $t->resource_path = 'db/view_relation/';
+
+        // start the test section (ts)
+        $ts = 'unit view relation ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql setup');
+        $mrl = $t_msk->view_relation();
+        $t->assert_sql_table_create($mrl);
+        $t->assert_sql_index_create($mrl);
+        $t->assert_sql_foreign_key_create($mrl);
+
+        $t->subheader($ts . 'sql read');
+        $mrl = new view_relation($usr);
+        $t->assert_sql_by_id($sc, $mrl);
+
+        $t->subheader($ts . 'sql write insert');
+        $mrl = $t_msk->view_relation();
+        // TODO Prio 0 switch on the tests
+        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'sql write update');
+        $mrl = $t_msk->view_relation();
+        $mrl_moved = clone $mrl;
+        $mrl_moved->start_pos = $mrl->start_pos + 1;
+        //$t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
 
         /*

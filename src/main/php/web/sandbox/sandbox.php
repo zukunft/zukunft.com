@@ -96,6 +96,12 @@ class sandbox extends db_object_dsp
     {
         $usr_msg = parent::api_mapper($json_array);
 
+        // TODO Prio 0 add dto cache object to api mapper
+        //if ($this->has_id()) {
+        //    $cac_obj = $dto->get_object_by_id($this);
+        //    $this->fill($cac_obj, $this->user());
+        //}
+
         if (array_key_exists(json_fields::SHARE, $json_array)) {
             $this->share_id = $json_array[json_fields::SHARE];
         } else {
@@ -210,14 +216,15 @@ class sandbox extends db_object_dsp
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        return $msk_lst->selector($form, $view_id, $name, msg_id::FORM_FIELD_SELECT_VIEW);
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
     /**

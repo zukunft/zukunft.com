@@ -162,6 +162,8 @@ include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -173,6 +175,7 @@ include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -185,6 +188,8 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
@@ -306,6 +311,7 @@ use mysqli;
 use mysqli_result;
 use PDOException;
 use PgSql\Connection;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class sql_db
 {
@@ -449,6 +455,8 @@ class sql_db
         view::class,
         view_link_type::class,
         term_view::class,
+        view_relation_type::class,
+        view_relation::class,
         component_link_type::class,
         position_type::class,
         component_type::class,
@@ -1288,8 +1296,9 @@ class sql_db
         }
 
         // load the core db rows to have at least the profile id of the system user
-        $this->db_fill_code_links();
-        $this->db_check_missing_owner();
+        // TODO Prio 2 check if this is called at the correct step
+        //$this->db_fill_code_links();
+        //$this->db_check_missing_owner();
     }
 
     /**
@@ -1509,6 +1518,7 @@ class sql_db
                         // check if the csv column names match the table names
                         if (!$this->check_column_names($table_name, $lib->array_trim($data))) {
                             $continue = false;
+                            log_err('csv code link column names are not correct for ' . $table_name);
                         } else {
                             $col_names = $lib->array_trim($data);
                         }
@@ -3057,8 +3067,8 @@ class sql_db
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
-                        $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        $result = null;
+                        $trace_link = log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
+                        $result = [];
                     }
                 }
             } elseif ($this->db_type == sql_db::MYSQL) {

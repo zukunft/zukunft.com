@@ -111,6 +111,10 @@ class component_type
     const int FORM_SELECT_VIEW_ID = 85;
     const string FORM_SELECT_VIEWS = "system_form_select_multi_views";
     const int FORM_SELECT_VIEWS_ID = 86;
+    const string FORM_SELECT_PARENT_VIEW = "system_form_select_parent_view";
+    const int FORM_SELECT_PARENT_VIEW_ID = 171;
+    const string FORM_SELECT_CHILD_VIEW = "system_form_select_child_view";
+    const int FORM_SELECT_CHILD_VIEW_ID = 172;
     const string FORM_SELECT_COMPONENT = "system_form_select_component";
     const int FORM_SELECT_COMPONENT_ID = 87;
     const string FORM_SELECT_COMPONENTS = "system_form_select_multi_components";
@@ -143,6 +147,10 @@ class component_type
     const int FORM_SELECT_COMPONENT_TYPE_ID = 52;
     const string FORM_SELECT_COMPONENT_STYLE = "system_form_select_component_style";
     const int FORM_SELECT_COMPONENT_STYLE_ID = 124;
+    const string FORM_SELECT_VIEW_RELATION_TYPE = "system_form_select_view_relation_type";
+    const int FORM_SELECT_VIEW_RELATION_TYPE_ID = 173;
+    const string FORM_FIELD_VIEW_RELATION_START_POS = "system_form_field_view_relation_start_pos";
+    const int FORM_FIELD_VIEW_RELATION_START_POS_ID = 174;
 
     // select link types and priority
     const string FORM_SELECT_FORMULA_LINK_TYPE = "system_form_select_formula_link_type";
@@ -414,6 +422,14 @@ class component_type
     const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
+    const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
+    const int SYSTEM_FIELD_PARENT_VIEW_ID = 175;
+    const string SYSTEM_FIELD_CHILD_VIEW = "system_show_child_view";
+    const int SYSTEM_FIELD_CHILD_VIEW_ID = 176;
+    const string SHOW_FIELD_RELATION_TYPE = "system_show_view_relation_type";
+    const int SHOW_FIELD_RELATION_TYPE_ID = 177;
+    const string SHOW_FIELD_START_POS = "system_show_view_start_pos";
+    const int SHOW_FIELD_START_POS_ID = 178;
     const string VIEW_AFTER_CHANGE = "system_show_after_change";
     const int VIEW_AFTER_CHANGE_ID = 143;
     const string VIEW_BEFORE_CHANGE = "system_show_before_change";
@@ -503,6 +519,8 @@ class component_type
         self::FORM_SELECT_RESULTS,
         self::FORM_SELECT_VIEW,
         self::FORM_SELECT_VIEWS,
+        self::FORM_SELECT_PARENT_VIEW,
+        self::FORM_SELECT_CHILD_VIEW,
         self::FORM_SELECT_COMPONENT,
         self::FORM_SELECT_COMPONENTS,
         self::FORM_SELECT_VIEW_DEFAULT,
@@ -518,6 +536,8 @@ class component_type
         self::FORM_SELECT_VIEW_STYLE,
         self::FORM_SELECT_COMPONENT_TYPE,
         self::FORM_SELECT_COMPONENT_STYLE,
+        self::FORM_SELECT_VIEW_RELATION_TYPE,
+        self::FORM_FIELD_VIEW_RELATION_START_POS,
         self::FORM_SELECT_FORMULA_LINK_TYPE,
         self::FORM_SELECT_FORMULA_LINK_PRIORITY,
         self::FORM_SELECT_VIEW_LINK_TYPE,
@@ -545,6 +565,10 @@ class component_type
         self::SHOW_NAME,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
+        self::SYSTEM_FIELD_PARENT_VIEW,
+        self::SYSTEM_FIELD_CHILD_VIEW,
+        self::SHOW_FIELD_RELATION_TYPE,
+        self::SHOW_FIELD_START_POS,
         self::SYSTEM_SHOW_RESULT_DIFF,
         self::SYSTEM_PASTE_TABLE_CONTEXT,
         self::SYSTEM_PASTE_TABLE_BODY,
@@ -654,6 +678,8 @@ class component_type
         [self::FORM_SELECT_RESULTS, self::FORM_SELECT_RESULTS_ID],
         [self::FORM_SELECT_VIEW, self::FORM_SELECT_VIEW_ID],
         [self::FORM_SELECT_VIEWS, self::FORM_SELECT_VIEWS_ID],
+        [self::FORM_SELECT_PARENT_VIEW, self::FORM_SELECT_PARENT_VIEW_ID],
+        [self::FORM_SELECT_CHILD_VIEW, self::FORM_SELECT_CHILD_VIEW_ID],
         [self::FORM_SELECT_COMPONENT, self::FORM_SELECT_COMPONENT_ID],
         [self::FORM_SELECT_COMPONENTS, self::FORM_SELECT_COMPONENTS_ID],
         [self::FORM_SELECT_VIEW_DEFAULT, self::FORM_SELECT_VIEW_DEFAULT_ID],
@@ -668,6 +694,8 @@ class component_type
         [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
         [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
         [self::FORM_SELECT_COMPONENT_STYLE, self::FORM_SELECT_COMPONENT_STYLE_ID],
+        [self::FORM_SELECT_VIEW_RELATION_TYPE, self::FORM_SELECT_VIEW_RELATION_TYPE_ID],
+        [self::FORM_FIELD_VIEW_RELATION_START_POS, self::FORM_FIELD_VIEW_RELATION_START_POS_ID],
         [self::FORM_SELECT_FORMULA_LINK_TYPE, self::FORM_SELECT_FORMULA_LINK_TYPE_ID],
         [self::FORM_SELECT_FORMULA_LINK_PRIORITY, self::FORM_SELECT_FORMULA_LINK_PRIORITY_ID],
         [self::FORM_SELECT_VIEW_LINK_TYPE, self::FORM_SELECT_VIEW_LINK_TYPE_ID],
@@ -740,6 +768,10 @@ class component_type
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
+        [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],
+        [self::SHOW_FIELD_RELATION_TYPE, self::SHOW_FIELD_RELATION_TYPE_ID],
+        [self::SHOW_FIELD_START_POS, self::SHOW_FIELD_START_POS_ID],
         [self::SYSTEM_SHOW_RESULT_DIFF, self::SYSTEM_SHOW_RESULT_DIFF_ID],
         [self::SYSTEM_PASTE_TABLE_CONTEXT, self::SYSTEM_PASTE_TABLE_CONTEXT_ID],
         [self::SYSTEM_PASTE_TABLE_BODY, self::SYSTEM_PASTE_TABLE_BODY_ID],

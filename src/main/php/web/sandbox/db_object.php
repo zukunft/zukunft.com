@@ -706,6 +706,19 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the html code to select the view relation type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view relation type
+     */
+    public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view relation type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
      * create the html code to select the formula link type
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
@@ -882,7 +895,8 @@ class db_object extends TextIdObject
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;

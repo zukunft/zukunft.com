@@ -311,6 +311,27 @@
       "ui_msg_code_id": "form_title_formula_link_del"
     },
     {
+      "name": "system form title view relation add",
+      "description": "show the language specific title for the system form to add a new view relation",
+      "type": "system_form_title",
+      "code_id": "form_title_view_relation_add",
+      "ui_msg_code_id": "form_title_view_relation_add"
+    },
+    {
+      "name": "system form title view relation edit",
+      "description": "show the language specific title for the system form to change a view relation",
+      "type": "system_form_title",
+      "code_id": "form_title_view_relation_edit",
+      "ui_msg_code_id": "form_title_view_relation_edit"
+    },
+    {
+      "name": "system form title view relation del",
+      "description": "show the language specific title for the system form to delete or exclude a view relation",
+      "type": "system_form_title",
+      "code_id": "form_title_view_relation_del",
+      "ui_msg_code_id": "form_title_view_relation_del"
+    },
+    {
       "name": "system form title admin user add",
       "description": "show the language specific title for the system admin form to add a user",
       "type": "system_form_title",
@@ -991,6 +1012,20 @@
       "ui_msg_code_id": "system_form_select_multi_views"
     },
     {
+      "name": "system form select parent view",
+      "description": "select the parent view of a view relation",
+      "type": "system_form_select_view",
+      "code_id": "system_form_select_parent_view",
+      "ui_msg_code_id": "system_form_select_parent_view"
+    },
+    {
+      "name": "system form select child view",
+      "description": "select the child view of a view relation",
+      "type": "system_form_select_view",
+      "code_id": "system_form_select_child_view",
+      "ui_msg_code_id": "system_form_select_child_view"
+    },
+    {
       "name": "system form select component",
       "description": "select one component",
       "type": "system_form_select_component",
@@ -1052,6 +1087,13 @@
       "type": "system_form_select_component_type",
       "code_id": "form_field_component_type",
       "ui_msg_code_id": "form_select_component_type"
+    },
+    {
+      "name": "system form select view relation type",
+      "description": "selector for the view relation type",
+      "type": "system_form_select_view_relation_type",
+      "code_id": "form_field_view_relation_type",
+      "ui_msg_code_id": "form_select_view_relation_type"
     },
     {
       "name": "system form select row phrase",
@@ -1129,6 +1171,13 @@
       "type": "system_form_select_component_link_order_number",
       "code_id": "form_field_component_link_order_number",
       "ui_msg_code_id": "form_select_component_link_order_number"
+    },
+    {
+      "name": "system form field view relation start position",
+      "description": "start position for the modification of the child view in the parent view",
+      "type": "system_form_field_view_relation_start_pos",
+      "code_id": "form_field_view_relation_start_pos",
+      "ui_msg_code_id": "form_field_view_relation_start_pos"
     },
     {
       "name": "system form select formula link type",
@@ -1264,6 +1313,30 @@
       "description": "show to the user how it looks without the change",
       "type": "system_show_before_change",
       "code_id": "system_show_before_change"
+    },
+    {
+      "name": "system show parent view",
+      "description": "show to the view name that should be modified by this view relation",
+      "type": "system_show_parent_view",
+      "code_id": "system_show_parent_view"
+    },
+    {
+      "name": "system show child view",
+      "description": "show to the view name that should be modified by this view relation",
+      "type": "system_show_child_view",
+      "code_id": "system_show_child_view"
+    },
+    {
+      "name": "system show view relation type",
+      "description": "show to the modification type of this view relation",
+      "type": "system_show_view_relation_type",
+      "code_id": "system_show_view_relation_type"
+    },
+    {
+      "name": "system show view relation start position",
+      "description": "show to position where the modification should start of this view relation",
+      "type": "system_show_view_start_pos",
+      "code_id": "system_show_view_start_pos"
     },
     {
       "name": "system form button cancel",
@@ -1968,6 +2041,83 @@
         },
         {
           "position": "24",
+          "name": "system formatter row end"
+        }
+      ]
+    },
+    {
+      "name": "word usage and log",
+      "description": "subview to show the usage and changes of a word",
+      "code_id": "word_usage",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "2",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "3",
+          "name": "parents of word",
+          "style": "col-md-4"
+        },
+        {
+          "position": "4",
+          "name": "children of word",
+          "position_type": "combine",
+          "style": "col-md-4"
+        },
+        {
+          "position": "5",
+          "name": "system sub title values",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "6",
+          "name": "value list of word",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "system sub title references",
+          "style": "col-md-4"
+        },
+        {
+          "position": "8",
+          "name": "ref list word",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "usage word",
+          "position_type": "side"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "13",
+          "name": "change log word",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
           "name": "system formatter row end"
         }
       ]
@@ -4920,6 +5070,224 @@
         },
         {
           "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add view relation",
+      "description": "Create a new relation between two views",
+      "code_id": "view_relation_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title view relation add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select parent view"
+        },
+        {
+          "position": "5",
+          "name": "system form select view relation type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field view relation start position",
+          "position_type": "side"
+        },
+        {
+          "position": "7",
+          "name": "system form select child view",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form field description"
+        },
+        {
+          "position": "9",
+          "name": "system form select share type"
+        },
+        {
+          "position": "10",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change view relation",
+      "description": "Change a relation between a component and a view",
+      "code_id": "view_relation_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title view relation edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select parent view"
+        },
+        {
+          "position": "5",
+          "name": "system form select view relation type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field view relation start position",
+          "position_type": "side"
+        },
+        {
+          "position": "7",
+          "name": "system form select child view",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form field description"
+        },
+        {
+          "position": "9",
+          "name": "system form select share type"
+        },
+        {
+          "position": "10",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system show view diff list"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete view relation",
+      "description": "To confirm the exclusion or deleting of a view relation",
+      "code_id": "view_relation_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title view relation del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show parent view"
+        },
+        {
+          "position": "5",
+          "name": "system show view relation type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system show view relation start position",
+          "position_type": "side"
+        },
+        {
+          "position": "7",
+          "name": "system show child view",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system show field description"
+        },
+        {
+          "position": "9",
+          "name": "system show view diff list"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "11",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "12",
+          "name": "system form button del"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]

@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -295,6 +296,7 @@ const DB_SEQ_LIST = [
 ];
 
 // TODO Prio 2 move to const/def class?
+// list of all ab tables in order of dependencies
 const DB_TABLE_LIST = [
     'config',
     'sys_log_types',
@@ -447,6 +449,8 @@ const DB_TABLE_LIST = [
     'user_components',
     'user_component_links',
     'component_links',
+    'user_view_relations',
+    'view_relations',
     'position_types',
     'components',
     'formulas',
@@ -459,6 +463,7 @@ const DB_TABLE_LIST = [
     'view_styles',
     'component_types',
     'view_link_types',
+    'view_relation_types',
     'term_views',
     'user_term_views',
     'value_formula_links',
@@ -550,6 +555,7 @@ function prg_restart(string $code_name): sql_db
 {
 
     global $db_con;
+    global $cac;
     global $cfg;
     global $mtr;
     global $sys_times;
@@ -597,8 +603,11 @@ function prg_restart(string $code_name): sql_db
 
         // preload all types from the database
         $sys_times->switch(system_time_type::LOAD_TYPES);
+        // the types are general so the system user can be used to load the types
+        $cac = new data_object($usr_sys);
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, $usr_sys);
+        $cac->typ_lst = $sys_typ_lst;
 
         $log = new change_log($usr_sys);
         $db_changed = $log->create_log_references($db_con);

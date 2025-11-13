@@ -39,16 +39,20 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
@@ -94,6 +98,28 @@ class test_views
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->env->usr1);
         $msk->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        return $msk;
+    }
+
+    /**
+     * used to test the view relation where the log components are added to the parent view
+     * @return view with the parent view to change a word
+     */
+    function view_word_edit(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::WORD_EDIT_ID, views::WORD_EDIT);
+        return $msk;
+    }
+
+    /**
+     * used to test the view relation where the log components are added to the parent view
+     * @return view with the parent view to change a word
+     */
+    function view_word_log(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::WORD_LOG_ID, views::WORD_LOG);
         return $msk;
     }
 
@@ -306,6 +332,29 @@ class test_views
     {
         $t_msk = new test_views($this->env);
         return new view_list_ui($t_msk->view_list_word()->api_json());
+    }
+
+    function view_relation(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->id = 1;
+        $mrl->set_parent($this->view_word_edit());
+        $mrl->set_relation_type(view_relation_types::ADD);
+        $mrl->set_child($this->view_word_log());
+        $mrl->start_pos = 15;
+        return $mrl;
+    }
+
+    function view_relation_filled(): view_relation
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        $mrl = $this->view_relation();
+        $mrl->description = 'add usage and log of a word';
+        $mrl->exclude();
+        $mrl->set_share_id($shr_typ_cac->id(share_type::GROUP));
+        $mrl->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        return $mrl;
     }
 
 }

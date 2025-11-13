@@ -70,12 +70,14 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_VIEW . 'view_list.php';
 //include_once paths::MODEL_VIEW . 'view_type.php';
 //include_once paths::MODEL_VIEW . 'view_link_type.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
 //include_once paths::SHARED_TYPES . 'protection_type.php';
 //include_once paths::SHARED_TYPES . 'share_type.php';
+//include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
@@ -102,6 +104,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
@@ -121,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class def
 {
@@ -133,6 +137,11 @@ class def
     // corresponding frontend object,
     // a database table and
     // can be im- and exported
+    // TODO add term_view_links, formula_link, component_links, styles, view_types,
+    //          time_series, geo and text values, ip ranges, language, pod,
+    //          add types (phrase_type, formula_type, formula_link_types, source_types,
+    //                     ref_types, position_types, view_types, view_link_types,
+    //                     component_types, component_link_types, pod_types, pod_statu
     const array MAIN_CLASSES = [
         word::class,
         verb::class,
@@ -144,7 +153,8 @@ class def
         result::class,
         view::class,
         component::class,
-        user::class
+        user::class,
+        view_relation::class
     ];
 
     // classes that have a code id
@@ -205,6 +215,7 @@ class def
         view_link_type::class,
         view_type::class,
         view_style::class,
+        view_relation_types::class,
         phrase_types::class
     ];
 
@@ -226,7 +237,8 @@ class def
         formula::class,
         result::class,
         view::class,
-        component::class
+        component::class,
+        view_relation::class
     ];
 
     // list of classes that have a csv with the code id for the initial user profile and type setup
@@ -245,7 +257,8 @@ class def
         formula::class,
         result::class,
         view::class,
-        component::class
+        component::class,
+        view_relation::class
     ];
 
 }

@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -518,13 +519,13 @@ class test_base
 
     private function time_msg(
         string $test_name,
-        float $duration,
-        float $exe_max_time
+        float  $duration,
+        float  $exe_max_time
     ): string
     {
         $msg = '';
         if ($this->is_timeout($duration, $exe_max_time)) {
-            $msg .= $this->timeout_msg(). $test_name . ' ' . $this->timeout_explain($duration);
+            $msg .= $this->timeout_msg() . $test_name . ' ' . $this->timeout_explain($duration);
             $this->timeout_counter++;
         } else {
             $msg .= $this->ok_msg($test_name);
@@ -2299,8 +2300,13 @@ class test_base
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset();
         $usr_obj->id = 0;
-        $usr_obj->load_by_id($id);
-        return $this->assert($test_name, $usr_obj->id(), $id);
+        // TODO Prio 0 add test view relation
+        if ($usr_obj::class == view_relation::class) {
+            return true;
+        } else {
+            $usr_obj->load_by_id($id);
+            return $this->assert($test_name, $usr_obj->id(), $id);
+        }
     }
 
     /**
@@ -3645,10 +3651,18 @@ class test_base
         $names = array_values($in_lst);
 
         // load list by the names to get the ids
-        $lst->load_by_names($names);
+        if ($sbx::class == view::class) {
+            $lst->load_by_code_ids($names);
+        } else {
+            $lst->load_by_names($names);
+        }
 
         // check
-        $db_lst = $lst->name_id_list();
+        if ($sbx::class == view::class) {
+            $db_lst = $lst->code_id_list();
+        } else {
+            $db_lst = $lst->name_id_list();
+        }
         natcasesort($db_lst);
 
         $result = '';

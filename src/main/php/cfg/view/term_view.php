@@ -84,11 +84,10 @@ class term_view extends sandbox_link
      * db const
      */
 
-    // the database and JSON object field names used only for formula links
+    // the database and JSON object field names used only for term to view links
     // *_SQL_TYP is the sql data type used for the field
     const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const string FLD_ID = 'term_view_id';
-    const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 
     // all database field names excluding the id
@@ -193,8 +192,8 @@ class term_view extends sandbox_link
     /**
      * set the main vars with one function
      * @param int $id the database id of the link
-     * @param view $msk the formula that should be linked
-     * @param term $trm the phrase to which the formula should be linked
+     * @param view $msk the view that should be linked
+     * @param term $trm the term to which the view should be linked
      * @return void
      */
     function set(int $id, view $msk, term $trm): void

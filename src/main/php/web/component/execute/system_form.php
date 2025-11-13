@@ -54,6 +54,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::WORD . 'triple.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -250,6 +252,42 @@ class system_form extends component
     function show_usage(db_object_dsp $dbo): string
     {
         return $dbo->name();
+    }
+
+    /**
+     * @param view_relation|db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function show_parent_view(view_relation|db_object_dsp $dbo): string
+    {
+        return $dbo->parent()?->name();
+    }
+
+    /**
+     * @param view_relation|db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function show_child_view(view_relation|db_object_dsp $dbo): string
+    {
+        return $dbo->child()?->name();
+    }
+
+    /**
+     * @param view_relation|db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function show_relation_type(view_relation|db_object_dsp $dbo): string
+    {
+        return $dbo->relation_type()?->name();
+    }
+
+    /**
+     * @param view_relation|db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function show_start_pos(view_relation|db_object_dsp $dbo): string
+    {
+        return $dbo->start_pos;
     }
 
     /**
@@ -593,6 +631,22 @@ class system_form extends component
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_12
+        );
+    }
+
+    /**
+     * @return string the html code to request the view modification start position
+     */
+    function form_view_relation_pos(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::POSITION,
+            msg_id::FORM_FIELD_COMPONENT_LINK,
+            $dbo->url(),
+            html_base::INPUT_INT,
+            '',
+            view_styles::COL_SM_1
         );
     }
 
@@ -1030,6 +1084,32 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to select the parent view
+     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param view_list|null $msk_lst cached list of views for fast selection
+     * @return string the html code to select the view
+     */
+    function form_parent_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    {
+        return $dbo->view_selector($form_name, $msk_lst,
+            url_var::VIEW_PARENT,msg_id::FORM_FIELD_SELECT_PARENT_VIEW);
+    }
+
+    /**
+     * create the html code for the form element to select the child view
+     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param view_list|null $msk_lst cached list of views for fast selection
+     * @return string the html code to select the view
+     */
+    function form_child_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    {
+        return $dbo->view_selector($form_name, $msk_lst,
+            url_var::VIEW_CHILD,msg_id::FORM_FIELD_SELECT_CHILD_VIEW);
+    }
+
+    /**
      * create the html code for the form element to select the view
      * there are three fields / functions to select a view:
      *   form_view_default - this select default to set the default view of a sandbox object within a system form
@@ -1205,6 +1285,18 @@ class system_form extends component
     function form_component_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_style_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the view relation type
+     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view relation type
+     */
+    function form_view_relation_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->view_relation_type_selector($form_name, $typ_lst);
     }
 
     /**

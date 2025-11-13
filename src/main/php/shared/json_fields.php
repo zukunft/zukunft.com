@@ -146,8 +146,18 @@ class json_fields
     const string TO_PHRASE = 'to_phrase';
     const string VERB = 'verb_id';
     const string WEIGHT = 'weight';
-    // the json field names in the api json message which is supposed to be the same as the var $id
+
+    // the parent object with detail fields used e.g. for the parent view of view relations
     const string PARENT = 'parent';
+    // the parent id used e.g. for the parent view of view relations
+    const string PARENT_ID = 'parent_id';
+
+    // the child object with detail fields used e.g. for the child view of view relations
+    const string CHILD = 'child';
+
+    // the child id used e.g. for the child view of view relations
+    const string CHILD_ID = 'child_id';
+
 
     const string USR_TEXT = 'user_text'; // the formula expression in the user readable format
     const string SHARE = 'share'; // the field name used for the JSON im- and export
@@ -185,9 +195,6 @@ class json_fields
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
 
-    // e.g. the order of the components within a view
-    const string POS = 'position';
-
     // the phrase to select the row name of a view component
     const string PHRASE_ROW = 'word_row';
     // the phrase to select the column name of a view component
@@ -195,6 +202,9 @@ class json_fields
 
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
+
+    // the relation type that defines e.g. how a child view changes the parent view
+    const string RELATION_TYPE = 'relation_type';
 
     // id the select a predefined text for the user that is translated into the user interface language
     const string UI_MSG_CODE_ID = 'ui_msg_code_id';

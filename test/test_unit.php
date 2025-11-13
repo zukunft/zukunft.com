@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 global $db_con;
+global $cac;
 
 // open database and display header
 $db_con = prg_start("unit tests", '', false, true);
@@ -56,6 +57,7 @@ if ($db_con->is_open()) {
     // load the session user parameters
     $start_usr = new user;
     $result = $start_usr->get();
+    $cac->set_user($start_usr);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id() > 0) {

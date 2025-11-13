@@ -137,6 +137,15 @@ class db_object_seq_id_user extends db_object_seq_id
         return $usr_msg;
     }
 
+    function has_id(): bool
+    {
+        if ($this->id() !== null and $this->id() !== 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * modify

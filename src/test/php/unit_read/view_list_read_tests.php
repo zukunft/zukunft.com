@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -105,6 +106,9 @@ class view_list_read_tests
         $wrd_lst->load_like('W');
         $t->assert_contains($test_name, $wrd_lst->names(), views::TN_READ);
         */
+
+        $test_name = 'all expected test views are in the database';
+        $t->assert_db_test_id_list($test_name, views::TEST_VIEW_IDS, new view($t->usr1), new view_list($t->usr1));
 
     }
 

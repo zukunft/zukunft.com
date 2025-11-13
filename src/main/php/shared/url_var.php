@@ -92,11 +92,13 @@ class url_var
     // data fields used for system forms
     const string VIEW = 'd'; // the Display / view id form field value of the object not the view that should be used to show the form to the user
     const string VIEW_LINK = 'dc'; // display connector to link a view to another view
-    const string VIEW_LINK_TYPE = 'dy'; // the type of the view to view link
+    const string VIEW_PARENT = 'df'; // the "from" display view that should be modified
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
+    const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
     const string UNLINK_VIEW = 'dx'; // exclude the view link
+    const string VIEW_LINK_TYPE = 'dy'; // the type of the view to view link
     const string SHARE = 'ds'; // the share id of the sandbox object
     const string PROTECTION = 'dt'; // the share id of the sandbox object
     const string TERM = 'e';
@@ -137,6 +139,7 @@ class url_var
     const string DIRECTION = 'pd'; // 'up' to get the parents and 'down' for the children
     const string PHRASE_FROM = 'pf';
     const string PHRASE_LIST = 'pl'; // a list of phrase ids
+    const string POSITION = 'po'; // a order number or a position
     const string PHRASE_TO = 'pt';
     const string LEVELS = 'px'; // the number of search levels'
     const string PHRASE_TYPE = 'py';
@@ -332,6 +335,9 @@ class url_var
     const string VIEW_LINK_HUMAN = 'link_view'; // id of the link that connects a view to another view
     const string VIEW_LINK_TYPE_HUMAN = 'view_link_type';
     const string UNLINK_VIEW_HUMAN = 'unlink_view'; //
+    const string VIEW_PARENT_HUMAN = 'parent_view';
+    const string VIEW_CHILD_HUMAN = 'child_view';
+    const string POSITION_HUMAN = 'position';
 
     // component
     const string COMPONENT_HUMAN = 'component_id';
@@ -499,6 +505,9 @@ class url_var
         [self::VIEW_LINK_HUMAN, self::VIEW_LINK],
         [self::VIEW_LINK_TYPE_HUMAN, self::VIEW_LINK_TYPE],
         [self::UNLINK_VIEW_HUMAN, self::UNLINK_VIEW],
+        [self::VIEW_PARENT_HUMAN, self::VIEW_PARENT],
+        [self::VIEW_CHILD_HUMAN, self::VIEW_CHILD],
+        [self::POSITION_HUMAN, self::POSITION],
 
         // component
         [self::COMPONENT_HUMAN, self::COMPONENT],

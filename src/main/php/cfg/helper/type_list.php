@@ -93,6 +93,8 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_type.php';
+include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
@@ -157,6 +159,8 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
@@ -382,6 +386,7 @@ class type_list
             view_type_list::class => view_type::class,
             view_style_list::class => view_style::class,
             view_link_type_list::class => view_link_type::class,
+            view_relation_type_list::class => view_relation_type::class,
             component_type_list::class => component_type::class,
             component_link_type_list::class => component_link_type::class,
             position_type_list::class => position_type::class,

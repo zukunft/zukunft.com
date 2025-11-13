@@ -52,6 +52,8 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
@@ -66,6 +68,7 @@ include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_list.php';
+//include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
 //include_once paths::MODEL_WORD . 'triple.php';
@@ -92,7 +95,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -107,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -148,6 +154,8 @@ class data_object
     private ip_range_list $ip_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
+    // all preloaded types
+    public type_lists $typ_lst;
 
 
     /*
@@ -180,6 +188,7 @@ class data_object
         $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
         $this->usr_msg = new user_message();
+        $this->typ_lst = new type_lists();
     }
 
 
@@ -396,10 +405,46 @@ class data_object
         return $this->ip_lst;
     }
 
+    function view_relation_types(): view_relation_type_list
+    {
+        return $this->typ_lst->mrl_lst;
+    }
+
 
     /*
      * get
      */
+
+    function get_object_by_name(IdObject|phrase $named_obj): IdObject|phrase|null
+    {
+        $sbx = null;
+        if ($named_obj::class == word::class) {
+            $sbx = $this->get_word_by_name($named_obj->name());
+        } elseif ($named_obj::class == phrase::class) {
+            $sbx = $this->get_phrase_by_name($named_obj->name());
+        } elseif ($named_obj::class == source::class) {
+            $sbx = $this->get_source_by_name($named_obj->name());
+        } elseif ($named_obj::class == formula::class) {
+            $sbx = $this->get_formula_by_name($named_obj->name());
+        } elseif ($named_obj::class == view::class) {
+            $sbx = $this->get_view_by_name($named_obj->name());
+        } elseif ($named_obj::class == component::class) {
+            $sbx = $this->get_component_by_name($named_obj->name());
+        } else {
+            log_err('get_object_by_name not yet defined for ' . $named_obj::class);
+        }
+        return $sbx;
+    }
+
+    /**
+     * get a word by the name from this cache object
+     * @param string $name the name of the word or triple
+     * @return word|null
+     */
+    function get_word_by_name(string $name): ?word
+    {
+        return $this->word_list()->get_by_name($name);
+    }
 
     /**
      * get a word or triple by the name from this cache object
@@ -430,6 +475,27 @@ class data_object
     {
         return $this->source_list()->get_by_name($name);
     }
+
+    /**
+     * get a formula by the name from this cache object
+     * @param string $name the name of the formula
+     * @return formula|IdObject|null
+     */
+    function get_formula_by_name(string $name): formula|IdObject|null
+    {
+        return $this->formula_list()->get_by_name($name);
+    }
+
+    /**
+     * get a source by the name from this cache object
+     * @param string $name the name of the source
+     * @return view|IdObject|null
+     */
+    function get_view_by_name(string $name): view|IdObject|null
+    {
+        return $this->view_list()->get_by_name($name);
+    }
+
 
     /*
      * info
@@ -564,10 +630,10 @@ class data_object
 
     /**
      * add a view with name but without db id to the list
-     * @param view $frm with the name and parameters set
+     * @param view|sandbox_named $frm with the name and parameters set
      * @return void
      */
-    function add_view(view $frm): void
+    function add_view(view|sandbox_named $frm): void
     {
         $this->msk_lst->add_by_name($frm);
     }

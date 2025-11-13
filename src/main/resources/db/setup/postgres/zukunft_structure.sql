@@ -4528,6 +4528,77 @@ COMMENT ON COLUMN user_term_views.protect_id IS 'to protect against unwanted cha
 -- --------------------------------------------------------
 
 --
+-- table structure to define the behaviour of the relation between two views
+--
+
+CREATE TABLE IF NOT EXISTS view_relation_types
+(
+    view_relation_type_id SERIAL PRIMARY KEY,
+    type_name   varchar(255)     NOT NULL,
+    code_id     varchar(255) DEFAULT NULL,
+    description text         DEFAULT NULL
+);
+
+COMMENT ON TABLE view_relation_types IS 'to define the behaviour of the relation between two views';
+COMMENT ON COLUMN view_relation_types.view_relation_type_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_relation_types.type_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN view_relation_types.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN view_relation_types.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+--
+
+CREATE TABLE IF NOT EXISTS view_relations
+(
+    view_relation_id BIGSERIAL PRIMARY KEY,
+    parent_view_id        bigint                NOT NULL,
+    child_view_id         bigint                NOT NULL,
+    user_id               bigint            DEFAULT NULL,
+    view_relation_type_id smallint NOT NULL DEFAULT 1,
+    start_pos             bigint            DEFAULT NULL,
+    description           text              DEFAULT NULL,
+    excluded              smallint          DEFAULT NULL,
+    share_type_id         smallint          DEFAULT NULL,
+    protect_id            smallint          DEFAULT NULL
+);
+
+COMMENT ON TABLE view_relations IS 'to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view';
+COMMENT ON COLUMN view_relations.view_relation_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_relations.parent_view_id IS 'the parent view that should be modified by the child view for the used view'; COMMENT ON COLUMN view_relations.child_view_id IS 'the child view that should modify the parent view for the used view';
+COMMENT ON COLUMN view_relations.user_id IS 'the owner / creator of the view_relation';
+COMMENT ON COLUMN view_relations.view_relation_type_id IS '1 = add components,2 = remove components as defined in view_relation_type';
+COMMENT ON COLUMN view_relations.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN view_relations.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN view_relations.protect_id IS 'to protect against unwanted changes';
+
+--
+-- table structure to save user specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+--
+
+CREATE TABLE IF NOT EXISTS user_view_relations
+(
+    view_relation_id      bigint       NOT NULL,
+    user_id               bigint       NOT NULL,
+    start_pos             bigint   DEFAULT NULL,
+    description           text     DEFAULT NULL,
+    excluded              smallint DEFAULT NULL,
+    share_type_id         smallint DEFAULT NULL,
+    protect_id            smallint DEFAULT NULL
+);
+
+COMMENT ON TABLE user_view_relations IS 'to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view';
+COMMENT ON COLUMN user_view_relations.view_relation_id IS 'with the user_id the internal unique primary index';
+COMMENT ON COLUMN user_view_relations.user_id IS 'the changer of the view_relation';
+COMMENT ON COLUMN user_view_relations.excluded IS 'true if a user,but not all,have removed it';
+COMMENT ON COLUMN user_view_relations.share_type_id IS 'to restrict the access';
+COMMENT ON COLUMN user_view_relations.protect_id IS 'to protect against unwanted changes';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to assign predefined behaviour to a component view link
 --
 
@@ -6741,6 +6812,34 @@ CREATE INDEX user_term_views_view_link_type_idx ON user_term_views (view_link_ty
 -- --------------------------------------------------------
 
 --
+-- indexes for table view_relation_types
+--
+
+CREATE INDEX view_relation_types_type_name_idx ON view_relation_types (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table view_relations
+--
+
+CREATE INDEX view_relations_parent_view_idx ON view_relations (parent_view_id);
+CREATE INDEX view_relations_child_view_idx ON view_relations (child_view_id);
+CREATE INDEX view_relations_user_idx ON view_relations (user_id);
+CREATE INDEX view_relations_view_relation_type_idx ON view_relations (view_relation_type_id);
+
+--
+-- indexes for table user_view_relations
+--
+
+ALTER TABLE user_view_relations
+    ADD CONSTRAINT user_view_relations_pkey PRIMARY KEY (view_relation_id,user_id);
+CREATE INDEX user_view_relations_view_relation_idx ON user_view_relations (view_relation_id);
+CREATE INDEX user_view_relations_user_idx ON user_view_relations (user_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table component_link_types
 --
 
@@ -7850,6 +7949,26 @@ ALTER TABLE user_term_views
     ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
     ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table view_relations
+--
+
+ALTER TABLE view_relations
+    ADD CONSTRAINT view_relations_view_fk FOREIGN KEY (parent_view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_relations_view2_fk FOREIGN KEY (child_view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_relations_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT view_relations_view_relation_type_fk FOREIGN KEY (view_relation_type_id) REFERENCES view_relation_types (view_relation_type_id);
+
+--
+-- constraints for table user_view_relations
+--
+
+ALTER TABLE user_view_relations
+    ADD CONSTRAINT user_view_relations_view_relation_fk FOREIGN KEY (view_relation_id) REFERENCES view_relations (view_relation_id),
+    ADD CONSTRAINT user_view_relations_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 -- --------------------------------------------------------
 
