@@ -2301,6 +2301,8 @@ class test_base
         $usr_obj->reset();
         $usr_obj->id = 0;
         // TODO Prio 0 add test view relation
+        //      but first finish the dto based import
+        //      and before that use the global $cac as the main backend cache var
         if ($usr_obj::class == view_relation::class) {
             return true;
         } else {

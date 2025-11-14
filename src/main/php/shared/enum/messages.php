@@ -185,7 +185,8 @@ enum messages: string
     case ERROR = 'error';
     case NONE = '';
 
-    // labels used for views
+    // labels used for form fields in views
+    // TODO Prio 1 change the value so that it does not contains spaces and add at least a english translation
     // TODO Prio 2 target is to use the most specific const name
     // e.g. form_field_name instead of just name
     //      for the label of an input form field label
@@ -204,9 +205,10 @@ enum messages: string
     case LABEL_PHRASE_ROW = 'take rows from';
     case LABEL_PHRASE_COL = 'take columns from';
     case LABEL_PHRASE_COL_SUB = 'take sub columns from';
+    case LABEL_PHRASE_TYPE = 'form_label_phrase_type';
 
     case LABEL_FORMULA = 'formula';
-    case LABEL_FORMULA_TYPE = 'formula type';
+    case LABEL_FORMULA_TYPE = 'form_label_formula_type';
     case LABEL_FORMULA_LINK_TYPE = 'formula link';
     case LABEL_TERM = 'word, verb, triple or formula';
     case LABEL_VIEW_TYPE = 'view type';
@@ -218,8 +220,13 @@ enum messages: string
     case LABEL_POSITION_TYPE = 'position';
     case LABEL_SOURCE_TYPE = 'source type';
     case LABEL_REF_TYPE = 'reference type';
-    case LABEL_LANGUAGE = 'language';
+    case LABEL_LANGUAGE = 'form_label_language';
+    case LABEL_LANGUAGE_FORM = 'form_label_language_form';
     case LABEL_USER_PROFILE = 'user profile';
+    case LABEL_JOB_TYPE = 'form_label_job_type';
+
+    case LABEL_SHARE_TYPE = 'form_select_share';
+    case LABEL_PROTECTION_TYPE = 'form_select_protection';
 
     // messages with vars
 
@@ -1202,15 +1209,13 @@ enum messages: string
     case FORM_FIELD_SELECT_MULTI_VIEWS = 'system_form_select_multi_views';
     case FORM_FIELD_SELECT_COMPONENT = 'system_form_select_component';
     case FORM_FIELD_SELECT_MULTI_COMPONENTS = 'system_form_select_multi_components';
-    case FORM_FIELD_PREVIEW_CHANGE_CfOMPONENTS = 'system_form_preview_change_component';
+    case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
     case FORM_SELECT_VIEW_LINK_TYPE = 'form_select_view_link_type';
     case FORM_SELECT_VIEW_LINK_PRIORITY = 'form_select_view_link_priority';
     case FORM_SELECT_COMPONENT_LINK_TYPE = 'form_select_component_link_type';
     case FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER = 'form_select_component_link_order_number';
     case FORM_SELECT_FORMULA_LINK_TYPE = 'form_select_formula_link_type';
     case FORM_SELECT_FORMULA_LINK_PRIORITY = 'form_select_formula_link_priority';
-    case FORM_SELECT_SHARE = 'form_select_share';
-    case FORM_SELECT_PROTECTION = 'form_select_protection';
     case FORM_SELECT_FILE = 'system_form_select_file';
     case FORM_SELECT_EXPORT_FORMAT = 'system_form_select_export_format';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
@@ -1323,6 +1328,10 @@ enum messages: string
         . '" not found';
     case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
     case VAR_TYPE_NAME = 'TYPE_NAME';
+
+    public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT = [
+        self::LABEL_PHRASE_TYPE,
+    ];
 
     /**
      * @return string with the text for the user in the default language

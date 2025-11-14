@@ -75,7 +75,9 @@ class url_var
 
     // the var names for the short technical url (in alphabetic order to detect duplicates)
     const string EXCLUDED = '0';
-    const string CONFIG_PART = '2';
+    const string CONFIG_PART = '1';
+    const string MSG = '2';
+    const string BACK = '9'; // list of url targets for the back action
     const string ACTION = 'a'; // the crud action
     const string VERB = 'b'; // the verB id
     const string VERBS = 'bl';  // to select the verbs that should be displayed
@@ -97,20 +99,20 @@ class url_var
     const string VIEW_CHILD = 'dm'; // the display view that modifies the parent view
     const string VIEW_TERM_LINK_PRIO = 'dp'; // to define the order of the view components
     const string VIEW_TYPE = 'dt';
+    const string VIEW_RELATION_TYPE = 'dr'; // the type of the view to view link
     const string UNLINK_VIEW = 'dx'; // exclude the view link
-    const string VIEW_LINK_TYPE = 'dy'; // the type of the view to view link
-    const string SHARE = 'ds'; // the share id of the sandbox object
-    const string PROTECTION = 'dt'; // the share id of the sandbox object
+    const string VIEW_LINK_TYPE = 'dy'; // the type of the term to view link
     const string TERM = 'e';
-    const string TERM_POS = 'e_'; // used for a list of terms where the list position is added to the name
+    const string TERM_POS = 'ep'; // used for a list of terms where the list position is added to the name
     const string EXTERNAL_KEY = 'ek'; // the external key of a form field
     const string FORMULA = 'f';
-    const string USER_EXPRESSION = 'fe';
     const string NEED_ALL = 'fa';
+    const string USER_EXPRESSION = 'fe';
     const string FORMULA_LINK = 'fl'; // to link a formula to a phrase
     const string FORMULA_LINK_PRIO = 'fp';
     const string FORMULAS = 'fs';  // to select the formulas that should be displayed
     const string FORMULA_LINK_TYPE = 'ft';
+    const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
     const string LOG = 'h'; // h for history of the object
@@ -119,11 +121,12 @@ class url_var
     const string LOG_FIELD = 'hf'; // the field of the change log entry used to filter the log
     const string SYS_LOG = 'hs'; // history of a system event
     const string FIGURE = 'i';
-    const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string ID = 'id'; // the internal database id of the main view object
     const string ID_LST = 'il'; // a comma separated list of internal database ids
     const string IP = 'ip'; // for ip ranges (for admin only)
+    const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string JOB = 'j'; // for system batch jobs
+    const string JOB_TYPE = 'jt'; // the job type
     const string NAME = 'k'; // the name of a word, verb, triple, ... of a form field (Kennung)
     const string CODE_ID = 'ki'; // the code id
     const string PATTERN = 'kp'; // the wildcard pattern to select a list of objects by name
@@ -132,7 +135,7 @@ class url_var
     const string PLURAL = 'lp'; // the name of the word, triple or verb if there are many
     const string REVERSE = 'lr'; // the name of the verb if used the other way round
     const string REVERSE_PLURAL = 'lx'; // the name of the verb if used the other way round and there are many phrases
-    // const string MASK = 'm'; // just the placeholder to remember that the char m is used
+    // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string PHRASE = 'p'; // the id or name of one phrase
@@ -149,19 +152,22 @@ class url_var
     const string LANGUAGE = 'q'; // the id of a language (q like question)
     const string LANGUAGE_FORM = 'qf';
     const string RESULT = 'r';
-    const string SOURCE = 's';
+    const string SHARE = 's'; // the share id of the sandbox object
+    const string SOURCE = 'so';
+    const string PROTECTION = 'sp'; // the protection id of the sandbox object
     const string SOURCE_TYPE = 'st';
     const string TRIPLE = 't';
     const string WEIGHT = 'tw';
     const string TRIPLES = 'tl'; // to select the triples that should be displayed
     const string USER = 'u';
+    const string IMPACT = 'ui'; // the impact value a form field
     const string EMAIL = 'um'; // the user email form field
     const string USERNAME = 'un';
     const string USER_PROFILE = 'up';
-    const string USER_PASSWORD = 'uw';
-    const string USAGE = 'uu'; // the usage value a form field
-    const string IMPACT = 'ui'; // the impact value a form field
     const string URL = 'ur';
+    const string USER_TYPE = 'ut';
+    const string USAGE = 'uu'; // the usage value a form field
+    const string USER_PASSWORD = 'uw';
     const string VALUE = 'v';
     const string VALUE_TIME_SERIES = 'vs';
     const string WORD = 'w';
@@ -170,8 +176,6 @@ class url_var
     const string CONTEXT = 'x'; // list of terms to describe the context used for the view
     const string TYPE = 'y'; // the type id of a form field
     const string STEP = 'z'; // the user process (proZess) step (e.g. show, to_confirm, confirmed)
-    const string BACK = '_'; // list of url targets for the back action
-    const string MSG = '9';
 
 
     /*
@@ -238,6 +242,7 @@ class url_var
     const string EMAIL_HUMAN = 'email';
     const string USER_PASSWORD_HUMAN = 'password';
     const string USER_PROFILE_HUMAN = 'user_profile';
+    const string USER_TYPE_HUMAN = 'user_type';
 
     // id & name
     //const string ID = 'id'; // repeated as comment from standard list above just to remember that it is the same as standard
@@ -308,6 +313,7 @@ class url_var
 
     // formula
     const string FORMULA_HUMAN = 'formula_id';
+    const string FORMULA_TYPE_HUMAN = 'formula_type';
     const string NEED_ALL_HUMAN = 'need_all_val';
     const string USER_EXPRESSION_HUMAN = 'formula_text';
     const string FORMULA_LINK_HUMAN = 'formula_link_id'; // to link a formula to a phrase
@@ -361,8 +367,9 @@ class url_var
 
     // system
     const string SYS_LOG_HUMAN = 'sys_log_id'; // the id of a system log entry e.g. of internal program errors
-    const string IP_HUMAN = 'ip_addr_id'; // the id of a system log entry e.g. of internal program errors
-    const string JOB_HUMAN = 'job_id'; // the id of a system log entry e.g. of internal program errors
+    const string IP_HUMAN = 'ip_addr_id'; // the id of an ip range to set rules
+    const string JOB_HUMAN = 'job_id'; // the id of a concrete job with start, status and end
+    const string JOB_TYPE_HUMAN = 'job_type'; // the id of the job type to link the functionality to the concrete job
 
     // access
     const string SHARE_HUMAN = 'share';
@@ -412,6 +419,7 @@ class url_var
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
+        [self::USER_TYPE_HUMAN, self::USER_TYPE],
 
         // id & name
         [self::ID, self::ID],
@@ -479,6 +487,7 @@ class url_var
 
         // formula
         [self::FORMULA_HUMAN, self::FORMULA],
+        [self::FORMULA_TYPE_HUMAN, self::FORMULA_TYPE],
         [self::USER_EXPRESSION_HUMAN, self::USER_EXPRESSION],
         [self::NEED_ALL_HUMAN, self::NEED_ALL],
         [self::FORMULA_LINK_HUMAN, self::FORMULA_LINK],
@@ -535,6 +544,7 @@ class url_var
         [self::SYS_LOG_HUMAN, self::SYS_LOG],
         [self::IP_HUMAN, self::IP],
         [self::JOB_HUMAN, self::JOB],
+        [self::JOB_TYPE_HUMAN, self::JOB_TYPE],
 
         // access
         [self::SHARE_HUMAN, self::SHARE],

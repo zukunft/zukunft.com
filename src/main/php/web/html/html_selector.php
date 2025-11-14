@@ -48,7 +48,7 @@ class html_selector
     public ?array $lst = null;      // list of objects from which the user can select
     public string $name = '';       // the HTML form field name
     public string $form = '';       // the name of the HTML form
-    public msg_id $label_id = msg_id::LABEL;  // the label of the HTML form
+    public msg_id $label_id = msg_id::LABEL;  // the message of for label of the HTML form that is translated to the frontend language
     public string $style = '';      // to add addition class information for the bootstrap version
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
