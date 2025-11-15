@@ -148,7 +148,7 @@ class test_words
         $wrd->set_type(phrase_type::SCALING, $this->env->usr1);
         $wrd->set_code_id(words::MATH, $this->env->usr_system);
         $wrd->plural = words::MATH_PLURAL;
-        $wrd->set_view_id(views::START_ID);
+        $wrd->set_view_id(views::MATH_CONST_ID);
         $wrd->set_usage(test_const::DUMMY_USAGE_WORD);
         $wrd->set_impact(test_const::DUMMY_IMPACT);
         $wrd->exclude();

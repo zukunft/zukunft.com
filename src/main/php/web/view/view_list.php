@@ -47,7 +47,11 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -58,12 +62,16 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_list extends list_dsp
@@ -80,13 +88,13 @@ class view_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new view_ui());
+        return parent::api_mapper_list($json_array, new view());
     }
 
-    function get_by_code_id(string $code_id): view_ui
+    function get_by_code_id(string $code_id): view|sandbox|IdObject|TextIdObject|CombineObject|null
     {
         // TODO use a hash list
-        $result = new view_ui();
+        $result = new view();
         foreach ($this->lst() as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
@@ -201,12 +209,44 @@ class view_list extends list_dsp
      * filter
      */
 
-    public function system_excluded(): view_list
+    public function ex_system(): view_list
+    {
+        return $this->ex_type(view_type::SYSTEM_TYPES);
+    }
+
+    public function ex_non_phrase(): view_list
+    {
+        return $this->ex_type(view_type::NON_PHRASE_TYPES);
+    }
+
+    /**
+     * excludes the views of the given types from the list
+     * @param array $typ_lst list of view_types
+     * @return view_list this list excluding the views of the given types
+     */
+    private function ex_type(array $typ_lst): view_list
     {
         $views = new view_list();
         foreach ($this->lst() as $msk) {
-            $code_id = $msk->code_id();
-            if (!in_array($code_id, views::SYSTEM_VIEWS)) {
+            $code_id = $msk->type_code_id();
+            if (!in_array($code_id, $typ_lst)) {
+                $views->add($msk);
+            }
+        }
+        return $views;
+    }
+
+    /**
+     * get only the views of the given type from the list
+     * @param string $typ the view_type to select the views
+     * @return view_list with the views of the given type
+     */
+    function only_type(string $typ): view_list
+    {
+        $views = new view_list();
+        foreach ($this->lst() as $msk) {
+            $code_id = $msk->type_code_id();
+            if ($code_id == $typ) {
                 $views->add($msk);
             }
         }

@@ -254,25 +254,25 @@ class views
 
     // default views
     // TODO easy add missing default views e.g. for formula
-    const string WORD = 'word';
+    const string WORD = 'word_default';
     const int WORD_ID = 88;
     const string WORD_NAME = 'Word';
-    const string VERB = 'verb';
+    const string VERB = 'verb_default';
     const int VERB_ID = 89;
     const string VERB_NAME = 'Verb';
-    const string TRIPLE = 'triple';
+    const string TRIPLE = 'triple_default';
     const int TRIPLE_ID = 90;
-    const string SOURCE = 'source';
+    const string SOURCE = 'source_default';
     const int SOURCE_ID = 91;
-    const string REF = 'ref';
+    const string REF = 'ref_default';
     const int REF_ID = 92;
-    const string LANGUAGE = 'language';
+    const string LANGUAGE = 'language_default';
     const int LANGUAGE_ID = 93;
-    const string VALUE = 'value';
+    const string VALUE = 'value_default';
     const int VALUE_ID = 94;
-    const string FORMULA = 'formula';
+    const string FORMULA = 'formula_default';
     const int FORMULA_ID = 95;
-    const string RESULT = 'result';
+    const string RESULT = 'result_default';
     const int RESULT_ID = 96;
 
     // base views for users
@@ -337,8 +337,6 @@ class views
     const string TEST_FORM_COM = 'system form to add a word';
     const string TEST_FORM = 'word_add';
     const int TEST_FORM_ID = 3;
-
-    const string VALUE_DISPLAY = 'Display Number';
 
     // TODO to be created
     const string WORD_LIST = 'word_list'; //
@@ -789,12 +787,12 @@ class views
     function system_to_base(string $msk_ci): string
     {
         return match ($msk_ci) {
-            self::WORD_ADD, self::WORD_EDIT, self::WORD_DEL => self::WORD_NAME,
-            self::VERB_ADD, self::VERB_EDIT, self::VERB_DEL => self::VERB_NAME,
+            self::WORD_ADD, self::WORD_EDIT, self::WORD_DEL => self::WORD,
+            self::VERB_ADD, self::VERB_EDIT, self::VERB_DEL => self::VERB,
             self::TRIPLE_ADD, self::TRIPLE_EDIT, self::TRIPLE_DEL => self::TRIPLE,
             self::SOURCE_ADD, self::SOURCE_EDIT, self::SOURCE_DEL => self::SOURCE,
             self::REF_ADD, self::REF_EDIT, self::REF_DEL => self::REF,
-            self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE_DISPLAY,
+            self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE,
             //self::GROUP_ADD, self::GROUP_EDIT, self::GROUP_DEL => self::GROUP,
             self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
             //self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
@@ -809,6 +807,11 @@ class views
         if (array_key_exists($code_id, $msk_codes)) {
             return $msk_codes[$code_id];
         } else {
+            if ($code_id != '') {
+                log_err('id for view code id ' . $code_id . ' not found');
+            } else {
+                log_warning('view code id is empty');
+            }
             return 0;
         }
     }
@@ -819,6 +822,7 @@ class views
         if (array_key_exists($id, $msk_ids)) {
             return $msk_ids[$id];
         } else {
+            log_err('code id for view id ' . $id . ' not found');
             return 0;
         }
     }

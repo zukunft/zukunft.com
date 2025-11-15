@@ -216,6 +216,18 @@ class view_base extends sandbox_code_id
         return $this->style_id;
     }
 
+    function type_code_id(): ?string
+    {
+        global $ui_cac;
+        $msk_typ_lst = $ui_cac->typ_lst_cache->html_view_types;
+        $id = $this->type_id();
+        if ($id != null) {
+            return $msk_typ_lst->get($this->type_id())?->code_id();
+        } else {
+            return '';
+        }
+    }
+
 
     /*
      * load
@@ -293,16 +305,16 @@ class view_base extends sandbox_code_id
      * * @return string the html code to select a component
      */
     function component_selector(
-        string $form,
-        string $pattern,
-        int $id,
+        string         $form,
+        string         $pattern,
+        int            $id,
         component_list $cmp_lst
     ): string
     {
         if ($pattern != '') {
             $cmp_lst->load_like($pattern);
         }
-        return $cmp_lst->selector($form, $id, url_var::COMPONENT,  msg_id::LABEL_COMPONENT_TYPE);
+        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::LABEL_COMPONENT_TYPE);
     }
 
     function log_err(string $msg): void

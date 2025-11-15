@@ -69,6 +69,7 @@ include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::VIEW . 'view_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -132,6 +134,7 @@ class word extends sandbox_code_id
      */
 
     // the language specific forms
+    // TODO make most ui vars public and check the mappings
     private ?string $plural = null;
 
     // the main parent phrase
@@ -139,9 +142,6 @@ class word extends sandbox_code_id
 
     // the impact used to sort the words
     private float $impact = 0.0;
-
-    // the default view
-    private ?view $msk = null;
 
 
     /*
@@ -163,11 +163,6 @@ class word extends sandbox_code_id
             } else {
                 $this->set_plural(null);
             }
-            if (array_key_exists(url_var::VIEW, $url_array)) {
-                if ($url_array[url_var::VIEW] != null) {
-                    $this->set_view_id($url_array[url_var::VIEW]);
-                }
-            }
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {
                     $this->impact = $url_array[url_var::IMPACT];
@@ -175,7 +170,7 @@ class word extends sandbox_code_id
             }
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 if ($url_array[url_var::VIEW] != null) {
-                    $this->set_view_id($url_array[url_var::VIEW]);
+                    $this->view_id = $url_array[url_var::VIEW];
                 }
             }
         }
@@ -276,19 +271,7 @@ class word extends sandbox_code_id
 
     function set_view_id(?int $view_id): void
     {
-        $msk = new view();
-        $msk->set_id($view_id);
-        $this->set_view($msk);
-    }
-
-    function set_view(?view $view): void
-    {
-        $this->msk = $view;
-    }
-
-    function view(): ?view
-    {
-        return $this->msk;
+        $this->view_id = $view_id;
     }
 
     /**
@@ -841,6 +824,7 @@ class word extends sandbox_code_id
         return $phr_lst->selector($form, $id, url_var::WORD, msg_id::LABEL_WORD);
     }
 
+
     /*
      * select
      */
@@ -912,6 +896,35 @@ class word extends sandbox_code_id
         }
         return $result;
     }
+
+
+    /*
+     * selectors
+     */
+
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_non_phrase();
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+    }
+
 
     /*
      * fixed

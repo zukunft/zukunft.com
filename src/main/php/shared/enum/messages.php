@@ -1336,6 +1336,7 @@ enum messages: string
 
     public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT = [
         self::LABEL_PHRASE_TYPE,
+        self::FORM_FIELD_SELECT_VIEW,
     ];
 
     /**

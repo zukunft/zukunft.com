@@ -54,7 +54,9 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -62,8 +64,10 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -72,6 +76,8 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -79,10 +85,19 @@ use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class list_dsp extends ListOfIdObjects
 {
+
+    // error return codes
+    const int CODE_ID_NOT_FOUND = -1;
+    // extra entry used in a selection to separate the highlighted entries from the sorted entries
+    const string SELECT_SEPARATOR = ' --- ';
+
+    private array $hash = []; // hash list with the code id for fast selection
 
     /*
      * construct and map
@@ -300,6 +315,37 @@ class list_dsp extends ListOfIdObjects
     }
 
     /**
+     * TODO Prio 1 easy move to a library function
+     * @returns array with the names on the db keys
+     */
+    function lst_key_sort_by_name(array $highlighted = []): array
+    {
+        $result = $this->lst_key();
+        natsort($result);
+
+        if (!empty($highlighted)) {
+            $highlightSet = array_flip($highlighted);
+            $final = [];
+            $remaining = [];
+            $separator = [];
+            $separator[0] = self::SELECT_SEPARATOR;
+
+            foreach ($result as $key => $val) {
+                if (isset($highlightSet[$val])) {
+                    $final[$key] = $val;
+                } else {
+                    $remaining[$key] = $val;
+                }
+            }
+
+            // Combine, keeping original keys
+            return $final + $separator + $remaining;
+        }
+
+        return $result;
+    }
+
+    /**
      * create the html code to show the entries below each other in a vertical list
      *
      * @return string the html code to show a useful numbers of list objects
@@ -311,6 +357,39 @@ class list_dsp extends ListOfIdObjects
             $names[] = $obj->name();
         }
         return implode(', ', $names);
+    }
+
+    /**
+     * return the database row id based on the code_id
+     *
+     * @param string $code_id
+     * @return int the database id for the given code_id
+     */
+    function id(string $code_id): int
+    {
+        $lib = new library();
+        $result = 0;
+        if ($code_id != '' and $code_id != null) {
+            if (array_key_exists($code_id, $this->hash)) {
+                $result = $this->hash[$code_id];
+            } else {
+                $result = self::CODE_ID_NOT_FOUND;
+                log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+        return $result;
+    }
+
+    /**
+     * get the type object by code id (just to shorten the code)
+     * @param string $code_id
+     * @return view|sandbox|IdObject|TextIdObject|CombineObject|null
+     */
+    function get_by_code_id(string $code_id): view|sandbox|IdObject|TextIdObject|CombineObject|null
+    {
+        return $this->get($this->id($code_id));
     }
 
 
@@ -345,7 +424,38 @@ class list_dsp extends ListOfIdObjects
     ): string
     {
         $sel = new html_selector();
-        $sel->lst = $this->lst_key();
+        if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
+            // TODO Prio 2 move $default to a function var
+            if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
+                $default = views::WORD;
+            } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
+                $default = view_type::VERB;
+            } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
+                $default = view_type::TRIPLE;
+            } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
+                $default = view_type::SOURCE;
+            } elseif ($form == views::REF_ADD or $form == views::REF_EDIT) {
+                $default = view_type::REF;
+            } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
+                $default = view_type::LANGUAGE;
+            } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
+                $default = view_type::VALUE;
+            } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
+                $default = view_type::FORMULA;
+            } elseif ($form == views::RESULT_ADD or $form == views::RESULT_EDIT) {
+                $default = view_type::RESULT;
+            } else {
+                $default = views::COMPLETE;
+            }
+            $std = $this->get_by_code_id($default);
+            if ($std != null) {
+                $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            } else {
+                $sel->lst = $this->lst_key_sort_by_name();
+            }
+        } else {
+            $sel->lst = $this->lst_key();
+        }
         $sel->name = $name;
         $sel->form = $form;
         $sel->selected = $selected;

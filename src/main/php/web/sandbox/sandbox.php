@@ -78,7 +78,7 @@ class sandbox extends db_object_dsp
     protected ?user_dsp $owner = null;
 
     // the id of the default view for this object
-    private ?int $view_id = null;
+    public ?int $view_id = null;
 
 
     /*
@@ -224,7 +224,7 @@ class sandbox extends db_object_dsp
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->system_excluded();
+        $msk_lst = $msk_lst->ex_system();
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

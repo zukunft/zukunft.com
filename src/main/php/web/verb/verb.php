@@ -41,17 +41,19 @@
 namespace Zukunft\ZukunftCom\main\php\web\verb;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -59,10 +61,13 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class verb extends sandbox_named
 {
@@ -283,6 +288,33 @@ class verb extends sandbox_named
     function name_link(?string $back = '', string $style = '', int $msk_id = views::VERB_ID): string
     {
         return parent::name_link($back, $style, $msk_id);
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a view usable for a source
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with all suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->only_type(view_type::VERB);
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
 

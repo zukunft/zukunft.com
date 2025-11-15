@@ -45,20 +45,24 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -213,6 +217,28 @@ class source extends sandbox_code_id
             $used_source_type_id = $typ_lst->html_source_types->default_id();
         }
         return $typ_lst->html_source_types->selector($form, $used_source_type_id);
+    }
+
+    /**
+     * create the HTML code to select a view usable for a source
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with all suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->only_type(view_type::SOURCE);
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
 }

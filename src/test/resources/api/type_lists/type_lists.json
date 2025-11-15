@@ -417,6 +417,60 @@
         "code_id": "export",
         "description": "export data to other pods or systems",
         "id": 10
+      },
+      {
+        "name": "for words only",
+        "code_id": "word",
+        "description": "only expected to be used for word objects",
+        "id": 11
+      },
+      {
+        "name": "for verbs only",
+        "code_id": "verb",
+        "description": "only expected to be used for verb objects",
+        "id": 12
+      },
+      {
+        "name": "for triples only",
+        "code_id": "triple",
+        "description": "only expected to be used for triple objects",
+        "id": 13
+      },
+      {
+        "name": "for sources only",
+        "code_id": "source",
+        "description": "only expected to be used for source objects",
+        "id": 14
+      },
+      {
+        "name": "for references only",
+        "code_id": "ref",
+        "description": "only expected to be used for ref objects",
+        "id": 15
+      },
+      {
+        "name": "for languages only",
+        "code_id": "language",
+        "description": "only expected to be used for language objects",
+        "id": 16
+      },
+      {
+        "name": "for values only",
+        "code_id": "value",
+        "description": "only expected to be used for value objects",
+        "id": 17
+      },
+      {
+        "name": "for formulas only",
+        "code_id": "formula",
+        "description": "only expected to be used for formula objects",
+        "id": 18
+      },
+      {
+        "name": "for results only",
+        "code_id": "result",
+        "description": "only expected to be used for result objects",
+        "id": 19
       }
     ],
     "view_styles": [
@@ -9684,17 +9738,6 @@
             "position_type": 2
           },
           {
-            "link_id": 147,
-            "id": 259,
-            "name": "system form triple weight",
-            "description": "the weight of a triple link",
-            "type_id": 150,
-            "code_id": "form_field_weight",
-            "ui_msg_code_id": "form_field_weight",
-            "position": 10,
-            "position_type": 2
-          },
-          {
             "link_id": 149,
             "id": 151,
             "name": "system form select view",
@@ -9704,6 +9747,17 @@
             "ui_msg_code_id": "system_form_select_view",
             "position": 10,
             "position_type": 1
+          },
+          {
+            "link_id": 147,
+            "id": 259,
+            "name": "system form triple weight",
+            "description": "the weight of a triple link",
+            "type_id": 150,
+            "code_id": "form_field_weight",
+            "ui_msg_code_id": "form_field_weight",
+            "position": 10,
+            "position_type": 2
           },
           {
             "link_id": 150,
@@ -16934,22 +16988,22 @@
             "position_type": 2
           },
           {
-            "link_id": 789,
-            "id": 214,
-            "name": "system formatter row right",
-            "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
-            "type_id": 33,
-            "code_id": "row_right",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 788,
             "id": 187,
             "name": "system show field description",
             "description": "the object description as read only",
             "type_id": 147,
             "code_id": "show_field_description",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 789,
+            "id": 214,
+            "name": "system formatter row right",
+            "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
+            "type_id": 33,
+            "code_id": "row_right",
             "position": 6,
             "position_type": 1
           },
@@ -17911,7 +17965,7 @@
         "name": "Sandbox",
         "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
         "usage": null,
-        "type_id": null,
+        "type_id": 7,
         "code_id": "sandbox",
         "components": [
           {
@@ -17942,7 +17996,7 @@
         "name": "Undo",
         "description": "show the last changes of the user and offer selective undo",
         "usage": null,
-        "type_id": null,
+        "type_id": 7,
         "code_id": "undo",
         "components": [
           {
@@ -17973,7 +18027,7 @@
         "name": "User Settings",
         "description": "to change the user settings",
         "usage": null,
-        "type_id": null,
+        "type_id": 7,
         "code_id": "user",
         "components": [
           {
@@ -18339,17 +18393,6 @@
             "position_type": 1
           },
           {
-            "link_id": 897,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 899,
             "id": 206,
             "name": "system form button export",
@@ -18357,6 +18400,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 897,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -18593,17 +18647,6 @@
             "position_type": 1
           },
           {
-            "link_id": 919,
-            "id": 203,
-            "name": "system form button save",
-            "description": "button to save the form field into the database",
-            "type_id": 29,
-            "code_id": "form_button_save",
-            "ui_msg_code_id": "form_button_save",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 921,
             "id": 206,
             "name": "system form button export",
@@ -18611,6 +18654,17 @@
             "type_id": 95,
             "code_id": "system_button_export",
             "ui_msg_code_id": "system_button_export",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 919,
+            "id": 203,
+            "name": "system form button save",
+            "description": "button to save the form field into the database",
+            "type_id": 29,
+            "code_id": "form_button_save",
+            "ui_msg_code_id": "form_button_save",
             "position": 8,
             "position_type": 1
           },
@@ -18860,16 +18914,16 @@
         "name": "Verb List",
         "description": "List all available ways how to link two words",
         "usage": null,
-        "type_id": null,
+        "type_id": 7,
         "code_id": "verbs",
         "components": []
       },
       {
         "id": 86,
-        "name": "complete",
+        "name": "Complete",
         "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
         "usage": null,
-        "type_id": 5,
+        "type_id": null,
         "code_id": "complete",
         "components": [
           {
@@ -18892,25 +18946,6 @@
             "position_type": 1
           },
           {
-            "link_id": 978,
-            "id": 278,
-            "name": "formula list",
-            "description": "list of formulas",
-            "type_id": 12,
-            "position": 2,
-            "position_type": 1
-          },
-          {
-            "link_id": 979,
-            "id": 237,
-            "name": "Export JSON",
-            "description": "export this word and the related value in the JSON format",
-            "type_id": 132,
-            "code_id": "export_json",
-            "position": 3,
-            "position_type": 1
-          },
-          {
             "link_id": 943,
             "id": 225,
             "name": "formulas list word",
@@ -18927,16 +18962,6 @@
             "description": "list of result related to this word",
             "type_id": 56,
             "code_id": "word_results",
-            "position": 4,
-            "position_type": 1
-          },
-          {
-            "link_id": 980,
-            "id": 238,
-            "name": "Export XML",
-            "description": "export this word and the related value in the XML format",
-            "type_id": 133,
-            "code_id": "export_xml",
             "position": 4,
             "position_type": 1
           },
@@ -18983,11 +19008,11 @@
       },
       {
         "id": 88,
-        "name": "Word",
+        "name": "Word (default)",
         "description": "the default view for words",
         "usage": null,
-        "type_id": null,
-        "code_id": "word",
+        "type_id": 11,
+        "code_id": "word_default",
         "components": [
           {
             "link_id": 948,
@@ -19014,8 +19039,8 @@
         "name": "Verb",
         "description": "the default view for verbs",
         "usage": null,
-        "type_id": null,
-        "code_id": "verb",
+        "type_id": 12,
+        "code_id": "verb_default",
         "components": [
           {
             "link_id": 950,
@@ -19042,8 +19067,8 @@
         "name": "Triple",
         "description": "the default view for triples",
         "usage": null,
-        "type_id": null,
-        "code_id": "triple",
+        "type_id": 13,
+        "code_id": "triple_default",
         "components": [
           {
             "link_id": 952,
@@ -19070,8 +19095,8 @@
         "name": "Source",
         "description": "the default view for sources",
         "usage": null,
-        "type_id": null,
-        "code_id": "source",
+        "type_id": 14,
+        "code_id": "source_default",
         "components": [
           {
             "link_id": 954,
@@ -19098,8 +19123,8 @@
         "name": "Reference",
         "description": "the default view for references",
         "usage": null,
-        "type_id": null,
-        "code_id": "ref",
+        "type_id": 15,
+        "code_id": "ref_default",
         "components": [
           {
             "link_id": 956,
@@ -19126,8 +19151,8 @@
         "name": "Language",
         "description": "the default view for languages",
         "usage": null,
-        "type_id": null,
-        "code_id": "language",
+        "type_id": 16,
+        "code_id": "language_default",
         "components": [
           {
             "link_id": 958,
@@ -19154,8 +19179,8 @@
         "name": "Display Number",
         "description": "the default view for values",
         "usage": null,
-        "type_id": null,
-        "code_id": "value",
+        "type_id": 17,
+        "code_id": "value_default",
         "components": [
           {
             "link_id": 960,
@@ -19173,8 +19198,8 @@
         "name": "Formula",
         "description": "Show a formula and the related results and words",
         "usage": null,
-        "type_id": null,
-        "code_id": "formula",
+        "type_id": 18,
+        "code_id": "formula_default",
         "components": [
           {
             "link_id": 961,
@@ -19209,8 +19234,8 @@
         "name": "Result",
         "description": "the default view for results",
         "usage": null,
-        "type_id": null,
-        "code_id": "result",
+        "type_id": 19,
+        "code_id": "result_default",
         "components": [
           {
             "link_id": 964,
@@ -19262,7 +19287,7 @@
       },
       {
         "id": 98,
-        "name": "science",
+        "name": "Science",
         "description": "show mainly related words that are relevant in sciences",
         "usage": null,
         "type_id": null,
@@ -19325,7 +19350,7 @@
       },
       {
         "id": 105,
-        "name": "math const",
+        "name": "Mathematical constance",
         "description": "Show a mathematical constance and the related words and formulas",
         "usage": null,
         "type_id": null,

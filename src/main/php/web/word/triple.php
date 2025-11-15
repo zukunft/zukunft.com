@@ -56,6 +56,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
+//include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -628,5 +630,31 @@ class triple extends sandbox_code_id
         return $result;
     }
 
+    /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_non_phrase();
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+    }
 
 }

@@ -110,7 +110,7 @@ SELECT word_update_log_0022224322222
         null::smallint,
         85::smallint,
         ''::text,
-        1::bigint,
+        105::bigint,
         null::text,
         null::bigint,
         13::smallint,

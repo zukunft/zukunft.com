@@ -107,7 +107,7 @@ SELECT word_update_log_0022224322222
         null,
         85,
         '',
-        1,
+        105,
         null,
         null,
         13,

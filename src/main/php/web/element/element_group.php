@@ -96,7 +96,7 @@ class element_group extends list_dsp
     }
 
     // TODO handle multi entry cases if needed
-    function id(): int
+    function id(string $code_id): int
     {
         if (count($this->lst()) == 1) {
             return $this->lst()[0]->obj->id();

@@ -6088,6 +6088,7 @@
       "name": "Sandbox",
       "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
       "code_id": "sandbox",
+      "type": "system",
       "components": [
         {
           "position": "1",
@@ -6103,6 +6104,7 @@
       "name": "Undo",
       "description": "show the last changes of the user and offer selective undo",
       "code_id": "undo",
+      "type": "system",
       "components": [
         {
           "position": "1",
@@ -6118,6 +6120,7 @@
       "name": "User Settings",
       "description": "to change the user settings",
       "code_id": "user",
+      "type": "system",
       "components": [
         {
           "position": "1",
@@ -6497,10 +6500,11 @@
     {
       "name": "Verb List",
       "description": "List all available ways how to link two words",
-      "code_id": "verbs"
+      "code_id": "verbs",
+      "type": "system"
     },
     {
-      "name": "complete",
+      "name": "Complete",
       "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "code_id": "complete",
       "components": [

@@ -350,7 +350,7 @@ class words
     const string SALES = 'sales';
     const int SALES_ID = 280;
     const string CASH = 'cash';
-    const int CASH_ID = 282;
+    const int CASH_ID = 281;
     const string STATEMENT = 'statement';
     const int STATEMENT_ID = 282;
     const string PARTS = 'parts';
