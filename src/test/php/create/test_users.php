@@ -93,6 +93,14 @@ class test_users
         return $usr;
     }
 
+    function user_dev(): user
+    {
+        $usr = new user();
+        $usr->set(users::DEV_ID, users::DEV_NAME, users::DEV_EMAIL);
+        $usr->set_profile(user_profiles::DEV);
+        return $usr;
+    }
+
     /**
      * @return user the system user for the database updates
      */

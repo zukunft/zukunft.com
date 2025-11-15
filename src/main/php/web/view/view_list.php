@@ -33,27 +33,14 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\ref\source;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';
-include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
-include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -63,6 +50,21 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_list extends list_dsp
 {
@@ -78,13 +80,13 @@ class view_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new view_dsp());
+        return parent::api_mapper_list($json_array, new view_ui());
     }
 
-    function get_by_code_id(string $code_id): view_dsp
+    function get_by_code_id(string $code_id): view_ui
     {
         // TODO use a hash list
-        $result = new view_dsp();
+        $result = new view_ui();
         foreach ($this->lst() as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
@@ -195,10 +197,48 @@ class view_list extends list_dsp
         };
     }
 
+    /*
+     * filter
+     */
+
+    public function system_excluded(): view_list
+    {
+        $views = new view_list();
+        foreach ($this->lst() as $msk) {
+            $code_id = $msk->code_id();
+            if (!in_array($code_id, views::SYSTEM_VIEWS)) {
+                $views->add($msk);
+            }
+        }
+        return $views;
+    }
+
 
     /*
      * select
      */
+
+    /**
+     * add the view list default values to the selector function
+     *
+     * @param string $form the html form name which must be unique within the html page
+     * @param int|string|null $selected the unique database id of the object that has been selected
+     * @param string $name the name of this selector which must be unique within the form
+     * @param msg_id $label_id the text show to the user
+     * @param string $style the formatting code to adjust the formatting
+     * @returns string the html code to select a word from this list
+     */
+    function selector(
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = url_var::VIEW,
+        msg_id          $label_id = msg_id::FORM_FIELD_SELECT_VIEW,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
+    ): string
+    {
+        return parent::selector($form, $selected, $name, $label_id, $style, $type);
+    }
 
     /**
      * create a selection page where the user can select a view that should be used for a view

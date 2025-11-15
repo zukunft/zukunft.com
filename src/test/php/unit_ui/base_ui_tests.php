@@ -314,7 +314,7 @@ class base_ui_tests
         $result = (new button($url, $back))->del(msg_id::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
-        $url = $html->url(views::WORD);
+        $url = $html->url(views::WORD_NAME);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
         $result = (new button($url, $back))->undo(msg_id::UNDO);

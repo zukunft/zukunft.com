@@ -353,6 +353,27 @@
       "ui_msg_code_id": "form_title_admin_user_del"
     },
     {
+      "name": "system form title admin add language",
+      "description": "show the language specific title for the system admin form to add a language",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_add_language",
+      "ui_msg_code_id": "form_title_admin_add_language"
+    },
+    {
+      "name": "system form title admin edit language",
+      "description": "show the language specific title for the system admin form to change a language",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_edit_language",
+      "ui_msg_code_id": "form_title_admin_edit_language"
+    },
+    {
+      "name": "system form title admin del language",
+      "description": "show the language specific title for the system admin form to delete or exclude a language",
+      "type": "system_form_title",
+      "code_id": "form_title_admin_del_language",
+      "ui_msg_code_id": "form_title_admin_del_language"
+    },
+    {
       "name": "system form title confirm add",
       "description": "show the language specific title for the system form to confirm adding a new entry",
       "type": "system_form_title",
@@ -786,6 +807,20 @@
       "type": "admin_form_field_user_password",
       "code_id": "form_field_user_password",
       "ui_msg_code_id": "form_field_user_password"
+    },
+    {
+      "name": "admin form field language symbol",
+      "description": "form field for admin users only to add or change the language name",
+      "type": "admin_form_field_language_symbol",
+      "code_id": "form_field_language_symbol",
+      "ui_msg_code_id": "form_field_language_symbol"
+    },
+    {
+      "name": "show field language symbol",
+      "description": "show language name",
+      "type": "field_language_symbol",
+      "code_id": "field_language_symbol",
+      "ui_msg_code_id": "field_language_symbol"
     },
     {
       "name": "system form field name",
@@ -4882,199 +4917,6 @@
       ]
     },
     {
-      "name": "Add formula link",
-      "description": "Create a new link between a formula and a phrase",
-      "code_id": "formula_link_add",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title formula link add"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select formula",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select phrase",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system form select formula link type",
-          "position_type": "side"
-        },
-        {
-          "position": "8",
-          "name": "system form formula link priority"
-        },
-        {
-          "position": "9",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "10",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "12",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "13",
-          "name": "system form button save"
-        },
-        {
-          "position": "14",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Change formula link",
-      "description": "Change a link between a formula and a phrase",
-      "code_id": "formula_link_edit",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title formula link edit"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select formula",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select phrase",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form field description"
-        },
-        {
-          "position": "7",
-          "name": "system form select formula link type",
-          "position_type": "side"
-        },
-        {
-          "position": "8",
-          "name": "system form formula link priority"
-        },
-        {
-          "position": "9",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "10",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "12",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "13",
-          "name": "system form button save"
-        },
-        {
-          "position": "14",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Delete formula link",
-      "description": "To confirm the exclusion or deleting of a formula link",
-      "code_id": "formula_link_del",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title formula link del"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system show field formula name"
-        },
-        {
-          "position": "5",
-          "name": "system show field phrase name"
-        },
-        {
-          "position": "6",
-          "name": "system show result diff list"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button del"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
       "name": "Add view relation",
       "description": "Create a new relation between two views",
       "code_id": "view_relation_add",
@@ -5293,6 +5135,199 @@
       ]
     },
     {
+      "name": "Add formula link",
+      "description": "Create a new link between a formula and a phrase",
+      "code_id": "formula_link_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula link add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select formula",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form select phrase",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form select formula link type",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form formula link priority"
+        },
+        {
+          "position": "9",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "10",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "12",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "13",
+          "name": "system form button save"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change formula link",
+      "description": "Change a link between a formula and a phrase",
+      "code_id": "formula_link_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula link edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select formula",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form select phrase",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form select formula link type",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form formula link priority"
+        },
+        {
+          "position": "9",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "10",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "12",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "13",
+          "name": "system form button save"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete formula link",
+      "description": "To confirm the exclusion or deleting of a formula link",
+      "code_id": "formula_link_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula link del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field formula name"
+        },
+        {
+          "position": "5",
+          "name": "system show field phrase name"
+        },
+        {
+          "position": "6",
+          "name": "system show result diff list"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
       "name": "Admin add user",
       "description": "View for administrators to create a new user",
       "code_id": "admin_user_add",
@@ -5427,6 +5462,164 @@
           "position": "5",
           "name": "admin form field user email",
           "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add language",
+      "description": "Add a language by an admin user",
+      "code_id": "language_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin add language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "admin form field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "8",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "9",
+          "name": "system form button save"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change language",
+      "description": "Change a language name or symbol by an admin user",
+      "code_id": "language_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin edit language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "admin form field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete language",
+      "description": "View for administrators to delete a language",
+      "code_id": "language_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title admin del language"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "show field language symbol",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system show field description"
         },
         {
           "position": "6",
@@ -6309,6 +6502,7 @@
     {
       "name": "complete",
       "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
+      "code_id": "complete",
       "components": [
         {
           "position": "1",

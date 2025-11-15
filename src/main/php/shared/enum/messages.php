@@ -1126,6 +1126,9 @@ enum messages: string
     case ADMIN_FORM_USED_ADD_TITLE = 'form_title_admin_user_add';
     case ADMIN_FORM_USED_EDIT_TITLE = 'form_title_admin_user_edit';
     case ADMIN_FORM_USED_DEL_TITLE = 'form_title_admin_user_del';
+    case ADMIN_FORM_ADD_LANGUAGE_TITLE = 'form_title_admin_add_language';
+    case ADMIN_FORM_EDIT_LANGUAGE_TITLE = 'form_title_admin_edit_language';
+    case ADMIN_FORM_DEL_LANGUAGE_TITLE = 'form_title_admin_del_language';
     case FORM_TITLE_CONFIRM_ADD = 'form_title_confirm_add';
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
@@ -1173,6 +1176,8 @@ enum messages: string
     case FORM_FIELD_USERNAME = 'form_field_username';
     case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
     case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
+    case FORM_FIELD_LANGUAGE_SYMBOL = 'form_field_language_symbol';
+    case FIELD_LANGUAGE_SYMBOL = 'field_language_symbol';
     case FORM_FIELD_NAME = 'form_field_name';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
     case FORM_FIELD_TYPE = 'form_field_type';

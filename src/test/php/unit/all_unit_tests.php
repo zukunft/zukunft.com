@@ -62,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
 use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit_read\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
@@ -99,7 +100,7 @@ class all_unit_tests extends test_cleanup
 
         // prepare the unit tests
         $tl = new test_lib();
-        $tl->ui_test_cache($this->usr1, $this);
+        $tl->ui_test_cache($this->usr_dev, $this);
         $u_env = new unit_env();
         $u_env->init_unit_tests();
 
@@ -204,6 +205,7 @@ class all_unit_tests extends test_cleanup
     private function users_for_unit_tests(): void
     {
         global $usr;
+        // TODO Prio 1 remove global system user for security reasons
         global $usr_sys;
 
         // create a dummy user for testing
@@ -217,6 +219,9 @@ class all_unit_tests extends test_cleanup
         $usr_sys = new user;
         $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
+
+        $t_usr = new test_users();
+        $this->usr_dev = $t_usr->user_dev();
 
     }
 

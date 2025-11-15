@@ -58,6 +58,7 @@ class language extends sandbox_typed
      */
 
     private ?string $url;
+    public string $symbol;
 
 
     /*

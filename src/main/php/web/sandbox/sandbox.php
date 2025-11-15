@@ -224,6 +224,7 @@ class sandbox extends db_object_dsp
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
+        $msk_lst = $msk_lst->system_excluded();
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

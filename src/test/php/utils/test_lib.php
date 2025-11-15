@@ -165,6 +165,7 @@ class test_lib
      * create the frontend cache and fill it with all entries for the unit tests
      * TODO use it for the global ui_cac var
      * @param user $usr the user for which the sample cache should be created
+     *                  for unit tests a user that is allowed to import code-ids should be used
      * @param test_cleanup $t the test environment e.g. the collect the errors
      * @return data_object_ui
      */
@@ -174,12 +175,14 @@ class test_lib
 
         $dto_dsp = new data_object_ui();
         $dto_dsp->usr = $this->cast_user($usr);
+        $dto_base_dsp = new data_object_ui();
+        $dto_base_dsp->usr = $this->cast_user($usr);
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
         $dto_dsp->typ_lst_cache = new type_lists($api_msg);
 
-        // import system views from resource json file
+        // import system views from resource json file so that not all details need to be repeated in the test data creation class
         $imp = new import();
         $imp->usr = $usr;
         $json_str = file_get_contents(files::SYSTEM_VIEWS);
@@ -188,6 +191,18 @@ class test_lib
         $usr_msg = new backend_user_message();
         $dto = $imp->get_data_object($json_array, $usr_msg, $size);
         $dto_dsp->set_view_list($this->cast_view_list($dto->view_list()));
+        // add the view id because the import does not include the database id
+        $dto_dsp->add_id_to_views();
+        // import the base views
+        $json_str = file_get_contents(files::BASE_VIEWS);
+        $size = strlen($json_str);
+        $json_array = json_decode($json_str, true);
+        $usr_msg = new backend_user_message();
+        $dto_base = $imp->get_data_object($json_array, $usr_msg, $size);
+        $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
+        // add the view id because the import does not include the database id
+        $dto_base_dsp->add_id_to_views();
+        $dto_dsp->merge_view_list($dto_base_dsp->view_list());
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);

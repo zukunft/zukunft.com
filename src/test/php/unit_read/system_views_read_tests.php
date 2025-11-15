@@ -89,11 +89,11 @@ class system_views_read_tests
         $cfg->set_view_list($t_msk->view_list_dsp());
         $cfg->set_component_list($t_cmp->component_list_dsp());
         // create the test pages
-        $t->assert_view(views::WORD_CODE_ID, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::VERB_CODE_ID, $t->usr1, new verb(), 1, $cfg);
+        $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1, $cfg);

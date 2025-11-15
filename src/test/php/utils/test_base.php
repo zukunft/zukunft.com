@@ -147,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Exception;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -408,6 +409,7 @@ class test_base
     public user $usr_signup; // the system user to add new users to the database
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_system; // a user with the system profile to test allow of system functionality
+    public user $usr_dev; // a virtual development user that is allowed to set the code id
 
     private float $exe_start_time; // time when the test run has started (end the end time of all tests)
     private float $section_start_time; // time when the test section has been started
@@ -478,6 +480,9 @@ class test_base
 
         $this->usr_signup = new user();
         $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
+
+        $t_usr = new test_users();
+        $this->usr_dev = $t_usr->user_dev();
 
     }
 
@@ -3644,13 +3649,8 @@ class test_base
         sandbox_list_named               $lst
     ): bool
     {
-        // convert to a key value array
-        $in_lst = [];
-        foreach ($id_lst as $item) {
-            $in_lst[$item[0]] = $item[1];
-        }
-        natcasesort($in_lst);
-        $names = array_values($in_lst);
+        natcasesort($id_lst);
+        $names = array_values($id_lst);
 
         // load list by the names to get the ids
         if ($sbx::class == view::class) {
@@ -3668,9 +3668,9 @@ class test_base
         natcasesort($db_lst);
 
         $result = '';
-        if ($db_lst != $in_lst) {
+        if ($db_lst != $id_lst) {
             $lib = new library();
-            $result = $lib->diff_msg($in_lst, $db_lst);
+            $result = $lib->diff_msg($id_lst, $db_lst);
             if ($result != '') {
                 log_warning($test_name . 'diff is:' . $result);
             }
@@ -4240,6 +4240,7 @@ class test_base
     {
         return file_exists(test_paths::RESOURCE . $test_resource_path);
     }
+
 
     /*
      * overwrites

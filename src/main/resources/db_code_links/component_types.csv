@@ -177,3 +177,5 @@ component_type_id, type_name, description, code_id
 176, 'system field child view', 'show the name of the child view e.g. of a view relation', 'system_show_child_view'
 177, 'system field relation type', 'show the view relation type', 'system_show_view_relation_type'
 178, 'system field view modification start position', 'show the position where the modification should start', 'system_show_view_start_pos'
+179, 'admin form field language symbol', 'form field for admin users only to add or change the language symbol', 'admin_form_field_language_symbol'
+180, 'field language symbol', 'show the language symbol', 'field_language_symbol'

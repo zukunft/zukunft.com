@@ -49,6 +49,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'view_style_list.php';
@@ -73,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
@@ -174,6 +176,28 @@ class system_form extends component
             $dbo->password(),
             html_base::INPUT_PASSWORD);
     }
+
+    /**
+     * @return string the html code so that an admin can overwrite the language symbol
+     */
+    function admin_form_language_symbol(language|db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->input(
+            url_var::LANGUAGE_SYMBOL,
+            msg_id::FORM_FIELD_LANGUAGE_SYMBOL,
+            $dbo->symbol,
+            html_base::INPUT_TEXT);
+    }
+
+    /**
+     * @return string the html code to show the language symbol
+     */
+    function show_language_symbol(language|db_object_dsp $dbo): string
+    {
+        return $dbo->symbol;
+    }
+
 
     /**
      * show the name of an object to the user

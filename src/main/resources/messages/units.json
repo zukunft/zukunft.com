@@ -2379,7 +2379,8 @@
   "views": [
     {
       "name": "base units",
-      "comment": "view the base units with the formulas",
+      "description": "view the base units with the formulas",
+      "code_id": "base_units",
       "type": "detail_view",
       "components": [
         {

@@ -520,7 +520,7 @@ class frontend
                             $view_id = $dbo->calc_view_id();
                             if ($view_id <= 0) {
                                 // if no one has set a view for this word, use the fallback view
-                                $msk = $this->dto->typ_lst_cache->get_view(views::WORD);
+                                $msk = $this->dto->typ_lst_cache->get_view(views::WORD_NAME);
                                 $view_id = $msk->id();
                             }
                         }

@@ -50,6 +50,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class data_object
@@ -265,6 +267,15 @@ class data_object
     }
 
     /**
+     * set the view_list of this data object
+     * @param view_list $msk_lst
+     */
+    function merge_view_list(view_list $msk_lst): void
+    {
+        $this->msk_lst->merge($msk_lst);
+    }
+
+    /**
      * @return view_list with the views of this data object
      */
     function view_list(): view_list
@@ -365,4 +376,26 @@ class data_object
         return $this->chg_log;
     }
 
+
+    /*
+     * fill
+     */
+
+    /**
+     * add the database id of the known test views to view list
+     * @return void
+     */
+    function add_id_to_views(): void
+    {
+        $views = new views();
+        $msk_lst = $this->msk_lst;
+        foreach ($msk_lst->lst() as $msk) {
+            if ($msk->id == 0) {
+                $code_id = $msk->code_id();
+                if ($code_id != null) {
+                    $msk->id = $views->code_id_to_id($code_id);
+                }
+            }
+        }
+    }
 }

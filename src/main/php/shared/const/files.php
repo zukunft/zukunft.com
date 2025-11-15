@@ -59,6 +59,8 @@ class files
     // the system views as a zukunft.com user import json
     const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
     const string SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
+    const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
+    const string BASE_VIEWS = self::MESSAGE_PATH . self::BASE_VIEWS_FILE;
     const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
 }

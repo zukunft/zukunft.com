@@ -151,6 +151,7 @@ class url_var
     const string UNLINK_PHRASE = 'p-';
     const string LANGUAGE = 'q'; // the id of a language (q like question)
     const string LANGUAGE_FORM = 'qf';
+    const string LANGUAGE_SYMBOL = 'qs';
     const string RESULT = 'r';
     const string SHARE = 's'; // the share id of the sandbox object
     const string SOURCE = 'so';
@@ -255,6 +256,7 @@ class url_var
 
     // language
     const string LANGUAGE_HUMAN = 'language';
+    const string LANGUAGE_SYMBOL_HUMAN = 'languageSymbol';
     const string LANGUAGE_FORM_HUMAN = 'languageForm';
     const string PLURAL_HUMAN = 'plural';
 
@@ -433,6 +435,7 @@ class url_var
         // language
         [self::LANGUAGE_HUMAN, self::LANGUAGE],
         [self::LANGUAGE_FORM_HUMAN, self::LANGUAGE_FORM],
+        [self::LANGUAGE_SYMBOL_HUMAN, self::LANGUAGE_SYMBOL],
         [self::PLURAL_HUMAN, self::PLURAL],
 
         // type
