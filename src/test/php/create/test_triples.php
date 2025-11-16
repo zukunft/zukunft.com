@@ -109,7 +109,7 @@ class test_triples
         $trp = $this->triple();
         $trp->name_given = triples::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
-        $trp->set_view_id(views::START_ID);
+        $trp->set_view_id(views::MATH_CONST_ID);
         $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
         $trp->set_impact(triples::SYSTEM_TEST_ADD_IMPACT);
         $trp->exclude();

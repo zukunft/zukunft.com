@@ -73,7 +73,7 @@ class component_type
     const int FORM_FIELD_DESCRIPTION_ID = 22;
 
     // select object fields
-    const string FORM_SELECT_PHRASE = "system_form_select_phrase";
+    const string FORM_SELECT_PHRASE = "form_select_phrase";
     const int FORM_SELECT_PHRASE_ID = 23;
     const string FORM_SELECT_PHRASES = "system_form_select_multi_phrases";
     const int FORM_SELECT_PHRASES_ID = 75;
@@ -127,7 +127,7 @@ class component_type
     const int FORM_PROTECTION_TYPE_ID = 27;
 
     // select object types
-    const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
+    const string FORM_SELECT_PHRASE_TYPE = "form_select_phrase_type";
     const int FORM_SELECT_PHRASE_TYPE_ID = 25;
     const string LIST_VIEWS = "view_list";
     const int LIST_VIEWS_ID = 122;

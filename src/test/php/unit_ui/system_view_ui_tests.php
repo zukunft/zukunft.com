@@ -134,9 +134,9 @@ class system_view_ui_tests
                 parse_str($url_part["query"], $url_array);
                 $usr_dsp = $tl->cast_user($t->usr1);
                 // TODO Prio 0 remove temp
-                //if ($id == 27) {
-                //    log_info('group add');
-                //}
+                if ($id == 9) {
+                    log_info('triple add');
+                }
                 $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
                 $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
                 // create the filename of the expected result

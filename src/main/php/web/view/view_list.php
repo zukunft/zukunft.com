@@ -34,12 +34,17 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SYSTEM . 'language.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
@@ -55,12 +60,17 @@ include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -201,9 +211,15 @@ class view_list extends list_dsp
             verb::class => views::VERB_ID,
             triple::class => views::TRIPLE_ID,
             source::class => views::SOURCE_ID,
+            ref::class => views::REF_ID,
+            language::class => views::LANGUAGE_ID,
+            value::class => views::VALUE_ID,
+            formula::class => views::FORMULA_ID,
+            result::class => views::RESULT_ID,
             default => views::START_ID
         };
     }
+
 
     /*
      * filter

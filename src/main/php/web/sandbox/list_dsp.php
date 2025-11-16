@@ -429,21 +429,21 @@ class list_dsp extends ListOfIdObjects
             if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
                 $default = views::WORD;
             } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
-                $default = view_type::VERB;
+                $default = views::VERB;
             } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
-                $default = view_type::TRIPLE;
+                $default = views::TRIPLE;
             } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
-                $default = view_type::SOURCE;
+                $default = views::SOURCE;
             } elseif ($form == views::REF_ADD or $form == views::REF_EDIT) {
-                $default = view_type::REF;
+                $default = views::REF;
             } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
-                $default = view_type::LANGUAGE;
+                $default = views::LANGUAGE;
             } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
-                $default = view_type::VALUE;
+                $default = views::VALUE;
             } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
-                $default = view_type::FORMULA;
+                $default = views::FORMULA;
             } elseif ($form == views::RESULT_ADD or $form == views::RESULT_EDIT) {
-                $default = view_type::RESULT;
+                $default = views::RESULT;
             } else {
                 $default = views::COMPLETE;
             }

@@ -594,7 +594,7 @@
       },
       {
         "name": "form select phrase",
-        "code_id": "system_form_select_phrase",
+        "code_id": "form_select_phrase",
         "description": "the form field to select one word or triple",
         "id": 23
       },
@@ -606,7 +606,7 @@
       },
       {
         "name": "form field phrase type",
-        "code_id": "system_form_select_phrase_type",
+        "code_id": "form_select_phrase_type",
         "description": "the phrase type field in a form",
         "id": 25
       },
@@ -9242,7 +9242,7 @@
             "name": "system form triple phrase from",
             "description": "selector for the from phrase of a triple",
             "type_id": 23,
-            "code_id": "form_field_triple_phrase_from",
+            "code_id": "form_select_phrase_from",
             "ui_msg_code_id": "form_select_phrase_from",
             "position": 7,
             "position_type": 1
@@ -9264,7 +9264,7 @@
             "name": "system form triple phrase to",
             "description": "selector for the to phrase of a triple",
             "type_id": 23,
-            "code_id": "form_field_triple_phrase_to",
+            "code_id": "form_select_phrase_to",
             "ui_msg_code_id": "form_select_phrase_to",
             "position": 9,
             "position_type": 2
@@ -9456,7 +9456,7 @@
             "name": "system form triple phrase from",
             "description": "selector for the from phrase of a triple",
             "type_id": 23,
-            "code_id": "form_field_triple_phrase_from",
+            "code_id": "form_select_phrase_from",
             "ui_msg_code_id": "form_select_phrase_from",
             "position": 8,
             "position_type": 1
@@ -9489,7 +9489,7 @@
             "name": "system form triple phrase to",
             "description": "selector for the to phrase of a triple",
             "type_id": 23,
-            "code_id": "form_field_triple_phrase_to",
+            "code_id": "form_select_phrase_to",
             "ui_msg_code_id": "form_select_phrase_to",
             "position": 11,
             "position_type": 2
@@ -14727,8 +14727,8 @@
             "name": "system form select phrase",
             "description": "select one word or triple",
             "type_id": 23,
-            "code_id": "system_form_select_phrase",
-            "ui_msg_code_id": "system_form_select_phrase",
+            "code_id": "form_select_phrase",
+            "ui_msg_code_id": "form_select_phrase",
             "position": 5,
             "position_type": 2
           },
@@ -14897,8 +14897,8 @@
             "name": "system form select phrase",
             "description": "select one word or triple",
             "type_id": 23,
-            "code_id": "system_form_select_phrase",
-            "ui_msg_code_id": "system_form_select_phrase",
+            "code_id": "form_select_phrase",
+            "ui_msg_code_id": "form_select_phrase",
             "position": 5,
             "position_type": 2
           },

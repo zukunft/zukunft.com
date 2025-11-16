@@ -724,12 +724,12 @@ class system_form extends component
 
     /**
      * create the HTML code to select a word or triple
-     * selected by the component type system_form_select_phrase
-     * in this case there can be more than only component with the type system_form_select_phrase
+     * selected by the component type form_select_phrase
+     * in this case there can be more than only component with the type form_select_phrase
      * all are used to select a phrase
      * but depending on the code_id different url fields and labels are used
      *
-     * TODO move form_field_triple_phrase_to to a const
+     * TODO move form_select_phrase_to to a const
      * TODO remove fixed pattern
      *
      * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now

@@ -130,7 +130,7 @@
       ]
     },
     {
-      "name": "Triple",
+      "name": "Triple (default)",
       "description": "the default view for triples",
       "code_id": "triple_default",
       "type": "triple",

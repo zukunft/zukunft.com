@@ -75,8 +75,8 @@ class components
 
     // triple only fields
     const string FORM_WEIGHT = 'form_field_weight';
-    const string FORM_PHRASE_FROM_CODE_ID = 'form_field_triple_phrase_from';
-    const string FORM_PHRASE_TO_CODE_ID = 'form_field_triple_phrase_from';
+    const string FORM_PHRASE_FROM_CODE_ID = 'form_select_phrase_from';
+    const string FORM_PHRASE_TO_CODE_ID = 'form_select_phrase_to';
 
     // component only fields
     const string FORM_PHRASE_ROW = 'form_field_select_phrase_row';
@@ -84,7 +84,7 @@ class components
     const string FORM_PHRASE_COL_SUB = 'form_field_select_phrase_col_sub';
 
     // ref only fields
-    const string FORM_PHRASE_REF_CODE_ID = 'form_field_triple_phrase_ref';
+    const string FORM_PHRASE_REF_CODE_ID = 'form_select_phrase_ref';
 
     const string FORM_SHARE_TYPE = 'form_field_share_type';
     const string FORM_SHARE_TYPE_NAME = 'form field share type';

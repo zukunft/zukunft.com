@@ -129,8 +129,10 @@ class triple extends sandbox_code_id
      */
 
     /**
+     * TODO add the cache object and use it to get linked objects
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
+     *
      * @param array $url_array an array based on $_GET from a form submit
      * @return user_message ok or a warning e.g. if the server version does not match
      */

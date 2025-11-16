@@ -194,14 +194,14 @@ enum messages: string
     case LABEL = 'name';
     // the label for type selections
     case LABEL_WORD = 'word';
-    case LABEL_VERB = 'verb';
+    case LABEL_VERB = 'system_form_select_verb';
     // the label for style selections
     case LABEL_STYLE = 'style';
     case LABEL_SOURCE = 'source';
     case LABEL_VIEW = 'view';
-    case LABEL_PHRASE = 'word / triple';
-    case LABEL_PHRASE_FROM = 'from word / triple';
-    case LABEL_PHRASE_TO = 'to word / triple';
+    case LABEL_PHRASE = 'form_select_phrase';
+    case LABEL_PHRASE_FROM = 'form_select_phrase_from';
+    case LABEL_PHRASE_TO = 'form_select_phrase_to';
     case LABEL_PHRASE_ROW = 'take rows from';
     case LABEL_PHRASE_COL = 'take columns from';
     case LABEL_PHRASE_COL_SUB = 'take sub columns from';
@@ -1077,6 +1077,12 @@ enum messages: string
     case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
 
+    // TODO Prio 0 easy change the const names to
+    //             FORM_* for all system form components
+    //             FORM_TITLE_* for the form title that is translated
+    //             FORM_FIELD_* for the test input form field label of that is translated
+    //             FORM_SELECT_* (or LABEL_*) for the form field label of that is translated
+
     // view titles: form_title_*
     case FORM_WORD_ADD_TITLE = 'form_title_word_add';
     case FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
@@ -1192,9 +1198,7 @@ enum messages: string
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
     case FORM_FIELD_SELECTION_DESCRIPTION = 'system_form_selection_description';
     case FORM_FIELD_SELECTION_TEXT = 'system_form_selection_text';
-    case FORM_FIELD_SELECT_PHRASE = 'system_form_select_phrase';
     case FORM_FIELD_SELECT_MULTI_PHRASES = 'system_form_select_multi_phrases';
-    case FORM_FIELD_SELECT_VERB = 'system_form_select_verb';
     case FORM_FIELD_SELECT_MULTI_VERBS = 'system_form_select_multi_verbs';
     case SYSTEM_FORM_SELECT_SOURCE = 'system_form_select_source';
     case SYSTEM_FORM_SELECT_MULTI_SOURCES = 'system_form_select_multi_sources';
@@ -1235,8 +1239,6 @@ enum messages: string
     case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
     case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
     case FORM_TRIPLE_PHRASE_REF = 'form_select_phrase_ref';
-    case FORM_TRIPLE_PHRASE_FROM = 'form_select_phrase_from';
-    case FORM_TRIPLE_PHRASE_TO = 'form_select_phrase_to';
     case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';
     case FORM_TRIPLE_PHRASE_COL = 'form_select_phrase_col';
     case FORM_TRIPLE_PHRASE_COL_SUB = 'form_select_phrase_col_sub';

@@ -839,22 +839,22 @@
     {
       "name": "system form select reference phrase",
       "description": "selector for the phrase of a reference",
-      "type": "system_form_select_phrase",
+      "type": "form_select_phrase",
       "code_id": "form_field_ref_phrase",
       "ui_msg_code_id": "form_select_phrase_ref"
     },
     {
       "name": "system form triple phrase from",
       "description": "selector for the from phrase of a triple",
-      "type": "system_form_select_phrase",
-      "code_id": "form_field_triple_phrase_from",
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase_from",
       "ui_msg_code_id": "form_select_phrase_from"
     },
     {
       "name": "system form triple phrase to",
       "description": "selector for the to phrase of a triple",
-      "type": "system_form_select_phrase",
-      "code_id": "form_field_triple_phrase_to",
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase_to",
       "ui_msg_code_id": "form_select_phrase_to"
     },
     {
@@ -923,9 +923,9 @@
     {
       "name": "system form select phrase",
       "description": "select one word or triple",
-      "type": "system_form_select_phrase",
-      "code_id": "system_form_select_phrase",
-      "ui_msg_code_id": "system_form_select_phrase"
+      "type": "form_select_phrase",
+      "code_id": "form_select_phrase",
+      "ui_msg_code_id": "form_select_phrase"
     },
     {
       "name": "system form select multi phrases",
@@ -1077,7 +1077,7 @@
     {
       "name": "system form select phrase type",
       "description": "selector for the phrase type",
-      "type": "system_form_select_phrase_type",
+      "type": "form_select_phrase_type",
       "code_id": "form_field_phrase_type",
       "ui_msg_code_id": "form_select_phrase_type"
     },
@@ -1133,21 +1133,21 @@
     {
       "name": "system form select row phrase",
       "description": "selector phrase that should be used to select the primary row names of a table",
-      "type": "system_form_select_phrase",
+      "type": "form_select_phrase",
       "code_id": "form_field_select_phrase_row",
       "ui_msg_code_id": "form_select_phrase_row"
     },
     {
       "name": "system form select column phrase",
       "description": "selector phrase that should be used to select the primary column names of a table",
-      "type": "system_form_select_phrase",
+      "type": "form_select_phrase",
       "code_id": "form_field_select_phrase_col",
       "ui_msg_code_id": "form_select_phrase_col"
     },
     {
       "name": "system form select secondary column phrase",
       "description": "selector phrase that should be used to select the secondary column names of a table",
-      "type": "system_form_select_phrase",
+      "type": "form_select_phrase",
       "code_id": "form_field_select_phrase_col_sub",
       "ui_msg_code_id": "form_select_phrase_col_sub"
     },
@@ -2461,11 +2461,16 @@
         },
         {
           "position": "7",
-          "name": "system form triple phrase from"
+          "name": "system formatter row start"
         },
         {
           "position": "8",
+          "name": "system form triple phrase from"
+        },
+        {
+          "position": "9",
           "name": "system form triple verb",
+          "style": "col-md-3",
           "position_type": "side"
         },
         {
@@ -2475,42 +2480,54 @@
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "11",
           "name": "system form triple phrase to",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "14",
           "name": "system form select view"
         },
         {
-          "position": "11",
+          "position": "15",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "12",
+          "position": "16",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "13",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "14",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "15",
-          "name": "system form button save"
-        },
-        {
-          "position": "16",
+          "position": "17",
           "name": "system formatter row end"
         },
         {
-          "position": "17",
+          "position": "18",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "19",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "20",
+          "name": "system form button save"
+        },
+        {
+          "position": "21",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "22",
           "name": "system form end"
         }
       ]
