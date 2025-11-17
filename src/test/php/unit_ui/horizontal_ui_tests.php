@@ -102,7 +102,7 @@ class horizontal_ui_tests
             $url_array = $url_map->url_to_standard($url_array, $usr_msg);
             $ui_obj = $t_map->class_to_ui_object($class);
             $filled_obj = $t_map->class_to_filled_object($class);
-            $ui_obj->url_mapper($url_array);
+            $ui_obj->url_mapper($url_array, $usr_msg);
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;
             $refilled_obj->reset();

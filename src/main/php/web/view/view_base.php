@@ -123,11 +123,13 @@ class view_base extends sandbox_code_id
     /**
      * set the vars of this view bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if (array_key_exists(url_var::STYLE, $url_array)) {
             $this->set_style_id($url_array[url_var::STYLE]);
         }

@@ -50,6 +50,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
@@ -124,11 +125,13 @@ class sandbox extends db_object_dsp
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if (array_key_exists(url_var::SHARE, $url_array)) {
             $this->share_id = $url_array[url_var::SHARE];
         } else {

@@ -350,7 +350,13 @@ class type_list
         $sel = new html_selector();
         if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
             $std = $this->get_by_code_id(phrase_type::DEFAULT);
-            $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            if ($std != null) {
+                $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            } else {
+                $sel->lst = $this->lst_key_sort_by_name();
+            }
+        } elseif (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA)) {
+            $sel->lst = $this->lst_key_sort_by_name();
         } else {
             $sel->lst = $this->lst_key();
         }

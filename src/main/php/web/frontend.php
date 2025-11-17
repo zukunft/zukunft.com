@@ -376,7 +376,7 @@ class frontend
         // save form action
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array);
+            $dbo->url_mapper($url_array, $usr_msg);
             $upd_result = $dbo->add_via_api();
 
             // if update was fine ...
@@ -468,7 +468,7 @@ class frontend
         // save form action
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
-            $dbo->url_mapper($url_array);
+            $dbo->url_mapper($url_array, $usr_msg, $dto);
             $upd_result = $dbo->add_via_api();
 
             // if update was fine ...
@@ -495,7 +495,7 @@ class frontend
             if (count($url_array) <= 2) {
                 $dbo->load_by_id($id);
             } else {
-                $dbo->url_mapper($url_array);
+                $dbo->url_mapper($url_array, $usr_msg, $dto);
             }
         } else {
             // get last term used by the user or a default value

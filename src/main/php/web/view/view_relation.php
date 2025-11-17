@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -44,6 +45,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -88,11 +90,13 @@ class view_relation extends sandbox_link
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::VIEW_PARENT, $url_array)) {
                 $this->set_parent_view_id($url_array[url_var::VIEW_PARENT]);

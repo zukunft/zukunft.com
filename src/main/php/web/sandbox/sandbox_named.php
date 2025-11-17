@@ -41,18 +41,11 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
+//include_once html_paths::GROUP . 'group.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
-//include_once html_paths::GROUP . 'group.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -62,6 +55,16 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sandbox_named extends sandbox
 {
@@ -173,11 +176,13 @@ class sandbox_named extends sandbox
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if (array_key_exists(url_var::NAME, $url_array)) {
             $this->set_name($url_array[url_var::NAME]);
         } else {

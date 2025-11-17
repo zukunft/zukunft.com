@@ -1338,7 +1338,30 @@ enum messages: string
 
     public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT = [
         self::LABEL_PHRASE_TYPE,
+        self::LABEL_FORMULA_TYPE,
+        self::LABEL_FORMULA_LINK_TYPE,
         self::FORM_FIELD_SELECT_VIEW,
+        self::LABEL_VIEW_TYPE,
+        self::LABEL_VIEW_LINK_TYPE,
+        self::LABEL_VIEW_RELATION_TYPE,
+        self::LABEL_COMPONENT_TYPE,
+        self::LABEL_COMPONENT_LINK_TYPE,
+    ];
+
+    public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA = [
+        self::LABEL_WORD,
+        self::LABEL_VERB,
+        self::LABEL_SOURCE,
+        self::LABEL_PHRASE,
+        self::LABEL_PHRASE_FROM,
+        self::LABEL_PHRASE_TO,
+        self::LABEL_PHRASE_ROW,
+        self::LABEL_PHRASE_COL,
+        self::LABEL_PHRASE_COL_SUB,
+        self::LABEL_FORMULA,
+        self::LABEL_TERM,
+        self::LABEL_VIEW,
+        self::LABEL_COMPONENT,
     ];
 
     /**

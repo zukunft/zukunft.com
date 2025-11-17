@@ -93,6 +93,7 @@ class html_selector
     }
 
     /**
+     * TODO Prio 0 easy use html function and html names
      * @returns string the HTML code that starts a selector field
      */
     private function start_selector(): string
@@ -122,7 +123,11 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute;
+                if (array_key_exists($this->selected, $this->lst)) {
+                    $result .= ' ' . html_names::VALUE . '="' . $this->lst[$this->selected] . '"';
+                }
+                $result .= '>';
                 $result .= '<datalist id="' . $this->name . '_list">';
             } else {
                 if ($this->form != "") {

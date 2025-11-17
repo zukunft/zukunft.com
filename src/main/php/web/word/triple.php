@@ -45,8 +45,7 @@ namespace Zukunft\ZukunftCom\main\php\web\word;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'sandbox_code_id.php';
-include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
@@ -54,6 +53,8 @@ include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 //include_once html_paths::VIEW . 'view_list.php';
@@ -67,6 +68,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -134,20 +136,22 @@ class triple extends sandbox_code_id
      * public because it is reused e.g. by the phrase group display object
      *
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PHRASE_FROM, $url_array)) {
-                $this->set_from_by_id($url_array[url_var::PHRASE_FROM]);
+                $this->set_from_by_id($url_array[url_var::PHRASE_FROM], $dto);
             }
             if (array_key_exists(url_var::VERB, $url_array)) {
                 $this->set_verb_by_id($url_array[url_var::VERB]);
             }
             if (array_key_exists(url_var::PHRASE_TO, $url_array)) {
-                $this->set_to_by_id($url_array[url_var::PHRASE_TO]);
+                $this->set_to_by_id($url_array[url_var::PHRASE_TO], $dto);
             }
             if (array_key_exists(url_var::WEIGHT, $url_array)) {
                 $this->weight = $url_array[url_var::WEIGHT];
@@ -285,9 +289,9 @@ class triple extends sandbox_code_id
         $this->from = $from;
     }
 
-    function set_from_by_id(int $id): void
+    function set_from_by_id(int $id, data_object|null $dto = null): void
     {
-        $this->from = $this->set_phrase_by_id($id);
+        $this->from = $this->set_phrase_by_id($id, $dto);
     }
 
     function set_verb(verb $vrb): void
@@ -307,25 +311,32 @@ class triple extends sandbox_code_id
         $this->to = $to;
     }
 
-    function set_to_by_id(int $id): void
+    function set_to_by_id(int $id, data_object|null $dto = null): void
     {
-        $this->to = $this->set_phrase_by_id($id);
+        $this->to = $this->set_phrase_by_id($id, $dto);
     }
 
-    private function set_phrase_by_id(int $id): phrase
+    private function set_phrase_by_id(int $id, data_object|null $dto): phrase
     {
-        if ($id > 0) {
-            $wrd = new word();
-            $wrd->set_id($id);
-            $phr = $wrd->phrase();
-        } elseif ($id < 0) {
-            $trp = new triple();
-            $trp->set_id($id * -1);
-            $phr = $trp->phrase();
-        } else {
-            $wrd = new word();
-            $wrd->set_id(0);
-            $phr = $wrd->phrase();
+        $phr = null;
+        if ($dto != null) {
+            $phr_lst = $dto->phr_lst;
+            $phr = $phr_lst->get_by_id($id);
+        }
+        if ($phr == null) {
+            if ($id > 0) {
+                $wrd = new word();
+                $wrd->set_id($id);
+                $phr = $wrd->phrase();
+            } elseif ($id < 0) {
+                $trp = new triple();
+                $trp->set_id($id * -1);
+                $phr = $trp->phrase();
+            } else {
+                $wrd = new word();
+                $wrd->set_id(0);
+                $phr = $wrd->phrase();
+            }
         }
         return $phr;
     }
@@ -518,9 +529,6 @@ class triple extends sandbox_code_id
         string      $style = view_styles::COL_SM_4
     ): string
     {
-        if ($phr_lst == null) {
-            $phr_lst = new phrase_list();
-        }
         return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
 
@@ -532,9 +540,9 @@ class triple extends sandbox_code_id
      * @return string the html code to select a verb
      */
     public function verb_selector(
-        string $form,
+        string      $form,
         ?type_lists $typ_lst,
-        string $style = view_styles::COL_SM_3
+        string      $style = view_styles::COL_SM_3
     ): string
     {
         if ($this->verb != null) {

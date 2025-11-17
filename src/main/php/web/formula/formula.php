@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
 //include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -83,6 +84,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -145,11 +147,13 @@ class formula extends sandbox_code_id
      * set the vars of this formula frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {

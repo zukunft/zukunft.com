@@ -453,6 +453,8 @@ class list_dsp extends ListOfIdObjects
             } else {
                 $sel->lst = $this->lst_key_sort_by_name();
             }
+        } elseif (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA)) {
+            $sel->lst = $this->lst_key_sort_by_name();
         } else {
             $sel->lst = $this->lst_key();
         }

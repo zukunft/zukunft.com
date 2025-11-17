@@ -13,6 +13,7 @@ A proper issue ticket should be created for these TODOs notes:
          for db read tests the complete cache is loaded from the database as in production
                            maybe a db cache of the json is used
          same for db write tests
+    TODO use the user_message object to collect all messages to the user and present the result to the user
     TODO note what has to be changed based on the old http scripts (done: about)
     TODO add to all sortable objects the fields usage (int) and the impact (float) for fast sorting 
          because objects can only be sorted by one criteria and the usage is the fallback;
@@ -310,7 +311,6 @@ A proper issue ticket should be created for these TODOs notes:
     TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
-    TODO use the user_message object to collect all messages to the user and present the result to the user
     TODO use log only for unexpected errors an warnings where the user has probably no chance ti fix it
     TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
     TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
