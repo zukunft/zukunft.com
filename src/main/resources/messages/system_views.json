@@ -858,13 +858,6 @@
       "ui_msg_code_id": "form_select_phrase_to"
     },
     {
-      "name": "system form triple verb",
-      "description": "selector for the verb of a triple",
-      "type": "system_form_select_verb",
-      "code_id": "form_field_triple_verb",
-      "ui_msg_code_id": "form_select_verb"
-    },
-    {
       "name": "system form field group",
       "description": "the group name field in a form",
       "type": "system_form_field_group",
@@ -930,149 +923,149 @@
     {
       "name": "system form select multi phrases",
       "description": "select one or many words and triples",
-      "type": "system_form_select_multi_phrases",
-      "code_id": "system_form_select_multi_phrases",
-      "ui_msg_code_id": "system_form_select_multi_phrases"
+      "type": "form_select_multi_phrases",
+      "code_id": "form_select_multi_phrases",
+      "ui_msg_code_id": "form_select_multi_phrases"
     },
     {
       "name": "system form select verb",
       "description": "select one verb",
-      "type": "system_form_select_verb",
-      "code_id": "system_form_select_verb",
-      "ui_msg_code_id": "system_form_select_verb"
+      "type": "form_select_verb",
+      "code_id": "form_select_verb",
+      "ui_msg_code_id": "form_select_verb"
     },
     {
       "name": "system form select multi verbs",
       "description": "select one or many verbs",
-      "type": "system_form_select_multi_verbs",
-      "code_id": "system_form_select_multi_verbs",
-      "ui_msg_code_id": "system_form_select_multi_verbs"
+      "type": "form_select_multi_verbs",
+      "code_id": "form_select_multi_verbs",
+      "ui_msg_code_id": "form_select_multi_verbs"
     },
     {
       "name": "system form select source",
       "description": "select one source",
-      "type": "system_form_select_source",
-      "code_id": "system_form_select_source",
-      "ui_msg_code_id": "system_form_select_source"
+      "type": "form_select_source",
+      "code_id": "form_select_source",
+      "ui_msg_code_id": "form_select_source"
     },
     {
       "name": "system form select multi sources",
       "description": "select one or many sources",
-      "type": "system_form_select_multi_sources",
-      "code_id": "system_form_select_multi_sources",
-      "ui_msg_code_id": "system_form_select_multi_sources"
+      "type": "form_select_multi_sources",
+      "code_id": "form_select_multi_sources",
+      "ui_msg_code_id": "form_select_multi_sources"
     },
     {
       "name": "system form select ref",
       "description": "select one ref",
-      "type": "system_form_select_ref",
-      "code_id": "system_form_select_ref",
-      "ui_msg_code_id": "system_form_select_ref"
+      "type": "form_select_ref",
+      "code_id": "form_select_ref",
+      "ui_msg_code_id": "form_select_ref"
     },
     {
       "name": "system form select multi refs",
       "description": "select one or many refs",
-      "type": "system_form_select_multi_refs",
-      "code_id": "system_form_select_multi_refs",
-      "ui_msg_code_id": "system_form_select_multi_refs"
+      "type": "form_select_multi_refs",
+      "code_id": "form_select_multi_refs",
+      "ui_msg_code_id": "form_select_multi_refs"
     },
     {
       "name": "system form select formula",
       "description": "select one formula",
-      "type": "system_form_select_formula",
-      "code_id": "system_form_select_formula",
-      "ui_msg_code_id": "system_form_select_formula"
+      "type": "form_select_formula",
+      "code_id": "form_select_formula",
+      "ui_msg_code_id": "form_select_formula"
     },
     {
       "name": "system form select multi formulas",
       "description": "select one or many formulas",
-      "type": "system_form_select_multi_formulas",
-      "code_id": "system_form_select_multi_formulas",
-      "ui_msg_code_id": "system_form_select_multi_formulas"
+      "type": "form_select_multi_formulas",
+      "code_id": "form_select_multi_formulas",
+      "ui_msg_code_id": "form_select_multi_formulas"
     },
     {
       "name": "system form select term",
       "description": "select one term",
-      "type": "system_form_select_term",
-      "code_id": "system_form_select_term",
-      "ui_msg_code_id": "system_form_select_term"
+      "type": "form_select_term",
+      "code_id": "form_select_term",
+      "ui_msg_code_id": "form_select_term"
     },
     {
       "name": "system form select multi terms",
       "description": "select one or many words, verbs, triples and formulas",
-      "type": "system_form_select_multi_terms",
-      "code_id": "system_form_select_multi_terms",
-      "ui_msg_code_id": "system_form_select_multi_terms"
+      "type": "form_select_multi_terms",
+      "code_id": "form_select_multi_terms",
+      "ui_msg_code_id": "form_select_multi_terms"
     },
     {
       "name": "system form select value",
       "description": "select one value",
-      "type": "system_form_select_value",
-      "code_id": "system_form_select_value",
-      "ui_msg_code_id": "system_form_select_value"
+      "type": "form_select_value",
+      "code_id": "form_select_value",
+      "ui_msg_code_id": "form_select_value"
     },
     {
       "name": "system form select multi values",
       "description": "select one or many values",
-      "type": "system_form_select_multi_values",
-      "code_id": "system_form_select_multi_values",
-      "ui_msg_code_id": "system_form_select_multi_values"
+      "type": "form_select_multi_values",
+      "code_id": "form_select_multi_values",
+      "ui_msg_code_id": "form_select_multi_values"
     },
     {
       "name": "system form select result",
       "description": "select one result",
-      "type": "system_form_select_result",
-      "code_id": "system_form_select_result",
-      "ui_msg_code_id": "system_form_select_result"
+      "type": "form_select_result",
+      "code_id": "form_select_result",
+      "ui_msg_code_id": "form_select_result"
     },
     {
       "name": "system form select multi results",
       "description": "select one or many results",
-      "type": "system_form_select_multi_results",
-      "code_id": "system_form_select_multi_results",
-      "ui_msg_code_id": "system_form_select_multi_results"
+      "type": "form_select_multi_results",
+      "code_id": "form_select_multi_results",
+      "ui_msg_code_id": "form_select_multi_results"
     },
     {
       "name": "system form select view",
       "description": "select one view",
-      "type": "system_form_select_view",
-      "code_id": "system_form_select_view",
-      "ui_msg_code_id": "system_form_select_view"
+      "type": "form_select_view",
+      "code_id": "form_select_view",
+      "ui_msg_code_id": "form_select_view"
     },
     {
       "name": "system form select multi views",
       "description": "select one or many views",
-      "type": "system_form_select_multi_views",
-      "code_id": "system_form_select_multi_views",
-      "ui_msg_code_id": "system_form_select_multi_views"
+      "type": "form_select_multi_views",
+      "code_id": "form_select_multi_views",
+      "ui_msg_code_id": "form_select_multi_views"
     },
     {
       "name": "system form select parent view",
       "description": "select the parent view of a view relation",
-      "type": "system_form_select_view",
-      "code_id": "system_form_select_parent_view",
-      "ui_msg_code_id": "system_form_select_parent_view"
+      "type": "form_select_view",
+      "code_id": "form_select_parent_view",
+      "ui_msg_code_id": "form_select_parent_view"
     },
     {
       "name": "system form select child view",
       "description": "select the child view of a view relation",
-      "type": "system_form_select_view",
-      "code_id": "system_form_select_child_view",
-      "ui_msg_code_id": "system_form_select_child_view"
+      "type": "form_select_view",
+      "code_id": "form_select_child_view",
+      "ui_msg_code_id": "form_select_child_view"
     },
     {
       "name": "system form select component",
       "description": "select one component",
-      "type": "system_form_select_component",
-      "code_id": "system_form_select_component",
-      "ui_msg_code_id": "system_form_select_component"
+      "type": "form_select_component",
+      "code_id": "form_select_component",
+      "ui_msg_code_id": "form_select_component"
     },
     {
       "name": "system form select multi components",
       "description": "select one or many components",
-      "type": "system_form_select_multi_components",
-      "code_id": "system_form_select_multi_components",
-      "ui_msg_code_id": "system_form_select_multi_components"
+      "type": "form_select_multi_components",
+      "code_id": "form_select_multi_components",
+      "ui_msg_code_id": "form_select_multi_components"
     },
     {
       "name": "system form select phrase type",
@@ -1084,49 +1077,49 @@
     {
       "name": "system form select source type",
       "description": "selector for the source type",
-      "type": "system_form_select_source_type",
+      "type": "form_select_source_type",
       "code_id": "form_field_source_type",
       "ui_msg_code_id": "form_select_source_type"
     },
     {
       "name": "system form select reference type",
       "description": "selector for the reference type",
-      "type": "system_form_select_ref_type",
+      "type": "form_select_ref_type",
       "code_id": "form_field_ref_type",
       "ui_msg_code_id": "form_select_ref_type"
     },
     {
       "name": "system form select value type",
       "description": "selector for the value type",
-      "type": "system_form_select_value_type",
+      "type": "form_select_value_type",
       "code_id": "form_field_value_type",
       "ui_msg_code_id": "form_select_value_type"
     },
     {
       "name": "system form select formula type",
       "description": "selector for the formula type",
-      "type": "system_form_select_formula_type",
+      "type": "form_select_formula_type",
       "code_id": "form_field_formula_type",
       "ui_msg_code_id": "form_select_formula_type"
     },
     {
       "name": "system form select view type",
       "description": "selector for the view type",
-      "type": "system_form_select_view_type",
+      "type": "form_select_view_type",
       "code_id": "form_field_view_type",
       "ui_msg_code_id": "form_select_view_type"
     },
     {
       "name": "system form select component type",
       "description": "selector for the component type",
-      "type": "system_form_select_component_type",
+      "type": "form_select_component_type",
       "code_id": "form_field_component_type",
       "ui_msg_code_id": "form_select_component_type"
     },
     {
       "name": "system form select view relation type",
       "description": "selector for the view relation type",
-      "type": "system_form_select_view_relation_type",
+      "type": "form_select_view_relation_type",
       "code_id": "form_field_view_relation_type",
       "ui_msg_code_id": "form_select_view_relation_type"
     },
@@ -1161,49 +1154,49 @@
     {
       "name": "system form select view style",
       "description": "selector for the style used in views and components e.g. to define the width",
-      "type": "system_form_select_view_style",
+      "type": "form_select_view_style",
       "code_id": "form_field_view_style",
       "ui_msg_code_id": "form_select_view_style"
     },
     {
       "name": "system form select component style",
       "description": "selector for the style used in views and components e.g. to define the width",
-      "type": "system_form_select_component_style",
+      "type": "form_select_component_style",
       "code_id": "form_field_component_style",
       "ui_msg_code_id": "form_select_component_style"
     },
     {
       "name": "system form select view link type",
       "description": "selector for the link type of a view to a term",
-      "type": "system_form_select_view_link_type",
+      "type": "form_select_view_link_type",
       "code_id": "form_field_view_link_type",
       "ui_msg_code_id": "form_select_view_link_type"
     },
     {
       "name": "system form view link priority",
       "description": "priority number for this link to a term",
-      "type": "system_form_select_view_link_priority",
+      "type": "form_select_view_link_priority",
       "code_id": "form_field_view_link_priority",
       "ui_msg_code_id": "form_select_view_link_priority"
     },
     {
       "name": "system form select component link type",
       "description": "selector for the link type of a component to a view",
-      "type": "system_form_select_component_link_type",
+      "type": "form_select_component_link_type",
       "code_id": "form_field_component_link_type",
       "ui_msg_code_id": "form_select_component_link_type"
     },
     {
       "name": "system form select component position type",
       "description": "selector for the position type of a component to a view",
-      "type": "system_form_select_component_position_type",
+      "type": "form_select_component_position_type",
       "code_id": "form_field_component_position_type",
-      "ui_msg_code_id": "form_select_component_pos"
+      "ui_msg_code_id": "form_select_component_pos_type"
     },
     {
       "name": "system form component link order number",
       "description": "position of the linked component in the view",
-      "type": "system_form_select_component_link_order_number",
+      "type": "form_select_component_link_order_number",
       "code_id": "form_field_component_link_order_number",
       "ui_msg_code_id": "form_select_component_link_order_number"
     },
@@ -1217,44 +1210,44 @@
     {
       "name": "system form select formula link type",
       "description": "selector for the link type of a formula to a term",
-      "type": "system_form_select_formula_link_type",
+      "type": "form_select_formula_link_type",
       "code_id": "form_field_formula_link_type",
       "ui_msg_code_id": "form_select_formula_link_type"
     },
     {
       "name": "system form formula link priority",
       "description": "priority number for this link to a term",
-      "type": "system_form_select_formula_link_priority",
+      "type": "form_select_formula_link_priority",
       "code_id": "form_field_formula_link_priority",
       "ui_msg_code_id": "form_select_formula_link_priority"
     },
     {
       "name": "system form select share type",
       "description": "selector for the share type",
-      "type": "system_form_select_share",
+      "type": "form_select_share",
       "code_id": "form_field_share_type",
       "ui_msg_code_id": "form_select_share"
     },
     {
       "name": "system form select protection type",
       "description": "selector for the protection type",
-      "type": "system_form_select_protection",
+      "type": "form_select_protection",
       "code_id": "form_field_protection_type",
       "ui_msg_code_id": "form_select_protection"
     },
     {
       "name": "system form select file",
       "description": "selector for a file to import",
-      "type": "system_form_select_file",
-      "code_id": "system_form_select_file",
-      "ui_msg_code_id": "system_form_select_file"
+      "type": "form_select_file",
+      "code_id": "form_select_file",
+      "ui_msg_code_id": "form_select_file"
     },
     {
       "name": "system form select export format",
       "description": "selector for the export format e.g. json",
-      "type": "system_form_select_export_format",
-      "code_id": "system_form_select_export_format",
-      "ui_msg_code_id": "system_form_select_export_format"
+      "type": "form_select_export_format",
+      "code_id": "form_select_export_format",
+      "ui_msg_code_id": "form_select_export_format"
     },
     {
       "name": "system form linked views",
@@ -1462,8 +1455,8 @@
       "name": "select default view",
       "description": "form field to select the default view for this object",
       "type": "select_view",
-      "code_id": "system_form_select_view_default",
-      "ui_msg_code_id": "system_form_select_view_default"
+      "code_id": "form_select_view_default",
+      "ui_msg_code_id": "form_select_view_default"
     },
     {
       "name": "system show view diff list",
@@ -2469,7 +2462,7 @@
         },
         {
           "position": "9",
-          "name": "system form triple verb",
+          "name": "system form select verb",
           "style": "col-md-3",
           "position_type": "side"
         },
@@ -2575,7 +2568,7 @@
         },
         {
           "position": "9",
-          "name": "system form triple verb",
+          "name": "system form select verb",
           "style": "col-md-3",
           "position_type": "side"
         },

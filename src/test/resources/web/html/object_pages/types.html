@@ -182,8 +182,8 @@
             <option value="9">view / layer</option>
         </select></div>
         <br><label for="fy">fy</label>
-        <div class="form-group col-md-4"><label for="fy">Type of formula</label><select class="form-control" name="fy"
-                                                                                        form="view" id="fy">
+        <div class="form-group col-md-4"><label for="fy">Formula type</label><select class="form-control" name="fy"
+                                                                                     form="view" id="fy">
             <option value="0" selected>please select ...</option>
             <option value="1">calc</option>
             <option value="0"> ---</option>
@@ -194,15 +194,15 @@
             <option value="4">this</option>
         </select></div>
         <br><label for="ft">ft</label>
-        <div class="form-group col-md-4"><label for="ft">formula link</label><select class="form-control" name="ft"
-                                                                                     form="view" id="ft">
+        <div class="form-group col-md-4"><label for="ft">Link type</label><select class="form-control" name="ft"
+                                                                                  form="view" id="ft">
             <option value="0" selected>please select ...</option>
             <option value="1">default</option>
             <option value="0"> ---</option>
             <option value="2">time period based</option>
         </select></div>
         <br><label for="dt">dt</label>
-        <div class="form-group col-md-4"><label for="dt">view type</label><select class="form-control" name="dt"
+        <div class="form-group col-md-4"><label for="dt">View type</label><select class="form-control" name="dt"
                                                                                   form="view" id="dt">
             <option value="0" selected>please select ...</option>
             <option value="1">standard</option>
@@ -227,14 +227,14 @@
             <option value="5">word default</option>
         </select></div>
         <br><label for="cs">cs</label>
-        <div class="form-group col-md-4"><label for="cs">style</label><select class="form-control" name="cs" form="view"
-                                                                              id="cs">
+        <div class="form-group col-md-4"><label for="cs">View style</label><select class="form-control" name="cs"
+                                                                                   form="view" id="cs">
             <option value="0" selected>please select ...</option>
             <option value="1">col-md-4</option>
             <option value="2">col-md-8</option>
         </select></div>
         <br><label for="ct">ct</label>
-        <div class="form-group col-md-4"><label for="ct">component type</label><select class="form-control" name="ct"
+        <div class="form-group col-md-4"><label for="ct">Component type</label><select class="form-control" name="ct"
                                                                                        form="view" id="ct">
             <option value="0" selected>please select ...</option>
             <option value="179">admin_form_field_language_symbol</option>
@@ -250,8 +250,48 @@
             <option value="159">form_class</option>
             <option value="32">form_end</option>
             <option value="161">form_impact</option>
+            <option value="172">form_select_child_view</option>
+            <option value="87">form_select_component</option>
+            <option value="126">form_select_component_link_order_number</option>
+            <option value="99">form_select_component_link_type</option>
+            <option value="153">form_select_component_position_type</option>
+            <option value="124">form_select_component_style</option>
+            <option value="52">form_select_component_type</option>
+            <option value="92">form_select_export_format</option>
+            <option value="91">form_select_file</option>
+            <option value="77">form_select_formula</option>
+            <option value="127">form_select_formula_link_priority</option>
+            <option value="100">form_select_formula_link_type</option>
+            <option value="49">form_select_formula_type</option>
+            <option value="88">form_select_multi_components</option>
+            <option value="78">form_select_multi_formulas</option>
+            <option value="75">form_select_multi_phrases</option>
+            <option value="121">form_select_multi_refs</option>
+            <option value="84">form_select_multi_results</option>
+            <option value="119">form_select_multi_sources</option>
+            <option value="80">form_select_multi_terms</option>
+            <option value="82">form_select_multi_values</option>
+            <option value="76">form_select_multi_verbs</option>
+            <option value="86">form_select_multi_views</option>
+            <option value="171">form_select_parent_view</option>
             <option value="23">form_select_phrase</option>
             <option value="25">form_select_phrase_type</option>
+            <option value="27">form_select_protection</option>
+            <option value="120">form_select_ref</option>
+            <option value="83">form_select_result</option>
+            <option value="26">form_select_share</option>
+            <option value="118">form_select_source</option>
+            <option value="39">form_select_source_type</option>
+            <option value="79">form_select_term</option>
+            <option value="81">form_select_value</option>
+            <option value="123">form_select_value_type</option>
+            <option value="24">form_select_verb</option>
+            <option value="90">form_select_view_default</option>
+            <option value="125">form_select_view_link_priority</option>
+            <option value="101">form_select_view_link_type</option>
+            <option value="173">form_select_view_relation_type</option>
+            <option value="51">form_select_view_style</option>
+            <option value="50">form_select_view_type</option>
             <option value="12">formula_list</option>
             <option value="98">formula_list_changeable</option>
             <option value="148">formulas_by_verb</option>
@@ -313,46 +353,6 @@
             <option value="150">system_form_field_weight</option>
             <option value="93">system_form_link_table</option>
             <option value="89">system_form_preview</option>
-            <option value="172">system_form_select_child_view</option>
-            <option value="87">system_form_select_component</option>
-            <option value="126">system_form_select_component_link_order_number</option>
-            <option value="99">system_form_select_component_link_type</option>
-            <option value="153">system_form_select_component_position_type</option>
-            <option value="124">system_form_select_component_style</option>
-            <option value="52">system_form_select_component_type</option>
-            <option value="92">system_form_select_export_format</option>
-            <option value="91">system_form_select_file</option>
-            <option value="77">system_form_select_formula</option>
-            <option value="127">system_form_select_formula_link_priority</option>
-            <option value="100">system_form_select_formula_link_type</option>
-            <option value="49">system_form_select_formula_type</option>
-            <option value="88">system_form_select_multi_components</option>
-            <option value="78">system_form_select_multi_formulas</option>
-            <option value="75">system_form_select_multi_phrases</option>
-            <option value="121">system_form_select_multi_refs</option>
-            <option value="84">system_form_select_multi_results</option>
-            <option value="119">system_form_select_multi_sources</option>
-            <option value="80">system_form_select_multi_terms</option>
-            <option value="82">system_form_select_multi_values</option>
-            <option value="76">system_form_select_multi_verbs</option>
-            <option value="86">system_form_select_multi_views</option>
-            <option value="171">system_form_select_parent_view</option>
-            <option value="27">system_form_select_protection</option>
-            <option value="120">system_form_select_ref</option>
-            <option value="83">system_form_select_result</option>
-            <option value="26">system_form_select_share</option>
-            <option value="118">system_form_select_source</option>
-            <option value="39">system_form_select_source_type</option>
-            <option value="79">system_form_select_term</option>
-            <option value="81">system_form_select_value</option>
-            <option value="123">system_form_select_value_type</option>
-            <option value="24">system_form_select_verb</option>
-            <option value="90">system_form_select_view_default</option>
-            <option value="125">system_form_select_view_link_priority</option>
-            <option value="101">system_form_select_view_link_type</option>
-            <option value="173">system_form_select_view_relation_type</option>
-            <option value="51">system_form_select_view_style</option>
-            <option value="50">system_form_select_view_type</option>
             <option value="73">system_form_selection_description</option>
             <option value="72">system_form_selection_name</option>
             <option value="74">system_form_selection_text</option>
@@ -393,7 +393,7 @@
             <option value="85">word_results</option>
         </select></div>
         <br><label for="lt">lt</label>
-        <div class="form-group col-md-4"><label for="lt">reference type</label><select class="form-control" name="lt"
+        <div class="form-group col-md-4"><label for="lt">Reference type</label><select class="form-control" name="lt"
                                                                                        form="view" id="lt">
             <option value="0" selected>please select ...</option>
             <option value="1">wikipedia</option>
@@ -401,7 +401,7 @@
             <option value="3">conceptnet</option>
         </select></div>
         <br><label for="st">st</label>
-        <div class="form-group col-md-4"><label for="st">source type</label><select class="form-control" name="st"
+        <div class="form-group col-md-4"><label for="st">Source type</label><select class="form-control" name="st"
                                                                                     form="view" id="st">
             <option value="0" selected>please select ...</option>
             <option value="1">System Test Type Name</option>

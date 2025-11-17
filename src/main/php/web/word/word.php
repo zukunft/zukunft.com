@@ -825,7 +825,7 @@ class word extends sandbox_code_id
         $phr_lst = new word_list();
         $phr_lst->load_like($pattern);
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::LABEL_WORD);
+        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::FORM_SELECT_WORD);
     }
 
 
@@ -847,7 +847,7 @@ class word extends sandbox_code_id
         } else {
             $name = url_var::WORD;
         }
-        return $phr_lst->selector($form, $id, $name, msg_id::LABEL_WORD);
+        return $phr_lst->selector($form, $id, $name, msg_id::FORM_SELECT_WORD);
     }
 
     /**
@@ -917,7 +917,7 @@ class word extends sandbox_code_id
         string    $form,
         view_list $msk_lst,
         string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();

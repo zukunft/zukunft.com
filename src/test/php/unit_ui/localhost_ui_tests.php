@@ -71,9 +71,9 @@ class localhost_ui_tests
 
         $t->subheader($ts . 'translator');
         $test_name = 'verb add view title';
-        $t->assert($test_name, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), 'Add a new verb');
+        $t->assert($test_name, $mtr->txt(msg_id::FORM_TITLE_VERB_ADD), 'Add a new verb');
         $test_name = 'verb add view title translated';
-        $t->assert($test_name, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE, language_codes::DE), 'Neues Verb');
+        $t->assert($test_name, $mtr->txt(msg_id::FORM_TITLE_VERB_ADD, language_codes::DE), 'Neues Verb');
 
         $t->subheader($ts . 'views');
         $test_name = 'word edit by url';

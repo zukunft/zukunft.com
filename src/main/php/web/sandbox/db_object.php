@@ -829,7 +829,7 @@ class db_object extends TextIdObject
         string      $form,
         ?int        $selected = null,
         string      $pattern = '',
-        msg_id      $label_id = msg_id::LABEL,
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
         string      $style = view_styles::COL_SM_4
     ): string
     {
@@ -899,7 +899,7 @@ class db_object extends TextIdObject
         string    $form,
         view_list $msk_lst,
         string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;

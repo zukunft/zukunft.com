@@ -33,7 +33,7 @@
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
                                                                                name="Name" id="k"></div>
-            <div class="form-group col-md-4"><label for="ct">component type</label><select class="form-control"
+            <div class="form-group col-md-4"><label for="ct">Component type</label><select class="form-control"
                                                                                            name="ct"
                                                                                            form="component_add" id="ct">
                 <option value="15">CSV export</option>
@@ -223,10 +223,10 @@
                                                                                        name="Description" id="o"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="c1">take rows from</label><input type="text" list="c1_list"
-                                                                                          class="form-control" name="c1"
-                                                                                          form="component_add" id="c1"
-                                                                                          value="mathematics">
+            <div class="form-group col-md-4"><label for="c1">Row type</label><input type="text" list="c1_list"
+                                                                                    class="form-control" name="c1"
+                                                                                    form="component_add" id="c1"
+                                                                                    value="mathematics">
                 <datalist id="c1_list">
                     <option data-value="293">2013</option>
                     <option data-value="294">2014</option>
@@ -321,12 +321,10 @@
                     <option data-value="-3">𝑒 (unit symbol)</option>
                 </datalist>
             </div>
-            <div class="form-group col-md-4"><label for="c2">take columns from</label><input type="text" list="c2_list"
-                                                                                             class="form-control"
-                                                                                             name="c2"
-                                                                                             form="component_add"
-                                                                                             id="c2"
-                                                                                             value="mathematics">
+            <div class="form-group col-md-4"><label for="c2">Column type</label><input type="text" list="c2_list"
+                                                                                       class="form-control" name="c2"
+                                                                                       form="component_add" id="c2"
+                                                                                       value="mathematics">
                 <datalist id="c2_list">
                     <option data-value="293">2013</option>
                     <option data-value="294">2014</option>
@@ -421,13 +419,10 @@
                     <option data-value="-3">𝑒 (unit symbol)</option>
                 </datalist>
             </div>
-            <div class="form-group col-md-4"><label for="c3">take sub columns from</label><input type="text"
-                                                                                                 list="c3_list"
-                                                                                                 class="form-control"
-                                                                                                 name="c3"
-                                                                                                 form="component_add"
-                                                                                                 id="c3"
-                                                                                                 value="mathematics">
+            <div class="form-group col-md-4"><label for="c3">Column subtype</label><input type="text" list="c3_list"
+                                                                                          class="form-control" name="c3"
+                                                                                          form="component_add" id="c3"
+                                                                                          value="mathematics">
                 <datalist id="c3_list">
                     <option data-value="293">2013</option>
                     <option data-value="294">2014</option>
@@ -524,8 +519,8 @@
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="cs">style</label><select class="form-control" name="cs"
-                                                                                  form="component_add" id="cs">
+            <div class="form-group col-md-4"><label for="cs">View style</label><select class="form-control" name="cs"
+                                                                                       form="component_add" id="cs">
                 <option value="0" selected>please select ...</option>
                 <option value="1">1/3 width</option>
                 <option value="2">2/3 width</option>

@@ -41,7 +41,24 @@ enum messages: string
      * GENERAL TARGET:
      * use the most specific const name so that the translation can be specific
      *
+     * the const names start with
+     * INFO_* for information only messages without a variable
+     * WARN_* for warning messages without a variable
+     * ERR_* for error messages without a variable
+     * VAR_* for variable names or makers
+     * SYSTEM_* for parts of fixed system pages
+     * FORM_* for form parts used by the system
+     * FORM_TITLE_* for the form title that is translated
+     * FORM_SUB_TITLE_* for the form sub titles that is translated
+     * FORM_FIELD_* for the test input form field label of that is translated
+     * FORM_SELECT_* (ex LABEL_*) for the form field label of that is translated
+     *
+     * to be renamed / deprecated
+     * MISSING_* to WARN_MISSING_*
+     *
+     *
      * the prefix naming convention for the translations is
+     * page_title_* for the main titles of fixed system pages
      * form_title_* for the main titles of the system forms
      * system_title_* for subtitles of system forms that might be used also in user views
      * form_field_* for normal input fields of system forms
@@ -184,49 +201,6 @@ enum messages: string
     // special message id placeholders
     case ERROR = 'error';
     case NONE = '';
-
-    // labels used for form fields in views
-    // TODO Prio 1 change the value so that it does not contains spaces and add at least a english translation
-    // TODO Prio 2 target is to use the most specific const name
-    // e.g. form_field_name instead of just name
-    //      for the label of an input form field label
-    // the fallback label for selections
-    case LABEL = 'name';
-    // the label for type selections
-    case LABEL_WORD = 'word';
-    case LABEL_VERB = 'system_form_select_verb';
-    // the label for style selections
-    case LABEL_STYLE = 'style';
-    case LABEL_SOURCE = 'source';
-    case LABEL_VIEW = 'view';
-    case LABEL_PHRASE = 'form_select_phrase';
-    case LABEL_PHRASE_FROM = 'form_select_phrase_from';
-    case LABEL_PHRASE_TO = 'form_select_phrase_to';
-    case LABEL_PHRASE_ROW = 'take rows from';
-    case LABEL_PHRASE_COL = 'take columns from';
-    case LABEL_PHRASE_COL_SUB = 'take sub columns from';
-    case LABEL_PHRASE_TYPE = 'form_label_phrase_type';
-
-    case LABEL_FORMULA = 'formula';
-    case LABEL_FORMULA_TYPE = 'form_label_formula_type';
-    case LABEL_FORMULA_LINK_TYPE = 'formula link';
-    case LABEL_TERM = 'word, verb, triple or formula';
-    case LABEL_VIEW_TYPE = 'view type';
-    case LABEL_VIEW_LINK_TYPE = 'view link type';
-    case LABEL_VIEW_RELATION_TYPE = 'view relation type';
-    case LABEL_COMPONENT = 'component';
-    case LABEL_COMPONENT_TYPE = 'component type';
-    case LABEL_COMPONENT_LINK_TYPE = 'link type';
-    case LABEL_POSITION_TYPE = 'position';
-    case LABEL_SOURCE_TYPE = 'source type';
-    case LABEL_REF_TYPE = 'reference type';
-    case LABEL_LANGUAGE = 'form_label_language';
-    case LABEL_LANGUAGE_FORM = 'form_label_language_form';
-    case LABEL_USER_PROFILE = 'user profile';
-    case LABEL_JOB_TYPE = 'form_label_job_type';
-
-    case LABEL_SHARE_TYPE = 'form_select_share';
-    case LABEL_PROTECTION_TYPE = 'form_select_protection';
 
     // messages with vars
 
@@ -1077,75 +1051,97 @@ enum messages: string
     case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
 
-    // TODO Prio 0 easy change the const names to
-    //             FORM_* for all system form components
-    //             FORM_TITLE_* for the form title that is translated
-    //             FORM_FIELD_* for the test input form field label of that is translated
-    //             FORM_SELECT_* (or LABEL_*) for the form field label of that is translated
+    /*
+     * view
+     */
+
+    // messages used to translate the fixed text of views
 
     // view titles: form_title_*
-    case FORM_WORD_ADD_TITLE = 'form_title_word_add';
-    case FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
-    case FORM_WORD_DEL_TITLE = 'form_title_word_del';
-    case FORM_VERB_ADD_TITLE = 'form_title_verb_add';
-    case FORM_VERB_EDIT_TITLE = 'form_title_verb_edit';
-    case FORM_VERB_DEL_TITLE = 'form_title_verb_del';
+    case FORM_TITLE_WORD_ADD = 'form_title_word_add';
+    case FORM_TITLE_WORD_EDIT = 'form_title_word_edit';
+    case FORM_TITLE_WORD_DEL = 'form_title_word_del';
+    case FORM_TITLE_VERB_ADD = 'form_title_verb_add';
+    case FORM_TITLE_VERB_EDIT = 'form_title_verb_edit';
+    case FORM_TITLE_VERB_DEL = 'form_title_verb_del';
     case FORM_TRIPLE_ADD_TITLE = 'form_title_triple_add';
-    case FORM_TRIPLE_EDIT_TITLE = 'form_title_triple_edit';
-    case FORM_TRIPLE_DEL_TITLE = 'form_title_triple_del';
-    case FORM_SOURCE_ADD_TITLE = 'form_title_source_add';
-    case FORM_SOURCE_EDIT_TITLE = 'form_title_source_edit';
-    case FORM_SOURCE_DEL_TITLE = 'form_title_source_del';
-    case FORM_REF_ADD_TITLE = 'form_title_ref_add';
-    case FORM_REF_EDIT_TITLE = 'form_title_ref_edit';
-    case FORM_REF_DEL_TITLE = 'form_title_ref_del';
-    case FORM_GROUP_ADD_TITLE = 'form_title_group_add';
-    case FORM_GROUP_EDIT_TITLE = 'form_title_group_edit';
-    case FORM_GROUP_DEL_TITLE = 'form_title_group_del';
-    case FORM_VALUE_ADD_TITLE = 'form_title_value_add';
-    case FORM_VALUE_EDIT_TITLE = 'form_title_value_edit';
-    case FORM_VALUE_DEL_TITLE = 'form_title_value_del';
-    case FORM_FORMULA_ADD_TITLE = 'form_title_formula_add';
-    case FORM_FORMULA_EDIT_TITLE = 'form_title_formula_edit';
-    case FORM_FORMULA_DEL_TITLE = 'form_title_formula_del';
-    case FORM_RESULT_ADD_TITLE = 'form_title_result_add';
-    case FORM_RESULT_EDIT_TITLE = 'form_title_result_edit';
-    case FORM_RESULT_DEL_TITLE = 'form_title_result_del';
-    case FORM_VIEW_ADD_TITLE = 'form_title_view_add';
-    case FORM_VIEW_EDIT_TITLE = 'form_title_view_edit';
-    case FORM_VIEW_DEL_TITLE = 'form_title_view_del';
-    case FORM_COMPONENT_ADD_TITLE = 'form_title_component_add';
-    case FORM_COMPONENT_EDIT_TITLE = 'form_title_component_edit';
-    case FORM_COMPONENT_DEL_TITLE = 'form_title_component_del';
+    case FORM_TITLE_TRIPLE_EDIT = 'form_title_triple_edit';
+    case FORM_TITLE_TRIPLE_DEL = 'form_title_triple_del';
+    case FORM_TITLE_SOURCE_ADD = 'form_title_source_add';
+    case FORM_TITLE_SOURCE_EDIT = 'form_title_source_edit';
+    case FORM_TITLE_SOURCE_DEL = 'form_title_source_del';
+    case FORM_TITLE_REF_ADD = 'form_title_ref_add';
+    case FORM_TITLE_REF_EDIT = 'form_title_ref_edit';
+    case FORM_TITLE_REF_DEL = 'form_title_ref_del';
+    case FORM_TITLE_GROUP_ADD = 'form_title_group_add';
+    case FORM_TITLE_GROUP_EDIT = 'form_title_group_edit';
+    case FORM_TITLE_GROUP_DEL = 'form_title_group_del';
+    case FORM_TITLE_VALUE_ADD = 'form_title_value_add';
+    case FORM_TITLE_VALUE_EDIT = 'form_title_value_edit';
+    case FORM_TITLE_VALUE_DEL = 'form_title_value_del';
+    case FORM_TITLE_FORMULA_ADD = 'form_title_formula_add';
+    case FORM_TITLE_FORMULA_EDIT = 'form_title_formula_edit';
+    case FORM_TITLE_FORMULA_DEL = 'form_title_formula_del';
+    case FORM_TITLE_RESULT_ADD = 'form_title_result_add';
+    case FORM_TITLE_RESULT_EDIT = 'form_title_result_edit';
+    case FORM_TITLE_RESULT_DEL = 'form_title_result_del';
+    case FORM_TITLE_VIEW_ADD = 'form_title_view_add';
+    case FORM_TITLE_VIEW_EDIT = 'form_title_view_edit';
+    case FORM_TITLE_VIEW_DEL = 'form_title_view_del';
+    case FORM_TITLE_COMPONENT_ADD = 'form_title_component_add';
+    case FORM_TITLE_COMPONENT_EDIT = 'form_title_component_edit';
+    case FORM_TITLE_COMPONENT_DEL = 'form_title_component_del';
     case FORM_TITLE_VIEW_LINK_ADD = 'form_title_view_link_add';
     case FORM_TITLE_VIEW_LINK_EDIT = 'form_title_view_link_edit';
     case FORM_TITLE_VIEW_LINK_DEL = 'form_title_view_link_del';
     case FORM_TITLE_COMPONENT_LINK_ADD = 'form_title_component_link_add';
     case FORM_TITLE_COMPONENT_LINK_EDIT = 'form_title_component_link_edit';
     case FORM_TITLE_COMPONENT_LINK_DEL = 'form_title_component_link_del';
-    case FORM_FORMULA_LINK_ADD_TITLE = 'form_title_formula_link_add';
-    case FORM_FORMULA_LINK_EDIT_TITLE = 'form_title_formula_link_edit';
-    case FORM_FORMULA_LINK_DEL_TITLE = 'form_title_formula_link_del';
-    case FORM_VIEW_RELATION_ADD_TITLE = 'form_title_view_relation_add';
-    case FORM_VIEW_RELATION_EDIT_TITLE = 'form_title_view_relation_edit';
-    case FORM_VIEW_RELATION_DEL_TITLE = 'form_title_view_relation_del';
-    case ADMIN_FORM_USED_ADD_TITLE = 'form_title_admin_user_add';
-    case ADMIN_FORM_USED_EDIT_TITLE = 'form_title_admin_user_edit';
-    case ADMIN_FORM_USED_DEL_TITLE = 'form_title_admin_user_del';
-    case ADMIN_FORM_ADD_LANGUAGE_TITLE = 'form_title_admin_add_language';
-    case ADMIN_FORM_EDIT_LANGUAGE_TITLE = 'form_title_admin_edit_language';
-    case ADMIN_FORM_DEL_LANGUAGE_TITLE = 'form_title_admin_del_language';
+    case FORM_TITLE_VIEW_RELATION_ADD = 'form_title_view_relation_add';
+    case FORM_TITLE_VIEW_RELATION_EDIT = 'form_title_view_relation_edit';
+    case FORM_TITLE_VIEW_RELATION_DEL = 'form_title_view_relation_del';
+    case FORM_TITLE_FORMULA_LINK_ADD = 'form_title_formula_link_add';
+    case FORM_TITLE_FORMULA_LINK_EDIT = 'form_title_formula_link_edit';
+    case FORM_TITLE_FORMULA_LINK_DEL = 'form_title_formula_link_del';
+    case FORM_TITLE_USER_ADD_BY_ADMIN = 'form_title_admin_user_add';
+    case FORM_TITLE_USER_EDIT_BY_ADMIN = 'form_title_admin_user_edit';
+    case FORM_TITLE_USER_DEL_BY_ADMIN = 'form_title_admin_user_del';
+    case FORM_TITLE_LANGUAGE_ADD_BY_ADMIN = 'form_title_admin_add_language';
+    case FORM_TITLE_LANGUAGE_EDIT_BY_ADMIN = 'form_title_admin_edit_language';
+    case FORM_TITLE_LANGUAGE_DEL_BY_ADMIN = 'form_title_admin_del_language';
     case FORM_TITLE_CONFIRM_ADD = 'form_title_confirm_add';
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
-    case SYSTEM_SUB_TITLE_USAGE = 'system_sub_title_usage';
-    case SYSTEM_SUB_TITLE_VAR_USAGE = 'system_sub_title_var_usage';
-    case SYSTEM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
-    case SYSTEM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
-    case SYSTEM_SUB_TITLE_REF = 'system_sub_title_references';
-    case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
-    case SYSTEM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
-    case SYSTEM_SUB_TITLE_LOG = 'system_sub_title_log';
+
+    // sub titles
+    case FORM_SUB_TITLE_USAGE = 'system_sub_title_usage';
+    case FORM_SUB_TITLE_VAR_USAGE = 'system_sub_title_var_usage';
+    case FORM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
+    case FORM_SUB_TITLE_TRIPLES = 'system_sub_title_triples';
+    case FORM_SUB_TITLE_REF = 'system_sub_title_references';
+    case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
+    case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
+    case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
+
+    // log, im- and export titles
+    case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
+    case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
+    case FORM_TITLE_SEARCH = 'system_title_search';
+    case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
+    case FORM_TITLE_SANDBOX = 'system_title_sandbox';
+    case FORM_TITLE_UNDO = 'system_title_undo';
+    case FORM_PASTE_TABLE = 'system_paste_table';
+    case FORM_TITLE_IMPORT = 'system_title_import';
+    case FORM_TITLE_EXPORT = 'system_title_export';
+    case FORM_TITLE_EXPORT_JSON = 'system_title_export_json';
+    case FORM_TITLE_EXPORT_XML = 'system_title_export_xml';
+    case FORM_TITLE_EXPORT_CSV = 'system_title_export_csv';
+    case FORM_TITLE_EXPORT_ODS = 'system_title_export_ods';
+    case FORM_TITLE_PROCESS_ASYNC = 'system_title_process_async';
+    case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
+    case FORM_TITLE_PROCESS = 'system_title_process';
+
+    // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
@@ -1153,26 +1149,17 @@ enum messages: string
     case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
     case SYSTEM_TITLE_LOGIN_RESET = 'system_title_login_reset';
     case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
-    case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
-    case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
-    case FORM_TITLE_SEARCH = 'system_title_search';
-    case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
     case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
     case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
     case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
-    case FORM_TITLE_SANDBOX = 'system_title_sandbox';
-    case FORM_TITLE_UNDO = 'system_title_undo';
     case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
-    case FORM_PASTE_TABLE = 'system_paste_table';
-    case TITLE_USER_IMPORT = 'system_title_import';
-    case TITLE_USER_EXPORT = 'system_title_export';
-    case TITLE_USER_EXPORT_JSON = 'system_title_export_json';
-    case TITLE_USER_EXPORT_XML = 'system_title_export_xml';
-    case TITLE_USER_EXPORT_CSV = 'system_title_export_csv';
-    case TITLE_USER_EXPORT_ODS = 'system_title_export_ods';
-    case FORM_TITLE_PROCESS_ASYNC = 'system_title_process_async';
-    case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
-    case FORM_TITLE_PROCESS = 'system_title_process';
+
+
+    /*
+     * form fields
+     */
+
+    // internal and hidden form fields
     case FORM_FIELD_STEP = 'form_field_step';
     case FORM_FIELD_CONFIRM = 'form_field_confirm';
     case FORM_FIELD_MASK = 'form_field_mask';
@@ -1184,91 +1171,153 @@ enum messages: string
     case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
     case FORM_FIELD_LANGUAGE_SYMBOL = 'form_field_language_symbol';
     case FIELD_LANGUAGE_SYMBOL = 'field_language_symbol';
+
+    // text input form fields
+    // general fields used in more than one view
     case FORM_FIELD_NAME = 'form_field_name';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
     case FORM_FIELD_TYPE = 'form_field_type';
+
+    // word, triple and phrase fields
+    case FORM_FIELD_WEIGHT = 'form_field_weight';
+    case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
+
+    // value and result fields
+    case FORM_FIELD_VALUE = 'form_field_value';
     case FORM_FIELD_GROUP = 'form_field_group';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
+
+    // source and reference fields
     case FORM_FIELD_URL = 'form_field_url';
-    case FORM_FIELD_VALUE = 'form_field_value';
+    case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
+
+    // formula fields
     case FORM_FIELD_FORMULA_LINK_PRIO = 'form_field_formula_link_prio';
+    case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
+    case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
+
+    // view fields
     case FORM_FIELD_VIEW_TERM_LINK_PRIO = 'form_field_view_term_link_prio';
     case FORM_FIELD_COMPONENT_LINK = 'form_field_component_link';
+
+    // export fields
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
     case FORM_FIELD_SELECTION_DESCRIPTION = 'system_form_selection_description';
     case FORM_FIELD_SELECTION_TEXT = 'system_form_selection_text';
-    case FORM_FIELD_SELECT_MULTI_PHRASES = 'system_form_select_multi_phrases';
-    case FORM_FIELD_SELECT_MULTI_VERBS = 'system_form_select_multi_verbs';
-    case SYSTEM_FORM_SELECT_SOURCE = 'system_form_select_source';
-    case SYSTEM_FORM_SELECT_MULTI_SOURCES = 'system_form_select_multi_sources';
-    case SYSTEM_FORM_SELECT_REF = 'system_form_select_ref';
-    case SYSTEM_FORM_SELECT_MULTI_REFS = 'system_form_select_multi_refs';
-    case FORM_FIELD_SELECT_FORMULA = 'system_form_select_formula';
-    case FORM_FIELD_SELECT_MULTI_FORMULAS = 'system_form_select_multi_formulas';
-    case FORM_FIELD_SELECT_TERM = 'system_form_select_term';
-    case FORM_FIELD_SELECT_MULTI_TERMS = 'system_form_select_multi_terms';
-    case FORM_FIELD_SELECT_VALUE = 'system_form_select_value';
-    case FORM_FIELD_SELECT_MULTI_VALUES = 'system_form_select_multi_values';
-    case FORM_FIELD_SELECT_RESULT = 'system_form_select_result';
-    case FORM_FIELD_SELECT_MULTI_RESULTS = 'system_form_select_multi_results';
-    case FORM_FIELD_SELECT_VIEW = 'system_form_select_view';
-    case FORM_FIELD_SELECT_PARENT_VIEW = 'system_form_select_parent_view';
-    case FORM_FIELD_SELECT_CHILD_VIEW = 'system_form_select_child_view';
-    case FORM_FIELD_SELECT_MULTI_VIEWS = 'system_form_select_multi_views';
-    case FORM_FIELD_SELECT_COMPONENT = 'system_form_select_component';
-    case FORM_FIELD_SELECT_MULTI_COMPONENTS = 'system_form_select_multi_components';
-    case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
-    case FORM_SELECT_VIEW_LINK_TYPE = 'form_select_view_link_type';
-    case FORM_SELECT_VIEW_LINK_PRIORITY = 'form_select_view_link_priority';
-    case FORM_SELECT_COMPONENT_LINK_TYPE = 'form_select_component_link_type';
-    case FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER = 'form_select_component_link_order_number';
-    case FORM_SELECT_FORMULA_LINK_TYPE = 'form_select_formula_link_type';
-    case FORM_SELECT_FORMULA_LINK_PRIORITY = 'form_select_formula_link_priority';
-    case FORM_SELECT_FILE = 'system_form_select_file';
-    case FORM_SELECT_EXPORT_FORMAT = 'system_form_select_export_format';
-    case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
+
+    // language form fields
     case FORM_FIELD_PLURAL = 'form_field_plural';
     case FORM_FIELD_REVERSE = 'form_field_reverse';
     case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
-    case FORM_FIELD_EXTERNAL_KEY = 'form_field_external_key';
     case FORM_FIELD_NAME_IN_FORMULAS = 'form_field_name_in_formulas';
-    case FORM_FIELD_WEIGHT = 'form_field_weight';
-    case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
-    case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
-    case FORM_FIELD_PHRASE_LIST = 'form_field_phrase_list';
-    case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
-    case FORM_TRIPLE_PHRASE_REF = 'form_select_phrase_ref';
-    case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';
-    case FORM_TRIPLE_PHRASE_COL = 'form_select_phrase_col';
-    case FORM_TRIPLE_PHRASE_COL_SUB = 'form_select_phrase_col_sub';
-    case FORM_TRIPLE_VERB = 'form_select_verb';
-    case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
-    case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
+
+
+    // select input form fields
+    case FORM_SELECT = 'form_select'; // dummy label as fallback value for selections
+
+    // word, verb and triple select fields
+    case FORM_SELECT_WORD = 'form_select_word';
+    case FORM_SELECT_VERB = 'form_select_verb';
+    case FORM_SELECT_MULTI_VERBS = 'form_select_multi_verbs';
+
+    // phrase select fields
+    case FORM_SELECT_PHRASE = 'form_select_phrase';
+    case FORM_SELECT_PHRASE_FROM = 'form_select_phrase_from';
+    case FORM_SELECT_PHRASE_TO = 'form_select_phrase_to';
+    case FORM_SELECT_MULTI_PHRASES = 'form_select_multi_phrases';
+    case FORM_SELECT_PHRASE_REF = 'form_select_phrase_ref';
+    case FORM_SELECT_PHRASE_ROW = 'form_select_phrase_row';
+    case FORM_SELECT_PHRASE_COL = 'form_select_phrase_col';
+    case FORM_SELECT_PHRASE_COL_SUB = 'form_select_phrase_col_sub';
     case FORM_SELECT_PHRASE_TYPE = 'form_select_phrase_type';
+
+    // source and ref select fields
+    case FORM_SELECT_SOURCE = 'form_select_source';
+    case FORM_SELECT_MULTI_SOURCES = 'form_select_multi_sources';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
+    case FORM_SELECT_REF = 'form_select_ref';
+    case FORM_SELECT_MULTI_REFS = 'form_select_multi_refs';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
-    case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
+
+    // value and result select fields
+    case FORM_SELECT_VALUE = 'form_select_value';
+    case FORM_SELECT_MULTI_VALUES = 'form_select_multi_values';
+    case FORM_SELECT_RESULT = 'form_select_result';
+    case FORM_SELECT_MULTI_RESULTS = 'form_select_multi_results';
+
+    // formula select fields
+    case FORM_SELECT_FORMULA = 'form_select_formula';
+    case FORM_SELECT_MULTI_FORMULAS = 'form_select_multi_formulas';
     case FORM_SELECT_FORMULA_TYPE = 'form_select_formula_type';
+    case FORM_SELECT_FORMULA_LINK_TYPE = 'form_select_formula_link_type';
+    case FORM_SELECT_FORMULA_LINK_PRIORITY = 'form_select_formula_link_priority';
+
+    // term select fields
+    case FORM_SELECT_TERM = 'form_select_term';
+    case FORM_SELECT_MULTI_TERMS = 'form_select_multi_terms';
+
+    // view select fields
+    case FORM_SELECT_VIEW = 'form_select_view';
+    case FORM_SELECT_PARENT_VIEW = 'form_select_parent_view';
+    case FORM_SELECT_CHILD_VIEW = 'form_select_child_view';
+    case FORM_SELECT_MULTI_VIEWS = 'form_select_multi_views';
     case FORM_SELECT_VIEW_TYPE = 'form_select_view_type';
     case FORM_SELECT_VIEW_STYLE = 'form_select_view_style';
-    case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
-    case FORM_SELECT_COMPONENT_STYLE = 'form_select_component_style';
-    case FORM_SELECT_COMPONENT_POS = 'form_select_component_pos';
+    case FORM_SELECT_VIEW_LINK_TYPE = 'form_select_view_link_type';
+    case FORM_SELECT_VIEW_LINK_PRIORITY = 'form_select_view_link_priority';
     case FORM_SELECT_VIEW_RELATION_TYPE = 'form_select_view_relation_type';
     case FORM_FIELD_VIEW_RELATION_START_POS = 'form_field_view_relation_start_pos';
+
+    // view component select fields
+    case FORM_SELECT_COMPONENT = 'form_select_component';
+    case FORM_SELECT_MULTI_COMPONENTS = 'form_select_multi_components';
+    case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
+    case FORM_SELECT_COMPONENT_STYLE = 'form_select_component_style';
+    case FORM_SELECT_COMPONENT_POS_TYPE = 'form_select_component_pos_type';
+    case FORM_SELECT_COMPONENT_LINK_TYPE = 'form_select_component_link_type';
+    case FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER = 'form_select_component_link_order_number';
+
+    // im- and export select fields
+    case FORM_SELECT_FILE = 'form_select_file';
+    case FORM_SELECT_EXPORT_FORMAT = 'form_select_export_format';
+
+    // im- and export select fields
+    case FORM_SELECT_LANGUAGE = 'form_select_language';
+    case FORM_SELECT_LANGUAGE_FORM = 'form_select_language_form';
+
+    // user select fields
+    case FORM_SELECT_USER_PROFILE = 'user profile';
+
+    // job select fields
+    case FORM_SELECT_JOB_TYPE = 'form_label_job_type';
+
+    // access select fields
+    case FORM_SELECT_SHARE_TYPE = 'form_select_share';
+    case FORM_SELECT_PROTECTION_TYPE = 'form_select_protection';
+
+    // TODO review
+    case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
+    case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
+    case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
+    case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
+    case FORM_SELECT_VIEW_DEFAULT = 'form_select_view_default';
+    case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
     case SYSTEM_PASTE_TABLE_CONTEXT = 'system_paste_table_context';
     case SYSTEM_PASTE_TABLE_BODY = 'system_paste_table_body';
     case SYSTEM_SELECTION_TEXT = 'system_selection_text';
     case SYSTEM_POPUP_TITLE_UPDATE = 'system_popup_title_update';
     case SYSTEM_POPUP_TITLE_DELETE = 'system_popup_title_delete';
     case SELECT_VIEW = 'select_view';
+
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_DEL = 'form_button_del';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
     case FORM_WORD_FLD_NAME = 'form_word_fld_name';
+
+
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';
@@ -1337,31 +1386,31 @@ enum messages: string
     case VAR_TYPE_NAME = 'TYPE_NAME';
 
     public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT = [
-        self::LABEL_PHRASE_TYPE,
-        self::LABEL_FORMULA_TYPE,
-        self::LABEL_FORMULA_LINK_TYPE,
-        self::FORM_FIELD_SELECT_VIEW,
-        self::LABEL_VIEW_TYPE,
-        self::LABEL_VIEW_LINK_TYPE,
-        self::LABEL_VIEW_RELATION_TYPE,
-        self::LABEL_COMPONENT_TYPE,
-        self::LABEL_COMPONENT_LINK_TYPE,
+        self::FORM_SELECT_PHRASE_TYPE,
+        self::FORM_SELECT_FORMULA_TYPE,
+        self::FORM_SELECT_FORMULA_LINK_TYPE,
+        self::FORM_SELECT_VIEW,
+        self::FORM_SELECT_VIEW_TYPE,
+        self::FORM_SELECT_VIEW_LINK_TYPE,
+        self::FORM_SELECT_VIEW_RELATION_TYPE,
+        self::FORM_SELECT_COMPONENT_TYPE,
+        self::FORM_SELECT_COMPONENT_LINK_TYPE,
     ];
 
     public const array FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA = [
-        self::LABEL_WORD,
-        self::LABEL_VERB,
-        self::LABEL_SOURCE,
-        self::LABEL_PHRASE,
-        self::LABEL_PHRASE_FROM,
-        self::LABEL_PHRASE_TO,
-        self::LABEL_PHRASE_ROW,
-        self::LABEL_PHRASE_COL,
-        self::LABEL_PHRASE_COL_SUB,
-        self::LABEL_FORMULA,
-        self::LABEL_TERM,
-        self::LABEL_VIEW,
-        self::LABEL_COMPONENT,
+        self::FORM_FIELD_NAME,
+        self::FORM_SELECT_VERB,
+        self::FORM_SELECT_SOURCE,
+        self::FORM_SELECT_PHRASE,
+        self::FORM_SELECT_PHRASE_FROM,
+        self::FORM_SELECT_PHRASE_TO,
+        self::FORM_SELECT_PHRASE_ROW,
+        self::FORM_SELECT_PHRASE_COL,
+        self::FORM_SELECT_PHRASE_COL_SUB,
+        self::FORM_SELECT_FORMULA,
+        self::FORM_SELECT_TERM,
+        self::FORM_SELECT_VIEW,
+        self::FORM_SELECT_COMPONENT,
     ];
 
     /**

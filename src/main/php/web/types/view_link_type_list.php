@@ -60,7 +60,7 @@ class view_link_type_list extends type_list
         string   $name = self::NAME
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_VIEW_LINK_TYPE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_VIEW_LINK_TYPE);
     }
 
 }

@@ -59,7 +59,7 @@ class term_list_ui_tests
         $test_page .= 'term list with link: ' . $lst->name_link() . '<br>';
 
         $from_rows = '<br>' . $html->text_h2('Selector tests');
-        $from_rows .= $lst->selector($form, 0, url_var::TERM, msg_id::LABEL_TERM) . '<br>';
+        $from_rows .= $lst->selector($form, 0, url_var::TERM, msg_id::FORM_SELECT_TERM) . '<br>';
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'term_list', 'term_list', $t);

@@ -474,7 +474,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::LABEL_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -489,7 +489,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $ref_lst->load_like($pattern);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::LABEL_STYLE);
+        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::FORM_SELECT_VIEW_STYLE);
     }
 
     /*

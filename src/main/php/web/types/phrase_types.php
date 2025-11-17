@@ -65,7 +65,7 @@ class phrase_types extends type_list
         string $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_PHRASE_TYPE, $style);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_PHRASE_TYPE, $style);
     }
 
 

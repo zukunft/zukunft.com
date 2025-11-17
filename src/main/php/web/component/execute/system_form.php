@@ -754,15 +754,15 @@ class system_form extends component
         // get the selected phrase id
         $id = $dbo->id();
         $name = url_var::PHRASE;
-        $label_id = msg_id::LABEL_PHRASE;
+        $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
             $name = url_var::PHRASE_FROM;
-            $label_id = msg_id::LABEL_PHRASE_FROM;
+            $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
             $id = $dbo->to()?->id();
             $name = url_var::PHRASE_TO;
-            $label_id = msg_id::LABEL_PHRASE_TO;
+            $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
             $id = $dbo->from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
@@ -770,19 +770,19 @@ class system_form extends component
             // $id = $dbo->phr_row?->id();
             $id = 1;
             $name = url_var::PHRASE_ROW;
-            $label_id = msg_id::LABEL_PHRASE_ROW;
+            $label_id = msg_id::FORM_SELECT_PHRASE_ROW;
         } elseif ($code_id == components::FORM_PHRASE_COL) {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col?->id();
             $id = 1;
             $name = url_var::PHRASE_COL;
-            $label_id = msg_id::LABEL_PHRASE_COL;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL;
         } elseif ($code_id == components::FORM_PHRASE_COL_SUB) {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col2?->id();
             $id = 1;
             $name = url_var::PHRASE_COL_SUB;
-            $label_id = msg_id::LABEL_PHRASE_COL_SUB;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL_SUB;
         }
         if ($id == null) {
             $id = 0;
@@ -818,15 +818,15 @@ class system_form extends component
         // get the selected phrase id
         $id = $dbo->id();
         $name = url_var::PHRASE;
-        $label_id = msg_id::LABEL_PHRASE;
+        $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
             $name = url_var::PHRASE_FROM;
-            $label_id = msg_id::LABEL_PHRASE_FROM;
+            $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
             $id = $dbo->to()?->id();
             $name = url_var::PHRASE_TO;
-            $label_id = msg_id::LABEL_PHRASE_TO;
+            $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
             $id = $dbo->from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
@@ -834,19 +834,19 @@ class system_form extends component
             // $id = $dbo->phr_row?->id();
             $id = 1;
             $name = url_var::PHRASE_ROW;
-            $label_id = msg_id::LABEL_PHRASE_ROW;
+            $label_id = msg_id::FORM_SELECT_PHRASE_ROW;
         } elseif ($code_id == components::FORM_PHRASE_COL) {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col?->id();
             $id = 1;
             $name = url_var::PHRASE_COL;
-            $label_id = msg_id::LABEL_PHRASE_COL;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL;
         } elseif ($code_id == components::FORM_PHRASE_COL_SUB) {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col2?->id();
             $id = 1;
             $name = url_var::PHRASE_COL_SUB;
-            $label_id = msg_id::LABEL_PHRASE_COL_SUB;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL_SUB;
         }
         if ($id == null) {
             $id = 0;
@@ -882,17 +882,17 @@ class system_form extends component
         // get the selected phrase id
         $id = $dbo->id();
         $name = url_var::PHRASE;
-        $label_id = msg_id::LABEL_PHRASE;
+        $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
             $name = url_var::PHRASE_FROM;
-            $label_id = msg_id::LABEL_PHRASE_FROM;
+            $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } else {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col2?->id();
             $id = 1;
             $name = url_var::PHRASE_COL_SUB;
-            $label_id = msg_id::LABEL_PHRASE_COL_SUB;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL_SUB;
         }
         if ($id == null) {
             $id = 0;
@@ -928,17 +928,17 @@ class system_form extends component
         // get the selected phrase id
         $id = $dbo->id();
         $name = url_var::PHRASE;
-        $label_id = msg_id::LABEL_PHRASE;
+        $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
             $name = url_var::PHRASE_FROM;
-            $label_id = msg_id::LABEL_PHRASE_FROM;
+            $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } else {
             // TODO Prio 1 activate
             //$id = $dbo->phr_col2?->id();
             $id = 1;
             $name = url_var::PHRASE_COL_SUB;
-            $label_id = msg_id::LABEL_PHRASE_COL_SUB;
+            $label_id = msg_id::FORM_SELECT_PHRASE_COL_SUB;
         }
         if ($id == null) {
             $id = 0;
@@ -1117,7 +1117,7 @@ class system_form extends component
     function form_parent_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
-            url_var::VIEW_PARENT,msg_id::FORM_FIELD_SELECT_PARENT_VIEW);
+            url_var::VIEW_PARENT,msg_id::FORM_SELECT_PARENT_VIEW);
     }
 
     /**
@@ -1130,7 +1130,7 @@ class system_form extends component
     function form_child_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
-            url_var::VIEW_CHILD,msg_id::FORM_FIELD_SELECT_CHILD_VIEW);
+            url_var::VIEW_CHILD,msg_id::FORM_SELECT_CHILD_VIEW);
     }
 
     /**

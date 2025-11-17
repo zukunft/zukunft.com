@@ -205,7 +205,7 @@ class source extends sandbox_code_id
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::LABEL_SOURCE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -234,7 +234,7 @@ class source extends sandbox_code_id
         string    $form,
         view_list $msk_lst,
         string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();

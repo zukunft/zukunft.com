@@ -220,7 +220,7 @@ class sandbox extends db_object_dsp
         string    $form,
         view_list $msk_lst,
         string    $name = url_var::VIEW,
-        msg_id    $msg_id = msg_id::FORM_FIELD_SELECT_VIEW
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();

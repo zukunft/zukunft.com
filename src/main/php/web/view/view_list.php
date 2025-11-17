@@ -288,7 +288,7 @@ class view_list extends list_dsp
         string          $form = '',
         int|string|null $selected = null,
         string          $name = url_var::VIEW,
-        msg_id          $label_id = msg_id::FORM_FIELD_SELECT_VIEW,
+        msg_id          $label_id = msg_id::FORM_SELECT_VIEW,
         string          $style = view_styles::COL_SM_4,
         string          $type = html_selector::TYPE_SELECT
     ): string

@@ -65,7 +65,7 @@ class component_link_type_list extends type_list
         string $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_COMPONENT_LINK_TYPE, $style);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_COMPONENT_LINK_TYPE, $style);
     }
 
 }

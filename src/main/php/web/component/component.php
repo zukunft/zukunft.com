@@ -806,7 +806,7 @@ class component extends sandbox_code_id
         string      $form,
         ?int        $selected = null,
         string      $pattern = '',
-        msg_id      $label_id = msg_id::LABEL_PHRASE,
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
         string      $style = view_styles::COL_SM_4
     ): string
     {

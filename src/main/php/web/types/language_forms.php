@@ -64,7 +64,7 @@ class language_forms extends type_list
         string   $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_LANGUAGE_FORM, $style);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_LANGUAGE_FORM, $style);
     }
 
 }

@@ -316,7 +316,7 @@ class view_base extends sandbox_code_id
         if ($pattern != '') {
             $cmp_lst->load_like($pattern);
         }
-        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::LABEL_COMPONENT_TYPE);
+        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT);
     }
 
     function log_err(string $msg): void

@@ -62,7 +62,7 @@ class formula_type_list extends type_list
         string   $name = self::NAME
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_FORMULA_TYPE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_FORMULA_TYPE);
     }
 
 

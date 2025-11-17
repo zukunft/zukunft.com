@@ -418,7 +418,7 @@ class list_dsp extends ListOfIdObjects
         string          $form = '',
         int|string|null $selected = null,
         string          $name = '',
-        msg_id          $label_id = msg_id::LABEL,
+        msg_id          $label_id = msg_id::FORM_SELECT,
         string          $style = view_styles::COL_SM_4,
         string          $type = html_selector::TYPE_SELECT
     ): string
