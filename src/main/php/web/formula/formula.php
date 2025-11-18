@@ -44,6 +44,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -155,10 +156,26 @@ class formula extends sandbox_code_id
     {
         parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
+                if ($url_array[url_var::USER_EXPRESSION] != null) {
+                    $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
+                }
+            }
+            if (array_key_exists(url_var::NEED_ALL, $url_array)) {
+                if ($url_array[url_var::NEED_ALL] != null) {
+                    $this->need_all_val = $url_array[url_var::NEED_ALL];
+                } else {
+                    $this->need_all_val = false;
+                }
+            }
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {
                     $this->impact = $url_array[url_var::IMPACT];
+                } else {
+                    $this->impact = 0.0;
                 }
+            } else {
+                $this->impact = 0.0;
             }
         }
         return $usr_msg;
@@ -519,14 +536,32 @@ class formula extends sandbox_code_id
             $result .= $html->dsp_form_hidden("back", $back);
         }
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", view_styles::COL_SM_8);
+        $result .= $html->form_field(
+            url_var::NAME,
+            msg_id::FORM_FIELD_NAME_FORMULA,
+            $this->name,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
         $result .= $this->dsp_type_selector($form_name);
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("description", $this->description, "Description:", view_styles::COL_SM_8);
+        $result .= $html->form_field(
+            url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
+            $this->description,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld(url_var::USER_EXPRESSION, $resolved_text, "Expression:", view_styles::COL_SM_12);
+            $result .= $html->form_field(
+                url_var::USER_EXPRESSION,
+                msg_id::FORM_FIELD_FORMULA_EXPRESSION,
+                $resolved_text,
+                html_base::INPUT_TEXT,
+                '',
+                view_styles::COL_SM_12);
         }
         $result .= $html->dsp_form_fld_checkbox(url_var::NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';

@@ -1166,15 +1166,14 @@ enum messages: string
     case FORM_FIELD_ID = 'form_field_id';
     case FORM_FIELD_BACK = 'form_field_back';
     case FORM_FIELD_PATTERN = 'form_field_pattern';
-    case FORM_FIELD_USERNAME = 'form_field_username';
-    case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
-    case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
     case FORM_FIELD_LANGUAGE_SYMBOL = 'form_field_language_symbol';
     case FIELD_LANGUAGE_SYMBOL = 'field_language_symbol';
 
     // text input form fields
     // general fields used in more than one view
     case FORM_FIELD_NAME = 'form_field_name';
+    case FORM_FIELD_NAME_FORMULA = 'form_field_name_formula';
+    case FORM_FIELD_NAME_COMPONENT = 'form_field_name_component';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
     case FORM_FIELD_TYPE = 'form_field_type';
 
@@ -1287,6 +1286,11 @@ enum messages: string
     case FORM_SELECT_LANGUAGE_FORM = 'form_select_language_form';
 
     // user select fields
+    case FORM_FIELD_USERNAME = 'form_field_username';
+    case FORM_FIELD_USER_EMAIL = 'form_field_user_email';
+    case FORM_FIELD_USER_PASSWORD = 'form_field_user_password';
+    case FORM_FIELD_USER_FIRST_NAME = 'form_field_first_name';
+    case FORM_FIELD_USER_LAST_NAME = 'form_field_last_name';
     case FORM_SELECT_USER_PROFILE = 'user profile';
 
     // job select fields

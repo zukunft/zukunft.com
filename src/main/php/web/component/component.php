@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\component;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
@@ -63,6 +64,7 @@ include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -79,12 +81,13 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class component extends sandbox_code_id
 {
@@ -496,8 +499,8 @@ class component extends sandbox_code_id
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header
@@ -556,11 +559,20 @@ class component extends sandbox_code_id
         $result .= $html->dsp_form_hidden("back", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
+        $result .= $html->form_field(
+            url_var::NAME,
+            msg_id::FORM_FIELD_NAME_COMPONENT,
+            $this->name,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
         // TODO Prio 0 check if the generated component edit mask has the type and all other elements used here and remove this function
         //$result .= $this->dsp_type_selector($form_name); // allow to change the type
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
+        $result .= $html->form_field(
+            url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
+            $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
                 $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back->url_encode());
@@ -631,8 +643,8 @@ class component extends sandbox_code_id
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header

@@ -850,6 +850,8 @@ class test_mappers
         return $url;
     }
 
+    // TODO Prio 1 check if all object fields are included e.g. view of source is missing
+
     private function word_url(word $wrd, string $type): array
     {
         $url_array = [];
@@ -911,6 +913,8 @@ class test_mappers
         $url_array[] = [url_var::DESCRIPTION, $src->description()];
         $url_array[] = [url_var::URL, $src->url()];
         $url_array[] = [url_var::TYPE, $src->type_id()];
+        // TODO Prio 1 activate
+        // $url_array[] = [url_var::VIEW, $src->view_id()];
         $url_array[] = [url_var::SHARE, $src->share_id()];
         $url_array[] = [url_var::PROTECTION, $src->protection_id()];
         $url_array[] = [url_var::USAGE, $src->usage()];
@@ -926,6 +930,8 @@ class test_mappers
         $url_array[] = [url_var::URL, $ref->url()];
         $url_array[] = [url_var::SOURCE, $ref->source_id()];
         $url_array[] = [url_var::DESCRIPTION, $ref->description()];
+        // TODO Prio 1 activate
+        //$url_array[] = [url_var::VIEW, $ref->view_id()];
         $url_array[] = [url_var::SHARE, $ref->share_id()];
         $url_array[] = [url_var::PROTECTION, $ref->protection_id()];
         return $url_array;
@@ -959,7 +965,11 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::NAME, $frm->name()];
         $url_array[] = [url_var::DESCRIPTION, $frm->description()];
+        $url_array[] = [url_var::USER_EXPRESSION, $frm->usr_text()];
+        // all need
+        // update
         $url_array[] = [url_var::TYPE, $frm->type_id()];
+        $url_array[] = [url_var::VIEW, $frm->view_id()];
         $url_array[] = [url_var::SHARE, $frm->share_id()];
         $url_array[] = [url_var::PROTECTION, $frm->protection_id()];
         $url_array[] = [url_var::USAGE, $frm->usage()];

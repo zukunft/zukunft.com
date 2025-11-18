@@ -678,14 +678,14 @@ class html_base
 
     /**
      * @param string $field the name of the form field
-     * @param string $txt_value the expected value of the form field
-     * @param string $label the expected value of the form field
+     * @param string|null $txt_value the expected value of the form field
+     * @param msg_id $label the expected value of the form field
      * @return string the html code of the form field
      */
     function form_text(string  $field,
                        ?string $txt_value = '',
-                       string  $label = '',
-                       string  $class = view_styles::COL_SM_4,
+                       msg_id $label = msg_id::FORM_FIELD_NAME,
+                       string  $type = '',
                        string  $attribute = ''): string
     {
         $result = '';
@@ -693,7 +693,10 @@ class html_base
             $label = strtoupper($field[0]) . substr($field, 1) . ':';
         }
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            if ($txt_value == null) {
+                $txt_value = '';
+            }
+            $result .= $this->form_field($field, $label, $txt_value, $type, $attribute);
         } else {
             $result .= $field .
                 ': <input type="' . html_base::INPUT_TEXT .
@@ -1215,12 +1218,13 @@ class html_base
             '" value="' . $id . '">';
     }
 
+    // TODO Prio 0 easy deprecate and use
 // add the text field to a form
-    function dsp_form_text($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
+    function dsp_form_text($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
                 ': <input type="' . html_base::INPUT_TEXT .
@@ -1231,34 +1235,16 @@ class html_base
     }
 
 // add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
+    function dsp_form_text_big($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
                 ': <input type="' . html_base::INPUT_TEXT .
                 '" name="' . $field .
                 '" class="resizedTextbox" value="' . $txt_value . '">';
-        }
-        return $result;
-    }
-
-// add the field to a form
-    function dsp_form_fld($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if ($label == '') {
-            $label = $field;
-        }
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-group ' . $class . '">';
-            $result .= $this->label($label, $field);
-            $result .= '<input class="form-control" name="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
-            $result .= '</div>';
-        } else {
-            $result .= $label . ' <input name="' . $field . '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1406,10 +1392,9 @@ class html_base
         if ($value != '') {
             $value = ' value="' . $value . '"';
         }
-        if ($type == '') {
-            $type = self::INPUT_SUBMIT;
+        if ($type != '') {
+            $type = ' type="' . $type . '"';
         }
-        $type = ' type="' . $type . '"';
         if ($class_add != '' and $class_add[0] != ' ') {
             $class_add = ' ' . $class_add;
         }
@@ -1480,23 +1465,28 @@ class html_base
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
-     * @param string $col_class the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @return string the HTML code for the field with the label
      */
     function form_field(
         string $url_id,
         msg_id $msg_id,
-        string $value,
-        string $type = '',
+        string $value = '',
+        string $type = html_base::INPUT_TEXT,
         string $input_class = '',
-        string $col_class = ''
+        string $style = view_styles::COL_SM_12
     ): string
     {
-        // TODO move mtr to label
+        // TODO Prio 2 move mtr to label
         global $mtr;
         $name = $mtr->txt($msg_id);
-        $text = $this->label($name, $url_id) . $this->input($url_id, $msg_id, $value, $type, $input_class);
-        return $this->div_form($text, $col_class);
+        if (self::UI_USE_BOOTSTRAP) {
+            $text = $this->label($name, $url_id);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
+            return $this->div_form($text, $style);
+        } else {
+            return $this->input($url_id, $msg_id, $value, $type);
+        }
     }
 
     /**

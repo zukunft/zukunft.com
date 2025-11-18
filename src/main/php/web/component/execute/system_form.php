@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -619,10 +620,7 @@ class system_form extends component
         return $html->form_field(
             url_var::FORMULA_LINK_PRIO,
             msg_id::FORM_FIELD_GROUP,
-            $dbo->url(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12
+            $dbo->url()
         );
     }
 
@@ -1417,10 +1415,12 @@ class system_form extends component
     function form_formula_expression(db_object_dsp $dbo, string $form_name): string
     {
         $html = new html_base();
-        return $html->dsp_form_fld(
+        return $html->form_field(
             url_var::NEED_ALL,
+            msg_id::FORM_FIELD_FORMULA_EXPRESSION,
             $dbo->user_expression(),
-            "Expression:",
+            html_base::INPUT_TEXT,
+            '',
             view_styles::COL_SM_12);
     }
 

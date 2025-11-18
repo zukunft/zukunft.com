@@ -161,7 +161,9 @@ class url_var
     const string WEIGHT = 'tw';
     const string TRIPLES = 'tl'; // to select the triples that should be displayed
     const string USER = 'u';
+    const string USER_FIRST_NAME = 'uf';
     const string IMPACT = 'ui'; // the impact value a form field
+    const string USER_LAST_NAME = 'ul';
     const string EMAIL = 'um'; // the user email form field
     const string USERNAME = 'un';
     const string USER_PROFILE = 'up';
@@ -243,6 +245,8 @@ class url_var
     const string EMAIL_HUMAN = 'email';
     const string USER_PASSWORD_HUMAN = 'password';
     const string USER_PROFILE_HUMAN = 'user_profile';
+    const string USER_FIRST_NAME_HUMAN = 'user_first_name';
+    const string USER_LAST_NAME_HUMAN = 'user_last_name';
     const string USER_TYPE_HUMAN = 'user_type';
 
     // id & name
@@ -420,6 +424,8 @@ class url_var
         [self::USERNAME_HUMAN, self::USERNAME],
         [self::EMAIL_HUMAN, self::EMAIL],
         [self::USER_PASSWORD_HUMAN, self::USER_PASSWORD],
+        [self::USER_FIRST_NAME_HUMAN, self::USER_FIRST_NAME],
+        [self::USER_LAST_NAME_HUMAN, self::USER_LAST_NAME],
         [self::USER_PROFILE_HUMAN, self::USER_PROFILE],
         [self::USER_TYPE_HUMAN, self::USER_TYPE],
 

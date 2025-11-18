@@ -33,6 +33,7 @@ namespace Zukunft\ZukunftCom\main\php\web\user;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
 include_once html_paths::HTML . 'html_base.php';
@@ -42,6 +43,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
@@ -50,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user extends db_object
 {
@@ -302,10 +305,10 @@ class user extends db_object
             $header = $html->text_h2('User "' . $this->name . '"');
             $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
-            $detail_fields = $html->form_text("username", $this->name);
-            $detail_fields .= $html->form_text("email", $this->email);
-            $detail_fields .= $html->form_text("first name", $this->first_name);
-            $detail_fields .= $html->form_text("last name", $this->last_name);
+            $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);
+            $detail_fields .= $html->form_text(url_var::EMAIL, $this->email, msg_id::FORM_FIELD_USER_EMAIL);
+            $detail_fields .= $html->form_text(url_var::USER_FIRST_NAME, $this->first_name, msg_id::FORM_FIELD_USER_FIRST_NAME);
+            $detail_fields .= $html->form_text(url_var::USER_LAST_NAME, $this->last_name, msg_id::FORM_FIELD_USER_LAST_NAME);
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
                 . $html->form(views::USER_EDIT, $hidden_fields . $detail_row)
