@@ -70,6 +70,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -95,6 +97,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_link extends sandbox_link
@@ -226,6 +230,40 @@ class formula_link extends sandbox_link
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
         }
         return $result;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        if ($this->formula_id() != 0) {
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::FORMULA_ID] = $this->formula_id();
+            }
+        }
+        if ($this->phrase_id() != 0) {
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::PHRASE_ID] = $this->phrase_id();
+            }
+        }
+
+        return $vars;
     }
 
 

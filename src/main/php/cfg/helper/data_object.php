@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
+//include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
@@ -85,6 +86,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -144,6 +146,7 @@ class data_object
     private ref_list $ref_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
+    private formula_link_list $frm_lnk_lst;
     private term_list $trm_lst;
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
@@ -180,6 +183,7 @@ class data_object
         $this->ref_lst = new ref_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
+        $this->frm_lnk_lst = new formula_link_list($usr);
         $this->trm_lst = new term_list($usr);
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
@@ -238,6 +242,7 @@ class data_object
         $vars[json_fields::REFERENCES] = $this->ref_lst->api_json_array($typ_lst);
         $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
+        $vars[json_fields::FORMULA_LINKS] = $this->frm_lnk_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst);
         $vars[json_fields::USERS] = $this->usr_lst->api_json_array($typ_lst);
@@ -354,6 +359,14 @@ class data_object
     function formula_list(): formula_list
     {
         return $this->frm_lst;
+    }
+
+    /**
+     * @return formula_link_list with the formula links of this data object
+     */
+    function formula_link_list(): formula_link_list
+    {
+        return $this->frm_lnk_lst;
     }
 
     /**

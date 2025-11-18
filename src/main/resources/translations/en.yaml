@@ -62,6 +62,7 @@ messages:
   system_sub_title_references: "References"
   system_sub_title_values: "Values"
   system_sub_title_formulas: "Formulas"
+  system_sub_title_results: "Results"
   system_sub_title_log: "Changes"
   system_title_about: "About"
   system_title_setup: "Setup"

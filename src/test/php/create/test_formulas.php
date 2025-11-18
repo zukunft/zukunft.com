@@ -40,15 +40,18 @@ include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
-include_once paths::MODEL_FORMULA . 'formula_link.php';
-include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -58,16 +61,19 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
-use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
-use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -236,7 +242,7 @@ class test_formulas
         global $frm_lnk_typ_cac;
         $t_wrd = new test_words($this->env);
         $lnk = new formula_link($this->env->usr1);
-        $lnk->set(1, $this->formula(), $t_wrd->word()->phrase());
+        $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
         return $lnk;
@@ -262,6 +268,20 @@ class test_formulas
         $lnk->set_formula($this->formula_filled_add());
         $lnk->set_phrase($t_wrd->word_filled_add()->phrase());
         return $lnk;
+    }
+
+    function formula_link_list(): formula_link_list
+    {
+        $lst = new formula_link_list($this->env->usr1);
+        $lst->add_link($this->formula_link());
+        return $lst;
+    }
+
+    function formula_link_list_ui(): formula_link_list_ui
+    {
+        $tl = new test_lib();
+        $lnk_lst = $this->formula_link_list();
+        return $tl->list_to_ui($lnk_lst, [api_type::INCL_PHRASES]);
     }
 
     /**

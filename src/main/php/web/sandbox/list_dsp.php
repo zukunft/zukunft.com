@@ -72,6 +72,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -99,6 +100,7 @@ class list_dsp extends ListOfIdObjects
 
     private array $hash = []; // hash list with the code id for fast selection
 
+
     /*
      * construct and map
      */
@@ -112,13 +114,16 @@ class list_dsp extends ListOfIdObjects
     }
 
     /**
+     * TODO Prio 0 check that all missing overwrites are creating an error log message
      * set the vars of this figure list based on the given json
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
     function api_mapper(array $json_array): user_message
     {
-        return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
+        $msg = 'set_from_json_array not overwritten by child object ' . $this::class;
+        log_err($msg);
+        return new user_message($msg);
     }
 
     /**
@@ -162,6 +167,35 @@ class list_dsp extends ListOfIdObjects
         $result = array();
         foreach ($this->lst() as $sbx) {
             $result[$sbx->id()] = $sbx->name();
+        }
+        return $result;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * TODO Prio 1 add the backend loading for all main objects and create a api and horizontal tests
+     * get the list of objects that are related to the given object from the backend via api
+     * e.g. to get the phrases assigned to a formula get the formula links of a formula selected by the id
+     *
+     * @param string $class the list class name that should be loaded e.g. formula_link_list
+     * @param string $url_var the url var of the object to filter the list e.g. formula
+     * @param int $id of the object to filter the list
+     * @return bool true if the load has been successful
+     */
+    function load_by_id(string $class, string $url_var, int $id): bool
+    {
+        $result = false;
+
+        $data = array($url_var => $id);
+        $rest = new rest_call();
+        $json_body = $rest->api_get($class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
         }
         return $result;
     }

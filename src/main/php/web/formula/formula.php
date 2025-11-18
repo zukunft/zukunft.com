@@ -55,7 +55,7 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::FORMULA . 'expression.php';
-include_once html_paths::FORMULA . 'formula_link_list.php';
+//include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';

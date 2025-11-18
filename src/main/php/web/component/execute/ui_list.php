@@ -38,10 +38,10 @@
 namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
@@ -61,6 +61,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
@@ -104,16 +105,26 @@ class ui_list extends ui_base
     }
 
     /**
-     * HTML for a list of words or triples
+     * HTML for a list of words or triples linked to the given formula in order of impact
      * @param formula|db_object $frm the object that should be used to select the related objects e.g. the triple "Canton of Zurich"
+     * @param data_object|null $cac the cached list of phrases for initial display without backend call
      * @return string the html code to start a new form and display the tile
      */
-    function phrases_of_formula(formula|db_object $frm): string
+    function phrases_of_formula(formula|db_object $frm, ?data_object $cac = null): string
     {
         global $cfg;
 
-        $phr_lst = new phrase_list();
-        $phr_lst->load_by_formula($frm);
+        $lnk_lst = $cac?->frm_lnk_lst;
+        // TODO Prio 2 decide if and when a reloading via api is done
+        if ($lnk_lst == null) {
+            $lnk_lst = new formula_link_list();
+            $lnk_lst->load_by_formula_id($frm->id());
+        }
+        $phr_lst = $lnk_lst->get_phrase_list($cac->phr_lst);
+        if ($phr_lst->is_empty()) {
+            $phr_lst = new phrase_list();
+            $phr_lst->load_by_formula($frm);
+        }
         $row_limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
         return $phr_lst->name_link('', $row_limit);
     }

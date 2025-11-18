@@ -1121,6 +1121,7 @@ enum messages: string
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
+    case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
 
     // log, im- and export titles

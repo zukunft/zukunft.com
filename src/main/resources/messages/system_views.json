@@ -439,6 +439,13 @@
       "ui_msg_code_id": "system_sub_title_formulas"
     },
     {
+      "name": "system sub title results",
+      "description": "show the language specific sub title for a result list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_results",
+      "ui_msg_code_id": "system_sub_title_results"
+    },
+    {
       "name": "system sub title log",
       "description": "show the language specific sub title for the change log",
       "type": "system_sub_title",
@@ -1548,13 +1555,13 @@
       "code_id": "value_numeric"
     },
     {
-      "name": "formula result list",
+      "name": "result list of formula",
       "description": "list of results calculated by this formula",
       "type": "result_list",
       "code_id": "result_list_formula"
     },
     {
-      "name": "formula usage list",
+      "name": "formula list of formula",
       "description": "list of formulas that use by this formula",
       "type": "formula_list",
       "code_id": "formula_list_formula"
@@ -3883,14 +3890,6 @@
           "name": "assigned phrases of this formula"
         },
         {
-          "position": "14",
-          "name": "formula result list"
-        },
-        {
-          "position": "15",
-          "name": "formula usage list"
-        },
-        {
           "position": "16",
           "name": "system form button cancel"
         },
@@ -3905,6 +3904,67 @@
         {
           "position": "19",
           "name": "system form end"
+        },
+        {
+          "position": "20",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "21",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "22",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "23",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "24",
+          "name": "system sub title results",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "25",
+          "name": "result list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "26",
+          "name": "system sub title formulas",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "29",
+          "name": "formula list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "30",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "31",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "32",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "33",
+          "name": "change log formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "34",
+          "name": "system formatter row end"
         }
       ]
     },
@@ -3942,6 +4002,67 @@
         {
           "position": "7",
           "name": "system form end"
+        },
+        {
+          "position": "20",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "21",
+          "name": "system sub title usage number",
+          "style": "col-md-12"
+        },
+        {
+          "position": "22",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "23",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "24",
+          "name": "system sub title results",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "25",
+          "name": "result list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "26",
+          "name": "system sub title formulas",
+          "position_type": "column",
+          "style": "col-md-4"
+        },
+        {
+          "position": "29",
+          "name": "formula list of formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "30",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "31",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "32",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "33",
+          "name": "change log formula",
+          "position_type": "combine"
+        },
+        {
+          "position": "34",
+          "name": "system formatter row end"
         }
       ]
     },

@@ -27,8 +27,8 @@ SELECT formula_link_delete_log_user (
                12::smallint,
                'scale minute to sec'::text,
                'time period based'::text,
-               'mathematics'::text,
+               'minute'::text,
                1::bigint,
                2::smallint,
-               1::bigint,
+               104::bigint,
                1::bigint);

@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -85,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -220,6 +222,7 @@ class test_lib
         $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
         $dto_dsp->val_lst = $t_val->list_all_ui();
         $dto_dsp->frm_lst = $t_frm->formula_list_ui();
+        $dto_dsp->frm_lnk_lst = $t_frm->formula_link_list_ui();
         $dto_dsp->chg_log = $t_log->log_list_named_ui();
 
         // set the global cache var
@@ -232,12 +235,12 @@ class test_lib
      * cast a backend list to a frontend list via api message
      * @param sandbox_list|type_list|change_log_list $lst the filled backend list
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @return word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+     * @return word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
      */
     function list_to_ui(
         sandbox_list|type_list|change_log_list $lst,
         api_type_list|array                    $typ_lst = []
-    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|change_log_list_ui|list_ui
+    ): word_list_ui|triple_list_ui|source_list_ui|ref_list_ui|value_list_ui|formula_list_ui|formula_link_list_ui|change_log_list_ui|list_ui
     {
         $tl = new test_lib();
         $lst_ui = $tl->obj_to_ui_obj($lst);
@@ -248,6 +251,7 @@ class test_lib
 
     /**
      * TODO add missing frontend objects like
+     * TODO Prio 0 easy add missing mapping error log message to all other object mapper
      * get the frontend object related to the given backend object
      * @param db_object_seq_id|sandbox_value|base_list|type_list $dbo the given backend object
      * @return false|db_object_ui|list_ui the corresponding frontend object
@@ -256,7 +260,7 @@ class test_lib
         db_object_seq_id|sandbox_value|base_list|type_list $dbo
     ): false|db_object_ui|list_ui
     {
-        return match ($dbo::class) {
+        $result =  match ($dbo::class) {
             word::class => new word_ui(),
             verb::class => new verb_ui(),
             triple::class => new triple_ui(),
@@ -275,10 +279,15 @@ class test_lib
             source_list::class => new source_list_ui(),
             value_list::class => new value_list_ui(),
             formula_list::class => new formula_list_ui(),
+            formula_link_list::class => new formula_link_list_ui(),
             change_log_list::class => new change_log_list_ui(),
             view_relation::class => new view_relation_ui(),
             default => false,
         };
+        if (!$result) {
+            log_err('ui object for ' . $dbo::class . ' missing');
+        }
+        return $result;
     }
 
     /**
@@ -329,7 +338,6 @@ class test_lib
 
         return $usr;
     }
-
 
 
 }

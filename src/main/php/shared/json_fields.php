@@ -132,11 +132,13 @@ class json_fields
     const string ID = 'id'; // the unique database id used to save the changes
 
     // reference fields e.g. to link a phrase to an external reference
-    const string PHRASE = 'phrase_id';
+    const string PHRASE_ID = 'phrase_id';
+    const string PHRASE = 'phrase'; // the phrase object as a sub array
     const string SOURCE = 'source_id';
     const string USER_ID = 'user_id';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
+    const string FORMULA = 'formula'; // the formula object as a sub array
 
     // for link api objects the id of the preloaded link type
     const string PREDICATE = 'predicate_id';
@@ -345,6 +347,7 @@ class json_fields
     const string EXPRESSION = 'expression';
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string FORMULA_LINKS = 'formula_links';
 
 
     // for results

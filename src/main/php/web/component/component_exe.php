@@ -344,7 +344,7 @@ class component_exe extends component
             component_type::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
             component_type::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
             component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
-            component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
+            component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $cfg),
 
             // TODO Prio 1 review the components below
 

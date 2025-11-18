@@ -257,10 +257,10 @@ class ref extends sandbox_link
     {
         $msg = parent::api_mapper($api_json);
 
-        if (array_key_exists(json_fields::PHRASE, $api_json)) {
-            if ($api_json[json_fields::PHRASE] != '' and $api_json[json_fields::PHRASE] != 0) {
+        if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
+            if ($api_json[json_fields::PHRASE_ID] != '' and $api_json[json_fields::PHRASE_ID] != 0) {
                 $phr = new phrase($this->user());
-                $phr->set_id($api_json[json_fields::PHRASE]);
+                $phr->set_id($api_json[json_fields::PHRASE_ID]);
                 $this->set_phrase($phr);
             }
         }
@@ -391,7 +391,7 @@ class ref extends sandbox_link
                 if ($typ_lst->include_phrases()) {
                     $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
                 } else {
-                    $vars[json_fields::PHRASE] = $this->phrase()->id();
+                    $vars[json_fields::PHRASE_ID] = $this->phrase()->id();
                 }
             }
             if ($this->source()?->id() != null) {

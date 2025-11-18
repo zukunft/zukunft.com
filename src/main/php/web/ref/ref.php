@@ -192,11 +192,11 @@ class ref extends sandbox
     function api_mapper(array $json_array): user_message
     {
         $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::PHRASE, $json_array)) {
+        if (array_key_exists(json_fields::PHRASE_ID, $json_array)) {
             $phr = new phrase();
             $wrd = new word();
             $phr->set_obj($wrd);
-            $phr->set_id($json_array[json_fields::PHRASE]);
+            $phr->set_id($json_array[json_fields::PHRASE_ID]);
             $this->phr = $phr;
         } elseif (array_key_exists(json_fields::PHRASES, $json_array)) {
             $phr = new phrase();
@@ -364,7 +364,7 @@ class ref extends sandbox
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::PHRASE] = $this->phr?->id();
+        $vars[json_fields::PHRASE_ID] = $this->phr?->id();
         $vars[json_fields::SOURCE] = $this->source?->id();
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
