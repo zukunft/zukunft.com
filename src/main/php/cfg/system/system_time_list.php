@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/sys_log_list.php - a list of system error objects
-    ---------------------------
+    model/system/system_time_list.php - a list of system error objects
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com

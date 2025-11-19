@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/view_style_list.php - to define the view or component style e.g. the number of columns to use
-    ------------------------------
+    model/component/view_style_list.php - to define the view or component style e.g. the number of columns to use
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 

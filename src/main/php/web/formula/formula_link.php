@@ -2,8 +2,8 @@
 
 /*
 
-    web/view/formula_link.php - create HTML code to display a formula link
-    -------------------------
+    web/formula/formula_link.php - create HTML code to display a formula link
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 

@@ -432,6 +432,7 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
+        $this->php_class_tree();
         $this->php_include_tests($t, paths::MODEL);
         $this->php_include_tests($t, paths::API);
         $this->php_include_tests($t, paths::WEB);
@@ -565,8 +566,75 @@ class system_tests
 
     }
 
+    function php_class_tree(): void
+    {
+        $class_lst = [];
+        $class_lst = array_merge($class_lst, $this->php_classes(paths::MODEL, paths::MODEL_SECTION));
+        $class_lst = array_merge($class_lst, $this->php_classes(paths::SHARED, paths::SHARED_SECTION));
+        $class_lst = array_merge($class_lst, $this->php_classes(paths::WEB, paths::WEB_SECTION));
+        $class_tree = $this->classTree($class_lst);
+        $class_parents = $this->classTreeParents($class_lst);
+        $md_txt = $this->php_class_list_to_md($class_tree);
+    }
+
+    private function php_class_list_to_md(array $class_tree): string
+    {
+        $md_txt = '# Objects' . "\n";
+        $md_txt .= "\n";
+        $md_txt .= '## Object structure' . "\n";
+        $md_txt .= "\n";
+        $md_txt .= 'the object structure is:' . "\n";
+        $md_txt .= "\n";
+        $md_txt .= '```' . "\n";
+        $md_txt .= $this->php_class_list_to_md_row($class_tree);
+        $md_txt .= '```' . "\n";
+        return $md_txt;
+    }
+
+    private function php_class_list_to_md_row(array $class_tree, string $intent = '+-- '): string
+    {
+        $md_txt = '';
+        foreach ($class_tree as $child => $info_lst) {
+            if (is_string($info_lst)) {
+                $md_txt .= $intent . $child . ' - ' . $info_lst . "\n";
+            } else {
+                if ($intent == '+-- ') {
+                    $this_intent = '\-- ';
+                    $next_intent = '    ' . $this_intent;
+                } else {
+                    $this_intent = $intent;
+                    $next_intent = '    ' . $intent;
+                }
+                $md_txt .= $this_intent . $child . "\n";
+                $md_txt .= $this->php_class_list_to_md_row($info_lst, $next_intent);
+            }
+        }
+        return $md_txt;
+    }
+
+    private function php_classes(string $path, string $section): array
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array($path);
+        $code_files = $lib->array_to_path($file_array);
+        $class_lst = [];
+        // create parent child class list upfront for a complete check
+        foreach ($code_files as $code_file) {
+            $file_path = str_replace('//','/', $path . $code_file);
+            $ctrl_code = file($path . $code_file);
+            $class_info = $lib->php_code_parent($ctrl_code, $section, $file_path);
+            if ($class_info != []) {
+                $class_lst = array_merge($class_lst, $class_info);
+            }
+        }
+        return $class_lst;
+    }
+
     /**
      * check if all used classes are also included once within the same file
+     * TODO add a child parent list and make sure that a parent never includes a child object
+     *      but the child always includes the parent
+     *      and make sure that all not needed deactivated includes are removed
      *
      * @param test_cleanup $t
      * @param string $base_path path name of the folder with the php scripts that should be checked
@@ -617,6 +685,96 @@ class system_tests
             }
             $pos++;
         }
+    }
+
+    private function classTree(array $map): array
+    {
+        $root = [];
+        foreach ($map as $child => $info_lst) {
+            $parent = $info_lst[0];
+            if ($parent == '') {
+                $root[$child] = $info_lst;
+            }
+        }
+        $tree = [];
+        foreach ($root as $parent => $info_lst) {
+            $description = $info_lst[2];
+            $children = $this->classTreeChildren($map, $parent);
+            if (count($children) == 0) {
+                $tree[$parent] = $description;
+            } else {
+                $tree[$parent] = $children;
+            }
+        }
+        return $tree;
+    }
+
+    private function classTreeChildren(
+        array  $map,
+        string $opa
+    ): array|string
+    {
+        $children = [];
+        foreach ($map as $child => $info_lst) {
+            $parent = $info_lst[0];
+            $description = $info_lst[2];
+            if ($opa == $parent) {
+                $grants = $this->classTreeChildren($map, $child);
+                if (count($grants) == 0) {
+                    $children[$child] = $description;
+                } else {
+                    $children[$child] = $grants;
+                }
+            }
+        }
+        return $children;
+    }
+
+    private function classTreeParents(array $map): array
+    {
+        $lst = [];
+        foreach ($map as $child => $info_lst) {
+            $parent = $info_lst[0];
+            if ($parent == '') {
+                $lst[$child] = $parent;
+            }
+        }
+        $tree = [];
+        foreach ($lst as $class => $info_lst) {
+            if (is_array($info_lst)) {
+                $parent = $info_lst[0];
+            } else {
+                $parent = $info_lst;
+            }
+            $tree = array_merge($tree, $this->classTreeGrants($map, $class, $parent, []));
+        }
+        return $tree;
+    }
+
+    private function classTreeGrants(
+        array  $map,
+        string $class,
+        string $parent,
+        array  $tree
+    ): array|string
+    {
+        if ($parent == '') {
+            // if it does not have a parent just add it to the list if not yet done
+            if (!in_array($class, $tree)) {
+                $tree[$class] = '';
+            }
+        } else {
+            // if it has an opa add the family tree
+            if (array_key_exists($parent, $map)) {
+                $opa = $map[$parent];
+                $tree[$class] = $this->classTreeGrants($map, $parent, $opa, $tree);
+            } else {
+                if (!in_array($class, $tree)) {
+                    $tree[$class] = $parent;
+                }
+            }
+        }
+        return $tree;
     }
 
     /**

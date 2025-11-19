@@ -45,6 +45,8 @@ class paths
     const string PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR;
     // path of the main model objects for db saving, api feed and processing
     const string MODEL = self::PHP_LIB . 'cfg' . DIRECTORY_SEPARATOR;
+    // the prefix for the code section for the documentation of the object overview
+    const string MODEL_SECTION = '';
     const string DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
     const string UTIL = self::PHP_LIB . 'utils' . DIRECTORY_SEPARATOR;
     const string SERVICE = self::PHP_LIB . 'service' . DIRECTORY_SEPARATOR;
@@ -77,6 +79,7 @@ class paths
     const string CACHE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR;
 
     const string SHARED = self::PHP_LIB . 'shared' . DIRECTORY_SEPARATOR;
+    const string SHARED_SECTION = 'Shared';
     const string SHARED_CALC = self::SHARED . 'calc' . DIRECTORY_SEPARATOR;
     const string SHARED_CONST = self::SHARED . 'const' . DIRECTORY_SEPARATOR;
     const string SHARED_ENUM = self::SHARED . 'enum' . DIRECTORY_SEPARATOR;
@@ -103,6 +106,7 @@ class paths
 
     // path of the pure html frontend objects
     const string WEB = self::PHP_LIB . 'web' . DIRECTORY_SEPARATOR;
+    const string WEB_SECTION = 'Ui';
     // only used for initial loading
     const string WEB_CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
 

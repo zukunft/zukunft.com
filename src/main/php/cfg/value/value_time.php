@@ -2,7 +2,7 @@
 
 /*
 
-    model/value/value_text.php - the main text value object using the prime, norm and big value keys
+    model/value/value_time.php - the main text value object using the prime, norm and big value keys
     --------------------------
 
 

@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_description.php - adding the description and type field to the _sandbox superclass
-    -------------------------------------
+    model/sandbox/sandbox_link_named.php - adding the description and type field to the _sandbox superclass
+    ------------------------------------
 
     The main sections of this object are
     - object vars:       the variables of this sandbox object

@@ -973,8 +973,9 @@ enum messages: string
     case PHRASE_MISSING_ID = 'phrase id is zero';
     case PHRASE_ID_NOT_FOUND = 'phrase id not found';
     case TERM_ID_NOT_FOUND = 'term id not found';
+    case NOT_USED_FOR_VERB = 'not used for verb';
     case NOT_USED_FOR_TRIPLES = 'not used for triples';
-    case NOT_USED_FOR_FORMULAS = 'not used for formulas';
+    case INFO_NOT_USED_FOR_FORMULAS = 'info_not_used_for_formulas';
 
     // e.g. if an import formula does not contain all needed parameters
     case FORMULA_NOT_VALID = 'formula is not valid';
@@ -1121,6 +1122,7 @@ enum messages: string
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
+    case FORM_SUB_TITLE_ASSIGNED_PHRASES= 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
 

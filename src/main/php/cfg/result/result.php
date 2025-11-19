@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/result.php - the calculated numeric result of a formula
-    -------------------------------
+    model/result/result.php - the calculated numeric result of a formula
+    -----------------------
 
     TODO: add these function
     TODO rename to result

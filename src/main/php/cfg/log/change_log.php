@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
-    ----------------------
+    model/log/change_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
+    ------------------------
 
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
@@ -37,7 +37,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com

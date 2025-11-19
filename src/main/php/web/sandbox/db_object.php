@@ -2,8 +2,8 @@
 
 /*
 
-    web/sandbox/sandbox.php - the superclass for the html frontend of database objects
-    -----------------------
+    web/sandbox/db_object.php - the superclass for the html frontend of database objects
+    -------------------------
 
     This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
 
@@ -39,8 +39,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
-include_once html_paths::FORMULA . 'formula_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';

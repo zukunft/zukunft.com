@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/group.php - a combination of a word list and a triple_list
-    -----------------------------
+    model/group/group.php - a combination of a word list and a triple_list
+    ---------------------
 
     the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
     the index group is designed to be useful for structured values e.g.

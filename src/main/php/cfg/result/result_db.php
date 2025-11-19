@@ -2,8 +2,8 @@
 
 /*
 
-    model/word/triple_db.php - the database const for triple tables
-    ------------------------
+    model/result/result_db.php - the database const for triple tables
+    --------------------------
 
     The main sections of this object are
     - db const:          const for the database link

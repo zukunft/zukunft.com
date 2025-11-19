@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/change_values_prime.php - log object for changes of values with a prime group id
-    -------------------------------
+    model/log/change_values_geo_prime.php - log object for changes of values with a prime group id
+    -------------------------------------
 
     This file is part of zukunft.com - calc with words
 

@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_list.php - list of predefined system components
-    ------------------------
+    model/component/component_list.php - list of predefined system components
+    ----------------------------------
 
     The main sections of this object are
     - construct and map: including the mapping of the db row to this component link list object

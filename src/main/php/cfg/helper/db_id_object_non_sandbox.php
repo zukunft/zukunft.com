@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_non_sandbox.php - a base object for not user specific database id objects
-    -------------------------------------
+    model/helper/db_id_object_non_sandbox.php - a base object for not user specific database id objects
+    -----------------------------------------
 
     used for the user, ip_range, pod and job
 

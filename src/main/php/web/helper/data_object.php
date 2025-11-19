@@ -37,20 +37,22 @@ namespace Zukunft\ZukunftCom\main\php\web\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+// including off child objects deactivated to avoid loops in including
 //include_once html_paths::COMPONENT . 'component_list.php';
-include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::FORMULA . 'formula_link_list.php';
-include_once html_paths::LOG . 'change_log_list.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::REF . 'source_list.php';
-include_once html_paths::REF . 'ref_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::USER . 'user_message.php';
-include_once html_paths::VALUE . 'value_list.php';
-include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::USER . 'user.php';
-include_once html_paths::WORD . 'word_list.php';
-include_once html_paths::WORD . 'triple_list.php';
+//include_once html_paths::LOG . 'change_log_list.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::REF . 'source_list.php';
+//include_once html_paths::REF . 'ref_list.php';
+//include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VALUE . 'value_list.php';
+//include_once html_paths::VIEW . 'view_list.php';
+//include_once html_paths::USER . 'user.php';
+//include_once html_paths::WORD . 'word_list.php';
+//include_once html_paths::WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -61,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -165,6 +168,11 @@ class data_object
     }
     public formula_list $frm_lst;
     public formula_link_list $frm_lnk_lst;
+    public result_list $res_lst {
+        set(result_list $value) {
+            $this->res_lst = $value;
+        }
+    }
     public view_list $msk_lst;
     private component_list $cmp_lst;
     public ?type_lists $typ_lst_cache = null;
@@ -192,6 +200,7 @@ class data_object
     {
         if ($api_json != null) {
             $this->val_lst = new value_list();
+            $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
             $this->set_from_json($api_json);
@@ -216,6 +225,7 @@ class data_object
         $this->val_lst = new value_list();
         $this->frm_lst = new formula_list();
         $this->frm_lnk_lst = new formula_link_list();
+        $this->res_lst = new result_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
         $this->usr_msg = new user_message();

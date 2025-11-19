@@ -2,8 +2,8 @@
 
 /*
 
-    web/user/sandbox_value.php - the superclass for the html frontend of value sandbox objects
-    ---------------------------
+    web/sandbox/sandbox_value.php - the superclass for the html frontend of value sandbox objects
+    -----------------------------
 
     This superclass should be used by the classes value_dsp, result_dsp, ...
 

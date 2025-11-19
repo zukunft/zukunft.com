@@ -2,8 +2,8 @@
 
 /*
 
-    web/value_list.php - the display extension of the api value list object
-    ------------------
+    web/value/value_list.php - the display extension of the api value list object
+    ------------------------
 
     to create the HTML code to display a list of values
 
@@ -37,7 +37,7 @@ namespace Zukunft\ZukunftCom\main\php\web\value;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
@@ -49,11 +49,11 @@ include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::REF . 'source.php';
-include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::REF . 'source.php';
+//include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::VALUE . 'value.php';
+//include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
@@ -82,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
-use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -98,7 +98,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class value_list extends list_dsp
+class value_list extends ListBase
 {
 
     /*

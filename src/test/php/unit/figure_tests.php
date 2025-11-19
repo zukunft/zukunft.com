@@ -33,20 +33,18 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once html_paths::FIGURE . 'figure.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\result\results;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\test\php\create\test_figures;
-use Zukunft\ZukunftCom\test\php\create\test_formulas;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class figure_tests
 {

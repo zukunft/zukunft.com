@@ -2,8 +2,8 @@
 
 /*
 
-    shared/const/views.php - system view const with name and id
-    ----------------------
+    shared/const/components.php - const components with name and id used by the system
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words

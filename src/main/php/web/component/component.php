@@ -2,8 +2,8 @@
 
 /*
 
-    web/view/component.php - function to add, change or delete a view component
-    ----------------------
+    web/component/component.php - function to add, change or delete a view component
+    ---------------------------
 
     to create the HTML code to display a component
 
@@ -38,7 +38,6 @@
 namespace Zukunft\ZukunftCom\main\php\web\component;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';

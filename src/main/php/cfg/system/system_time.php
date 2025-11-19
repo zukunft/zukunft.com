@@ -3,7 +3,7 @@
 /*
 
     model/system/system_time.php - object to log and optimize the execution times of the system
-    --------------------------
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 

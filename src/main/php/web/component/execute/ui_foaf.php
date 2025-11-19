@@ -2,8 +2,8 @@
 
 /*
 
-    web/component/execute/list_related.php - html user interface components to show related objects as a tree
-    --------------------------------------
+    web/component/execute/ui_foaf.php - html user interface components to show related objects as a tree
+    ---------------------------------
 
 
     This file is part of zukunft.com - calc with words

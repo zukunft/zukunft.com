@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/result_list.php - a list of formula results
-    ------------------------------------
+    model/result/result_list.php - a list of formula results
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words

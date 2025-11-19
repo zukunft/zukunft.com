@@ -2,8 +2,8 @@
 
 /*
 
-    web/view/view_navbar.php - add the navigation bar to the view object to finish the frontend view object
-    ------------------------
+    web/view/view.php - the main frontend object to create the html code
+    -----------------
 
     add the function to create a navigation bar to the html frontend view object
 

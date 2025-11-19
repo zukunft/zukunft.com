@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/component_type_list.php - to link coded functionality to a view component
+    model/component/component_type_list.php - to link coded functionality to a view component
     ---------------------------------------
 
     This file is part of zukunft.com - calc with words

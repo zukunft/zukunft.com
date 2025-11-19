@@ -2,8 +2,8 @@
 
 /*
 
-    web/log/sys_log_list.php - the display extension of the system error log api object
-    ------------------------
+    web/system/sys_log_list.php - the display extension of the system error log api object
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -46,8 +46,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';

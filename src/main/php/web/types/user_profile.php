@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/user_profiles.php - the preloaded user profiles used for the html frontend
-    ---------------------------
+    web/types/user_profile.php - the preloaded user profiles used for the html frontend
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words

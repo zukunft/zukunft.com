@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/element_type.php - to assign coded functionality to a formula element
-    ----------------------------
+    model/element/element_type.php - to assign coded functionality to a formula element
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 

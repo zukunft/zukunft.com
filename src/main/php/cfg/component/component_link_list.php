@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_link_list.php - a list of links between a view and a component
-    ----------------------------------
+    model/component/component_link_list.php - a list of links between a view and a component
+    ---------------------------------------
 
     This links list object is used to update or delete a list of links with one SQL statement
 

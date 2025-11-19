@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_utils.php - system ENUM definition for the log level
-    -----------------------------
+    model/system/sys_log_level.php - system ENUM definition for the log level
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 

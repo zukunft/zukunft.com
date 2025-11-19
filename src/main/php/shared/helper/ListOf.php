@@ -44,6 +44,8 @@ class ListOf
      */
 
     // the protected main var
+    // to avoid adding or removing of objects
+    // without updating the related index object
     private array $lst;
 
 
@@ -72,6 +74,7 @@ class ListOf
 
     /**
      * TODO check if a more specific return object can be used
+     * get one object of the list by the key
      * @param string|int $key the key of the lst array
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */

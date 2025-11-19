@@ -36,30 +36,26 @@ namespace Zukunft\ZukunftCom\main\php\web\result;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\group\group_list;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\list_value;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
-use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
-use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-include_once html_paths::SANDBOX . 'list_value.php';
+include_once html_paths::SANDBOX . 'sandbox_list_value.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -67,7 +63,30 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-class result_list extends list_value
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+class result_list extends sandbox_list_value
 {
 
     /*
@@ -112,27 +131,6 @@ class result_list extends list_value
         return $result;
     }
 
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a formula result to the list
-     * @returns bool true if the formula result has been added
-     */
-    function add(result|IdObject|TextIdObject|CombineObject|null $to_add): bool
-    {
-        $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
-            $this->add_direct($to_add);
-            $this->set_lst_dirty();
-            $result = true;
-        }
-        return $result;
-    }
-
     /**
      * load a list of results linked to
      * a formula
@@ -151,6 +149,64 @@ class result_list extends list_value
 
         $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
         return $this->load($qp);
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a formula result to the list
+     * @returns bool true if the formula result has been added
+     */
+    function add(triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    {
+        $result = false;
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
+            $this->set_lst_dirty();
+            $result = true;
+        }
+        return $result;
+    }
+
+    function get_by_formula(formula $frm): result_list
+    {
+        return $this->filter($frm);
+    }
+
+    /**
+     * get a list with the results related directly to the given formula, word, triple or source
+     *
+     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @return result_list with only the direct linked values
+     */
+    function filter(word|triple|source|formula|db_object|null $dbo = null): result_list
+    {
+        $res_lst = new result_list();
+        if ($dbo::class == formula::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->calculated_by_formula($dbo)) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->has_phrase($dbo->phrase())) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        if ($dbo::class == source::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->source_id() == $dbo->id()) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        return $res_lst;
     }
 
 

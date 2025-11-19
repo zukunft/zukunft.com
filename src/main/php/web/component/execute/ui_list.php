@@ -2,8 +2,8 @@
 
 /*
 
-    web/component/execute/list_related.php - create the html for listed related to an object
-    --------------------------------------
+    web/component/execute/ui_list.php - create the html for listed related to an object
+    ---------------------------------
 
     function to create the pure HTML frontend code to display lists of objects related to a given object
 
@@ -48,8 +48,8 @@ include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
-include_once html_paths::RESULT . 'result_list.php';
-include_once html_paths::VALUE . 'value_list.php';
+//include_once html_paths::RESULT . 'result_list.php';
+//include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
@@ -114,6 +114,9 @@ class ui_list extends ui_base
     {
         global $cfg;
 
+        $page = new system_page();
+
+        $result = $page->system_sub_tile(msg_id::FORM_SUB_TITLE_ASSIGNED_PHRASES);
         $lnk_lst = $cac?->frm_lnk_lst;
         // TODO Prio 2 decide if and when a reloading via api is done
         if ($lnk_lst == null) {
@@ -126,7 +129,8 @@ class ui_list extends ui_base
             $phr_lst->load_by_formula($frm);
         }
         $row_limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_NAME_LIST);
-        return $phr_lst->name_link('', $row_limit);
+        $result .= $phr_lst->name_link('', $row_limit);
+        return $result;
     }
 
     /**
@@ -152,10 +156,12 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
+     * get a list of formulas related to e.g. a verb
+     * @param db_object $dbo e.g. a verb to select only the formulas where the object is used
+     * @param data_object|null $cfg the cache values used for a backend independent preselection of the formulas
+     * @return string the most relevant formulas related to e.g. a verb
      */
-    function formula_list(?db_object $dbo = null, ?data_object $cfg = null): string
+    function formula_list(db_object $dbo, ?data_object $cfg = null): string
     {
         global $mtr;
 
@@ -168,7 +174,7 @@ class ui_list extends ui_base
             log_err($dbo::class . '  is not expected to be a selection for formulas');
         }
         if ($result == '') {
-            $result = $mtr->txt(msg_id::NOT_USED_FOR_FORMULAS);
+            $result = $mtr->txt(msg_id::NOT_USED_FOR_VERB);
         }
         return $result;
     }
@@ -326,6 +332,28 @@ class ui_list extends ui_base
      * but additional an update of the list is request via api
      * if the updated list is returned from the backend the list is updated
      *
+     * @param formula|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @return string the html code to show the list of values
+     */
+    function results_by_word(
+        formula|db_object|null $dbo,
+        ?data_object        $dto = null,
+        ?int                $style_id = null
+    ): string
+    {
+        $res_lst = $dto->res_lst?->filter($dbo);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $this->result_list_by($res_lst, $phr_lst, $style_id);
+    }
+
+    /**
+     * show a list of values related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
      * @param value_list $val_lst
      * @param phrase_list $phr_lst
      * @param int|null $style_id id
@@ -371,21 +399,59 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * show a list of values related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param result_list $res_lst
+     * @param phrase_list $phr_lst
+     * @param int|null $style_id id
+     * @return string the html code to show the list of values
+     */
+    private function result_list_by(
+        result_list $res_lst,
+        phrase_list $phr_lst,
+        ?int        $style_id = null
+    ): string
+    {
+        global $msk_sty_cac;
+        $style_txt = '';
+        if ($style_id != null) {
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+        }
+        return $res_lst->list($phr_lst, '', $style_txt);
+    }
+
+    /**
      * @return string a dummy text
      */
-    function results(): string
+    function result_list(?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        return 'results component';
+        global $mtr;
+
+        $result = '';
+        $res_lst = clone $cfg->res_lst;
+        if ($dbo::class == formula::class) {
+            $res_lst = $res_lst->get_by_formula($dbo);
+            $result = $res_lst->name_link();
+        } else {
+            log_err($dbo::class . '  is not expected to be a selection for results');
+        }
+        if ($result == '') {
+            $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_FORMULAS);
+        }
+        return $result;
     }
 
     /**
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
-    function result_list(): string
+    function results(): string
     {
-        return 'result_list component';
+        return 'results component';
     }
 
     /**

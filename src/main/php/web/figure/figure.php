@@ -2,8 +2,8 @@
 
 /*
 
-    web/formula/figure.php - to create the html code to display a value or result
-    ----------------------
+    web/figure/figure.php - to create the html code to display a value or result
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

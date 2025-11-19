@@ -2,8 +2,8 @@
 
 /*
 
-    web/sandbox/sandbox_typed.php - extends the superclass for named html objects with the type id
-    ------------------------------
+    web/sandbox/sandbox_code_id.php - extends the superclass for named html objects with the type id
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words

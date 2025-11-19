@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_id_object_user.php - a base object for all user specific database id objects
-    ----------------------------------
+    model/helper/db_object_seq_id_user.php - a base object for all user specific database id objects
+    --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object

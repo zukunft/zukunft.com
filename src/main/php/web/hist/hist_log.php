@@ -2,8 +2,8 @@
 
 /*
 
-    web/word_log_dsp.php - display the past changes of an object
-    --------------------
+    web/hist/hist_log.php - display the past changes of an object
+    ---------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -39,7 +39,7 @@ include_once html_paths::WORD . 'word.php';
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 
-class hist_log_dsp
+class hist_log
 {
 
     // show the changes of the view

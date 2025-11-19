@@ -2,8 +2,8 @@
 
 /*
 
-    web/user/user_old.php - to display the user specific settings
-    ---------------------
+    web/user/user_display_old.php - to display the user specific settings
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 

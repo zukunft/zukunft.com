@@ -2,7 +2,7 @@
 
 /*
 
-    web/sandbox/list_value.php - add name function to the frontend list object
+    web/sandbox/list_named.php - add name function to the frontend list object
     --------------------------
 
 
@@ -34,12 +34,12 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 
-class list_named extends list_dsp
+class list_named extends ListBase
 {
 
     /*

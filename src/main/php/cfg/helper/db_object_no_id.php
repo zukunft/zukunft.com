@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/dbobjectnoid.php - a base object for database objects that does not have a single db key
-    -----------------------------
+    model/helper/db_object_no_id.php - a base object for database objects that does not have a single db key
+    --------------------------------
 
     used to create the database tables for the time_series_data, log amd formula elements
 

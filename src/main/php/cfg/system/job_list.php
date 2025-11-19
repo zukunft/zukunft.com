@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/ob_list.php - a list of calculation request
+    model/system/job_list.php - a list of calculation request
     -------------------------
 
     This list in "in memory only" to wrap the communication between the classes

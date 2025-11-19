@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
-//include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';

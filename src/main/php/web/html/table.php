@@ -2,7 +2,7 @@
 
 /*
 
-    web/html/sheet.php - create the html code to display a spreadsheet
+    web/html/table.php - create the html code to display a spreadsheet
     ------------------
 
 

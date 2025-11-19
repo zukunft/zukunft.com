@@ -44,9 +44,9 @@ namespace Zukunft\ZukunftCom\main\php\web\types;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::SHARED_TYPES . 'phrase_type.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::WORD . 'word.php';
+//include_once paths::SHARED_TYPES . 'phrase_type.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::WORD . 'word.php';
 
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;

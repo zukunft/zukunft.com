@@ -2,8 +2,8 @@
 
 /*
 
-    web/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
-    ---------------------------
+    web/log/change_log_named.php - a list function to create the HTML code to display a list of user changes
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 

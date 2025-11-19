@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_description.php - adding the description field to the _sandbox superclass
-    -------------------------------------
+    model/sandbox/sandbox_typed.php - adding the description field to the _sandbox superclass
+    -------------------------------
 
     This superclass should be used by the classes words, formula, ... su that users can link predefined behavior
 

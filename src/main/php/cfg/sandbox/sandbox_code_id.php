@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/sandbox/sandbox_named_code_id.php - superclass for handling objects with a code id
-    -------------------------------------
+    cfg/sandbox/sandbox_code_id.php - superclass for handling objects with a code id
+    -------------------------------
 
     This superclass adds the code_id handling to named classes words, formula, ...
 

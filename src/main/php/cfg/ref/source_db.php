@@ -2,8 +2,8 @@
 
 /*
 
-    model/source/source_db.php - the database const for source tables
-    --------------------------
+    model/ref/source_db.php - the database const for source tables
+    -----------------------
 
     The main sections of this object are
     - db const:          const for the database link

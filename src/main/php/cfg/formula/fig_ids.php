@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/fig_ids.php - helper class for figure id lists
-    ------------------------
+    model/formula/fig_ids.php - helper class for figure id lists
+    -------------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -5,6 +5,10 @@
     shared/helper/ListOfIdObjects.php - the list of objects that have a unique database id
     ---------------------------------
 
+    This is the parent list object for back and frontend.
+    Has an array with the id for faster return of single objects by the database id.
+    TODO Prio 3 check if valkey/redis db is faster
+
 
     This file is part of zukunft.com - calc with words
 

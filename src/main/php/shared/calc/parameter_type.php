@@ -2,8 +2,8 @@
 
 /*
 
-    shared/formula/parameter_type.php - enum to link the class string to a db id for a formula element
-    ---------------------------------
+    shared/calc/parameter_type.php - enum to link the class string to a db id for a formula element
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/library.php - some useful function e.g. for string handling
-    ------------------------
+    shared/library.php - some useful function e.g. for string handling
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -1169,6 +1169,23 @@ class library
         return $result;
     }
 
+    private function php_code_get_section(string $class, array $lines): ?string
+    {
+        $result = null;
+        $use_lines = $this->php_code_use_sorted($lines);
+        foreach ($use_lines as $line) {
+            if ($result === null) {
+                $class_with_path = trim($this->str_between($line, 'use', ';'));
+                $line_class = $this->str_right_of_or_all($class_with_path, '\\');
+                if ($line_class == $class) {
+                    $path = $this->str_left_of_last($class_with_path, '\\' . $class);
+                    $result = $this->php_code_path_to_section($path);
+                }
+            }
+        }
+        return $result;
+    }
+
     function php_code_include(array $lines): array
     {
         $result = [];
@@ -1187,6 +1204,79 @@ class library
             }
         }
         return $result;
+    }
+
+    /**
+     * extract the elements from a class that all zukunft.com classes should have
+     * this includes the name, parent, path and description
+     *
+     * @param array $lines
+     * @param string $section
+     * @return array with the class_name, parent_name (both names have additional "Shared" or "Ui"),
+     *               path from the header and the description
+     */
+    function php_code_parent(array $lines, string $section, $file_path): array
+    {
+        $result = [];
+        $header_line = '';
+        $path = '';
+        $description = '';
+        foreach ($lines as $line) {
+            if ($header_line == '') {
+                if (str_contains($line, '.php - ')) {
+                    $header_line = $this->str_left_of_or_all($line, "\n");
+                    $path = trim($this->str_left_of($header_line, '.php - '));
+                    $description = $this->str_right_of($header_line, '.php - ');
+                }
+            }
+            if (str_starts_with($line, 'class')) {
+                $class = trim($this->str_between($line, 'class', 'extends'));
+                $line = $this->str_left_of_or_all($line, "\n");
+                if ($class == '') {
+                    $class = trim($this->str_right_of($line, 'class'));
+                    $parent = '';
+                } else {
+                    $parent = trim($this->str_right_of($line, 'extends'));
+                    $parent_section = $this->php_code_get_section($parent, $lines);
+                    if ($parent_section !== null) {
+                        $parent = $parent . $parent_section;
+                    } else {
+                        if ($section != '') {
+                            $parent = $parent . $section;
+                        }
+                    }
+                }
+                if ($section != '') {
+                    $class = $class . $section;
+                }
+                // check
+                if (!str_contains($file_path, $path)) {
+                    // TODO Prio 3 remove exception
+                    $file_path = str_replace('cfg','model', $file_path);
+                    if (!str_contains($file_path, $path)) {
+                        log_err('class header path ' . $path . ' does not match ' . $file_path);
+                    }
+                }
+                if ($class != '') {
+                    $result[$class] = [$parent, $path, $description];
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function php_code_path_to_section(string $path): string
+    {
+        $section = '';
+        $shared_path = $this->str_right_of(paths::SHARED, paths::SRC);
+        $web_path = $this->str_right_of(paths::WEB, paths::SRC);
+        $path = str_replace('\\', '/', $path);
+        if (str_contains($path, $shared_path)) {
+            $section = paths::SHARED_SECTION;
+        } elseif (str_contains($path, $web_path)) {
+            $section = paths::WEB_SECTION;
+        }
+        return $section;
     }
 
 

@@ -2,8 +2,8 @@
 
 /*
 
-    web/sandbox/list.php - the superclass for html list objects
-    --------------------
+    web/sandbox/ListBase.php - the superclass for html list objects
+    ------------------------
 
     e.g. used to display phrase, term and figure lists
 
@@ -54,9 +54,9 @@ include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::VIEW . 'view.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
+//include_once html_paths::VIEW . 'view.php';
+//include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
@@ -90,7 +90,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class list_dsp extends ListOfIdObjects
+class ListBase extends ListOfIdObjects
 {
 
     // error return codes
@@ -279,7 +279,7 @@ class list_dsp extends ListOfIdObjects
      * modify
      */
 
-    function merge(list_dsp $lst): void
+    function merge(ListBase $lst): void
     {
         foreach ($lst->lst() as $phr) {
             $this->add($phr);

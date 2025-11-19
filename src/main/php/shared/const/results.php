@@ -2,8 +2,8 @@
 
 /*
 
-    shared/results.php - results used by the system for testing only in the backend
-    ------------------
+    shared/const/results.php - results used by the system for testing only in the backend
+    ------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,7 @@
 
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\result;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 class results
 {

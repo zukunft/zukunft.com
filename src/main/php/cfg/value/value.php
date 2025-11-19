@@ -2,8 +2,8 @@
 
 /*
 
-    model/value/value_text.php - the main numeric value object using the prime, norm and big value keys
-    --------------------------
+    model/value/value.php - the main numeric value object using the prime, norm and big value keys
+    ---------------------
 
 
     The main sections of this object are

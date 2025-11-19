@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link superclass
-    ----------------------------------------
+    model/sandbox/sandbox_predicated_link.php - adding the type field to the user sandbox link superclass
+    -----------------------------------------
 
     similar to sandbox_link_named, but for links without name
 

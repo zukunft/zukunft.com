@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/text_log.php - object to handle standard io logging
-    -------------------------
+    model/log_text/text_log.php - object to handle standard io logging
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
