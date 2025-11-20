@@ -868,18 +868,18 @@ function prg_version_is_newer_test(test_cleanup $t): void
 {
     $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
     $target = 'false';
-    $t->display('prg_version 0.0.1 is newer than ' . PRG_VERSION, $target, $result);
+    $t->assert('prg_version 0.0.1 is newer than ' . PRG_VERSION, $result, $target);
     $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION));
     $target = 'false';
-    $t->display('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
+    $t->assert('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $result, $target);
     $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION));
     $target = 'true';
-    $t->display('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $target, $result);
+    $t->assert('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $result, $target);
     $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9'));
     $target = 'true';
-    $t->display('prg_version 0.1.0 is newer than 0.0.9', $target, $result);
+    $t->assert('prg_version 0.1.0 is newer than 0.0.9', $result, $target);
     $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1'));
     $target = 'false';
-    $t->display('prg_version 0.2.3 is newer than 1.1.1', $target, $result);
+    $t->assert('prg_version 0.2.3 is newer than 1.1.1', $result, $target);
 }
 

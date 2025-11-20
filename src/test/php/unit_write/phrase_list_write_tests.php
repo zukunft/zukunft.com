@@ -91,14 +91,14 @@ class phrase_list_write_tests
         $target = '"' . words::ABB . '","' . words::VESTAS . '","' . triples::COMPANY_ZURICH . '"';
         $target = '"' . words::ABB . '","' . words::VESTAS . '"';
         $result = $phr_lst->dsp_name();
-        $t->display('phrase->load via id', $target, $result);
+        $t->assert('phrase->load via id', $result, $target);
 
         // ... the complete word list, which means split the triples into single words
         $wrd_lst_all = $phr_lst->wrd_lst_all();
         $target = '"' . words::ABB . '","' . words::VESTAS . '","' . words::ZH . '","' . words::COMPANY . '"';
         $target = '"' . words::ABB . '","' . words::VESTAS . '"';
         $result = $wrd_lst_all->name();
-        $t->display('phrase->wrd_lst_all of list above', $target, $result);
+        $t->assert('phrase->wrd_lst_all of list above', $result, $target);
 
 
         // test getting the parent for phrase list with ABB
@@ -109,13 +109,13 @@ class phrase_list_write_tests
         $lst_parents = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = words::COMPANY; // order adjusted based on the number of usage
-        $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);
+        $t->assert('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // ... same using is
         $phr_lst = $wrd_lst->phrase_list();
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
-        $t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
+        $t->assert('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // ... same with Vestas
         $wrd_lst = new word_list($usr);
@@ -124,7 +124,7 @@ class phrase_list_write_tests
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
         // TODO Prio 1 activate
-        //$t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
+        //$t->assert('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $result, $target);
 
         // test the excluding function
         $phr_lst = new phrase_list($usr);

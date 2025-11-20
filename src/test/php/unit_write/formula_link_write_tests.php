@@ -90,7 +90,7 @@ class formula_link_write_tests
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
         $target = users::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . words::TEST_ADD;
-        $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
+        $t->assert('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $result, $target);
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
         $frm_lnk = new formula_link($t->usr1);
@@ -111,14 +111,14 @@ class formula_link_write_tests
         }
         $frm_html = new formula_dsp($frm->api_json());
         $target = $frm_html->name();
-        $t->display('formula_link->load by formula id and link id "' . $frm_html->name(), $target, $result);
+        $t->assert('formula_link->load by formula id and link id "' . $frm_html->name(), $result, $target);
 
         $result = '';
         if ($frm_lnk2->phrase() != null) {
             $result = $frm_lnk2->phrase()->name();
         }
         $target = $phr->name();
-        $t->display('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
+        $t->assert('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $result, $target);
 
         // ... check if the link is shown correctly
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
@@ -126,7 +126,7 @@ class formula_link_write_tests
         echo $phr_lst->dsp_id() . '<br>';
         $result = $phr_lst->does_contain($phr);
         $target = true;
-        $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
+        $t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $result, $target);
 
         // ... check if the link is shown correctly also for the second user
         // ... the second user has excluded the word at this point,
@@ -138,7 +138,7 @@ class formula_link_write_tests
         $result = $phr_lst->does_contain($phr);
         $target = false;
         // TODO fix it
-        //$t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
+        //$t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value update has been triggered
 
@@ -149,7 +149,7 @@ class formula_link_write_tests
         $phr->load_by_name(words::TEST_ADD);
         $result = $frm->unlink_phr($phr);
         $target = '';
-        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
@@ -160,7 +160,7 @@ class formula_link_write_tests
         // TODO fix it
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . words::TEST_ADD . '';
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
-        $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
+        $t->assert('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $result, $target);
 
 
         // ... check if the link is really not used any more for the second user
@@ -169,7 +169,7 @@ class formula_link_write_tests
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
-        $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result);
+        $t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '" not any more', $result, $target);
 
 
         // ... check if the value update for the second user has been triggered
@@ -180,14 +180,14 @@ class formula_link_write_tests
         $result = $phr_lst->does_contain($phr);
         $target = true;
         // TODO Prio 1 activate
-        // $t->display('formula->assign_phr_ulst still contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
+        // $t->assert('formula->assign_phr_ulst still contains "' . $phr->name() . '" for user "' . $t->usr1->name . '"', $result, $target);
 
         // ... check if the values for the first user are still the same
 
         // if the first user also removes the link, both records should be deleted
         $result = $frm->unlink_phr($phr);
         $target = '';
-        $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_link($t->usr1);
@@ -196,14 +196,14 @@ class formula_link_write_tests
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
         $target = users::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . words::TEST_ADD;
-        $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
+        $t->assert('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $result, $target);
 
         // check if the formula is not used any more for both users
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
-        $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '" not any more', $target, $result);
+        $t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr1->name . '" not any more', $result, $target);
 
 
         // ... and the values have been updated
@@ -215,7 +215,7 @@ class formula_link_write_tests
         $phr->load_by_name(word::TEST_NAME_CHANGED);
         $result = $frm->link_phr($phr);
         $target = '1';
-        $t->display('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('formula_link->link_phr "'.$phr->name().'" to "'.$frm->name.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
 
         // ... if the second user changes the link

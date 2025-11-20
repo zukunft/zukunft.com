@@ -80,7 +80,7 @@ class component_write_tests
         $cmp->load();
         $result = $cmp->comment;
         $target = 'Show a word, all related words to edit the word tree and the linked formulas with some results';
-        $t->display('component->load the comment of "'.$cmp->name.'"', $target, $result);
+        $t->assert('component->load the comment of "'.$cmp->name.'"', $result, $target);
 
         // test the complete component for one word
         $wrd = New word_dsp;
@@ -109,19 +109,19 @@ class component_write_tests
             $result = $cmp->description;
         }
         $target = 'Just added for testing';
-        $t->display('component->save for adding "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('component->save for adding "' . $cmp->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component name has been saved
         $cmp_added = new component($t->usr1);
         $cmp_added->load_by_name(components::TEST_ADD_NAME);
         $result = $cmp_added->description;
         $target = 'Just added for testing';
-        $t->display('component->load the added "' . $cmp_added->name() . '"', $target, $result);
+        $t->assert('component->load the added "' . $cmp_added->name() . '"', $result, $target);
 
         // check if the component adding has been logged
         $result = $t->log_last_by_field($cmp, component::FLD_NAME, $cmp->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "System Test View Component"';
-        $t->display('component->save adding logged for "' . components::TEST_ADD_NAME . '"', $target, $result);
+        $t->assert('component->save adding logged for "' . components::TEST_ADD_NAME . '"', $result, $target);
 
         // check if adding the same component again creates a correct error message
         $cmp = new component($t->usr1);
@@ -131,7 +131,7 @@ class component_write_tests
         $target = 'A view component with the name "' . components::TEST_ADD_NAME . '" already exists. Please use another name.';
         // for the standard settings
         $target = '';
-        $t->display('component->save adding "' . $cmp->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('component->save adding "' . $cmp->name() . '" again', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component can be renamed
         $cmp = new component($t->usr1);
@@ -139,7 +139,7 @@ class component_write_tests
         $cmp->set_name(components::TEST_RENAMED_NAME);
         $result = $cmp->save()->get_last_message();
         $target = '';
-        $t->display('component->save rename "' . components::TEST_ADD_NAME . '" to "' . components::TEST_RENAMED_NAME . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('component->save rename "' . components::TEST_ADD_NAME . '" to "' . components::TEST_RENAMED_NAME . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the component renaming was successful
         $cmp_renamed = new component($t->usr1);
@@ -150,12 +150,12 @@ class component_write_tests
             $result = $cmp_renamed_reloaded->name();
         }
         $target = components::TEST_RENAMED_NAME;
-        $t->display('component->load renamed component "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load renamed component "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component renaming has been logged
         $result = $t->log_last_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
-        $t->display('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameters can be added
         $cmp_renamed = new component($t->usr1);
@@ -164,17 +164,17 @@ class component_write_tests
         $cmp_renamed->type_id = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_renamed->save()->get_last_message();
         $target = '';
-        $t->display('component->save all component fields beside the name for "' . components::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        $t->assert('component->save all component fields beside the name for "' . components::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // check if the component parameters have been added
         $cmp_reloaded = new component($t->usr1);
         $cmp_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $cmp_reloaded->type_id;
         $target = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
-        $t->display('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameter adding have been logged
         // TODO for testing always use the latest table name
@@ -185,14 +185,14 @@ class component_write_tests
         if ($result != $target) {
             $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         }
-        $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $target, $result);
+        $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
         // TODO fix it
         $target = users::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
             $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';
         }
-        $t->display('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $target, $result);
+        $t->assert('component->load component_type_id for "' . components::TEST_RENAMED_NAME . '" logged', $result, $target);
 
         // check if a user specific component is created if another user changes the component
         $cmp_usr2 = new component($t->usr2);
@@ -201,27 +201,27 @@ class component_write_tests
         $cmp_usr2->type_id = $cmp_typ_cac->id(comp_type_shared::FORMULAS);
         $result = $cmp_usr2->save()->get_last_message();
         $target = '';
-        $t->display('component->save all component fields for user 2 beside the name for "' . components::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('component->save all component fields for user 2 beside the name for "' . components::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
         $target = 'Just changed for testing the user sandbox';
-        $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $cmp_usr2_reloaded->type_id;
         $target = $cmp_typ_cac->id(comp_type_shared::FORMULAS);
-        $t->display('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check the component for the original user remains unchanged
         $cmp_reloaded = new component($t->usr1);
         $cmp_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $cmp_reloaded->type_id;
         $target = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
-        $t->display('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if undo all specific changes removes the user component
         $cmp_usr2 = new component($t->usr2);
@@ -230,17 +230,17 @@ class component_write_tests
         $cmp_usr2->type_id = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_usr2->save()->get_last_message();
         $target = '';
-        $t->display('component->save undo the user component fields beside the name for "' . components::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('component->save undo the user component fields beside the name for "' . components::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
         $cmp_usr2_reloaded->load_by_name(components::TEST_RENAMED_NAME);
         $result = $cmp_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('component->load comment for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
         //$result = $dsp_usr2_reloaded->type_id;
         //$target = cl(SQL_VIEW_TYPE_WORD_NAME);
-        //$t->display('component->load type_id for "'.component::TEST_NAME_RENAMED.'"', $target, $result);
+        //$t->assert('component->load type_id for "'.component::TEST_NAME_RENAMED.'"', $result, $target);
 
         // redo the user specific component changes
         // check if the user specific changes can be removed with one click

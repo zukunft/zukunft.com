@@ -648,7 +648,7 @@ class test_base
             $test_name .= ' (' . $comment . ')';
         }
 
-        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
+        return $this->assert_dsp($test_name, $test_result, $result, $target, $msg, $exe_max_time);
     }
 
     /**
@@ -753,7 +753,7 @@ class test_base
         if ($pos !== false) {
             $needle = $haystack;
         }
-        return $this->display($msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $needle, $haystack, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -812,7 +812,7 @@ class test_base
         }
         // the array keys are not relevant if only a few elements should be checked
         $haystack = array_values(array_intersect($haystack, $needles));
-        return $this->display($msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -840,7 +840,7 @@ class test_base
             $needles = $needle;
         }
         $haystack = array_diff($needles, $haystack);
-        return $this->display($msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
 
@@ -3774,110 +3774,7 @@ class test_base
     }
 
     /**
-     * display the result of one test e.g. if adding a value has been successful
-     * should be replaced with the assert function
-     *
-     * @param string $test_name the message show to the admin / developer to identify the test
-     * @param string|array|null $target the expected result
-     * @param string|array|null $result the actual result
-     * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
-     * @param string $comment optional and additional information to explain the test
-     * @param string $test_type 'contains' to check only that the expected target is part of the actual result
-     * @return bool true if the test result is fine
-     */
-    function display(
-        string            $test_name,
-        string|array|null $target,
-        string|array|null $result,
-        float             $exe_max_time = self::TIMEOUT_LIMIT,
-        string            $comment = '',
-        string            $test_type = ''): bool
-    {
-
-        // init the test result vars
-        $lib = new library();
-        $msg = '';
-
-        // precheck
-        if ($target === null) {
-            $msg = 'target should not be null';
-        }
-        if ($result === null) {
-            $msg = 'result should not be null';
-        }
-
-        if ($msg == '') {
-            // do the compare depending on the type
-            if (is_string($result)) {
-                $result = $this->test_remove_color($result);
-            }
-            if ($test_type == self::TEST_TYPE_CONTAINS) {
-                $msg = $lib->explain_missing($result, $target);
-            } else {
-                $msg = $lib->diff_msg($result, $target);
-            }
-
-            // explain the check
-            if ($msg != '') {
-                if (is_array($target)) {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
-                    } else {
-                        $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
-                    }
-                } else {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " should contain \"" . $target . "\"";
-                    } else {
-                        $msg .= " should be \"" . $target . "\"";
-                    }
-                }
-                if ($result == $target) {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " and it contains ";
-                    } else {
-                        $msg .= " and it is ";
-                    }
-                } else {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= ", but ";
-                    } else {
-                        $test_name .= ", but it is ";
-                    }
-                }
-                if (is_array($result)) {
-                    if ($result != null) {
-                        if (is_array($result[0])) {
-                            $msg .= "\"";
-                            foreach ($result[0] as $result_item) {
-                                if ($result_item <> $result[0]) {
-                                    $msg .= ",";
-                                }
-                                $msg .= implode(":", $lib->array_flat($result_item));
-                            }
-                            $msg .= "\"";
-                        } else {
-                            $msg .= "\"" . $lib->dsp_array($result) . "\"";
-                        }
-                    }
-                }
-                if ($comment <> '') {
-                    $msg .= ' (' . $comment . ')';
-                }
-            }
-        }
-
-        if ($msg == '') {
-            $test_result = true;
-        } else {
-            $test_result = false;
-        }
-
-        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
-    }
-
-    /**
-     * create the html code to display a unit test result
+     * create the html code to show a unit test result to the user or developer
      *
      * @param string $test_name the message that describes the test for the developer
      * @param bool $test_result true if the test is fine
@@ -3886,8 +3783,7 @@ class test_base
      * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
      * @return bool true if the test result is fine
      */
-    private
-    function assert_dsp(
+    private function assert_dsp(
         string            $test_name,
         bool              $test_result,
         string|array|null $target = '',
@@ -3962,7 +3858,7 @@ class test_base
         } else {
             $result = $target;
         }
-        return $this->display($test_text, $target, $result, $exe_max_time, $comment, 'contains');
+        return $this->assert($test_text, $result, $target, $exe_max_time, $comment, 'contains');
     }
 
 

@@ -93,7 +93,7 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = 'word "System Test Word Total" (' . $wrd_total->id . ') for user 3 (zukunft.com system test)';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                $t->assert('element->dsp_id', $result, $target);
 
                 $result = $elm->name();
                 if ($pos == 0) {
@@ -105,7 +105,7 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = 'System Test Word Total';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                $t->assert('element->dsp_id', $result, $target);
 
                 $elm_dsp = new element($elm->api_json());
                 $result = $elm_dsp->link($back);
@@ -119,14 +119,14 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = $url . $wrd_total->id . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                $t->assert('element->dsp_id', $result, $target);
 
                 $pos++;
             }
         } else {
             $result = 'formula element list not set';
             $target = '';
-            $t->display('expression->element_lst', $target, $result);
+            $t->assert('expression->element_lst', $result, $target);
         }
 
         $t->subheader($ts . 'cleanup formula element write');
@@ -160,7 +160,7 @@ class element_write_tests
         } else {
             $result = 'formula element list not set';
             $target = '';
-            $t->display('element_list->dsp_id', $target, $result);
+            $t->assert('element_list->dsp_id', $result, $target);
         }
 
         $t->subheader($ts . 'cleanup');

@@ -89,26 +89,26 @@ class formula_trigger_tests
         $added_val->load_by_grp($phr_lst1->get_grp_id());
         $result = $added_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($usr);
         $added_val2->load_by_grp($phr_lst2->get_grp_id());
         $result = $added_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
         $best_val->load_best($phr_ch_19);
         $result = $best_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check best value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
         $best_val2->load_best($phr_ch_20);
         $result = $best_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check best value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
         $res_lst = $frm->calc($phr_lst2);
@@ -129,7 +129,7 @@ class formula_trigger_tests
         } else {
             $target = "0.79%";
         }
-        $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        $t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
         $val_add1->del();

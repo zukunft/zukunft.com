@@ -222,7 +222,7 @@ class formula_tests
                 . $frm_this->id() . '" title="'
                 . words::THIS_NAME . '">'
                 . words::THIS_NAME . '</a>';
-            $t->display('element_group->dsp_names', trim($target), trim($result));
+            $t->assert('element_group->dsp_names', trim($result), trim($target));
         }
         /*
         if (count($elm_grp_lst->lst()) > 0) {

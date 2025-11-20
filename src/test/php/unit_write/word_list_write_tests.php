@@ -325,7 +325,7 @@ class word_list_write_tests
         $wrd_lst_ex->ex_time();
         $result = $wrd_lst_ex->name();
         $target = '"' . words::MIO . '","' . words::TEST_CHF . '","' . words::ZH . '"'; // the creation should be tested, but how?
-        $t->display('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
+        $t->assert('word_list->ex_time for ' . $wrd_lst->name(), $result, $target);
 
         // add a test value
         $t_db->test_value(array(words::ZH, words::TEST_2021, words::TEST_CHF, words::MIO), values::SAMPLE_INT);
@@ -341,7 +341,7 @@ class word_list_write_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('phrase_group->get_id for "' . implode('","', $wrd_lst->names()) . '"', $target, $result);
+        $t->assert('phrase_group->get_id for "' . implode('","', $wrd_lst->names()) . '"', $result, $target);
 
         // test word list value
         $val = $wrd_lst->value();
@@ -360,7 +360,7 @@ class word_list_write_tests
         $val = $wrd_lst->value();
         $result = $val->number();
         $target = values::SAMPLE_FLOAT;
-        $t->display('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
+        $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, $target);
 
         // test assume time
         $wrd_lst = new word_list($usr);
@@ -372,7 +372,7 @@ class word_list_write_tests
             $result = '';
         }
         $target = words::TEST_2021;
-        $t->display('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('word_list->assume_time for ' . $wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
 
 
         // word sort
@@ -412,7 +412,7 @@ class word_list_write_tests
         $wrd_lst->diff($del_wrd_lst);
         $result = $wrd_lst->names();
         $target = array("April", "December", "February", "January", "March", "November", "October", "September");
-        $t->display('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
 
     }
 

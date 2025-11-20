@@ -89,7 +89,7 @@ class view_write_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('view->load of "' . $msk->name() . '"', $target, $result);
+        $t->assert('view->load of "' . $msk->name() . '"', $result, $target);
 
         // test the complete view for one word
         $wrd = new word($t->usr1);
@@ -102,14 +102,14 @@ class view_write_tests
         // check if the view contains at least one value
         $target = 'back=' . $wrd->id() . '">8.51</a>';
         /* TODO fix the result display
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         // check if the view contains at least the main formulas
         $target = 'System Test Word Increase';
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */
         /* TODO fix the result loading
         $target = 'back='.$wrd->id.'">0.79%</a>';
-        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */
 
         // test adding of one view
@@ -121,19 +121,19 @@ class view_write_tests
             $result = $msk->description;
         }
         $target = 'Just added for testing';
-        $t->display('view->save for adding "' . $msk->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('view->save for adding "' . $msk->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view name has been saved
         $msk = new view($t->usr1);
         $msk->load_by_name(views::TEST_ADD_NAME, view::class);
         $result = $msk->description;
         $target = 'Just added for testing';
-        $t->display('view->load the added "' . $msk->name() . '"', $target, $result);
+        $t->assert('view->load the added "' . $msk->name() . '"', $result, $target);
 
         // check if the view adding has been logged
         $result = $t->log_last_by_field($msk, view_db::FLD_NAME, $msk->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "System Test View"';
-        $t->display('view->save adding logged for "' . views::TEST_ADD_NAME . '"', $target, $result);
+        $t->assert('view->save adding logged for "' . views::TEST_ADD_NAME . '"', $result, $target);
 
         // check if adding the same view again creates a correct error message
         $msk = new view($t->usr1);
@@ -141,7 +141,7 @@ class view_write_tests
         $result = $msk->save()->get_last_message();
         $target = 'A view with the name "' . views::TEST_ADD_NAME . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
-        $t->display('view->save adding "' . $msk->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('view->save adding "' . $msk->name() . '" again', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // check if the view can be renamed
         $msk = new view($t->usr1);
@@ -149,7 +149,7 @@ class view_write_tests
         $msk->set_name(views::TEST_RENAMED_NAME);
         $result = $msk->save()->get_last_message();
         $target = '';
-        $t->display('view->save rename "' . views::TEST_ADD_NAME . '" to "' . views::TEST_RENAMED_NAME . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('view->save rename "' . views::TEST_ADD_NAME . '" to "' . views::TEST_RENAMED_NAME . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view renaming was successful
         $dsp_renamed = new view($t->usr1);
@@ -160,29 +160,29 @@ class view_write_tests
             }
         }
         $target = 'System Test View Renamed';
-        $t->display('view->load renamed view "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load renamed view "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the view renaming has been logged
         $result = $t->log_last_by_field($dsp_renamed, view_db::FLD_NAME, $dsp_renamed->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
-        $t->display('view->save rename logged for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->save rename logged for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the view parameters can be added
         $dsp_renamed->description = 'Just added for testing the user sandbox';
         $dsp_renamed->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
         $result = $dsp_renamed->save()->get_last_message();
         $target = '';
-        $t->display('view->save all view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('view->save all view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view parameters have been added
         $dsp_reloaded = new view($t->usr1);
         $dsp_reloaded->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $result = $dsp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_reloaded->type_id;
         $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
-        $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the view parameter adding have been logged
         $result = $t->log_last_by_field($dsp_reloaded, sql_db::FLD_DESCRIPTION, $dsp_reloaded->id(), true);
@@ -191,14 +191,14 @@ class view_write_tests
         if ($result != $target) {
             $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         }
-        $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '" logged', $target, $result);
+        $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '" logged', $result, $target);
         $result = $t->log_last_by_field($dsp_reloaded, view_db::FLD_TYPE, $dsp_reloaded->id(), true);
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word default" to "entry view"';
         // TODO fix it
         if ($result != $target) {
             $target = users::SYSTEM_TEST_NAME . ' added "word default"';
         }
-        $t->display('view->load view_type_id for "' . views::TEST_RENAMED_NAME . '" logged', $target, $result);
+        $t->assert('view->load view_type_id for "' . views::TEST_RENAMED_NAME . '" logged', $result, $target);
 
         // check if a user specific view is created if another user changes the view
         $dsp_usr2 = new view($t->usr2);
@@ -207,27 +207,27 @@ class view_write_tests
         $dsp_usr2->type_id = $msk_typ_cac->id(view_type::ENTRY);
         $result = $dsp_usr2->save()->get_last_message();
         $target = '';
-        $t->display('view->save all view fields for user 2 beside the name for "' . views::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('view->save all view fields for user 2 beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific view changes have been saved
         $dsp_usr2_reloaded = new view($t->usr2);
         $dsp_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $result = $dsp_usr2_reloaded->description;
         $target = 'Just changed for testing the user sandbox';
-        $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_usr2_reloaded->type_id;
         $target = $msk_typ_cac->id(view_type::ENTRY);
-        $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check the view for the original user remains unchanged
         $dsp_reloaded = new view($t->usr1);
         $dsp_reloaded->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $result = $dsp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_reloaded->type_id;
         $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
-        $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if undo all specific changes removes the user view
         $dsp_usr2 = new view($t->usr2);
@@ -236,17 +236,17 @@ class view_write_tests
         $dsp_usr2->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
         $result = $dsp_usr2->save()->get_last_message();
         $target = '';
-        $t->display('view->save undo the user view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('view->save undo the user view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific view changes have been saved
         $dsp_usr2_reloaded = new view($t->usr2);
         $dsp_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $result = $dsp_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
-        $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_usr2_reloaded->type_id;
         $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
-        $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
+        $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // redo the user specific view changes
         // check if the user specific changes can be removed with one click

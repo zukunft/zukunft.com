@@ -107,7 +107,7 @@ class base_ui_tests
 
         $created_html = $html->about();
         $expected_html = $t->file(test_paths::HTML . test_paths::VIEW_FUNCTIONS . 'about.html');
-        $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
+        $t->assert('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
         $t->subheader($ts . 'selector');
@@ -277,7 +277,7 @@ class base_ui_tests
         $cmp_dsp = new component_dsp($cmp->api_json());
         $result = $cmp_dsp->html();
         $target = views::NESN_2016_FS_NAME;
-        $t->display('component_dsp->text', $target, $result);
+        $t->assert('component_dsp->text', $result, $target);
 
 
         $t->subheader($ts . 'button tests');
@@ -318,30 +318,30 @@ class base_ui_tests
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
         $result = (new button($url, $back))->undo(msg_id::UNDO);
-        //$t->display(", btn_undo", $target, $result);
+        //$t->assert(", btn_undo", $result, $target);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $back))->find(msg_id::FIND);
-        //$t->display(", btn_find", $target, $result);
+        //$t->assert(", btn_find", $result, $target);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
-        //$t->display(", btn_unfilter", $target, $result);
+        //$t->assert(", btn_unfilter", $result, $target);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
         $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
         $result = (new button($url, $back))->yes_no();
-        $t->display(", btn_yesno", $target, $result);
+        $t->assert(", btn_yesno", $result, $target);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<a href="/http/view.php?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
-        //$t->display(", btn_back", $target, $result);
+        //$t->assert(", btn_back", $result, $target);
 
         $lib = new library();
         $usr_msg = new user_message();

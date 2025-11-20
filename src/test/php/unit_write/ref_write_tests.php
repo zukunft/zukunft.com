@@ -71,7 +71,7 @@ class ref_write_tests
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->external_key();
         $target = ref::TEST_REF_NAME;
-        $t->display('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $t->assert('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
@@ -79,10 +79,10 @@ class ref_write_tests
             $ref2->load_by_id($ref->id());
             $result = $ref2->phrase()->name();
             $target = words::TEST_ADD;
-            $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+            $t->assert('ref->load_object word', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
             $result = $ref2->predicate_name();
             $target = ref_type::WIKIDATA;
-            $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+            $t->assert('ref->load_object type', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
         // cleanup of ref specific tests

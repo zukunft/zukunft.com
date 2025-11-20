@@ -437,7 +437,7 @@ class test_db_load
             }
         }
 
-        $this->env->display('test_triple', $target, $result_text, test_base::TIMEOUT_LIMIT_DB);
+        $this->env->assert('test_triple', $result_text, $target, test_base::TIMEOUT_LIMIT_DB);
         return $result;
     }
 
@@ -611,7 +611,7 @@ class test_db_load
     function test_formula(string $frm_name, string $frm_text): formula
     {
         $frm = $this->add_formula($frm_name, $frm_text);
-        $this->env->display('formula', $frm_name, $frm->name());
+        $this->env->assert('formula', $frm->name(), $frm_name);
         return $frm;
     }
 
@@ -666,7 +666,7 @@ class test_db_load
     {
         $ref = $this->add_ref($wrd_name, $external_key, $type_name);
         $target = $external_key;
-        $this->env->display('ref', $target, $ref->external_key());
+        $this->env->assert('ref', $ref->external_key(), $target);
         return $ref;
     }
 
@@ -688,7 +688,7 @@ class test_db_load
     ): phrase
     {
         $phr = $this->load_phrase($phr_name);
-        $this->env->display('phrase', $phr_name, $phr->name(true));
+        $this->env->assert('phrase', $phr->name(true), $phr_name);
         return $phr;
     }
 
@@ -707,7 +707,7 @@ class test_db_load
         $wrd_lst = $this->load_word_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
         $result = $wrd_lst->name();
-        $this->env->display(', word list', $target, $result);
+        $this->env->assert(', word list', $result, $target);
         return $wrd_lst;
     }
 
@@ -726,7 +726,7 @@ class test_db_load
         $phr_lst = $this->load_phrase_list($array_of_word_str);
         $target = '"' . implode('","', $array_of_word_str) . '"';
         $result = $phr_lst->dsp_name();
-        $this->env->display(', phrase list', $target, $result);
+        $this->env->assert(', phrase list', $result, $target);
         return $phr_lst;
     }
 
@@ -837,7 +837,7 @@ class test_db_load
     {
         $val = $this->add_value($array_of_word_str, $target);
         $result = $val->value();
-        $this->env->display(', value->load for ' . $val->name(), $target, $result);
+        $this->env->assert(', value->load for ' . $val->name(), $result, $target);
         return $val;
     }
 
@@ -867,7 +867,7 @@ class test_db_load
     {
         $val = $this->add_value_by_phr_grp($phr_grp, $target);
         $result = $val->number();
-        $this->env->display(', value->load for ' . $val->name(), $target, $result);
+        $this->env->assert(', value->load for ' . $val->name(), $result, $target);
         return $val;
     }
 
@@ -909,7 +909,7 @@ class test_db_load
     function test_source(string $src_name): source
     {
         $src = $this->add_source($src_name);
-        $this->env->display('source', $src_name, $src->name());
+        $this->env->assert('source', $src->name(), $src_name);
         return $src;
     }
 
@@ -1032,7 +1032,7 @@ class test_db_load
         }
 
         $msk = $this->add_view($dsp_name, $test_usr);
-        $this->env->display('view', $dsp_name, $msk->name(), test_base::TIMEOUT_LIMIT_DB);
+        $this->env->assert('view', $msk->name(), $dsp_name, test_base::TIMEOUT_LIMIT_DB);
         return $msk;
     }
 
@@ -1092,7 +1092,7 @@ class test_db_load
         }
 
         $cmp = $this->add_component($cmp_name, $test_usr, $type_code_id);
-        $this->env->display('view component', $cmp_name, $cmp->name());
+        $this->env->assert('view component', $cmp->name(), $cmp_name);
         return $cmp;
     }
 
@@ -1107,7 +1107,7 @@ class test_db_load
         $lnk->order_nbr = $pos;
         $result = $lnk->save()->get_last_message();
         $target = '';
-        $this->env->display('view component link', $target, $result);
+        $this->env->assert('view component link', $result, $target);
         return $lnk;
     }
 
@@ -1136,7 +1136,7 @@ class test_db_load
             if ($frm_lnk->id() > 0) {
                 $result = $frm_lnk->formula()->name() . ' is linked to ' . $frm_lnk->phrase()->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
-                $this->env->display('formula_link', $target, $result);
+                $this->env->assert('formula_link', $result, $target);
             } else {
                 if ($auto_create) {
                     $frm_lnk->set_formula($frm);

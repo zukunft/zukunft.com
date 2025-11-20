@@ -432,7 +432,11 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
-        $this->php_class_tree();
+        $test_name = 'check that the docs with all objects is updated';
+        $md_txt = $this->php_class_tree();
+        $doc_txt = file_get_contents(test_files::DOCS_OBJECTS);
+        $t->assert($test_name, $doc_txt, $md_txt);
+
         $this->php_include_tests($t, paths::MODEL);
         $this->php_include_tests($t, paths::API);
         $this->php_include_tests($t, paths::WEB);
@@ -566,15 +570,16 @@ class system_tests
 
     }
 
-    function php_class_tree(): void
+    function php_class_tree(): string
     {
+        $test_name = 'c';
         $class_lst = [];
         $class_lst = array_merge($class_lst, $this->php_classes(paths::MODEL, paths::MODEL_SECTION));
         $class_lst = array_merge($class_lst, $this->php_classes(paths::SHARED, paths::SHARED_SECTION));
         $class_lst = array_merge($class_lst, $this->php_classes(paths::WEB, paths::WEB_SECTION));
         $class_tree = $this->classTree($class_lst);
         $class_parents = $this->classTreeParents($class_lst);
-        $md_txt = $this->php_class_list_to_md($class_tree);
+        return $this->php_class_list_to_md($class_tree);
     }
 
     private function php_class_list_to_md(array $class_tree): string

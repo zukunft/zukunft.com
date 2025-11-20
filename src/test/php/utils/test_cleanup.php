@@ -112,7 +112,7 @@ class test_cleanup extends test_api
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
-                        $this->display('value->del test value for "' . words::TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+                        $this->assert('value->del test value for "' . words::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
                     }
                 }
             }
@@ -162,14 +162,14 @@ class test_cleanup extends test_api
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
             $result .= $cmp_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->assert('cleanup: unlink first component "' . $cmp_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // check if the test components have been unlinked
         if ($msk->id() > 0 and $cmp->id() > 0) {
             $result .= $cmp->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->assert('cleanup: unlink first component "' . $cmp->name() . '" from "' . $msk->name() . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component
@@ -179,14 +179,14 @@ class test_cleanup extends test_api
         if ($msk->id() > 0 and $cmp2->id() > 0) {
             $result .= $cmp2->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->assert('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $msk->name() . '"', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
         if ($dsp_usr2->id() > 0 and $cmp2_usr2->id() > 0) {
             $result .= $cmp2_usr2->unlink($dsp_usr2);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->assert('cleanup: unlink second component "' . $cmp2_usr2->name() . '" from "' . $dsp_usr2->name() . '" for user 2', $result, $target, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // request to delete the added test views
@@ -196,7 +196,7 @@ class test_cleanup extends test_api
                 $msg = $cmp->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('component->del of "' . $cmp_name . '"', $target, $result);
+                $this->assert('component->del of "' . $cmp_name . '"', $result, $target);
             }
         }
 
@@ -207,7 +207,7 @@ class test_cleanup extends test_api
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('view->del of "' . $dsp_name . '"', $target, $result);
+                $this->assert('view->del of "' . $dsp_name . '"', $result, $target);
             }
         }
 
@@ -222,7 +222,7 @@ class test_cleanup extends test_api
             $msg = $cmp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . components::TEST_ADD_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of first component "' . components::TEST_ADD_NAME . '" for user 2', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the first test view component
@@ -236,7 +236,7 @@ class test_cleanup extends test_api
             $msg = $cmp->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . components::TEST_ADD_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of first component "' . components::TEST_ADD_NAME . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the second test view component
@@ -247,7 +247,7 @@ class test_cleanup extends test_api
             $msg = $cmp2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the second added test view component for user 2
@@ -255,7 +255,7 @@ class test_cleanup extends test_api
             $msg = $cmp2_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '" for user 2', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view for user 2
@@ -269,7 +269,7 @@ class test_cleanup extends test_api
             $msg = $dsp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . views::TEST_ADD_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of view "' . views::TEST_ADD_NAME . '" for user 2', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view
@@ -283,7 +283,7 @@ class test_cleanup extends test_api
             $msg = $msk->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . views::TEST_ADD_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('cleanup: del of view "' . views::TEST_ADD_NAME . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test views
@@ -293,7 +293,7 @@ class test_cleanup extends test_api
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('view->del of "' . $dsp_name . '"', $target, $result);
+                $this->assert('view->del of "' . $dsp_name . '"', $result, $target);
             }
         }
 
@@ -303,7 +303,7 @@ class test_cleanup extends test_api
             $msg = $src->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('source->del of "' . sources::SYSTEM_TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('source->del of "' . sources::SYSTEM_TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test sources
@@ -314,7 +314,7 @@ class test_cleanup extends test_api
                     $msg = $src->del();
                     $result .= $msg->get_last_message();
                     $target = '';
-                    $this->display('source->del of "' . $src_name . '"', $target, $result);
+                    $this->assert('source->del of "' . $src_name . '"', $result, $target);
                 }
             }
         }
@@ -325,7 +325,7 @@ class test_cleanup extends test_api
             $msg = $ref->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('ref->del of "' . words::TEST_ADD . '"', $target, $result);
+            $this->assert('ref->del of "' . words::TEST_ADD . '"', $result, $target);
         }
 
         // request to delete the added test formulas
@@ -335,7 +335,7 @@ class test_cleanup extends test_api
                 $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('formula->del of "' . $frm_name . '"', $target, $result);
+                $this->assert('formula->del of "' . $frm_name . '"', $result, $target);
             }
         }
 
@@ -346,7 +346,7 @@ class test_cleanup extends test_api
                 $msg = $phr->del();
                 $result .= $msg->get_last_message();
                 $target = '';
-                $this->display('phrase->del of "' . $phr_name . '"', $target, $result);
+                $this->assert('phrase->del of "' . $phr_name . '"', $result, $target);
             }
         }
 
@@ -372,7 +372,7 @@ class test_cleanup extends test_api
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . words::TEST_ADD . '"', $target, $result);
+            $this->assert('word->del of "' . words::TEST_ADD . '"', $result, $target);
         }
 
         // request to delete the renamed test word
@@ -381,7 +381,7 @@ class test_cleanup extends test_api
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . words::TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->assert('word->del of "' . words::TEST_RENAMED . '"', $result, $target, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test words
@@ -393,7 +393,7 @@ class test_cleanup extends test_api
                     $msg = $wrd->del();
                     $result .= $msg->get_last_message();
                     $target = '';
-                    $this->display('word->del of "' . $wrd_name . '"', $target, $result);
+                    $this->assert('word->del of "' . $wrd_name . '"', $result, $target);
                 }
             }
         }
@@ -548,7 +548,7 @@ class test_cleanup extends test_api
         }
         $created_html = $this->html_page($body, $title);
         $expected_html = $this->file(test_paths::HTML . $file_path . test_files::HTML);
-        $this->display($file_path, $lib->trim_html($expected_html), $lib->trim_html($created_html));
+        $this->assert($file_path, $lib->trim_html($created_html), $lib->trim_html($expected_html));
     }
 
     private function html_page(string $body, string $title): string

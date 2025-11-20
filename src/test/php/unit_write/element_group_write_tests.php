@@ -105,12 +105,12 @@ class element_group_write_tests
                 . words::INHABITANTS . '","'
                 . words::MIO . '","'
                 . words::CH . '"';
-            $t->display('element_group->dsp_id', $target, $result);
+            $t->assert('element_group->dsp_id', $result, $target);
 
             // test symbol for text replacement in the formula expression text
             $result = $elm_grp->build_symbol();
             $target = '{f' . $frm_this->id() . '}';
-            $t->display('element_group->build_symbol', $target, $result);
+            $t->assert('element_group->build_symbol', $result, $target);
 
             // test if the values for an element group are displayed correctly
             $elm_grp_dsp = new element_group($elm_grp->api_json());
@@ -118,7 +118,7 @@ class element_group_write_tests
             //$result = $elm_grp_dsp->dsp_values();
             //$fig_lst = $elm_grp->figures();
             //$target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            //$t->display('element_group->dsp_values', $target, $result);
+            //$t->assert('element_group->dsp_values', $result, $target);
 
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
@@ -140,17 +140,17 @@ class element_group_write_tests
                     $fig_dsp = $tl->ui_obj($fig, new figure_dsp());
                     $result = $fig_dsp->display();
                     $target = "8.51";
-                    $t->display('figure->display', $target, $result);
+                    $t->assert('figure->display', $result, $target);
 
                     $result = $fig_dsp->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '" title="8.51">8.51</a>';
-                    $t->display('figure->display_linked', $target, $result);
+                    $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
                 $result = 'figure list is empty';
                 $target = 'this (3) and "System Test Word Parent e.g. '  . words::CH . '","System Test Word Unit e.g. inhabitant"';
-                $t->display('element_group->figures', $target, $result);
+                $t->assert('element_group->figures', $result, $target);
             }
 
 
@@ -170,7 +170,7 @@ class element_group_write_tests
             $fig_lst_dsp = new figure_list($fig_lst->api_json());
             $result = $fig_lst_dsp->display();
             $target = "8.51 ";
-            $t->display('figure_list->display', $target, $result);
+            $t->assert('figure_list->display', $result, $target);
 
         } else {
             $result = 'formula element group list is empty';
@@ -180,7 +180,7 @@ class element_group_write_tests
                 . words::CHF . '","'
                 . words::MIO . '","'
                 . words::YEAR_2015 . '"@';
-            $t->display('element_group->dsp_names', $target, $result);
+            $t->assert('element_group->dsp_names', $result, $target);
         }
 
     }

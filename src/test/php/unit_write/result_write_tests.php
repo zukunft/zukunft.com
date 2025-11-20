@@ -73,14 +73,14 @@ class result_write_tests
             $result = $frm->usr_text;
         }
         $target = formulas::INCREASE_EXP;
-        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('formula->save for adding "' . $frm->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm->save()->get_last_message();
         $target = '';
-        $t->display('formula->save rename "' . formulas::SYSTEM_TEST_ADD . '" to "' . formulas::SYSTEM_TEST_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('formula->save rename "' . formulas::SYSTEM_TEST_ADD . '" to "' . formulas::SYSTEM_TEST_RENAMED . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // test load result without time
@@ -104,7 +104,7 @@ class result_write_tests
         // TODO review
         $target = results::TV_INCREASE_LONG;
         // TODO Prio 1 activate
-        //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        //$t->assert('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test load result with time
         $phr_lst->add_name(words::YEAR_2020);
@@ -124,9 +124,9 @@ class result_write_tests
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
             // TODO Prio 1 activate
-            //$t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
+            //$t->assert('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $result, $target);
         } else {
-            $t->display('value->val_formatted incl time for ', $target, $result);
+            $t->assert('value->val_formatted incl time for ', $result, $target);
         }
 
         // test the scaling
@@ -155,7 +155,7 @@ class result_write_tests
         }
         $target = 8505.251;
         // TODO Prio 1 activate
-        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        //$t->assert('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value
         // e.g. if ABB,sales,2014 is requested, but there is only a value for ABB,sales,2014,CHF,million get it
@@ -172,7 +172,7 @@ class result_write_tests
         if ($result != $target) {
             $target = 0.007871833296164;
         }
-        $t->display('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('value->load the best guess for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
         */
 
         /*

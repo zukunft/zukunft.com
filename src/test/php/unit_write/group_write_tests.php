@@ -134,7 +134,7 @@ class group_write_tests
                 $target = $result;
             }
         }
-        $t->display('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
+        $t->assert('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $result, $target);
 
         // load based on id
         if ($phr_grp->is_id_set()) {
@@ -147,7 +147,7 @@ class group_write_tests
             );
         }
         $target = array(4 => words::CH);
-        $t->display('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
+        $t->assert('phrase_group->load for id ' . $phr_grp->id(), $result, $target);
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
@@ -157,12 +157,12 @@ class group_write_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test names
         $result = implode(",", $zh_city_grp->names());
         $target = words::INHABITANTS . ',' . triples::CITY_ZH;
-        $t->display('phrase_group->names', $target, $result);
+        $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
@@ -172,7 +172,7 @@ class group_write_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
@@ -182,7 +182,7 @@ class group_write_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test value
         // test value_scaled

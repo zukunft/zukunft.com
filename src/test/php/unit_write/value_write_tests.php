@@ -206,7 +206,7 @@ class value_write_tests
         // test the HTML code creation
         $result = $mio_val_dsp->value();
         $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, shared_config::DEFAULT_DEC_POINT, shared_config::DEFAULT_THOUSAND_SEP);
-        $t->display(', value->display', $result, $target);
+        $t->assert(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink
         $result = $mio_val_dsp->value_edit('1');
@@ -288,7 +288,7 @@ class value_write_tests
         $add_val_ts->time_stamp = new DateTime('2020-05-15');
         $result = $add_val_ts->save()->get_last_message();
         $target = '';
-        $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
 
         // ... check if the value adding has been logged

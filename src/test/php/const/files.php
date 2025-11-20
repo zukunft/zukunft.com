@@ -46,6 +46,7 @@ class files
     CONST string HTML = '.html';
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
+    CONST string MD = '.md';
 
 
     /*
@@ -53,6 +54,13 @@ class files
      */
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+
+
+    /*
+     * docs
+     */
+
+    CONST string DOCS_OBJECTS = test_paths::DOCS . 'code_objects_all' . self::MD;
 
 
     /*

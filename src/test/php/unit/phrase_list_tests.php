@@ -131,10 +131,10 @@ class phrase_list_tests
         $phr_lst = $this->get_phrase_list();
         $phr_lst_ex_time = clone $phr_lst;
         $phr_lst_ex_time->ex_time();
-        $t->display('phrase_list->ex_time', true, true);
+        $t->assert('phrase_list->ex_time', true, true);
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time()->dsp_id();
-        $t->display('phrase_list->ex_time names', $target, $result);
+        $t->assert('phrase_list->ex_time names', $result, $target);
 
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t_phr->phrase_list();

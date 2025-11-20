@@ -49,6 +49,6 @@ function run_db_link_test(all_tests $t): void
     $id = change_tables::WORD;
     $target = 5;
     $result = $cng_tbl_cac->id($id);
-    $t->display(", sql_code_link " . $id, $target, $result);
+    $t->assert(", sql_code_link " . $id, $result, $target);
 
 }

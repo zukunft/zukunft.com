@@ -125,7 +125,7 @@ class value_ui_tests
         $val_lst = new value_list($usr);
         $result = $val_lst->check_all();
         $target = '';
-        $t->display('value_list->check_all', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->check_all', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // test get a single value from a value list by group and time
         // get all value for Switzerland
@@ -139,13 +139,13 @@ class value_ui_tests
         $grp = $wrd_lst->get_grp();
         $result = $grp->id();
         $target = '2116';
-        $t->display('word_list->get_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('word_list->get_grp for ' . $wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
         $val = $val_lst->get_by_grp($grp, $wrd_time);
         if ($val != null) {
             $result = $val->number();
         }
         $target = values::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // ... get all times of the Switzerland values
         $time_lst = $val_lst->time_list();
@@ -156,7 +156,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name(), true, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name(), $result, true, $t::TIMEOUT_LIMIT_DB);
 
         // ... and filter by times
         $time_lst = new word_list($usr);
@@ -168,7 +168,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name(), true, $result);
+        $t->assert('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name(), $result, true);
 
         // ... but not 2020
         $wrd_2020 = new word($usr);
@@ -178,7 +178,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name(), $result, true);
 
         // ... and filter by phrases
         $sector_lst = new word_list($usr);
@@ -193,7 +193,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name(), $result, true);
 
         // ... but not 2016
         $wrd_power = new word($usr);
@@ -203,7 +203,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name(), $result, true);
 
 
         $t->subheader($ts . 'Test the value list display class (classes/value_list_display.php)');
@@ -221,7 +221,7 @@ class value_ui_tests
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
         //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());
-        //$t->display('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        //$t->assert('value_list_dsp->dsp_table for "'.$wrd->name.'"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         */
 
     }

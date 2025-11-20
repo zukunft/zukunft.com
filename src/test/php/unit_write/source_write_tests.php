@@ -76,17 +76,17 @@ class source_write_tests
         $src_usr2->description = sources::TD_ADD;
         $result = $src_usr2->save()->get_last_message();
         $target = '';
-        $t->display('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
         $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
         $result = $src_usr2_reloaded->url();
         $target = sources::TU_ADD;
-        $t->display('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $t->assert('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $result, $target);
         $result = $src_usr2_reloaded->description;
         $target = sources::TD_ADD;
-        $t->display('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $t->assert('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $result, $target);
 
         // clean up by deleting all add test sources
         $src_usr2_reloaded->del();

@@ -158,7 +158,7 @@ class view_tests
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id.sql');
-        $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->assert('view->load_components_sql by view id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
@@ -167,7 +167,7 @@ class view_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
-        $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->assert('view->load_components_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
         /*
@@ -222,7 +222,7 @@ class view_tests
         $wrd->set_name(word::TEST_NAME);
         $result = $msk->display($wrd, 1);
         $target = '';
-        $t->display('view->display', $target, $result);
+        $t->assert('view->display', $result, $target);
         */
 
     }

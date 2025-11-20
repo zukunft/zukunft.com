@@ -147,7 +147,7 @@ function run_word_display_test(all_tests $t): void
     $target = words::ZH;
     // TODO add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
-    //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+    //$t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     // the value table for company
@@ -164,7 +164,7 @@ function run_word_display_test(all_tests $t): void
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
-    $t->display('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
+    $t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $result, $target);
     */
 
 

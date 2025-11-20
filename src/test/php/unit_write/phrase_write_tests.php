@@ -119,7 +119,7 @@ class phrase_write_tests
             log_warning('Vestas type test failed');
         }
         $target = words::COMPANY;
-        $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);
+        $t->assert('phrase->is_mainly for ' . $phr->name(), $result, $target);
 
     }
 

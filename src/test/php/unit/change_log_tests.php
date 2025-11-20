@@ -224,7 +224,7 @@ class change_log_tests
         // TODO Prio 1 activate
         //$created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         //$expected_sql = $t->file('db/log/change_log.sql');
-        //$t->display('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $lib->trim($expected_sql), $lib->trim($created_sql));
+        //$t->assert('user_log_display->dsp_hist_links_sql by ' . $log_dsp->type, $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));

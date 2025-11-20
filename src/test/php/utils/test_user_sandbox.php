@@ -61,12 +61,12 @@ function run_sandbox_test(all_tests $t): void
     $wrd2->set_name(words::MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
-    $t->display("a word is not the same as the same word that represents a formula", $target, $result);
+    $t->assert("a word is not the same as the same word that represents a formula", $result, $target);
 
     // ... but it is similar
     $target = true;
     $result = $wrd1->is_similar_named($wrd2);
-    $t->display("... but it is similar", $target, $result);
+    $t->assert("... but it is similar", $result, $target);
 
     $t->subheader($ts . 'saving');
 
@@ -75,7 +75,7 @@ function run_sandbox_test(all_tests $t): void
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
     $result = $src->save()->get_last_message();
     $target = '';
-    $t->display('_sandbox->save create a new source', $target, $result);
+    $t->assert('_sandbox->save create a new source', $result, $target);
 
     // remember the id
     $src_id = 0;
@@ -89,7 +89,7 @@ function run_sandbox_test(all_tests $t): void
         $result = $src->name();
     }
     $target = sources::IPCC_AR6_SYNTHESIS;
-    $t->display('_sandbox->save check created source', $target, $result);
+    $t->assert('_sandbox->save check created source', $result, $target);
 
     // update the source url by name (_sandbox->save case 2)
     $src = new source($t->usr1);
@@ -97,7 +97,7 @@ function run_sandbox_test(all_tests $t): void
     $src->set_url(sources::IPCC_AR6_SYNTHESIS_URL);
     $result = $src->save()->get_last_message();
     $target = '';
-    $t->display('_sandbox->save update the source url by name', $target, $result);
+    $t->assert('_sandbox->save update the source url by name', $result, $target);
 
     // remember the id
     $src_id = 0;
@@ -111,7 +111,7 @@ function run_sandbox_test(all_tests $t): void
         $result = $src->url();
     }
     $target = sources::IPCC_AR6_SYNTHESIS_URL;
-    $t->display('_sandbox->save check if the source url has been updates', $target, $result);
+    $t->assert('_sandbox->save check if the source url has been updates', $result, $target);
 
 }
 

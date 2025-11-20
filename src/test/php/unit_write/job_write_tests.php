@@ -76,7 +76,7 @@ class job_write_tests
         $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('job->value to link', $target, $result);
+        $t->assert('job->value to link', $result, $target);
 
         // test adding a batch job
         $job = new job($usr);
@@ -86,7 +86,7 @@ class job_write_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('job->add has number "' . $result . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('job->add has number "' . $result . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 
@@ -119,7 +119,7 @@ class job_write_tests
         if ($result->is_ok()) {
             $target = $result->get_last_message();
         }
-        $t->display('job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 

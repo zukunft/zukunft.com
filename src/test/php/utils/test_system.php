@@ -83,7 +83,7 @@ function run_system_test(all_tests $t): void
     if ($usr_test->id() > 0) {
         $result = 'permitted!';
     }
-    $t->display('IP blocking for ' . $usr_test->ip_addr, $target, $result);
+    $t->assert('IP blocking for ' . $usr_test->ip_addr, $result, $target);
 
     // TODO combine with the other user unit tests
     $t->subheader($ts . 'user unit tests');
@@ -95,7 +95,7 @@ function run_system_test(all_tests $t): void
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_by_id->display();
-    $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
+    $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 
 
     $t->subheader('user list');
