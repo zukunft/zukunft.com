@@ -128,26 +128,14 @@ class combine_object extends CombineObject
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**

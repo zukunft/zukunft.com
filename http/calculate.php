@@ -67,7 +67,7 @@ if ($usr->id > 0) {
 
     // start displaying while calculating
     $calc_pos = 0;
-    $last_msg_time = time();
+    $last_msg_time = microtime(true);
     ob_implicit_flush();
     ob_end_flush();
     log_debug("create the calculation queue ... ");
@@ -98,12 +98,12 @@ if ($usr->id > 0) {
                 $res_lst = $frm->calc($r->wrd_lst);
 
                 // show the user the progress every two seconds
-                if ($last_msg_time + $ui_response_time < time()) {
+                if ($last_msg_time + $ui_response_time < microtime(true)) {
                     $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                     echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $res_lst->names() . ")<br>";
                     ob_flush();
                     flush();
-                    $last_msg_time = time();
+                    $last_msg_time = microtime(true);
                 }
 
                 $calc_pos++;

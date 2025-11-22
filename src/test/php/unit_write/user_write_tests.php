@@ -71,7 +71,7 @@ class user_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $phr_typ_cac;
+        global $sys;
 
         // init
         $t_usr = new test_users($t);

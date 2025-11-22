@@ -172,7 +172,7 @@ if ($session_usr->id > 0) {
             ob_end_flush();
             log_debug("create the calculation queue ... ");
             $calc_pos = 0;
-            $last_msg_time = time();
+            $last_msg_time =microtime(true);
 
             // build the calculation queue
             // the standard value will always be checked first
@@ -226,7 +226,7 @@ if ($session_usr->id > 0) {
                         }
 
                         // show the user the progress every two seconds
-                        if ($last_msg_time + $ui_response_time < time()) {
+                        if ($last_msg_time + $ui_response_time < microtime(true)) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($res->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";
@@ -235,7 +235,7 @@ if ($session_usr->id > 0) {
                             }
                             ob_flush();
                             flush();
-                            $last_msg_time = time();
+                            $last_msg_time = microtime(true);
                         }
                     }
                 }

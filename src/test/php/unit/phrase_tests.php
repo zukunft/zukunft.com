@@ -122,8 +122,8 @@ class phrase_tests
         $t->header($ts);
 
         $t->subheader($ts . 'type api');
-        global $phr_typ_cac;
-        $phr_typ = $phr_typ_cac->get_by_code_id(phrase_type_shared::PERCENT);
+        global $sys;
+        $phr_typ = $sys->typ_lst->phr_typ->get_by_code_id(phrase_type_shared::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
 

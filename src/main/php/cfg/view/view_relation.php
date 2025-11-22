@@ -362,8 +362,8 @@ class view_relation extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $cac;
-        $msk_rel_lst = $cac->view_relation_types();
+        global $sys;
+        $msk_rel_lst = $sys->view_relation_types();
         $this->set_predicate_id($msk_rel_lst->id($type_code_id));
     }
 
@@ -387,10 +387,10 @@ class view_relation extends sandbox_link
 
     function relation_code_id(): string
     {
-        global $cac;
+        global $sys;
         $id = $this->predicate_id;
         if ($id != 0) {
-            return $cac->view_relation_types()->get($this->predicate_id)?->code_id();
+            return $sys->view_relation_types()->get($this->predicate_id)?->code_id();
         } else {
             return '';
         }
@@ -513,8 +513,8 @@ class view_relation extends sandbox_link
      */
     function predicate_name(): ?string
     {
-        global $cac;
-        return $cac->view_relation_types()->name($this->relation_type_id());
+        global $sys;
+        return $sys->view_relation_name($this->relation_type_id());
     }
 
     /**
@@ -522,8 +522,8 @@ class view_relation extends sandbox_link
      */
     function relation_type_code_id(): ?string
     {
-        global $cac;
-        return $cac->view_relation_types()->code_id($this->relation_type_id());
+        global $sys;
+        return $sys->view_relation_code_id($this->relation_type_id());
     }
 
     /**
@@ -684,7 +684,7 @@ class view_relation extends sandbox_link
         user_message          $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -696,11 +696,11 @@ class view_relation extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_relation_type::FLD_ID,
-                    $cng_fld_cac->id($table_id . view_relation_type::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . view_relation_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phr_typ_cac;
+            global $sys;
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
@@ -712,14 +712,14 @@ class view_relation extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $phr_typ_cac);
+                $sys->typ_lst->phr_typ);
         }
 
         if ($sbx->start_pos !== $this->start_pos) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_relation_db::FLD_START_POS,
-                    $cng_fld_cac->id($table_id . view_relation_db::FLD_START_POS),
+                    $sys->typ_lst->cng_fld->id($table_id . view_relation_db::FLD_START_POS),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -735,7 +735,7 @@ class view_relation extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

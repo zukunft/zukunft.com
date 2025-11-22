@@ -240,9 +240,8 @@ class change_log_named extends change_log
      */
     private function action_code_id(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get($this->action_id);
         return $action->code_id;
     }
 
@@ -251,9 +250,8 @@ class change_log_named extends change_log
      */
     private function action_name(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get_by_id($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -262,9 +260,8 @@ class change_log_named extends change_log
      */
     private function field_code_id(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->code_id;
     }
 
@@ -273,9 +270,8 @@ class change_log_named extends change_log
      */
     private function field_description(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->description;
     }
 
@@ -284,9 +280,8 @@ class change_log_named extends change_log
      */
     private function table_name(): string
     {
-        global $cng_tbl_cac;
-
-        $table = $cng_tbl_cac->get($this->table_id);
+        global $sys;
+        $table = $sys->typ_lst->cng_tbl->get($this->table_id);
         return $table->name;
     }
 

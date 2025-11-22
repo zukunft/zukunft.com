@@ -62,9 +62,9 @@ class word_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $usr;
         global $usr_sys;
-        global $phr_typ_cac;
 
         // init
         $sc = new sql_creator();
@@ -125,7 +125,7 @@ class word_tests
         $wrd_updated->set_user($usr_sys);
         $wrd_updated->plural = words::TEST_RENAMED;
         $wrd_updated->description = words::TEST_RENAMED;
-        $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_updated->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write update of all fields changed');

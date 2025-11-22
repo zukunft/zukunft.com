@@ -293,7 +293,7 @@ function log_msg(string  $msg_text,
                  ?sql_db $given_db_con = null): string
 {
 
-    global $sys_log_msg_lst;
+    global $sys;
     global $db_con;
 
     $result = '';
@@ -344,11 +344,11 @@ function log_msg(string  $msg_text,
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
-        if (!in_array($msg_type_text, $sys_log_msg_lst)) {
+        if (!in_array($msg_type_text, $sys->log_msg_lst)) {
             $used_db_con->usr_id = $user_id;
             $sys_log_id = 0;
 
-            $sys_log_msg_lst[] = $msg_type_text;
+            $sys->log_msg_lst[] = $msg_type_text;
             if ($msg_log_level > LOG_LEVEL or $force_log) {
                 $used_db_con->set_class(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);

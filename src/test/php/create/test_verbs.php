@@ -215,9 +215,9 @@ class test_verbs
      */
     function random(): verb
     {
-        global $vrb_cac;
-        $vrb_id = rand(1, $vrb_cac->count());
-        return $vrb_cac->get_by_id($vrb_id);
+        global $sys;
+        $vrb_id = rand(1, $sys->typ_lst->vrb->count());
+        return $sys->typ_lst->vrb->get_by_id($vrb_id);
     }
 
 }

@@ -56,8 +56,8 @@ class view_write_tests
 
     function run(test_cleanup $t): void
     {
+        global $sys;
         global $db_con;
-        global $msk_typ_cac;
 
         // init
         $t_msk = new test_views($t);
@@ -169,7 +169,7 @@ class view_write_tests
 
         // check if the view parameters can be added
         $dsp_renamed->description = 'Just added for testing the user sandbox';
-        $dsp_renamed->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $dsp_renamed->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $result = $dsp_renamed->save()->get_last_message();
         $target = '';
         $t->assert('view->save all view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -181,7 +181,7 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_reloaded->type_id;
-        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $target = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the view parameter adding have been logged
@@ -204,7 +204,7 @@ class view_write_tests
         $dsp_usr2 = new view($t->usr2);
         $dsp_usr2->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $dsp_usr2->description = 'Just changed for testing the user sandbox';
-        $dsp_usr2->type_id = $msk_typ_cac->id(view_type::ENTRY);
+        $dsp_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
         $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->assert('view->save all view fields for user 2 beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -216,7 +216,7 @@ class view_write_tests
         $target = 'Just changed for testing the user sandbox';
         $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_usr2_reloaded->type_id;
-        $target = $msk_typ_cac->id(view_type::ENTRY);
+        $target = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
         $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check the view for the original user remains unchanged
@@ -226,14 +226,14 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_reloaded->type_id;
-        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $target = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if undo all specific changes removes the user view
         $dsp_usr2 = new view($t->usr2);
         $dsp_usr2->load_by_name(views::TEST_RENAMED_NAME, view::class);
         $dsp_usr2->description = 'Just added for testing the user sandbox';
-        $dsp_usr2->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $dsp_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->assert('view->save undo the user view fields beside the name for "' . views::TEST_RENAMED_NAME . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -245,7 +245,7 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->assert('view->load comment for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
         $result = $dsp_usr2_reloaded->type_id;
-        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $target = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $t->assert('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $result, $target);
 
         // redo the user specific view changes

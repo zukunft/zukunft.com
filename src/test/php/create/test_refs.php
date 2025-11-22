@@ -82,11 +82,11 @@ class test_refs
      */
     function reference(): ref
     {
-        global $ref_typ_cac;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(refs::PI_ID,
-            $t_wrd->word_pi()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::PI_KEY);
+            $t_wrd->word_pi()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::PI_KEY);
         $ref->description = refs::PI_COM;
         return $ref;
     }
@@ -96,11 +96,11 @@ class test_refs
      */
     function reference1(): ref
     {
-        global $ref_typ_cac;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(1,
-            $t_wrd->word()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::PI_KEY);
+            $t_wrd->word()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::PI_KEY);
         $ref->description = refs::PI_COM;
         return $ref;
     }
@@ -110,11 +110,11 @@ class test_refs
      */
     function reference_math(): ref
     {
-        global $ref_typ_cac;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(refs::MATH_ID,
-            $t_wrd->word_math()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::MATH_KEY);
+            $t_wrd->word_math()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::MATH_KEY);
         $ref->description = refs::MATH_COM;
         return $ref;
     }
@@ -147,11 +147,11 @@ class test_refs
      */
     function reference_change(): ref
     {
-        global $ref_typ_cac;
+        global $sys;
         $t_trp = new test_triples($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(12,
-            $t_trp->triple_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
+            $t_trp->triple_gwp()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
         $ref->description = refs::CHANGE_OLD_KEY;
         return $ref;
     }
@@ -161,15 +161,14 @@ class test_refs
      */
     function ref_filled(): ref
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_src = new test_sources($this->env);
         $ref = $this->reference();
         $ref->set_source($t_src->source());
         $ref->set_url(refs::PI_URL);
         $ref->include();
-        $ref->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $ref->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $ref;
     }
 
@@ -178,8 +177,7 @@ class test_refs
      */
     function ref_filled_user(): ref
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_src = new test_sources($this->env);
         $ref = $this->reference_user();
         $ref->set_external_key(refs::PI_KEY);
@@ -187,8 +185,8 @@ class test_refs
         $ref->set_source($t_src->source());
         $ref->description = refs::PI_COM;
         $ref->exclude();
-        $ref->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $ref->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $ref;
     }
 

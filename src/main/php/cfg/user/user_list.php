@@ -99,11 +99,13 @@ class user_list
 
     /**
      * always set the user because a link list is always user specific
-     * @param user $usr the user who requested to see e.g. the formula links
+     * @param user|null $usr the user who requested to see e.g. the formula links
      */
-    function __construct(user $usr)
+    function __construct(?user $usr = null)
     {
-        $this->set_user($usr);
+        if ($usr != null) {
+            $this->set_user($usr);
+        }
     }
 
 
@@ -226,14 +228,15 @@ class user_list
      */
     private function load_sql_count_all_changes(): string
     {
-        $sql = $this->load_sql_count_changes_dbo(new word($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($this->user()));
-        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($this->user()));
+        $usr = new user(); // dummy user because the user is not relevant for counting
+        $sql = $this->load_sql_count_changes_dbo(new word($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($usr));
+        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($usr));
         /* TODO activate if a class name can be used to create a class instance
         foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
             $sql_count .= $this->load_sql_count_changes($class);
@@ -337,11 +340,12 @@ class user_list
     /**
      * load all system users that have a code id
      */
-    function load_system(sql_db $db_con): void
+    function load_system(sql_db $db_con): bool
     {
         global $system_users;
         $this->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
         $system_users = clone $this;
+        return true;
     }
 
 
@@ -486,38 +490,38 @@ class user_list
      */
     function load_dummy(): void
     {
-        global $usr_pro_cac;
+        global $sys;
 
         $this->lst = array();
         $this->code_id_hash = array();
 
         $usr = new user(users::SYSTEM_NAME, users::SYSTEM_EMAIL);
         $usr->code_id = users::SYSTEM_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
         $this->lst[users::SYSTEM_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_CODE_ID] = users::SYSTEM_ID;
 
         $usr = new user(users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
         $usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::ADMIN);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         $this->lst[users::SYSTEM_ADMIN_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_ADMIN_CODE_ID] = users::SYSTEM_ADMIN_ID;
 
         $usr = new user(users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
         $this->lst[users::SYSTEM_TEST_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_CODE_ID] = users::SYSTEM_TEST_ID;
 
         $usr = new user(users::SYSTEM_TEST_PARTNER_NAME, users::SYSTEM_TEST_PARTNER_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_PARTNER_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
         $this->lst[users::SYSTEM_TEST_PARTNER_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_PARTNER_CODE_ID] = users::SYSTEM_TEST_PARTNER_ID;
 
         $usr = new user(users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_NORMAL_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         $this->lst[users::SYSTEM_TEST_NORMAL_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_NORMAL_CODE_ID] = users::SYSTEM_TEST_NORMAL_ID;
 

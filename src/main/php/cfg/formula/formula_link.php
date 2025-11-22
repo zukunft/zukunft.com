@@ -192,8 +192,8 @@ class formula_link extends sandbox_link
         $this->reset_objects($this->user());
 
         $this->order_nbr = null;
-        global $frm_lnk_typ_cac;
-        $this->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::DEFAULT));
+        global $sys;
+        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT));
     }
 
     /**
@@ -366,8 +366,8 @@ class formula_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $frm_lnk_typ_cac;
-        return $frm_lnk_typ_cac->name($this->predicate_id);
+        global $sys;
+        return $sys->typ_lst->frm_lnk_typ->name($this->predicate_id);
     }
 
 
@@ -489,8 +489,8 @@ class formula_link extends sandbox_link
      */
     function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        global $frm_lnk_typ_cac;
-        $id = parent::load_by_link_id($frm->id(), $frm_lnk_typ_cac->default_id(), $phr->id(), $class);
+        global $sys;
+        $id = parent::load_by_link_id($frm->id(), $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -800,7 +800,7 @@ class formula_link extends sandbox_link
         user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -813,11 +813,11 @@ class formula_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
-                    $cng_fld_cac->id($table_id . formula_link_type::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $frm_lnk_typ_cac;
+            global $sys;
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_id(),
@@ -829,14 +829,14 @@ class formula_link extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $frm_lnk_typ_cac
+                $sys->typ_lst->frm_lnk_typ
             );
         }
         if ($sbx->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
-                    $cng_fld_cac->id($table_id . self::FLD_ORDER),
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_ORDER),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

@@ -557,8 +557,8 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        global $cng_tbl_cac;
-        return $cng_tbl_cac->id($this->get_table_name($class));
+        global $sys;
+        return $sys->typ_lst->cng_tbl->id($this->get_table_name($class));
     }
 
 
@@ -2193,13 +2193,12 @@ class sql_creator
         sql_type_list      $sc_par_lst
     ): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
+        global $sys;
 
         // get the change table id
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
-        $table_id = $cng_tbl_cac->id($table_name);
+        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
 
         // select which log to use and set the parameters
         $num_fld = $sbx::FLD_VALUE;
@@ -2242,7 +2241,7 @@ class sql_creator
             sql_par_type::INT_SMALL);
         $par_lst_out->add_field(
             sql::FLD_LOG_FIELD_PREFIX . $num_fld,
-            $cng_fld_cac->id($table_id . $num_fld),
+            $sys->typ_lst->cng_fld->id($table_id . $num_fld),
             change::FLD_FIELD_ID_SQL_TYP
         );
         if ($sc_par_lst->is_update()) {

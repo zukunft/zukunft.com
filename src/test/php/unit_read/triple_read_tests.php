@@ -50,7 +50,7 @@ class triple_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $vrb_cac;
+        global $sys;
 
         // init
         $t_db = new test_db_load($t);
@@ -63,7 +63,7 @@ class triple_read_tests
 
         $t->subheader($ts . 'prepare');
         // load the verb used for testing
-        $is_id = $vrb_cac->id(verbs::IS);
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
         $wrd_zh = $t_db->load_word(words::ZH);
         $wrd_canton = $t_db->load_word(words::CANTON);

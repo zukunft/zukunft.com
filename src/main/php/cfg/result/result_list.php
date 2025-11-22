@@ -1012,7 +1012,7 @@ class result_list extends sandbox_value_list
         $lib = new library();
 
         // to inform the user about the progress
-        $last_msg_time = time(); // the start time
+        $last_msg_time = microtime(true); // the start time
         $collect_pos = 0;        // to calculate the progress in percent
 
         $result = null;

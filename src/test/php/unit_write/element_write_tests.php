@@ -49,7 +49,7 @@ class element_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $vrb_cac;
+        global $sys;
 
         // init
         $back = 0;
@@ -71,7 +71,7 @@ class element_write_tests
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
         $wrd_canton = $t_db->load_word(words::CANTON);
-        $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
+        $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
             $pos = 0;

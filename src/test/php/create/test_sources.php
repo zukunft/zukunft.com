@@ -90,12 +90,11 @@ class test_sources
      */
     function source_filled(): source
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $src = $this->source();
         $src->exclude();
-        $src->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
-        $src->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
+        $src->set_share_id($sys->typ_lst->shr_typ->id(share_type_shared::GROUP));
+        $src->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::USER));
         $src->set_usage(test_const::DUMMY_USAGE_SOURCE);
         return $src;
     }

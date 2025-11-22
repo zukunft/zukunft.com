@@ -880,13 +880,13 @@ class triple_list extends sandbox_list_named
 
     function fill_missing_verbs(): user_message
     {
-        global $vrb_cac;
+        global $sys;
 
         $usr_msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
                 if ($phr->verb() == null) {
-                    $phr->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
+                    $phr->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_SET, [
                         msg_id::VAR_ID => $phr->dsp_id(),
                         msg_id::VAR_VALUE => verbs::NOT_SET

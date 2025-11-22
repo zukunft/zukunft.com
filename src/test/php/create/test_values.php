@@ -171,9 +171,9 @@ class test_values
      */
     function value_shared(value $val): value
     {
-        global $shr_typ_cac;
+        global $sys;
         $val_upd = clone $val;
-        $val_upd->set_share_id($shr_typ_cac->id(share_type::GROUP));
+        $val_upd->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
         return $val_upd;
     }
 
@@ -196,16 +196,15 @@ class test_values
 
     function value_16_filled(): value
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_src = new test_sources($this->env);
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_16();
         $val = new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
         $val->set_source($t_src->source());
         $val->exclude();
-        $val->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $val->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $val->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $val;
     }
 

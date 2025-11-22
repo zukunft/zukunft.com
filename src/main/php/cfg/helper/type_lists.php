@@ -107,7 +107,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -121,7 +120,44 @@ class type_lists
      *  object vars
      */
 
-    public view_relation_type_list $mrl_lst;
+    // system users
+    public user_profile_list $usr_pro;
+    public user_list $system_users;
+
+    // system log
+    public sys_log_status_list $sys_log_sta;
+
+    // change log
+    public change_action_list $cng_act;
+    public change_table_list $cng_tbl;
+    public change_field_list $cng_fld;
+
+    // language and system jobs
+    public job_type_list $job_typ;
+    public language_list $lan;
+    public language_form_list $lan_for;
+
+    // sandbox
+    public share_type_list $shr_typ;
+    public protection_type_list $ptc_typ;
+
+    // word, number and formula types
+    public verb_list $vrb;
+    public phrase_types $phr_typ;
+    public ref_type_list $ref_typ;
+    public source_type_list $src_typ;
+    public formula_type_list $frm_typ;
+    public formula_link_type_list $frm_lnk_typ;
+    public element_type_list $elm_typ;
+
+    // view
+    public view_type_list $msk_typ;
+    public view_style_list $msk_sty;
+    public view_link_type_list $msk_lnk_typ;
+    public component_type_list $cmp_typ;
+    public component_link_type_list $cmp_lnk_typ;
+    public position_type_list $pos_typ;
+    public view_relation_type_list $mrl_typ;
 
 
     /*
@@ -130,7 +166,44 @@ class type_lists
 
     function __construct()
     {
-        $this->mrl_lst = new view_relation_type_list();
+        // system users
+        $this->usr_pro = new user_profile_list();
+        $this->system_users = new user_list();
+
+        // system log
+        $this->sys_log_sta = new sys_log_status_list();
+
+        // change log
+        $this->cng_act = new change_action_list();
+        $this->cng_tbl = new change_table_list();
+        $this->cng_fld = new change_field_list();
+
+        // language and system jobs
+        $this->job_typ = new job_type_list();
+        $this->lan = new language_list();
+        $this->lan_for = new language_form_list();
+
+        // sandbox
+        $this->shr_typ = new share_type_list();
+        $this->ptc_typ = new protection_type_list();
+
+        // word, number and formula types
+        $this->vrb = new verb_list();
+        $this->phr_typ = new phrase_types();
+        $this->ref_typ = new ref_type_list();
+        $this->src_typ = new source_type_list();
+        $this->frm_typ = new formula_type_list();
+        $this->frm_lnk_typ = new formula_link_type_list();
+        $this->elm_typ = new element_type_list();
+
+        // view
+        $this->msk_typ = new view_type_list();
+        $this->msk_sty = new view_style_list();
+        $this->msk_lnk_typ = new view_link_type_list();
+        $this->cmp_typ = new component_type_list();
+        $this->cmp_lnk_typ = new component_link_type_list();
+        $this->pos_typ = new position_type_list();
+        $this->mrl_typ = new view_relation_type_list();
     }
 
 
@@ -138,171 +211,170 @@ class type_lists
      * load
      */
 
+    // TODO Prio 0 use the dto object and cache the type data
+    /**
+     * load the type objects once from the database because they are expected to change very rarely
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool true if the loading is complete
+     */
+    function load(sql_db $db_con): bool
+    {
+
+        // user
+        $result = $this->usr_pro->load($db_con);
+
+        // log
+        if ($result) {
+            $result = $this->load_backend_only($db_con);
+        }
+        if ($result) {
+            $result = $this->load_log($db_con);
+        }
+
+        // load the type database enum
+        // these tables are expected to be so small that it is more efficient to load all database records once at start
+
+        // language and system jobs
+        if ($result) {
+            $result = $this->lan->load($db_con);
+        }
+        if ($result) {
+            $result = $this->lan_for->load($db_con);
+        }
+        if ($result) {
+            $result = $this->job_typ->load($db_con);
+        }
+
+        // sandbox
+        if ($result) {
+            $result = $this->shr_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->ptc_typ->load($db_con);
+        }
+
+        // word, number and formula types
+        if ($result) {
+            $result = $this->load_core($db_con);
+        }
+        if ($result) {
+            $result = $this->ref_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->src_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->frm_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->frm_lnk_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->elm_typ->load($db_con);
+        }
+
+        // view
+        if ($result) {
+            $result = $this->msk_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->msk_sty->load($db_con);
+        }
+        if ($result) {
+            $result = $this->msk_lnk_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->cmp_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->pos_typ->load($db_con);
+        }
+        if ($result) {
+            $result = $this->mrl_typ->load($db_con);
+        }
+
+        // preload type lists vars of this object
+        if ($this->mrl_typ->is_empty()) {
+            $this->mrl_typ->load_dummy();
+        }
+
+        // preload the little more complex objects
+        $this->vrb->load($db_con);
+        // TODO move the a separate loader on the data_object level
+        //$sys_msk_cac = new view_sys_list($usr);
+        //$sys_msk_cac->load($db_con);
+
+        return $result;
+    }
+
     /**
      * reload the cache used for logging the changes
-     * @param sql_db $db_con
-     * @return bool
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool false if the load is incomplete
      */
     function load_log(sql_db $db_con): bool
     {
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-
-        $result = true;
-
-        $cng_act_cac = new change_action_list();
-        $cng_act_cac->load($db_con);
-        $cng_tbl_cac = new change_table_list();
-        $cng_tbl_cac->load($db_con);
-        $cng_fld_cac = new change_field_list();
-        $cng_fld_cac->load($db_con);
+        $result = $this->cng_act->load($db_con);
+        if ($result) {
+            $result = $this->cng_tbl->load($db_con);
+        }
+        if ($result) {
+            $result = $this->cng_fld->load($db_con);
+        }
 
         return $result;
     }
 
     /**
      * load the core type lists needed for the api
-     * @param sql_db $db_con
-     * @return void
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool false if the load is incomplete
      */
-    function load_core(sql_db $db_con): void
+    function load_core(sql_db $db_con): bool
     {
-        global $phr_typ_cac;
-
-        $phr_typ_cac = new phrase_types();
-        $phr_typ_cac->load($db_con);
-
+        return $this->phr_typ->load($db_con);
     }
 
-    // TODO Prio 0 use the dto object and cache the type data
-    function load(sql_db $db_con, ?user $usr): bool
+    /**
+     * load the backend only type lists
+     * @param sql_db $db_con an open database connection to be able to redirect the loading
+     * @return bool false if the load is incomplete
+     */
+    function load_backend_only(sql_db $db_con): bool
     {
-        // TODO Prio 1 use one type_list object instead
-        global $sys_log_sta_cac;
-        global $system_users;
-        global $usr_pro_cac;
-        global $phr_typ_cac;
-        global $frm_typ_cac;
-        global $frm_lnk_typ_cac;
-        global $elm_typ_cac;
-        global $msk_typ_cac;
-        global $msk_sty_cac;
-        global $msk_lnk_typ_cac;
-        global $cmp_typ_cac;
-        global $cmp_lnk_typ_cac;
-        global $pos_typ_cac;
-        global $ref_typ_cac;
-        global $src_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-        global $lan_cac;
-        global $lan_for_cac;
-        global $sys_log_sta_cac;
-        global $job_typ_cac;
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-        global $vrb_cac;
-        global $sys_msk_cac;
-
-        $result = true;
-
-        // load backend only default records
-        $sys_log_sta_cac = new sys_log_status_list();
-        $sys_log_sta_cac->load($db_con);
-        $system_users = new user_list($usr);
-        $system_users->load_system($db_con);
-
-        // load the type database enum
-        // these tables are expected to be so small that it is more efficient to load all database records once at start
-        $usr_pro_cac = new user_profile_list();
-        $usr_pro_cac->load($db_con);
-        $phr_typ_cac = new phrase_types();
-        $phr_typ_cac->load($db_con);
-        $frm_typ_cac = new formula_type_list();
-        $frm_typ_cac->load($db_con);
-        $frm_lnk_typ_cac = new formula_link_type_list();
-        $frm_lnk_typ_cac->load($db_con);
-        $elm_typ_cac = new element_type_list();
-        $elm_typ_cac->load($db_con);
-        $msk_typ_cac = new view_type_list();
-        $msk_typ_cac->load($db_con);
-        $msk_sty_cac = new view_style_list();
-        $msk_sty_cac->load($db_con);
-        $msk_lnk_typ_cac = new view_link_type_list();
-        $msk_lnk_typ_cac->load($db_con);
-        $cmp_typ_cac = new component_type_list();
-        $cmp_typ_cac->load($db_con);
-        $cmp_lnk_typ_cac = new component_link_type_list();
-        $cmp_lnk_typ_cac->load($db_con);
-        $pos_typ_cac = new position_type_list();
-        $pos_typ_cac->load($db_con);
-        $ref_typ_cac = new ref_type_list();
-        $ref_typ_cac->load($db_con);
-        $src_typ_cac = new source_type_list();
-        $src_typ_cac->load($db_con);
-        $shr_typ_cac = new share_type_list();
-        $shr_typ_cac->load($db_con);
-        $ptc_typ_cac = new protection_type_list();
-        $ptc_typ_cac->load($db_con);
-        $lan_cac = new language_list();
-        $lan_cac->load($db_con);
-        $lan_for_cac = new language_form_list();
-        $lan_for_cac->load($db_con);
-        $job_typ_cac = new job_type_list();
-        $job_typ_cac->load($db_con);
-        $cng_act_cac = new change_action_list();
-        $cng_act_cac->load($db_con);
-        $cng_tbl_cac = new change_table_list();
-        $cng_tbl_cac->load($db_con);
-        $cng_fld_cac = new change_field_list();
-        $cng_fld_cac->load($db_con);
-
-        // preload type lists vars of this object
-        $this->mrl_lst = new view_relation_type_list();
-        $this->mrl_lst->load($db_con);
-        if ($this->mrl_lst->is_empty()) {
-            $this->mrl_lst->load_dummy();
+        $result = $this->sys_log_sta->load($db_con);
+        /* TODO move the user cache
+        if ($result) {
+            $this->system_users = new user_list();
+            $result = $this->system_users->load_system($db_con);
         }
-
-        // preload the little more complex objects
-        $vrb_cac = new verb_list();
-        $vrb_cac->load($db_con);
-        if ($usr != null) {
-            $sys_msk_cac = new view_sys_list($usr);
-            $sys_msk_cac->load($db_con);
-        }
+        */
 
         return $result;
     }
+
 
     /*
      * api
      */
 
+    /**
+     * create the api message based on the loaded types
+     * @param api_type_list|array $typ_lst to define the message format
+     *        e.g. if the header should be included to avoid multi clients by using a message seq number security
+     * @param user|null $usr the user for whom the message has been created
+     * @return string with the encoded json message
+     */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array();
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
@@ -313,57 +385,86 @@ class type_lists
 
         log_debug();
         $vars = [];
-        global $usr_pro_cac;
-        $vars[json_fields::LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
-        global $phr_typ_cac;
-        $vars[json_fields::LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
-        global $frm_typ_cac;
-        $vars[json_fields::LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
-        global $frm_lnk_typ_cac;
-        $vars[json_fields::LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
-        global $elm_typ_cac;
-        $vars[json_fields::LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
-        global $msk_typ_cac;
-        $vars[json_fields::LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
-        global $msk_sty_cac;
-        $vars[json_fields::LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
-        global $msk_lnk_typ_cac;
-        $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
-        global $cmp_typ_cac;
-        $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
-        global $cmp_lnk_typ_cac;
-        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
-        global $pos_typ_cac;
-        $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
-        global $ref_typ_cac;
-        $vars[json_fields::LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
-        global $src_typ_cac;
-        $vars[json_fields::LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
-        global $shr_typ_cac;
-        $vars[json_fields::LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
-        global $ptc_typ_cac;
-        $vars[json_fields::LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
-        global $lan_cac;
-        $vars[json_fields::LIST_LANGUAGES] = $lan_cac->api_json_array();
-        global $lan_for_cac;
-        $vars[json_fields::LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
-        global $sys_log_sta_cac;
-        $vars[json_fields::LIST_SYS_LOG_STATUUS] = $sys_log_sta_cac->api_json_array();
-        global $job_typ_cac;
-        $vars[json_fields::LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
-        global $cng_act_cac;
-        $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
-        global $cng_tbl_cac;
-        $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
-        global $cng_fld_cac;
-        $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
-        global $vrb_cac;
-        $vars[json_fields::LIST_VERBS] = $vrb_cac->api_json_array();
-        global $sys_msk_cac;
-        if ($sys_msk_cac != null) {
-            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array();
-        }
+
+        $vars[json_fields::LIST_USER_PROFILES] = $this->usr_pro->api_json_array();
+
+        $vars[json_fields::LIST_SYS_LOG_STATUUS] = $this->sys_log_sta->api_json_array();
+
+        $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $this->cng_act->api_json_array();
+        $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $this->cng_tbl->api_json_array();
+        $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
+
+        $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
+        $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
+        $vars[json_fields::LIST_LANGUAGE_FORMS] = $this->lan_for->api_json_array();
+
+        $vars[json_fields::LIST_SHARE_TYPES] = $this->shr_typ->api_json_array();
+        $vars[json_fields::LIST_PROTECTION_TYPES] = $this->ptc_typ->api_json_array();
+
+        $vars[json_fields::LIST_VERBS] = $this->vrb->api_json_array();
+        $vars[json_fields::LIST_PHRASE_TYPES] = $this->phr_typ->api_json_array();
+        $vars[json_fields::LIST_REF_TYPES] = $this->ref_typ->api_json_array();
+        $vars[json_fields::LIST_SOURCE_TYPES] = $this->src_typ->api_json_array();
+        $vars[json_fields::LIST_FORMULA_TYPES] = $this->frm_typ->api_json_array();
+        $vars[json_fields::LIST_FORMULA_LINK_TYPES] = $this->frm_lnk_typ->api_json_array();
+        $vars[json_fields::LIST_ELEMENT_TYPES] = $this->elm_typ->api_json_array();
+
+        $vars[json_fields::LIST_VIEW_TYPES] = $this->msk_typ->api_json_array();
+        $vars[json_fields::LIST_VIEW_STYLES] = $this->msk_sty->api_json_array();
+        $vars[json_fields::LIST_VIEW_LINK_TYPES] = $this->msk_lnk_typ->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_TYPES] = $this->cmp_typ->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $this->cmp_lnk_typ->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $this->pos_typ->api_json_array();
+        $vars[json_fields::LIST_VIEW_RELATION_TYPES] = $this->mrl_typ->api_json_array();
+
         return $vars;
+    }
+
+
+    /**
+     * set all type list to dummy fallback values
+     */
+
+    function load_dummy(): void
+    {
+        // system users
+        $this->usr_pro ->load_dummy();
+        $this->system_users ->load_dummy();
+
+        // system log
+        $this->sys_log_sta ->load_dummy();
+
+        // change log
+        $this->cng_act ->load_dummy();
+        $this->cng_tbl ->load_dummy();
+        $this->cng_fld ->load_dummy();
+
+        // language and system jobs
+        $this->job_typ ->load_dummy();
+        $this->lan ->load_dummy();
+        $this->lan_for ->load_dummy();
+
+        // sandbox
+        $this->shr_typ ->load_dummy();
+        $this->ptc_typ ->load_dummy();
+
+        // word, number and formula types
+        $this->vrb ->load_dummy();
+        $this->phr_typ ->load_dummy();
+        $this->ref_typ ->load_dummy();
+        $this->src_typ ->load_dummy();
+        $this->frm_typ ->load_dummy();
+        $this->frm_lnk_typ ->load_dummy();
+        $this->elm_typ ->load_dummy();
+
+        // view
+        $this->msk_typ ->load_dummy();
+        $this->msk_sty ->load_dummy();
+        $this->msk_lnk_typ ->load_dummy();
+        $this->cmp_typ ->load_dummy();
+        $this->cmp_lnk_typ ->load_dummy();
+        $this->pos_typ ->load_dummy();
+        $this->mrl_typ ->load_dummy();
     }
 
 }

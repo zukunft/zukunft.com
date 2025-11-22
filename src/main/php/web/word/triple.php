@@ -361,11 +361,11 @@ class triple extends sandbox_code_id
      */
     function set_type(?string $code_id): void
     {
-        global $phr_typ_cac;
+        global $sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phr_typ_cac->id($code_id));
+            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
         }
     }
 
@@ -375,11 +375,11 @@ class triple extends sandbox_code_id
      */
     function type(): ?object
     {
-        global $phr_typ_cac;
+        global $sys;
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $phr_typ_cac->get($this->type_id());
+            return $sys->typ_lst->phr_typ->get($this->type_id());
         }
     }
 

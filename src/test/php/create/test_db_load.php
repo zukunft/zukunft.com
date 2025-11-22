@@ -47,13 +47,13 @@ namespace Zukunft\ZukunftCom\test\php\create;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
-include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_REF . 'ref.php';
@@ -86,13 +86,13 @@ include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
 include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -176,7 +176,7 @@ class test_db_load
         ?user     $test_usr = null,
     ): word
     {
-        global $phr_typ_cac;
+        global $sys;
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
@@ -189,7 +189,7 @@ class test_db_load
             log_err('Cannot create word ' . $wrd_name);
         }
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = $phr_typ_cac->id($wrd_type_code_id);
+            $wrd->type_id = $sys->typ_lst->phr_typ->id($wrd_type_code_id);
             $result = $wrd->save()->get_last_message();
             if ($result != '') {
                 log_err('add formula failed due to: ' . $result);
@@ -295,14 +295,14 @@ class test_db_load
         string    $to_name
     ): triple
     {
-        global $vrb_cac;
+        global $sys;
 
         $wrd_from = $this->load_word($from_name, $this->env->usr1);
         $wrd_to = $this->load_word($to_name, $this->env->usr1);
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $vrb_cac->get_verb($verb_code_id);
+        $vrb = $sys->typ_lst->vrb->get_verb($verb_code_id);
 
         $lnk_test = new triple($this->env->usr1);
         if ($from->id() > 0 and $to->id() > 0) {
@@ -318,7 +318,7 @@ class test_db_load
         string $to_name,
         ?user  $test_usr = null): triple
     {
-        global $vrb_cac;
+        global $sys;
 
         if ($test_usr == null) {
             $test_usr = $this->env->usr1;
@@ -329,7 +329,7 @@ class test_db_load
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $vrb_cac->get_verb($verb_code_id);
+        $vrb = $sys->typ_lst->vrb->get_verb($verb_code_id);
 
         $lnk_test = new triple($test_usr);
         $lnk_test->set_from($from);
@@ -356,7 +356,7 @@ class test_db_load
         bool      $auto_create = true
     ): triple
     {
-        global $vrb_cac;
+        global $sys;
 
         $result = new triple($this->env->usr1);
 
@@ -377,7 +377,7 @@ class test_db_load
         }
 
         // load the verb
-        $vrb = $vrb_cac->get_verb($verb_code_id);
+        $vrb = $sys->typ_lst->vrb->get_verb($verb_code_id);
 
         // check if the triple exists or create a new if needed
         $trp = new triple($this->env->usr1);
@@ -563,7 +563,7 @@ class test_db_load
      */
     function new_formula(string $frm_name, int $id = 0, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
-        global $frm_typ_cac;
+        global $sys;
 
         if ($id == null) {
             $id = $this->env->next_seq_nbr();
@@ -577,7 +577,7 @@ class test_db_load
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
-            $frm->type_id = $frm_typ_cac->id($frm_type_code_id);
+            $frm->type_id = $sys->typ_lst->frm_typ->id($frm_type_code_id);
         }
         return $frm;
     }
@@ -626,11 +626,11 @@ class test_db_load
         $wrd = $this->load_word($wrd_name);
         $phr = $wrd->phrase();
 
-        global $ref_typ_cac;
+        global $sys;
         $ref = new ref($this->env->usr1);
         if ($phr->id() != 0) {
             // TODO check if type name is the code id or really the name
-            $ref->load_by_link_ids($phr->id(), $ref_typ_cac->id($type_name));
+            $ref->load_by_link_ids($phr->id(), $sys->typ_lst->ref_typ->id($type_name));
         }
         return $ref;
     }
@@ -641,14 +641,14 @@ class test_db_load
         string    $type_name
     ): ref
     {
-        global $ref_typ_cac;
+        global $sys;
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
         $ref = $this->load_ref($wrd->name(), $type_name);
         if ($ref->id() == 0) {
             $ref->set_phrase($phr);
             // TODO check if type name is the code id or really the name
-            $ref->set_predicate_id($ref_typ_cac->id($type_name));
+            $ref->set_predicate_id($sys->typ_lst->ref_typ->id($type_name));
             $ref->set_external_key($external_key);
             $result = $ref->save()->get_last_message();
             if ($result != '') {
@@ -918,15 +918,16 @@ class test_db_load
      */
     function word_put_json(): array
     {
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
         $msg = new api_message();
+        $pod_name = $msg->api_site_name($db_con);
         $wrd = new word($this->env->usr1);
         $wrd->set_name(words::TEST_ADD_API);
         $wrd->description = words::TEST_ADD_API_COM;
-        $wrd->type_id = $phr_typ_cac->id(phrase_type::NORMAL);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type::NORMAL);
         $body_array = $wrd->api_json_array(new api_type_list([]));
-        return $msg->api_header_array($db_con, word::class, $this->env->usr1, $body_array);
+        return $msg->api_header_array($pod_name, word::class, $this->env->usr1, $body_array);
     }
 
     /**
@@ -936,11 +937,12 @@ class test_db_load
     {
         global $db_con;
         $msg = new api_message();
+        $pod_name = $msg->api_site_name($db_con);
         $wrd = new word($this->env->usr1);
         $wrd->set_name(words::TEST_UPD_API);
         $wrd->description = words::TEST_UPD_API_COM;
         $body_array = $wrd->api_json_array(new api_type_list([]));
-        return $msg->api_header_array($db_con, word::class, $this->env->usr1, $body_array);
+        return $msg->api_header_array($pod_name, word::class, $this->env->usr1, $body_array);
     }
 
     /**
@@ -948,16 +950,17 @@ class test_db_load
      */
     function source_put_json(): array
     {
+        global $sys;
         global $db_con;
-        global $src_typ_cac;
         $msg = new api_message();
+        $pod_name = $msg->api_site_name($db_con);
         $src = new source($this->env->usr1);
         $src->set_name(sources::SYSTEM_TEST_ADD_API);
         $src->description = sources::SYSTEM_TEST_ADD_API_COM;
         $src->set_url(sources::SYSTEM_TEST_ADD_API_URL);
-        $src->type_id = $src_typ_cac->id(source_types::PDF);
+        $src->type_id = $sys->typ_lst->src_typ->id(source_types::PDF);
         $body_array = $src->api_json_array(new api_type_list([]));
-        return $msg->api_header_array($db_con, source::class, $this->env->usr1, $body_array);
+        return $msg->api_header_array($pod_name, source::class, $this->env->usr1, $body_array);
     }
 
     /**
@@ -967,11 +970,12 @@ class test_db_load
     {
         global $db_con;
         $msg = new api_message();
+        $pod_name = $msg->api_site_name($db_con);
         $src = new source($this->env->usr1);
         $src->set_name(sources::SYSTEM_TEST_UPD_API);
         $src->description = sources::SYSTEM_TEST_UPD_API_COM;
         $body_array = $src->api_json_array(new api_type_list([]));
-        return $msg->api_header_array($db_con, source::class, $this->env->usr1, $body_array);
+        return $msg->api_header_array($pod_name, source::class, $this->env->usr1, $body_array);
     }
 
     /**
@@ -983,6 +987,7 @@ class test_db_load
         global $reference_types;
         $t_wrd = new test_words($this->env);
         $msg = new api_message();
+        $pod_name = $msg->api_site_name($db_con);
         $ref = new ref($this->env->usr1);
         $ref->set_phrase($t_wrd->word()->phrase());
         $ref->set_external_key(refs::SYSTEM_TEST_API_ADD_KEY);
@@ -990,7 +995,7 @@ class test_db_load
         $ref->set_url(refs::SYSTEM_TEST_API_ADD_URL);
         $ref->predicate_id = $reference_types->id(source_types::PDF);
         $body_array = $ref->api_json_array(new api_type_list([]));
-        return $msg->api_header_array($db_con, ref::class, $this->env->usr1, $body_array);
+        return $msg->api_header_array($pod_name, ref::class, $this->env->usr1, $body_array);
     }
 
     /*
@@ -1068,14 +1073,14 @@ class test_db_load
 
     function add_component(string $cmp_name, user $test_usr, string $type_code_id = ''): component
     {
-        global $cmp_typ_cac;
+        global $sys;
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
             $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
-                $cmp->type_id = $cmp_typ_cac->id($type_code_id);
+                $cmp->type_id = $sys->typ_lst->cmp_typ->id($type_code_id);
             }
             $result = $cmp->save()->get_last_message();
             if ($result != '') {
@@ -1179,19 +1184,19 @@ class test_db_load
      * called upfront also from the reset db run because this is used for the unit tests
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times
+     * @param user $usr the user for whom the api message should be created which can differ from the session user
      * @return void
      */
-    function type_list_recreate(test_cleanup $t): void
+    function type_list_recreate(test_cleanup $t, user $usr): void
     {
-        global $db_con;
-
         // start the test section (ts)
-        $ts = 'db read type ';
+        $ts = 'db read types and system views ';
 
         $t->subheader($ts . 'api');
-        $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $t->usr1);
-        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
+
+        $ui_cfg = new ui_config();
+        $ui_cfg->reload($usr);
+        $t->assert_api($ui_cfg, '', [api_type::HEADER]);
 
     }
 

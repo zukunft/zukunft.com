@@ -56,7 +56,6 @@ $db_con = prg_start("error_update");
 $html = new html_base();
 
 global $sys_msk_cac;
-global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 

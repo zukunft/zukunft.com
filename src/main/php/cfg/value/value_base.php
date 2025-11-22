@@ -1420,8 +1420,7 @@ class value_base extends sandbox_value
      */
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         log_debug();
         $usr_msg = new user_message();
@@ -1459,11 +1458,11 @@ class value_base extends sandbox_value
         }
 
         if (array_key_exists(json_fields::SHARE, $api_json)) {
-            $this->set_share_id($shr_typ_cac->id($api_json[json_fields::SHARE]));
+            $this->set_share_id($sys->typ_lst->shr_typ->id($api_json[json_fields::SHARE]));
         }
 
         if (array_key_exists(json_fields::PROTECTION, $api_json)) {
-            $this->set_protection_id($ptc_typ_cac->id($api_json[json_fields::PROTECTION]));
+            $this->set_protection_id($sys->typ_lst->ptc_typ->id($api_json[json_fields::PROTECTION]));
             if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -1504,8 +1503,7 @@ class value_base extends sandbox_value
         user_message $msg,
         bool         $do_save = true): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $lib = new library();
 
         if ($key == json_fields::TIMESTAMP) {
@@ -1530,11 +1528,11 @@ class value_base extends sandbox_value
         }
 
         if ($key == json_fields::SHARE) {
-            $this->set_share_id($shr_typ_cac->id($value));
+            $this->set_share_id($sys->typ_lst->shr_typ->id($value));
         }
 
         if ($key == json_fields::PROTECTION) {
-            $this->set_protection_id($ptc_typ_cac->id($value));
+            $this->set_protection_id($sys->typ_lst->ptc_typ->id($value));
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -1947,6 +1945,7 @@ class value_base extends sandbox_value
      */
     function save_field_trigger_update($db_con): string
     {
+        global $sys;
         global $job_typ_cac;
         global $usr;
 
@@ -2450,7 +2449,7 @@ class value_base extends sandbox_value
         user_message                           $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
@@ -2463,7 +2462,7 @@ class value_base extends sandbox_value
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                        $cng_fld_cac->id($table_id . source_db::FLD_ID),
+                        $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }

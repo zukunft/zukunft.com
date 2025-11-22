@@ -228,6 +228,8 @@ class import_file
      */
     function import_config_yaml(user $usr, bool $validate = false): user_message
     {
+        global $sys;
+        global $db_con;
         global $mtr;
         global $log_txt;
 
@@ -268,7 +270,8 @@ class import_file
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
                     $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load();
+                    $load_msg = $dto->load($db_con);
+                    $sys->typ_lst->load($db_con);
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values

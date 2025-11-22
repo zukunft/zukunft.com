@@ -532,7 +532,7 @@ class phrase_list extends sandbox_list_named
         user_message $usr_msg
     ): bool
     {
-        global $phr_typ_cac;
+        global $sys;
         global $db_con;
 
         foreach ($json_obj as $phr_name) {
@@ -559,7 +559,7 @@ class phrase_list extends sandbox_list_named
                                 $wrd->load_by_name($phr_name);
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
-                                    $wrd->type_id = $phr_typ_cac->default_id();
+                                    $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
                                     $usr_msg->add($wrd->save());
                                 }
                                 if ($wrd->id() == 0) {
@@ -999,8 +999,8 @@ class phrase_list extends sandbox_list_named
      */
     function is(): phrase_list
     {
-        global $vrb_cac;
-        $phr_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        global $sys;
+        $phr_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -1013,9 +1013,9 @@ class phrase_list extends sandbox_list_named
      */
     function are(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug($this->dsp_id());
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::IS));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -1027,8 +1027,8 @@ class phrase_list extends sandbox_list_named
      */
     function contains(): phrase_list
     {
-        global $vrb_cac;
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::PART_NAME));
+        global $sys;
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1275,9 +1275,9 @@ class phrase_list extends sandbox_list_named
      */
     function differentiators(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1289,10 +1289,10 @@ class phrase_list extends sandbox_list_named
      */
     function differentiators_all(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1301,7 +1301,7 @@ class phrase_list extends sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+                $next_lst = $added_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
@@ -1765,12 +1765,12 @@ class phrase_list extends sandbox_list_named
      */
     function time_lst_old(): array
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_debug($this->dsp_id());
 
         $result = array();
-        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $time_type) {
@@ -1897,12 +1897,12 @@ class phrase_list extends sandbox_list_named
      */
     function measure_lst(): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $measure_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class) {
@@ -1927,14 +1927,14 @@ class phrase_list extends sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
+        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
@@ -2415,7 +2415,7 @@ class phrase_list extends sandbox_list_named
         if ($type->id() > 0) {
             $sql_from = "triples l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id
-                        AND l.verb_id = " . $vrb_cac->id(verbs::IS_A) . "
+                        AND l.verb_id = " . $sys->typ_lst->vrb->id(verbs::IS_A) . "
                         AND l.to_phrase_id = " . $type->id();
         } else {
             $sql_from = "words w";

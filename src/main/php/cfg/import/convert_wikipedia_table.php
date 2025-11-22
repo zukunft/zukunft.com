@@ -189,7 +189,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $vrb_cac;
+        global $sys;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked

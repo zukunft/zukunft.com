@@ -37,7 +37,7 @@
 // TODO Prio 2 remove this speed testing code
 $start_time = microtime(true);
 global $debug;
-global $sys_times;
+global $sys;
 
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
@@ -102,7 +102,7 @@ if ($db_con->is_open()) {
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
         }
-        $sys_times->switch(system_time_type::MAP_JSON);
+        $sys->times->switch(system_time_type::MAP_JSON);
         if ($with_phr == url_var::TRUE) {
             $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
         } else {
@@ -110,7 +110,7 @@ if ($db_con->is_open()) {
         }
     }
 
-    $sys_times->switch(system_time_type::API_CTRL);
+    $sys->times->switch(system_time_type::API_CTRL);
     $ctrl = new controller();
     $ctrl->get_json($result, $usr_msg->get_last_message());
 
@@ -118,7 +118,7 @@ if ($db_con->is_open()) {
         // TODO Prio 2 remove this speed testing code
         $end_time = microtime(true);
         $duration = $end_time - $start_time;
-        $report = $sys_times->report($duration);
+        $report = $sys->times->report($duration);
         echo $report;
     }
 

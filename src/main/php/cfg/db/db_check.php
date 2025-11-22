@@ -162,11 +162,11 @@ class db_check
      */
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
-        global $sys_times;
+        global $sys;
 
         $cfg = new config();
         $lib = new library();
-        $sys_times->switch(system_time_type::DB_UPGRADE);
+        $sys->times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
         $msg = $this->db_move_time_phrase_to_group();
@@ -373,9 +373,9 @@ class db_check
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
-            global $usr_pro_cac;
-            $usr_pro_cac = new user_profile_list();
-            $usr_pro_cac->load($db_con);
+            global $sys;
+            $sys->typ_lst->usr_pro = new user_profile_list();
+            $sys->typ_lst->usr_pro->load($db_con);
 
             // add missing system users if needed
             $sys_usr = new user();
@@ -433,7 +433,7 @@ class db_check
         if ($db_version != PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
-        $sys_times->switch();
+        $sys->times->switch();
 
         return $result;
     }

@@ -46,8 +46,8 @@ class share_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $shr_typ_cac;
 
         // init
         $t->name = 'share read db->';
@@ -64,7 +64,7 @@ class share_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $shr_typ_cac->id(share_type_shared::PUBLIC);
+        $result = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
         $t->assert('check ' . share_type_shared::PUBLIC, $result, 1);
     }
 

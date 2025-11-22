@@ -261,7 +261,7 @@ class formula_tests
         /*
         $frm_next = new formula($usr);
         $frm_next->name = "next";
-        $frm_next->type_id = $frm_typ_cac->id(formula_type::NEXT);
+        $frm_next->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';

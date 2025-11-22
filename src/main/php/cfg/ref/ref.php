@@ -210,7 +210,7 @@ class ref extends sandbox_link
 
     private function create_objects(user $usr): void
     {
-        global $ref_typ_cac;
+        global $sys;
         $this->set_phrase(new phrase($usr));
     }
 
@@ -230,7 +230,7 @@ class ref extends sandbox_link
         string $id_fld = ''
     ): bool
     {
-        global $ref_typ_cac;
+        global $sys;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
@@ -299,7 +299,7 @@ class ref extends sandbox_link
     {
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
-        global $ref_typ_cac;
+        global $sys;
         global $db_con;
 
         // reset of object not needed, because the calling function has just created the object
@@ -323,7 +323,7 @@ class ref extends sandbox_link
             $this->set_source($src);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
+            $this->set_predicate_id($sys->typ_lst->ref_typ->id($in_ex_json[json_fields::TYPE_NAME]));
 
             if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
                 $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_NOT_FOUND, [
@@ -763,8 +763,8 @@ class ref extends sandbox_link
      */
     function predicate_name(): ?string
     {
-        global $ref_typ_cac;
-        return $ref_typ_cac->name($this->predicate_id());
+        global $sys;
+        return $sys->typ_lst->ref_typ->name($this->predicate_id());
     }
 
     /**
@@ -773,8 +773,8 @@ class ref extends sandbox_link
      */
     function predicate_code_id(): string
     {
-        global $ref_typ_cac;
-        return $ref_typ_cac->code_id($this->predicate_id);
+        global $sys;
+        return $sys->typ_lst->ref_typ->code_id($this->predicate_id);
     }
 
     /**
@@ -782,8 +782,8 @@ class ref extends sandbox_link
      */
     function type(): ?type_object
     {
-        global $ref_typ_cac;
-        return $ref_typ_cac->get($this->predicate_id);
+        global $sys;
+        return $sys->typ_lst->ref_typ->get($this->predicate_id);
     }
 
 
@@ -1458,7 +1458,7 @@ class ref extends sandbox_link
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -1474,11 +1474,11 @@ class ref extends sandbox_link
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
-                        $cng_fld_cac->id($table_id . ref_type::FLD_ID),
+                        $sys->typ_lst->cng_fld->id($table_id . ref_type::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $ref_typ_cac;
+                global $sys;
                 if ($this->predicate_id() < 0) {
                     $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_MISSING, [
                         msg_id::VAR_TYPE => $this->predicate_id(),
@@ -1490,7 +1490,7 @@ class ref extends sandbox_link
                     type_object::FLD_NAME,
                     $this->predicate_id(),
                     $sbx->predicate_id(),
-                    $ref_typ_cac
+                    $sys->typ_lst->ref_typ
                 );
             }
         }
@@ -1499,7 +1499,7 @@ class ref extends sandbox_link
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
-                        $cng_fld_cac->id($table_id . phrase::FLD_ID),
+                        $sys->typ_lst->cng_fld->id($table_id . phrase::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1515,7 +1515,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
-                    $cng_fld_cac->id($table_id . ref_db::FLD_EX_KEY),
+                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_EX_KEY),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1534,7 +1534,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
-                    $cng_fld_cac->id($table_id . ref_db::FLD_URL),
+                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1549,7 +1549,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                    $cng_fld_cac->id($table_id . source_db::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1564,7 +1564,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

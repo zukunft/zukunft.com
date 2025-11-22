@@ -50,8 +50,8 @@ class formula_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $frm_typ_cac;
 
         // init
         $t_db = new test_db_load($t);
@@ -91,7 +91,7 @@ class formula_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $frm_typ_cac->id(formula_type::CALC);
+        $result = $sys->typ_lst->frm_typ->id(formula_type::CALC);
         $target = 1;
         $t->assert('check ' . formula_type::CALC, $result, 1);
 

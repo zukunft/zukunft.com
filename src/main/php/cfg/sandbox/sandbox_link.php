@@ -204,8 +204,8 @@ class sandbox_link extends sandbox
         if ($this::class != triple::class) {
             if ($this->predicate_id() != 0) {
                 if ($this::class == formula_link::class) {
-                    global $frm_lnk_typ_cac;
-                    if ($this->predicate_id() != $frm_lnk_typ_cac->id(formula_link_type::DEFAULT)) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
                         $vars[json_fields::PREDICATE] = $this->predicate_id();
                     }
                 } else {
@@ -1274,7 +1274,7 @@ class sandbox_link extends sandbox
         user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -1296,7 +1296,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                        $cng_fld_cac->id($table_id . $this->from_field()),
+                        $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1312,7 +1312,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                        $cng_fld_cac->id($table_id . $this->to_field()),
+                        $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1376,7 +1376,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $cng_fld_cac->id($table_id . $this->from_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1389,7 +1389,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $cng_fld_cac->id($table_id . $this->to_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1416,7 +1416,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $cng_fld_cac->id($table_id . $this->from_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1429,7 +1429,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $cng_fld_cac->id($table_id . $this->to_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }

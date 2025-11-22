@@ -58,7 +58,7 @@ $usr_msg = new user_message();
 $db_con = prg_start("view", '', false);
 
 global $debug;
-global $sys_times;
+global $sys;
 
 if ($db_con->is_open()) {
 
@@ -90,9 +90,9 @@ if ($db_con->is_open()) {
         //$url = 'http://localhost/http/view.php?m=2&id=1&back=1&confirm=1&name=add+word&phrase_type=1&plural=&share=1&protection=3';
         //$url = 'http://localhost/http/view.php?mask_id=2&id=1&back=1&action=add&step=confirmed&Name=Test+add&phrase_type=1&Description=&Plural=&share=1&view_type=1';
         //$url_array = $lib->url_array($url);
-        $sys_times->switch(system_time_type::URL_TO_HTML);
+        $sys->times->switch(system_time_type::URL_TO_HTML);
         $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
-        $sys_times->switch(system_time_type::CLOSE);
+        $sys->times->switch(system_time_type::CLOSE);
     }
 
     // close the database
@@ -105,7 +105,7 @@ if ($debug == -1) {
     // TODO Prio 2 remove temp overwrite for debug
     $end_time = microtime(true);
     $duration = $end_time - $start_time;
-    $html_str .= '<br>Execution times for debugging: ' . $sys_times->report($duration);
+    $html_str .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
 }
 
 // show the page

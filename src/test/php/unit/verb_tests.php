@@ -136,9 +136,9 @@ class verb_tests
         string $name_generated
     ): void
     {
-        global $vrb_cac;
+        global $sys;
         $test_name = 'the sample triple generated name for verb ';
-        $vrb = $vrb_cac->get_verb($code_id);
+        $vrb = $sys->typ_lst->vrb->get_verb($code_id);
         $t->assert($test_name . $vrb->name(), $trp->generate_name(), $name_generated);
     }
 

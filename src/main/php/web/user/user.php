@@ -215,12 +215,12 @@ class user extends db_object
      */
     function is_admin(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -232,13 +232,13 @@ class user extends db_object
      */
     function is_system(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }

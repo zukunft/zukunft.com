@@ -49,8 +49,8 @@ class ref_read_tests
 
     function run(test_cleanup $t): void
     {
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
 
         // init
         $lib = new library();
@@ -69,7 +69,7 @@ class ref_read_tests
 
         // ... and check if at least the most critical is loaded
         // TODO check
-        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
         $t->subheader($ts . 'apis');

@@ -119,15 +119,15 @@ class source_type_list extends type_list
      */
     function get_by_id(int $id): ?source_type
     {
-        global $src_typ_cac;
+        global $sys;
 
         $lib = new library();
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $src_typ_cac->lst())) {
-                $result = $src_typ_cac->get($id);
+            if (array_key_exists($id, $sys->typ_lst->src_typ->lst())) {
+                $result = $sys->typ_lst->src_typ->get($id);
             } else {
-                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($src_typ_cac->lst()));
+                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($sys->typ_lst->src_typ->lst()));
             }
         } else {
             log_debug('Source type id not not set');
@@ -143,19 +143,19 @@ class source_type_list extends type_list
  */
 function get_source_type(string $code_id): ?source_type
 {
-    global $src_typ_cac;
-    $id = $src_typ_cac->id($code_id);
-    return $src_typ_cac->get_by_id($id);
+    global $sys;
+    $id = $sys->typ_lst->src_typ->id($code_id);
+    return $sys->typ_lst->src_typ->get_by_id($id);
 }
 
 function get_source_type_id(string $code_id): int
 {
-    global $src_typ_cac;
-    return $src_typ_cac->id($code_id);
+    global $sys;
+    return $sys->typ_lst->src_typ->id($code_id);
 }
 
 function get_source_type_by_id(string $id): source_type
 {
-    global $src_typ_cac;
-    return $src_typ_cac->get_by_id($id);
+    global $sys;
+    return $sys->typ_lst->src_typ->get_by_id($id);
 }

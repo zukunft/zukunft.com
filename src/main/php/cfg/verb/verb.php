@@ -607,7 +607,7 @@ class verb extends type_object
     ): bool
     {
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
@@ -689,7 +689,7 @@ class verb extends type_object
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protection_type::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
         */

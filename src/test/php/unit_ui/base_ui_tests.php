@@ -249,7 +249,7 @@ class base_ui_tests
         // TODO review
 
         global $usr;
-        global $cmp_typ_cac;
+        global $sys;
         $html = new html_base();
 
         $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
@@ -271,7 +271,7 @@ class base_ui_tests
 
         // test if a simple text component can be created
         $cmp = new component($usr);
-        $cmp->type_id = $cmp_typ_cac->id(comp_type_shared::TEXT);
+        $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_dsp = new component_dsp($cmp->api_json());

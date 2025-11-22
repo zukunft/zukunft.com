@@ -53,8 +53,8 @@ class system_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $sys_log_sta_cac;
 
         // init
         $t->name = 'system read db->';
@@ -71,7 +71,7 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
+        $result = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
         $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
 
         $t->subheader($ts . 'batch job type');
@@ -82,8 +82,7 @@ class system_read_tests
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $job_typ_cac;
-        $result = $job_typ_cac->id(job_type_list::VALUE_UPDATE);
+        $result = $sys->typ_lst->job_typ->id(job_type_list::VALUE_UPDATE);
         $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
         /*

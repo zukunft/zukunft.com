@@ -296,8 +296,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $cng_act_cac;
-        global $cng_fld_cac;
+        global $sys;
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
@@ -333,14 +332,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($key_fld != '') {
             // add the field_id of the field actually changed if needed
             $fvt_lst_out->add_field(
                 sql::FLD_LOG_FIELD_PREFIX . $key_fld,
-                $cng_fld_cac->id($table_id . $key_fld),
+                $sys->typ_lst->cng_fld->id($table_id . $key_fld),
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed

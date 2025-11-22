@@ -37,7 +37,7 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-//include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::WEB . 'frontend.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once paths::SHARED_ENUM . 'messages.php';
 //include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -1436,8 +1436,8 @@ class html_base
     function get_style_code(?int $style_id = null): string
     {
         if ($style_id != null) {
-            global $msk_sty_cac;
-            $style = $msk_sty_cac->get($style_id);
+            global $sys;
+            $style = $sys->typ_lst->msk_sty->get($style_id);
             return $style->code_id();
         } else {
             return '';

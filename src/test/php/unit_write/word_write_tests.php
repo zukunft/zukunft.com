@@ -67,7 +67,7 @@ class word_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $phr_typ_cac;
+        global $sys;
 
         // init
         $lib = new library();
@@ -369,7 +369,7 @@ class word_write_tests
         // check if the word parameters can be added
         $wrd_renamed->plural = words::TEST_RENAMED . 's';
         $wrd_renamed->description = words::TEST_RENAMED . ' description';
-        $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
+        $wrd_renamed->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
         $target = '';
         $t->assert('word->save all word fields beside the name for "' . words::TEST_RENAMED . '"', $result,
@@ -384,7 +384,7 @@ class word_write_tests
         $target = words::TEST_RENAMED . ' description';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '"', $result, $target);
         $result = $wrd_reloaded->type_id;
-        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
+        $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $t->assert('word->load type_id for "' . words::TEST_RENAMED . '"', $result, $target);
 
         // check if the word parameter adding have been logged
@@ -404,7 +404,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
         $wrd_usr2->plural = words::TEST_RENAMED . 's2';
         $wrd_usr2->description = words::TEST_RENAMED . ' description2';
-        $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_usr2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->assert('word->save all word fields for user 2 beside the name for "' . words::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -419,7 +419,7 @@ class word_write_tests
         $target = words::TEST_RENAMED . ' description2';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '"', $result, $target);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $t->assert('word->load type_id for "' . words::TEST_RENAMED . '"', $result, $target);
 
         // check the word for the original user remains unchanged
@@ -431,7 +431,7 @@ class word_write_tests
         $target = words::TEST_RENAMED . ' description';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '" unchanged for user 1', $result, $target);
         $result = $wrd_reloaded->type_id;
-        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
+        $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $t->assert('word->load type_id for "' . words::TEST_RENAMED . '" unchanged for user 1', $result, $target);
 
         // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
@@ -441,7 +441,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
         $wrd_usr2->plural = words::TEST_RENAMED . 's';
         $wrd_usr2->description = words::TEST_RENAMED . ' description';
-        $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
+        $wrd_usr2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->assert('word->save undo the user word fields beside the name for "' . words::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -456,7 +456,7 @@ class word_write_tests
         $target = words::TEST_RENAMED . ' description';
         $t->assert('word->load description for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $result, $target);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
+        $target = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
         $t->assert('word->load type_id for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $result, $target);
 
         // display

@@ -48,7 +48,7 @@ class verb_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $vrb_cac;
+        global $sys;
 
         // init
         $t_db = new test_db_load($t);
@@ -60,7 +60,7 @@ class verb_write_tests
         // check the loading of the "is a" verb
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_id($vrb_cac->id(verbs::IS));
+        $vrb->load_by_id($sys->typ_lst->vrb->id(verbs::IS));
         $t->assert('verb->load ', $vrb->name(), verbs::IS_NAME);
 
         // test the creation of a new verb

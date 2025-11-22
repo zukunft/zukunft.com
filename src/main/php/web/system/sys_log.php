@@ -194,7 +194,7 @@ class sys_log extends log_dsp
      */
     function display_admin(user $usr, ?string $back = '', string $style = ''): string
     {
-        global $sys_log_sta_cac;
+        global $sys;
 
         $html = new html_base();
         $row = '';
@@ -210,7 +210,7 @@ class sys_log extends log_dsp
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
-            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
             $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
             $row .= $html->td($html->ref($url, 'close'));
         }
@@ -251,7 +251,7 @@ class sys_log extends log_dsp
 
     function get_html(user $usr = null, string $back = ''): string
     {
-        global $sys_log_sta_cac;
+        global $sys;
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
@@ -272,7 +272,7 @@ class sys_log extends log_dsp
         $row_text .= $html->td($this->status_name());
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }
@@ -328,8 +328,8 @@ class sys_log extends log_dsp
 
     private function status_text(): string
     {
-        global $sys_log_sta_cac;
-        return $sys_log_sta_cac->name($this->status());
+        global $sys;
+        return $sys->typ_lst->sys_log_sta->name($this->status());
     }
 
 }

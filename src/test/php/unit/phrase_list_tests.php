@@ -70,7 +70,7 @@ class phrase_list_tests
     {
 
         global $usr;
-        global $vrb_cac;
+        global $sys;
 
         // init
         $db_con = new sql_db();
@@ -119,7 +119,7 @@ class phrase_list_tests
         $wrd = new word($usr);
         $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $vrb_cac->get_verb(verbs::PART_NAME);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
@@ -218,11 +218,11 @@ class phrase_list_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
-        global $phr_typ_cac;
+        global $sys;
 
         $wrd = new word($usr);
         $wrd->set(words::CONST_ID, words::TEST_RENAMED);
-        $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }
 

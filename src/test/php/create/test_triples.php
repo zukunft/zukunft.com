@@ -96,8 +96,8 @@ class test_triples
         $trp->set_verb($t_vrb->verb_part());
         $trp->set_to($t_wrd->word()->phrase());
         $trp->set_type(phrase_type::MATH_CONST, $this->env->usr1);
-        global $ptc_typ_cac;
-        $trp->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        global $sys;
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $trp;
     }
 
@@ -720,7 +720,7 @@ class test_triples
      */
     function random(?int $id, phrase_list $phr_lst, test_cleanup $t): triple
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $t_vrb = new test_verbs($t);
 
@@ -748,7 +748,7 @@ class test_triples
         $trp->set_to($phr_lst->get_by_id($to_id)->phrase());
         $trp->set_name(words::TEST_SPEED_PREFIX . $id);
 
-        $type_id = rand(1, $phr_typ_cac->count());
+        $type_id = rand(1, $sys->typ_lst->phr_typ->count());
         $trp->set_type_id($type_id, $this->env->usr1);
         return $trp;
     }

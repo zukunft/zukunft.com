@@ -125,22 +125,14 @@ class sys_log_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
         $vars = $this->api_array($typ_lst);
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**

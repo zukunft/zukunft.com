@@ -50,8 +50,8 @@ class source_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $src_typ_cac;
 
         // init
         $lib = new library();
@@ -73,7 +73,7 @@ class source_read_tests
         $result = $lst->load($db_con);
         $t->assert('load_source_types', $result, true);
         $test_name = '... and check if at least ' . source_types::XBRL . ' is loaded';
-        $t->assert($test_name, $src_typ_cac->id(source_types::XBRL), source_types::XBRL_ID);
+        $t->assert($test_name, $sys->typ_lst->src_typ->id(source_types::XBRL), source_types::XBRL_ID);
 
         $t->subheader($ts . 'list');
         $test_name = 'loading by source list by ids ';

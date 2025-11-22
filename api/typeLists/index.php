@@ -33,16 +33,13 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
-include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 
@@ -62,9 +59,9 @@ if ($db_con->is_open()) {
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
-        $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $usr);
-        $result = $sys_typ_lst->api_json([api_type::HEADER], $usr);
+        $ui_cfg = new ui_config();
+        $ui_cfg->reload($usr);
+        $result = $ui_cfg->api_json([api_type::HEADER], $usr);
     }
 
     $ctrl = new controller();

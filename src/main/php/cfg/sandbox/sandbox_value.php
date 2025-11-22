@@ -1954,10 +1954,10 @@ class sandbox_value extends sandbox_multi
         $fvt_lst_log = new sql_par_field_list();
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst_log->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -2107,7 +2107,7 @@ class sandbox_value extends sandbox_multi
         user_message                $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -2142,7 +2142,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
-                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        $sys->typ_lst->cng_fld->id($table_id . self::FLD_VALUE),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2166,7 +2166,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TIME,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TIME),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_TIME),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2190,7 +2190,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TEXT,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TEXT),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_TEXT),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2214,7 +2214,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_GEO,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_GEO),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_GEO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2238,7 +2238,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
-                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        $sys->typ_lst->cng_fld->id($table_id . self::FLD_VALUE),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }

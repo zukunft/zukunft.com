@@ -38,6 +38,7 @@ the object structure is:
 \-- db_object_no_id
     \-- value_ts_data - for a single time series value data entry
 +-- id_list - a base object for a list of database IDs
++-- system_object - a header object for the system data cache and execution time tracking
 \-- type_list
     \-- component_link_type_list - to define the behaviour if a component is linked to a view
     \-- component_type_list - to link coded functionality to a view component

@@ -310,7 +310,7 @@ class expression extends shared_expression
      */
     function element_special_following(?term_list $trm_lst = null): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
@@ -329,9 +329,9 @@ class expression extends shared_expression
                     }
                 }
                 if ($elm->type == word::class or $elm->type == triple::class) {
-                    if ($elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::THIS)
-                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::NEXT)
-                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PRIOR)) {
+                    if ($elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::THIS)
+                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::NEXT)
+                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PRIOR)) {
                         $phr_lst->add($elm->obj->phrase());
                     }
                 }

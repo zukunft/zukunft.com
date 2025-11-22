@@ -91,13 +91,13 @@ class test_views
 
     function view_protected(): view
     {
-        global $ptc_typ_cac;
+        global $sys;
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->env->usr1);
-        $msk->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $msk;
     }
 
@@ -216,8 +216,7 @@ class test_views
      */
     function view_filled(): view
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
@@ -226,8 +225,8 @@ class test_views
         $msk->set_style(view_styles::COL_SM_4);
         $msk->set_usage(test_const::DUMMY_USAGE_VIEW);
         $msk->exclude();
-        $msk->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $msk->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $msk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $msk;
     }
 
@@ -347,13 +346,12 @@ class test_views
 
     function view_relation_filled(): view_relation
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $mrl = $this->view_relation();
         $mrl->description = 'add usage and log of a word';
         $mrl->exclude();
-        $mrl->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $mrl->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $mrl;
     }
 

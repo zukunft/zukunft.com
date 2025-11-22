@@ -81,6 +81,7 @@ class api
     const string JSON_TRIPLE = 'triple';
 
     //
+    const string JSON_TYPE_API_CONFIG = 'api_config';
     const string JSON_TYPE_LISTS = 'type_lists';
     const string JSON_LIST_USER_PROFILES = 'user_profiles';
     const string JSON_LIST_PHRASE_TYPES = 'phrase_types';

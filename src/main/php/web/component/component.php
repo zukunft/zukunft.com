@@ -661,9 +661,9 @@ class component extends sandbox_code_id
      */
     function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        global $cmp_typ_cac;
+        global $sys;
         $base = new ui_base();
-        return match ($cmp_typ_cac->code_id($this->type_id())) {
+        return match ($sys->typ_lst->cmp_typ->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
             component_type::VALUES_RELATED => $base->table($dbo, $cfg),
@@ -684,8 +684,8 @@ class component extends sandbox_code_id
      */
     function word_name(phrase $phr): string
     {
-        global $cmp_typ_cac;
-        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        global $sys;
+        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';

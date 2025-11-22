@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
@@ -59,7 +60,6 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
@@ -90,20 +90,14 @@ include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once paths::MODEL_HELPER . 'system_object.php';
 
 // global vars for system control
-global $sys_script;      // name php script that has been call this library
-global $sys_trace;       // names of the php functions
-global $sys_time_start;  // to measure the execution time
-global $sys_time_limit;  // to write too long execution times to the log to improve the code
-global $sys_log_msg_lst; // to avoid repeating the same message
+global $sys;
+
 global $log_txt; // the log object for standard io logging
 
-$sys_script = "";
-$sys_trace = "";
-$sys_time_start = time();
-$sys_time_limit = time() + 2;
-$sys_log_msg_lst = array();
+$sys = new system_object('init');
 $log_txt = new text_log();
 
 // check php version
@@ -500,8 +494,11 @@ function prg_start(
     bool $echo_env = false
 ): sql_db
 {
-    global $sys_time_start, $sys_script, $errors;
-    global $sys_times;
+    global $sys;
+    global $errors;
+
+    $sys = new system_object($code_name);
+    $sys->times->switch(system_time_type::INIT);
 
     // TODO check if cookies are actually needed
     // resume session (based on cookies)
@@ -522,10 +519,6 @@ function prg_start(
         log_info('environment ' . getenv(ENVIRONMENT));
     }
 
-    $sys_time_start = time();
-    $sys_times = new system_time_list();
-    $sys_times->switch(system_time_type::DEFAULT);
-    $sys_script = $code_name;
     $errors = 0;
 
     log_debug($code_name . ': session_start');
@@ -554,14 +547,14 @@ function prg_start(
 function prg_restart(string $code_name): sql_db
 {
 
-    global $db_con;
-    global $cac;
-    global $cfg;
-    global $mtr;
-    global $sys_times;
+    global $sys;       // the global system time control including the preloaded types
+    global $db_con;    // the database connection
+    global $cac;       // the global user data cache including the system views
+    global $cfg;       // the user configuration values
+    global $mtr;       // the translation object
 
     // link to database
-    $sys_times->switch(system_time_type::DB_OPEN);
+    $sys->times->switch(system_time_type::DB_OPEN);
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
     $sc = new sql_creator();
@@ -579,7 +572,7 @@ function prg_restart(string $code_name): sql_db
         log_debug($code_name . ': db open');
 
         // check the system setup
-        $sys_times->switch(system_time_type::DB_CHECK);
+        $sys->times->switch(system_time_type::DB_CHECK);
         $db_chk = new db_check();
         $usr_msg = $db_chk->db_check($db_con);
         if (!$usr_msg->is_ok()) {
@@ -595,19 +588,17 @@ function prg_restart(string $code_name): sql_db
         $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
-        $sys_times->switch(system_time_type::LOAD_SYS_CONFIG);
+        $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
         // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
         $mtr = new Translator($cfg->language());
 
         // preload all types from the database
-        $sys_times->switch(system_time_type::LOAD_TYPES);
+        $sys->times->switch(system_time_type::LOAD_TYPES);
         // the types are general so the system user can be used to load the types
         $cac = new data_object($usr_sys);
-        $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $usr_sys);
-        $cac->typ_lst = $sys_typ_lst;
+        $sys->load_type_lists($db_con);
 
         $log = new change_log($usr_sys);
         $db_changed = $log->create_log_references($db_con);
@@ -615,26 +606,23 @@ function prg_restart(string $code_name): sql_db
         // reload the type list if needed and trigger an update in the frontend
         // even tough the update of the preloaded list should already be done by the single adds
         if ($db_changed) {
-            $sys_typ_lst->load($db_con, $usr_sys);
+            $sys->load_type_lists($db_con);
         }
 
     }
-    $sys_times->switch(system_time_type::DEFAULT);
+    $sys->times->switch(system_time_type::DEFAULT);
     return $db_con;
 }
 
 function prg_start_api_core($code_name): sql_db
 {
-    global $sys_time_start, $sys_script;
-    global $sys_times;
+    global $sys;
     global $mtr;
 
+    // init system
     $code_name = 'api/' . $code_name;
-
-    $sys_time_start = time();
-    $sys_times = new system_time_list();
-    $sys_times->switch(system_time_type::INIT);
-    $sys_script = $code_name;
+    $sys = new system_object($code_name);
+    $sys->times->switch(system_time_type::INIT);
 
     // resume session (based on cookies)
     session_start();
@@ -648,24 +636,20 @@ function prg_start_api_core($code_name): sql_db
     $mtr = new Translator(language_codes::SYS);
 
     // preload all types from the database
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load_core($db_con);
+    // TODO Prio 2 check if really all types needs to be loaded
+    //$sys->typ_lst->load_core($db_con);
+    $sys->typ_lst->load($db_con);
 
     return $db_con;
 }
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $usr_pro_cac;
-    global $sys_times;
-    global $mtr;
+    global $sys;
 
     $code_name = 'api/' . $code_name;
     log_debug($code_name . ' ..');
-
-    $sys_time_start = time();
-    $sys_times = new system_time_list();
-    $sys_script = $code_name;
+    $sys = new system_object($code_name);
 
     // resume session (based on cookies)
     session_start();
@@ -677,17 +661,12 @@ function prg_start_api($code_name): sql_db
     log_debug($code_name . ' ... database link open');
 
     // for the api only english is used
+    global $mtr;
     $mtr = new Translator(language_codes::SYS);
-
-    // create a virtual one-time system user to load the system users
-    $usr_sys = new user();
-    $usr_sys->id = users::SYSTEM_ID;
-    $usr_sys->name = users::SYSTEM_NAME;
 
     // preload all types from the database
     // TODO Prio 3 try to speed up
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, $usr_sys);
+    $sys->load_type_lists($db_con);
 
     return $db_con;
 }
@@ -697,21 +676,19 @@ function prg_start_api($code_name): sql_db
  */
 function prg_end_write_time($db_con): void
 {
-    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
-    global $sys_times;
+    global $sys;
 
-    $time_report = $sys_times->report();
-    $sys_time_end = time();
-    if ($sys_time_end > $sys_time_limit) {
+    $sys_time_end = microtime(true);
+    if ($sys_time_end > $sys->time_limit) {
         $db_con->usr_id = users::SYSTEM_ID;
         $db_con->set_class(system_time_type::class);
-        $sys_script_id = $db_con->get_id($sys_script);
+        $sys_script_id = $db_con->get_id($sys->script);
         if ($sys_script_id <= 0) {
-            $sys_script_id = $db_con->add_id($sys_script);
+            $sys_script_id = $db_con->add_id($sys->script);
         }
-        $start_time_sql = date("Y-m-d H:i:s", $sys_time_start);
+        $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
         $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
-        $interval = $sys_time_end - $sys_time_start;
+        $interval = $sys_time_end - $sys->start_time;
         $milliseconds = $interval;
 
         //$db_con->insert();
@@ -720,20 +697,19 @@ function prg_end_write_time($db_con): void
         } else {
             $calling_uri = 'localhost';
         }
-        $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
+        // TODO Prio 1 add time report to database and calling uri
+        $time_report = $sys->times->report();
+        $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) "
+            . "VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
         $db_con->exe($sql);
     }
 
     // free the global vars
-    unset($sys_log_msg_lst);
-    unset($sys_script);
-    unset($sys_time_limit);
-    unset($sys_time_start);
+    unset($sys);
 }
 
 function prg_end($db_con, $echo_header = true): void
 {
-    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
     if ($echo_header) {
         $html = new html_base();
@@ -755,7 +731,6 @@ function prg_end($db_con, $echo_header = true): void
 function prg_end_about($link): void
 {
     global $db_con;
-    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
     $html = new html_base();
     echo $html->footer(true);
@@ -773,7 +748,6 @@ function prg_end_about($link): void
 function prg_end_api($link): void
 {
     global $db_con;
-    global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
     prg_end_write_time($db_con);
 
@@ -795,23 +769,6 @@ function resource_file(string $resource_path): string
     return $result;
 }
 
-/**
- * TODO to be move to a class
- * update the cache files
- * called upfront also from the reset db run because this is used for the unit tests
- *
- * @param user $usr the test object to collect the errors and calculate the execution times
- * @return void
- */
-function cache_recreate(user $usr): void
-{
-    global $db_con;
-
-    log_debug('update cache');
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, $usr);
-
-}
 
 /*
  * display functions

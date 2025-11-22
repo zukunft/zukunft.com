@@ -653,8 +653,6 @@ class sandbox_link_named extends sandbox_link
         user_message               $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
-
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);

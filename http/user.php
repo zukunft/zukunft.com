@@ -60,7 +60,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 $db_con = prg_start("user");
 $html = new html_base();
 
-global $usr_pro_cac;
+global $sys;
 
 $result = ''; // reset the html code var
 
@@ -197,7 +197,7 @@ if ($usr->id > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+    if ($usr->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
         $errors_all = $dsp_usr->dsp_errors("other", 0, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");

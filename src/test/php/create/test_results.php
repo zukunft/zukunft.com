@@ -143,12 +143,11 @@ class test_results
      */
     function result_main_filled(): result
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $res = $this->result_main_max();
         $res->exclude();
-        $res->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $res->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $res->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $res->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $res;
     }
 

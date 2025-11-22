@@ -230,8 +230,8 @@ class term_view extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $msk_lnk_typ_cac;
-        $this->set_predicate_id($msk_lnk_typ_cac->id($type_code_id));
+        global $sys;
+        $this->set_predicate_id($sys->typ_lst->msk_lnk_typ->id($type_code_id));
     }
 
     /**
@@ -323,8 +323,8 @@ class term_view extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $msk_lnk_typ_cac;
-        return $msk_lnk_typ_cac->name($this->predicate_id);
+        global $sys;
+        return $sys->typ_lst->msk_lnk_typ->name($this->predicate_id);
     }
 
 
@@ -475,7 +475,7 @@ class term_view extends sandbox_link
         user_message      $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -487,7 +487,7 @@ class term_view extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -503,11 +503,10 @@ class term_view extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
-                    $cng_fld_cac->id($table_id . view_link_type::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . view_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phr_typ_cac;
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
@@ -519,7 +518,7 @@ class term_view extends sandbox_link
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $phr_typ_cac);
+                $sys->typ_lst->phr_typ);
         }
         return $lst;
     }

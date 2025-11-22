@@ -62,8 +62,8 @@ class localhost_ui_tests
     {
 
         // init
+        global $sys;
         global $mtr;
-        global $sys_times;
 
         // start the test section (ts)
         $ts = 'unit ui localhost ';
@@ -77,15 +77,15 @@ class localhost_ui_tests
 
         $t->subheader($ts . 'views');
         $test_name = 'word edit by url';
-        $sys_times->switch(system_time_type::LOCALHOST_VIEWS);
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID);
-        $sys_times->switch(system_time_type::DEFAULT);
+        $sys->times->switch(system_time_type::DEFAULT);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, words::MATH, test_base::TIMEOUT_LOCALHOST);
         $test_name = 'verb add by url';
-        $sys_times->switch(system_time_type::LOCALHOST_VIEWS);
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::VERB_ADD_ID);
-        $sys_times->switch(system_time_type::DEFAULT);
+        $sys->times->switch(system_time_type::DEFAULT);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
     }

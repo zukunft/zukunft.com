@@ -127,8 +127,7 @@ class test_formulas
      */
     function formula_filled(): formula
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_trm = new test_terms($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
@@ -145,8 +144,8 @@ class test_formulas
         $frm->set_usage(test_const::DUMMY_USAGE_FORMULA);
         $frm->set_impact(test_const::DUMMY_IMPACT);
         $frm->exclude();
-        $frm->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $frm->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $frm;
     }
 
@@ -239,23 +238,22 @@ class test_formulas
 
     function formula_link(): formula_link
     {
-        global $frm_lnk_typ_cac;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
-        $lnk->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::TIME_PERIOD));
+        $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
         return $lnk;
     }
 
     function formula_link_filled(): formula_link
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $lnk = $this->formula_link();
         $lnk->exclude();
-        $lnk->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $lnk->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $lnk;
     }
 
@@ -345,7 +343,7 @@ class test_formulas
      */
     function random(?int $id = null): formula
     {
-        global $frm_typ_cac;
+        global $sys;
 
         if ($id == null) {
             $id = $this->env->next_seq_nbr();
@@ -356,7 +354,7 @@ class test_formulas
         $frm->id = $id;
         $frm->set_name(formulas::TEST_SPEED_PREFIX . $id);
 
-        $type_id = rand(1, $frm_typ_cac->count());
+        $type_id = rand(1, $sys->typ_lst->frm_typ->count());
         $frm->set_type_id($type_id, $test_usr);
         return $frm;
     }

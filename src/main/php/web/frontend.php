@@ -254,9 +254,9 @@ class frontend
      */
     function load_cache(): user_message
     {
-        global $sys_times;
+        global $sys;
 
-        $sys_times->switch(system_time_type::LOAD_FRONTEND);
+        $sys->times->switch(system_time_type::LOAD_FRONTEND);
         $usr_msg = new user_message();
         if ($this->dto?->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
@@ -268,7 +268,7 @@ class frontend
                 $this->set_type_cache($api_msg);
             }
         }
-        $sys_times->switch(system_time_type::DEFAULT);
+        $sys->times->switch(system_time_type::DEFAULT);
         return $usr_msg;
     }
 

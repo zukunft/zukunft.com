@@ -84,7 +84,7 @@ if ($db_con->is_open()) {
             // most likely new fields have not yet been added to the
             // src/main/resources/db_code_links/change_fields.csv of the predefined fields
             $t_db = new test_db_load($t);
-            $t_db->type_list_recreate($t);
+            $t_db->type_list_recreate($t, $t->usr1);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

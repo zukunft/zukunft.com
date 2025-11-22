@@ -56,17 +56,17 @@ class test_sys_log
      */
     function sys_log(): sys_log
     {
-        global $sys_log_sta_cac;
-        $sys = new sys_log();
-        $sys->id = 1;
-        $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = users::SYSTEM_TEST_NAME;
-        $sys->log_text = sys_log_tests::TV_LOG_TEXT;
-        $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
-        $sys->function_name = sys_log_tests::TV_FUNC_NAME;
-        $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_id = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
-        return $sys;
+        global $sys;
+        $slg = new sys_log();
+        $slg->id = 1;
+        $slg->log_time = new DateTime(sys_log_tests::TV_TIME);
+        $slg->usr_name = users::SYSTEM_TEST_NAME;
+        $slg->log_text = sys_log_tests::TV_LOG_TEXT;
+        $slg->log_trace = sys_log_tests::TV_LOG_TRACE;
+        $slg->function_name = sys_log_tests::TV_FUNC_NAME;
+        $slg->solver_name = sys_log_tests::TV_SOLVE_ID;
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
+        return $slg;
     }
 
     /**
@@ -74,17 +74,17 @@ class test_sys_log
      */
     function sys_log_closed(): sys_log
     {
-        global $sys_log_sta_cac;
-        $sys = new sys_log();
-        $sys->id = 2;
-        $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = users::SYSTEM_TEST_NAME;
-        $sys->log_text = sys_log_tests::T2_LOG_TEXT;
-        $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
-        $sys->function_name = sys_log_tests::T2_FUNC_NAME;
-        $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_id = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
-        return $sys;
+        global $sys;
+        $slg = new sys_log();
+        $slg->id = 2;
+        $slg->log_time = new DateTime(sys_log_tests::TV_TIME);
+        $slg->usr_name = users::SYSTEM_TEST_NAME;
+        $slg->log_text = sys_log_tests::T2_LOG_TEXT;
+        $slg->log_trace = sys_log_tests::T2_LOG_TRACE;
+        $slg->function_name = sys_log_tests::T2_FUNC_NAME;
+        $slg->solver_name = sys_log_tests::TV_SOLVE_ID;
+        $slg->status_id = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
+        return $slg;
     }
 
     /**

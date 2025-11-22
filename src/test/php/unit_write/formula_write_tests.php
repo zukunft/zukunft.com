@@ -63,7 +63,7 @@ class formula_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $frm_typ_cac;
+        global $sys;
 
         // init
         $t_wrd = new test_words($t);
@@ -398,7 +398,7 @@ class formula_write_tests
         // check if the formula parameters can be added
         $frm_renamed->usr_text = '= "' . words::THIS_NAME . '"';
         $frm_renamed->description = formulas::SYSTEM_TEST_RENAMED . ' description';
-        $frm_renamed->type_id = $frm_typ_cac->id(formula_type::THIS);
+        $frm_renamed->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
         $result = $frm_renamed->save()->get_last_message();
         $target = '';
@@ -416,7 +416,7 @@ class formula_write_tests
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';
         $t->assert('formula->load description for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->type_id;
-        $target = $frm_typ_cac->id(formula_type::THIS);
+        $target = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $t->assert('formula->load type_id for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->need_all_val;
         $target = True;
@@ -451,7 +451,7 @@ class formula_write_tests
         $frm_usr2->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
         $frm_usr2->usr_text = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
         $frm_usr2->description = formulas::SYSTEM_TEST_RENAMED . ' description2';
-        $frm_usr2->type_id = $frm_typ_cac->id(formula_type::NEXT);
+        $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
@@ -470,7 +470,7 @@ class formula_write_tests
         $target = formulas::SYSTEM_TEST_RENAMED . ' description2';
         $t->assert('formula->load description for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->type_id;
-        $target = $frm_typ_cac->id(formula_type::NEXT);
+        $target = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
         $t->assert('formula->load type_id for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = False;
@@ -488,7 +488,7 @@ class formula_write_tests
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';
         $t->assert('formula->load description for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->type_id;
-        $target = $frm_typ_cac->id(formula_type::THIS);
+        $target = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $t->assert('formula->load type_id for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->need_all_val;
         $target = True;
@@ -499,7 +499,7 @@ class formula_write_tests
         $frm_usr2->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
         $frm_usr2->usr_text = '= "' . words::THIS_NAME . '"';
         $frm_usr2->description = formulas::SYSTEM_TEST_RENAMED . ' description';
-        $frm_usr2->type_id = $frm_typ_cac->id(formula_type::THIS);
+        $frm_usr2->type_id = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
@@ -518,7 +518,7 @@ class formula_write_tests
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';
         $t->assert('formula->load description for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->type_id;
-        $target = $frm_typ_cac->id(formula_type::THIS);
+        $target = $sys->typ_lst->frm_typ->id(formula_type::THIS);
         $t->assert('formula->load type_id for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = True;

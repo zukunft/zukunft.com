@@ -64,8 +64,8 @@ class word_list_tests
     {
 
         global $usr;
-        global $phr_typ_cac;
-        global $vrb_cac;
+        global $sys;
+        global $sys;
 
         // init
         $db_con = new sql_db();
@@ -119,7 +119,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $vrb = $vrb_cac->get_verb(verbs::IS);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -136,7 +136,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->id = 9;
         $wrd_lst->add($wrd);
-        $vrb = $vrb_cac->get_verb(verbs::IS);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader($ts . 'modify and filter word lists');
@@ -155,23 +155,23 @@ class word_list_tests
         $wrd_time = new word($usr);
         $wrd_time->id = 4;
         $wrd_time->set_name('time_word');
-        $wrd_time->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_time->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->id = 5;
         $wrd_time2->set_name('time_word2');
-        $wrd_time2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_time2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->id = 6;
         $wrd_scale->set_name('scale_word');
-        $wrd_scale->type_id = $phr_typ_cac->id(phrase_type_shared::SCALING);
+        $wrd_scale->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->id = 7;
         $wrd_percent->set_name('percent_word');
-        $wrd_percent->type_id = $phr_typ_cac->id(phrase_type_shared::PERCENT);
+        $wrd_percent->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->id = 8;
         $wrd_measure->set_name('measure_word');
-        $wrd_measure->type_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $wrd_measure->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);

@@ -219,11 +219,11 @@ class test_log
      */
     function log_word_add_type(): change
     {
-        global $phr_typ_cac;
+        global $sys;
         $chg = $this->log_word_add();
         $chg->set_field(change_fields::FLD_PHRASE_TYPE);
         $chg->new_value = phrase_type::TIME;
-        $chg->new_id = $phr_typ_cac->id(phrase_type::TIME);
+        $chg->new_id = $sys->typ_lst->phr_typ->id(phrase_type::TIME);
         return $chg;
     }
 
@@ -233,11 +233,11 @@ class test_log
      */
     function log_word_update_type(): change
     {
-        global $phr_typ_cac;
+        global $sys;
         $chg = $this->log_word_add_type();
         $chg->set_action(change_actions::UPDATE);
         $chg->old_value = phrase_type::MEASURE;
-        $chg->old_id = $phr_typ_cac->id(phrase_type::MEASURE);
+        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
         return $chg;
     }
 
@@ -311,11 +311,11 @@ class test_log
      */
     function log_ref_update(): change
     {
-        global $phr_typ_cac;
+        global $sys;
         $chg = $this->log_ref_add();
         $chg->set_action(change_actions::UPDATE);
         $chg->old_value = phrase_type::MEASURE;
-        $chg->old_id = $phr_typ_cac->id(phrase_type::MEASURE);
+        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
         return $chg;
     }
 

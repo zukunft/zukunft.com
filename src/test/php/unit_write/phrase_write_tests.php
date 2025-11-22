@@ -55,7 +55,7 @@ class phrase_write_tests
     {
 
         global $usr;
-        global $vrb_cac;
+        global $sys;
 
         // init
         $lib = new library();
@@ -72,7 +72,7 @@ class phrase_write_tests
         // load or create a word that can be parts of a group e.g. Zurich
         $wrd = $t_db->test_word(words::ZH);
         $zh_id = $wrd->id();
-        $is_id = $vrb_cac->id(verbs::IS);
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
         $trp->load_by_link_id($zh_id, $is_id, $company_id);

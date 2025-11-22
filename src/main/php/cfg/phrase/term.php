@@ -774,13 +774,13 @@ class term extends combine_named
     private
     function load_word_by_id(int $id): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_id($id)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
-            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -874,13 +874,13 @@ class term extends combine_named
     private
     function load_word_by_name(string $name): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_name($name)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
-            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

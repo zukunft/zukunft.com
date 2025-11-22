@@ -365,10 +365,10 @@ class ui_list extends ui_base
         ?int        $style_id = null
     ): string
     {
-        global $msk_sty_cac;
+        global $sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $msk_sty_cac->get($style_id);
+            $style = $sys->typ_lst->msk_sty->get($style_id);
             $style_txt = $style->code_id();
         }
         return $val_lst->list($phr_lst, '', $style_txt);
@@ -389,10 +389,10 @@ class ui_list extends ui_base
         ?int        $style_id = null
     ): string
     {
-        global $msk_sty_cac;
+        global $sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $msk_sty_cac->get($style_id);
+            $style = $sys->typ_lst->msk_sty->get($style_id);
             $style_txt = $style->code_id();
         }
         return $val_lst->list_unit();
@@ -415,10 +415,10 @@ class ui_list extends ui_base
         ?int        $style_id = null
     ): string
     {
-        global $msk_sty_cac;
+        global $sys;
         $style_txt = '';
         if ($style_id != null) {
-            $style = $msk_sty_cac->get($style_id);
+            $style = $sys->typ_lst->msk_sty->get($style_id);
             $style_txt = $style->code_id();
         }
         return $res_lst->list($phr_lst, '', $style_txt);

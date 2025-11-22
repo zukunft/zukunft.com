@@ -1337,7 +1337,7 @@ class sandbox_named extends sandbox
         user_message          $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -1357,7 +1357,7 @@ class sandbox_named extends sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_USAGE),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

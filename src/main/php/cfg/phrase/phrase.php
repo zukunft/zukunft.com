@@ -929,8 +929,8 @@ class phrase extends combine_named
 
     function type_code_id(): string
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->code_id($this->type_id());
+        global $sys;
+        return $sys->typ_lst->phr_typ->code_id($this->type_id());
     }
 
     /**
@@ -1242,7 +1242,7 @@ class phrase extends combine_named
     {
         log_debug();
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $sql_type_from = '';
         $sql_type_where = '';
@@ -1277,7 +1277,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . ' ) AS a 
+                                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1289,7 +1289,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
+                                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1316,7 +1316,7 @@ class phrase extends combine_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
+                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -1408,11 +1408,11 @@ class phrase extends combine_named
      */
     function is_percent(): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1433,11 +1433,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new phrase($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id;
@@ -1462,11 +1462,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new word($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
@@ -1491,7 +1491,7 @@ class phrase extends combine_named
      */
     function save(): user_message
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $usr_msg = new user_message();
 
@@ -1516,7 +1516,7 @@ class phrase extends combine_named
                 // create a word if neither the word nor the triple exists
                 $wrd = new word($this->user());
                 $wrd->set_name($this->name());
-                $wrd->type_id = $phr_typ_cac->default_id();
+                $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
                 $usr_msg->add($wrd->save());
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');

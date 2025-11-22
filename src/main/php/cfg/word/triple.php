@@ -390,8 +390,8 @@ class triple extends sandbox_link_named
         ?data_object $dto = null
     ): bool
     {
-        global $phr_typ_cac;
-        global $vrb_cac;
+        global $sys;
+        global $sys;
         global $db_con;
 
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
@@ -402,7 +402,7 @@ class triple extends sandbox_link_named
             $this->set_type($in_ex_json[json_fields::TYPE_NAME]);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+            $this->type_id = $sys->typ_lst->phr_typ->id($in_ex_json[json_fields::TYPE_NAME]);
         }
         if (key_exists(json_fields::EX_FROM, $in_ex_json)) {
             $value = $in_ex_json[json_fields::EX_FROM];
@@ -461,7 +461,7 @@ class triple extends sandbox_link_named
 
         if (key_exists(json_fields::EX_VERB, $in_ex_json)) {
             $name = $in_ex_json[json_fields::EX_VERB];
-            $vrb = $vrb_cac->get_by_name($name);
+            $vrb = $sys->typ_lst->vrb->get_by_name($name);
             if ($vrb == null) {
                 if ($name <> '') {
                     $vrb = new verb();
@@ -475,7 +475,7 @@ class triple extends sandbox_link_named
                     }
                     $dto?->add_verb($vrb);
                 } else {
-                    $vrb = $vrb_cac->get_verb(verbs::NOT_SET);
+                    $vrb = $sys->typ_lst->vrb->get_verb(verbs::NOT_SET);
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
@@ -616,18 +616,18 @@ class triple extends sandbox_link_named
      */
     private function verb_from_api_json(int|array $value): verb
     {
-        global $vrb_cac;
+        global $sys;
         if (is_array($value)) {
             if (key_exists(json_fields::ID, $value)) {
                 $id = $value[json_fields::ID];
-                $vrb = $vrb_cac->get($id);
+                $vrb = $sys->typ_lst->vrb->get($id);
             } else {
                 $vrb = new verb();
                 log_err('id field missing in ' . implode(',', $value));
             }
         } elseif (is_int($value)) {
             if ($value != 0) {
-                $vrb = $vrb_cac->get($value);
+                $vrb = $sys->typ_lst->vrb->get($value);
             } else {
                 $vrb = new verb();
             }
@@ -732,7 +732,7 @@ class triple extends sandbox_link_named
      */
     function export_json(bool $do_load = true): array
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $vars = parent::export_json($do_load);
 
@@ -743,7 +743,7 @@ class triple extends sandbox_link_named
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
         if ($this->type_name() <> '') {
-            if ($this->type_id != $phr_typ_cac->default_id()) {
+            if ($this->type_id != $sys->typ_lst->phr_typ->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $this->type_name();
             }
         }
@@ -837,8 +837,8 @@ class triple extends sandbox_link_named
             $this->set_predicate_id($vrb->id());
         } else {
             if ($vrb->name() != '') {
-                global $vrb_cac;
-                $vrb_selected = $vrb_cac->get_by_name($vrb->name());
+                global $sys;
+                $vrb_selected = $sys->typ_lst->vrb->get_by_name($vrb->name());
                 if ($vrb_selected == null) {
                     log_err('verb for ' . $vrb->name() . ' not found');
                 } else {
@@ -861,12 +861,12 @@ class triple extends sandbox_link_named
 
     function verb(): verb|null
     {
-        global $vrb_cac;
+        global $sys;
         $id = $this->predicate_id();
         if ($id == 0) {
             return null;
         } else {
-            return $vrb_cac->get($id);
+            return $sys->typ_lst->vrb->get($id);
         }
     }
 
@@ -895,10 +895,10 @@ class triple extends sandbox_link_named
      */
     function verb_name(): string
     {
-        global $vrb_cac;
+        global $sys;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $vrb_cac->get($this->predicate_id());
+            $vrb = $sys->typ_lst->vrb->get($this->predicate_id());
             if ($vrb != null) {
                 return $vrb->name();
             } else {
@@ -907,7 +907,7 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } elseif ($id < 0) {
-            $vrb = $vrb_cac->get($this->predicate_id() * -1);
+            $vrb = $sys->typ_lst->vrb->get($this->predicate_id() * -1);
             if ($vrb != null) {
                 return $vrb->reverse();
             } else {
@@ -925,10 +925,10 @@ class triple extends sandbox_link_named
      */
     function verb_code_id(): string
     {
-        global $vrb_cac;
+        global $sys;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $vrb_cac->get($this->predicate_id());
+            $vrb = $sys->typ_lst->vrb->get($this->predicate_id());
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {
@@ -937,7 +937,7 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } elseif ($id < 0) {
-            $vrb = $vrb_cac->get($this->predicate_id() * -1);
+            $vrb = $sys->typ_lst->vrb->get($this->predicate_id() * -1);
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {
@@ -997,13 +997,13 @@ class triple extends sandbox_link_named
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $phr_typ_cac;
-        if ($phr_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->phr_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->phr_typ, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->phr_typ, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -1323,8 +1323,8 @@ class triple extends sandbox_link_named
      */
     function type_name(): string
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->name($this->type_id);
+        global $sys;
+        return $sys->typ_lst->phr_typ->name($this->type_id);
     }
 
     /**
@@ -1333,13 +1333,13 @@ class triple extends sandbox_link_named
      */
     function type_code_id(): string
     {
-        global $phr_typ_cac;
+        global $sys;
         if ($this->type_id == null) {
             $msg = 'type for triple ' . $this->dsp_id() . ' is missing';
             log_err($msg);
             return $msg;
         } else {
-            return $phr_typ_cac->code_id($this->type_id);
+            return $sys->typ_lst->phr_typ->code_id($this->type_id);
         }
     }
 
@@ -1422,10 +1422,10 @@ class triple extends sandbox_link_named
      */
     function is_type(string $typ): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
-        if ($this->type_id == $phr_typ_cac->id($typ)) {
+        if ($this->type_id == $sys->typ_lst->phr_typ->id($typ)) {
             $result = true;
         }
         return $result;
@@ -2098,8 +2098,8 @@ class triple extends sandbox_link_named
      */
     function generate_name(): string
     {
-        global $vrb_cac;
-        if ($this->verb_id() == $vrb_cac->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
+        global $sys;
+        if ($this->verb_id() == $sys->typ_lst->vrb->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
             // use the user defined description
             return $this->from()->name() . ' (' . $this->to()->name() . ')';
         } elseif ($this->from()->name() != '' and $this->verb_name() != '' and $this->to()->name() != '') {
@@ -2849,7 +2849,7 @@ class triple extends sandbox_link_named
         user_message   $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -2866,11 +2866,11 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phr_typ_cac;
+            global $sys;
             if ($this->type_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
@@ -2882,7 +2882,7 @@ class triple extends sandbox_link_named
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phr_typ_cac);
+                $sys->typ_lst->phr_typ);
         }
 
         // the link type cannot be changed by the user, because this would be another link
@@ -2891,11 +2891,11 @@ class triple extends sandbox_link_named
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
-                        $cng_fld_cac->id($table_id . verb_db::FLD_ID),
+                        $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $vrb_cac;
+                global $sys;
                 if ($this->verb_id() < 0) {
                     $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
                         msg_id::VAR_TYPE => $this->verb_name(),
@@ -2907,7 +2907,7 @@ class triple extends sandbox_link_named
                     verb_db::FLD_NAME,
                     $this->verb_id(),
                     $sbx->verb_id(),
-                    $vrb_cac
+                    $sys->typ_lst->vrb
                 );
             }
         } else {
@@ -2920,11 +2920,11 @@ class triple extends sandbox_link_named
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
+                            $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $vrb_cac;
+                    global $sys;
                     if ($sbx->verb_id() < 0) {
                         $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
                             msg_id::VAR_TYPE => $sbx->verb_name(),
@@ -2936,13 +2936,13 @@ class triple extends sandbox_link_named
                         verb_db::FLD_NAME,
                         null,
                         $sbx->verb_id(),
-                        $vrb_cac
+                        $sys->typ_lst->vrb
                     );
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                            $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                            $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -2955,11 +2955,11 @@ class triple extends sandbox_link_named
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
+                            $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $vrb_cac;
+                    global $sys;
                     if ($this->verb_id() < 0) {
                         $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
                             msg_id::VAR_TYPE => $this->verb_name(),
@@ -2971,7 +2971,7 @@ class triple extends sandbox_link_named
                         verb_db::FLD_NAME,
                         $this->verb_id(),
                         null,
-                        $vrb_cac
+                        $sys->typ_lst->vrb
                     );
                 }
             }
@@ -2981,7 +2981,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3000,7 +3000,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_GIVEN,
-                    $cng_fld_cac->id($table_id . triple_db::FLD_NAME_GIVEN),
+                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_NAME_GIVEN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3018,7 +3018,7 @@ class triple extends sandbox_link_named
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_AUTO,
-                        $cng_fld_cac->id($table_id . triple_db::FLD_NAME_AUTO),
+                        $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_NAME_AUTO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -3034,7 +3034,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_WIGHT,
-                    $cng_fld_cac->id($table_id . triple_db::FLD_WIGHT),
+                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_WIGHT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3049,7 +3049,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_USAGE),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3064,7 +3064,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3079,7 +3079,7 @@ class triple extends sandbox_link_named
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . triple_db::FLD_VIEW),
+                    $sys->typ_lst->cng_fld->id($table_id . triple_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

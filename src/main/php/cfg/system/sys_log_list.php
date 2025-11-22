@@ -112,11 +112,11 @@ class sys_log_list extends base_list
      */
     function load_sql(sql_db $db_con): sql_par
     {
-        global $sys_log_sta_cac;
+        global $sys;
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
         $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;

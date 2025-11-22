@@ -58,7 +58,7 @@ class phrase_list_write_tests
     {
 
         global $usr;
-        global $vrb_cac;
+        global $sys;
 
         // init
         $t_db = new test_db_load($t);
@@ -73,7 +73,7 @@ class phrase_list_write_tests
 
         // load the main test word and verb
         $wrd_company = $t_db->test_word(words::MATH);
-        $is_id = $vrb_cac->id(verbs::IS);
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
         $wrd_zh = $t_db->load_word(words::ZH);
@@ -106,7 +106,7 @@ class phrase_list_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ABB));
         $phr_lst = $wrd_lst->phrase_list();
-        $lst_parents = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        $lst_parents = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = words::COMPANY; // order adjusted based on the number of usage
         $t->assert('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $result, $target);

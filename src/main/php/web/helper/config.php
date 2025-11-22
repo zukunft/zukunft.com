@@ -106,10 +106,10 @@ class config extends value_list
      */
     function load(string $part = api::CONFIG_FRONTEND): user_message
     {
-        global $sys_times;
+        global $sys;
 
         $usr_msg = new user_message();
-        $sys_times->switch(system_time_type::LOAD_CONFIG);
+        $sys->times->switch(system_time_type::LOAD_CONFIG);
 
         $data = [];
         $data[url_var::CONFIG_PART] = $part;
@@ -125,7 +125,7 @@ class config extends value_list
                 $usr_msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
-        $sys_times->switch(system_time_type::DEFAULT);
+        $sys->times->switch(system_time_type::DEFAULT);
         return $usr_msg;
     }
 

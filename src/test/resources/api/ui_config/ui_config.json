@@ -8006,7 +8006,38 @@
         "id": 180
       }
     ],
-    "component_link_types": [],
+    "component_link_types": [
+      {
+        "name": "always",
+        "code_id": "always",
+        "description": "the component is always shown as it is",
+        "id": 1
+      },
+      {
+        "name": "expression",
+        "code_id": "expression",
+        "description": "the component is only shown if an expression is true",
+        "id": 2
+      },
+      {
+        "name": "add",
+        "code_id": "add",
+        "description": "adds this component in the child view that is not in the parent view",
+        "id": 3
+      },
+      {
+        "name": "overwrite",
+        "code_id": "overwrite",
+        "description": "overwrite this component in the child view with the component of the parent view",
+        "id": 4
+      },
+      {
+        "name": "remove",
+        "code_id": "remove",
+        "description": "remove this component from the child view that is in the parent view",
+        "id": 5
+      }
+    ],
     "position_types": [
       {
         "name": "below",

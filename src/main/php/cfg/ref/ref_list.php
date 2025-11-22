@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
+// TODO Prio 2 check if not better based on the sandbox_link_list
 class ref_list extends type_list
 {
 

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // more specific includes are switched off to avoid circular includes
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
+//include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
@@ -53,7 +54,6 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range.php';
@@ -70,6 +70,7 @@ include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_list.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
+//include_once paths::MODEL_VIEW . 'view_sys_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
 //include_once paths::MODEL_WORD . 'triple.php';
@@ -85,6 +86,7 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -97,7 +99,6 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
@@ -115,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -135,8 +137,10 @@ class data_object
      *  object vars
      */
 
-    private user $usr; // the person for whom the list has been created
+    // the person for whom the list has been created
+    private user $usr;
 
+    // sandbox data cache lists
     private word_list $wrd_lst;
     private verb_list $vrb_lst;
     private triple_list $trp_lst;
@@ -152,13 +156,19 @@ class data_object
     private view_list $msk_lst;
     private component_list $cmp_lst;
     private term_view_list $trm_msk_lst;
+
     // for system configuration exchange
     private user_list $usr_lst;
     private ip_range_list $ip_lst;
+
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
+
     // all preloaded types
     public type_lists $typ_lst;
+
+    // all preloaded views which can be user specific
+    public view_sys_list $sys_msk;
 
 
     /*
@@ -193,6 +203,7 @@ class data_object
         $this->ip_lst = new ip_range_list();
         $this->usr_msg = new user_message();
         $this->typ_lst = new type_lists();
+        $this->sys_msk = new view_sys_list($usr);
     }
 
 
@@ -208,22 +219,14 @@ class data_object
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
         $vars = $this->api_array($typ_lst);
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
@@ -420,7 +423,7 @@ class data_object
 
     function view_relation_types(): view_relation_type_list
     {
-        return $this->typ_lst->mrl_lst;
+        return $this->typ_lst->mrl_typ;
     }
 
 
@@ -507,6 +510,39 @@ class data_object
     function get_view_by_name(string $name): view|IdObject|null
     {
         return $this->view_list()->get_by_name($name);
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the objects from the database and fill in missing db id
+     * e.g. to validate the import
+     * TODO Prio 2 add the missing lists and vars
+     */
+    function load(sql_db $db_con): user_message
+    {
+        $usr_msg = new user_message();
+        $this->load_system_views($db_con);
+        $wrd_lst = $this->word_list();
+        $wrd_lst->load_by_names($wrd_lst->names());
+        $trp_lst = $this->triple_list();
+        $trp_lst->load_by_names($trp_lst->names());
+        $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
+        //$this->value_list()->load_by_ids();
+        return $usr_msg;
+    }
+
+    /**
+     * load the base data (types, system views) from the database
+     * @param sql_db $db_con the database connection as a parameter to be able to force reloading from a not standard db
+     * @return bool
+     */
+    function load_system_views(sql_db $db_con): bool
+    {
+        return $this->sys_msk->load($db_con);
     }
 
 
@@ -743,23 +779,6 @@ class data_object
         return $this->word_list()->count()
             + $this->triple_list()->count()
             + $this->value_list()->count();
-    }
-
-    /**
-     * load the objects from the database and fill in missing db id
-     * e.g. to validate the import
-     * TODO Prio 2 add the missing lists and vars
-     */
-    function load(): user_message
-    {
-        $usr_msg = new user_message();
-        $wrd_lst = $this->word_list();
-        $wrd_lst->load_by_names($wrd_lst->names());
-        $trp_lst = $this->triple_list();
-        $trp_lst->load_by_names($trp_lst->names());
-        $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
-        //$this->value_list()->load_by_ids();
-        return $usr_msg;
     }
 
     /**

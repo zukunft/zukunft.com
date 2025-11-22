@@ -94,8 +94,8 @@ class test_words
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type::NORMAL, $this->env->usr1);
-        global $ptc_typ_cac;
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        global $sys;
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $wrd;
     }
 
@@ -114,13 +114,13 @@ class test_words
      */
     function word_view_set(): word
     {
-        global $ptc_typ_cac;
+        global $sys;
         $wrd = new word($this->env->usr1);
         $wrd->set(words::COMPANY_ID, words::COMPANY);
         $msk = new view($this->env->usr1);
         $msk->set(views::HISTORIC_ID);
         $wrd->view = $msk;
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $wrd;
     }
 
@@ -140,8 +140,7 @@ class test_words
      */
     function word_filled(): word
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $wrd = new word($this->env->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
@@ -152,8 +151,8 @@ class test_words
         $wrd->set_usage(test_const::DUMMY_USAGE_WORD);
         $wrd->set_impact(test_const::DUMMY_IMPACT);
         $wrd->exclude();
-        $wrd->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $wrd;
     }
 
@@ -219,8 +218,8 @@ class test_words
         $wrd->set(words::CONST_ID, words::CONST_NAME);
         $wrd->description = words::CONST_COM;
         $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
-        global $ptc_typ_cac;
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        global $sys;
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $wrd;
     }
 
@@ -233,8 +232,8 @@ class test_words
         $wrd->set(words::PI_SYMBOL_ID, words::PI_SYMBOL);
         $wrd->description = words::PI_SYMBOL_COM;
         $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
-        global $ptc_typ_cac;
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        global $sys;
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $wrd;
     }
 
@@ -247,8 +246,8 @@ class test_words
         $wrd->set(words::PI_ID, words::PI);
         $wrd->description = words::PI_COM;
         $wrd->set_type(phrase_type::MATH_CONST, $this->env->usr1);
-        global $ptc_typ_cac;
-        $wrd->set_protection_id($ptc_typ_cac->id(protection_type::ADMIN));
+        global $sys;
+        $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
         return $wrd;
     }
 
@@ -850,7 +849,7 @@ class test_words
      */
     function random(?int $id = null): word
     {
-        global $phr_typ_cac;
+        global $sys;
 
         if ($id == null) {
             $id = $this->env->next_seq_nbr();
@@ -861,7 +860,7 @@ class test_words
         $wrd->id = $id;
         $wrd->set_name(words::TEST_SPEED_PREFIX . $id);
 
-        $type_id = rand(1, $phr_typ_cac->count());
+        $type_id = rand(1, $sys->typ_lst->phr_typ->count());
         $wrd->set_type_id($type_id, $test_usr);
         return $wrd;
     }

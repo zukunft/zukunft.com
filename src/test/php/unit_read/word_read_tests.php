@@ -58,8 +58,8 @@ class word_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
 
         // init
         $t_wrd = new test_words($t);
@@ -90,7 +90,7 @@ class word_read_tests
         $t->assert_true($test_name, $result);
 
         $test_name = 'check that at least ' . phrase_type_shared::NORMAL . ' is loaded';
-        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert($test_name, $result, 1);
 
 
@@ -153,7 +153,7 @@ class word_read_tests
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_type($phr_typ_cac->id(phrase_type_shared::PERCENT));
+        $wrd_lst->load_by_type($sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . words::PCT . '"');
 
         // load a word list by name pattern

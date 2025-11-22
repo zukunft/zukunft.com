@@ -284,11 +284,11 @@ class word extends sandbox_code_id
      */
     function set_type(?string $code_id): void
     {
-        global $phr_typ_cac;
+        global $sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phr_typ_cac->id($code_id));
+            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
         }
     }
 
@@ -414,10 +414,10 @@ class word extends sandbox_code_id
      */
     function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $phr_typ_cac;
+        global $sys;
         $result = '';
-        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
-            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
+        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+            $result .= ' type: ' . $sys->typ_lst->phr_typ->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
         }
@@ -532,10 +532,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type): bool
     {
-        global $phr_typ_cac;
+        global $sys;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phr_typ_cac->id($type)) {
+            if ($this->type_id() == $sys->typ_lst->phr_typ->id($type)) {
                 $result = true;
             }
         }
@@ -885,11 +885,11 @@ class word extends sandbox_code_id
 
     function dsp_formula(string $back = ''): string
     {
-        global $phr_typ_cac;
+        global $sys;
         $html = new html_base();
 
         $result = '';
-        if ($this->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+        if ($this->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = new formula();

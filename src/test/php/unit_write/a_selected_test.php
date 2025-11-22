@@ -150,7 +150,7 @@ class a_selected_test extends test_cleanup
              * prepare db testing
              */
 
-            $t_db->type_list_recreate($this);
+            $t_db->type_list_recreate($this, $usr);
 
             //$this->create_test_db_entries($t);
 

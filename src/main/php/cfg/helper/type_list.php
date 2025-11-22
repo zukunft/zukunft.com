@@ -506,26 +506,14 @@ class type_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
@@ -857,11 +845,11 @@ class type_list
      */
     function view_id_list(array $code_id_list): array
     {
-        global $msk_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $msk_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->msk_typ->id($code_id);
         }
         return $result;
     }
@@ -872,11 +860,11 @@ class type_list
      */
     function component_id_list(array $code_id_list): array
     {
-        global $cmp_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $cmp_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->cmp_typ->id($code_id);
         }
         return $result;
     }

@@ -221,13 +221,13 @@ class config_numbers extends value_list
      */
     function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
-        global $sys_times;
+        global $sys;
         $usr_msg = new user_message();
         if ($this->is_cache_valid($usr, $phr)) {
-            $sys_times->switch(system_time_type::LOAD_CONFIG_CACHE);
+            $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
             $this->read_cache($usr, $phr);
         } else {
-            $sys_times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
             // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
@@ -246,7 +246,7 @@ class config_numbers extends value_list
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
             if ($usr_msg->is_ok()) {
-                $sys_times->switch(system_time_type::WRITE_CONFIG_CACHE);
+                $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
                 $this->write_cache($usr, $phr);
             }
         }

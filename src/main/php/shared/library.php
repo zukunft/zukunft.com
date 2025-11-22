@@ -1315,6 +1315,7 @@ class library
             'Zukunft\ZukunftCom\main\php\cfg\system' => 'paths::MODEL_SYSTEM',
             'Zukunft\ZukunftCom\main\php\cfg\formula' => 'paths::MODEL_FORMULA',
             'Zukunft\ZukunftCom\main\php\cfg\element' => 'paths::MODEL_ELEMENT',
+            'Zukunft\ZukunftCom\main\php\cfg\log_text' => 'paths::MODEL_LOG_TEXT',
             'Zukunft\ZukunftCom\main\php\cfg\result' => 'paths::MODEL_RESULT',
             'Zukunft\ZukunftCom\main\php\cfg\phrase' => 'paths::MODEL_PHRASE',
             'Zukunft\ZukunftCom\main\php\cfg\sandbox' => 'paths::MODEL_SANDBOX',
@@ -2581,11 +2582,11 @@ class library
      */
     function ui_class_to_table_id_list(string $class): array
     {
-        global $cng_tbl_cac;
+        global $sys;
 
         $result = [];
 
-        $result[] = $cng_tbl_cac->id($this->class_to_table($class));
+        $result[] = $sys->typ_lst->cng_tbl->id($this->class_to_table($class));
         // TODO Prio 2 add a test case for a table rename
         //if ($class == word_dsp::class) {
         //    $result[] = 5;

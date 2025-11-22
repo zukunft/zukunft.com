@@ -100,7 +100,7 @@ class unit_env
     {
         global $usr;
         global $usr_sys;
-        global $usr_pro_cac;
+        global $sys;
 
         // prepare the unit tests
         $this->init_sys_log_status();
@@ -109,8 +109,8 @@ class unit_env
         $this->init_job_types();
 
         // set the profile of the test users
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::EMAIL);
-        $usr_sys->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::EMAIL);
+        $usr_sys->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
         $usr->id = 1;
 
         // continue with preparing unit tests
@@ -145,10 +145,10 @@ class unit_env
      */
     private function init_sys_log_status(): void
     {
-        global $sys_log_sta_cac;
+        global $sys;
 
-        $sys_log_sta_cac = new sys_log_status_list();
-        $sys_log_sta_cac->load_dummy();
+        $sys->typ_lst->sys_log_sta = new sys_log_status_list();
+        $sys->typ_lst->sys_log_sta->load_dummy();
     }
 
     /**
@@ -168,10 +168,10 @@ class unit_env
      */
     private function init_user_profiles(): void
     {
-        global $usr_pro_cac;
+        global $sys;
 
-        $usr_pro_cac = new user_profile_list();
-        $usr_pro_cac->load_dummy();
+        $sys->typ_lst->usr_pro = new user_profile_list();
+        $sys->typ_lst->usr_pro->load_dummy();
 
     }
 
@@ -180,10 +180,10 @@ class unit_env
      */
     private function init_phrase_types(): void
     {
-        global $phr_typ_cac;
+        global $sys;
 
-        $phr_typ_cac = new phrase_types();
-        $phr_typ_cac->load_dummy();
+        $sys->typ_lst->phr_typ = new phrase_types();
+        $sys->typ_lst->phr_typ->load_dummy();
 
     }
 
@@ -192,10 +192,10 @@ class unit_env
      */
     private function init_verbs(): void
     {
-        global $vrb_cac;
+        global $sys;
 
-        $vrb_cac = new verb_list();
-        $vrb_cac->load_dummy();
+        $sys->typ_lst->vrb = new verb_list();
+        $sys->typ_lst->vrb->load_dummy();
 
     }
 
@@ -204,10 +204,8 @@ class unit_env
      */
     private function init_formula_types(): void
     {
-        global $frm_typ_cac;
-
-        $frm_typ_cac = new formula_type_list();
-        $frm_typ_cac->load_dummy();
+        global $sys;
+        $sys->typ_lst->frm_typ->load_dummy();
 
     }
 
@@ -217,10 +215,10 @@ class unit_env
     private function init_formula_html_types(): void
     {
         global $html_formula_types;
-        global $frm_typ_cac;
+        global $sys;
 
         $html_formula_types = new formula_type_list_ui();
-        $html_formula_types->set_from_json_array($frm_typ_cac->api_json_array());
+        $html_formula_types->set_from_json_array($sys->typ_lst->frm_typ->api_json_array());
 
     }
 
@@ -229,10 +227,10 @@ class unit_env
      */
     private function init_formula_link_types(): void
     {
-        global $frm_lnk_typ_cac;
+        global $sys;
 
-        $frm_lnk_typ_cac = new formula_link_type_list();
-        $frm_lnk_typ_cac->load_dummy();
+        $sys->typ_lst->frm_lnk_typ = new formula_link_type_list();
+        $sys->typ_lst->frm_lnk_typ->load_dummy();
 
     }
 
@@ -241,10 +239,10 @@ class unit_env
      */
     private function init_element_types(): void
     {
-        global $elm_typ_cac;
+        global $sys;
 
-        $elm_typ_cac = new element_type_list();
-        $elm_typ_cac->load_dummy();
+        $sys->typ_lst->elm_typ = new element_type_list();
+        $sys->typ_lst->elm_typ->load_dummy();
 
     }
 
@@ -265,10 +263,10 @@ class unit_env
      */
     private function init_view_types(): void
     {
-        global $msk_typ_cac;
+        global $sys;
 
-        $msk_typ_cac = new view_type_list();
-        $msk_typ_cac->load_dummy();
+        $sys->typ_lst->msk_typ = new view_type_list();
+        $sys->typ_lst->msk_typ->load_dummy();
 
     }
 
@@ -277,10 +275,10 @@ class unit_env
      */
     private function init_view_link_types(): void
     {
-        global $msk_lnk_typ_cac;
+        global $sys;
 
-        $msk_lnk_typ_cac = new view_link_type_list();
-        $msk_lnk_typ_cac->load_dummy();
+        $sys->typ_lst->msk_lnk_typ = new view_link_type_list();
+        $sys->typ_lst->msk_lnk_typ->load_dummy();
 
     }
 
@@ -301,10 +299,10 @@ class unit_env
      */
     private function init_component_types(): void
     {
-        global $cmp_typ_cac;
+        global $sys;
 
-        $cmp_typ_cac = new component_type_list();
-        $cmp_typ_cac->load_dummy();
+        $sys->typ_lst->cmp_typ = new component_type_list();
+        $sys->typ_lst->cmp_typ->load_dummy();
 
     }
 
@@ -313,10 +311,10 @@ class unit_env
      */
     private function init_component_link_types(): void
     {
-        global $cmp_lnk_typ_cac;
+        global $sys;
 
-        $cmp_lnk_typ_cac = new component_link_type_list();
-        $cmp_lnk_typ_cac->load_dummy();
+        $sys->typ_lst->cmp_lnk_typ = new component_link_type_list();
+        $sys->typ_lst->cmp_lnk_typ->load_dummy();
 
     }
 
@@ -325,10 +323,10 @@ class unit_env
      */
     private function init_component_pos_types(): void
     {
-        global $pos_typ_cac;
+        global $sys;
 
-        $pos_typ_cac = new position_type_list();
-        $pos_typ_cac->load_dummy();
+        $sys->typ_lst->pos_typ = new position_type_list();
+        $sys->typ_lst->pos_typ->load_dummy();
 
     }
 
@@ -337,10 +335,10 @@ class unit_env
      */
     private function init_ref_types(): void
     {
-        global $ref_typ_cac;
+        global $sys;
 
-        $ref_typ_cac = new ref_type_list();
-        $ref_typ_cac->load_dummy();
+        $sys->typ_lst->ref_typ = new ref_type_list();
+        $sys->typ_lst->ref_typ->load_dummy();
 
     }
 
@@ -349,10 +347,10 @@ class unit_env
      */
     private function init_source_types(): void
     {
-        global $src_typ_cac;
+        global $sys;
 
-        $src_typ_cac = new source_type_list();
-        $src_typ_cac->load_dummy();
+        $sys->typ_lst->src_typ = new source_type_list();
+        $sys->typ_lst->src_typ->load_dummy();
 
     }
 
@@ -361,10 +359,10 @@ class unit_env
      */
     private function init_share_types(): void
     {
-        global $shr_typ_cac;
+        global $sys;
 
-        $shr_typ_cac = new share_type_list();
-        $shr_typ_cac->load_dummy();
+        $sys->typ_lst->shr_typ = new share_type_list();
+        $sys->typ_lst->shr_typ->load_dummy();
 
     }
 
@@ -373,10 +371,10 @@ class unit_env
      */
     private function init_protection_types(): void
     {
-        global $ptc_typ_cac;
+        global $sys;
 
-        $ptc_typ_cac = new protection_type_list();
-        $ptc_typ_cac->load_dummy();
+        $sys->typ_lst->ptc_typ = new protection_type_list();
+        $sys->typ_lst->ptc_typ->load_dummy();
 
     }
 
@@ -385,10 +383,10 @@ class unit_env
      */
     private function init_languages(): void
     {
-        global $lan_cac;
+        global $sys;
 
-        $lan_cac = new language_list();
-        $lan_cac->load_dummy();
+        $sys->typ_lst->lan = new language_list();
+        $sys->typ_lst->lan->load_dummy();
 
     }
 
@@ -397,10 +395,10 @@ class unit_env
      */
     private function init_language_forms(): void
     {
-        global $lan_for_cac;
+        global $sys;
 
-        $lan_for_cac = new language_form_list();
-        $lan_for_cac->load_dummy();
+        $sys->typ_lst->lan_for = new language_form_list();
+        $sys->typ_lst->lan_for->load_dummy();
 
     }
 
@@ -409,10 +407,8 @@ class unit_env
      */
     private function init_job_types(): void
     {
-        global $job_typ_cac;
-
-        $job_typ_cac = new job_type_list();
-        $job_typ_cac->load_dummy();
+        global $sys;
+        $sys->typ_lst->job_typ->load_dummy();
 
     }
 
@@ -421,10 +417,8 @@ class unit_env
      */
     private function init_log_actions(): void
     {
-        global $cng_act_cac;
-
-        $cng_act_cac = new change_action_list();
-        $cng_act_cac->load_dummy();
+        global $sys;
+        $sys->typ_lst->cng_act->load_dummy();
 
     }
 
@@ -433,10 +427,8 @@ class unit_env
      */
     private function init_log_tables(): void
     {
-        global $cng_tbl_cac;
-
-        $cng_tbl_cac = new change_table_list();
-        $cng_tbl_cac->load_dummy();
+        global $sys;
+        $sys->typ_lst->cng_tbl->load_dummy();
 
     }
 
@@ -445,10 +437,8 @@ class unit_env
      */
     private function init_log_fields(): void
     {
-        global $cng_fld_cac;
-
-        $cng_fld_cac = new change_field_list();
-        $cng_fld_cac->load_dummy();
+        global $sys;
+        $sys->typ_lst->cng_fld->load_dummy();
 
     }
 

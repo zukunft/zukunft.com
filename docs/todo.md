@@ -27,15 +27,41 @@ A proper issue ticket should be created for these TODOs notes:
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
     TODO use only these global vars:
          - $db_con for the database connection
-         - $cac for the backend cache  
+         - $cac for the backend cache of user specific 
          - $ui_cac for the frontend cache including the session user
          - $t_cac for the test environment 
+         - maybe $cfg for the user configuration that changes more often than the types and the system views  
+         - maybe $sys for not user specific system cache including types, system views that change rarely 
+                      for easy check how many times the code writes
+                      and execution times vars
          pro using a global var:
            - less parameters for functions, so easier to read and maybe faster
          cont:
-           - parameters make it easier to simulate test scenaries
+           - parameters make it easier to simulate test scenaries (can be avoided by using the cache as a parameter)
          result:
            - use the global vars if not a test scenario is needed
+    TODO add backend cache objects:
+         $trg = new trigger(); // to trigger cache refresh on next database access
+         $pus = new push_message() // to push an update message to the frontend f9r data cached in frontend
+         This implies that the frontend confirm cached elements in the backend
+         The question is how? Assume that everything is cached until cache deletion is confirmed and end session confirms complete delete
+    TODO add a backend db cache table (until it is known how the server file system can be used in all configuration)
+         the fields of the table "cache" are: 
+            - type: the cache type, which can be
+                1 = types,
+                2 = system config incl pod config, 
+                3 = frontend config, 
+                4 = system views, 
+                5 = user config
+            - user (only used for type 3 to 5
+            - created (if null the cache is invalid)
+            - last_used (timestamp of the last use, so that old unused cache can be cleaned up)
+            - json (the message e.g. in the json format)
+         Only write user specific system views if really needed
+         do not write a combined cache because reading 3 rows from the is fast if done with one request
+    TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
+         the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
+
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects

@@ -254,7 +254,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_action(string $action_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_act_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -263,14 +263,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->action_id = $cng_act_cac->id($action_name);
+        $this->action_id = $sys->typ_lst->cng_act->id($action_name);
         if ($this->action_id <= 0) {
             $this->add_action($used_db_con, $action_name);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
                 $act = new type_object($action_name, $action_name, '', $this->action_id);
-                $cng_act_cac->add($act);
+                $sys->typ_lst->cng_act->add($act);
                 $db_changed = true;
             }
         }
@@ -283,8 +283,8 @@ class change_log extends db_object_seq_id_user
      */
     function action(): string
     {
-        global $cng_act_cac;
-        return $cng_act_cac->name($this->action_id);
+        global $sys;
+        return $sys->typ_lst->cng_act->name($this->action_id);
     }
 
     /**
@@ -311,7 +311,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_table(string $table_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_tbl_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -320,14 +320,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->table_id = $cng_tbl_cac->id($table_name);
+        $this->table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($this->table_id <= 0) {
             $this->add_table($used_db_con, $table_name);
             if ($this->table_id <= 0) {
                 log_err("Cannot add table name " . $table_name);
             } else {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
-                $cng_tbl_cac->add($tbl);
+                $sys->typ_lst->cng_tbl->add($tbl);
                 $db_changed = true;
             }
         }
@@ -340,8 +340,8 @@ class change_log extends db_object_seq_id_user
      */
     function table(): string
     {
-        global $cng_tbl_cac;
-        return $cng_tbl_cac->name($this->table_id);
+        global $sys;
+        return $sys->typ_lst->cng_tbl->name($this->table_id);
     }
 
     /**
@@ -352,7 +352,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_field(string $field_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_fld_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -362,7 +362,7 @@ class change_log extends db_object_seq_id_user
 
         $db_changed = false;
         if ($this->table_id > 0) {
-            $this->field_id = $cng_fld_cac->id($this->table_id . $field_name);
+            $this->field_id = $sys->typ_lst->cng_fld->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 if ($used_db_con->connected()) {
                     $this->add_field($used_db_con, $field_name);
@@ -374,7 +374,7 @@ class change_log extends db_object_seq_id_user
                             $this->table_id . $field_name,
                             '',
                             $this->field_id);
-                        $cng_fld_cac->add($tbl);
+                        $sys->typ_lst->cng_fld->add($tbl);
                         $db_changed = true;
                     }
                 } else {
@@ -393,11 +393,11 @@ class change_log extends db_object_seq_id_user
      */
     function field(): string
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lib = new library();
 
-        $field_key = $cng_fld_cac->name($this->field_id);
+        $field_key = $sys->typ_lst->cng_fld->name($this->field_id);
         return $lib->str_right_of_or_all($field_key, $this->table_id);
     }
 

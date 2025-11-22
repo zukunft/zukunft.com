@@ -322,13 +322,13 @@ class source extends sandbox_code_id
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $src_typ_cac;
-        if ($src_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->src_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -352,8 +352,8 @@ class source extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $src_typ_cac;
-        return $src_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->src_typ->code_id($this->type_id);
     }
 
     /**
@@ -361,11 +361,11 @@ class source extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $src_typ_cac;
+        global $sys;
 
         $type_name = '';
         if ($this->type_id > 0) {
-            $type_name = $src_typ_cac->name($this->type_id);
+            $type_name = $sys->typ_lst->src_typ->name($this->type_id);
         }
         return $type_name;
     }
@@ -635,7 +635,7 @@ class source extends sandbox_code_id
         user_message   $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -646,7 +646,7 @@ class source extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . source_db::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -661,7 +661,7 @@ class source extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
-                    $cng_fld_cac->id($table_id . source_db::FLD_URL),
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

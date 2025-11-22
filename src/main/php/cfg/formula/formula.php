@@ -268,7 +268,7 @@ class formula extends sandbox_code_id
         string $name_fld = formula_db::FLD_NAME,
         string $type_fld = formula_db::FLD_TYPE): bool
     {
-        global $frm_typ_cac;
+        global $sys;
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
@@ -294,7 +294,7 @@ class formula extends sandbox_code_id
             }
 
             if ($this->type_id > 0) {
-                $this->type_cl = $frm_typ_cac->code_id($this->type_id);
+                $this->type_cl = $sys->typ_lst->frm_typ->code_id($this->type_id);
             }
             /*
             if ($this->id() > 0) {
@@ -390,7 +390,7 @@ class formula extends sandbox_code_id
         ?data_object $dto = null
     ): bool
     {
-        global $frm_typ_cac;
+        global $sys;
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->user();
@@ -399,9 +399,9 @@ class formula extends sandbox_code_id
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+            $this->type_id = $sys->typ_lst->frm_typ->id($in_ex_json[json_fields::TYPE_NAME]);
         } else {
-            $this->type_id = $frm_typ_cac->default_id();
+            $this->type_id = $sys->typ_lst->frm_typ->default_id();
         }
         if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
             if ($in_ex_json[json_fields::EXPRESSION] <> '') {
@@ -431,7 +431,7 @@ class formula extends sandbox_code_id
 
         // set the default type if no type is specified
         if ($this->type_id == 0) {
-            $this->type_id = $frm_typ_cac->default_id();
+            $this->type_id = $sys->typ_lst->frm_typ->default_id();
         }
 
         if ($usr_msg->is_ok()) {
@@ -485,13 +485,13 @@ class formula extends sandbox_code_id
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $frm_typ_cac;
-        if ($frm_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->frm_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->frm_typ, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->frm_typ, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -579,8 +579,8 @@ class formula extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $frm_typ_cac;
-        return $frm_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->frm_typ->code_id($this->type_id);
     }
 
     /**
@@ -588,8 +588,8 @@ class formula extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $frm_typ_cac;
-        return $frm_typ_cac->name($this->type_id);
+        global $sys;
+        return $sys->typ_lst->frm_typ->name($this->type_id);
     }
 
 
@@ -709,12 +709,12 @@ class formula extends sandbox_code_id
      */
     function formula_word(): word
     {
-        global $phr_typ_cac;
+        global $sys;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
         return $name_wrd;
     }
 
@@ -725,7 +725,7 @@ class formula extends sandbox_code_id
      */
     function wrd_add(): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_debug('formula wrd_add for ' . $this->dsp_id());
         $result = false;
@@ -796,7 +796,7 @@ class formula extends sandbox_code_id
      */
     function wrd_add_fix(): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
         $result = false;
@@ -804,7 +804,7 @@ class formula extends sandbox_code_id
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
-        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
@@ -1763,12 +1763,12 @@ class formula extends sandbox_code_id
     {
         $vars = parent::export_json($do_load);
 
-        global $frm_typ_cac;
+        global $sys;
 
         // TODO avoid the var overwrite be overwriting the type_name() function
         if (isset($this->type_id)) {
-            if ($this->type_id <> $frm_typ_cac->default_id()) {
-                $vars[json_fields::TYPE_NAME] = $frm_typ_cac->code_id($this->type_id);
+            if ($this->type_id <> $sys->typ_lst->frm_typ->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $sys->typ_lst->frm_typ->code_id($this->type_id);
             } else {
                 // unset the type that might be set by the parent object
                 unset($vars[json_fields::TYPE_NAME]);
@@ -2513,7 +2513,7 @@ class formula extends sandbox_code_id
     private
     function is_term_the_same(term $trm): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         if ($trm->type() == formula::class) {
@@ -2523,7 +2523,7 @@ class formula extends sandbox_code_id
             if ($trm->obj() == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
-                if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+                if ($trm->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                     //$result = $trm;
                     $result = true;
                 }
@@ -2699,7 +2699,7 @@ class formula extends sandbox_code_id
 
         global $db_con;
         global $mtr;
-        global $phr_typ_cac;
+        global $sys;
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -2723,7 +2723,7 @@ class formula extends sandbox_code_id
                 if ($trm->id_obj() > 0) {
                     if ($trm->type() <> formula::class) {
                         if ($trm->type() == word::class) {
-                            if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+                            if ($trm->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
                                 $usr_msg->add($trm->id_used_msg($this));
@@ -2896,7 +2896,6 @@ class formula extends sandbox_code_id
     function del_links(): user_message
     {
         global $db_con;
-        global $phr_typ_cac;
         $usr_msg = new user_message();
 
         $frm_lnk_lst = new formula_link_list($this->user());
@@ -2979,7 +2978,7 @@ class formula extends sandbox_code_id
         user_message    $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -2990,7 +2989,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3005,7 +3004,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_FORMULA_TEXT),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_FORMULA_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3020,7 +3019,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_FORMULA_USER_TEXT),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_FORMULA_USER_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3035,7 +3034,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_ALL_NEEDED),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_ALL_NEEDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3060,7 +3059,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_VIEW),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3075,7 +3074,7 @@ class formula extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

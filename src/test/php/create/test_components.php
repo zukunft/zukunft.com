@@ -121,24 +121,23 @@ class test_components
 
     function view_link(): term_view
     {
-        global $msk_lnk_typ_cac;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $t_msk = new test_views($this->env);
         $lnk = new term_view($this->env->usr1);
         $lnk->set(1, $t_msk->view(), $t_wrd->word()->term());
-        $lnk->set_predicate_id($msk_lnk_typ_cac->id(view_link_type::DEFAULT));
+        $lnk->set_predicate_id($sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }
 
     function view_link_filled(): term_view
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $lnk = $this->view_link();
         $lnk->exclude();
-        $lnk->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $lnk->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $lnk;
     }
 
@@ -177,8 +176,7 @@ class test_components
      */
     function component_filled(): component
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_phr = new test_phrases($this->env);
         $cmp = new component($this->env->usr1);
         $cmp->set(components::WORD_ID, components::WORD_NAME);
@@ -198,8 +196,8 @@ class test_components
         //$cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();
-        $cmp->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $cmp->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $cmp->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $cmp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $cmp;
     }
 
@@ -395,8 +393,7 @@ class test_components
 
     function component_link_filled(): component_link
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $t_msk = new test_views($this->env);
         $lnk = new component_link($this->env->usr1);
         $lnk->set(1, $t_msk->view(), $this->component(), 1);
@@ -404,8 +401,8 @@ class test_components
         $lnk->set_pos_type(position_types::SIDE);
         $lnk->set_style(view_styles::COL_SM_4);
         $lnk->exclude();
-        $lnk->set_share_id($shr_typ_cac->id(share_type::GROUP));
-        $lnk->set_protection_id($ptc_typ_cac->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $lnk;
     }
 

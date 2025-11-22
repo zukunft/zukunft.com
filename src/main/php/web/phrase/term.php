@@ -220,12 +220,12 @@ class term extends combine_named_dsp
     private
     function load_word_by_id(int $id): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

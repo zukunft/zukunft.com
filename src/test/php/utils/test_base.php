@@ -506,8 +506,8 @@ class test_base
      */
     function header(string $header_text): void
     {
+        global $sys;
         global $log_txt;
-        global $sys_times;
         $log_txt->header($header_text);
 
         // reset the test timer to avoid timeouts due to a delay in previous tests
@@ -551,8 +551,8 @@ class test_base
 
     private function timeout_explain(float $expected): string
     {
-        global $sys_times;
-        return $sys_times->section_report($expected);
+        global $sys;
+        return $sys->times->section_report($expected);
     }
 
     private function ok_msg(string $test_name): string
@@ -3725,8 +3725,8 @@ class test_base
 
     function assert_verb_id(string $code_id, int $id, string $test_name): int
     {
-        global $vrb_cac;
-        $vrb_is_id = $vrb_cac->id($code_id);
+        global $sys;
+        $vrb_is_id = $sys->typ_lst->vrb->id($code_id);
         if ($this->assert($test_name, $vrb_is_id, $id)) {
             return $vrb_is_id;
         } else {
@@ -3928,13 +3928,13 @@ class test_base
      */
     function dsp_result(): void
     {
+        global $sys;
         global $errors;
-        global $sys_times;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
-        echo ' (' . $sys_times->report($since_start) . ')';
+        echo ' (' . $sys->times->report($since_start) . ')';
         echo "\n";
         echo $this->total_tests . ' test cases';
         echo "\n";

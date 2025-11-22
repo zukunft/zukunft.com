@@ -229,8 +229,8 @@ class sys_log extends db_object_seq_id
      */
     function status_name(): string
     {
-        global $sys_log_sta_cac;
-        return $sys_log_sta_cac->name($this->status_id);
+        global $sys;
+        return $sys->typ_lst->sys_log_sta->name($this->status_id);
     }
 
 
@@ -419,12 +419,12 @@ class sys_log extends db_object_seq_id
     private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
-        global $sys_log_sta_cac;
+        global $sys;
 
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
-            $log->old_value = $sys_log_sta_cac->name($db_rec->status_id);
+            $log->old_value = $sys->typ_lst->sys_log_sta->name($db_rec->status_id);
             $log->old_id = $db_rec->status_id;
             $log->new_value = $this->status_name();
             $log->new_id = $this->status_id;

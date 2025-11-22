@@ -438,7 +438,7 @@ class user extends db_id_object_non_sandbox
         user_message $usr_msg
     ): void
     {
-        global $usr_pro_cac;
+        global $sys;
 
         if (key_exists(json_fields::NAME, $json)) {
             $this->name = $json[json_fields::NAME];
@@ -460,7 +460,7 @@ class user extends db_id_object_non_sandbox
             $this->last_name = $json[json_fields::LAST_NAME];
         }
         if (key_exists(json_fields::PROFILE, $json)) {
-            $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
+            $profile_id_to_add = $sys->typ_lst->usr_pro->id($json[json_fields::PROFILE]);
             if ($usr_req->can_set_profile($profile_id_to_add)) {
                 $this->profile_id = $profile_id_to_add;
             } else {
@@ -878,9 +878,9 @@ class user extends db_id_object_non_sandbox
 
     function load_by_profile_code(string $profile_code_id): bool
     {
-        global $usr_pro_cac;
-        if ($usr_pro_cac != null) {
-            return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
+        global $sys;
+        if ($sys->typ_lst->usr_pro != null) {
+            return $this->load_by_profile($sys->typ_lst->usr_pro->id($profile_code_id));
         } else {
             return false;
         }
@@ -1072,19 +1072,19 @@ class user extends db_id_object_non_sandbox
      */
     function load_usr_data(): void
     {
+        global $sys;
         global $db_con;
-        global $vrb_cac;
+        global $sys;
         global $sys_msk_cac;
-        global $sys_times;
 
-        $sys_times->switch(system_time_type::LOAD_USER_DATA);
-        $vrb_cac = new verb_list($this);
-        $vrb_cac->load($db_con);
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $sys->typ_lst->vrb = new verb_list($this);
+        $sys->typ_lst->vrb->load($db_con);
 
         $sys_msk_cac = new view_sys_list($this);
         $sys_msk_cac->load($db_con);
 
-        $sys_times->switch(system_time_type::DEFAULT);
+        $sys->times->switch(system_time_type::DEFAULT);
     }
 
     function has_any_user_this_profile(string $profile_code_id): bool
@@ -1201,12 +1201,12 @@ class user extends db_id_object_non_sandbox
         $usr_msg = new user_message();
         if ($db_con->count(user::class) <= 0) {
             // reload user profiles if needed
-            global $usr_pro_cac;
-            if ($usr_pro_cac == null) {
+            global $sys;
+            if ($sys->typ_lst->usr_pro == null) {
                 log_warning('unexpected reload of user profiles');
-                $usr_pro_cac = new user_profile_list();
-                if (!$usr_pro_cac->load($db_con)) {
-                    $usr_pro_cac->load_dummy();
+                $sys->typ_lst->usr_pro = new user_profile_list();
+                if (!$sys->typ_lst->usr_pro->load($db_con)) {
+                    $sys->typ_lst->usr_pro->load_dummy();
                 };
             }
 
@@ -1340,9 +1340,9 @@ class user extends db_id_object_non_sandbox
     {
         $result = false;
 
-        global $usr_pro_cac;
+        global $sys;
 
-        $profile = $usr_pro_cac->get($profile_id);
+        $profile = $sys->typ_lst->usr_pro->get($profile_id);
         // the system users can assign all profiles
         if ($this->is_system()) {
             $result = true;
@@ -1463,7 +1463,7 @@ class user extends db_id_object_non_sandbox
         ?user        $usr_req = null
     ): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         global $usr;
 
         if ($usr_req == null) {
@@ -1500,11 +1500,11 @@ class user extends db_id_object_non_sandbox
                 $this->code_id = $value;
             }
             if ($key == json_fields::PROFILE) {
-                $this->profile_id = $usr_pro_cac->id($value);
+                $this->profile_id = $sys->typ_lst->usr_pro->id($value);
             }
             if ($key == json_fields::CODE_ID) {
-                if ($profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-                    or $profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+                if ($profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+                    or $profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -1651,11 +1651,11 @@ class user extends db_id_object_non_sandbox
      */
     function profile_code_id(): string
     {
-        global $usr_pro_cac;
+        global $sys;
 
         $result = '';
         if ($this->is_profile_valid()) {
-            $result = $usr_pro_cac->code_id($this->profile_id);
+            $result = $sys->typ_lst->usr_pro->code_id($this->profile_id);
         }
         return $result;
     }
@@ -1673,18 +1673,18 @@ class user extends db_id_object_non_sandbox
      */
     function is_unique(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::EMAIL)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::HUMAN)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYS_LINK)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::DEV)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::EMAIL)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::HUMAN)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYS_LINK)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1696,12 +1696,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_developer(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::DEV)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)) {
                 $result = true;
             }
         }
@@ -1713,12 +1713,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_admin(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -1730,20 +1730,20 @@ class user extends db_id_object_non_sandbox
      */
     function is_system(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         // TODO Prio 1 should never happen, so create a log_err instead of a log_warning
-        if ($usr_pro_cac == null) {
+        if ($sys->typ_lst->usr_pro == null) {
             log_warning('unexpected creation of a user profile list because it has been empty');
-            $usr_pro_cac = new user_profile_list();
-            $usr_pro_cac->load_dummy();
+            $sys->typ_lst->usr_pro = new user_profile_list();
+            $sys->typ_lst->usr_pro->load_dummy();
         }
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1755,12 +1755,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_normal(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::NORMAL)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::NORMAL)) {
                 $result = true;
             }
         }
@@ -1783,13 +1783,13 @@ class user extends db_id_object_non_sandbox
     // true if the user has the right to import data
     function can_import(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-            or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-            or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+        if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+            or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+            or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -1854,9 +1854,9 @@ class user extends db_id_object_non_sandbox
 
     function set_profile(string $profile_code_id): void
     {
-        global $usr_pro_cac;
-        $this->profile_id = $usr_pro_cac->id($profile_code_id);
-        //$this->profile = $usr_pro_cac->lst[$this->profile_id];
+        global $sys;
+        $this->profile_id = $sys->typ_lst->usr_pro->id($profile_code_id);
+        //$this->profile = $sys->typ_lst->usr_pro->lst[$this->profile_id];
     }
 
     /**
@@ -2305,10 +2305,10 @@ class user extends db_id_object_non_sandbox
         $par_lst_out = new sql_par_field_list();
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::ADD),
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -2407,6 +2407,7 @@ class user extends db_id_object_non_sandbox
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
+        global $sys;
         // clone the parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
@@ -2445,10 +2446,9 @@ class user extends db_id_object_non_sandbox
             $id_val = '_' . $id_fld;
 
             // add the change action field to the field list for the log entries
-            global $cng_act_cac;
             $fvt_lst->add_field(
                 change_action::FLD_ID,
-                $cng_act_cac->id(change_actions::UPDATE),
+                $sys->typ_lst->cng_act->id(change_actions::UPDATE),
                 type_object::FLD_ID_SQL_TYP
             );
 
@@ -2638,7 +2638,7 @@ class user extends db_id_object_non_sandbox
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -2654,7 +2654,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2671,7 +2671,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_IP_ADDR,
-                    $cng_fld_cac->id($table_id . user_db::FLD_IP_ADDR),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_IP_ADDR),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2690,7 +2690,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2707,7 +2707,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . user_db::FLD_CODE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2724,12 +2724,11 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PROFILE,
-                    $cng_fld_cac->id($table_id . user_db::FLD_PROFILE),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_PROFILE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $usr_pro_cac;
-            if ($usr_pro_cac == null) {
+            if ($sys->typ_lst->usr_pro == null) {
                 log_fatal('no user profile found', 'user->db_fields_changed');
             } else {
                 if ($this->profile_id() < 0) {
@@ -2743,7 +2742,7 @@ class user extends db_id_object_non_sandbox
                     type_object::FLD_NAME,
                     $this->profile_id(),
                     $db_usr->profile_id(),
-                    $usr_pro_cac);
+                    $sys->typ_lst->usr_pro);
             }
         }
 
@@ -2753,7 +2752,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
-                    $cng_fld_cac->id($table_id . user_db::FLD_TYPE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_TYPE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2773,7 +2772,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2790,7 +2789,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
-                    $cng_fld_cac->id($table_id . user_db::FLD_EMAIL),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_EMAIL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2807,7 +2806,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_FIRST_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_FIRST_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_FIRST_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2824,7 +2823,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_LAST_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2841,7 +2840,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TERM,
-                    $cng_fld_cac->id($table_id . user_db::FLD_TERM),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_TERM),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2858,7 +2857,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_SOURCE,
-                    $cng_fld_cac->id($table_id . user_db::FLD_SOURCE),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_SOURCE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

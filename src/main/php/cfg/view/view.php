@@ -472,13 +472,12 @@ class view extends sandbox_code_id
     {
         $vars = parent::export_json($do_load);
 
-        global $msk_typ_cac;
-        global $msk_sty_cac;
+        global $sys;
 
         // TODO avoid the var overwrite be overwriting the type_name() function
         if (isset($this->type_id)) {
-            if ($this->type_id <> $msk_typ_cac->default_id()) {
-                $vars[json_fields::TYPE_NAME] = $msk_typ_cac->code_id($this->type_id);
+            if ($this->type_id <> $sys->typ_lst->msk_typ->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $sys->typ_lst->msk_typ->code_id($this->type_id);
             } else {
                 // unset the type that might be set by the parent object
                 unset($vars[json_fields::TYPE_NAME]);
@@ -486,8 +485,8 @@ class view extends sandbox_code_id
         }
 
         if ($this->style_id() != null) {
-            if ($this->style_id() <> $msk_sty_cac->default_id()) {
-                $vars[json_fields::STYLE] = $msk_sty_cac->code_id($this->style_id());
+            if ($this->style_id() <> $sys->typ_lst->msk_sty->default_id()) {
+                $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->style_id());
             }
         }
 
@@ -515,13 +514,13 @@ class view extends sandbox_code_id
      */
     function set_type(?string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $msk_typ_cac;
-        if ($msk_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->msk_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->msk_typ, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -533,13 +532,13 @@ class view extends sandbox_code_id
      */
     function set_style(?string $code_id): user_message
     {
-        global $msk_sty_cac;
+        global $sys;
         $usr_msg = new user_message();
         if ($code_id == null) {
             $this->style = null;
         } else {
-            if ($msk_sty_cac->has_code_id($code_id)) {
-                $this->style = $msk_sty_cac->get_by_code_id($code_id);
+            if ($sys->typ_lst->msk_sty->has_code_id($code_id)) {
+                $this->style = $sys->typ_lst->msk_sty->get_by_code_id($code_id);
             } else {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_NOT_FOUND, [
                     msg_id::VAR_NAME => $code_id
@@ -558,11 +557,11 @@ class view extends sandbox_code_id
      */
     function set_style_by_id(?int $style_id): void
     {
-        global $msk_sty_cac;
+        global $sys;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_sty_cac->get($style_id);
+            $this->style = $sys->typ_lst->msk_sty->get($style_id);
         }
     }
 
@@ -637,8 +636,8 @@ class view extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $msk_typ_cac;
-        return $msk_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->msk_typ->code_id($this->type_id);
     }
 
     /**
@@ -646,8 +645,8 @@ class view extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $msk_typ_cac;
-        return $msk_typ_cac->name($this->type_id);
+        global $sys;
+        return $sys->typ_lst->msk_typ->name($this->type_id);
     }
 
     /**
@@ -657,8 +656,8 @@ class view extends sandbox_code_id
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $msk_typ_cac;
-        return $msk_typ_cac->id($code_id);
+        global $sys;
+        return $sys->typ_lst->msk_typ->id($code_id);
     }
 
 
@@ -1277,7 +1276,7 @@ class view extends sandbox_code_id
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -1288,11 +1287,11 @@ class view extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . view_db::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . view_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $msk_typ_cac;
+            global $sys;
             if ($this->type_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
@@ -1304,18 +1303,18 @@ class view extends sandbox_code_id
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $msk_typ_cac
+                $sys->typ_lst->msk_typ
             );
         }
         if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,
-                    $cng_fld_cac->id($table_id . view_db::FLD_STYLE),
+                    $sys->typ_lst->cng_fld->id($table_id . view_db::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $msk_sty_cac;
+            global $sys;
             // TODO move to id function of type list
             if ($this->style_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_MISSING, [
@@ -1328,7 +1327,7 @@ class view extends sandbox_code_id
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $msk_sty_cac
+                $sys->typ_lst->msk_sty
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

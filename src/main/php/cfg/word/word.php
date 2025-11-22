@@ -327,7 +327,7 @@ class word extends sandbox_code_id
         ?data_object $dto = null
     ): bool
     {
-        global $phr_typ_cac;
+        global $sys;
         global $db_con;
 
         // reset all parameters for the word object but keep the user
@@ -339,7 +339,7 @@ class word extends sandbox_code_id
         parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+            $this->type_id = $sys->typ_lst->phr_typ->id($in_ex_json[json_fields::TYPE_NAME]);
         }
         if (key_exists(json_fields::PLURAL, $in_ex_json)) {
             if ($in_ex_json[json_fields::PLURAL] <> '') {
@@ -383,7 +383,7 @@ class word extends sandbox_code_id
 
         // set the default type if no type is specified
         if ($this->type_id <= 0) {
-            $this->type_id = $phr_typ_cac->default_id();
+            $this->type_id = $sys->typ_lst->phr_typ->default_id();
         }
 
         if ($usr_msg->is_ok()) {
@@ -438,7 +438,7 @@ class word extends sandbox_code_id
      */
     function export_json(bool $do_load = true): array
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $vars = parent::export_json($do_load);
 
@@ -446,7 +446,7 @@ class word extends sandbox_code_id
             $vars[json_fields::PLURAL] = $this->plural;
         }
         if ($this->type_id > 0) {
-            if ($this->type_id == $phr_typ_cac->default_id()) {
+            if ($this->type_id == $sys->typ_lst->phr_typ->default_id()) {
                 unset($vars[json_fields::TYPE_NAME]);
             }
         }
@@ -486,13 +486,13 @@ class word extends sandbox_code_id
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $phr_typ_cac;
-        if ($phr_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->phr_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->phr_typ, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->phr_typ, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -575,8 +575,8 @@ class word extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->name($this->type_id);
+        global $sys;
+        return $sys->typ_lst->phr_typ->name($this->type_id);
     }
 
     /**
@@ -585,8 +585,8 @@ class word extends sandbox_code_id
      */
     function type_name_or_null(): ?string
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->name_or_null($this->type_id);
+        global $sys;
+        return $sys->typ_lst->phr_typ->name_or_null($this->type_id);
     }
 
     /**
@@ -595,8 +595,8 @@ class word extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->phr_typ->code_id($this->type_id);
     }
 
 
@@ -732,10 +732,10 @@ class word extends sandbox_code_id
      */
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
-        global $phr_typ_cac;
+        global $sys;
         $qp = parent::load_sql_usr_num($sc, $this, formula_db::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
+        $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -753,9 +753,9 @@ class word extends sandbox_code_id
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
-        // global $phr_typ_cac;
+        // global $sys;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
-        // $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        // $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
         // return $qp;
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -921,10 +921,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
-        if ($this->type_id == $phr_typ_cac->id($type)) {
+        if ($this->type_id == $sys->typ_lst->phr_typ->id($type)) {
             $result = true;
             log_debug($this->dsp_id() . ' is ' . $type);
         }
@@ -1077,10 +1077,10 @@ class word extends sandbox_code_id
      */
     function parents(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        $parent_phr_lst = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1121,14 +1121,14 @@ class word extends sandbox_code_id
      */
     function add_child(word $child): bool
     {
-        global $vrb_cac;
+        global $sys;
 
         $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->set_from($child->phrase());
-            $wrd_lnk->set_verb($vrb_cac->get_verb(verbs::IS));
+            $wrd_lnk->set_verb($sys->typ_lst->vrb->get_verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
             if ($wrd_lnk->save() == '') {
                 $result = true;
@@ -1145,10 +1145,10 @@ class word extends sandbox_code_id
      */
     function children(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->all_children($vrb_cac->get_verb(verbs::IS));
+        $child_phr_lst = $phr_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1173,9 +1173,9 @@ class word extends sandbox_code_id
      */
     function parts(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::PART_NAME));
+        return $phr_lst->foaf_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
     }
 
     /**
@@ -1184,9 +1184,9 @@ class word extends sandbox_code_id
      */
     function direct_parts(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::PART_NAME), 1);
+        return $phr_lst->foaf_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME), 1);
     }
 
     /**
@@ -1231,11 +1231,11 @@ class word extends sandbox_code_id
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new word($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
@@ -1257,11 +1257,11 @@ class word extends sandbox_code_id
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new word($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
@@ -1384,10 +1384,10 @@ class word extends sandbox_code_id
      */
     function is_part(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id);
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::PART_NAME));
+        $is_phr_lst = $phr_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
@@ -1457,7 +1457,7 @@ class word extends sandbox_code_id
      */
     function has_cfg(): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $has_cfg = false;
         if ($this->plural != null) {
@@ -1471,7 +1471,7 @@ class word extends sandbox_code_id
             }
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $phr_typ_cac->default_id()) {
+            if ($this->type_id <> $sys->typ_lst->phr_typ->default_id()) {
                 $has_cfg = true;
             }
         }
@@ -1840,7 +1840,7 @@ class word extends sandbox_code_id
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -1851,11 +1851,11 @@ class word extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phr_typ_cac;
+            global $sys;
             if ($this->type_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
@@ -1867,13 +1867,13 @@ class word extends sandbox_code_id
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phr_typ_cac);
+                $sys->typ_lst->phr_typ);
         }
         if ($sbx->view_id() !== $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . word_db::FLD_VIEW),
+                    $sys->typ_lst->cng_fld->id($table_id . word_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1889,7 +1889,7 @@ class word extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
-                    $cng_fld_cac->id($table_id . word_db::FLD_PLURAL),
+                    $sys->typ_lst->cng_fld->id($table_id . word_db::FLD_PLURAL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1904,7 +1904,7 @@ class word extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_IMPACT),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

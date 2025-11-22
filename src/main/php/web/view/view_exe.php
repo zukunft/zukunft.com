@@ -302,7 +302,7 @@ class view_exe extends view_base
     function dsp_edit($add_cmp, $wrd, $back): string
     {
         global $usr;
-        global $msk_typ_cac;
+        global $sys;
         global $cfg;
 
         $result = '';
@@ -310,7 +310,7 @@ class view_exe extends view_base
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($msk_typ_cac->id(view_type::DEFAULT));
+            $this->set_type_id($sys->typ_lst->msk_typ->id(view_type::DEFAULT));
         }
 
         // the header to add or change a view

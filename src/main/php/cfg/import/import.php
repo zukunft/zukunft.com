@@ -1522,7 +1522,7 @@ class import
         data_object $dto
     ): triple
     {
-        global $vrb_cac;
+        global $sys;
         $names = explode(' ', $key);
         // create the single words and add them to the data_object
         $from = null;
@@ -1547,7 +1547,7 @@ class import
         $trp = new triple($this->usr);
         if ($from != null and $to != null) {
             $trp->set_from($from->phrase());
-            $trp->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
+            $trp->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
             $trp->set_to($to->phrase());
             $trp->set_name($key);
         } else {

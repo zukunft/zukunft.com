@@ -59,11 +59,9 @@ class view_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $msk_typ_cac;
-        global $msk_lnk_typ_cac;
         global $sys_msk_cac;
-        global $cmp_typ_cac;
 
         // init
         $t_db = new test_db_load($t);
@@ -107,7 +105,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $msk_typ_cac->id(view_type_shared::DEFAULT);
+        $result = $sys->typ_lst->msk_typ->id(view_type_shared::DEFAULT);
         $t->assert('check type' . view_type_shared::DEFAULT, $result, 1);
 
         // load the view link types
@@ -116,7 +114,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $msk_lnk_typ_cac->id(view_link_type::DEFAULT);
+        $result = $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT);
         $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
 
 
@@ -172,7 +170,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $cmp_typ_cac->id(comp_type_shared::TEXT);
+        $result = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
     }
 
