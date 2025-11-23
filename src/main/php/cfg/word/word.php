@@ -80,6 +80,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
@@ -117,6 +118,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -220,7 +222,7 @@ class word extends sandbox_code_id
         $this->reset();
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_WORD_NAME;
     }
 
     /**
@@ -1216,7 +1218,7 @@ class word extends sandbox_code_id
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while (count($added_lst->lst()) > 0 and $loops < MAX_LOOP);
+            } while (count($added_lst->lst()) > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->dsp_id());
         return $phr_lst;

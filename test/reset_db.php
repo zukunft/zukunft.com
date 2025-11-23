@@ -77,27 +77,36 @@ if ($db_con->is_open()) {
             $t = new all_tests();
             $t->header('drop and recreate zukunft.com database');
 
-            // run the unit tests and reset the database
-            $t = new all_tests();
-            $t->run_unit();
-            $t->run_db_recreate();
+            // TODO Prio 0 allow only in DEV, in TEST copy db from PROD
 
-            // recreate the type list api message based on the updated db
-            // because this json is used for the unit tests
-            // if the type_list created by this reset_db script differs
-            // from the type_list created by the test.php differs
-            // most likely new fields have not yet been added to the
-            // src/main/resources/db_code_links/change_fields.csv of the predefined fields
-            $t_db = new test_db_load($t);
-            $t_db->type_list_recreate($t, $t->usr1);
+            if (getenv(ENVIRONMENT) == ENV_DEV) {
 
-            // display the test results
-            if ($t->format == text_log_format::HTML) {
-                $t->dsp_result_html();
+                // run the unit tests and reset the database
+                $t = new all_tests();
+                $t->run_unit();
+                $t->run_db_recreate();
+
+                // recreate the type list api message based on the updated db
+                // because this json is used for the unit tests
+                // if the type_list created by this reset_db script differs
+                // from the type_list created by the test.php differs
+                // most likely new fields have not yet been added to the
+                // src/main/resources/db_code_links/change_fields.csv of the predefined fields
+                $t_db = new test_db_load($t);
+                $t_db->type_list_recreate($t, $t->usr1);
+
+                // display the test results
+                if ($t->format == text_log_format::HTML) {
+                    $t->dsp_result_html();
+                } else {
+                    $t->dsp_result();
+                }
             } else {
-                $t->dsp_result();
+                echo 'Only admin users are allowed to reset the database' . "\n";
             }
 
+        } elseif (getenv(ENVIRONMENT) == ENV_UA) {
+            echo 'planned is an automatic copy from the corresponding production database to this user acceptance test database, but it is not yet implemented' . "\n";
         } else {
             echo 'Only admin users are allowed to reset the database' . "\n";
         }

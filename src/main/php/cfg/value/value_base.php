@@ -90,6 +90,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_GROUP . 'group.php';
@@ -145,6 +146,7 @@ include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
@@ -262,7 +264,7 @@ class value_base extends sandbox_value
     {
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VALUE;
 
         $this->reset();
 

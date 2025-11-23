@@ -125,6 +125,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CALC . 'expression.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_ELEMENT . 'element_group_list.php';
@@ -142,6 +143,7 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
@@ -154,12 +156,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Exception;
 use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
 use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Exception;
 
 class expression extends shared_expression
 {
@@ -627,7 +629,7 @@ class expression extends shared_expression
             // loop over the formula text and replace ref by ref from left to right
             $found = true;
             $nbr = 0;
-            while ($found and $nbr < MAX_LOOP) {
+            while ($found and $nbr < def::MAX_LOOP) {
                 log_debug('in "' . $work . '"');
                 $found = false;
 

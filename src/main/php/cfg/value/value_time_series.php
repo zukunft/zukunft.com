@@ -46,6 +46,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
@@ -56,6 +57,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -133,7 +135,7 @@ class value_time_series extends sandbox_value
     {
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VALUE;
 
         $this->reset($usr);
     }

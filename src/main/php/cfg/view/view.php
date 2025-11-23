@@ -63,6 +63,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
@@ -93,6 +94,7 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
@@ -183,7 +185,7 @@ class view extends sandbox_code_id
         $this->reset();
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VIEW_NAME;
     }
 
     function reset(): void

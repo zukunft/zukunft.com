@@ -62,6 +62,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -79,6 +80,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -204,7 +206,7 @@ class component_link extends sandbox_link
         $this->from_name = $lib->class_to_name(view::class);
         $this->to_name = $lib->class_to_name(component::class);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VIEW_COMPONENT_LINK;
 
         $this->reset_objects($usr);
     }

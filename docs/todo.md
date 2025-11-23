@@ -7,6 +7,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO use the view (db) version to update the database by using a next_step-php
+    TODO create a seperate php session for backend, frontend and test and from test test the login prozess
     TODO cleanup init.php to speed up the api
          make init.php as small and fast as possible
          make const.php as small and fast as possible

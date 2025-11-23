@@ -63,6 +63,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -91,6 +92,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -1926,7 +1928,7 @@ class group extends sandbox_multi
             }
         }
         global $debug;
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }

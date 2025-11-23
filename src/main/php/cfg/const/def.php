@@ -152,6 +152,48 @@ class def
     const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
     const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
 
+    // parameters for internal testing and debugging
+    const int LIST_MIN_NAMES = 4; // number of object names that should at least be shown
+    const int LIST_MIN_NUM = 20; // number of object ids that should at least be shown
+    const int DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
+
+
+    /*
+     * calc
+     */
+
+    // TODO Prio 2 allow overwrite by the config value
+    const int MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
+    const int MAX_RECURSIVE = 10; // max number of recursive call to avoid endless looping in case of a program error
+
+
+    /*
+     * user sandbox
+     */
+
+    /*
+    if UI_CAN_CHANGE_... setting is true renaming an object may switch to an object with the new name
+    if false the user gets an error message that the object with the new name exists already
+
+    e.g. if this setting is true
+         user 1 creates     "Nestle" with id 1
+         and user 2 creates "Nestlé" with id 2
+         now the user 1 changes "Nestle" to "Nestlé"
+         1. "Nestle" will be deleted, because it is not used anymore
+         2. "Nestlé" with id 2 will not be excluded anymore
+
+    */
+    const bool UI_CAN_CHANGE_VALUE = TRUE;
+    const bool UI_CAN_CHANGE_TIME_SERIES_VALUE = TRUE;
+    const bool UI_CAN_CHANGE_VIEW_NAME = TRUE;
+    const bool UI_CAN_CHANGE_VIEW_COMPONENT_NAME = TRUE; // dito for view components
+    const bool UI_CAN_CHANGE_VIEW_COMPONENT_LINK = TRUE; // dito for view component links
+    const bool UI_CAN_CHANGE_WORD_NAME = TRUE; // dito for words
+    const bool UI_CAN_CHANGE_triple_NAME = TRUE; // dito for phrases
+    const bool UI_CAN_CHANGE_FORMULA_NAME = TRUE; // dito for formulas
+    const bool UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
+    const bool UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
+
 
     /*
      * classes

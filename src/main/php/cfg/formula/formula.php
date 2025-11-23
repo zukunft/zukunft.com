@@ -54,8 +54,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
@@ -218,7 +220,7 @@ class formula extends sandbox_code_id
         $this->reset();
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_FORMULA_NAME;
     }
 
     /**
@@ -2564,7 +2566,7 @@ class formula extends sandbox_code_id
                 $db_chk->load_standard();
                 if ($db_chk->id() > 0) {
                     log_debug('->save_id_if_updated target formula name already exists ' . $db_chk->dsp_id());
-                    if (UI_CAN_CHANGE_FORMULA_NAME) {
+                    if (def::UI_CAN_CHANGE_FORMULA_NAME) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
                         $msg = $to_del->del();

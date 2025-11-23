@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -46,6 +47,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -661,8 +663,8 @@ class group_list extends sandbox_list
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
         $result = '';

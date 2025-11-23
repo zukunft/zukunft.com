@@ -58,6 +58,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -67,7 +68,6 @@ include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -77,7 +77,6 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
-include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -85,6 +84,7 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -98,7 +98,6 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
@@ -108,7 +107,6 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -605,7 +603,7 @@ class word_list extends sandbox_list_named
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
-            $max_loops = MAX_RECURSIVE;
+            $max_loops = def::MAX_RECURSIVE;
         }
         $loops = 0;
         $additional_added = clone $this;
@@ -618,7 +616,7 @@ class word_list extends sandbox_list_named
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
-            if ($loops >= MAX_RECURSIVE) {
+            if ($loops >= def::MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops reached.", "word_list->foaf_level");
             }
         } while (!empty($additional_added->lst()) and $loops < $max_loops);
@@ -765,7 +763,7 @@ class word_list extends sandbox_list_named
                 }
                 $wrd_lst->merge($added_lst);
                 $loops++;
-            } while (count($next_lst->lst()) > 0 and $loops < MAX_LOOP);
+            } while (count($next_lst->lst()) > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;

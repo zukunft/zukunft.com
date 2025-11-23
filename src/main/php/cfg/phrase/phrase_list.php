@@ -62,6 +62,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -94,6 +95,7 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -758,7 +760,7 @@ class phrase_list extends sandbox_list_named
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
-            $max_loops = MAX_RECURSIVE;
+            $max_loops = def::MAX_RECURSIVE;
         }
         $loops = $level;
 
@@ -811,7 +813,7 @@ class phrase_list extends sandbox_list_named
             // accumulate the list used as a base for the search
             $accumulated_list->merge($added_phr_lst);
 
-            if ($loops >= MAX_RECURSIVE) {
+            if ($loops >= def::MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
             }
         } while ((
@@ -1264,7 +1266,7 @@ class phrase_list extends sandbox_list_named
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1310,7 +1312,7 @@ class phrase_list extends sandbox_list_named
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($phr_lst->name() . ' for ' . $this->dsp_id());
         return $phr_lst;
@@ -2294,7 +2296,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = '';
         if ($limit == null) {
-            $limit = LIST_MIN_NAMES;
+            $limit = def::LIST_MIN_NAMES;
         }
         $lib = new library();
         $name_lst = $this->names();

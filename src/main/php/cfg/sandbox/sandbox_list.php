@@ -43,6 +43,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 //include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -65,6 +66,7 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -462,11 +464,11 @@ class sandbox_list extends base_list
         // show at least 4 elements by name
         $min_names = $debug;
         $min_num = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
-        if ($min_num < LIST_MIN_NUM) {
-            $min_num = LIST_MIN_NUM;
+        if ($min_num < def::LIST_MIN_NUM) {
+            $min_num = def::LIST_MIN_NUM;
         }
 
         $id = $this->ids_txt($min_num);
@@ -517,7 +519,7 @@ class sandbox_list extends base_list
         if (count($this->lst()) > $pos) {
             $result .= ' ... total ' . $lib->dsp_count($this->lst());
         }
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
