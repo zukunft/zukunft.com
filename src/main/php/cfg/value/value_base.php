@@ -1680,6 +1680,7 @@ class value_base extends sandbox_value
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if (!$this->is_id_set()) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
@@ -1689,7 +1690,7 @@ class value_base extends sandbox_value
                 $result = false;
             }
         }
-        log_debug('value->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('value->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1717,11 +1718,12 @@ class value_base extends sandbox_value
     function is_std(): bool
     {
         $result = false;
+        $lib = new library();
         if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

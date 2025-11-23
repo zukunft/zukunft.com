@@ -727,7 +727,7 @@ class sql_creator
             $this->join4_field = $join_field;
             $this->join4_sub_query = true;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
 
 
@@ -876,7 +876,7 @@ class sql_creator
             $this->join4_usr_query = false;
             $this->join4_sub_query = false;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
     }
 
@@ -929,7 +929,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -979,7 +979,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -1002,7 +1002,7 @@ class sql_creator
             $this->join_force_rename = $force_rename;
             $this->join_usr_fields = true;
         } else {
-            log_err('Max one geo table joins expected in version ' . PRG_VERSION);
+            log_err('Max one geo table joins expected in version ' . def::PRG_VERSION);
         }
     }
 

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -55,7 +56,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 $html = new html_base();
 
 // open database
-$db_con = prg_start("value_del");
+$app = new frontend();
+$db_con = $app->start("value_del");
 
 global $mtr;
 
@@ -108,4 +110,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

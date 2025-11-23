@@ -35,21 +35,18 @@
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_LANGUAGE . 'language_form.php';
-
 // open database
-$db_con = prg_start_api("languageForm", "", false);
+$app = new application();
+$db_con = $app->start_api("languageForm", "", false);
 
 if ($db_con->is_open()) {
 
@@ -79,5 +76,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    prg_end_api($db_con);
+    $app->end_api($db_con);
 }

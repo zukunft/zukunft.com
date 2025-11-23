@@ -51,6 +51,7 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -70,7 +71,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 /* open database */
-$db_con = prg_start(view_shared::WORD_ADD);
+$app = new frontend();
+$db_con = $app->start(view_shared::WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -212,4 +214,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

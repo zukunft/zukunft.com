@@ -690,6 +690,7 @@ class calc_internal
     private function is_math_symbol(string $formula): bool
     {
         log_debug($formula);
+        $lib = new library();
         $result = false;
         if ($this->has_operator($formula[0])) {
             log_debug("operator");
@@ -710,7 +711,7 @@ class calc_internal
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -739,13 +740,14 @@ class calc_internal
     function is_math_symbol_or_num(string $formula): bool
     {
         log_debug($formula);
+        $lib = new library();
         if ($this->is_math_symbol($formula)) {
             log_debug("math");
             $result = True;
         } else {
             $result = $this->next_char_is_num($formula);
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

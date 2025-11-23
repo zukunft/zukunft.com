@@ -31,9 +31,9 @@
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once paths::DB . 'sql_db.php';
+//include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
@@ -45,6 +45,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
@@ -349,7 +350,7 @@ function log_msg(string  $msg_text,
             $sys_log_id = 0;
 
             $sys->log_msg_lst[] = $msg_type_text;
-            if ($msg_log_level > LOG_LEVEL or $force_log) {
+            if ($msg_log_level > text_log::LOG_LEVEL or $force_log) {
                 $used_db_con->set_class(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
@@ -383,13 +384,13 @@ function log_msg(string  $msg_text,
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
             }
-            if ($msg_log_level >= MSG_LEVEL) {
+            if ($msg_log_level >= text_log::MSG_LEVEL) {
                 echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
                 if ($sys_log_id > 0) {
                     echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
                 }
             } else {
-                if ($msg_log_level >= DSP_LEVEL) {
+                if ($msg_log_level >= text_log::DSP_LEVEL) {
                     $usr = new user();
                     $usr->load_by_id($user_id);
                     $msk = new view($usr);

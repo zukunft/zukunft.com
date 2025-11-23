@@ -35,15 +35,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
@@ -53,7 +49,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start_api("word", "", false);
+$app = new application();
+$db_con = $app->start_api("word", "", false);
 
 if ($db_con->is_open()) {
 
@@ -126,5 +123,5 @@ if ($db_con->is_open()) {
         $ctrl->not_permitted($msg);
     }
 
-    prg_end_api($db_con);
+    $app->end_api($db_con);
 }

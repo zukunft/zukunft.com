@@ -587,6 +587,7 @@ class formula_link extends sandbox_link
         log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
+        $lib = new library();
         $result = true;
         $qp = $this->not_changed_sql($db_con->sql_creator());
         $db_con->usr_id = $this->user()->id;
@@ -596,7 +597,7 @@ class formula_link extends sandbox_link
                 $result = false;
             }
         }
-        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 

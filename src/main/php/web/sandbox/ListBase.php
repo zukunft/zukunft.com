@@ -55,6 +55,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::VIEW . 'view_list.php';
 //include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -89,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 
 class ListBase extends ListOfIdObjects
 {
@@ -451,29 +453,40 @@ class ListBase extends ListOfIdObjects
     {
         $sel = new html_selector();
         if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
-            // TODO Prio 2 move $default to a function var
-            if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
-                $default = views::WORD;
-            } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
-                $default = views::VERB;
-            } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
-                $default = views::TRIPLE;
-            } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
-                $default = views::SOURCE;
-            } elseif ($form == views::REF_ADD or $form == views::REF_EDIT) {
-                $default = views::REF;
-            } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
-                $default = views::LANGUAGE;
-            } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
-                $default = views::VALUE;
-            } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
-                $default = views::FORMULA;
-            } elseif ($form == views::RESULT_ADD or $form == views::RESULT_EDIT) {
-                $default = views::RESULT;
+            // get the default selection entry
+            // TODO Prio 2 move $default to a function var a
+            //      this default value is only valid to select the view
+            //      but it does not work for e.g. the formula selector
+            if ($this::class == view_list::class) {
+                if ($form == views::WORD_ADD or $form == views::WORD_EDIT) {
+                    $default = views::WORD;
+                } elseif ($form == views::VERB_ADD or $form == views::VERB_EDIT) {
+                    $default = views::VERB;
+                } elseif ($form == views::TRIPLE_ADD or $form == views::TRIPLE_EDIT) {
+                    $default = views::TRIPLE;
+                } elseif ($form == views::SOURCE_ADD or $form == views::SOURCE_EDIT) {
+                    $default = views::SOURCE;
+                } elseif ($form == views::REF_ADD or $form == views::REF_EDIT) {
+                    $default = views::REF;
+                } elseif ($form == views::LANGUAGE_ADD or $form == views::LANGUAGE_EDIT) {
+                    $default = views::LANGUAGE;
+                } elseif ($form == views::VALUE_ADD or $form == views::VALUE_EDIT) {
+                    $default = views::VALUE;
+                } elseif ($form == views::FORMULA_ADD or $form == views::FORMULA_EDIT) {
+                    $default = views::FORMULA;
+                } elseif ($form == views::RESULT_ADD or $form == views::RESULT_EDIT) {
+                    $default = views::RESULT;
+                } else {
+                    $default = views::COMPLETE;
+                }
             } else {
-                $default = views::COMPLETE;
+                $default = null;
             }
-            $std = $this->get_by_code_id($default);
+            if ($default != null) {
+                $std = $this->get_by_code_id($default);
+            } else {
+                $std = null;
+            }
             if ($std != null) {
                 $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
             } else {

@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
@@ -53,7 +54,8 @@ if ($debug > 1) {
 }
 
 // open database
-$db_con = prg_start("progress display");
+$app = new frontend();
+$db_con = $app->start("progress display");
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -106,4 +108,4 @@ if ($usr->id > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

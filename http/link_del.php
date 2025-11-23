@@ -35,6 +35,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
@@ -48,7 +49,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("link_del");
+$app = new frontend();
+$db_con = $app->start("link_del");
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -99,4 +101,4 @@ if ($usr->id > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

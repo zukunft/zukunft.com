@@ -3,7 +3,18 @@
 /*
 
     init.php - for initial loading of the needed php scripts
-    ----------
+    --------
+
+    the target start process has these steps
+    1. set the start time
+       1.1 set the const path and code files with const.php in the same folder
+       1.2 set the basis system vars with init.php in the main backend, frontend or test folder
+    2. load the environment that can only be changed by the server admin and a change requires a restart
+       2.1 done by application.php, frontend.php or test_app.php
+       2.2 these script open the database connection, the api connection or both for testing
+    3. load the system config which can be changed by the admin user online
+    4. get the user and its permissions / role
+    5. load the user configuration from cache if possible
 
 
     This file is part of zukunft.com - calc with words
@@ -30,48 +41,49 @@
 
 */
 
+// add as first step a global debug level var to allow also interactive debugging
+global $debug;
+
+// check php version
+$version = explode('.', PHP_VERSION);
+if ($version[0] < 8) {
+    if ($version[1] < 4) {
+        echo 'at least php version 8.4 is needed';
+    }
+}
+
 // set all path for the backend program code here at once
 const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
 include_once CONST_PATH . 'paths.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
 // set all path for the frontend program code here at once
+// TODO Prio 1 move to init_ui.php
 const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
 include_once WEB_CONST_PATH . 'paths.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\element\element;
-use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
-use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\session;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
-use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+
+// global vars for system control
+include_once paths::MODEL_HELPER . 'system_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
+global $sys;
+$sys = new system_object('init');
+
+// text logging to standard io
+include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
+global $log_txt; // the log object for standard io logging
+$log_txt = new text_log();
+
+// load environment
+// open db connection
+//$app = new application();
+
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
@@ -83,30 +95,8 @@ const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_con; // the database connection
 global $usr;    // the session user
-global $debug;  // the debug level
 
-// logging
-include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
-include_once paths::MODEL_LOG_TEXT . 'text_log.php';
-include_once paths::MODEL_HELPER . 'system_object.php';
 
-// global vars for system control
-global $sys;
-
-global $log_txt; // the log object for standard io logging
-
-$sys = new system_object('init');
-$log_txt = new text_log();
-
-// check php version
-$version = explode('.', PHP_VERSION);
-if ($version[0] < 8) {
-    if ($version[1] < 1) {
-        echo 'at least php version 8.1 is needed';
-    }
-}
 // TODO check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
@@ -166,7 +156,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 
 // settings
-include_once paths::PHP_LIB . 'application.php';
+//include_once paths::PHP_LIB . 'application.php';
 
 // libraries that may be useful in the future
 /*
@@ -214,629 +204,5 @@ const MAX_RECURSIVE = 10;
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
-// list of classes that use a database table but where the changes do not need to be logged
-// TODO Prio 2 move to const/def class?
-const CLASSES_NO_CHANGE_LOG = [
-    sys_log_status::class,
-    sys_log_function::class,
-    sys_log_type::class,
-    system_time_type::class,
-    system_time::class,
-    change_action::class,
-    change_table::class,
-    change_field::class,
-    change_link::class,
-    change_value::class,
-    'change*',
-    session::class,
-    job::class,
-    element::class,
-    'phrase*',
-    'user_phrase*',
-    'prime_phrase*',
-    'user_prime_phrase*',
-    'term*',
-    'user_term*',
-    'prime_term*',
-    'user_prime_term*',
-    'result*',
-    'user_result*',
-];
 
-// TODO Prio 2 move to const/def class?
-const CLASS_WITH_USER_CODE_LINK_CSV = [
-    user_profile::class,
-    user_type::class
-];
-// list of all sequences used in the database
-// TODO base the list on the class list const and a sequence name function
-// TODO Prio 2 move to const/def class?
-const DB_SEQ_LIST = [
-    'sys_log_status_sys_log_status_id_seq',
-    'sys_log_sys_log_id_seq',
-    'elements_element_id_seq',
-    'element_types_element_type_id_seq',
-    'formula_links_formula_link_id_seq',
-    'formulas_formula_id_seq',
-    'formula_types_formula_type_id_seq',
-    'component_links_component_link_id_seq',
-    'component_link_types_component_link_type_id_seq',
-    'components_component_id_seq',
-    'component_types_component_type_id_seq',
-    'views_view_id_seq',
-    'view_types_view_type_id_seq',
-    'verbs_verb_id_seq',
-    'triples_triple_id_seq',
-    'words_word_id_seq',
-    'phrase_types_phrase_type_id_seq',
-    'sources_source_id_seq',
-    'source_types_source_type_id_seq',
-    'refs_ref_id_seq',
-    'ref_types_ref_type_id_seq',
-    'change_links_change_link_id_seq',
-    'changes_change_id_seq',
-    'change_actions_change_action_id_seq',
-    'change_fields_change_field_id_seq',
-    'change_tables_change_table_id_seq',
-    'config_config_id_seq',
-    'job_types_job_type_id_seq',
-    'jobs_job_id_seq',
-    'sys_log_status_sys_log_status_id_seq',
-    'sys_log_functions_sys_log_function_id_seq',
-    'share_types_share_type_id_seq',
-    'protection_types_protection_type_id_seq',
-    'users_user_id_seq',
-    'user_profiles_user_profile_id_seq'
-];
-
-// TODO Prio 2 move to const/def class?
-// list of all ab tables in order of dependencies
-const DB_TABLE_LIST = [
-    'config',
-    'sys_log_types',
-    'sys_log',
-    'sys_log_status',
-    'sys_log_functions',
-    'system_times',
-    'system_time_types',
-    'job_times',
-    'jobs',
-    'job_types',
-    'user_official_types',
-    'ip_ranges',
-    'sessions',
-    'changes',
-    'changes_norm',
-    'changes_big',
-    'change_values_norm',
-    'change_values_prime',
-    'change_values_big',
-    'change_values_time_norm',
-    'change_values_time_prime',
-    'change_values_time_big',
-    'change_values_text_prime',
-    'change_values_text_norm',
-    'change_values_text_big',
-    'change_values_geo_norm',
-    'change_values_geo_prime',
-    'change_values_geo_big',
-    'change_fields',
-    'change_links',
-    'change_actions',
-    'change_tables',
-    'protection_types',
-    'share_types',
-    'language_forms',
-    'user_words',
-    'words',
-    'user_triples',
-    'phrase_tables',
-    'pods',
-    'pod_types',
-    'pod_status',
-    'triples',
-    'phrase_types',
-    'verbs',
-    'phrase_table_status',
-    'groups',
-    'user_groups',
-    'groups_prime',
-    'user_groups_prime',
-    'groups_big',
-    'user_groups_big',
-    'user_sources',
-    'user_refs',
-    'refs',
-    'ref_types',
-    'values_standard_prime',
-    'values_standard',
-    'values',
-    'user_values',
-    'values_prime',
-    'user_values_prime',
-    'values_big',
-    'user_values_big',
-    'values_text_standard_prime',
-    'values_text_standard',
-    'values_text',
-    'user_values_text',
-    'values_text_prime',
-    'user_values_text_prime',
-    'values_text_big',
-    'user_values_text_big',
-    'values_time_standard_prime',
-    'values_time_standard',
-    'values_time',
-    'user_values_time',
-    'values_time_prime',
-    'user_values_time_prime',
-    'values_time_big',
-    'user_values_time_big',
-    'values_geo_standard_prime',
-    'values_geo_standard',
-    'values_geo',
-    'user_values_geo',
-    'values_geo_prime',
-    'user_values_geo_prime',
-    'values_geo_big',
-    'user_values_geo_big',
-    'sources',
-    'source_types',
-    'user_values_time_series',
-    'value_time_series_prime',
-    'user_value_time_series_prime',
-    'value_ts_data',
-    'values_time_series',
-    'elements',
-    'element_types',
-    'user_formulas',
-    'user_formula_links',
-    'formula_link_types',
-    'formula_links',
-    'results_standard_prime',
-    'results_standard_main',
-    'results_standard',
-    'results',
-    'user_results',
-    'results_prime',
-    'user_results_prime',
-    'results_main',
-    'user_results_main',
-    'results_big',
-    'user_results_big',
-    'results_text_standard_prime',
-    'results_text_standard_main',
-    'results_text_standard',
-    'results_text',
-    'user_results_text',
-    'results_text_prime',
-    'user_results_text_prime',
-    'results_text_main',
-    'user_results_text_main',
-    'results_text_big',
-    'user_results_text_big',
-    'results_time_standard_prime',
-    'results_time_standard_main',
-    'results_time_standard',
-    'results_time',
-    'user_results_time',
-    'results_time_prime',
-    'user_results_time_prime',
-    'results_time_main',
-    'user_results_time_main',
-    'results_time_big',
-    'user_results_time_big',
-    'results_geo_standard_prime',
-    'results_geo_standard_main',
-    'results_geo_standard',
-    'results_geo',
-    'user_results_geo',
-    'results_geo_prime',
-    'user_results_geo_prime',
-    'results_geo_main',
-    'user_results_geo_main',
-    'results_geo_big',
-    'user_results_geo_big',
-    'user_views',
-    'languages',
-    'component_link_types',
-    'user_components',
-    'user_component_links',
-    'component_links',
-    'user_view_relations',
-    'view_relations',
-    'position_types',
-    'components',
-    'formulas',
-    'formula_types',
-    'views',
-    'users',
-    'user_types',
-    'user_profiles',
-    'view_types',
-    'view_styles',
-    'component_types',
-    'view_link_types',
-    'view_relation_types',
-    'term_views',
-    'user_term_views',
-    'value_formula_links',
-    'value_time_series',
-    'user_value_time_series',
-    'values_time_series_prime',
-    'user_values_time_series_prime',
-    'values_time_series_big',
-    'user_values_time_series_big',
-    'results_time_series',
-    'user_results_time_series',
-    'results_time_series_prime',
-    'user_results_time_series_prime',
-    'results_time_series_big',
-    'user_results_time_series_big'
-];
-
-
-/**
- * should be called from all code that can be accessed by an url
- * return null if the db connection fails or the db is not compatible
- * TODO create a separate class for starting the backend and frontend
- *
- * @param string $code_name the place that is displayed to the user e.g. add word
- * @param string $style the display style used to show the place
- * @param bool $echo_header if true start with a html header
- * @param bool $echo_env if true log the environment
- * @return sql_db the open database connection
- */
-function prg_start(
-    string $code_name,
-    string $style = "",
-    bool $echo_header = true,
-    bool $echo_env = false
-): sql_db
-{
-    global $sys;
-    global $errors;
-
-    $sys = new system_object($code_name);
-    $sys->times->switch(system_time_type::INIT);
-
-    // TODO check if cookies are actually needed
-    // resume session (based on cookies)
-    session_start();
-
-    /*
-    require __DIR__ . '/vendor/autoload.php';
-    // Looking for .env at the root directory
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-    */
-
-    // check if environment is loaded
-    $env = getenv(ENVIRONMENT);
-    if (!$env) {
-        log_warning('no environment found using fallback values');
-    } else {
-        log_info('environment ' . getenv(ENVIRONMENT));
-    }
-
-    $errors = 0;
-
-    log_debug($code_name . ': session_start');
-
-    // html header
-    if ($echo_header) {
-        $html = new html_base();
-        echo $html->header("", $style);
-    }
-
-    // log environment
-    if ($echo_env) {
-        $lib = new library();
-        echo $lib->env_to_log() . "\n";
-        phpinfo(INFO_GENERAL);
-    }
-
-    return prg_restart($code_name);
-}
-
-/**
- * open the database connection and load the base cache
- * @param string $code_name the place that is displayed to the user e.g. add word
- * @return sql_db the open database connection
- */
-function prg_restart(string $code_name): sql_db
-{
-
-    global $sys;       // the global system time control including the preloaded types
-    global $db_con;    // the database connection
-    global $cac;       // the global user data cache including the system views
-    global $cfg;       // the user configuration values
-    global $mtr;       // the translation object
-
-    // link to database
-    $sys->times->switch(system_time_type::DB_OPEN);
-    $db_con = new sql_db;
-    $db_con->db_type = SQL_DB_TYPE;
-    $sc = new sql_creator();
-    $sc->set_db_type($db_con->db_type);
-    $db_con->open();
-    if (!$db_con->is_open()) {
-        log_debug($code_name . ': start db setup');
-        if ($db_con->setup()) {
-            $db_con->open();
-            if (!$db_con->is_open()) {
-                log_fatal('Cannot connect to database', 'prg_restart');
-            }
-        }
-    } else {
-        log_debug($code_name . ': db open');
-
-        // check the system setup
-        $sys->times->switch(system_time_type::DB_CHECK);
-        $db_chk = new db_check();
-        $usr_msg = $db_chk->db_check($db_con);
-        if (!$usr_msg->is_ok()) {
-            echo '\n';
-            echo $usr_msg->all_message_text();
-            $db_con->close();
-            $db_con = null;
-        }
-
-        // create a virtual one-time system user to load the system users
-        $usr_sys = new user();
-        $usr_sys->id = users::SYSTEM_ID;
-        $usr_sys->name = users::SYSTEM_NAME;
-
-        // load system configuration
-        $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-        // TODO cache the system config json and detect
-        $cfg = new config_numbers($usr_sys);
-        $cfg->load_cfg($usr_sys);
-        $mtr = new Translator($cfg->language());
-
-        // preload all types from the database
-        $sys->times->switch(system_time_type::LOAD_TYPES);
-        // the types are general so the system user can be used to load the types
-        $cac = new data_object($usr_sys);
-        $sys->load_type_lists($db_con);
-
-        $log = new change_log($usr_sys);
-        $db_changed = $log->create_log_references($db_con);
-
-        // reload the type list if needed and trigger an update in the frontend
-        // even tough the update of the preloaded list should already be done by the single adds
-        if ($db_changed) {
-            $sys->load_type_lists($db_con);
-        }
-
-    }
-    $sys->times->switch(system_time_type::DEFAULT);
-    return $db_con;
-}
-
-function prg_start_api_core($code_name): sql_db
-{
-    global $sys;
-    global $mtr;
-
-    // init system
-    $code_name = 'api/' . $code_name;
-    $sys = new system_object($code_name);
-    $sys->times->switch(system_time_type::INIT);
-
-    // resume session (based on cookies)
-    session_start();
-
-    // link to database
-    $db_con = new sql_db;
-    $db_con->db_type = SQL_DB_TYPE;
-    $db_con->open();
-
-    // for the api only english is used
-    $mtr = new Translator(language_codes::SYS);
-
-    // preload all types from the database
-    // TODO Prio 2 check if really all types needs to be loaded
-    //$sys->typ_lst->load_core($db_con);
-    $sys->typ_lst->load($db_con);
-
-    return $db_con;
-}
-
-function prg_start_api($code_name): sql_db
-{
-    global $sys;
-
-    $code_name = 'api/' . $code_name;
-    log_debug($code_name . ' ..');
-    $sys = new system_object($code_name);
-
-    // resume session (based on cookies)
-    session_start();
-
-    // link to database
-    $db_con = new sql_db;
-    $db_con->db_type = SQL_DB_TYPE;
-    $db_con->open();
-    log_debug($code_name . ' ... database link open');
-
-    // for the api only english is used
-    global $mtr;
-    $mtr = new Translator(language_codes::SYS);
-
-    // preload all types from the database
-    // TODO Prio 3 try to speed up
-    $sys->load_type_lists($db_con);
-
-    return $db_con;
-}
-
-/**
- * write the execution time to the database if it is long
- */
-function prg_end_write_time($db_con): void
-{
-    global $sys;
-
-    $sys_time_end = microtime(true);
-    if ($sys_time_end > $sys->time_limit) {
-        $db_con->usr_id = users::SYSTEM_ID;
-        $db_con->set_class(system_time_type::class);
-        $sys_script_id = $db_con->get_id($sys->script);
-        if ($sys_script_id <= 0) {
-            $sys_script_id = $db_con->add_id($sys->script);
-        }
-        $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
-        $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
-        $interval = $sys_time_end - $sys->start_time;
-        $milliseconds = $interval;
-
-        //$db_con->insert();
-        if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
-            $calling_uri = $_SERVER[rest_ctrl::REQUEST_URI];
-        } else {
-            $calling_uri = 'localhost';
-        }
-        // TODO Prio 1 add time report to database and calling uri
-        $time_report = $sys->times->report();
-        $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) "
-            . "VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
-        $db_con->exe($sql);
-    }
-
-    // free the global vars
-    unset($sys);
-}
-
-function prg_end($db_con, $echo_header = true): void
-{
-
-    if ($echo_header) {
-        $html = new html_base();
-        echo $html->footer();
-    }
-
-    prg_end_write_time($db_con);
-
-    // Free result test
-    //mysqli_free_result($result);
-
-    // Closing connection
-    $db_con->close();
-
-    log_debug(' ... database link closed');
-}
-
-// special page closing only for the about page
-function prg_end_about($link): void
-{
-    global $db_con;
-
-    $html = new html_base();
-    echo $html->footer(true);
-
-    prg_end_write_time($db_con);
-
-    // Closing connection
-    $db_con->close();
-
-    log_debug(' ... database link closed');
-}
-
-// special page closing of api pages
-// for the api e.g. the csv export no footer should be shown
-function prg_end_api($link): void
-{
-    global $db_con;
-
-    prg_end_write_time($db_con);
-
-    // Closing connection
-    $db_con->close();
-
-    log_debug(' ... database link closed');
-}
-
-/**
- * @return string the content of a resource file
- */
-function resource_file(string $resource_path): string
-{
-    $result = file_get_contents(paths::RES . $resource_path);
-    if ($result === false) {
-        $result = 'Cannot get file from ' . paths::RES . $resource_path;
-    }
-    return $result;
-}
-
-
-/*
- * display functions
- */
-
-// to display a boolean var
-function zu_dsp_bool($bool_var): string
-{
-    if ($bool_var) {
-        $result = 'true';
-    } else {
-        $result = 'false';
-    }
-    return $result;
-}
-
-/*
-
-version control functions
-
-*/
-
-
-/**
- * returns true if the version to check is older than this program version
- * used e.g. for import to allow importing of files of an older version without warning
- */
-function prg_version_is_newer($prg_version_to_check, $this_version = PRG_VERSION): bool
-{
-    $is_newer = false;
-
-    $this_prg_version_parts = explode(".", $this_version);
-    $to_check = explode(".", $prg_version_to_check);
-    $is_older = false;
-    foreach ($this_prg_version_parts as $key => $this_part) {
-        if (!$is_newer and !$is_older) {
-            if ($this_part < $to_check[$key]) {
-                $is_newer = true;
-            } else {
-                if ($this_part > $to_check[$key]) {
-                    $is_older = true;
-                }
-            }
-        }
-    }
-
-    return $is_newer;
-}
-
-/**
- * unit_test for prg_version_is_newer
- */
-function prg_version_is_newer_test(test_cleanup $t): void
-{
-    $result = zu_dsp_bool(prg_version_is_newer('0.0.1'));
-    $target = 'false';
-    $t->assert('prg_version 0.0.1 is newer than ' . PRG_VERSION, $result, $target);
-    $result = zu_dsp_bool(prg_version_is_newer(PRG_VERSION));
-    $target = 'false';
-    $t->assert('prg_version ' . PRG_VERSION . ' is newer than ' . PRG_VERSION, $result, $target);
-    $result = zu_dsp_bool(prg_version_is_newer(NEXT_VERSION));
-    $target = 'true';
-    $t->assert('prg_version ' . NEXT_VERSION . ' is newer than ' . PRG_VERSION, $result, $target);
-    $result = zu_dsp_bool(prg_version_is_newer('0.1.0', '0.0.9'));
-    $target = 'true';
-    $t->assert('prg_version 0.1.0 is newer than 0.0.9', $result, $target);
-    $result = zu_dsp_bool(prg_version_is_newer('0.2.3', '1.1.1'));
-    $target = 'false';
-    $t->assert('prg_version 0.2.3 is newer than 1.1.1', $result, $target);
-}
 

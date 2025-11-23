@@ -5,6 +5,7 @@
 the object structure is:
 
 ```
++-- application - the main backend application object to start and stop the $app
 +-- component_db - a single display object like a headline or a table
 +-- position - the position of a data_object within a sheet
 +-- position_list - a list of positions of a data object within a sheet

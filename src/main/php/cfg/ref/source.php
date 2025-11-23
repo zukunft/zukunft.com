@@ -503,6 +503,7 @@ class source extends sandbox_code_id
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if ($this->id() == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
@@ -513,7 +514,7 @@ class source extends sandbox_code_id
                 $result = false;
             }
         }
-        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 

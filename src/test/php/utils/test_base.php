@@ -648,7 +648,7 @@ class test_base
             $test_name .= ' (' . $comment . ')';
         }
 
-        return $this->assert_dsp($test_name, $test_result, $result, $target, $msg, $exe_max_time);
+        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
     }
 
     /**

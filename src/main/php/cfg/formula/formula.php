@@ -2006,7 +2006,7 @@ class formula extends sandbox_code_id
             }
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -2213,6 +2213,7 @@ class formula extends sandbox_code_id
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if ($this->id() == 0) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
@@ -2224,7 +2225,7 @@ class formula extends sandbox_code_id
                 }
             }
         }
-        log_debug('->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 

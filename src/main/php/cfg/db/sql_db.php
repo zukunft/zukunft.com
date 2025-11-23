@@ -1391,7 +1391,7 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
@@ -1412,7 +1412,7 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
@@ -1718,7 +1718,7 @@ class sql_db
             $this->join4_select_id = $join_select_id;
             $this->join4_usr_query = false;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
     }
 
@@ -1771,7 +1771,7 @@ class sql_db
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_query = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -1821,7 +1821,7 @@ class sql_db
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_query = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -1834,7 +1834,7 @@ class sql_db
             $this->join_usr_count_field_lst = $join_field_lst;
             $this->join_usr_query = true;
         } else {
-            log_err('Max one table count joins expected in version ' . PRG_VERSION);
+            log_err('Max one table count joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -5137,9 +5137,9 @@ class sql_db
         $names = [];
         // TODO move db selection to the top e.g. db/postgres/setup instead of db/setup/postgres this way the number of if can be reduced
         if ($this->db_type == sql_db::POSTGRES) {
-            $sql = resource_file('db/select/postgres/routines.sql');
+            $sql = $this->resource_file('db/select/postgres/routines.sql');
         } else {
-            $sql = resource_file('db/select/mysql/routines.sql');
+            $sql = $this->resource_file('db/select/mysql/routines.sql');
         }
         $db_lst = $this->get_internal($sql);
         foreach ($db_lst as $row) {
@@ -5147,6 +5147,18 @@ class sql_db
         }
 
         return $names;
+    }
+
+    /**
+     * @return string the content of a resource file
+     */
+    function resource_file(string $resource_path): string
+    {
+        $result = file_get_contents(paths::RES . $resource_path);
+        if ($result === false) {
+            $result = 'Cannot get file from ' . paths::RES . $resource_path;
+        }
+        return $result;
     }
 
     /**
@@ -5650,7 +5662,7 @@ class sql_db
 
         // the sequence names of the tables to reset
         $log_txt->echo_log('truncate all tables ');
-        foreach (DB_SEQ_LIST as $seq_name) {
+        foreach (def::DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
     }
@@ -5690,7 +5702,7 @@ class sql_db
     function reset_seq_all(): void
     {
         // the sequence names of the tables to reset
-        foreach (DB_SEQ_LIST as $seq_name) {
+        foreach (def::DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
     }
@@ -5743,7 +5755,7 @@ class sql_db
     function reset_config(): void
     {
         $cfg = new config();
-        $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
+        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $this);
     }
 
     /**

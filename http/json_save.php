@@ -41,8 +41,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
+
 // open database
-$db_con = prg_start_api("json_save");
+$app = new frontend();
+$db_con = $app->start_api("json_save");
 
 // load the session user parameters
 $usr = new user;
@@ -81,4 +84,4 @@ if ($usr->id() > 0) {
 }
 
 // Closing connection
-prg_end_api($db_con);
+$app->end_api($db_con);

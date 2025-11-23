@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -108,7 +109,7 @@ class sql_db_read_tests
     {
         $result = false;
         $lib = new library();
-        foreach (CLASSES_NO_CHANGE_LOG as $class) {
+        foreach (def::CLASSES_NO_CHANGE_LOG as $class) {
             if ($tbl_name == $class) {
                 $result = true;
             } else {

@@ -44,18 +44,17 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\export;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::SHARED . 'library.php';
-include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED . 'library.php';
 
-use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class export
@@ -89,7 +88,7 @@ class export
             } else {
 
                 // 1. create the header
-                $export_obj->version = PRG_VERSION;
+                $export_obj->version = def::PRG_VERSION;
                 $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;

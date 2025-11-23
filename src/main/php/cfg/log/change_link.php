@@ -385,6 +385,7 @@ class change_link extends change_log
     function add_link(): bool
     {
         global $db_con;
+        $lib = new library();
         log_debug("user_log_link->add_link (u" . $this->user()->id . " " . $this->action() . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
@@ -441,7 +442,7 @@ class change_link extends change_log
         // restore the type before saving the log
         $db_con->set_class($db_type);
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -488,6 +489,7 @@ class change_link extends change_log
         log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
 
         global $db_con;
+        $lib = new library();
 
         // set the table specific references
         log_debug('set fields');
@@ -639,7 +641,7 @@ class change_link extends change_log
         // restore the type before saving the log
         $db_con->set_class($db_type);
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

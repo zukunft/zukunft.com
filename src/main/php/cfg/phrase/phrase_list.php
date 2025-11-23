@@ -1685,6 +1685,7 @@ class phrase_list extends sandbox_list_named
     function has_time(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check (' . $phr->name() . ')');
@@ -1694,7 +1695,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1705,6 +1706,7 @@ class phrase_list extends sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
@@ -1714,7 +1716,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1724,6 +1726,7 @@ class phrase_list extends sandbox_list_named
     function has_scaling(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
@@ -1733,7 +1736,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1743,6 +1746,7 @@ class phrase_list extends sandbox_list_named
     function has_percent(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             // temp solution for testing
@@ -1754,7 +1758,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -49,6 +50,7 @@ class expression_write_tests
         // init
         $t_db = new test_db_load($t);
         $t->name = 'expression->';
+        $lib = new library();
 
         // start the test section (ts)
         $ts = 'db write expression ';
@@ -96,7 +98,7 @@ class expression_write_tests
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
         $target = 'true';
-        $result = zu_dsp_bool($exp->has_ref());
+        $result = $lib->dsp_bool($exp->has_ref());
         $t->assert('has_ref for "' . $frm->usr_text . '"', $result, $target);
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
         $result = $exp->ref_text();

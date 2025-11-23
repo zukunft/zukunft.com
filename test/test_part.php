@@ -34,6 +34,10 @@
 
 include_once 'test_const.php';
 
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
+
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
@@ -46,7 +50,8 @@ use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("selected tests", '', false, true);
+$app = new test_app();
+$db_con = $app->start("selected tests", '', false, true);
 
 // load the session user parameters
 $start_usr = new user;
@@ -79,4 +84,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con, false);
+$app->end($db_con, false);

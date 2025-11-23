@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -182,7 +183,7 @@ class api_tests
         $cfg = new config();
         $cfg->load();
         $test_name = 'the default configuration api message must at least contain the pod name';
-        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
+        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), def::POD_NAME);
 
         $cfg_all = new config();
         $cfg_all->load(api::CONFIG_ALL);
@@ -191,7 +192,7 @@ class api_tests
         //$t->assert_greater($test_name, $cfg->count(), $cfg_all->count());
         $test_name = 'the complete configuration api message must at least contain the pod name';
         // TODO Prio 2 activate
-        //$t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
+        //$t->assert($test_name, $cfg->get_by([words::POD, words::URL]), def::POD_NAME);
 
         // TODO get frontend configuration values and check if frontend and user config contains less values
         // TODO check if requesting an unknown config part returns an error message

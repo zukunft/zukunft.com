@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -50,7 +51,8 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
-$db_con = prg_start("formula_edit");
+$app = new frontend();
+$db_con = $app->start("formula_edit");
 $html = new html_base();
 
 // get the parameters
@@ -163,4 +165,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

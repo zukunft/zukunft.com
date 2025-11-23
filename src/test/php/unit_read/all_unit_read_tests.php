@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
+include_once paths::MODEL . 'application.php';
 include_once test_paths::UNIT . 'all_unit_tests.php';
 include_once paths::WEB . 'frontend.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -74,7 +76,8 @@ class all_unit_read_tests extends all_unit_tests
 
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();
-        $db_con = prg_restart("reload cache after unit testing");
+        $app = new application();
+        $db_con = $app->open_db("reload cache after unit testing");
 
         // create the testing users
         $t->subheader($ts . 'prepare');

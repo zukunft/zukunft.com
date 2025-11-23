@@ -38,10 +38,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'fig_ids.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -49,7 +47,8 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start_api("figureList", "", false);
+$app = new application();
+$db_con = $app->start_api("figureList");
 
 if ($db_con->is_open()) {
 
@@ -79,5 +78,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    prg_end_api($db_con);
+    $app->end_api($db_con);
 }

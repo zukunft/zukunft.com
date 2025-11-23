@@ -80,7 +80,12 @@ class ListOf
      */
     function get(string|int $key): IdObject|TextIdObject|CombineObject|null
     {
-        return $this->lst[$key];
+        if (array_key_exists($key, $this->lst)) {
+            return $this->lst[$key];
+        } else {
+            log_err($key . ' missing in ' . $this::class);
+            return null;
+        }
     }
 
     /**

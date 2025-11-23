@@ -433,6 +433,7 @@ class expression extends shared_expression
         log_debug($this->dsp_id());
         $result = false;
 
+        $lib = new library();
         if ($this->get_word_id($this->ref_text()) > 0
             or $this->get_triple_id($this->ref_text()) > 0
             or $this->get_formula_id($this->ref_text()) > 0
@@ -440,7 +441,7 @@ class expression extends shared_expression
             $result = true;
         }
 
-        log_debug('done ' . zu_dsp_bool($result));
+        log_debug('done ' . $lib->dsp_bool($result));
         return $result;
     }
 

@@ -2,6 +2,7 @@
 
 include_once 'test_const.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
@@ -21,7 +22,8 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("sql sequence check", '', false);
+$app = new application();
+$db_con = $app->start("sql sequence check", '', false);
 
 // load the session user parameters
 $start_usr = new user;
@@ -45,4 +47,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con, false);
+$app->end($db_con, false);

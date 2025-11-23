@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -54,6 +55,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -109,20 +111,20 @@ class db_check
         }
 
         $cfg = new config();
-        $cfg->check(config::SITE_NAME, POD_NAME, $db_con);
+        $cfg->check(config::SITE_NAME, def::POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
         if ($db_version == '') {
-            $cfg->set(config::VERSION_DB, FIRST_VERSION, $db_con);
-        } elseif ($db_version != PRG_VERSION) {
+            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con);
+        } elseif ($db_version != def::PRG_VERSION) {
             $do_consistency_check = true;
-            if (prg_version_is_newer($db_version)) {
+            if ($lib->prg_version_is_newer($db_version)) {
                 log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
             } else {
                 $diff_txt = match ($db_version) {
-                    NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
-                    FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
+                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
+                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
                 };
                 $usr_msg->add_message_text($diff_txt);
             }
@@ -424,13 +426,13 @@ class db_check
         // Change code_id in verbs from contains to is_part_of
 
         // update the database version number in the config
-        $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
+        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $db_con);
 
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
-        if ($db_version != PRG_VERSION) {
+        if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
         $sys->times->switch();
@@ -459,7 +461,7 @@ class db_check
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
-        if ($db_version != PRG_VERSION) {
+        if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }
 

@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\api;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -110,7 +111,7 @@ class api_message
             $msg[json_fields::USER_ID] = $usr->id();
             $msg[json_fields::USER_NAME] = $usr->name();
         }
-        $msg[json_fields::VERSION] = PRG_VERSION;
+        $msg[json_fields::VERSION] = def::PRG_VERSION;
         $msg[json_fields::TIMESTAMP] = new DateTime()->format(DateTimeInterface::ATOM);
         $msg[json_fields::BODY] = $vars;
 
@@ -123,12 +124,12 @@ class api_message
     {
         $cfg = new config();
         // for unit tests use the default pod name
-        $site_name = POD_NAME;
+        $site_name = def::POD_NAME;
         if ($db_con->connected()) {
             $site_name = $cfg->get_db(config::SITE_NAME, $db_con);
             // TODO remove this fallback case
             if ($site_name == '') {
-                $site_name = POD_NAME;
+                $site_name = def::POD_NAME;
             }
         }
         return $site_name;

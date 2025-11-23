@@ -976,12 +976,13 @@ class sandbox_named extends sandbox
         $result = False;
         log_debug($this->dsp_id());
 
+        $lib = new library();
         log_debug('compare name ' . $db_rec->name() . ' with ' . $this->name());
         if ($db_rec->name() <> $this->name()) {
             $result = True;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

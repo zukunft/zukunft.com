@@ -34,6 +34,10 @@
 
 include_once 'test_const.php';
 
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
+
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
@@ -50,7 +54,8 @@ global $db_con;
 global $cac;
 
 // open database and display header
-$db_con = prg_start("unit tests", '', false, true);
+$app = new test_app();
+$db_con = $app->start("unit tests", '', false, true);
 
 if ($db_con->is_open()) {
 
@@ -85,6 +90,6 @@ if ($db_con->is_open()) {
     }
 
     // Closing connection
-    prg_end($db_con, false);
+    $app->end($db_con, false);
 
 }

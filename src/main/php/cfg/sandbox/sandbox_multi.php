@@ -1326,12 +1326,13 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id() . ' by someone else than the owner ' . $this->owner_id());
 
+        $lib = new library();
         $other_usr_id = $this->changer();
         if ($other_usr_id > 0) {
             $result = false;
         }
 
-        log_debug($this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug($this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1344,12 +1345,13 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
+        $lib = new library();
         $using_usr_id = $this->median_user();
         if ($using_usr_id > 0) {
             $result = false;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1466,6 +1468,7 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
+        $lib = new library();
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
         if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $changer_id = $this->changer();
@@ -1476,7 +1479,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        log_debug(': ' . zu_dsp_bool($result));
+        log_debug(': ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1489,6 +1492,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $result = false;
 
+        $lib = new library();
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
@@ -1496,7 +1500,7 @@ class sandbox_multi extends db_object_multi_user
             $result = true;
         }
 
-        log_debug($this::class . zu_dsp_bool($result));
+        log_debug($this::class . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1531,11 +1535,12 @@ class sandbox_multi extends db_object_multi_user
     function has_usr_cfg(): bool
     {
         $result = false;
+        $lib = new library();
         if ($this->usr_cfg_id > 0) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

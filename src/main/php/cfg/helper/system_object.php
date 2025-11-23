@@ -40,19 +40,16 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 // more specific includes are switched off to avoid circular includes
-//include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
-//include_once paths::MODEL_USER . 'user.php';
-//include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class system_object
 {
@@ -63,6 +60,8 @@ class system_object
 
     // execution times and system control
 
+    // the name of the pod / site uri for fast access because it may be used in every api message
+    public string $pod_name;
     // name php script that has been called by the webserver
     public string $script;
     // names of the php functions
@@ -91,6 +90,7 @@ class system_object
      */
     function __construct(string $script_name)
     {
+        $this->pod_name = '';
         $this->script = $script_name;
         $this->trace = "";
         $this->start_time = microtime(true);
@@ -114,19 +114,6 @@ class system_object
     function load_type_lists(sql_db $db_con): bool
     {
         return $this->typ_lst->load($db_con);
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * forward function name for shorted calls
-     */
-    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
-    {
-        return $this->typ_lst->api_json($typ_lst, $usr);
     }
 
 

@@ -800,6 +800,7 @@ class verb extends type_object
         global $db_con;
         $result = true;
 
+        $lib = new library();
         /*
         $change_user_id = 0;
         $sql = "SELECT user_id
@@ -815,7 +816,7 @@ class verb extends type_object
         }
         */
 
-        log_debug('verb->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('verb->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -823,12 +824,13 @@ class verb extends type_object
     function can_change(): bool
     {
         log_debug('verb->can_change ' . $this->id());
+        $lib = new library();
         $can_change = false;
         if ($this->usage == null or $this->usage == 0) {
             $can_change = true;
         }
 
-        log_debug(zu_dsp_bool($can_change));
+        log_debug($lib->dsp_bool($can_change));
         return $can_change;
     }
 

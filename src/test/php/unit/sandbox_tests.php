@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
@@ -292,7 +293,7 @@ class sandbox_tests
 
         $t->subheader($ts . 'version control');
 
-        prg_version_is_newer_test($t);
+        $this->prg_version_is_newer_test($t);
 
 
         // start the test section (ts)
@@ -1913,4 +1914,26 @@ class sandbox_tests
         $t->assert_qp($qp, $sc->db_type);
     }
 
+    /**
+     * unit_test for prg_version_is_newer
+     */
+    function prg_version_is_newer_test(test_cleanup $t): void
+    {
+        $lib = new library();
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.0.1'));
+        $target = 'false';
+        $t->assert('prg_version 0.0.1 is newer than ' . def::PRG_VERSION, $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer(def::PRG_VERSION));
+        $target = 'false';
+        $t->assert('prg_version ' . def::PRG_VERSION . ' is newer than ' . def::PRG_VERSION, $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer(def::NEXT_VERSION));
+        $target = 'true';
+        $t->assert('prg_version ' . def::NEXT_VERSION . ' is newer than ' . def::PRG_VERSION, $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.1.0', '0.0.9'));
+        $target = 'true';
+        $t->assert('prg_version 0.1.0 is newer than 0.0.9', $result, $target);
+        $result = $lib->dsp_bool($lib->prg_version_is_newer('0.2.3', '1.1.1'));
+        $target = 'false';
+        $t->assert('prg_version 0.2.3 is newer than 1.1.1', $result, $target);
+    }
 }

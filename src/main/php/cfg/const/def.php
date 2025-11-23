@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 //include_once paths::MODEL_COMPONENT . 'position_type.php';
 //include_once paths::MODEL_COMPONENT . 'view_style.php';
+//include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_type.php';
@@ -47,10 +48,16 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_field.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_SYSTEM . 'job_type.php';
+//include_once paths::MODEL_SYSTEM . 'session.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+//include_once paths::MODEL_SYSTEM . 'system_time.php';
 //include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_type.php';
@@ -85,10 +92,13 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -101,9 +111,13 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -128,6 +142,16 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class def
 {
+
+    /*
+     * main code const
+     */
+
+    const string POD_NAME = "zukunft.com"; // the default pod name if not defined
+    const string PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export
+    const string NEXT_VERSION = "0.0.4"; // to prevent importing incompatible data
+    const string FIRST_VERSION = "0.0.2"; // the last program version which has not a basic upgrade process
+
 
     /*
      * classes
@@ -259,6 +283,260 @@ class def
         view::class,
         component::class,
         view_relation::class
+    ];
+
+    // list of classes that use a database table but where the changes do not need to be logged
+    const array CLASSES_NO_CHANGE_LOG = [
+        sys_log_status::class,
+        sys_log_function::class,
+        sys_log_type::class,
+        system_time_type::class,
+        system_time::class,
+        change_action::class,
+        change_table::class,
+        change_field::class,
+        change_link::class,
+        change_value::class,
+        'change*',
+        session::class,
+        job::class,
+        element::class,
+        'phrase*',
+        'user_phrase*',
+        'prime_phrase*',
+        'user_prime_phrase*',
+        'term*',
+        'user_term*',
+        'prime_term*',
+        'user_prime_term*',
+        'result*',
+        'user_result*',
+    ];
+
+    // TODO Prio 2 base it on the class names
+    // list of all ab tables in order of dependencies
+    const array DB_TABLE_LIST = [
+        'config',
+        'sys_log_types',
+        'sys_log',
+        'sys_log_status',
+        'sys_log_functions',
+        'system_times',
+        'system_time_types',
+        'job_times',
+        'jobs',
+        'job_types',
+        'user_official_types',
+        'ip_ranges',
+        'sessions',
+        'changes',
+        'changes_norm',
+        'changes_big',
+        'change_values_norm',
+        'change_values_prime',
+        'change_values_big',
+        'change_values_time_norm',
+        'change_values_time_prime',
+        'change_values_time_big',
+        'change_values_text_prime',
+        'change_values_text_norm',
+        'change_values_text_big',
+        'change_values_geo_norm',
+        'change_values_geo_prime',
+        'change_values_geo_big',
+        'change_fields',
+        'change_links',
+        'change_actions',
+        'change_tables',
+        'protection_types',
+        'share_types',
+        'language_forms',
+        'user_words',
+        'words',
+        'user_triples',
+        'phrase_tables',
+        'pods',
+        'pod_types',
+        'pod_status',
+        'triples',
+        'phrase_types',
+        'verbs',
+        'phrase_table_status',
+        'groups',
+        'user_groups',
+        'groups_prime',
+        'user_groups_prime',
+        'groups_big',
+        'user_groups_big',
+        'user_sources',
+        'user_refs',
+        'refs',
+        'ref_types',
+        'values_standard_prime',
+        'values_standard',
+        'values',
+        'user_values',
+        'values_prime',
+        'user_values_prime',
+        'values_big',
+        'user_values_big',
+        'values_text_standard_prime',
+        'values_text_standard',
+        'values_text',
+        'user_values_text',
+        'values_text_prime',
+        'user_values_text_prime',
+        'values_text_big',
+        'user_values_text_big',
+        'values_time_standard_prime',
+        'values_time_standard',
+        'values_time',
+        'user_values_time',
+        'values_time_prime',
+        'user_values_time_prime',
+        'values_time_big',
+        'user_values_time_big',
+        'values_geo_standard_prime',
+        'values_geo_standard',
+        'values_geo',
+        'user_values_geo',
+        'values_geo_prime',
+        'user_values_geo_prime',
+        'values_geo_big',
+        'user_values_geo_big',
+        'sources',
+        'source_types',
+        'user_values_time_series',
+        'value_time_series_prime',
+        'user_value_time_series_prime',
+        'value_ts_data',
+        'values_time_series',
+        'elements',
+        'element_types',
+        'user_formulas',
+        'user_formula_links',
+        'formula_link_types',
+        'formula_links',
+        'results_standard_prime',
+        'results_standard_main',
+        'results_standard',
+        'results',
+        'user_results',
+        'results_prime',
+        'user_results_prime',
+        'results_main',
+        'user_results_main',
+        'results_big',
+        'user_results_big',
+        'results_text_standard_prime',
+        'results_text_standard_main',
+        'results_text_standard',
+        'results_text',
+        'user_results_text',
+        'results_text_prime',
+        'user_results_text_prime',
+        'results_text_main',
+        'user_results_text_main',
+        'results_text_big',
+        'user_results_text_big',
+        'results_time_standard_prime',
+        'results_time_standard_main',
+        'results_time_standard',
+        'results_time',
+        'user_results_time',
+        'results_time_prime',
+        'user_results_time_prime',
+        'results_time_main',
+        'user_results_time_main',
+        'results_time_big',
+        'user_results_time_big',
+        'results_geo_standard_prime',
+        'results_geo_standard_main',
+        'results_geo_standard',
+        'results_geo',
+        'user_results_geo',
+        'results_geo_prime',
+        'user_results_geo_prime',
+        'results_geo_main',
+        'user_results_geo_main',
+        'results_geo_big',
+        'user_results_geo_big',
+        'user_views',
+        'languages',
+        'component_link_types',
+        'user_components',
+        'user_component_links',
+        'component_links',
+        'user_view_relations',
+        'view_relations',
+        'position_types',
+        'components',
+        'formulas',
+        'formula_types',
+        'views',
+        'users',
+        'user_types',
+        'user_profiles',
+        'view_types',
+        'view_styles',
+        'component_types',
+        'view_link_types',
+        'view_relation_types',
+        'term_views',
+        'user_term_views',
+        'value_formula_links',
+        'value_time_series',
+        'user_value_time_series',
+        'values_time_series_prime',
+        'user_values_time_series_prime',
+        'values_time_series_big',
+        'user_values_time_series_big',
+        'results_time_series',
+        'user_results_time_series',
+        'results_time_series_prime',
+        'user_results_time_series_prime',
+        'results_time_series_big',
+        'user_results_time_series_big'
+    ];
+
+    // list of all sequences used in the database
+    // TODO base the list on the class list const and a sequence name function
+    const array DB_SEQ_LIST = [
+        'sys_log_status_sys_log_status_id_seq',
+        'sys_log_sys_log_id_seq',
+        'elements_element_id_seq',
+        'element_types_element_type_id_seq',
+        'formula_links_formula_link_id_seq',
+        'formulas_formula_id_seq',
+        'formula_types_formula_type_id_seq',
+        'component_links_component_link_id_seq',
+        'component_link_types_component_link_type_id_seq',
+        'components_component_id_seq',
+        'component_types_component_type_id_seq',
+        'views_view_id_seq',
+        'view_types_view_type_id_seq',
+        'verbs_verb_id_seq',
+        'triples_triple_id_seq',
+        'words_word_id_seq',
+        'phrase_types_phrase_type_id_seq',
+        'sources_source_id_seq',
+        'source_types_source_type_id_seq',
+        'refs_ref_id_seq',
+        'ref_types_ref_type_id_seq',
+        'change_links_change_link_id_seq',
+        'changes_change_id_seq',
+        'change_actions_change_action_id_seq',
+        'change_fields_change_field_id_seq',
+        'change_tables_change_table_id_seq',
+        'config_config_id_seq',
+        'job_types_job_type_id_seq',
+        'jobs_job_id_seq',
+        'sys_log_status_sys_log_status_id_seq',
+        'sys_log_functions_sys_log_function_id_seq',
+        'share_types_share_type_id_seq',
+        'protection_types_protection_type_id_seq',
+        'users_user_id_seq',
+        'user_profiles_user_profile_id_seq'
     ];
 
 }

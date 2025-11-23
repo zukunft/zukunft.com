@@ -39,3 +39,10 @@ $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
+
+// include classes used for all api calls
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::MODEL . 'application.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'url_var.php';

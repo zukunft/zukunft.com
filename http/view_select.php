@@ -42,8 +42,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
+
 // open database
-$db_con = prg_start("select_view");
+$app = new frontend();
+$db_con = $app->start("select_view");
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -97,4 +100,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

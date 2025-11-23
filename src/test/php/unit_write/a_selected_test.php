@@ -114,7 +114,8 @@ class a_selected_test extends test_cleanup
 
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();
-        $db_con = prg_restart("reload cache after unit testing");
+        $app = new application();
+        $db_con = $app->restart("reload cache after unit testing");
 
         // create the testing users
         $this->set_users();

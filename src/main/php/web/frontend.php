@@ -33,7 +33,6 @@ namespace Zukunft\ZukunftCom\main\php\web;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::WEB_CONST . 'paths.php';
 
@@ -93,17 +92,28 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 //include_once test_paths::CONST . 'files.php';
-include_once paths::MODEL_IMPORT . 'import.php';
-include_once paths::SHARED_TYPES . 'system_time_type.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+
+// TODO Prio 1 deprecate
+include_once paths::DB . 'db_check.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 // TODO Prio 0 rename _dsp to _ui
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -132,11 +142,21 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object as data_object_backend;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
@@ -181,7 +201,7 @@ class frontend
     /**
      * define the settings for this word object
      */
-    function __construct(string $code_name)
+    function __construct(string $code_name = '')
     {
         $this->set_start_time();
         $this->set_code_name($code_name);
@@ -213,14 +233,152 @@ class frontend
      * session
      */
 
-    function start(string $title): string
+    /**
+     * TODO to be deprecated
+     * start a frontend session with direct db access
+     *
+     * @param string $title
+     * @return sql_db
+     */
+    function start(string $code_name): sql_db
     {
+        global $sys;
+        global $errors;
+
+        $sys->script = $code_name;
+        $sys->times->switch(system_time_type::INIT);
+
+        // TODO Prio 2 check if cookies are actually needed
+        // resume session (based on cookies)
+        session_start();
+
+        /*
+        require __DIR__ . '/vendor/autoload.php';
+        // Looking for .env at the root directory
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+        $dotenv->load();
+        */
+
+        // check if environment is loaded
+        $env = getenv(ENVIRONMENT);
+        if (!$env) {
+            log_warning('no environment found using fallback values');
+        } else {
+            log_info('environment ' . getenv(ENVIRONMENT));
+        }
+
+        $sys->pod_name = $code_name;
+
+        $errors = 0;
+
+        log_debug($code_name . ': session_start');
+
+        // log environment
+        /*
+        if ($echo_env) {
+            $lib = new library();
+            echo $lib->env_to_log() . "\n";
+            phpinfo(INFO_GENERAL);
+        }
+        */
+
+        return $this->open_db($code_name);
+    }
+
+    /**
+     * TODO to be deprecated
+     * open the database connection and load the base cache
+     * @param string $code_name the place that is displayed to the user e.g. add word
+     * @return sql_db the open database connection
+     */
+    private function open_db(string $code_name): sql_db
+    {
+
+        global $sys;       // the global system time control including the preloaded types
+        global $db_con;    // the database connection
+        global $cac;       // the global user data cache including the system views
+        global $cfg;       // the user configuration values
+        global $mtr;       // the translation object
+
+        // link to database
+        $sys->times->switch(system_time_type::DB_OPEN);
+        $db_con = new sql_db;
+        $db_con->db_type = SQL_DB_TYPE;
+        $sc = new sql_creator();
+        $sc->set_db_type($db_con->db_type);
+        $db_con->open();
+        if (!$db_con->is_open()) {
+            log_debug($code_name . ': start db setup');
+            if ($db_con->setup()) {
+                $db_con->open();
+                if (!$db_con->is_open()) {
+                    log_fatal('Cannot connect to database', 'prg_restart');
+                }
+            }
+        } else {
+            log_debug($code_name . ': db open');
+
+            // check the system setup
+            $sys->times->switch(system_time_type::DB_CHECK);
+            $db_chk = new db_check();
+            $usr_msg = $db_chk->db_check($db_con);
+            if (!$usr_msg->is_ok()) {
+                echo '\n';
+                echo $usr_msg->all_message_text();
+                $db_con->close();
+                $db_con = null;
+            }
+
+            // create a virtual one-time system user to load the system users
+            $usr_sys = new user_backend();
+            $usr_sys->id = users::SYSTEM_ID;
+            $usr_sys->name = users::SYSTEM_NAME;
+
+            // load system configuration
+            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            // TODO cache the system config json and detect
+            $cfg = new config_numbers($usr_sys);
+            $cfg->load_cfg($usr_sys);
+            $mtr = new Translator($cfg->language());
+
+            // preload all types from the database
+            $sys->times->switch(system_time_type::LOAD_TYPES);
+            // the types are general so the system user can be used to load the types
+            $cac = new data_object_backend($usr_sys);
+            $sys->load_type_lists($db_con);
+
+            $log = new change_log($usr_sys);
+            $db_changed = $log->create_log_references($db_con);
+
+            // reload the type list if needed and trigger an update in the frontend
+            // even tough the update of the preloaded list should already be done by the single adds
+            if ($db_changed) {
+                $sys->load_type_lists($db_con);
+            }
+
+        }
+        $sys->times->switch(system_time_type::DEFAULT);
+        return $db_con;
+    }
+
+    /**
+     * start a frontend session via api
+     *
+     * @param string $title the name of the called frontend view for logging
+     * @return string the page header
+     */
+    function start_ui(string $title): string
+    {
+        global $mtr;
         $result = '';
 
         // resume session (based on cookies)
         // TODO review session start and end calls
         session_start();
 
+        // just for cache loading
+        // TODO Prio 2 switch to user setting later
+        $mtr = new Translator(language_codes::SYS);
         $usr = $this->get_user();
 
         $this->load_cache();

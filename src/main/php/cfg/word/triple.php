@@ -2154,6 +2154,7 @@ class triple extends sandbox_link_named
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if ($this->id() == 0) {
             log_err('The id must be set to check if the triple has been changed');
         } else {
@@ -2163,7 +2164,7 @@ class triple extends sandbox_link_named
                 $result = false;
             }
         }
-        log_debug('triple->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('triple->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 

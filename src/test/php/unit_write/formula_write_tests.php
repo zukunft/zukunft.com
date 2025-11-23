@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -72,6 +73,7 @@ class formula_write_tests
         $t_db = new test_db_load($t);
         $t->name = 'formula->';
         $back = 0;
+        $lib = new library();
 
         // start the test section (ts)
         $ts = 'db write formula ';
@@ -108,8 +110,8 @@ class formula_write_tests
         $t->assert('load for "' . $frm->name() . '"', $result, $target);
 
         // test the formula type
-        $result = zu_dsp_bool($frm->is_special());
-        $target = zu_dsp_bool(false);
+        $result = $lib->dsp_bool($frm->is_special());
+        $target = $lib->dsp_bool(false);
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
         $exp = $frm->expression();
@@ -118,8 +120,8 @@ class formula_write_tests
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {
                 $elm_frm = $frm_lst->lst()[0];
-                $result = zu_dsp_bool($elm_frm->is_special());
-                $target = zu_dsp_bool(true);
+                $result = $lib->dsp_bool($elm_frm->is_special());
+                $target = $lib->dsp_bool(true);
                 $t->assert('formula->is_special for "' . $elm_frm->name() . '"', $result, $target);
 
                 $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2019));

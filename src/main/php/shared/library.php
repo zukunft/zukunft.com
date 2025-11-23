@@ -133,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use DateTime;
 use Exception;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class library
 {
@@ -214,6 +215,19 @@ class library
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return string the text of a boolean var
+     */
+    function dsp_bool(bool $bool_var): string
+    {
+        if ($bool_var) {
+            $result = 'true';
+        } else {
+            $result = 'false';
+        }
+        return $result;
     }
 
     /**
@@ -1038,6 +1052,38 @@ class library
         return $result;
     }
 
+
+    /*
+     * version
+     */
+
+    /**
+     * returns true if the version to check is older than this program version
+     * used e.g. for import to allow importing of files of an older version without warning
+     */
+    function prg_version_is_newer($prg_version_to_check, $this_version = def::PRG_VERSION): bool
+    {
+        $is_newer = false;
+
+        $this_prg_version_parts = explode(".", $this_version);
+        $to_check = explode(".", $prg_version_to_check);
+        $is_older = false;
+        foreach ($this_prg_version_parts as $key => $this_part) {
+            if (!$is_newer and !$is_older) {
+                if ($this_part < $to_check[$key]) {
+                    $is_newer = true;
+                } else {
+                    if ($this_part > $to_check[$key]) {
+                        $is_older = true;
+                    }
+                }
+            }
+        }
+
+        return $is_newer;
+    }
+
+
     /*
      * file
      */
@@ -1307,6 +1353,7 @@ class library
             'Zukunft\ZukunftCom\main\php\api\log' => 'API_LOG_PATH',
             'Zukunft\ZukunftCom\main\php\controller', 'Zukunft\ZukunftCom\main\php\api' => 'paths::API_OBJECT',
             'Zukunft\ZukunftCom\main\php\controller\system', 'Zukunft\ZukunftCom\main\php\api\system' => 'API_SYSTEM_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg' => 'paths::MODEL',
             'Zukunft\ZukunftCom\main\php\cfg\db' => 'paths::DB',
             'Zukunft\ZukunftCom\main\php\cfg\log' => 'paths::MODEL_LOG',
             'Zukunft\ZukunftCom\main\php\cfg\const' => 'paths::MODEL_CONST',

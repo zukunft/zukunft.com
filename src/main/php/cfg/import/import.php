@@ -40,6 +40,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -72,6 +73,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
@@ -469,6 +471,7 @@ class import
         global $usr;
 
         log_debug();
+        $lib = new library();
         $usr_msg = new user_message();
         $this->last_display_time = microtime(true);
 
@@ -505,10 +508,10 @@ class import
             $this->display_progress();
             $pos++;
             if ($key == json_fields::VERSION) {
-                if (prg_version_is_newer($json_obj)) {
+                if ($lib->prg_version_is_newer($json_obj)) {
                     $usr_msg->add_id_with_vars(msg_id::IMPORT_VERSION_NEWER, [
                         msg_id::VAR_VALUE => $json_obj,
-                        msg_id::VAR_VALUE_CHK => PRG_VERSION
+                        msg_id::VAR_VALUE_CHK => def::PRG_VERSION
                     ]);
                 }
             } elseif ($key == json_fields::POD) {
@@ -1051,12 +1054,13 @@ class import
      */
     private function message_check(array $json_array): user_message
     {
+        $lib = new library();
         $usr_msg = new user_message();
         if (key_exists(json_fields::VERSION, $json_array)) {
-            if (prg_version_is_newer($json_array[json_fields::VERSION])) {
+            if ($lib->prg_version_is_newer($json_array[json_fields::VERSION])) {
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_VERSION_NEWER, [
                     msg_id::VAR_VALUE => $json_array[json_fields::VERSION],
-                    msg_id::VAR_VALUE_CHK => PRG_VERSION
+                    msg_id::VAR_VALUE_CHK => def::PRG_VERSION
                 ]);
             }
         }

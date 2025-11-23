@@ -41,13 +41,15 @@ if ($debug > 0) {
 }
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database 
-$db_con = prg_start("about", "center_form", false);
+$app = new frontend();
+$db_con = $app->start("about", "center_form", false);
 
 // display the view
 $html = new html_base();
 echo $html->about();
 
 // close the database  
-prg_end_api($db_con);
+$app->end($db_con);

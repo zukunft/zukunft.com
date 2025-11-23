@@ -32,23 +32,20 @@
 include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_REF . 'source.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-
 // open database
-$db_con = prg_start_api("ref", "", false);
+$app = new application();
+$db_con = $app->start_api("ref", "", false);
 
 if ($db_con->is_open()) {
 
@@ -91,5 +88,5 @@ if ($db_con->is_open()) {
         $ctrl->not_permitted($msg);
     }
 
-    prg_end_api($db_con);
+    $app->end_api($db_con);
 }

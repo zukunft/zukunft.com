@@ -1330,6 +1330,8 @@ class word_list extends sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
+        $lib = new library();
+
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1339,7 +1341,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1349,6 +1351,7 @@ class word_list extends sandbox_list_named
     function has_measure(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1358,7 +1361,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1368,6 +1371,7 @@ class word_list extends sandbox_list_named
     function has_scaling(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1377,7 +1381,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1388,6 +1392,7 @@ class word_list extends sandbox_list_named
     function has_percent(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1397,7 +1402,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 

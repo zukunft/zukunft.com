@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
@@ -41,14 +42,15 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use DateTimeInterface;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class convert_wikipedia_table
 {
@@ -198,9 +200,9 @@ class convert_wikipedia_table
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
-            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type_shared::SYMBOL);
-            $rank_names = $phr_lst->get_names_by_type(phrase_type_shared::RANK);
-            $ignore_names = $phr_lst->get_names_by_type(phrase_type_shared::IGNORE);
+            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
+            $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
+            $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
         }
         $exclude_col_names = array_merge($rank_names, $ignore_names);
 
@@ -676,8 +678,8 @@ class convert_wikipedia_table
     private function header(user $usr, string $timestamp = ''): array
     {
         $header = [];
-        $header[json_fields::POD] = POD_NAME;
-        $header[json_fields::VERSION] = PRG_VERSION;
+        $header[json_fields::POD] = def::POD_NAME;
+        $header[json_fields::VERSION] = def::PRG_VERSION;
         if ($timestamp == '') {
             $header[json_fields::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
         } else {

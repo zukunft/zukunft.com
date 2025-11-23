@@ -1227,12 +1227,13 @@ class phrase extends combine_named
         log_debug($this->dsp_id() . ',' . $related_phrase->name);
 
         $result = false;
+        $lib = new library();
         $is_phrases = $this->is(); // should be taken from the original array to increase speed
         if (in_array($related_phrase->id, $is_phrases->id_lst())) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result) . $this->id());
+        log_debug($lib->dsp_bool($result) . $this->id());
         return $result;
     }
 

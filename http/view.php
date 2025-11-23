@@ -2,7 +2,7 @@
 
 /*
 
-    /http/view.php - create the HTML code to display a zukunft.com view
+    /http/view.php - create the HTML code to show a zukunft.com view to the user
     --------------
 
     - the view contains the overall formatting like page size
@@ -55,7 +55,8 @@ $html_str = '';
 $usr_msg = new user_message();
 
 // open database
-$db_con = prg_start("view", '', false);
+$app = new frontend();
+$db_con = $app->start("view", '', false);
 
 global $debug;
 global $sys;
@@ -96,7 +97,7 @@ if ($db_con->is_open()) {
     }
 
     // close the database
-    prg_end($db_con, false);
+    $app->end($db_con, false);
 } else {
     $html_str .= 'database connection lost';
 }

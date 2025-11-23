@@ -219,6 +219,12 @@ zukunft.com:
           lists:
             tooltip-comment: "general parameters for lists e.g. the number of default entries"
             limit:
+              min names:
+                sys-conf-value: 4
+                tooltip-comment: "number of object names that should at least be shown"
+              min numbers:
+                sys-conf-value: 20
+                tooltip-comment: "number of object ids that should at least be shown"
               name list:
                 sys-conf-value: 10
                 tooltip-comment: "number of initial entries to show in a list names"

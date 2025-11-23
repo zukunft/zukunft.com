@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -51,7 +52,8 @@ include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("verbs");
+$app = new frontend();
+$db_con = $app->start("verbs");
 
 $result = ''; // reset the html code var
 $back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
@@ -88,4 +90,4 @@ if ($usr->id() > 0) {
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

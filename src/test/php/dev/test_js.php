@@ -29,12 +29,15 @@
 
 */
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
+
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-$db_con = prg_start("start test.php");
+$app = new application();
+$db_con = $app->start("start test.php");
 
 /*
 
@@ -265,6 +268,6 @@ $db_con = prg_start("start test.php");
 //mysqli_free_result();
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);
 
 ?>

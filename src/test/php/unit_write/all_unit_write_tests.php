@@ -37,6 +37,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
@@ -52,6 +53,7 @@ include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
@@ -239,8 +241,8 @@ class all_unit_write_tests extends all_unit_read_tests
             $usr->set_profile(user_profiles::ADMIN);
         }
 
-        // drop all old database tables
-        foreach (DB_TABLE_LIST as $table_name) {
+        // drop all old database tables (the least dependent tables first)
+        foreach (def::DB_TABLE_LIST as $table_name) {
             $db_con->drop_table($table_name);
         }
         $db_con->setup_db();
@@ -276,7 +278,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reopen the database to reload the list cache
         $db_con->close();
-        $db_con = prg_restart("test_reset_db");
+        $app = new application();
+        $db_con = $app->restart("test_reset_db");
 
         // reload the session user parameters
         $usr = new user;
@@ -284,7 +287,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reopen the database to reload the verb cache
         $db_con->close();
-        $db_con = prg_restart("test_reset_db");
+        $app = new application();
+        $db_con = $app->restart("test_reset_db");
 
         // reload the base configuration
         $job = new job($sys_usr);

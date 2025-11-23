@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -43,7 +44,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("login_activate", "center_form");
+$app = new frontend();
+$db_con = $app->start("login_activate", "center_form");
 $html = new html_base();
 
 if ($db_con->is_open()) {
@@ -175,5 +177,5 @@ if ($db_con->is_open()) {
     echo $result;
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con);
 }
