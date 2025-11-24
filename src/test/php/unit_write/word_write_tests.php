@@ -512,6 +512,9 @@ class word_write_tests
         $t->assert('word->main_wrd_from_txt', $result, $target);
         */
 
+
+        $t->subheader($ts . 'cleanup');
+
         // cleanup - fallback delete
         $wrd = new word($t->usr1);
         foreach (words::TEST_WORDS as $wrd_name) {

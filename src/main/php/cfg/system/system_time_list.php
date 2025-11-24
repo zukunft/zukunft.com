@@ -163,16 +163,7 @@ class system_time_list
             $key = $this->cur_cat;
             $end_time = microtime(true);
             $duration = $end_time - $this->start_time;
-            if (array_key_exists($key, $this->lst)) {
-                $this->lst[$key] = $this->lst[$key] + $duration;
-            } else {
-                $this->lst[$key] = $duration;
-            }
-            if (array_key_exists($key, $this->section_lst)) {
-                $this->section_lst[$key] = $this->section_lst[$key] + $duration;
-            } else {
-                $this->section_lst[$key] = $duration;
-            }
+            $this->add($duration, $key);
         }
     }
 
@@ -182,6 +173,26 @@ class system_time_list
         $this->cur_cat = $this->pre_cat;
         $this->start($this->cur_cat);
     }
+
+
+    /*
+     * modify
+     */
+
+    function add(float $duration, string $key): void
+    {
+        if (array_key_exists($key, $this->lst)) {
+            $this->lst[$key] = $this->lst[$key] + $duration;
+        } else {
+            $this->lst[$key] = $duration;
+        }
+        if (array_key_exists($key, $this->section_lst)) {
+            $this->section_lst[$key] = $this->section_lst[$key] + $duration;
+        } else {
+            $this->section_lst[$key] = $duration;
+        }
+    }
+
 
     /*
      * save

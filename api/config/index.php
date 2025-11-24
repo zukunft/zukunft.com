@@ -114,7 +114,7 @@ if ($db_con->is_open()) {
     $ctrl = new controller();
     $ctrl->get_json($result, $usr_msg->get_last_message());
 
-    if ($debug == -1) {
+    if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
         // TODO Prio 2 remove this speed testing code
         $end_time = microtime(true);
         $duration = $end_time - $start_time;

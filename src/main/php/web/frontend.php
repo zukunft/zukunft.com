@@ -393,12 +393,33 @@ class frontend
         return $result;
     }
 
-    function end(): string
+    /**
+     * write the execution time if it took too long
+     * and because the frontend is using direct database access
+     * close the database connection
+     * @param sql_db $db_con the database connection open on start
+     * @param float $start_time the start time of the calling script
+     * @return string any error messages if the closing fails or if the execution time should be shown
+     */
+    function end(sql_db $db_con, float $start_time = 0): string
     {
-        $html = new html_base();
-        echo $html->footer();
+        global $sys;
+        if ($start_time != 0) {
+            $sys->times->add($start_time - $this->start_time, 'script loading');
+            $duration = microtime(true) - $start_time;
+        } else {
+            $duration = microtime(true) - $this->start_time;
+        }
+        if ($duration > 1) {
 
-        $duration = microtime(true) - $this->start_time;
+        }
+
+        // Free result test
+        //mysqli_free_result($result);
+
+        // Closing connection
+        $db_con->close();
+
         if (self::HOST_SYS_LOG != '') {
             return $this->log_info('end ' . $this->code_name);
         } else {
@@ -535,7 +556,8 @@ class frontend
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg);
-            $upd_result = $dbo->add_via_api();
+            $upd_result = new user_message();
+            // $upd_result = $dbo->add_via_api();
 
             // if update was fine ...
             if ($upd_result->is_ok()) {
@@ -627,7 +649,7 @@ class frontend
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg, $dto);
-            $upd_result = $dbo->add_via_api();
+            $upd_result = $dbo->add_via_api($usr);
 
             // if update was fine ...
             if ($upd_result->is_ok()) {
@@ -650,7 +672,8 @@ class frontend
         // get the main object to display
         if ($id != 0) {
             // if only the id is included in the url load the data via api
-            if (count($url_array) <= 2) {
+            // TODO Prio 1 why? better always reload from db
+            if (count($url_array) <= 3) {
                 $dbo->load_by_id($id);
             } else {
                 $dbo->url_mapper($url_array, $usr_msg, $dto);

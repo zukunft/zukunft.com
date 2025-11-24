@@ -77,8 +77,6 @@ if ($db_con->is_open()) {
             $t = new all_tests();
             $t->header('drop and recreate zukunft.com database');
 
-            // TODO Prio 0 allow only in DEV, in TEST copy db from PROD
-
             if (getenv(ENVIRONMENT) == ENV_DEV) {
 
                 // run the unit tests and reset the database
@@ -101,12 +99,12 @@ if ($db_con->is_open()) {
                 } else {
                     $t->dsp_result();
                 }
+            } elseif (getenv(ENVIRONMENT) == ENV_UA) {
+                echo 'planned is an automatic copy from the corresponding production database to this user acceptance test database, but it is not yet implemented' . "\n";
             } else {
                 echo 'Only admin users are allowed to reset the database' . "\n";
             }
 
-        } elseif (getenv(ENVIRONMENT) == ENV_UA) {
-            echo 'planned is an automatic copy from the corresponding production database to this user acceptance test database, but it is not yet implemented' . "\n";
         } else {
             echo 'Only admin users are allowed to reset the database' . "\n";
         }

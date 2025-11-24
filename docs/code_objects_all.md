@@ -265,6 +265,7 @@ the object structure is:
                 \-- configUi - to cache and manage the user config in the frontend
             \-- view_listUi - a list function to create the HTML code to display a view list
             \-- triple_listUi - a list function to create the HTML code to display a triple list
++-- MapObjectShared - temp helper object to map the frontend to backend objects until the api is fast enough
 \-- TextIdObjectShared
     \-- db_object_key
         \-- db_object_multi
@@ -285,6 +286,7 @@ the object structure is:
         \-- userUi
             \-- user_display_oldUi - to display the user specific settings
 +-- TranslatorShared - translates a message for the user into the user language
++-- WorkflowShared - defines which view to show next
 +-- json_fieldsShared - list of json field names used for the api and im- and export
 +-- libraryShared - some useful function e.g. for string handling
 +-- api_type_listShared - a list of parameters to configure the api message

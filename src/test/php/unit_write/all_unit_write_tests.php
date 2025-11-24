@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -52,6 +53,7 @@ include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_url_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
@@ -169,6 +171,9 @@ class all_unit_write_tests extends all_unit_read_tests
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
 
+                // url tests
+                new word_url_tests()->run($t);
+
                 // TODO Prio 2 activate
                 // run_export_test($t);
                 // run_permission_test ($t);
@@ -279,7 +284,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // reopen the database to reload the list cache
         $db_con->close();
         $app = new application();
-        $db_con = $app->restart("test_reset_db");
+        $db_con = $app->open_db("test_reset_db");
 
         // reload the session user parameters
         $usr = new user;
@@ -288,7 +293,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // reopen the database to reload the verb cache
         $db_con->close();
         $app = new application();
-        $db_con = $app->restart("test_reset_db");
+        $db_con = $app->open_db("test_reset_db");
 
         // reload the base configuration
         $job = new job($sys_usr);

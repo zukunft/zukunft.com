@@ -44,6 +44,7 @@ include_once paths::WEB . 'frontend.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
@@ -56,7 +57,7 @@ $usr_msg = new user_message();
 
 // open database
 $app = new frontend();
-$db_con = $app->start("view", '', false);
+$db_con = $app->start("view");
 
 global $debug;
 global $sys;
@@ -84,13 +85,6 @@ if ($db_con->is_open()) {
         $ui = new frontend('view');
         $ui->load_cache();
         $url_array = $_GET;
-        // TODO Prio 1 remove temp overwrite for debug
-        $lib = new library();
-        //$url = api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . words::MATH_ID;
-        //$url = 'http://localhost/http/view.php?m=3&id=1&debug=-1';
-        //$url = 'http://localhost/http/view.php?m=2&id=1&back=1&confirm=1&name=add+word&phrase_type=1&plural=&share=1&protection=3';
-        //$url = 'http://localhost/http/view.php?mask_id=2&id=1&back=1&action=add&step=confirmed&Name=Test+add&phrase_type=1&Description=&Plural=&share=1&view_type=1';
-        //$url_array = $lib->url_array($url);
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
         $sys->times->switch(system_time_type::CLOSE);
@@ -102,7 +96,7 @@ if ($db_con->is_open()) {
     $html_str .= 'database connection lost';
 }
 
-if ($debug == -1) {
+if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
     // TODO Prio 2 remove temp overwrite for debug
     $end_time = microtime(true);
     $duration = $end_time - $start_time;

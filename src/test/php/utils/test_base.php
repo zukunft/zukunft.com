@@ -753,7 +753,7 @@ class test_base
         if ($pos !== false) {
             $needle = $haystack;
         }
-        return $this->assert($msg, $needle, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
     }
 
     /**

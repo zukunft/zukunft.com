@@ -2,8 +2,13 @@
 
 /*
 
-    about.php - display the legal information
-    ---------
+    shared/helper/Workflow.php - defines which view to show next
+    --------------------------
+
+    $wrk is the suggested var name
+    e.g. if a word has been added the next step could be to add a value
+         or to use it for a triple
+
 
     This file is part of zukunft.com - calc with words
 
@@ -22,30 +27,28 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-include_once 'const.php';
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::WEB . 'frontend.php';
-include_once html_paths::HTML . 'html_base.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once html_paths::SANDBOX . 'db_object.php';
 
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
-// open database 
-$app = new frontend();
-$db_con = $app->start("about", "center_form", false);
+class Workflow
+{
+    function next_url(array $url_arr, user_message $usr_msg): string
+    {
+        return '';
+    }
 
-// display the view
-$html = new html_base();
-echo $html->about();
-
-// close the database  
-$app->end($db_con);
+}

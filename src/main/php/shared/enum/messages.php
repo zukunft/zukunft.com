@@ -366,6 +366,7 @@ enum messages: string
     case WORD_ID_MISSING = 'word id missing of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case WORD_NAME_MISSING = 'required word name missing';
     case WORD_ID_ADDITIONAL = 'word id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';

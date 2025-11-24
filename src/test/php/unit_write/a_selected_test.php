@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'users.php';
@@ -42,11 +43,13 @@ include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -115,7 +118,7 @@ class a_selected_test extends test_cleanup
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();
         $app = new application();
-        $db_con = $app->restart("reload cache after unit testing");
+        $db_con = $app->start("reload cache after unit testing");
 
         // create the testing users
         $this->set_users();
@@ -239,12 +242,19 @@ class a_selected_test extends test_cleanup
             //new element_write_tests()->run_list($this);
             //new view_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
-            new component_write_tests()->run($this);
+            //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
 
 
             //$import = new import_file();
             //$import->import_test_files($usr);
+
+            /*
+             * url
+             */
+
+            new word_url_tests()->run($this);
+
         }
 
         /*

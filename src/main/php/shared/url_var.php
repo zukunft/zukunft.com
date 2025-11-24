@@ -214,6 +214,8 @@ class url_var
     // init
     const string CONFIG_PART_HUMAN = 'part';
     const string DEBUG = 'debug'; // to force the output of debug messages
+    const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
+
 
     // the var names for the easy human-readable url (in content related order)
     const string ACTION_HUMAN = 'action'; // the CRUD action for the long url

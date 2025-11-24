@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
@@ -49,15 +50,18 @@ include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+//include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_HELPER . 'MapObject.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
@@ -72,13 +76,15 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 
@@ -523,50 +529,75 @@ class db_object extends TextIdObject
      */
 
     /**
-     * add the frontend object via api to the database
+     * save the frontend object in the database
+     * TODO Prio 2 should be done via api
      *
+     * @param user $usr the frontend user
      * @return user_message
      */
-    function add_via_api(): user_message
+    function add_via_api(user $usr): user_message
     {
         $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $db_usr = $map_obj->convertToDb($usr);
+        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $add_result = $db_obj->save();
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_post($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
+        */
         return $usr_msg;
     }
 
     /**
      * update the frontend object via api in the database
      *
+     * @param user $usr the frontend user
      * @return user_message
      */
-    function update(): user_message
+    function update(user $usr): user_message
     {
         $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $db_usr = $map_obj->convertToDb($usr);
+        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $upd_result = $db_obj->save();
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_put($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
+        */
         return $usr_msg;
     }
 
     /**
      * exclude this frontend object via api from the database
      *
+     * @param user $usr the frontend user
      * @return user_message
      */
-    function del(): user_message
+    function del(user $usr): user_message
     {
         $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $db_usr = $map_obj->convertToDb($usr);
+        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $del_result = $db_obj->del();
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_del($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
+        */
         return $usr_msg;
     }
 

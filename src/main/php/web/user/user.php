@@ -79,6 +79,7 @@ class user extends db_object
 
     public ?string $name;
     public ?string $description;
+    // TODO Prio 0 deprecate
     public ?string $profile;
     // id of the user profile
     private int $profile_id;
@@ -268,11 +269,16 @@ class user extends db_object
      */
     function api_array(): array
     {
+        $vars = parent::api_array();
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::DESCRIPTION] = $this->description;
         if ($this->is_profile_valid()) {
             $vars[json_fields::PROFILE_ID] = $this->profile_id;
         }
+        $vars[json_fields::EMAIL] = $this->email;
+        $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::LAST_NAME] = $this->last_name;
+        // TODO Prio 1 check if password should be included and in which form
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

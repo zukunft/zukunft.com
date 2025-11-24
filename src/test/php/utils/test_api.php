@@ -245,10 +245,10 @@ class test_api extends test_base
      * @return int the id of the added user sandbox object
      */
     function assert_api_put(
-        string $class,
+        string       $class,
         test_cleanup $t,
-        array $data = [],
-        bool $ignore_id = false
+        array        $data = [],
+        bool         $ignore_id = false
     ): int
     {
         $t_db = new test_db_load($t);
@@ -678,7 +678,7 @@ class test_api extends test_base
      * @return bool true if the json has no relevant differences
      */
     function assert_api_post(
-        string $class,
+        string       $class,
         test_cleanup $t
     ): bool
     {
@@ -690,7 +690,7 @@ class test_api extends test_base
         $name = $dbo->name();
         $dbo_dsp = $t_map->class_to_ui_object($class);
         $dbo_dsp->set_from_json($dbo->api_json());
-        $add_result = $dbo_dsp->add_via_api();
+        //$add_result = $dbo_dsp->add_via_api();
 
         // TODO Prio 1 remove reloading and use $add_result instead
         $dbo->load_by_name($name);
@@ -707,10 +707,10 @@ class test_api extends test_base
      * @return bool true if the json has no relevant differences
      */
     function assert_api_post_direct(
-        string $class,
-        user   $usr,
+        string       $class,
+        user         $usr,
         test_cleanup $t,
-        string $msg = ''
+        string       $msg = ''
     ): bool
     {
         $lib = new library();
@@ -738,10 +738,10 @@ class test_api extends test_base
      * @return bool true if the json has no relevant differences
      */
     function assert_api_del_direct(
-        string $class,
-        user   $usr,
+        string       $class,
+        user         $usr,
         test_cleanup $t,
-        string $msg = ''
+        string       $msg = ''
     ): bool
     {
         $lib = new library();
@@ -864,7 +864,7 @@ class test_api extends test_base
      * @return string the api url
      */
     private function class_to_put_msg(
-        string $class,
+        string       $class,
         test_cleanup $t
     ): array
     {
