@@ -46,10 +46,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 /* open database */
 $app = new frontend();
@@ -74,7 +74,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_ADD));
+    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_ADD));
     $back = $_GET[url_var::BACK] = '';      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -129,13 +129,13 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg);
 
         // display the add source view
-        $scr_dsp = new source_dsp($src->api_json());
+        $scr_dsp = new source_ui($src->api_json());
         //$result .= $scr_dsp->dsp_edit($back);
     }
 }

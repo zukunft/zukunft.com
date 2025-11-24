@@ -76,8 +76,8 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -112,7 +112,7 @@ class type_lists
     public ?change_action_list $html_change_action_list = null;
     public ?change_table_list $html_change_table_list = null;
     public ?change_field_list $html_change_field_list = null;
-    public ?view_list_dsp $html_system_views = null;
+    public ?view_list_ui $html_system_views = null;
 
 
     /*
@@ -454,7 +454,7 @@ class type_lists
 
     function set_system_views(?array $json_array = null): void
     {
-        $this->html_system_views = new view_list_dsp();
+        $this->html_system_views = new view_list_ui();
         $this->html_system_views->api_mapper($json_array);
     }
 
@@ -462,7 +462,7 @@ class type_lists
     function get_html_by_id(int $id): string
     {
         $msk = $this->get_view_by_id($id);
-        $wrd = new word_dsp();
+        $wrd = new word_ui();
         return $msk->show($wrd);
     }
 
@@ -479,7 +479,7 @@ class type_lists
     function get_html(string $code_id): string
     {
         $msk = $this->get_view($code_id);
-        $wrd = new word_dsp();
+        $wrd = new word_ui();
         return $msk->show($wrd);
     }
 

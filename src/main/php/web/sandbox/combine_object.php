@@ -47,7 +47,7 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -115,7 +115,7 @@ class combine_object extends CombineObject
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_body = $api->api_call_id($this::class, $id);
         if ($json_body) {
             $this->api_mapper($json_body);

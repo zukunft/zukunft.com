@@ -74,7 +74,7 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -257,7 +257,7 @@ class ListBase extends ListOfIdObjects
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new api_ui();
         $data = array();
         $data[url_var::PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);

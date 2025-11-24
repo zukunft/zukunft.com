@@ -472,14 +472,14 @@ class formula extends sandbox_code_id
     // display the history of a formula
     private function dsp_hist_log($page, $size, $call, $back): user_log_display
     {
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = formula::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        return $log_dsp;
+        $log = new user_log_display();
+        $log->id = $this->id();
+        $log->type = formula::class;
+        $log->page = $page;
+        $log->size = $size;
+        $log->call = $call;
+        $log->back = $back;
+        return $log;
     }
 
     /**

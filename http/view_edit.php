@@ -42,8 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -68,7 +68,7 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VIEW_ADD);
+    $msk->load_by_code_id(views::VIEW_ADD);
     $back = $_GET[url_var::BACK] = '';
 
     // create the view object that the user can change
@@ -170,7 +170,7 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($back);
             $result .= $html->dsp_err($msg);
 
@@ -182,7 +182,7 @@ if ($usr->id() > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $msk_edit_dsp = new view_dsp($msk_edit->api_json());
+            $msk_edit_dsp = new view_ui($msk_edit->api_json());
             $result .= $msk_edit_dsp->dsp_edit($add_cmp, $wrd, $back);
         }
     }

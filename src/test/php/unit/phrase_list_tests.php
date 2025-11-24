@@ -44,7 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -163,7 +163,7 @@ class phrase_list_tests
         $t->subheader($ts . 'html frontend');
 
         $phr_lst = $t_phr->phrase_list();
-        $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
+        $t->assert_api_to_ui($phr_lst, new phrase_list_ui());
 
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
         $phr_lst_dsp = $t_phr->phrase_list_dsp();

@@ -41,9 +41,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -70,7 +70,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_EDIT));
+    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_EDIT));
     $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
@@ -115,13 +115,13 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($msg);
 
             // show the source and its relations, so that the user can change it
-            $scr_dsp = new source_dsp($src->api_json());
+            $scr_dsp = new source_ui($src->api_json());
             //$result .= $scr_dsp->dsp_edit($back);
         }
     }

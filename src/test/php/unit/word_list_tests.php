@@ -48,7 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -311,7 +311,7 @@ class word_list_tests
         $t->subheader($ts . 'html frontend');
 
         $wrd_lst = $t_wrd->word_list();
-        $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
+        $t->assert_api_to_ui($wrd_lst, new word_list_ui());
 
     }
 

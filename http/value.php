@@ -41,9 +41,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -73,7 +73,7 @@ if ($usr->id > 0) {
     $msk->load_by_code_id(view_shared::VALUE);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
 
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -83,11 +83,11 @@ if ($usr->id > 0) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(explode(",", $wrd_names));
 
-        $wrd_lst_dsp = new word_list_dsp($wrd_lst->api_json());
+        $wrd_lst_dsp = new word_list_ui($wrd_lst->api_json());
         $result .= $wrd_lst_dsp->name_link();
         $result .= ' = ';
         $val = $wrd_lst->value();
-        $val_dsp = new value_dsp($val->api_json());
+        $val_dsp = new value_ui($val->api_json());
         $result .= $val_dsp->value_edit($back);
     }
 }

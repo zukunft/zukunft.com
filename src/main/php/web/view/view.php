@@ -112,7 +112,7 @@ class view extends view_exe
 
         // check the all minimal input parameters are set
         if ($this->id() <= 0) {
-            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_dsp->dsp_navbar");
+            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_ui->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result = $this->dsp_navbar_bs(TRUE, $cfg->usr, $back);
@@ -210,7 +210,7 @@ class view extends view_exe
 
         // check the all minimal input parameters are set
         if ($this->user() == null) {
-            $this->log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
+            $this->log_err("The user id must be set to display a view.", "view_ui->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $usr = new user();

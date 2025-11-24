@@ -486,9 +486,9 @@ class sandbox_list extends base_list
                     $result .= $val->dsp();
                 }
                 if (is_array($id_field)) {
-                    $fld_dsp = ' (' . implode(', ', $id_field);
-                    $fld_dsp .= ' = ' . $id . ')';
-                    $result .= $fld_dsp;
+                    $fld_ui = ' (' . implode(', ', $id_field);
+                    $fld_ui .= ' = ' . $id . ')';
+                    $result .= $fld_ui;
                 } else {
                     $result .= ' (' . $id_field . ' ' . $id . ')';
                 }

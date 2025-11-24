@@ -38,7 +38,7 @@ include_once html_paths::REF . 'source.php';
 include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class source_list extends ListBase
@@ -55,7 +55,7 @@ class source_list extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new source_dsp());
+        return parent::api_mapper_list($json_array, new source());
     }
 
 }

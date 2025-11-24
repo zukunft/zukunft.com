@@ -55,7 +55,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -111,14 +110,14 @@ class type_list
                     $usr_msg->add_err('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME],
                         $value[json_fields::DESCRIPTION]
                     );
                 } else {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME]

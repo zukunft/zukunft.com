@@ -79,8 +79,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -522,7 +522,7 @@ class system_tests
         $t_sys = new test_sys_log();
         $log = $t_sys->sys_log();
         $api_msg = $log->api_json();
-        $log_dsp = new sys_log_dsp($api_msg);
+        $log_dsp = new sys_log_ui($api_msg);
         $created = $log_dsp->api_json();
         $expected = file_get_contents(test_files::SYS_LOG);
         $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
@@ -554,7 +554,7 @@ class system_tests
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
+        $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_API);

@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
@@ -124,7 +124,7 @@ class result_list_tests
         $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t_res->result_list();
-        $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
+        $t->assert_api_to_ui($trp_lst, new result_list_ui());
 
     }
 

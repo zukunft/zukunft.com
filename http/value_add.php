@@ -42,9 +42,9 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -68,7 +68,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VALUE_ADD);
+    $msk->load_by_code_id(views::VALUE_ADD);
     $back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -140,12 +140,12 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the view header
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg);
 
-        $val_dsp = new value_dsp($val->api_json());
+        $val_dsp = new value_ui($val->api_json());
         $result .= $val_dsp->dsp_edit($type_ids, $back);
     }
 }

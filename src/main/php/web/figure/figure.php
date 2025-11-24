@@ -54,14 +54,14 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class figure extends combine_named_dsp
+class figure extends combine_named
 {
 
     /*

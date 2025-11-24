@@ -118,7 +118,9 @@ the object structure is:
             \-- term - either a word, verb, triple or formula
     \-- combine_objectUi
         \-- combine_namedUi
+            \-- figureUi - to create the html code to display a value or result
             \-- phraseUi - to create the html code to display a word or triple
+            \-- termUi - to create the html code to display a word, triple, verb or formula
 +-- ConfigShared - const fallback configuration settings
 \-- IdObjectShared
     \-- db_object
@@ -283,6 +285,34 @@ the object structure is:
                         \-- value_time_series - the header object for time series values
     \-- db_objectUi
         \-- elementUi - either a word, triple, verb or formula with a link to a formula
+        \-- sandboxUi
+            \-- change_logUi
+                \-- change_log_namedUi - a list function to create the HTML code to display a list of user changes
+            \-- refUi - the extension of the reference API objects to create ref base html code
+            \-- sandbox_linkUi
+                \-- formula_linkUi - create HTML code to display a formula link
+                \-- view_relationUi - create HTML code to display a n:m link between two views
+            \-- sandbox_namedUi
+                \-- groupUi - the extension of the phrase group api object to create the HTML code to display a word or triple
+                \-- sandbox_typedUi
+                    \-- sandbox_code_idUi
+                        \-- componentUi
+                            \-- component_exeUi - call the functions to execute a view component
+                            \-- system_formUi - function to execute a system form component
+                            \-- system_pageUi - create the html code for fixed system pages
+                        \-- formulaUi - the display extension of the api formula object
+                        \-- sourceUi - the extension of the source API objects to create source base html code
+                        \-- view_baseUi
+                            \-- view_exeUi
+                                \-- viewUi - the main frontend object to create the html code
+                        \-- tripleUi - create the HTML code to display a triple (two linked words or triples)
+                        \-- wordUi - create HTML code to display a words based on the api json message
+                    \-- languageUi - the extension of the language API objects to create language base html code
+                \-- verbUi - the display extension of the api verb object
+            \-- sandbox_valueUi
+                \-- resultUi - the display extension of the api result object
+                \-- valueUi - create the html code to show a value to the user
+        \-- jobUi - the extension of the batch task API objects to create job base html code
         \-- userUi
             \-- user_display_oldUi - to display the user specific settings
 +-- TranslatorShared - translates a message for the user into the user language

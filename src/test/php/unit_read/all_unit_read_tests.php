@@ -42,7 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_types;
@@ -132,7 +132,7 @@ class all_unit_read_tests extends all_unit_tests
 
         // load the types from the api message
         $api_msg = $t_typ->type_lists_api($this->usr1);
-        new type_list_dsp($api_msg);
+        new type_list_ui($api_msg);
 
         $api_test = new api_tests();
         $api_test->run($this);

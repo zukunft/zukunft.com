@@ -43,9 +43,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::VERB . 'verb_list.php';
@@ -71,10 +71,10 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VERBS);
+    $msk->load_by_code_id(views::VERBS);
 
     // show the header
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -82,7 +82,7 @@ if ($usr->id() > 0) {
     $result .= $html->dsp_text_h2("Word link types");
     $vrb_lst = new verb_list($usr);
     $vrb_lst->load($db_con);
-    $vrb_lst_dsp = new verb_list_dsp($vrb_lst->api_json());
+    $vrb_lst_dsp = new verb_list_ui($vrb_lst->api_json());
     $result .= $vrb_lst_dsp->dsp_list();
     //$result .= zul_dsp_list ($usr->id());
 }

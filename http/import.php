@@ -43,8 +43,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -71,7 +71,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::IMPORT);
+    $msk->load_by_code_id(views::IMPORT);
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];
@@ -170,7 +170,7 @@ if ($usr->id() > 0) {
     if ($result == '') {
         log_debug('import.php display mask ');
         // show the value and the linked words to edit the value (again after removing or adding a word)
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg);

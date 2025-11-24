@@ -49,7 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
@@ -157,7 +157,7 @@ class word_tests
 
         $t->subheader($ts . 'html frontend');
         $wrd = $t_wrd->word();
-        $t->assert_api_to_dsp($wrd, new word_dsp());
+        $t->assert_api_to_ui($wrd, new word_ui());
 
         $t->subheader($ts . 'im- and export');
         // TODO check that all objects have a im and export test

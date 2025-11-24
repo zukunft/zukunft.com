@@ -33,8 +33,8 @@
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     $msk = new view($usr);
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
     $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $result .= $msk_dsp->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
@@ -89,12 +89,12 @@ if ($usr->id() > 0) {
     }
 
     // allow to change to type
-    $msk = new view_dsp();
+    $msk = new view_ui();
     $msk->set_id($view_id);
     $result .= $msk->selector_page($word_id, $back);
 
     // show the changes
-    $wrd_html = new word_dsp($wrd->api_json());
+    $wrd_html = new word_ui($wrd->api_json());
     $result .= $wrd_html->log_view($back);
 }
 

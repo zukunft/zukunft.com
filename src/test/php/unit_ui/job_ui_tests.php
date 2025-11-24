@@ -37,7 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SYSTEM . 'job_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\system\job_list as job_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -54,7 +54,7 @@ class job_ui_tests
 
         // test the batch job html display functions
         $test_page = $html->text_h2('batch job display test');
-        $log_lst = new job_list_dsp($t_job->job_list()->api_json());
+        $log_lst = new job_list($t_job->job_list()->api_json());
         $test_page .= 'user view of a table with batch job entries<br>';
         $test_page .= $log_lst->display() . '<br>';
 

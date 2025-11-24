@@ -48,13 +48,13 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -73,7 +73,7 @@ class triple_list extends ListBase
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new triple_dsp());
+        return parent::api_mapper_list($json_array, new triple_ui());
     }
 
 
@@ -233,7 +233,7 @@ class triple_list extends ListBase
                         $dsp_obj = $lnk->tob()->get_dsp_obj();
                         $result .= $dsp_obj->dsp_tbl_cell(0);
                     }
-                    $lnk_dsp = new triple_dsp($lnk->api_json());
+                    $lnk_dsp = new triple_ui($lnk->api_json());
                     $result .= $lnk_dsp->btn_edit($lnk->fob()->dsp_obj());
                     if ($lnk->fob() != null) {
                         $dsp_obj = $lnk->fob()->get_dsp_obj();
@@ -298,9 +298,9 @@ class triple_list extends ListBase
      * and delete list of "2016", "2017","2018"
      * the result is "2014", "2015"
      *
-     * @param triple_list_dsp $del_lst is the list of phrases that should be removed from this list object
+     * @param triple_list_ui $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(triple_list_dsp $del_lst): void
+    private function diff(triple_list_ui $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();
@@ -316,11 +316,11 @@ class triple_list extends ListBase
 
     /**
      * @param string $type the ENUM string of the fixed type
-     * @return triple_list_dsp with the all triples of the give type
+     * @return triple_list_ui with the all triples of the give type
      */
-    private function filter(string $type): triple_list_dsp
+    private function filter(string $type): triple_list_ui
     {
-        $result = new triple_list_dsp();
+        $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
@@ -332,7 +332,7 @@ class triple_list extends ListBase
     /**
      * get all time triples from this list of triples
      */
-    function time_lst(): triple_list_dsp
+    function time_lst(): triple_list_ui
     {
         return $this->filter(phrase_type_shared::TIME);
     }
@@ -340,7 +340,7 @@ class triple_list extends ListBase
     /**
      * get all measure triples from this list of triples
      */
-    function measure_lst(): triple_list_dsp
+    function measure_lst(): triple_list_ui
     {
         return $this->filter(phrase_type_shared::MEASURE);
     }
@@ -348,9 +348,9 @@ class triple_list extends ListBase
     /**
      * get all scaling triples from this list of triples
      */
-    function scaling_lst(): triple_list_dsp
+    function scaling_lst(): triple_list_ui
     {
-        $result = new triple_list_dsp();
+        $result = new triple_list_ui();
         foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
@@ -361,9 +361,9 @@ class triple_list extends ListBase
 
     /**
      * get all measure and scaling triples from this list of triples
-     * @returns triple_list_dsp triples that are usually shown after a number
+     * @returns triple_list_ui triples that are usually shown after a number
      */
-    function measure_scale_lst(): triple_list_dsp
+    function measure_scale_lst(): triple_list_ui
     {
         $scale_lst = $this->scaling_lst();
         $measure_lst = $this->measure_lst();
@@ -374,7 +374,7 @@ class triple_list extends ListBase
     /**
      * get all measure triples from this list of triples
      */
-    function percent_lst(): triple_list_dsp
+    function percent_lst(): triple_list_ui
     {
         return $this->filter(phrase_type_shared::PERCENT);
     }
@@ -383,9 +383,9 @@ class triple_list extends ListBase
      * like names_linked, but without measure and time triples
      * because measure triples are usually shown after the number
      * TODO call this from the display object t o avoid casting again
-     * @returns triple_list_dsp a triple
+     * @returns triple_list_ui a triple
      */
-    function ex_measure_and_time_lst(): triple_list_dsp
+    function ex_measure_and_time_lst(): triple_list_ui
     {
         $wrd_lst_ex = clone $this;
         $wrd_lst_ex->ex_time();
@@ -428,11 +428,11 @@ class triple_list extends ListBase
     }
 
     /**
-     * @return phrase_list_dsp with all from phrases
+     * @return phrase_list_ui with all from phrases
      */
-    function phrase_list(): phrase_list_dsp
+    function phrase_list(): phrase_list_ui
     {
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
             $lst->add($trp->phrase());
         }
@@ -440,11 +440,11 @@ class triple_list extends ListBase
     }
 
     /**
-     * @return phrase_list_dsp with all from phrases
+     * @return phrase_list_ui with all from phrases
      */
-    function from_phrase_list(): phrase_list_dsp
+    function from_phrase_list(): phrase_list_ui
     {
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
             $lst->add($trp->from);
         }
@@ -452,20 +452,20 @@ class triple_list extends ListBase
     }
 
     /**
-     * @return phrase_list_dsp with all from phrases
+     * @return phrase_list_ui with all from phrases
      */
-    function to_phrase_list(): phrase_list_dsp
+    function to_phrase_list(): phrase_list_ui
     {
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list_ui();
         foreach ($this->lst() as $trp) {
             $lst->add($trp->to);
         }
         return $lst;
     }
 
-    function suggested(): triple_dsp
+    function suggested(): triple_ui
     {
-        $trp = new triple_dsp();
+        $trp = new triple_ui();
         $from_lst = $this->from_phrase_list();
         $from_phr = $from_lst->mainly();
         if ($from_phr != null) {

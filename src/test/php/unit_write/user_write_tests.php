@@ -41,28 +41,11 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\log\change;
-use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
-use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 

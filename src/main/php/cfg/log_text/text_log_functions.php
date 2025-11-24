@@ -51,7 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -394,8 +394,8 @@ function log_msg(string  $msg_text,
                     $usr = new user();
                     $usr->load_by_id($user_id);
                     $msk = new view($usr);
-                    $msk_dsp = new view_dsp($msk->api_json());
-                    $result .= $msk_dsp->dsp_navbar_simple();
+                    $msk_ui = new view_ui($msk->api_json());
+                    $result .= $msk_ui->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
                 }
             }

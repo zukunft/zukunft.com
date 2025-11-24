@@ -51,18 +51,14 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class term extends combine_named_dsp
+class term extends combine_named
 {
 
     /*
@@ -78,23 +74,23 @@ class term extends combine_named_dsp
     {
         $usr_msg = new user_message();
         if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-            $wrd = new word_dsp();
+            $wrd = new word();
             $wrd->api_mapper($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-            $trp = new triple_dsp();
+            $trp = new triple();
             $trp->api_mapper($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
-            $vrb = new verb_dsp();
+            $vrb = new verb();
             $vrb->api_mapper($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-            $frm = new formula_dsp();
+            $frm = new formula();
             $frm->api_mapper($json_array);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
@@ -104,7 +100,7 @@ class term extends combine_named_dsp
         return $usr_msg;
     }
 
-    function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
+    function set_term_obj(word|triple|verb|formula|null $obj): void
     {
         $this->obj = $obj;
     }
@@ -387,7 +383,7 @@ class term extends combine_named_dsp
      */
     function is_word(): bool
     {
-        if ($this->obj()::class == word_dsp::class) {
+        if ($this->obj()::class == word::class) {
             return true;
         } else {
             return false;
@@ -399,7 +395,7 @@ class term extends combine_named_dsp
      */
     function is_triple(): bool
     {
-        if ($this->obj()::class == triple_dsp::class) {
+        if ($this->obj()::class == triple::class) {
             return true;
         } else {
             return false;
@@ -411,7 +407,7 @@ class term extends combine_named_dsp
      */
     function is_verb(): bool
     {
-        if ($this->obj()::class == verb_dsp::class) {
+        if ($this->obj()::class == verb::class) {
             return true;
         } else {
             return false;
@@ -423,7 +419,7 @@ class term extends combine_named_dsp
      */
     function is_formula(): bool
     {
-        if ($this->obj()::class == formula_dsp::class) {
+        if ($this->obj()::class == formula::class) {
             return true;
         } else {
             return false;

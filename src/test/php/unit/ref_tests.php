@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
-use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -122,7 +122,7 @@ class ref_tests
 
         $t->subheader($ts . 'frontend');
         $ref = $t_ref->reference_plus();
-        $t->assert_api_to_dsp($ref, new ref_dsp());
+        $t->assert_api_to_ui($ref, new ref_ui());
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_ref->reference(), $usr_sys);

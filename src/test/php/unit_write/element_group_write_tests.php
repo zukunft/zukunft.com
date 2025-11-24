@@ -41,7 +41,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -137,7 +137,7 @@ class element_group_write_tests
 
                 if (isset($fig)) {
                     $t = new test_api();
-                    $fig_dsp = $tl->ui_obj($fig, new figure_dsp());
+                    $fig_dsp = $tl->ui_obj($fig, new figure_ui());
                     $result = $fig_dsp->display();
                     $target = "8.51";
                     $t->assert('figure->display', $result, $target);

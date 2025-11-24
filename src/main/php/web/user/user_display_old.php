@@ -64,10 +64,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 
 class user_display_old extends user
@@ -102,14 +102,14 @@ class user_display_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new sys_log_list_dsp;
+        $err_lst = new sys_log_list;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list_dsp($err_lst->api_json());
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $result = $err_lst_dsp->get_html();
         }
 
@@ -619,7 +619,7 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
+                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
                         $sandbox_item_name = $phr_lst_dsp->name_linked();
                     }
 
@@ -761,7 +761,7 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp($this);
+                $dsp_usr = new view_ui($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_description'];

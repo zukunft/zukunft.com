@@ -37,7 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'api_type.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -55,7 +55,7 @@ class figure_list_ui_tests
         $t->header($ts);
 
         // test the figure list display functions
-        $lst = new figure_list_dsp($t_fig->figure_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));
+        $lst = new figure_list($t_fig->figure_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('figure list display test');
         $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';

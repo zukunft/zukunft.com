@@ -51,7 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 
 class ui_config
 {
@@ -65,12 +65,12 @@ class ui_config
      * and if possible cached in the frontend in a cookie if possible
      *
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|user_dsp|null $usr the user for whom the api message should be created which can differ from the session user
+     * @param user|user_ui|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
     function api_json(
         api_type_list|array $typ_lst,
-        user|user_dsp|null  $usr = null
+        user|user_ui|null $usr = null
     ): string
     {
         global $sys;

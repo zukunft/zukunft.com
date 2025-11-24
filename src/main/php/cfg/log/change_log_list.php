@@ -288,7 +288,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_dsp(view $msk, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_ui(view $msk, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -405,7 +405,7 @@ class change_log_list extends base_list
             $result = $field_name . '_of_src';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == view::class) {
-            $result = $field_name . '_of_dsp';
+            $result = $field_name . '_of_msk';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == component::class) {
             $result = $field_name . '_of_cmp';

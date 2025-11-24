@@ -1532,7 +1532,7 @@ class word_list extends sandbox_list_named
           ar sort($time_lst);
           $time_keys = array_keys($time_lst);
           $wrd_id = $time_keys[0];
-          $wrd = New word_dsp;
+          $wrd = New word_ui;
           if ($wrd_id > 0) {
             $wrd->id = $wrd_id;
             $wrd->usr = $this->user();

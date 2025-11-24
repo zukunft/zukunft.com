@@ -44,7 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -103,13 +103,13 @@ class formula_link_write_tests
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->formula() != null) {
             if ($frm_lnk2->formula()::class == formula::class) {
-                $fop_dsp = new formula_dsp($frm_lnk2->formula()->api_json());
+                $fop_dsp = new formula_ui($frm_lnk2->formula()->api_json());
                 $result = $fop_dsp->name();
             } else {
                 log_err('unexpected class in formula link test');
             }
         }
-        $frm_html = new formula_dsp($frm->api_json());
+        $frm_html = new formula_ui($frm->api_json());
         $target = $frm_html->name();
         $t->assert('formula_link->load by formula id and link id "' . $frm_html->name(), $result, $target);
 

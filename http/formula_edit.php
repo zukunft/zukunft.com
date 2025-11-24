@@ -44,12 +44,12 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views as views;
 
 $app = new frontend();
 $db_con = $app->start("formula_edit");
@@ -72,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::FORMULA_EDIT);
+    $msk->load_by_code_id(views::FORMULA_EDIT);
     $back = $_GET[url_var::BACK] = '';
 
     // create the formula object to have a place to update the parameters
@@ -149,7 +149,7 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // display the view header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($msg);
@@ -157,7 +157,7 @@ if ($usr->id() > 0) {
             // display the view to change the formula
             $frm->load_by_id($frm_id); // reload to formula object to display the real database values
             $add_link = $_GET['add_link'] ?? 0;
-            $frm_dsp = new formula_dsp($frm->api_json());
+            $frm_dsp = new formula_ui($frm->api_json());
             $result .= $frm_dsp->dsp_edit($add_link, 0, $back); // with add_link to add a link and display a word selector
         }
     }

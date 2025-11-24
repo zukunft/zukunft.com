@@ -41,10 +41,10 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -82,8 +82,8 @@ if ($usr->id > 0) {
     // init the display object to show the standard elements such as the header
     global $sys_msk_cac;
     $dsp_db = new view($usr);
-    $dsp_db->load_by_id($sys_msk_cac->id(view_shared::COMPONENT_ADD));
-    $msk = new view_dsp($dsp_db->api_json());
+    $dsp_db->load_by_id($sys_msk_cac->id(views::COMPONENT_ADD));
+    $msk = new view_ui($dsp_db->api_json());
 
     // create the view component object to apply the user changes to it
     $cmp = new component($usr);
@@ -161,7 +161,7 @@ if ($usr->id > 0) {
         }
 
         // show the word and its relations, so that the user can change it
-        $cmp_dsp = new component_dsp($cmp->api_json());
+        $cmp_dsp = new component_ui($cmp->api_json());
         $result .= $cmp_dsp->dsp_add($add_link, $wrd, $back);
     }
 }

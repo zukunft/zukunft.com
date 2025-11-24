@@ -11,7 +11,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -100,7 +100,7 @@ class triple_tests
 
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();
-        $t->assert_api_to_dsp($trp, new triple_dsp());
+        $t->assert_api_to_ui($trp, new triple_ui());
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_trp->triple(), $usr_sys);

@@ -45,9 +45,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -72,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VERB_ADD);
+    $msk->load_by_code_id(views::VERB_ADD);
     $back = $_GET[url_var::BACK] = ''; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
@@ -134,13 +134,13 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($msg);
 
             // get the form to add a new verb
-            $vrb_dsp = new verb_dsp($vrb->api_json());
+            $vrb_dsp = new verb_ui($vrb->api_json());
             $result .= $vrb_dsp->dsp_edit($back);
         }
     }

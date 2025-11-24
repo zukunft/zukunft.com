@@ -42,7 +42,7 @@ include_once html_paths::SANDBOX . 'combine_object.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class combine_named extends combine_object
@@ -152,7 +152,7 @@ class combine_named extends combine_object
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
             $this->api_mapper($json_body);

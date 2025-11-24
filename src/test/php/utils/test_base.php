@@ -9,7 +9,7 @@
     ----
 
     test_exe_time    - show the execution time for the last test and create a warning if it took too long
-    test_dsp - simply to display the function test result
+    test_ui - simply to display the function test result
     test_show_db_id  - to get a database id because this may differ from instance to instance
 
     the extension of the test classes
@@ -51,13 +51,16 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\service\config;
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -110,29 +113,15 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
 use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_dsp;
-use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -192,7 +181,7 @@ include_once test_paths::CONST . 'paths.php';
 include_once test_paths::CONST . 'files.php';
 
 // TODO Prio 2 activate
-//use html\group\group as group_dsp;
+//use html\group\group as group_ui;
 
 
 // load the system config for testing
@@ -921,7 +910,7 @@ class test_base
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
-     * @param data_object_dsp|null $cfg the context that should be used to create the view
+     * @param data_object_ui|null $cfg the context that should be used to create the view
      *                              which can be fixed test data for stable test results
      * @return bool true if the generated view matches the expected
      */
@@ -930,7 +919,7 @@ class test_base
         user             $usr,
         db_object_seq_id $dbo,
         int              $id = 0,
-        ?data_object_dsp $cfg = null
+        ?data_object_ui $cfg = null
     ): bool
     {
         $lib = new library();
@@ -974,12 +963,12 @@ class test_base
         }
 
         // create the view for the user
-        $dsp_html = new view_dsp;
+        $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg);
         if ($cfg == null) {
             $ui = new frontend('');
             $ui->load_cache();
-            $cfg = new data_object_dsp();
+            $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
@@ -4069,7 +4058,7 @@ class test_base
         }
         $log = new change($this->usr1);
         $log->load_by_user($this->usr1);
-        $log_dsp = new change_dsp($log->api_json());
+        $log_dsp = new change_log_ui($log->api_json());
         return $log_dsp->dsp(true);
     }
 
@@ -4099,7 +4088,7 @@ class test_base
             $log = $sbx->log_object();
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        $log_dsp = new change_dsp($log->api_json());
+        $log_dsp = new change_log_ui($log->api_json());
         return $log_dsp->dsp($ex_time);
     }
 

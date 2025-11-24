@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -84,7 +84,7 @@ class view_write_tests
         // test loading of one view
         $dsp_db = new view($t->usr1);
         $result = $dsp_db->load_by_name(views::TEST_COMPLETE_NAME);
-        $msk = new view_dsp($dsp_db->api_json());
+        $msk = new view_ui($dsp_db->api_json());
         $target = 0;
         if ($result > 0) {
             $target = $result;

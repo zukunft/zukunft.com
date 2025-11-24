@@ -59,7 +59,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -214,7 +214,7 @@ class sandbox_named extends sandbox
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
             $this->api_mapper($json_body);

@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use DateTime;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -56,7 +56,7 @@ class api_message
      * @param string $class the class of the message
      * @param array $vars the json array for the message body
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|user_dsp|null $usr the user for whom the api message should be created which can differ from the session user
+     * @param user|user_ui|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns string the api json message for the object as a string
      */
     function api_json(
@@ -64,7 +64,7 @@ class api_message
         string              $class,
         array               $vars,
         api_type_list|array $typ_lst = [],
-        user|user_dsp|null  $usr = null
+        user|user_ui|null   $usr = null
     ): string
     {
         if (is_array($typ_lst)) {
@@ -91,15 +91,15 @@ class api_message
      * create and set the api message header information
      * @param string $pod_name the site_name or the pod name that has created this message
      * @param string $class the class of the message
-     * @param user|user_dsp|null $usr the user view that the api message should contain
+     * @param user|user_ui|null $usr the user view that the api message should contain
      * @param array $vars the json array for the message body
      * @return array the json array including the message header
      */
     function api_header_array(
-        string             $pod_name,
-        string             $class,
-        user|user_dsp|null $usr,
-        array              $vars
+        string            $pod_name,
+        string            $class,
+        user|user_ui|null $usr,
+        array             $vars
     ): array
     {
         $lib = new library();

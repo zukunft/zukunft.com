@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -462,7 +462,7 @@ class word_write_tests
         // display
         $back = 1;
         $target = '<a href="/http/view.php?m=' . views::WORD_ID . '&id=' . $wrd_read->id() . '&back=1" title="' . words::MATH_COM . '">' . words::MATH . '</a>';
-        $wrd_read_dsp = new word_dsp($wrd_read->api_json());
+        $wrd_read_dsp = new word_ui($wrd_read->api_json());
         $result = $wrd_read_dsp->name_link($back);
         $t->assert('word->display "' . words::MATH . '"', $result, $target);
 

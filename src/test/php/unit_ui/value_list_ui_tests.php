@@ -32,13 +32,10 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -69,7 +66,7 @@ class value_list_ui_tests
         // create a test set of phrase groups
         $phr_lst_context = new phrase_list($usr);
         $phr_lst_context->add($phr_inhabitant);
-        $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json());
+        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
         // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458

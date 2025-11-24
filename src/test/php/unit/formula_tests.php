@@ -47,9 +47,9 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_dsp;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -144,7 +144,7 @@ class formula_tests
 
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();
-        $t->assert_api_to_dsp($frm, new formula_dsp());
+        $t->assert_api_to_ui($frm, new formula_ui());
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_frm->formula(), $usr_sys);
@@ -189,8 +189,8 @@ class formula_tests
         $t->dsp_contains($test_name, $target, $result);
 
         $test_name = 'formula increase; test the display name that can be used for user debugging';
-        $frm_html = new formula_dsp($frm->api_json());
-        $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+        $frm_html = new formula_ui($frm->api_json());
+        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
         $back = 0;
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
         $target = '"' . words::PERCENT
@@ -216,7 +216,7 @@ class formula_tests
         if (count($elm_grp_lst->lst()) > 0) {
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
-            $elm_grp_dsp = new element_group_dsp($elm_grp->api_json());
+            $elm_grp_dsp = new element_group_ui($elm_grp->api_json());
             $result = $elm_grp_dsp->dsp_names();
             $target = '<a href="/http/formula_edit.php?id='
                 . $frm_this->id() . '" title="'

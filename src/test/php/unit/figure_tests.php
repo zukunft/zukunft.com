@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -104,12 +104,12 @@ class figure_tests
         $t->subheader($ts . 'html frontend');
 
         $fig = $t_fig->figure_value();
-        $t->assert_api_to_dsp($fig, new figure_dsp());
+        $t->assert_api_to_ui($fig, new figure_ui());
         $fig = $t_fig->figure_result();
-        $t->assert_api_to_dsp($fig, new figure_dsp());
+        $t->assert_api_to_ui($fig, new figure_ui());
 
         $fig = $t_fig->figure_value();
-        $dsp = $tl->ui_obj($fig, new figure_dsp());
+        $dsp = $tl->ui_obj($fig, new figure_ui());
         $html_link = $dsp->display_linked();
         $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
 

@@ -54,19 +54,18 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
-use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -83,7 +82,6 @@ use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class base_ui_tests
@@ -160,7 +158,7 @@ class base_ui_tests
         $val_city = new value($t->usr1);
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
-        $val_city_dsp = new value_dsp($val_city->api_json([api_type::INCL_PHRASES]));
+        $val_city_dsp = new value_ui($val_city->api_json([api_type::INCL_PHRASES]));
         $val_city_html = $val_city_dsp->name_link();
         $t->assert_text_contains('', $val_city_html, words::CITY);
 
@@ -168,7 +166,7 @@ class base_ui_tests
         $val_canton = new value($t->usr1);
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
-        $val_canton_dsp = new value_dsp($val_canton->api_json([api_type::INCL_PHRASES]));
+        $val_canton_dsp = new value_ui($val_canton->api_json([api_type::INCL_PHRASES]));
         $val_canton_html = $val_canton_dsp->name_link();
         $t->assert_text_contains('', $val_canton_html, words::CANTON);
 
@@ -176,7 +174,7 @@ class base_ui_tests
         $val_ch = new value($t->usr1);
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $val_ch_dsp = new value_dsp($val_ch->api_json([api_type::INCL_PHRASES]));
+        $val_ch_dsp = new value_ui($val_ch->api_json([api_type::INCL_PHRASES]));
         $val_ch_html = $val_ch_dsp->name_link();
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
@@ -185,7 +183,7 @@ class base_ui_tests
         $res_city->set_grp($grp_city_pct);
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
-        $res_city_dsp = new value_dsp($res_city->api_json([api_type::INCL_PHRASES]));
+        $res_city_dsp = new value_ui($res_city->api_json([api_type::INCL_PHRASES]));
         $res_city_html = $res_city_dsp->name_link();
         $t->assert_text_contains('', $res_city_html, words::CITY);
 
@@ -193,19 +191,19 @@ class base_ui_tests
         $res_canton = new result($t->usr1);
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
-        $res_canton_dsp = new value_dsp($res_canton->api_json([api_type::INCL_PHRASES]));
+        $res_canton_dsp = new value_ui($res_canton->api_json([api_type::INCL_PHRASES]));
         $res_canton_html = $res_canton_dsp->value_edit('');
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
         // create the formula result list and the table to display the results
-        $res_lst = new result_list_dsp();
-        $res_lst->add(new result_dsp($res_city->api_json([api_type::INCL_PHRASES])));
-        $res_lst->add(new result_dsp($res_canton->api_json([api_type::INCL_PHRASES])));
+        $res_lst = new result_list_ui();
+        $res_lst->add(new result_ui($res_city->api_json([api_type::INCL_PHRASES])));
+        $res_lst->add(new result_ui($res_canton->api_json([api_type::INCL_PHRASES])));
         $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
-        $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json([api_type::INCL_PHRASES]));
+        $phr_lst_context_dsp = new phrase_list_ui($phr_lst_context->api_json([api_type::INCL_PHRASES]));
         $t->html_page_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
@@ -214,7 +212,7 @@ class base_ui_tests
         $cmp = new component($usr);
         $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
         $cmp->set_type(comp_type_shared::TEXT, $usr);
-        $cmp_dsp = new component_dsp($cmp->api_json());
+        $cmp_dsp = new component_ui($cmp->api_json());
         $t->html_page_test($cmp_dsp->html(), '', 'component_text', $t);
 
 
@@ -228,9 +226,9 @@ class base_ui_tests
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
-        $vrb_lst_dsp = new verb_list_dsp();
+        $vrb_lst_dsp = new verb_list_ui();
         $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
-        $t->html_page_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
+        $t->html_page_test($vrb_lst_dsp->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $t);
 
         $test_name = 'sort a named list by the name';
         $lst = $t_phr->phrase_list_zh_mio();
@@ -274,7 +272,7 @@ class base_ui_tests
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
-        $cmp_dsp = new component_dsp($cmp->api_json());
+        $cmp_dsp = new component_ui($cmp->api_json());
         $result = $cmp_dsp->html();
         $target = views::NESN_2016_FS_NAME;
         $t->assert('component_dsp->text', $result, $target);

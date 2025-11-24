@@ -93,7 +93,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Substeps: move all display functions from the backend objects to the frontend
     TODO Step 24: deprecate the get_old in user_list
     TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
-    TODO Step 23: deprecate the get_old in value_dsp
+    TODO Step 23: deprecate the get_old in value_ui
     TODO remove backend classes from frontend
     TODO Step 22: deprecate the get_old in value_list
     TODO remove frontend classes from backend
@@ -188,7 +188,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make sure that im-and export and api check all objects fields
     TODO move all test const to the api class or a test class
     TODO check the all used object are loaded with include once
-    TODO base the html frontend objects (_dsp) on the api JSON using the set_from_json function
+    TODO base the html frontend objects (_ui) on the api JSON using the set_from_json function
     TODO check that in the API            messages the database id is used for all preloaded types e.g. phrase type
     TODO check that in the im- and export messages the     code id is used for all preloaded types e.g. phrase type
     TODO refactor the web classes (dismiss all _old classes)
@@ -216,7 +216,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO per km in 'one' 'per' 'km'
     TODO split acronym in 'one to one' and 'one to many'
     TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given
-    TODO add api unit test (assert_api_to_dsp) to all objects
+    TODO add api unit test (assert_api_to_ui) to all objects
     TODO add limit and offset to all list sql statements
     TODO align the namespace with PSR-0 as much as possible
     TODO sort the phrases by usage, so that the values with the smallest group id are the most relevant

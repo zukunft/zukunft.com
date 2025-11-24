@@ -39,7 +39,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -59,11 +59,11 @@ class triple_list_ui_tests
 
         // fill the triple list based on the api message
         $db_lst = $t_trp->triple_list_short();
-        $lst = new triple_list_dsp($db_lst->api_json());
+        $lst = new triple_list($db_lst->api_json());
         $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
 
         // create the triple list test set
-        $lst = new triple_list_dsp();
+        $lst = new triple_list();
         $phr_city = $t_trp->zh_city();
         $phr_canton = $t_trp->zh_canton();
         $phr_city_dsp = new triple($phr_city->api_json());

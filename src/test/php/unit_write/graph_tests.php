@@ -35,7 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -127,7 +127,7 @@ class graph_tests
         $zh_types = $trp_lst->phrase_parts();
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
-        $dsp_trp_list = new triple_list_dsp();
+        $dsp_trp_list = new triple_list_ui();
         $dsp_trp_list->api_mapper($api_json);
         $result = $dsp_trp_list->tbl($back);
         $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);

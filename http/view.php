@@ -42,13 +42,12 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
@@ -73,7 +72,7 @@ if ($db_con->is_open()) {
     if ($usr->id() > 0) {
         $usr->load_usr_data();
 
-        $usr_dsp = new user_dsp();
+        $usr_dsp = new user_ui();
         $usr_dsp->set_from_json($usr->api_json());
 
         // load the user changeable configuration once via api

@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -107,7 +107,7 @@ class formula_list_tests
         $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t_frm->formula_list_short();
-        $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
+        $t->assert_api_to_ui($trp_lst, new formula_list_ui());
 
     }
 

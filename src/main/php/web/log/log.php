@@ -41,14 +41,14 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class log extends db_object_dsp
+class log extends db_object_ui
 {
 
     /*

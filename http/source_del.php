@@ -42,8 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_DEL));
+    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_DEL));
     $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters
@@ -88,7 +88,7 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
 

@@ -48,9 +48,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
 $app = new frontend();
@@ -76,8 +76,8 @@ if ($usr->id > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->id = $sys_msk_cac->id(view_shared::ERR_UPD);
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk->id = $sys_msk_cac->id(views::ERR_UPD);
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 

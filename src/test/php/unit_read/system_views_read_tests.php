@@ -46,15 +46,13 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_views;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_read_tests
@@ -82,12 +80,12 @@ class system_views_read_tests
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache();
-        $cfg = new data_object_dsp();
+        $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
-        //$cfg = new data_object_dsp();
+        //$cfg = new data_object_ui();
         $cfg->set_formula_list($t_frm->formula_list_ui());
-        $cfg->set_view_list($t_msk->view_list_dsp());
-        $cfg->set_component_list($t_cmp->component_list_dsp());
+        $cfg->set_view_list($t_msk->view_list_ui());
+        $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));

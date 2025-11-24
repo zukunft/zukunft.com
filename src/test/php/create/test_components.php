@@ -114,7 +114,7 @@ class test_components
     /**
      * @return component_list_ui a sample frontend component list
      */
-    function component_list_dsp(): component_list_ui
+    function component_list_ui(): component_list_ui
     {
         return new component_list_ui($this->component_list_word()->api_json());
     }

@@ -37,9 +37,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -63,18 +62,18 @@ class phrase_list_ui_tests
 
         // fill the phrase list based on the api message
         $db_lst = $t_phr->phrase_list();
-        $lst = new phrase_list_dsp($db_lst->api_json());
+        $lst = new phrase_list($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
         // create the phrase list test set
         $form = 'phrase_list_ui_test';
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list();
         $phr_city = $t_trp->zh_city()->phrase();
         $phr_canton = $t_trp->zh_canton()->phrase();
         $phr_ch = $t_wrd->word_ch()->phrase();
-        $phr_city_dsp = new phrase_dsp($phr_city->api_json());
-        $phr_canton_dsp = new phrase_dsp($phr_canton->api_json());
-        $phr_ch_dsp = new phrase_dsp($phr_ch->api_json());
+        $phr_city_dsp = new phrase($phr_city->api_json());
+        $phr_canton_dsp = new phrase($phr_canton->api_json());
+        $phr_ch_dsp = new phrase($phr_ch->api_json());
         $lst->add_phrase($phr_city_dsp);
         $lst->add_phrase($phr_canton_dsp);
         $lst->add_phrase($phr_ch_dsp);

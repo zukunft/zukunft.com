@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -99,7 +99,7 @@ class verb_tests
         $t->subheader($ts . 'html frontend');
 
         $vrb = $t_vrb->verb();
-        $t->assert_api_to_dsp($vrb, new verb_dsp());
+        $t->assert_api_to_ui($vrb, new verb_ui());
 
 
         $t->subheader($ts . 'triple usage');

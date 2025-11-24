@@ -54,7 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
@@ -250,10 +250,10 @@ class value_tests
 
         $val = $t_val->value();
         // TODO add class field to api message
-        $t->assert_api_to_dsp($val, new value_dsp());
+        $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
-        $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
+        $val_dsp = new value_ui($val->api_json([api_type::INCL_PHRASES]));
         $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32819" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');

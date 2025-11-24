@@ -110,15 +110,15 @@ class all_unit_tests extends test_cleanup
         new math_tests()->run($this);
         new system_tests()->run($this);
         new sql_tests()->run($this);
-        new sys_log_tests()->run($this); // TODO add assert_api_to_dsp
-        new change_log_tests()->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
-        new job_tests()->run($this); // TODO add assert_api_to_dsp
+        new sys_log_tests()->run($this); // TODO add assert_api_to_ui
+        new change_log_tests()->run($this); // TODO add assert_api_to_ui  // TODO for version 0.0.6 add import test
+        new job_tests()->run($this); // TODO add assert_api_to_ui
         new pod_tests()->run($this);
         new user_tests()->run($this);
         new user_list_tests()->run($this);
         new sandbox_tests()->run($this);
-        new language_tests()->run($this); // TODO add assert_api_to_dsp
-        new type_tests()->run($this); // TODO add assert_api_to_dsp
+        new language_tests()->run($this); // TODO add assert_api_to_ui
+        new type_tests()->run($this); // TODO add assert_api_to_ui
 
         // do the user object unit tests
         new horizontal_tests()->run($this);
@@ -131,8 +131,8 @@ class all_unit_tests extends test_cleanup
         new triple_list_tests()->run($this);
         new phrase_tests()->run($this);
         new phrase_list_tests()->run($this);
-        new group_tests()->run($this); // TODO add assert_api_to_dsp
-        new group_list_tests()->run($this); // TODO add assert_api_to_dsp
+        new group_tests()->run($this); // TODO add assert_api_to_ui
+        new group_list_tests()->run($this); // TODO add assert_api_to_ui
         new term_tests()->run($this);
         new term_list_tests()->run($this);
         new source_tests()->run($this);
@@ -142,7 +142,7 @@ class all_unit_tests extends test_cleanup
         new value_list_tests()->run($this);
         new formula_tests()->run($this);
         new formula_list_tests()->run($this);
-        new formula_link_tests()->run($this); // TODO add assert_api_to_dsp
+        new formula_link_tests()->run($this); // TODO add assert_api_to_ui
         new element_tests()->run($this);
         new element_list_tests()->run($this);
         new expression_tests()->run($this);
@@ -151,11 +151,11 @@ class all_unit_tests extends test_cleanup
         new figure_tests()->run($this);
         new figure_list_tests()->run($this);
         new view_tests()->run($this);
-        new view_list_tests()->run($this); // TODO add assert_api_to_dsp
+        new view_list_tests()->run($this); // TODO add assert_api_to_ui
         new term_view_tests()->run($this);
         new component_tests()->run($this);
-        new component_list_tests()->run($this); // TODO add assert_api_to_dsp
-        new component_link_tests()->run($this); // TODO add assert_api_to_dsp
+        new component_list_tests()->run($this); // TODO add assert_api_to_ui
+        new component_link_tests()->run($this); // TODO add assert_api_to_ui
         new component_link_list_tests()->run($this);
 
         // do the im- and export unit tests

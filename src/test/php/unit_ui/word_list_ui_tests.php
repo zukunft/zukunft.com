@@ -37,7 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::WORD . 'word_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -54,8 +54,8 @@ class word_list_ui_tests
         $t->header($ts);
 
         // create the word list test set
-        $lst = new word_list_dsp($t_wrd->word_list_short()->api_json());
-        $lst_long = new word_list_dsp($t_wrd->word_list_all_types()->api_json());
+        $lst = new word_list_ui($t_wrd->word_list_short()->api_json());
+        $lst_long = new word_list_ui($t_wrd->word_list_all_types()->api_json());
 
         // test the word list display functions
         $test_page = $html->text_h1('Word list display test');

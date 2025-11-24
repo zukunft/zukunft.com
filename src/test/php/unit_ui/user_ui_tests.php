@@ -36,8 +36,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::USER . 'user.php';
 
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_ui_tests
@@ -49,7 +48,7 @@ class user_ui_tests
         $ts = 'unit ui html user ';
         $t->header($ts);
 
-        $usr_dsp = new user_dsp();
+        $usr_dsp = new user_ui();
         $usr_dsp->id = 1;
         $usr_dsp->name = 'zukunft.com';
         $usr_dsp->email = 'heang@zukunft.com';

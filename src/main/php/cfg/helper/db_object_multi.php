@@ -353,9 +353,9 @@ class db_object_multi extends db_object_key
         if ($this->id() != 0) {
             $id_fields = $this->id_field();
             if (is_array($id_fields)) {
-                $fld_dsp = ' (' . implode(', ', $id_fields);
-                $fld_dsp .= ' = ' . $this->id() . ')';
-                return $fld_dsp;
+                $fld_ui = ' (' . implode(', ', $id_fields);
+                $fld_ui .= ' = ' . $this->id() . ')';
+                return $fld_ui;
             } else {
                 return ' (' . $id_fields . ' ' . $this->id() . ')';
             }

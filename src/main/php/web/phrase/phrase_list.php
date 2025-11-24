@@ -63,9 +63,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
@@ -94,7 +92,7 @@ class phrase_list extends sandbox_list_named
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new phrase_dsp());
+        return parent::api_mapper_list($json_array, new phrase());
     }
 
 
@@ -104,17 +102,17 @@ class phrase_list extends sandbox_list_named
 
     /**
      * add the phrases related to the given phrase to the list
-     * @param phrase_dsp $phr
+     * @param phrase $phr
      * @param foaf_direction $direction
      * @param verb_list|null $link_types
      * @return bool
      */
-    function load_related(phrase_dsp $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
+    function load_related(phrase $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
     {
         $result = false;
 
         // TODO move the
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
         $data[url_var::PHRASE] = $phr->id();
         $data[url_var::DIRECTION] = $direction->value;
@@ -137,7 +135,7 @@ class phrase_list extends sandbox_list_named
         $result = false;
 
         // TODO move the
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
         $json_body = $api->api_get(self::class, $data);
@@ -578,11 +576,11 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @return phrase_dsp|null the dominate phrase of the list
+     * @return phrase|null the dominate phrase of the list
      * used to guess which related phrase a human user might use next
      * if no phrase is dominant, the phrase is selected by the parent phrase
      */
-    function mainly(): ?phrase_dsp
+    function mainly(): ?phrase
     {
         global $db_con;
         $phr = null;
@@ -605,7 +603,7 @@ class phrase_list extends sandbox_list_named
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add_phrase(phrase_dsp $phr): bool
+    function add_phrase(phrase $phr): bool
     {
         return parent::add_obj($phr)->is_ok();
     }
@@ -613,14 +611,14 @@ class phrase_list extends sandbox_list_named
     /**
      * remove all phrases of the given list from this list
      * @param phrase_list $del_lst of phrases that should be deleted
-     * @return phrase_list_dsp with the remaining phrases
+     * @return phrase_list with the remaining phrases
      */
-    function remove(phrase_list_dsp $del_lst): phrase_list_dsp
+    function remove(phrase_list $del_lst): phrase_list
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
-            $remain_lst = new phrase_list_dsp();
+            $remain_lst = new phrase_list();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add_phrase($phr);
@@ -708,7 +706,7 @@ class phrase_list extends sandbox_list_named
      * e.g. used to display all phrases linked to a word
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase_dsp $root_phr, string $back = ''): string
+    function dsp_graph(phrase $root_phr, string $back = ''): string
     {
         log_debug();
         $result = '';

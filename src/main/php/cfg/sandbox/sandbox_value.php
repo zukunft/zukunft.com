@@ -2400,9 +2400,9 @@ class sandbox_value extends sandbox_multi
             $sc_par_lst->add($this->value_type());
             $id_fields = $this->id_field($sc_par_lst);
             if (is_array($id_fields)) {
-                $fld_dsp = ' (' . implode(', ', $id_fields);
-                $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';
-                $result .= $fld_dsp;
+                $fld_ui = ' (' . implode(', ', $id_fields);
+                $fld_ui .= ' = ' . $this->grp()->dsp_id_short() . ')';
+                $result .= $fld_ui;
             } else {
                 $result .= ' (' . $id_fields . ' ' . $this->id() . ')';
             }

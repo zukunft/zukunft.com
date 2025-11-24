@@ -41,9 +41,9 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -146,7 +146,7 @@ if ($usr->id > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
             $result .= $html->dsp_err($msg);
 
@@ -157,7 +157,7 @@ if ($usr->id > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $cmp_dsp = new component_dsp($cmp->api_json());
+            $cmp_dsp = new component_ui($cmp->api_json());
             $result .= $cmp_dsp->dsp_edit($add_link, $wrd, $back);
         }
     }

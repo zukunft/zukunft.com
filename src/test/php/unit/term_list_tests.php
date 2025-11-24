@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -105,7 +105,7 @@ class term_list_tests
         $t->subheader($ts . 'html frontend');
 
         $trm_lst = $t_trm->term_list_short();
-        $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
+        $t->assert_api_to_ui($trm_lst, new term_list_ui());
 
     }
 

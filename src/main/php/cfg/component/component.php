@@ -1925,7 +1925,7 @@ class component extends sandbox_code_id
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
-            log_err("The user id must be set to list the component links.", "component->assign_dsp_ids");
+            log_err("The user id must be set to list the component links.", "component->assign_ui_ids");
         }
 
         return $result;

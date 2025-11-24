@@ -32,10 +32,9 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
-use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
@@ -49,7 +48,7 @@ class formula_ui_tests
         $ts = 'unit ui html formula ';
         $t->header($ts);
 
-        $frm = new formula_dsp($t_frm->formula()->api_json());
+        $frm = new formula($t_frm->formula()->api_json());
         $test_page = $html->text_h2('formula display test');
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';

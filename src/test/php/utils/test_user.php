@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -55,7 +55,7 @@ function run_user_test(all_tests $t): void
     $ts = 'db write user ';
     $t->header($ts);
 
-    $usr_dsp = new user_dsp($usr->api_json());
+    $usr_dsp = new user_ui($usr->api_json());
     $result = $usr_dsp->form_edit($back);
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);

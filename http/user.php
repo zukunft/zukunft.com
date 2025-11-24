@@ -49,9 +49,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -74,7 +74,7 @@ $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];
 $undo_frm = $_GET['undo_formula'];
 $undo_frm_lnk = $_GET['undo_formula_link'];
-$undo_dsp = $_GET['undo_view'];
+$undo_msk = $_GET['undo_view'];
 $undo_cmp = $_GET['undo_component'];
 $undo_cmp_lnk = $_GET['undo_view_link'];
 $undo_src = $_GET['undo_source'];
@@ -82,7 +82,7 @@ $undo_src = $_GET['undo_source'];
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$dsp_usr = new user_dsp($usr->api_json());
+$dsp_usr = new user_ui($usr->api_json());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id > 0) {
@@ -92,7 +92,7 @@ if ($usr->id > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::USER);
+    $msk->load_by_code_id(views::USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);
@@ -133,9 +133,9 @@ if ($usr->id > 0) {
     }
 
     // undo user changes for formulas
-    if ($undo_dsp > 0) {
+    if ($undo_msk > 0) {
         $msk = new view($usr);
-        $msk->id = $undo_dsp;
+        $msk->id = $undo_msk;
         $msk->del_usr_cfg();
     }
 
@@ -153,7 +153,7 @@ if ($usr->id > 0) {
         $cmp_lnk->del_usr_cfg();
     }
 
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
     $result .= $dsp_usr->form_edit($back);

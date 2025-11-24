@@ -48,7 +48,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -118,13 +118,13 @@ class term_tests
         $t->subheader($ts . 'html frontend');
 
         $trm = $t_trm->term();
-        $t->assert_api_to_dsp($trm, new term_dsp());
+        $t->assert_api_to_ui($trm, new term_ui());
         $trm = $t_trm->term_triple();
-        $t->assert_api_to_dsp($trm, new term_dsp());
+        $t->assert_api_to_ui($trm, new term_ui());
         $trm = $t_trm->term_formula();
-        $t->assert_api_to_dsp($trm, new term_dsp());
+        $t->assert_api_to_ui($trm, new term_ui());
         $trm = $t_trm->term_verb();
-        $t->assert_api_to_dsp($trm, new term_dsp());
+        $t->assert_api_to_ui($trm, new term_ui());
 
     }
 

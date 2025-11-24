@@ -42,7 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -180,7 +180,7 @@ class result_tests
         $t->subheader($ts . 'html frontend');
 
         $res = $t_res->result_simple_1();
-        $t->assert_api_to_dsp($res, new result_dsp());
+        $t->assert_api_to_ui($res, new result_ui());
 
     }
 

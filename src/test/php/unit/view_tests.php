@@ -37,7 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
@@ -128,12 +128,12 @@ class view_tests
         $t->assert_api_json($msk);
         $msk = $t_msk->view_protected();
         $t->assert_api($msk);
-        $t->assert_api_to_dsp($msk, new view_dsp());
+        $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'with components api');
         $msk = $t_msk->view_with_components();
         $t->assert_api($msk, 'view_with_components');
-        $t->assert_api_to_dsp($msk, new view_dsp());
+        $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_msk->view(), $usr_sys);
@@ -144,7 +144,7 @@ class view_tests
 
         $test_name = 'view create from json string';
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
-        $msk_dsp = new view_dsp($json);
+        $msk_dsp = new view_ui($json);
         $dsp_text = $msk_dsp->name_tip();
         $target = '<span title="the default view for words" data-toggle="tooltip">Word</span>';
         $t->assert($test_name, $dsp_text, $target);
@@ -213,7 +213,7 @@ class view_tests
 
         /*
          * needs database connection
-        $msk = new view_dsp;
+        $msk = new view_ui;
         $msk->id = 1;
         $msk->code_id = null;
         $msk->name = view::TEST_NAME_ADD;

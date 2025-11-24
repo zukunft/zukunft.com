@@ -72,7 +72,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -764,8 +764,8 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $result .= $log_dsp->dsp_hist(component::class, $this->id(), $size, $page);
+        $log_ui = new user_log_display();
+        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");
         return $result;
@@ -777,14 +777,14 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = component::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = component::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         $this->log_debug("done");
         return $result;
@@ -802,7 +802,7 @@ class component extends sandbox_code_id
 
     /**
      * to select the word or triple
-     * @param phrase_list_dsp $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
+     * @param phrase_list_ui $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
      * @param string $form the name of the html form
      * @param int|null $selected the row id of the suggested phrase or the already selected phrase

@@ -40,7 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 
 class sandbox_list_value extends sandbox_list_named
 {
@@ -56,12 +56,12 @@ class sandbox_list_value extends sandbox_list_named
      */
 
     /**
-     * @returns phrase_list_dsp with the phrases that are used in all values of the list
+     * @returns phrase_list with the phrases that are used in all values of the list
      */
-    protected function common_phrases(): phrase_list_dsp
+    protected function common_phrases(): phrase_list
     {
         // get common words
-        $common_phr_lst = new phrase_list_dsp();
+        $common_phr_lst = new phrase_list();
         foreach ($this->lst() as $val) {
             if ($val != null) {
                 if ($val->phr_lst() != null) {

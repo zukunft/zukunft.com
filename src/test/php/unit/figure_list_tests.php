@@ -43,7 +43,7 @@ include_once html_paths::FIGURE . 'figure_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
-use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -85,7 +85,7 @@ class figure_list_tests
         $t->subheader($ts . 'html frontend');
 
         $fig_lst = $t_fig->figure_list();
-        $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
+        $t->assert_api_to_ui($fig_lst, new figure_list_ui());
 
     }
 

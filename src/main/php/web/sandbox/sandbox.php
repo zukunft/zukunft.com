@@ -51,16 +51,15 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class sandbox extends db_object_dsp
+class sandbox extends db_object
 {
 
     // the share_id is used to define the access rights
@@ -76,7 +75,7 @@ class sandbox extends db_object_dsp
     public ?bool $excluded = null;
 
     // the user that has created the standard object
-    protected ?user_dsp $owner = null;
+    protected ?user $owner = null;
 
     // the id of the default view for this object
     public ?int $view_id = null;

@@ -45,10 +45,10 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
 $app = new frontend();
@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::WORD_EDIT);
+    $msk->load_by_code_id(views::WORD_EDIT);
     $back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
@@ -119,13 +119,13 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($msg);
 
             // show the word and its relations, so that the user can change it
-            $wrd_dsp = new word_dsp();
+            $wrd_dsp = new word_ui();
             $wrd_dsp->set_from_json($wrd->api_json());
             $result .= $wrd_dsp->dsp_edit($back);
         }

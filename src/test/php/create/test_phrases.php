@@ -331,7 +331,7 @@ class test_phrases
         return $lst;
     }
 
-    function phrase_list_start_view_dsp(): phrase_list_ui
+    function phrase_list_start_view_ui(): phrase_list_ui
     {
         return new phrase_list_ui($this->phrase_list_start_view()->api_json([api_type::INCL_PHRASES]));
     }

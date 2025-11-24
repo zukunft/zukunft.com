@@ -4577,7 +4577,7 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param object $dsp_obj the object that should be filled with all user sandbox values
      */
-    function fill_dsp_obj(object $dsp_obj): void
+    function fill_ui_obj(object $dsp_obj): void
     {
         $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;

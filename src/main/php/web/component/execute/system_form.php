@@ -74,7 +74,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\ref\ref;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -142,7 +142,7 @@ class system_form extends component
     /**
      * @return string the html code so that an admin user can overwrite the username
      */
-    function admin_form_username(user|db_object_dsp $dbo): string
+    function admin_form_username(user|db_object $dbo): string
     {
         $html = new html_base();
         return $html->input(
@@ -155,7 +155,7 @@ class system_form extends component
     /**
      * @return string the html code so that an admin user can overwrite the user email
      */
-    function admin_form_user_email(user|db_object_dsp $dbo): string
+    function admin_form_user_email(user|db_object $dbo): string
     {
         $html = new html_base();
         return $html->input(
@@ -168,7 +168,7 @@ class system_form extends component
     /**
      * @return string the html code so that an admin user can overwrite the user password
      */
-    function admin_form_user_password(user|db_object_dsp $dbo): string
+    function admin_form_user_password(user|db_object $dbo): string
     {
         $html = new html_base();
         return $html->input(
@@ -181,7 +181,7 @@ class system_form extends component
     /**
      * @return string the html code so that an admin can overwrite the language symbol
      */
-    function admin_form_language_symbol(language|db_object_dsp $dbo): string
+    function admin_form_language_symbol(language|db_object $dbo): string
     {
         $html = new html_base();
         return $html->input(
@@ -194,7 +194,7 @@ class system_form extends component
     /**
      * @return string the html code to show the language symbol
      */
-    function show_language_symbol(language|db_object_dsp $dbo): string
+    function show_language_symbol(language|db_object $dbo): string
     {
         return $dbo->symbol;
     }
@@ -202,11 +202,11 @@ class system_form extends component
 
     /**
      * show the name of an object to the user
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @param string $code_id e.g. to select the name in case of a link object
      * @return string the html code to show the object name to the user
      */
-    function show_name(db_object_dsp $dbo, string $code_id = ''): string
+    function show_name(db_object $dbo, string $code_id = ''): string
     {
         if ($code_id == '') {
             return $dbo->name();
@@ -221,37 +221,37 @@ class system_form extends component
     }
 
     /**
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to show the object description to the user
      */
-    function show_description(db_object_dsp $dbo): string
+    function show_description(db_object $dbo): string
     {
         return $dbo->description();
     }
 
     /**
-     * @param ref|db_object_dsp $dbo the object
+     * @param ref|db_object $dbo the object
      * @return string the html code to show the object reference type to the user
      */
-    function show_ref_type(ref|db_object_dsp $dbo): string
+    function show_ref_type(ref|db_object $dbo): string
     {
         return $dbo->type_name();
     }
 
     /**
-     * @param ref|db_object_dsp $dbo the object
+     * @param ref|db_object $dbo the object
      * @return string the html code to show the object reference type to the user
      */
-    function show_ref_key(ref|db_object_dsp $dbo): string
+    function show_ref_key(ref|db_object $dbo): string
     {
         return $dbo->external_key();
     }
 
     /**
-     * @param ref|db_object_dsp $dbo the object
+     * @param ref|db_object $dbo the object
      * @return string the html code to show the object reference type to the user
      */
-    function show_ref_source(ref|db_object_dsp $dbo): string
+    function show_ref_source(ref|db_object $dbo): string
     {
         $src_txt = $dbo->source_name();
         if ($src_txt == null) {
@@ -261,95 +261,95 @@ class system_form extends component
     }
 
     /**
-     * @param ref|db_object_dsp $dbo the object
+     * @param ref|db_object $dbo the object
      * @return string the html code to show the object reference type to the user
      */
-    function show_ref_url(ref|db_object_dsp $dbo): string
+    function show_ref_url(ref|db_object $dbo): string
     {
         return $dbo->url();
     }
 
     /**
      * TODO Prio 1 fill with the correct field
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function show_usage(db_object_dsp $dbo): string
+    function show_usage(db_object $dbo): string
     {
         return $dbo->name();
     }
 
     /**
-     * @param view_relation|db_object_dsp $dbo the object
+     * @param view_relation|db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function show_parent_view(view_relation|db_object_dsp $dbo): string
+    function show_parent_view(view_relation|db_object $dbo): string
     {
         return $dbo->parent()?->name();
     }
 
     /**
-     * @param view_relation|db_object_dsp $dbo the object
+     * @param view_relation|db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function show_child_view(view_relation|db_object_dsp $dbo): string
+    function show_child_view(view_relation|db_object $dbo): string
     {
         return $dbo->child()?->name();
     }
 
     /**
-     * @param view_relation|db_object_dsp $dbo the object
+     * @param view_relation|db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function show_relation_type(view_relation|db_object_dsp $dbo): string
+    function show_relation_type(view_relation|db_object $dbo): string
     {
         return $dbo->relation_type()?->name();
     }
 
     /**
-     * @param view_relation|db_object_dsp $dbo the object
+     * @param view_relation|db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function show_start_pos(view_relation|db_object_dsp $dbo): string
+    function show_start_pos(view_relation|db_object $dbo): string
     {
         return $dbo->start_pos;
     }
 
     /**
      * TODO Prio 1 fill with the correct field
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function result(db_object_dsp $dbo): string
+    function result(db_object $dbo): string
     {
         return $dbo->name();
     }
 
     /**
      * TODO Prio 1 fill with the correct field
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function used_as_text(db_object_dsp $dbo): string
+    function used_as_text(db_object $dbo): string
     {
         return $dbo->name();
     }
 
     /**
      * TODO Prio 1 fill with the correct field
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function used_as_text_link(db_object_dsp $dbo): string
+    function used_as_text_link(db_object $dbo): string
     {
         return $dbo->name();
     }
 
     /**
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request the object name from the user
      */
-    function form_name(db_object_dsp $dbo, string $style_text): string
+    function form_name(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -364,7 +364,7 @@ class system_form extends component
     /**
      * @return string the html code to request the description from the user
      */
-    function form_description(db_object_dsp $dbo): string
+    function form_description(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -378,10 +378,10 @@ class system_form extends component
     }
 
     /**
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request the object plural from the user
      */
-    function form_field_plural(db_object_dsp $dbo, string $style_text): string
+    function form_field_plural(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $plural = $dbo->get_plural();
@@ -400,10 +400,10 @@ class system_form extends component
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
-    function form_field_reverse(db_object_dsp $dbo, string $style_text): string
+    function form_field_reverse(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $reverse = $dbo->reverse();
@@ -422,10 +422,10 @@ class system_form extends component
     /**
      * request the verb name if used the other way round
      * e.g. if Zurich is part of Switzerland, Switzerland contains Zurich and "contains" is the reverse name for "ia part of"
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request the verb name used if the triple is used the other way round
      */
-    function form_field_plural_reverse(db_object_dsp $dbo, string $style_text): string
+    function form_field_plural_reverse(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $reverse = $dbo->plural_reverse();
@@ -443,10 +443,10 @@ class system_form extends component
 
     /**
      * request the verb name if used in a formula
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request the verb name used in a formula
      */
-    function form_field_name_in_formulas(db_object_dsp $dbo, string $style_text): string
+    function form_field_name_in_formulas(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $frm_name = $dbo->formula_name();
@@ -464,10 +464,10 @@ class system_form extends component
 
     /**
      * request the external kay of a reference
-     * @param ref|db_object_dsp $dbo the reference object
+     * @param ref|db_object $dbo the reference object
      * @return string the html code to request the verb name used in a formula
      */
-    function form_field_ref_key(ref|db_object_dsp $dbo, string $style_text): string
+    function form_field_ref_key(ref|db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $ref_key = $dbo->external_key();
@@ -485,10 +485,10 @@ class system_form extends component
 
     /**
      * edit field for the triple weight
-     * @param triple|db_object_dsp $trp the triple object
+     * @param triple|db_object $trp the triple object
      * @return string the html code to request the triple weight from the user
      */
-    function form_field_weight(triple|db_object_dsp $trp): string
+    function form_field_weight(triple|db_object $trp): string
     {
         $html = new html_base();
         $weight = $trp->weight;
@@ -505,10 +505,10 @@ class system_form extends component
     }
 
     /**
-     * @param db_object_dsp $dbo the object
+     * @param db_object $dbo the object
      * @return string the html code to request a numeric value from the user
      */
-    function form_num_value(db_object_dsp $dbo, string $style_text): string
+    function form_num_value(db_object $dbo, string $style_text): string
     {
         $html = new html_base();
         $val_txt = $dbo->value();
@@ -527,7 +527,7 @@ class system_form extends component
     /**
      * @return string the html code to request a url from the user
      */
-    function form_field_url(db_object_dsp $dbo, string $style_text = ''): string
+    function form_field_url(db_object $dbo, string $style_text = ''): string
     {
         $html = new html_base();
         $url = $dbo->url();
@@ -550,7 +550,7 @@ class system_form extends component
     /**
      * @return string the html code to request the group name
      */
-    function form_field_group_name(db_object_dsp $dbo): string
+    function form_field_group_name(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -566,7 +566,7 @@ class system_form extends component
     /**
      * @return string the html code to request the source group name
      */
-    function form_field_source_group_name(db_object_dsp $dbo): string
+    function form_field_source_group_name(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -582,7 +582,7 @@ class system_form extends component
     /**
      * @return string the html code to request the group name or a list of phrases
      */
-    function form_field_group_or_phrases(db_object_dsp $dbo): string
+    function form_field_group_or_phrases(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -598,7 +598,7 @@ class system_form extends component
     /**
      * @return string the html code to request the group name or a list of phrases
      */
-    function form_field_source_group_or_phrases(db_object_dsp $dbo): string
+    function form_field_source_group_or_phrases(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -614,7 +614,7 @@ class system_form extends component
     /**
      * @return string the html code to request the formula link priority
      */
-    function form_field_formula_link_priority(db_object_dsp $dbo): string
+    function form_field_formula_link_priority(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -627,7 +627,7 @@ class system_form extends component
     /**
      * @return string the html code to request the view link priority
      */
-    function form_field_view_link_priority(db_object_dsp $dbo): string
+    function form_field_view_link_priority(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -643,7 +643,7 @@ class system_form extends component
     /**
      * @return string the html code to request the component position
      */
-    function form_field_component_link_order_number(db_object_dsp $dbo): string
+    function form_field_component_link_order_number(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -659,7 +659,7 @@ class system_form extends component
     /**
      * @return string the html code to request the view modification start position
      */
-    function form_view_relation_pos(db_object_dsp $dbo): string
+    function form_view_relation_pos(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -675,7 +675,7 @@ class system_form extends component
     /**
      * @return string the html code to request the selection name from the user
      */
-    function form_field_selection_name(db_object_dsp $dbo): string
+    function form_field_selection_name(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -691,7 +691,7 @@ class system_form extends component
     /**
      * @return string the html code to request the selection description from the user
      */
-    function form_field_selection_description(db_object_dsp $dbo): string
+    function form_field_selection_description(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -707,7 +707,7 @@ class system_form extends component
     /**
      * @return string the html code to request the selection text from the user
      */
-    function form_field_selection_text(db_object_dsp $dbo): string
+    function form_field_selection_text(db_object $dbo): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -730,16 +730,16 @@ class system_form extends component
      * TODO move form_select_phrase_to to a const
      * TODO remove fixed pattern
      *
-     * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
+     * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
     function form_phrase(
-        db_object_dsp|triple $dbo,
-        string               $form_name,
-        string               $code_id = '',
-        ?phrase_list         $phr_lst = null,
-        bool                 $test_mode = false
+        db_object|triple $dbo,
+        string           $form_name,
+        string           $code_id = '',
+        ?phrase_list     $phr_lst = null,
+        bool             $test_mode = false
     ): string
     {
         $lib = new library();
@@ -794,16 +794,16 @@ class system_form extends component
      * create the HTML code to select one or more words or triples
      * TODO review
      *
-     * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
+     * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
     function form_phrases(
-        db_object_dsp|triple $dbo,
-        string               $form_name,
-        string               $code_id = '',
-        ?phrase_list         $phr_lst = null,
-        bool                 $test_mode = false
+        db_object|triple $dbo,
+        string           $form_name,
+        string           $code_id = '',
+        ?phrase_list     $phr_lst = null,
+        bool             $test_mode = false
     ): string
     {
         $lib = new library();
@@ -858,16 +858,16 @@ class system_form extends component
      * create the HTML code to select a word, verb, triple or formula
      * TODO Prio 1 review
      *
-     * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
+     * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
     function form_term(
-        db_object_dsp|triple $dbo,
-        string               $form_name,
-        string               $code_id = '',
-        ?phrase_list         $phr_lst = null,
-        bool                 $test_mode = false
+        db_object|triple $dbo,
+        string           $form_name,
+        string           $code_id = '',
+        ?phrase_list     $phr_lst = null,
+        bool             $test_mode = false
     ): string
     {
         $lib = new library();
@@ -904,16 +904,16 @@ class system_form extends component
      * create the HTML code to select one or mane words, verbs, triples or formulas
      * TODO Prio 1 review
      *
-     * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
+     * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
     function form_terms(
-        db_object_dsp|triple $dbo,
-        string               $form_name,
-        string               $code_id = '',
-        ?phrase_list         $phr_lst = null,
-        bool                 $test_mode = false
+        db_object|triple $dbo,
+        string           $form_name,
+        string           $code_id = '',
+        ?phrase_list     $phr_lst = null,
+        bool             $test_mode = false
     ): string
     {
         $lib = new library();
@@ -948,62 +948,62 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the phrase type
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verb(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verb(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->verb_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select one or more verbs
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verbs(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_verbs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->verb_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the source
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the source
      */
-    function form_source(db_object_dsp $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
+    function form_source(db_object $dbo, string $form_name, ?source_list $src_lst, string $pattern = ''): string
     {
         return $dbo->source_selector($form_name, $pattern, $src_lst);
     }
 
     /**
      * create the html code for the form element to select one or many sources
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source
      */
-    function form_sources(db_object_dsp $dbo, string $form_name, ?source_list $src_lst): string
+    function form_sources(db_object $dbo, string $form_name, ?source_list $src_lst): string
     {
         return $dbo->source_selector($form_name, '', $src_lst);
     }
 
     /**
      * create the html code for the form element to select the reference
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the reference
      */
-    function form_ref(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
+    function form_ref(db_object $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
     {
         return $dbo->ref_selector($form_name, $pattern);
     }
@@ -1011,108 +1011,108 @@ class system_form extends component
     /**
      * create the html code for the form element to select one or many references
      * TODO Prio 1 review
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the reference
      */
-    function form_refs(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_refs(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->ref_selector($form_name, '');
     }
 
     /**
      * create the html code for the form element to select a value
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_value(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_value(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->value_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select a value
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_values(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_values(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->value_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select a result
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_result(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_result(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->result_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select a result
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view
      */
-    function form_results(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_results(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->result_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select one formula
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param formula_list|null $frm_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_formula(db_object_dsp $dbo, string $form_name, ?formula_list $frm_lst): string
+    function form_formula(db_object $dbo, string $form_name, ?formula_list $frm_lst): string
     {
         return $dbo->formula_selector($form_name, $frm_lst);
     }
 
     /**
      * create the html code for the form element to select one formula
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param formula_list|null $frm_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_formulas(db_object_dsp $dbo, string $form_name, ?formula_list $frm_lst): string
+    function form_formulas(db_object $dbo, string $form_name, ?formula_list $frm_lst): string
     {
         return $dbo->formula_selector($form_name, $frm_lst);
     }
 
     /**
      * create the html code for the form element to select the view
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst);
     }
 
     /**
      * create the html code for the form element to select the parent view
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_parent_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_parent_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
             url_var::VIEW_PARENT,msg_id::FORM_SELECT_PARENT_VIEW);
@@ -1120,12 +1120,12 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the child view
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_child_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_child_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst,
             url_var::VIEW_CHILD,msg_id::FORM_SELECT_CHILD_VIEW);
@@ -1138,31 +1138,31 @@ class system_form extends component
      *   form_view         - the select view as a form field e.g. to select a view for the export
      *   select_view       - the select view as a direct save to change the view of a sandbox object without changing other fields
      *
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_view_default(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_view_default(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst);
     }
 
     /**
      * create the html code for the form element to select one or many views
-     * @param db_object_dsp $dbo the frontend object with the view used until now
+     * @param db_object $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection
      * @return string the html code to select the view
      */
-    function form_views(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_views(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst);
     }
 
     /**
      * create the html code for the form element to select the component
-     * @param db_object_dsp $dbo the frontend object with the component used until now
+     * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
@@ -1170,7 +1170,7 @@ class system_form extends component
      * @return string the html code to select the component
      */
     function form_component(
-        db_object_dsp   $dbo,
+        db_object       $dbo,
         string          $form_name,
         string          $pattern,
         int             $id,
@@ -1182,7 +1182,7 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select one or many components
-     * @param db_object_dsp $dbo the frontend object with the component used until now
+     * @param db_object $dbo the frontend object with the component used until now
      * @param string $form_name the name of the component which is also used for the html form name
      * @param string $pattern the pattern used to filter the components by the name
      * @param int $id the id of the component selected until now
@@ -1190,7 +1190,7 @@ class system_form extends component
      * @return string the html code to select the component
      */
     function form_components(
-        db_object_dsp   $dbo,
+        db_object       $dbo,
         string          $form_name,
         string          $pattern,
         int             $id,
@@ -1202,71 +1202,71 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the phrase type
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param db_object $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function form_phrase_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_phrase_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->phrase_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the source type
-     * @param db_object_dsp $dbo the frontend source object with the type used until now
+     * @param db_object $dbo the frontend source object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    function form_source_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_source_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->source_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the reference type
-     * @param db_object_dsp $dbo the frontend reference object with the type used until now
+     * @param db_object $dbo the frontend reference object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the reference type
      */
-    function form_ref_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_ref_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->ref_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the value type
-     * @param db_object_dsp $dbo the frontend value object with the type used until now
+     * @param db_object $dbo the frontend value object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the value type
      */
-    function form_value_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_value_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->ref_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the formula type
-     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param db_object $dbo the frontend formula object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_formula_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->formula_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the view type
-     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param db_object $dbo the frontend view object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->view_type_selector($form_name, $typ_lst);
     }
@@ -1275,120 +1275,120 @@ class system_form extends component
      * create the html code for the form element to select the view style
      * used by the view and the component
      *
-     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param db_object $dbo the frontend view object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->style_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the component type
-     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    function form_component_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the component style
-     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component style
      */
-    function form_component_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_style(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_style_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the view relation type
-     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view relation type
      */
-    function form_view_relation_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_relation_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->view_relation_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the formula link type
-     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param db_object $dbo the frontend formula object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the formula link type
      */
-    function form_formula_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_formula_link_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->formula_link_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the view link type
-     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param db_object $dbo the frontend view object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view link type
      */
-    function form_view_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_view_link_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->view_link_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the component link type
-     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component link type
      */
-    function form_component_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_link_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_link_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the component position type
-     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param db_object $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component link type
      */
-    function form_component_pos_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_component_pos_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_link_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the share type
-     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param db_object $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    function form_share_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_share_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->share_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the protection type
-     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param db_object $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    function form_protection_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_protection_type(db_object $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->protection_type_selector($form_name, $typ_lst);
     }
@@ -1396,23 +1396,23 @@ class system_form extends component
     /**
      * TODO Prio 0 review
      * create the html code for the form element to select the protection type
-     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param db_object $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    function form_table_linked_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    function form_table_linked_view(db_object $dbo, string $form_name, ?view_list $msk_lst): string
     {
         return $dbo->view_selector($form_name, $msk_lst);
     }
 
     /**
      * create the html code for the form element to enter the formula expression
-     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param db_object $dbo the frontend formula object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_expression(db_object_dsp $dbo, string $form_name): string
+    function form_formula_expression(db_object $dbo, string $form_name): string
     {
         $html = new html_base();
         return $html->form_field(
@@ -1426,11 +1426,11 @@ class system_form extends component
 
     /**
      * create the html code for the form flag to set that the formula needs all fields to be set
-     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param db_object $dbo the frontend formula object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_all_fields(db_object_dsp $dbo, string $form_name): string
+    function form_formula_all_fields(db_object $dbo, string $form_name): string
     {
         $html = new html_base();
         return $html->dsp_form_fld_checkbox(

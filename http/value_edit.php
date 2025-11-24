@@ -42,7 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\value\value;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -141,7 +141,7 @@ if ($usr->id() > 0) {
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the value and the linked words to edit the value (again after removing or adding a word)
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
             $result .= $html->dsp_err($msg);

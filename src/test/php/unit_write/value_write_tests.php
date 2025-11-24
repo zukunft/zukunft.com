@@ -44,8 +44,8 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -176,7 +176,7 @@ class value_write_tests
             words::PCT,
             words::YEAR_2020));
         $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
-        $val_dsp = new value_dsp($api_msg);
+        $val_dsp = new value_ui($api_msg);
         $result = $val_dsp->value(0);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
@@ -195,10 +195,10 @@ class value_write_tests
         $phr_lst = $t_db->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
-        $mio_val_dsp = new value_dsp();
+        $mio_val_dsp = new value_ui();
         $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]));
         $fig = $mio_val->figure();
-        $fig_dsp = $tl->ui_obj($fig, new figure_dsp());
+        $fig_dsp = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_dsp->display_linked('1');
         $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);

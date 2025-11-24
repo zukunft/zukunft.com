@@ -33,7 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -54,10 +54,10 @@ class term_ui_tests
         $ts = 'unit ui html term ';
         $t->header($ts);
 
-        $wrd = new term_dsp($t_wrd->word()->term()->api_json());
-        $trp = new term_dsp($t_trp->triple_pi()->term()->api_json());
-        $vrb = new term_dsp($t_vrb->verb()->term()->api_json());
-        $frm = new term_dsp($t_frm->formula()->term()->api_json());
+        $wrd = new term($t_wrd->word()->term()->api_json());
+        $trp = new term($t_trp->triple_pi()->term()->api_json());
+        $vrb = new term($t_vrb->verb()->term()->api_json());
+        $frm = new term($t_frm->formula()->term()->api_json());
         $test_page = $html->text_h2('term display test');
         $test_page .= 'word term with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'word term with link: ' . $wrd->name_link() . '<br>';

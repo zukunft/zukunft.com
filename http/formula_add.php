@@ -43,11 +43,11 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -71,7 +71,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::FORMULA_ADD);
+    $msk->load_by_code_id(views::FORMULA_ADD);
     $back = $_GET[url_var::BACK] = '';
 
     // init the formula object
@@ -160,12 +160,12 @@ if ($usr->id() > 0) {
     // if nothing yet done display the edit view (and any message on the top)
     if ($result == '') {
         // show the header
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg);
 
-        $frm_dsp = new formula_dsp($frm->api_json());
+        $frm_dsp = new formula_ui($frm->api_json());
         $result .= $frm_dsp->dsp_edit(0, $wrd, $back);
     }
 }

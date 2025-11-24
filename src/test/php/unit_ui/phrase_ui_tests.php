@@ -33,7 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -50,8 +50,8 @@ class phrase_ui_tests
         $ts = 'unit ui html phrase ';
         $t->header($ts);
 
-        $wrd = new phrase_dsp($t_wrd->word()->phrase()->api_json());
-        $trp = new phrase_dsp($t_trp->triple_pi()->phrase()->api_json());
+        $wrd = new phrase($t_wrd->word()->phrase()->api_json());
+        $trp = new phrase($t_trp->triple_pi()->phrase()->api_json());
         $test_page = $html->text_h2('Phrase display test');
         $test_page .= 'word phrase with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'word phrase with link: ' . $wrd->name_link() . '<br>';

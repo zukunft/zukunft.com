@@ -115,30 +115,29 @@ include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
-// TODO Prio 0 rename _dsp to _ui
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
-use Zukunft\ZukunftCom\main\php\web\group\group as group_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
-use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -520,10 +519,10 @@ class frontend
      * user
      */
 
-    function get_user(): user_dsp
+    function get_user(): user_ui
     {
         global $usr;
-        $usr = new user_dsp();
+        $usr = new user_ui();
         return $usr;
     }
 
@@ -536,18 +535,18 @@ class frontend
      * execute database updates via api
      *
      * @param string $action the standard action
-     * @param user_dsp $usr the session user who has requested the view
+     * @param user_ui $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_action(
-        string        $action,
-        string        $step,
-        db_object_dsp $dbo,
-        array         $url_array,
-        user_message  $usr_msg,
-        string $back
+        string       $action,
+        string       $step,
+        db_object_ui $dbo,
+        array        $url_array,
+        user_message $usr_msg,
+        string       $back
     ): string
     {
         $url = ''; // the follow-up url
@@ -589,14 +588,14 @@ class frontend
      * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
-     * @param user_dsp $usr the session user who has requested the view
+     * @param user_ui $usr the session user who has requested the view
      * @param user_message $usr_msg to enrich with potential errors
      * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
     function url_to_html(
         array        $url_array,
-        user_dsp     $usr,
+        user_ui      $usr,
         user_message $usr_msg,
         data_object  $dto = new data_object()
     ): string
@@ -643,7 +642,7 @@ class frontend
         }
 
         // select the main object to display
-        $dbo = $this->view_id_to_dbo_dsp($view_id);
+        $dbo = $this->view_id_to_dbo_ui($view_id);
 
         // save form action
         // if the save bottom has been pressed
@@ -719,18 +718,18 @@ class frontend
             // TODO for system views avoid the backend call by using the cache from the frontend
             // TODO get the system view from the preloaded cache
             // TODO use the frontend not the backend cache
-            $msk_dsp = $this->dto->typ_lst_cache->get_view_by_id($view_id);
-            if ($msk_dsp == null) {
+            $msk_ui = $this->dto->typ_lst_cache->get_view_by_id($view_id);
+            if ($msk_ui == null) {
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                $title = $msk_dsp->title($dbo);
-                $dsp_text = $msk_dsp->show($dbo, $dto, $back);
+                $title = $msk_ui->title($dbo);
+                $dsp_text = $msk_ui->show($dbo, $dto, $back);
 
                 // use a fallback if the view is empty
-                if ($dsp_text == '' or $msk_dsp->name() == '') {
-                    $msk_dsp = $this->dto->typ_lst_cache->get_view(views::START);
-                    $dsp_text = $msk_dsp->name_tip($dbo, $back);
+                if ($dsp_text == '' or $msk_ui->name() == '') {
+                    $msk_ui = $this->dto->typ_lst_cache->get_view(views::START);
+                    $dsp_text = $msk_ui->name_tip($dbo, $back);
                 }
                 if ($dsp_text == '') {
                     $result .= 'Please add a component to the view by clicking on Edit on the top right.';
@@ -760,9 +759,9 @@ class frontend
      */
 
     private function exe_process_step(
-        sandbox_dsp|sandbox_named_dsp|db_object_dsp $sbx,
-        array                                       $url_array,
-        user_message                                $usr_msg
+        sandbox_ui|sandbox_named_ui|db_object_ui $sbx,
+        array                                    $url_array,
+        user_message                             $usr_msg
     ): bool
     {
 
@@ -822,35 +821,35 @@ class frontend
      */
 
     private
-    function view_id_to_dbo_dsp(int $view_id): sandbox_dsp|sandbox_named_dsp|db_object_dsp
+    function view_id_to_dbo_ui(int $view_id): sandbox_ui|sandbox_named_ui|db_object_ui
     {
         // select the main object to display
         if (in_array($view_id, views::WORD_MASKS_IDS)) {
-            $dbo_dsp = new word_dsp();
+            $dbo_ui = new word_ui();
         } elseif (in_array($view_id, views::VERB_MASKS_IDS)) {
-            $dbo_dsp = new verb_dsp();
+            $dbo_ui = new verb_ui();
         } elseif (in_array($view_id, views::TRIPLE_MASKS_IDS)) {
-            $dbo_dsp = new triple_dsp();
+            $dbo_ui = new triple_ui();
         } elseif (in_array($view_id, views::SOURCE_MASKS_IDS)) {
-            $dbo_dsp = new source_dsp();
+            $dbo_ui = new source_ui();
         } elseif (in_array($view_id, views::REF_MASKS_IDS)) {
-            $dbo_dsp = new ref_dsp();
+            $dbo_ui = new ref_ui();
         } elseif (in_array($view_id, views::VALUE_MASKS_IDS)) {
-            $dbo_dsp = new value_dsp();
+            $dbo_ui = new value_ui();
         } elseif (in_array($view_id, views::GROUP_MASKS_IDS)) {
-            $dbo_dsp = new group_dsp();
+            $dbo_ui = new group_ui();
         } elseif (in_array($view_id, views::FORMULA_MASKS_IDS)) {
-            $dbo_dsp = new formula_dsp();
+            $dbo_ui = new formula_ui();
         } elseif (in_array($view_id, views::RESULT_MASKS_IDS)) {
-            $dbo_dsp = new result_dsp();
+            $dbo_ui = new result_ui();
         } elseif (in_array($view_id, views::VIEW_MASKS_IDS)) {
-            $dbo_dsp = new view_dsp();
+            $dbo_ui = new view_ui();
         } elseif (in_array($view_id, views::COMPONENT_MASKS_IDS)) {
-            $dbo_dsp = new component_dsp();
+            $dbo_ui = new component_ui();
         } else {
-            $dbo_dsp = new word_dsp();
+            $dbo_ui = new word_ui();
         }
-        return $dbo_dsp;
+        return $dbo_ui;
     }
 
 }

@@ -68,7 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\group\group_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\phrase\term;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -119,7 +119,7 @@ class result_list extends sandbox_list_value
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
         $data[url_var::FORMULA] = $frm->id();
         $data[url_var::GROUP] = $lst->ids();

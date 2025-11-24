@@ -45,8 +45,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -271,7 +271,7 @@ class formula_write_tests
 
         // test the formula display functions
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
-        $frm_html = new formula_dsp($frm->api_json());
+        $frm_html = new formula_ui($frm->api_json());
         $exp = $frm->expression();
         $result = $exp->dsp_id();
         $target = '""percent" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"" ({w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '})';
@@ -285,7 +285,7 @@ class formula_write_tests
         // ... in HTML format
         // TODO test without preloaded term list
         $trm_lst = $t_trm->term_list_increase();
-        $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
         $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
         $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);

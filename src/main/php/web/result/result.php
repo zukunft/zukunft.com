@@ -55,9 +55,9 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -134,10 +134,10 @@ class result extends sandbox_value
      */
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function display(?phrase_list_dsp $phr_lst_header = null): string
+    function display(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp->name_tip($phr_lst_header);
     }
@@ -159,10 +159,10 @@ class result extends sandbox_value
     }
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function display_linked(?phrase_list_dsp $phr_lst_header = null): string
+    function display_linked(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp->name_link_list($phr_lst_header);
     }
@@ -194,11 +194,11 @@ class result extends sandbox_value
      */
 
     /**
-     * @returns figure_dsp the figure display object base on this value object
+     * @returns figure the figure display object base on this value object
      */
-    function figure(): figure_dsp
+    function figure(): figure
     {
-        $fig = new figure_dsp();
+        $fig = new figure();
         $fig->set_obj($this);
         return $fig;
     }

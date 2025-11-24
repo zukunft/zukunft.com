@@ -34,7 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -50,7 +50,7 @@ class view_ui_tests
         $ts = 'unit ui html view ';
         $t->header($ts);
 
-        $msk = new view_dsp($t_msk->view()->api_json());
+        $msk = new view($t_msk->view()->api_json());
         $test_page = $html->text_h2('view display test');
         $test_page .= 'with tooltip: ' . $msk->name_tip() . '<br>';
         $test_page .= 'with link: ' . $msk->name_link() . '<br>';

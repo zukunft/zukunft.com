@@ -44,7 +44,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -53,7 +53,7 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class job extends db_object_dsp
+class job extends db_object
 {
 
     /*

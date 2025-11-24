@@ -43,9 +43,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -77,11 +77,11 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $view_id = $sys_msk_cac->id(view_shared::WORD_FIND);
+        $view_id = $sys_msk_cac->id(views::WORD_FIND);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -100,7 +100,7 @@ if (!$db_con->connected()) {
         // TODO replace by term or phrase list
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_like($find_str);
-        $dsp_lst = new word_list_dsp($wrd_lst->api_json());
+        $dsp_lst = new word_list_ui($wrd_lst->api_json());
         $result .= $dsp_lst->name_link();
 
         // show the matching terms to select

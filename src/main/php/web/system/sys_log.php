@@ -44,7 +44,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\log\log as log_dsp;
+use Zukunft\ZukunftCom\main\php\web\log\log;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTimeInterface;
 
-class sys_log extends log_dsp
+class sys_log extends log
 {
 
     /*

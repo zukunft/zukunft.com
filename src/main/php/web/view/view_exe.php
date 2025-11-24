@@ -469,8 +469,8 @@ class view_exe extends view_base
         ?back_trace $back = null
     ): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(view_exe::class, $this->id(), $size, $page, '', $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(view_exe::class, $this->id(), $size, $page, '', $back);
     }
 
     /**
@@ -481,14 +481,14 @@ class view_exe extends view_base
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = view_exe::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = view_exe::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         $this->log_debug("done");
         return $result;

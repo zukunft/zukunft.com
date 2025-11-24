@@ -40,7 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
-use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -123,7 +123,7 @@ class component_tests
         $t->assert_api($cmp);
 
         $t->subheader($ts . 'component frontend');
-        $t->assert_api_to_dsp($cmp, new component_dsp());
+        $t->assert_api_to_ui($cmp, new component_ui());
 
         $t->subheader($ts . 'component im- and export');
         $t->assert_ex_and_import($t_cmp->component(), $usr_sys);

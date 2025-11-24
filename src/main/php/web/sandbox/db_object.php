@@ -5,7 +5,7 @@
     web/sandbox/db_object.php - the superclass for the html frontend of database objects
     -------------------------
 
-    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
+    This superclass should be used by the classes word_ui, formula_ui, ... to enable user specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -69,11 +69,10 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -84,7 +83,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 
@@ -233,7 +231,7 @@ class db_object extends TextIdObject
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
         if ($json_array) {
             $excluded = false;
@@ -479,17 +477,17 @@ class db_object extends TextIdObject
         return 0;
     }
 
-    function phrase(): phrase_dsp
+    function phrase(): phrase_ui
     {
-        return new phrase_dsp();
+        return new phrase_ui();
     }
 
     /**
-     * @returns term_dsp the word object cast into a term object
+     * @returns term_ui the word object cast into a term object
      */
-    function term(): term_dsp
+    function term(): term_ui
     {
-        return new term_dsp();
+        return new term_ui();
     }
 
     /**
@@ -824,7 +822,7 @@ class db_object extends TextIdObject
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     public function phrase_selector_old(
@@ -834,7 +832,7 @@ class db_object extends TextIdObject
         string      $col_class = '',
         int         $selected = 0,
         string      $pattern = '',
-        ?phrase_dsp $phr = null
+        ?phrase_ui $phr = null
     ): string
     {
         $msg = 'phrase selector not defined for ' . $this::class;

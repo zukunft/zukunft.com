@@ -33,11 +33,11 @@
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -157,10 +157,10 @@ class sys_log_list
 
     /**
      * add a system log entry to the list
-     * @param sys_log_dsp $sys_log the log frontend entry that should be added to the list
+     * @param sys_log $sys_log the log frontend entry that should be added to the list
      * @returns bool true if the system log entry has been added
      */
-    function add(sys_log_dsp $sys_log): bool
+    function add(sys_log $sys_log): bool
     {
         $this->lst[] = $sys_log;
         return true;

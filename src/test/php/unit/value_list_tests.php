@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
-use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -86,7 +86,7 @@ class value_list_tests
         $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t_val->value_list()->api_json();
-        $val_lst_dsp = new value_list_dsp($api_json);
+        $val_lst_dsp = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
 
         $t->subheader($ts . 'sql creation value list');
@@ -131,7 +131,7 @@ class value_list_tests
         $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t_val->value_list();
-        $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
+        $t->assert_api_to_ui($trp_lst, new value_list_ui());
 
     }
 

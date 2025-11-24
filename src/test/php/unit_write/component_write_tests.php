@@ -74,7 +74,7 @@ class component_write_tests
 
         /*
         // test loading of one component
-        $cmp = new component_dsp;
+        $cmp = new component_ui;
         $cmp->usr = $t->usr1;
         $cmp->name = 'complete';
         $cmp->load();
@@ -83,7 +83,7 @@ class component_write_tests
         $t->assert('component->load the comment of "'.$cmp->name.'"', $result, $target);
 
         // test the complete component for one word
-        $wrd = New word_dsp;
+        $wrd = New word_ui;
         $wrd->usr  = $t->usr1;
         $wrd->set_name(words::TN_ABB);
         $wrd->load();

@@ -512,7 +512,7 @@ class word extends sandbox_code_id
      */
     function log_view(back_trace $back): string
     {
-        $log_dsp = new change_log_named();
+        $log_ui = new change_log_named();
         return '';
     }
 
@@ -633,7 +633,7 @@ class word extends sandbox_code_id
         } else {
             // load the word parameters if not yet done
             if ($this->name == "") {
-                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_dsp->dsp_header');
+                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_ui->ui_header');
             }
 
             //$default_view_id = cl(DBL_VIEW_WORD);
@@ -696,7 +696,7 @@ class word extends sandbox_code_id
      */
     function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, string $back): string
     {
-        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
+        log_debug('word_ui->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
         $result = '';
         $html = new html_base();
 
@@ -717,7 +717,7 @@ class word extends sandbox_code_id
         $result .= '</div>';
         $result .= $html->dsp_form_end('', $back);
 
-        log_debug('word_dsp->dsp_add ... done');
+        log_debug('word_ui->dsp_add ... done');
         return $result;
     }
 
@@ -733,7 +733,7 @@ class word extends sandbox_code_id
         $phr_lst_down = $this->children();
         $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $back);
         $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $back);
-        $wrd_dsp = $this;
+        $wrd_ui = $this;
         // collect the display code for the user changes
         $dsp_log = '';
         $changes = $this->dsp_hist(1, $row_limit, '', $back);
@@ -746,7 +746,7 @@ class word extends sandbox_code_id
             $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        return $wrd_dsp->form_edit(
+        return $wrd_ui->form_edit(
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
@@ -858,8 +858,8 @@ class word extends sandbox_code_id
      */
     function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(word::class, $this->id(), $size, $page, '', null);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, '', null);
     }
 
     /**
@@ -870,14 +870,14 @@ class word extends sandbox_code_id
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = word::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = word::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         log_debug('done');
         return $result;

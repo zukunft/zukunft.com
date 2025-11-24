@@ -48,7 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -102,9 +102,9 @@ class phrase_tests
 
         $t->subheader($ts . 'html frontend');
         $phr = $t_wrd->word()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
+        $t->assert_api_to_ui($phr, new phrase_ui());
         $phr = $t_trp->triple_pi()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
+        $t->assert_api_to_ui($phr, new phrase_ui());
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);

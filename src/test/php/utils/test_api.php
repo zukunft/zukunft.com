@@ -73,7 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
-use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -109,7 +109,7 @@ class test_api extends test_base
      * @param array $api_types to check the different message type e.g.to test if excluded object can be reactivated
      * @return bool true if the test has been successful
      */
-    function assert_api_to_dsp(object $usr_obj, object $dsp_obj, array $api_types = []): bool
+    function assert_api_to_ui(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
         $lib = new library();
         $class = $this->class_to_api($usr_obj::class);
@@ -640,7 +640,7 @@ class test_api extends test_base
         int        $page = 0
     ): bool
     {
-        $log_lst = new change_log_list_dsp();
+        $log_lst = new change_log_list_ui();
         $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
         $actual = json_decode($json, true);
 
@@ -688,9 +688,9 @@ class test_api extends test_base
 
         $dbo = $t_map->class_to_add_object($class);
         $name = $dbo->name();
-        $dbo_dsp = $t_map->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
-        //$add_result = $dbo_dsp->add_via_api();
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json());
+        //$add_result = $dbo_ui->add_via_api();
 
         // TODO Prio 1 remove reloading and use $add_result instead
         $dbo->load_by_name($name);
@@ -720,11 +720,11 @@ class test_api extends test_base
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
         $dbo = $t_map->class_to_add_object($class);
-        $dbo_dsp = $t_map->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json());
         // replacement for the api call
         $name = $dbo->name();
-        $ctrl->post_json($dbo_dsp->api_array(), $dbo, $usr, $msg);
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, $msg);
         $dbo->load_by_name($name);
 
         return $this->assert_greater_zero($test_name, $dbo->id());
@@ -752,9 +752,9 @@ class test_api extends test_base
 
         $dbo = $t_map->class_to_add_object($class);
         $dbo->load_by_name($dbo->name());
-        $dbo_dsp = $t_map->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
-        $ctrl->delete($dbo_dsp->id(), $dbo, $usr, $msg);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json());
+        $ctrl->delete($dbo_ui->id(), $dbo, $usr, $msg);
 
         $dbo->load_by_name($dbo->name());
         return $this->assert($test_name, $dbo->id(), 0);

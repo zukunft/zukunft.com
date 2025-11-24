@@ -123,7 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -2492,7 +2492,7 @@ class library
     {
         $msg_id = msg_id::ADD;
         switch ($class) {
-            case verb_dsp::class;
+            case verb_ui::class;
                 $msg_id = msg_id::VERB_ADD;
                 break;
         }

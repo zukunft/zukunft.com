@@ -37,7 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
-use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
@@ -128,7 +128,7 @@ class source_tests
 
         $t->subheader($ts . 'frontend');
         $src = $t_src->source();
-        $t->assert_api_to_dsp($src, new source_dsp());
+        $t->assert_api_to_ui($src, new source_ui());
 
         $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t_src->source(), $usr_sys);

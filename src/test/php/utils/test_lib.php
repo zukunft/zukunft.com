@@ -130,9 +130,9 @@ class test_lib
      */
     function cast_user(user $usr): user_ui
     {
-        $usr_dsp = new user_ui();
-        $usr_dsp->set_from_json($usr->api_json());
-        return $usr_dsp;
+        $usr_ui = new user_ui();
+        $usr_ui->set_from_json($usr->api_json());
+        return $usr_ui;
     }
 
     function ui_value(value $val): value_ui
@@ -175,14 +175,14 @@ class test_lib
     {
         global $ui_cac;
 
-        $dto_dsp = new data_object_ui();
-        $dto_dsp->usr = $this->cast_user($usr);
+        $dto_ui = new data_object_ui();
+        $dto_ui->usr = $this->cast_user($usr);
         $dto_base_dsp = new data_object_ui();
         $dto_base_dsp->usr = $this->cast_user($usr);
 
         // load type lists from resource json file
         $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-        $dto_dsp->typ_lst_cache = new type_lists($api_msg);
+        $dto_ui->typ_lst_cache = new type_lists($api_msg);
 
         // import system views from resource json file so that not all details need to be repeated in the test data creation class
         $imp = new import();
@@ -192,9 +192,9 @@ class test_lib
         $json_array = json_decode($json_str, true);
         $usr_msg = new backend_user_message();
         $dto = $imp->get_data_object($json_array, $usr_msg, $size);
-        $dto_dsp->set_view_list($this->cast_view_list($dto->view_list()));
+        $dto_ui->set_view_list($this->cast_view_list($dto->view_list()));
         // add the view id because the import does not include the database id
-        $dto_dsp->add_id_to_views();
+        $dto_ui->add_id_to_views();
         // import the base views
         $json_str = file_get_contents(files::BASE_VIEWS);
         $size = strlen($json_str);
@@ -204,7 +204,7 @@ class test_lib
         $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id
         $dto_base_dsp->add_id_to_views();
-        $dto_dsp->merge_view_list($dto_base_dsp->view_list());
+        $dto_ui->merge_view_list($dto_base_dsp->view_list());
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
         $t_wrd = new test_words($t);
@@ -216,19 +216,19 @@ class test_lib
         $t_log = new test_log($t);
 
         // set the value cache list based
-        $dto_dsp->wrd_lst = $t_wrd->word_list_ui();
-        $dto_dsp->trp_lst = $t_trp->triple_list_ui();
-        $dto_dsp->src_lst = $t_src->source_list_ui();
-        $dto_dsp->ref_lst = $t_ref->ref_list_math_ui();
-        $dto_dsp->val_lst = $t_val->list_all_ui();
-        $dto_dsp->frm_lst = $t_frm->formula_list_ui();
-        $dto_dsp->frm_lnk_lst = $t_frm->formula_link_list_ui();
-        $dto_dsp->chg_log = $t_log->log_list_named_ui();
+        $dto_ui->wrd_lst = $t_wrd->word_list_ui();
+        $dto_ui->trp_lst = $t_trp->triple_list_ui();
+        $dto_ui->src_lst = $t_src->source_list_ui();
+        $dto_ui->ref_lst = $t_ref->ref_list_math_ui();
+        $dto_ui->val_lst = $t_val->list_all_ui();
+        $dto_ui->frm_lst = $t_frm->formula_list_ui();
+        $dto_ui->frm_lnk_lst = $t_frm->formula_link_list_ui();
+        $dto_ui->chg_log = $t_log->log_list_named_ui();
 
         // set the global cache var
-        $ui_cac = $dto_dsp;
+        $ui_cac = $dto_ui;
 
-        return $dto_dsp;
+        return $dto_ui;
     }
 
     /**

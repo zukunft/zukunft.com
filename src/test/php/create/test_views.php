@@ -327,7 +327,7 @@ class test_views
     /**
      * @return view_list_ui a sample frontend view list
      */
-    function view_list_dsp(): view_list_ui
+    function view_list_ui(): view_list_ui
     {
         $t_msk = new test_views($this->env);
         return new view_list_ui($t_msk->view_list_word()->api_json());

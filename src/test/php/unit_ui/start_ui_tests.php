@@ -38,7 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::MODEL_CONST . 'files.php';
 include_once html_paths::TYPES . 'type_lists.php';
 
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -67,9 +67,9 @@ class start_ui_tests
         $imp = new import();
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
-        $dto_dsp = new data_object_dsp();
+        $dto_dsp = new data_object();
         $dto_dsp->set_offline();
-        $dto_dsp->add_phrases($t_phr->phrase_list_start_view_dsp());
+        $dto_dsp->add_phrases($t_phr->phrase_list_start_view_ui());
 
         $msk = new list_sort();
         $phr = $t_trp->global_problem()->phrase();

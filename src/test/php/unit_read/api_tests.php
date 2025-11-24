@@ -65,8 +65,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -81,8 +81,6 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_sources;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -228,13 +226,13 @@ class api_tests
 
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';
-        $wrd_zh = new word_dsp();
+        $wrd_zh = new word_ui();
         $wrd_zh->load_by_name(words::ZH);
         $wrd_zh->load_by_id($wrd_zh->id());
         $t->assert($test_name, $wrd_zh->name(), words::ZH);
 
         $test_name = 'api id and name call of a phrase';
-        $phr_zh = new phrase_dsp();
+        $phr_zh = new phrase_ui();
         $phr_zh->load_by_name(words::ZH);
         $phr_zh->load_by_id($phr_zh->id());
         $t->assert($test_name, $phr_zh->name(), words::ZH);

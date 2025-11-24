@@ -32,15 +32,12 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -58,7 +55,7 @@ class view_list_ui_tests
 
         // test the view list display functions
         $form = 'view_list_test';
-        $lst = new view_list_dsp($t_msk->view_list()->api_json());
+        $lst = new view_list($t_msk->view_list()->api_json());
         $test_page = $html->text_h2('view list display test');
         $test_page .= 'view list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'view list with link: ' . $lst->name_link() . '<br>';

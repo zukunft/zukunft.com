@@ -1783,7 +1783,6 @@ class phrase_list extends sandbox_list_named
                 $result[] = $phr;
             }
         }
-        //zu_debug('phrase_list->time_lst_old -> ('.zu_lst_dsp($result).')');
         return $result;
     }
 
