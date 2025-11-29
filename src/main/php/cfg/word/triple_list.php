@@ -491,11 +491,7 @@ class triple_list extends sandbox_list_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -537,16 +533,15 @@ class triple_list extends sandbox_list_named
 
     /**
      * delete all loaded triples e.g. to delete all the triples linked to a word
-     * @return user_message
+     * @param user_message $usr_msg the message for the user why deleting the triples has failed and a suggested solution
+     * @return bool true if all triples has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $trp) {
-            $usr_msg->add($trp->del());
+            $trp->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -682,15 +677,14 @@ class triple_list extends sandbox_list_named
      * starting with the $cache that contains the words
      * add the triples that does not yet have a database id
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the filename and the estimated time of arrival
      * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
-     * @return user_message
+     * @return bool true if everything has been fine
      */
-    function save_with_cache(import $imp, phrase_list $cache): user_message
+    function save_with_cache(user_message $usr_msg, import $imp, phrase_list $cache): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::TRIPLES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -798,7 +792,7 @@ class triple_list extends sandbox_list_named
 
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

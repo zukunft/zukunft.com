@@ -62,6 +62,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 //include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -85,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Exception;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -374,10 +376,11 @@ class change_link extends change_log
     }
 
 
-    // this should be dismissed
+    // TODO Prio 0 this should be dismissed
     function add_link_ref(): bool
     {
-        return $this->add();
+        $usr_msg = new user_message();
+        return $this->add($usr_msg);
     }
 
     // log a user change of a link / verb
@@ -482,9 +485,10 @@ class change_link extends change_log
 
     /**
      * similar to add_link, but additional fix the references as a text for fast displaying
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * $link_text is used for fixed links such as the source for values
      */
-    function add(): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
 

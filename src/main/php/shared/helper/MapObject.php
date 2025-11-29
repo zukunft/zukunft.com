@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
@@ -119,6 +121,30 @@ class MapObject
         $db_obj = $this->dbObject($ui_obj, $usr);
         $db_obj->api_mapper($ui_obj->api_array());
         return $db_obj;
+    }
+
+    /**
+     * convert a frontend message object to a backend message object via api json
+     * @param user_message_ui $ui_msg the filled frontend object
+     * @return user_message the backend object filled with the value from the frontend object
+     */
+    function convertMsgToDb(user_message_ui $ui_msg): user_message
+    {
+        $db_msg = new user_message();
+        $db_msg->api_mapper($ui_msg->api_array());
+        return $db_msg;
+    }
+
+    /**
+     * convert a backend message object to a frontend message object via api json
+     * @param user_message $db_msg the filled backend object
+     * @return user_message_ui the frontend object filled with the value from the backend object
+     */
+    function convertMsgToUi(user_message $db_msg): user_message_ui
+    {
+        $ui_msg = new user_message_ui();
+        $ui_msg->api_mapper($ui_msg->api_array());
+        return $ui_msg;
     }
 
 }

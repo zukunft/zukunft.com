@@ -216,11 +216,7 @@ class db_object_multi extends db_object_key
     ): bool
     {
         $usr_msg->start_time = microtime(true);
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /*

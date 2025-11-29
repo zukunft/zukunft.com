@@ -115,9 +115,8 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $ins_msg = $db_con->insert($qp, 'add ' . $class . ' from list');
-            $usr_msg->add($ins_msg);
-            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+            $db_con->insert($qp, 'add ' . $class . ' from list', $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
         }
         return $usr_msg;
     }
@@ -132,9 +131,8 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $upd_msg = $db_con->update($qp, 'update ' . $class . ' from list');
-            $usr_msg->add($upd_msg);
-            $usr_msg->add_list_name_id($upd_msg, $qp->obj_name);
+            $db_con->update($qp, 'update ' . $class . ' from list', $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
         }
         return $usr_msg;
     }
@@ -149,7 +147,7 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list');
+            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $usr_msg);
             $usr_msg->add($del_msg);
             $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }

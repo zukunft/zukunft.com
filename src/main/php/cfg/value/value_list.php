@@ -925,7 +925,7 @@ class value_list extends sandbox_value_list
                     if ($usr_msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
-                            $usr_msg->add($src->save());
+                            $src->save($usr_msg);
                         }
                     }
                 }
@@ -957,11 +957,7 @@ class value_list extends sandbox_value_list
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     private function add_value(
@@ -989,7 +985,7 @@ class value_list extends sandbox_value_list
         if ($grp != null) {
             $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
             if ($db_con->is_open()) {
-                $usr_msg->add($val_to_add->save());
+                $val_to_add->save($usr_msg);
                 $this->add_obj($val_to_add);
             } else {
                 // TODO Prio 2 maybe use add_by_phr_names
@@ -1458,10 +1454,8 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
     {
-        $usr_msg = new user_message();
-
         $lib = new library();
         $name = $lib->class_to_table(value::class);
 
@@ -1490,7 +1484,7 @@ class value_list extends sandbox_value_list
                     if ($val->id() == 0) {
                         $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
                     } else {
-                        $usr_msg->add($val->save());
+                        $val->save($usr_msg);
                     }
                 }
                 $i++;
@@ -1505,22 +1499,21 @@ class value_list extends sandbox_value_list
             //      create blocks of update function calls
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
     /**
      * delete all loaded values e.g. to delete all the values linked to a phrase
-     * @return user_message
+     * @param user_message $usr_msg the message for the user why deleting the values has failed and a suggested solution
+     * @return bool true if all values has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $val) {
-            $usr_msg->add($val->del());
+            $val->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 }

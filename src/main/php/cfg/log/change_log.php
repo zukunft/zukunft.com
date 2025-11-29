@@ -99,6 +99,7 @@ include_once paths::MODEL_REF . 'ref_db.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
@@ -112,6 +113,7 @@ include_once paths::MODEL_REF . 'ref_db.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -140,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
@@ -153,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -973,6 +977,11 @@ class change_log extends db_object_seq_id_user
         ?sandbox_link $sbx = null
     ): sql_par
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'sql_insert_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new sql_par($this::class);
     }
 
@@ -1051,9 +1060,10 @@ class change_log extends db_object_seq_id_user
 
     /**
      * log a user change of a word, value or formula
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @return true if the change has been logged successfully
      */
-    function add(): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -1068,9 +1078,8 @@ class change_log extends db_object_seq_id_user
                 $qp = $this->sql_insert($sc);
             }
         }
-        $usr_msg = $db_con->insert($qp, 'log change');
         $log_id = 0;
-        if ($usr_msg->is_ok()) {
+        if ($db_con->insert($qp, 'log change', $usr_msg)) {
             $log_id = $usr_msg->get_row_id();
         }
 

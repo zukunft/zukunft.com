@@ -764,7 +764,7 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
-        $log_ui = new user_log_display();
+        $log_ui = new user_log_display($this->user());
         $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");

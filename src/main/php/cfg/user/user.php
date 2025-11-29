@@ -417,11 +417,7 @@ class user extends db_id_object_non_sandbox
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1144,6 +1140,7 @@ class user extends db_id_object_non_sandbox
         global $debug;
 
         $result = ''; // for the result message e.g. if the user is blocked
+        $usr_msg = new user_message();
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
@@ -1174,12 +1171,12 @@ class user extends db_id_object_non_sandbox
                         // create the main system user upfront direct from the code
                         // but only if needed and allowed which is only the case directly after the database structure creation
                         // TODO switch this fallback off because it should anyway never be called
-                        $upd_result = $this->create_system_user();
+                        $this->create_system_user($usr_msg);
 
                     } else {
-                        $upd_result = $this->save_user();
+                        $this->save_user($usr_msg);
                     }
-                    $result = $upd_result->get_last_message();
+                    $result = $usr_msg->get_last_message();
                 }
             }
         }
@@ -1192,13 +1189,13 @@ class user extends db_id_object_non_sandbox
      * BUT only if the user table is empty
      * fixed code to create the initial system user
      * TODO move to system_user
-     * @return user_message ok if the system user have been created
+     * @param user_message $usr_msg ok if the system user have been created
+     * @return bool true if the system users have been created
      */
-    function create_system_user(): user_message
+    function create_system_user(user_message $usr_msg): bool
     {
         global $db_con;
 
-        $usr_msg = new user_message();
         if ($db_con->count(user::class) <= 0) {
             // reload user profiles if needed
             global $sys;
@@ -1243,7 +1240,7 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1517,7 +1514,7 @@ class user extends db_id_object_non_sandbox
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
-                    $usr_msg->add($this->save_user($usr_req));
+                    $this->save_user($usr_msg, $usr_req);
                 }
             } else {
                 $lib = new library();
@@ -1528,11 +1525,7 @@ class user extends db_id_object_non_sandbox
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1890,6 +1883,7 @@ class user extends db_id_object_non_sandbox
     function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
     {
         $result = '';
+        $usr_msg = new user_message();
         if ($usr_par[$par_name] <> $db_value
             and $usr_par[$par_name] <> '') {
             $log = $this->log_upd();
@@ -1897,7 +1891,7 @@ class user extends db_id_object_non_sandbox
             $log->new_value = $usr_par[$par_name];
             $log->row_id = $this->id;
             $log->set_field($fld_name);
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class(user::class);
                 $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
@@ -1948,16 +1942,12 @@ class user extends db_id_object_non_sandbox
      * and if return a message to the user to suggest another name
      *
      * @param user $usr the user who has request the user adding or update
-     * @return user_message
+     * @param user_message $usr_msg
+     * @return bool true if ...
      */
     protected
-    function check_preserved(user $usr): user_message
+    function check_preserved(user_message $usr_msg, user $usr): bool
     {
-        global $mtr;
-
-        // init
-        $usr_msg = new user_message();
-
         // system users are always allowed to add users e.g. to add the system users
         if (!$usr->is_system()) {
             if (in_array($this->name(), users::RESERVED_NAMES)) {
@@ -1970,7 +1960,7 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function is_same(user $usr): bool
@@ -1992,10 +1982,10 @@ class user extends db_id_object_non_sandbox
      * add or update a user in the database
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @return user_message the message that should be shown to the user in case something went wrong
-     *                      or the database id of the user just added
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     *                              or the database id of the user just added
      */
-    function save_user(?user $usr_req = null): user_message
+    function save_user(user_message $usr_msg, ?user $usr_req = null): void
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
@@ -2014,12 +2004,10 @@ class user extends db_id_object_non_sandbox
         $db_con->set_usr($usr_req->id);
 
         // check the preserved names
-        $usr_msg = $this->check_preserved($usr_req);
-
-        // check if a user with the same name or email already exists
-        if ($usr_msg->is_ok()) {
-            // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->check_preserved($usr_msg, $usr_req)) {
+            // check if a user with the same name or email already exists
             if ($this->id == 0) {
+                // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar->id <> 0) {
@@ -2068,8 +2056,6 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-
-        return $usr_msg;
     }
 
     /**
@@ -2108,11 +2094,10 @@ class user extends db_id_object_non_sandbox
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
 
-        $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-        if ($ins_msg->is_ok()) {
-            $this->id = $ins_msg->get_row_id();
+        $msg = 'add and log ' . $this->dsp_id();
+        if ($db_con->insert($qp, $msg, $usr_msg)) {
+            $this->id = $usr_msg->get_row_id();
         }
-        $usr_msg->add($ins_msg);
 
         return $usr_msg;
     }
@@ -2193,11 +2178,10 @@ class user extends db_id_object_non_sandbox
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, $usr_req, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
-            $usr_msg->add($ins_msg);
         } else {
             log_debug('no permission to add user ' . $this->dsp_id());
             $usr_msg->add_id_with_vars(msg_id::USER_NO_ADD_PRIVILEGES, [
@@ -2237,12 +2221,11 @@ class user extends db_id_object_non_sandbox
 
             if (in_array($this->name(), users::TEST_NO_LOG)) {
                 $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
-                $upd_msg = $db_con->update($qp, 'update ' . $this->dsp_id());
+                $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
             } else {
                 $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
-                $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+                $db_con->update($qp, 'update and log ' . $this->dsp_id(), $usr_msg);
             }
-            $usr_msg->add($upd_msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
@@ -2901,16 +2884,15 @@ class user extends db_id_object_non_sandbox
      * exclude, archive or delete this user
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function del(user|null $usr_req = null): user_message
+    function del(user_message $usr_msg, user|null $usr_req = null): bool
     {
-        $usr_msg = new user_message();
         if ($this->never_used()) {
-            $usr_msg = new user_message();
             $lib = new library();
             $class_name = $lib->class_to_name($this::class);
             if ($this->id == 0) {
@@ -2949,13 +2931,13 @@ class user extends db_id_object_non_sandbox
                     }
                 }
             }
-            return $usr_msg;
+            return $usr_msg->is_ok();
         } else {
             $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
                 msg_id::VAR_USER_NAME => $this->name(),
             ]);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

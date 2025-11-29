@@ -367,11 +367,7 @@ class component_link extends sandbox_link
             $this->set_style($in_ex_json[json_fields::STYLE]);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -989,6 +985,8 @@ class component_link extends sandbox_link
     {
         $result = false;
 
+        $usr_msg = new user_message();
+
         // load any missing parameters
         if ($this->id() > 0) {
             $this->load_by_id($this->id());
@@ -1025,7 +1023,7 @@ class component_link extends sandbox_link
                                 . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
-                            $cmp_lnk->save()->get_last_message();
+                            $cmp_lnk->save($usr_msg)->get_last_message();
                             $order_number_corrected = true;
                         }
                         log_debug('component_link->move check order numbers checked for '
@@ -1069,12 +1067,12 @@ class component_link extends sandbox_link
                             if (isset($prev_entry)) {
                                 log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                                 $prev_entry->order_nbr = $order_nbr;
-                                $prev_entry->save();
+                                $prev_entry->save($usr_msg);
                                 $prev_entry = null;
                             }
                             log_debug('component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->view()->name() . '"');
                             $cmp_lnk->order_nbr = $order_nbr - 1;
-                            $cmp_lnk->save();
+                            $cmp_lnk->save($usr_msg);
                             $result = true;
                             $prev_entry_down = false;
                         }
@@ -1083,12 +1081,12 @@ class component_link extends sandbox_link
                                 if ($cmp_lnk->order_nbr > 0) {
                                     log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->view()->dsp_id());
                                     $cmp_lnk->order_nbr = $order_nbr - 1;
-                                    $cmp_lnk->save();
+                                    $cmp_lnk->save($usr_msg);
                                     $result = true;
                                     if (isset($prev_entry)) {
                                         log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                                         $prev_entry->order_nbr = $order_nbr;
-                                        $prev_entry->save();
+                                        $prev_entry->save($usr_msg);
                                     }
                                 }
                             } else {

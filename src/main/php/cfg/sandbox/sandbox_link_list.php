@@ -46,6 +46,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 //include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -156,7 +158,7 @@ class sandbox_link_list extends sandbox_list
      * @return true if the link has been added
      */
     function add_link(
-        component_link|term_view|formula_link $lnk_to_add,
+        component_link|term_view|view_relation|formula_link $lnk_to_add,
         bool                                  $allow_duplicates = false
     ): bool
     {
@@ -172,13 +174,13 @@ class sandbox_link_list extends sandbox_list
      * add one link to the list of user sandbox objects,
      * but only if it is not yet part of the list
      * based on the names (not the db id) of the linked objects
-     * @param component_link|term_view|formula_link $obj_to_add the backend object that should be added
+     * @param component_link|term_view|view_relation|formula_link $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
     function add_link_by_key(
-        component_link|term_view|formula_link $obj_to_add,
-        bool                                  $allow_duplicates = false
+        component_link|term_view|view_relation|formula_link $obj_to_add,
+        bool                                                $allow_duplicates = false
     ): user_message
     {
         $usr_msg = new user_message();
@@ -211,10 +213,10 @@ class sandbox_link_list extends sandbox_list
      * add the object to the list without duplicate check
      * and add the id to the id hash
      *
-     * @param IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add
+     * @param IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add
      * @return void
      */
-    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add): void
+    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add): void
     {
         if (!$this->is_key_list_dirty()) {
             $this->key_pos_lst[$obj_to_add->key()] = count($this->lst());

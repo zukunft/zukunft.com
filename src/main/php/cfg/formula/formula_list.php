@@ -553,11 +553,7 @@ class formula_list extends sandbox_list_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -901,7 +897,7 @@ class formula_list extends sandbox_list_named
             $wrd = $frm->formula_word();
             $wrd_lst->add_by_name($wrd);
         }
-        $wrd_lst->save($imp);
+        $wrd_lst->save($usr_msg, $imp);
         foreach ($this->lst() as $frm) {
             $name_wrd = $wrd_lst->get_by_name($frm->name());
             if ($name_wrd->id() > 0) {
@@ -918,7 +914,7 @@ class formula_list extends sandbox_list_named
     protected function delete_depending(user_message $usr_msg): void
     {
         foreach ($this->lst() as $frm) {
-            $usr_msg->add($frm->del_links());
+            $frm->del_links($usr_msg);
         }
     }
 
@@ -966,7 +962,7 @@ class formula_list extends sandbox_list_named
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $frm) {
-            $usr_msg->add($frm->save());
+            $frm->save($usr_msg);
             $cache->add($frm->term());
         }
         return $usr_msg;

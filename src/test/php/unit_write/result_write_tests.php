@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
@@ -55,6 +56,7 @@ class result_write_tests
 
         // init
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write result ';
@@ -64,23 +66,17 @@ class result_write_tests
          * prepare
          */
 
-        // test adding of one formula
+        $test_name = 'add of formula ' . formulas::INCREASE_EXP . ' with name ' . formulas::SYSTEM_TEST_ADD;
         $frm = new formula($t->usr1);
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
         $frm->usr_text = formulas::INCREASE_EXP;
-        $result = $frm->save()->get_last_message();
-        if ($frm->id() > 0) {
-            $result = $frm->usr_text;
-        }
-        $target = formulas::INCREASE_EXP;
-        $t->assert('formula->save for adding "' . $frm->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
+        $test_name = 'rename formula to ' . formulas::SYSTEM_TEST_RENAMED;
         // check if the formula can be renamed
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
-        $result = $frm->save()->get_last_message();
-        $target = '';
-        $t->assert('formula->save rename "' . formulas::SYSTEM_TEST_ADD . '" to "' . formulas::SYSTEM_TEST_RENAMED . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // test load result without time
@@ -191,16 +187,16 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
-        $frm->del();
+        $frm->del($usr_msg);
 
 
     }

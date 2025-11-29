@@ -87,6 +87,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -110,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class source extends sandbox_code_id
 {
@@ -226,11 +228,7 @@ class source extends sandbox_code_id
             $this->set_url($in_ex_json[json_fields::URL]);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -283,7 +281,7 @@ class source extends sandbox_code_id
         }
 
         if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add($this->save());
+            $this->save($usr_msg);
         }
 
         return $usr_msg;
@@ -597,6 +595,40 @@ class source extends sandbox_code_id
     protected function fixed_names(): array
     {
         return sources::FIXED_NAMES;
+    }
+
+
+    /*
+     * del
+     */
+
+    /**
+     * delete the references to this source
+     *
+     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @return bool true if the word links has been deleted
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        $usr_msg = new user_message();
+
+        // collect all phrase groups where this word is used
+        // TODO Prio 2 activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
+
+        // collect all references where this source is used
+        $ref_lst = new ref_list($this->user());
+        // TODO Prio 1 activate
+        $ref_lst->load_sql_by_source($this);
+
+        // if there are still triples, ask if they really should be deleted
+        if (!$ref_lst->is_empty()) {
+            // TODO Prio 1 activate
+            $ref_lst->del($usr_msg);
+        }
+
+        return $usr_msg->is_ok();
     }
 
 

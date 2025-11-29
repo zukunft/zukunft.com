@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -59,7 +60,7 @@ $db_con = $app->start("link_type_add");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -117,7 +118,7 @@ if ($usr->id() > 0) {
                 // if the parameters are fine
                 if ($msg == '') {
                     // add the new verb
-                    $add_result = $vrb->save()->get_last_message();
+                    $add_result = $vrb->save($usr_msg);
 
                     // if adding was successful ...
                     if (str_replace('1', '', $add_result) == '') {
@@ -137,7 +138,7 @@ if ($usr->id() > 0) {
             $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get the form to add a new verb
             $vrb_dsp = new verb_ui($vrb->api_json());

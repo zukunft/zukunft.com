@@ -690,11 +690,7 @@ class result_list extends sandbox_value_list
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 

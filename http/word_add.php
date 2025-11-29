@@ -60,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -76,7 +77,7 @@ $db_con = $app->start(views::WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -170,7 +171,7 @@ if ($usr->id() > 0) {
             $add_result = '';
             // ... add the new word to the database
             if ($wrd->name() <> "") {
-                $add_result .= $wrd->save()->get_last_message();
+                $add_result .= $wrd->save($usr_msg);
             } else {
                 $wrd->load_by_id($wrd_id);
             }
@@ -182,7 +183,7 @@ if ($usr->id() > 0) {
                 $lnk->from()->id = $wrd->id();
                 $lnk->set_verb_id($vrb_id);
                 $lnk->to()->id = $wrd_to;
-                $add_result .= $lnk->save()->get_last_message();
+                $add_result .= $lnk->save($usr_msg);
             }
 
             // if adding was successful ...
@@ -205,10 +206,10 @@ if ($usr->id() > 0) {
         $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         $wrd_dsp = new word_ui($wrd->api_json());
-        $result .= $wrd_dsp->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
+        //$result .= $wrd_dsp->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
     }
 }
 

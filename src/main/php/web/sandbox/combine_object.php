@@ -45,11 +45,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 
 class combine_object extends CombineObject
@@ -97,7 +99,10 @@ class combine_object extends CombineObject
     function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        $usr_msg->add_err('This set_from_json_array function should have been overwritten by the child object');
+        $usr_msg->add_err_with_vars(msg_id::DUMMY_PARENT_FUNCTION_CALLED, [
+            msg_id::VAR_FUNCTION_NAME => 'api_mapper',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return $usr_msg;
     }
 

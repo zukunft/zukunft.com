@@ -456,12 +456,12 @@ class test_api extends test_base
             case word::class:
                 $wrd = new word($usr);
                 $wrd->id = $id;
-                $usr_msg = $wrd->del();
+                $wrd->del($usr_msg);
                 break;
             case source::class:
                 $src = new source($usr);
                 $src->id = $id;
-                $usr_msg = $src->del();
+                $src->del($usr_msg);
                 break;
             default:
                 log_err($class . ' not yet mapped in assert_api_del_no_rest');

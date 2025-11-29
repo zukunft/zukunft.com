@@ -74,7 +74,8 @@ class source_write_tests
         $src_usr2->load_by_name(sources::TN_RENAMED, source::class);
         $src_usr2->set_url(sources::TU_ADD);
         $src_usr2->description = sources::TD_ADD;
-        $result = $src_usr2->save()->get_last_message();
+        $src_usr2->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -89,8 +90,8 @@ class source_write_tests
         $t->assert('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $result, $target);
 
         // clean up by deleting all add test sources
-        $src_usr2_reloaded->del();
-        $src_renamed->del();
+        $src_usr2_reloaded->del($usr_msg);
+        $src_renamed->del($usr_msg);
 
         */
 

@@ -4381,6 +4381,7 @@ class sql_db
     */
 
     /**
+     * TODO Prio 0 add user_message parameter
      * execute an insert sql statement
      * and return a message to the user if something has gone wrong
      * and a suggested solution to fix the issue
@@ -4389,16 +4390,22 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
+     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
      * @param bool $is_val if true the row to be added to the database is a value or result and is using the group id, so no database id needs to be returned
-     * @return user_message
+     * @return true if the database has been updated
      */
-    function insert(sql_par $qp, string $description, bool $usr_tbl = false, bool $is_val = false): user_message
+    function insert(
+        sql_par $qp,
+        string $description,
+        user_message $usr_msg,
+        bool $usr_tbl = false,
+        bool $is_val = false
+    ): bool
     {
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        $usr_msg = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4435,7 +4442,7 @@ class sql_db
         }
         $sys->times->switch();
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -4447,14 +4454,14 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
-     * @return user_message
+     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @return bool true if the database has been updated
      */
-    function update(sql_par $qp, string $description): user_message
+    function update(sql_par $qp, string $description, user_message $usr_msg): bool
     {
         global $sys;
 
         $sys->times->switch(system_time_type::DB_WRITE);
-        $usr_msg = new user_message();
         $err_msg = 'Update of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4472,7 +4479,7 @@ class sql_db
         }
         $sys->times->switch();
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -4484,9 +4491,10 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
+     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
      * @return user_message
      */
-    function delete(sql_par $qp, string $description): user_message
+    function delete(sql_par $qp, string $description, user_message $usr_msg): user_message
     {
         global $sys;
 
@@ -5765,6 +5773,7 @@ class sql_db
     function import_system_users(): bool
     {
         $result = false;
+        $usr_msg = new user_message();
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
@@ -5783,7 +5792,7 @@ class sql_db
                 // create the main system user upfront direct from the code
                 // but only if needed and allowed which is only the case directly after the database structure creation
                 $init_usr = new user();
-                if ($init_usr->create_system_user()) {
+                if ($init_usr->create_system_user($usr_msg)) {
                     // reload the system user if adding has been successful
                     $usr->load_by_id(users::SYSTEM_ID);
                 }
@@ -5849,7 +5858,7 @@ class sql_db
                 $wrd->set_name($name);
                 $wrd->set_code_id($name, $usr);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
-                $usr_msg->add($wrd->save());
+                $wrd->save($usr_msg);
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
@@ -5857,7 +5866,7 @@ class sql_db
                 $wrd->set_code_id($name, $usr);
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
-                $usr_msg->add($wrd->save());
+                $wrd->save($usr_msg);
             }
             foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
                 $wrd = new word($usr);
@@ -5869,7 +5878,7 @@ class sql_db
                 $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
                 $wrd->set_code_id($name, $usr);
-                $usr_msg->add($wrd->save());
+                $wrd->save($usr_msg);
             }
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
@@ -5887,7 +5896,7 @@ class sql_db
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $usr_msg->add($trp->save());
+                $trp->save($usr_msg);
             }
             foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
@@ -5904,7 +5913,7 @@ class sql_db
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protect_type_shared::ADMIN));
                 //$trp->set_code_id($from_name . ' ' . $to_name);
-                $usr_msg->add($trp->save());
+                $trp->save($usr_msg);
             }
         }
 

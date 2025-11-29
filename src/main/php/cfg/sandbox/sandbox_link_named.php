@@ -199,11 +199,7 @@ class sandbox_link_named extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -284,9 +280,12 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        $msg = 'function name_field() missing in class ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**

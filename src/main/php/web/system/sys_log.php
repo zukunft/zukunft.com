@@ -249,7 +249,7 @@ class sys_log extends log
         return $html->tr($result);
     }
 
-    function get_html(user $usr = null, string $back = ''): string
+    function get_html(?user $usr = null, string $back = ''): string
     {
         global $sys;
 

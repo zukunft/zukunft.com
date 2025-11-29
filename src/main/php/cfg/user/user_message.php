@@ -44,20 +44,15 @@ namespace Zukunft\ZukunftCom\main\php\cfg\user;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
-
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_message
 {
-    // the message types that defines what needs to be done next
-    const int OK = 1;
-    const int NOK = 2;
-    const int WARNING = 3;
-    //const int YES_NO = 4;
-    //const int CONFIRM_CANCEL = 5;
 
     private int $msg_status;
     private int|null $checksum = null;
@@ -110,10 +105,10 @@ class user_message
         $this->info_text = [];
         $this->msg_text = [];
         if ($msg_text == '') {
-            $this->msg_status = self::OK;
+            $this->msg_status = msg_id::OK;
         } else {
             $this->msg_text[] = $msg_text;
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
         $this->start_time = null;
         $this->db_row_id = 0;
@@ -135,7 +130,7 @@ class user_message
      */
     function set_not_ok(): void
     {
-        $this->msg_status = self::NOK;
+        $this->msg_status = msg_id::NOK;
 
     }
 
@@ -145,7 +140,7 @@ class user_message
      */
     function set_ok(): void
     {
-        $this->msg_status = self::OK;
+        $this->msg_status = msg_id::OK;
 
     }
 
@@ -155,7 +150,7 @@ class user_message
      */
     function set_warning(): void
     {
-        $this->msg_status = self::WARNING;
+        $this->msg_status = msg_id::WARNING;
 
     }
 
@@ -209,6 +204,66 @@ class user_message
     function added_depending(): bool
     {
         return $this->added_depending;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create a json array to send the messages to the frontend
+     * TODO Prio 0 move the message status to a shared const object
+     * TODO Prio 1 move the text messages to id message and include it in the json
+     * TODO Prio 2 add the solution with the prepared job id
+     * @return array with the messages
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $msg_lst = [];
+        foreach ($this->msg_id_lst as $id_msg) {
+            $msg_lst[] = $id_msg;
+        }
+        $vars[json_fields::USER_MESSAGES] = $msg_lst;
+        $var_lst = [];
+        foreach ($this->msg_var_lst as $var_msg) {
+            $var_lst[] = $var_msg;
+        }
+        $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
+        $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
+        return $vars;
+    }
+
+    /**
+     * @return string the json message to the backend as a string
+     */
+    function api_json(): string
+    {
+        return json_encode($this->api_array());
+    }
+
+    /**
+     * fill the vars with this database message object based on the given api json array
+     * @param array $api_json the api array with the frontend message
+     */
+    function api_mapper(array $api_json): void
+    {
+        if (array_key_exists(json_fields::USER_MESSAGES, $api_json)) {
+            $msg_lst = $api_json[json_fields::USER_MESSAGES];
+            foreach ($msg_lst as $id_msg) {
+                $this->msg_id_lst[] = $id_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_WITH_VARS, $api_json)) {
+            $var_lst = $api_json[json_fields::USER_MESSAGES_WITH_VARS];
+            foreach ($var_lst as $var_msg) {
+                $this->msg_var_lst[] = $var_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_STATUS, $api_json)) {
+            $this->msg_status = $api_json[json_fields::USER_MESSAGES_STATUS];
+        }
     }
 
 
@@ -268,6 +323,36 @@ class user_message
     function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
     {
         $this->add_id_with_vars($msg_id, $var_lst, true);
+    }
+
+    /**
+     * add a warning message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_warning($msg);
+    }
+
+    /**
+     * add a error message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_err($msg);
     }
 
     /**
@@ -470,7 +555,7 @@ class user_message
      */
     function is_ok(): bool
     {
-        if ($this->msg_status == self::OK) {
+        if ($this->msg_status == msg_id::OK) {
             return true;
         } else {
             return false;
@@ -669,7 +754,7 @@ class user_message
     private function combine_status(user_message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
     }
 

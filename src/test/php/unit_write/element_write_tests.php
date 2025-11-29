@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\element\element;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -54,6 +55,7 @@ class element_write_tests
         // init
         $back = 0;
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write formula element ';
@@ -61,7 +63,7 @@ class element_write_tests
 
         $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
@@ -130,8 +132,8 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup formula element write');
-        $frm_sector->del();
-        $wrd_total->del();
+        $frm_sector->del($usr_msg);
+        $wrd_total->del($usr_msg);
 
     }
 
@@ -139,6 +141,7 @@ class element_write_tests
     {
 
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write formula element list ';
@@ -146,7 +149,7 @@ class element_write_tests
 
         $t->subheader($ts . 'prepare');
         $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
@@ -164,8 +167,8 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup');
-        $frm_sector->del();
-        $wrd_total->del();
+        $frm_sector->del($usr_msg);
+        $wrd_total->del($usr_msg);
 
     }
 

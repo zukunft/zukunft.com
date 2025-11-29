@@ -217,10 +217,12 @@ class change_log_tests
         $this->assert_sql_list_by_field(value::class, sandbox_multi::FLD_VALUE, $t_val->value_17_plus()->id(), $log_lst, $db_con, $t);
 
         // sql to load the word by id
-        $log_dsp = new user_log_display($usr);
-        $log_dsp->type = $lib->class_to_name(user::class);
-        $log_dsp->size = sql_db::ROW_LIMIT;
-        $db_con->db_type = sql_db::POSTGRES;
+        $test_name = 'user change log';
+        //$log_dsp = new user_log_display();
+        //$log_dsp->usr = $usr;
+        //$log_dsp->type = $lib->class_to_name(user::class);
+        //$log_dsp->size = sql_db::ROW_LIMIT;
+        //$db_con->db_type = sql_db::POSTGRES;
         // TODO Prio 1 activate
         //$created_sql = $log_dsp->dsp_hist_links_sql($db_con);
         //$expected_sql = $t->file('db/log/change_log.sql');

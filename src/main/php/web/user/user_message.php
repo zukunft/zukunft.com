@@ -33,24 +33,17 @@
 namespace Zukunft\ZukunftCom\main\php\web\user;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_message
 {
-    // the message types that defines what needs to be done next
-    const int OK = 1;
-    //const int INFO = 2;
-    //const int YES_NO = 3;
-    //const int CONFIRM_CANCEL = 4;
-    const int NOK = 5;
-    const int WARNING = 6;
-    const int ERROR = 7;
 
     private int $msg_status;
 
@@ -80,10 +73,10 @@ class user_message
     {
         $this->txt = [];
         if ($txt == '') {
-            $this->msg_status = self::OK;
+            $this->msg_status = msg_id::OK;
         } else {
             $this->txt[] = $txt;
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
         $this->db_row_id = 0;
         $this->msg_id_lst = [];
@@ -101,8 +94,8 @@ class user_message
      */
     function set_not_ok(): void
     {
-        if ($this->msg_status < self::NOK) {
-            $this->msg_status = self::NOK;
+        if ($this->msg_status < msg_id::NOK) {
+            $this->msg_status = msg_id::NOK;
         }
     }
 
@@ -112,8 +105,8 @@ class user_message
      */
     function set_error(): void
     {
-        if ($this->msg_status < self::ERROR) {
-            $this->msg_status = self::ERROR;
+        if ($this->msg_status < msg_id::ERROR) {
+            $this->msg_status = msg_id::ERROR;
         }
     }
 
@@ -123,8 +116,67 @@ class user_message
      */
     function set_warning(): void
     {
-        if ($this->msg_status < self::WARNING) {
-            $this->msg_status = self::WARNING;
+        if ($this->msg_status < msg_id::WARNING) {
+            $this->msg_status = msg_id::WARNING;
+        }
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create a json array to send the messages to the frontend
+     * TODO Prio 1 move the text messages to id message and include it in the json
+     * TODO Prio 2 add the solution with the prepared job id
+     * @return array with the messages
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $msg_lst = [];
+        foreach ($this->msg_id_lst as $id_msg) {
+            $msg_lst[] = $id_msg;
+        }
+        $vars[json_fields::USER_MESSAGES] = $msg_lst;
+        $var_lst = [];
+        foreach ($this->msg_var_lst as $var_msg) {
+            $var_lst[] = $var_msg;
+        }
+        $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
+        $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
+        return $vars;
+    }
+
+    /**
+     * @return string the json message to the backend as a string
+     */
+    function api_json(): string
+    {
+        return json_encode($this->api_array());
+    }
+
+    /**
+     * fill the vars with this database message object based on the given api json array
+     * @param array $api_json the api array with the frontend message
+     */
+    function api_mapper(array $api_json): void
+    {
+        if (array_key_exists(json_fields::USER_MESSAGES, $api_json)) {
+            $msg_lst = $api_json[json_fields::USER_MESSAGES];
+            foreach ($msg_lst as $id_msg) {
+                $this->msg_id_lst[] = $id_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_WITH_VARS, $api_json)) {
+            $var_lst = $api_json[json_fields::USER_MESSAGES_WITH_VARS];
+            foreach ($var_lst as $var_msg) {
+                $this->msg_var_lst[] = $var_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_STATUS, $api_json)) {
+            $this->msg_status = $api_json[json_fields::USER_MESSAGES_STATUS];
         }
     }
 
@@ -273,7 +325,7 @@ class user_message
      */
     function is_ok(): bool
     {
-        if ($this->msg_status == self::OK) {
+        if ($this->msg_status == msg_id::OK) {
             return true;
         } else {
             return false;
@@ -352,7 +404,7 @@ class user_message
     private function combine_status(user_message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
     }
 

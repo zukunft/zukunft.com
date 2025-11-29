@@ -35,8 +35,12 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 class sandbox_predicated_link extends sandbox_link
 {
@@ -82,8 +86,12 @@ class sandbox_predicated_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        $msg = 'ERROR: the type name function should have been overwritten by the child object';
-        return log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'predicate_name',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
 }

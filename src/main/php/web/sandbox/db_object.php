@@ -531,15 +531,16 @@ class db_object extends TextIdObject
      * TODO Prio 2 should be done via api
      *
      * @param user $usr the frontend user
-     * @return user_message
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function add_via_api(user $usr): user_message
+    function add_via_api(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
         $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
         $db_usr = $map_obj->convertToDb($usr);
         $db_obj = $map_obj->convertToDb($this, $db_usr);
-        $add_result = $db_obj->save();
+        $add_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
@@ -548,22 +549,23 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $usr_msg;
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
     /**
      * update the frontend object via api in the database
      *
      * @param user $usr the frontend user
-     * @return user_message
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function update(user $usr): user_message
+    function update(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
         $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
         $db_usr = $map_obj->convertToDb($usr);
         $db_obj = $map_obj->convertToDb($this, $db_usr);
-        $upd_result = $db_obj->save();
+        $upd_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
@@ -572,22 +574,23 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $usr_msg;
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
     /**
      * exclude this frontend object via api from the database
      *
      * @param user $usr the frontend user
-     * @return user_message
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function del(user $usr): user_message
+    function del(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
         $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
         $db_usr = $map_obj->convertToDb($usr);
         $db_obj = $map_obj->convertToDb($this, $db_usr);
-        $del_result = $db_obj->del();
+        $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
         $rest = new rest_call();
@@ -596,7 +599,7 @@ class db_object extends TextIdObject
             $usr_msg->add_message_text($msg);
         }
         */
-        return $usr_msg;
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
 
@@ -609,9 +612,12 @@ class db_object extends TextIdObject
      */
     function url(): ?string
     {
-        $msg = 'url not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'api_mapper',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**

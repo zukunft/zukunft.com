@@ -343,11 +343,7 @@ class db_object_seq_id extends db_object
     ): bool
     {
         $usr_msg->start_time = microtime(true);
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -377,7 +373,7 @@ class db_object_seq_id extends db_object
         // save the object and the related objects in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             } else {
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
@@ -387,11 +383,7 @@ class db_object_seq_id extends db_object
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -491,11 +483,7 @@ class db_object_seq_id extends db_object
     ): bool
     {
         log_err('overwrite of import_mapper_user missing in ' . $this::class);
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -573,35 +561,35 @@ class db_object_seq_id extends db_object
      * add or update an object to the database
      * to be overwritten by the child object
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
-        $usr_msg = new user_message();
         $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'save in db_object_seq_id',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * delete or exclude an object from or in the database
      * to be overwritten by the child object
      *
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
 
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
         $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'del in db_object_seq_id',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

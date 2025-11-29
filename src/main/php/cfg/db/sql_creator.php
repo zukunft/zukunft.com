@@ -42,6 +42,7 @@ include_once paths::DB . 'sql_where.php';
 include_once paths::DB . 'sql_where_list.php';
 include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -97,6 +98,7 @@ include_once paths::DB . 'sql.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;

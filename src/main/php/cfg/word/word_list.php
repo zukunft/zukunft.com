@@ -511,11 +511,7 @@ class word_list extends sandbox_list_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1602,11 +1598,12 @@ class word_list extends sandbox_list_named
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()), $usr_msg);
     }
 
 }

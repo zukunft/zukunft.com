@@ -119,7 +119,11 @@ class sandbox_list extends base_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        log_err('Unexpected call of the parent rows_mapper function');
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'rows_mapper',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return false;
     }
 

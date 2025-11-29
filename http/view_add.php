@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -55,7 +56,7 @@ $html = new html_base();
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -92,7 +93,7 @@ if ($usr->id() > 0) {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
-            $add_result = $msk_add->save()->get_last_message();
+            $add_result = $msk_add->save($usr_msg);
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {
@@ -118,7 +119,7 @@ if ($usr->id() > 0) {
         // show the header (in view edit views the view cannot be changed)
         $msk_dsp = new view_ui($msk->api_json());
         $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // show the form to create a new view
         $msk_add_dsp = new view_ui($msk_add->api_json());

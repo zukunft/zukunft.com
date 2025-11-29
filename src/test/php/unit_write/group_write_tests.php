@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
@@ -239,13 +240,14 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message();
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if (!$grp->is_saved()) {
             $phr_lst->add($wrd->phrase());
             $grp->set_phrase_list($phr_lst);
             $grp->set_name($grp_name);
-            $grp->save($use_func);
+            $grp->save($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_name($grp_name);
             $t->assert_true($test_name, $grp->isset());
@@ -272,6 +274,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message();
         $grp = new group($t->usr1);
         $grp->load_by_name($old_name);
         if ($grp->is_saved()) {
@@ -282,7 +285,7 @@ class group_write_tests
                 $grp->set_user($t->usr1);
             }
             $grp->set_name($new_name);
-            $grp->save($use_func);
+            $grp->save($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $new_name);
@@ -305,11 +308,12 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message();
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if ($grp->is_saved()) {
             $id = $grp->id();
-            $grp->del($use_func);
+            $grp->del($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $grp->name_generated());

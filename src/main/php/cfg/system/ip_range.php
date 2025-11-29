@@ -191,11 +191,7 @@ class ip_range extends db_object_seq_id
             $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -347,15 +343,11 @@ class ip_range extends db_object_seq_id
         // save the ip range in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -414,7 +406,7 @@ class ip_range extends db_object_seq_id
     private function save_field_do(sql_db $db_con, change $log): user_message
     {
         $usr_msg = new user_message();
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             $db_con->set_class(self::class);
             if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
                 $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
@@ -479,6 +471,7 @@ class ip_range extends db_object_seq_id
     {
         log_debug('->log_add ' . $this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
@@ -487,7 +480,7 @@ class ip_range extends db_object_seq_id
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -593,15 +586,15 @@ class ip_range extends db_object_seq_id
     /**
      * update an ip range in the database or update the existing
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the error message for the user if it has failed or an empty string
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = true): user_message
+    function save(user_message $usr_msg, ?bool $use_func = true): bool
     {
         log_debug('ip_range->save ' . $this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id);
@@ -636,7 +629,7 @@ class ip_range extends db_object_seq_id
                 $usr_msg->add($this->save_fields($db_con, $db_rec));
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

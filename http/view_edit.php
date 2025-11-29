@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -54,7 +55,7 @@ $db_con = $app->start("view_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -125,12 +126,12 @@ if ($usr->id() > 0) {
                 $cmp = new component($usr);
                 $cmp_name = $_GET['entry_name'];
                 $cmp->set_name($cmp_name);
-                $add_result = $cmp->save()->get_last_message();
+                $add_result = $cmp->save($usr_msg);
                 if ($add_result == '') {
                     $cmp->load_by_name($cmp_name);
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
-                        $cmp->save()->get_last_message();
+                        $cmp->save($usr_msg);
                         $order_nbr = $cmp->next_nbr($msk_edit->id());
                         $cmp->link($msk_edit, $order_nbr);
                     }
@@ -155,7 +156,7 @@ if ($usr->id() > 0) {
             } //
 
             // save the changes
-            $upd_result = $msk_edit->save()->get_last_message();
+            $upd_result = $msk_edit->save($usr_msg);
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -172,7 +173,7 @@ if ($usr->id() > 0) {
             // in view edit views the view cannot be changed
             $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get parameters that change only dsp_edit
             // if the user has requested to add another display component to this view, $add_cmp is greater than 0

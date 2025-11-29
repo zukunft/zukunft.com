@@ -505,6 +505,7 @@ class formula extends sandbox_code_id
     function dsp_edit($add, $wrd, $back): string
     {
         global $usr;
+        global $cac;
 
         log_debug(" for " . $wrd->name() . ", back:" . $back);
         $result = '';
@@ -543,7 +544,7 @@ class formula extends sandbox_code_id
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($form_name);
+        $result .= $this->dsp_type_selector($form_name, $cac->typ_lis->frm_typ);
         $result .= '</div>';
         $result .= $html->form_field(
             url_var::DESCRIPTION,

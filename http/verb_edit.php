@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -58,7 +59,7 @@ $db_con = $app->start("verb_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -104,7 +105,7 @@ if ($usr->id() > 0) {
             }
 
             // save the changes
-            $upd_result = $vrb->save()->get_last_message();
+            $upd_result = $vrb->save($usr_msg);
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -126,7 +127,7 @@ if ($usr->id() > 0) {
             $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the verb and its relations, so that the user can change it
             $vrb_dsp = new verb_ui($vrb->api_json());

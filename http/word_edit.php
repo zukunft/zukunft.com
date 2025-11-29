@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -56,7 +57,7 @@ $db_con = $app->start("word_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -99,20 +100,10 @@ if ($usr->id() > 0) {
 
             // an empty word name should never be saved; instead the word should be deleted)
             if ($wrd->name() == '') {
-                $msg .= 'An empty name should never be saved. Please delete the word instead.';
+                $usr_msg->add_message_text('An empty name should never be saved. Please delete the word instead.');
             } else {
                 // save the changes
-                $upd_result = $wrd->save()->get_last_message();
-
-                // if update was fine ...
-                if (str_replace('1', '', $upd_result) == '') {
-                    // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                    // switched off because maybe staying on the edit page is the expected behaviour
-                    //$result .= dsp_go_back($back, $usr);
-                } else {
-                    // ... or in case of a problem prepare to show the message
-                    $msg .= $upd_result;
-                }
+                $wrd->save($usr_msg);
             }
         }
 
@@ -122,7 +113,7 @@ if ($usr->id() > 0) {
             $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the word and its relations, so that the user can change it
             $wrd_dsp = new word_ui();

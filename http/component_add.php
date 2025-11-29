@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -67,7 +68,7 @@ $back = $_GET[url_var::BACK] = ''; // the calling stack to move back to page whe
 
 $html = new html_base();
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user
 $usr = new user;
@@ -103,13 +104,13 @@ if ($usr->id > 0) {
         $dsp_link = new view($usr);
         $result .= $dsp_link->load_by_id($dsp_link_id);
         $order_nbr = $cmp->next_nbr($dsp_link_id);
-        $upd_result = $cmp->link($dsp_link, $order_nbr);
+        $upd_result = $cmp->link($dsp_link, $order_nbr, $usr_msg);
     }
 
     if ($dsp_unlink_id > 0) {
         $dsp_unlink = new view($usr);
         $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
-        $upd_result .= $cmp->unlink($dsp_unlink);
+        $upd_result .= $cmp->unlink($dsp_unlink, $usr_msg);
     }
 
     // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
@@ -136,23 +137,14 @@ if ($usr->id > 0) {
         } //
 
         // save the changes
-        $upd_result .= $cmp->save()->get_last_message();
-
-        // if update was fine ...
-        if (str_replace('1', '', $upd_result) == '') {
-            // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
-            // $result .= dsp_go_back($back, $usr);
-        } else {
-            // ... or in case of a problem prepare to show the message
-            $msg .= $upd_result;
-        }
+        $upd_result .= $cmp->save($usr_msg);
     }
 
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // in view add views the view cannot be changed
         $result .= $msk->dsp_navbar_no_view($back);
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // if the user has requested to use this display component also in another view, $add_link is greater than 0
         $add_link = 0;

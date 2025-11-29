@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -51,6 +52,7 @@ class expression_write_tests
         $t_db = new test_db_load($t);
         $t->name = 'expression->';
         $lib = new library();
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write expression ';
@@ -60,9 +62,9 @@ class expression_write_tests
         $wrd_price = $t_db->test_word(words::TEST_PRICE);
         $wrd_earning = $t_db->test_word(words::TEST_EARNING);
         $wrd_pe = $t_db->test_word(words::TEST_PE);
-        $frm_ratio = $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
+        $frm_ratio = $t_db->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP, $usr_msg);
         $wrd_total = $t_db->test_word(words::TEST_TOTAL);
-        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         $back = '';
 
@@ -159,12 +161,12 @@ class expression_write_tests
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         $t->subheader($ts . 'cleanup');
-        $frm_ratio->del();
-        $wrd_price->del();
-        $wrd_earning->del();
-        $wrd_pe->del();
-        $frm_sector->del();
-        $wrd_total->del();
+        $frm_ratio->del($usr_msg);
+        $wrd_price->del($usr_msg);
+        $wrd_earning->del($usr_msg);
+        $wrd_pe->del($usr_msg);
+        $frm_sector->del($usr_msg);
+        $wrd_total->del($usr_msg);
 
     }
 

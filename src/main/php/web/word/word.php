@@ -692,36 +692,6 @@ class word extends sandbox_code_id
 
 
     /**
-     * @return string HTML code to edit all word fields
-     */
-    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, string $back): string
-    {
-        log_debug('word_ui->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
-        $result = '';
-        $html = new html_base();
-
-        $form = "word_add";
-        $result .= $html->dsp_text_h2('Add a new word');
-        $result .= $html->dsp_form_start($form);
-        $result .= $html->dsp_form_hidden("back", $back);
-        $result .= $html->dsp_form_hidden("confirm", '1');
-        $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", view_styles::COL_SM_4);
-        $result .= $this->dsp_type_selector($form, view_styles::COL_SM_4);
-        $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
-        $result .= '</div>';
-        $result .= 'which ';
-        $result .= '<div class="form-row">';
-        //$result .= $this->selector_link($vrb_id, $form, $back);
-        $result .= $this->selector_word($wrd_to, 0, $form);
-        $result .= '</div>';
-        $result .= $html->dsp_form_end('', $back);
-
-        log_debug('word_ui->dsp_add ... done');
-        return $result;
-    }
-
-    /**
      * HTML code to edit all word fields
      */
     function dsp_edit(string $back = ''): string
@@ -749,7 +719,7 @@ class word extends sandbox_code_id
         return $wrd_ui->form_edit(
             $dsp_graph,
             $dsp_log,
-            $this->dsp_formula($back),
+            //$this->dsp_formula($back),
             $this->dsp_type_selector(views::WORD_EDIT),
             $back);
     }
@@ -880,25 +850,6 @@ class word extends sandbox_code_id
         $result .= $log_ui->dsp_hist_links();
 
         log_debug('done');
-        return $result;
-    }
-
-    function dsp_formula(string $back = ''): string
-    {
-        global $sys;
-        $html = new html_base();
-
-        $result = '';
-        if ($this->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
-            $result .= $html->dsp_form_hidden("name", $this->name);
-            $result .= '  to change the name of "' . $this->name . '" rename the ';
-            $frm = new formula();
-            $frm->load_by_name($this->name());
-            $result .= $frm->name_link($back);
-            $result .= '.<br> ';
-        } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);
-        }
         return $result;
     }
 

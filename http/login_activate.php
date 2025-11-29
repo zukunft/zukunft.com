@@ -51,7 +51,7 @@ $html = new html_base();
 if ($db_con->is_open()) {
 
     $result = ''; // reset the html code var
-    $msg = '';
+    $usr_msg = new user_message();
 
     $_SESSION['logged'] = FALSE;
 

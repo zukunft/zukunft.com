@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -55,7 +56,7 @@ $db_con = $app->start("value_add");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -113,7 +114,7 @@ if ($usr->id() > 0) {
         $val->convert();
 
         // add the new value to the database
-        $upd_result = $val->save()->get_last_message();
+        $upd_result = $val->save($usr_msg);
 
         // if update was successful ...
         if ($val->id() > 0 and str_replace('1', '', $upd_result) == '') {
@@ -125,7 +126,7 @@ if ($usr->id() > 0) {
                 if ($val->get_source_id() > 0) {
                     log_debug("save source" . $val->get_source_id() . ".");
                     $usr->set_source($val->get_source_id());
-                    $upd_result = $val->save()->get_last_message();
+                    $upd_result = $val->save($usr_msg);
                     log_debug("save source done.");
                 }
             }
@@ -143,7 +144,7 @@ if ($usr->id() > 0) {
         $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         $val_dsp = new value_ui($val->api_json());
         $result .= $val_dsp->dsp_edit($type_ids, $back);

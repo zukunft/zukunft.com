@@ -650,14 +650,14 @@ class formula_link extends sandbox_link
 
     /**
      * update a formula_link in the database or create a user formula_link
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // check if the required parameters are set
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
@@ -696,7 +696,7 @@ class formula_link extends sandbox_link
         if ($this->id() <= 0) {
             if ($this->db_ready()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $usr_msg->add_message_text($this->add($use_func)->get_last_message());
+                $this->add($usr_msg, $use_func);
             }
         } else {
             log_debug('update "' . $this->id() . '"');
@@ -736,14 +736,14 @@ class formula_link extends sandbox_link
             // check if the id parameters are supposed to be changed
             $this->load_objects();
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
             }
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -751,16 +751,40 @@ class formula_link extends sandbox_link
         }
 
         if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+            // TODO Prio 1 activate
+            //log_err($usr_msg->all_message_text());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
     protected function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+
+    /**
+     * delete the references which where this formula link is used
+     *
+     * @param user_message $usr_msg the message for the user why deleting the triple links has failed and a suggested solution
+     * @return bool true if the triple links has been deleted
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        $usr_msg = new user_message();
+
+        // collect all ... related to this ref
+        //$val_lst = new value_list($this->user());
+        //$val_lst->load_by_phr($this->phrase());
+
+        // if there are still values, ask if they really should be deleted
+        //if ($val_lst->has_values()) {
+        //    $val_lst->del($usr_msg);
+        //}
+
+        return $usr_msg->is_ok();
     }
 
 

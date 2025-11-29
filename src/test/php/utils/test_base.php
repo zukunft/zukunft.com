@@ -134,9 +134,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Exception;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Exception;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -2472,9 +2472,10 @@ class test_base
      */
     function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
+        $usr_msg = new user_message();
         // add the named object and remember the name
         $name = $sbx->name();
-        $sbx->save($use_func);
+        $sbx->save($usr_msg, $use_func);
         $sbx->reset();
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2494,7 +2495,7 @@ class test_base
         // update the name
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
-            $sbx->save($use_func);
+            $sbx->save($usr_msg, $use_func);
             $sbx->reset();
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2512,7 +2513,7 @@ class test_base
 
         if ($result) {
             // delete the name
-            $sbx->del($use_func);
+            $sbx->del($usr_msg, $use_func);
         }
 
         // check the log
@@ -3068,13 +3069,14 @@ class test_base
      */
     function write_cleanup(user|db_id_object_non_sandbox $obj, string $key, string $key_name, bool $check = false): void
     {
+        $usr_msg = new user_message();
         $obj->load_by_key($key, $key_name);
         if ($check) {
             if ($obj->id() != 0) {
                 log_warning('Unexpected cleanup of ' . $obj->dsp_id());
             }
         }
-        $obj->del($this->usr_admin);
+        $obj->del($usr_msg, $this->usr_admin);
     }
 
     /**
@@ -3112,6 +3114,7 @@ class test_base
         bool                                    $check = false
     ): void
     {
+        $usr_msg = new user_message();
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
         if ($check) {
@@ -3119,13 +3122,13 @@ class test_base
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
         }
-        $sbx->del();
+        $sbx->del($usr_msg);
     }
 
     /**
      * remove all remaining link test rows without test
      *
-     * @param sandbox_link $lnk the link objecz that should be deleted
+     * @param sandbox_link $lnk the link object that should be deleted
      * @param int $id the id of the link object
      * @param bool $check if true an error message is created if the object needs to be removed
      * *                    e.g. to detect incomplete cleanup of previous tests
@@ -3133,6 +3136,7 @@ class test_base
      */
     function write_link_cleanup(sandbox_link $lnk, int $id, bool $check = false): void
     {
+        $usr_msg = new user_message();
         $lnk->set_user($this->usr1);
         $lnk->load_by_id($id);
         if ($check) {
@@ -3140,7 +3144,7 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del();
+        $lnk->del($usr_msg);
         $lnk->set_user($this->usr2);
         $lnk->load_by_id($id);
         if ($check) {
@@ -3148,7 +3152,10 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del();
+        $lnk->del($usr_msg);
+        if (!$usr_msg->is_ok()) {
+            log_err('link cleanup failed due to ' . $usr_msg->all_message_text());
+        }
     }
 
 
@@ -3167,12 +3174,12 @@ class test_base
     function write_add(user|ip_range $obj, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message();
         $class = $lib->class_to_name($obj::class);
         $name = $obj->unique_value();
         $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
         // TODO maybe add if ($obj::class = user::class) {
-        $result = $obj->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $obj->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $obj->id();
         } else {
             return 0;
@@ -3191,12 +3198,12 @@ class test_base
     function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
         $sbx->set_name($name);
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -3207,6 +3214,7 @@ class test_base
     function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -3219,8 +3227,7 @@ class test_base
         $sbx->set_tob($tob);
         $sbx->set_name($name);
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -3231,6 +3238,7 @@ class test_base
     function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -3246,8 +3254,7 @@ class test_base
             $sbx->set_tob($tob);
         }
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
@@ -3370,6 +3377,7 @@ class test_base
     private
     function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
+        $usr_msg = new user_message();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
         $name = $sbx->name();
@@ -3378,8 +3386,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
         $sbx->set_name($new_name);
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             $sbx->reset();
             $sbx->load_by_name($new_name);
             if ($sbx->id() == $id) {
@@ -3399,6 +3406,7 @@ class test_base
     private
     function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
+        $usr_msg = new user_message();
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3406,8 +3414,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, sql_db::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
@@ -3417,6 +3424,7 @@ class test_base
     private
     function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
+        $usr_msg = new user_message();
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3425,8 +3433,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $sbx->description = $new_description;
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
                 sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
@@ -3469,6 +3476,7 @@ class test_base
     private
     function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
+        $usr_msg = new user_message();
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3477,8 +3485,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' order number to ' . $new_order_nbr;
         $lnk->order_nbr = $new_order_nbr;
-        $result = $lnk->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 formula_link::FLD_ORDER, $new_order_nbr, msg_id::LOG_UPDATE->value, $old_order_nbr);
         } else {
@@ -3505,6 +3512,7 @@ class test_base
     private
     function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
+        $usr_msg = new user_message();
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3513,8 +3521,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $lnk->description = $new_description;
-        $result = $lnk->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
@@ -3563,6 +3570,7 @@ class test_base
     private
     function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
+        $usr_msg = new user_message();
         $id = $sbx->id();
         $name = $sbx->name();
         $sbx->set_user($usr);
@@ -3570,9 +3578,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'del ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
-        $msg = $sbx->del();
-        $result = $msg->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->del($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_DEL->value);
         } else {
             return false;

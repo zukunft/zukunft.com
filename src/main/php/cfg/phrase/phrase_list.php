@@ -213,11 +213,7 @@ class phrase_list extends sandbox_list_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -562,7 +558,7 @@ class phrase_list extends sandbox_list_named
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
                                     $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
-                                    $usr_msg->add($wrd->save());
+                                    $wrd->save($usr_msg);
                                 }
                                 if ($wrd->id() == 0) {
                                     log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -583,15 +579,11 @@ class phrase_list extends sandbox_list_named
 
         // save the word in the database
         // TODO check why this is needed
-        if ($usr_msg == '' and $db_con->is_open()) {
-            $usr_msg->add($this->save());
+        if ($usr_msg->is_ok() and $db_con->is_open()) {
+            $this->save($usr_msg);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -633,7 +625,7 @@ class phrase_list extends sandbox_list_named
     function import_names(array $json_obj, ?data_object $dto = null): user_message
     {
         $usr_msg = $this->import_map_names($json_obj, $dto);
-        $this->save();
+        $this->save($usr_msg);
 
         return $usr_msg;
     }
@@ -2203,13 +2195,12 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message the message that should be shown to the user if something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        $usr_msg = new user_message();
-
         // get the phrase names that are already in the database
         $db_lst = clone $this;
         $db_lst->reset();
@@ -2233,14 +2224,14 @@ class phrase_list extends sandbox_list_named
 
         // add the missing phrase
         foreach ($add_lst->lst() as $phr) {
-            $usr_msg->add($phr->save());
+            $phr->save($usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
-            $usr_msg->add($phr->save());
+            $phr->save($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

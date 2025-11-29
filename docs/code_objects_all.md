@@ -227,6 +227,7 @@ the object structure is:
                     \-- component_link_list - a list of links between a view and a component
                     \-- formula_link_list - a list of formula word links
                     \-- term_view_list - a list of assignments from terms to views
+                    \-- view_relation_list - a list of view to view relations
                 \-- sandbox_list_named
                     \-- component_list - list of predefined system components
                     \-- formula_list - a simple list of formulas

@@ -371,11 +371,7 @@ class formula extends sandbox_code_id
             $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -436,11 +432,7 @@ class formula extends sandbox_code_id
             $this->type_id = $sys->typ_lst->frm_typ->default_id();
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -658,6 +650,7 @@ class formula extends sandbox_code_id
     function load_wrd(bool $with_automatic_error_fixing = true): bool
     {
         $result = true;
+        $usr_msg = new user_message();
 
         $do_load = true;
         if (isset($this->name_wrd)) {
@@ -676,7 +669,7 @@ class formula extends sandbox_code_id
                 // try to recreate it and report the internal error
                 // because this should actually never happen
                 if ($with_automatic_error_fixing) {
-                    if (!$this->wrd_add_fix()) {
+                    if (!$this->wrd_add_fix($usr_msg)) {
                         log_err('The formula word recreation for ' . $this->dsp_id() . ' failed');
                         $result = false;
                     }
@@ -725,33 +718,28 @@ class formula extends sandbox_code_id
      * add the corresponding name word for the formula name to the database
      * @return bool true if adding the word has been successful
      */
-    function wrd_add(): bool
+    function wrd_add(user_message $usr_msg): bool
     {
-        global $sys;
-
         log_debug('formula wrd_add for ' . $this->dsp_id());
-        $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = $this->formula_word();
-        $name_wrd->save()->get_last_message();
+        $name_wrd->save($usr_msg);
         if ($name_wrd->id > 0) {
             $this->name_wrd = $name_wrd;
-            $result = true;
         } else {
             log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
      * rename the corresponding name word if the formula is renamed
-     * @return bool true if adding the word has been successful
+     * @return bool true if renaming the word has been successful
      */
-    function wrd_rename(string $old_name): bool
+    function wrd_rename(string $old_name, user_message $usr_msg): bool
     {
         log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
-        $result = false;
 
         $wrd = new word($this->user());
         $wrd->load_by_name($old_name);
@@ -762,21 +750,20 @@ class formula extends sandbox_code_id
                 log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
             } else {
                 $wrd->set_name($this->name());
-                $wrd->save()->get_last_message();
-                $result = true;
+                $wrd->save($usr_msg);
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
      * remove the corresponding name word if the formula is deleted
-     * @return user_message true if adding the word has been successful
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if deleting the word has been successful
      */
-    function wrd_del(): user_message
+    function wrd_del(user_message $usr_msg): bool
     {
         log_debug('formula wrd_del for ' . $this->dsp_id());
-        $usr_msg = new user_message();
 
         $wrd = new word($this->user());
         $wrd->load_by_name($this->name());
@@ -786,36 +773,34 @@ class formula extends sandbox_code_id
             if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
                 log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
             } else {
-                $usr_msg = $wrd->del();
+                $wrd->del($usr_msg);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add the corresponding name word for the formula name to the database without similar check
      * this should only be used to fix internal errors
      */
-    function wrd_add_fix(): bool
+    function wrd_add_fix(user_message $usr_msg): bool
     {
         global $sys;
 
         log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
-        $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
         $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-        $name_wrd->add();
+        $name_wrd->add($usr_msg);
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
             $this->name_wrd = $name_wrd;
-            $result = true;
         } else {
             log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1670,15 +1655,11 @@ class formula extends sandbox_code_id
         // save the object and the related objects in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     private function assign_name(string $phr_name): string
@@ -1714,7 +1695,7 @@ class formula extends sandbox_code_id
     {
         if ($this->lnk_lst != null) {
             foreach ($this->lnk_lst->lst() as $lnk) {
-                $usr_msg->add($lnk->save());
+                $lnk->save($usr_msg);
             }
         }
     }
@@ -1731,28 +1712,30 @@ class formula extends sandbox_code_id
             $phr_lst = $this->phr_lst;
             if ($phr_lst != null) {
                 if (!$phr_lst->is_empty()) {
-                    $usr_msg->add($phr_lst->save());
-                    foreach ($phr_lst as $phr) {
-                        $this->assign_phrase($phr);
+                    if ($phr_lst->save($usr_msg)) {
+                        foreach ($phr_lst as $phr) {
+                            $this->assign_phrase($phr);
+                        }
                     }
                 }
             }
         }
     }
 
+    // TODO Prio 0 add user_message as parameter
     function assign_phrase(phrase $phr): string
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->id() > 0 and $phr->id() <> 0) {
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->load_by_link($this, $phr);
             if ($frm_lnk->id() == 0) {
                 $frm_lnk->set_formula($this);
                 $frm_lnk->set_phrase($phr);
-                $result .= $frm_lnk->save()->get_last_message();
+                $frm_lnk->save($usr_msg);
             }
         }
-        return $result;
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -2078,37 +2061,40 @@ class formula extends sandbox_code_id
      */
 
     /**
+     * TODO Prio 0 add user_message as parameter
      * link this formula to a word or triple
      */
     function link_phr(phrase $phr): string
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->user() != null) {
             log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->set_formula($this);
             $frm_lnk->set_phrase($phr);
-            $result = $frm_lnk->save()->get_last_message();
+            $frm_lnk->save($usr_msg);
         }
-        return $result;
+        return $usr_msg->get_last_message();
     }
 
     /**
+     * TODO Prio 0 add user_message as parameter
      * unlink this formula from a word or triple
      */
     function unlink_phr($phr): string
     {
-        $result = '';
+        $usr_msg = new user_message();
         if (isset($phr) and $this->user() != null) {
             log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->user()->dsp_id());
             $frm_lnk = new formula_link($this->user());
             $frm_lnk->load_by_link($this, $phr);
-            $msg = $frm_lnk->del();
-            $result = $msg->get_message();
+            $frm_lnk->del($usr_msg);
         } else {
-            $result .= log_err("Cannot unlink formula, phrase is not set.", "formula.php");
+            $msg = "Cannot unlink formula, phrase is not set.";
+            $usr_msg->all_message_text($msg);
+            log_err($msg, "formula.php");
         }
-        return $result;
+        return $usr_msg->get_message();
     }
 
 
@@ -2446,11 +2432,11 @@ class formula extends sandbox_code_id
 
     /**
      * set the update parameters for the formula text as written by the user if needed
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @param user_message the message for the user why the action has failed and a suggested solution
+     * @return bool true if the field name has been updated
      */
-    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
+    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
         if ($db_rec->name() <> $this->name()) {
             log_debug('->save_field_name to ' . $this->dsp_id() . ' from "' . $db_rec->name() . '"');
             $this->needs_res_upd = true;
@@ -2466,7 +2452,7 @@ class formula extends sandbox_code_id
                 $wrd = new word($this->user());
                 $wrd->load_by_name($db_rec->name());
                 $wrd->set_name($this->name());
-                $usr_msg->add($wrd->save());
+                $wrd->save($usr_msg);
 
             } else {
                 // create a new formula
@@ -2482,14 +2468,19 @@ class formula extends sandbox_code_id
     /**
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): bool
     {
         $result = '';
         if ($db_rec->name() <> $this->name()) {
             log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
-            if (!$this->wrd_rename($db_rec->name())) {
+            if (!$this->wrd_rename($db_rec->name(), $usr_msg)) {
                 $result .= 'formula ' . $db_rec->name() . ' cannot ba renamed to ' . $this->name() . ', because ...';
             }
 
@@ -2500,7 +2491,7 @@ class formula extends sandbox_code_id
             $log->std_value = $std_rec->name();
             $log->row_id = $this->id();
             $log->set_field(formula_db::FLD_NAME);
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class(formula::class);
                 if (!$db_con->update_old($this->id(),
                     array(formula_db::FLD_NAME),
@@ -2541,13 +2532,19 @@ class formula extends sandbox_code_id
      * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg a messages for the user what should be changed if something failed
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @returns user_message a messages for the user what should be changed if something failed
+     * @return bool true if everything has been fine
      */
-    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, bool $use_func): user_message
+    function save_id_if_updated(
+        sql_db $db_con,
+        sandbox $db_rec,
+        sandbox $std_rec,
+        user_message $usr_msg,
+        bool $use_func
+    ): bool
     {
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());
-        $usr_msg = new user_message();
 
         // if the name has changed, check if word, verb or formula with the same name already exists
         // this should have been checked by the calling function, so display the error message directly if it happens
@@ -2569,8 +2566,7 @@ class formula extends sandbox_code_id
                     if (def::UI_CAN_CHANGE_FORMULA_NAME) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
-                        $msg = $to_del->del();
-                        $usr_msg->add($msg);
+                        $to_del->del($usr_msg);
                         // ... and use it for the update
                         $this->id = $db_chk->id();
                         $this->set_owner_id($db_chk->owner_id());
@@ -2589,20 +2585,19 @@ class formula extends sandbox_code_id
                         // in this case change is allowed and done
                         log_debug('->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                         //$this->load_objects();
-                        $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
+                        $this->save_id_fields($db_con, $db_rec, $std_rec, $usr_msg);
                     } else {
                         // if the target link has not yet been created
                         // ... request to delete the old
                         $to_del = clone $db_rec;
-                        $msg = $to_del->del();
-                        $usr_msg->add($msg);
+                        $to_del->del($usr_msg);
                         // ... and create a deletion request for all users ???
 
                         // ... and create a new display component link
                         $this->id = 0;
                         $this->set_owner_id($this->user()->id);
                         // TODO check the usr_msg values and if the id is needed
-                        $usr_msg->add($this->add());
+                        $this->add($usr_msg);
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                     }
                 }
@@ -2610,35 +2605,33 @@ class formula extends sandbox_code_id
         }
 
         log_debug('->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create a new formula
      * the user sandbox function is overwritten because the formula text should never be null
      * and the corresponding formula word is created
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
 
@@ -2669,7 +2662,7 @@ class formula extends sandbox_code_id
             // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
             // the creation of the formula word is switched off because the term loading should be fine now
             // TODO check and remove the create_wrd function and the phrase_type_shared::FORMULA_LINK
-            if ($this->wrd_add()) {
+            if ($this->wrd_add($usr_msg)) {
 
                 // create an empty db_frm element to force saving of all set fields
                 $db_rec = new formula($this->user());
@@ -2677,7 +2670,7 @@ class formula extends sandbox_code_id
                 $std_rec = clone $db_rec;
                 // save the formula fields
                 if ($use_func) {
-                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -2686,7 +2679,7 @@ class formula extends sandbox_code_id
             $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2694,9 +2687,10 @@ class formula extends sandbox_code_id
      * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
@@ -2710,9 +2704,7 @@ class formula extends sandbox_code_id
         }
 
         // check the preserved names
-        $usr_msg = $this->check_save();
-
-        if ($usr_msg->is_ok()) {
+        if ($this->check_save($usr_msg)) {
 
             // build the database object because the is anyway needed
             $db_con->set_class(formula::class);
@@ -2786,7 +2778,7 @@ class formula extends sandbox_code_id
                 if ($usr_msg->is_ok()) {
 
                     log_debug('add');
-                    $usr_msg->add($this->add($use_func));
+                    $this->add($usr_msg, $use_func);
                 }
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
@@ -2830,13 +2822,13 @@ class formula extends sandbox_code_id
                     if ($usr_msg->is_ok()) {
 
                         // check if the id parameters are supposed to be changed
-                        $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
 
                         // if a problem has appeared up to here, don't try to save the values
                         // the problem is shown to the user by the calling interactive script
                         if ($usr_msg->is_ok()) {
                             if ($use_func) {
-                                $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                             } else {
                                 $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                             }
@@ -2859,7 +2851,7 @@ class formula extends sandbox_code_id
             log_info($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
 
     }
 
@@ -2894,12 +2886,12 @@ class formula extends sandbox_code_id
      * needs to be overwritten by the child class if needed
      * TODO make sure that only user specific data is deleted
      *
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why deleting the formula links has failed and a suggested solution
+     * @return bool true if the formula links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
 
         $frm_lnk_lst = new formula_link_list($this->user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
@@ -2930,10 +2922,10 @@ class formula extends sandbox_code_id
 
         // and the corresponding word if possible
         if ($usr_msg->is_ok()) {
-            $usr_msg->add($this->wrd_del());
+            $this->wrd_del($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

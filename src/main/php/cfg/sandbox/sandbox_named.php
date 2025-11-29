@@ -258,11 +258,7 @@ class sandbox_named extends sandbox
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -762,6 +758,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
@@ -773,7 +770,7 @@ class sandbox_named extends sandbox
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -786,6 +783,7 @@ class sandbox_named extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
@@ -796,7 +794,7 @@ class sandbox_named extends sandbox
         $log->new_value = null;
 
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -808,33 +806,32 @@ class sandbox_named extends sandbox
 
     /**
      * create a new named object
-     *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
      * TODO do a rollback in case of an
      * TODO used prepared sql_insert for all fields
      * TODO use optional sql insert with log
      * TODO use prepared sql insert
+     *
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                $msg = 'add and log ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
 
@@ -847,9 +844,9 @@ class sandbox_named extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                    $msg = 'add ' . $this->dsp_id();
+                    if ($db_con->insert($qp, $msg, $usr_msg)) {
+                        $this->id = $usr_msg->get_row_id();
                     }
                 } else {
                     $lib = new library();
@@ -894,7 +891,7 @@ class sandbox_named extends sandbox
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -907,26 +904,27 @@ class sandbox_named extends sandbox
      * for these named objects check if the user has requested to use a preserved name
      * and if yes return a message and a suggested solution to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_save(): user_message
+    protected function check_save(user_message $usr_msg): bool
     {
-        return $this->check_preserved();
+        return $this->check_preserved($usr_msg);
     }
 
     /**
      * check if the user has requested to use a preserved name for the sandbox object
      * and if yes return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
         global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
         $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
@@ -944,7 +942,7 @@ class sandbox_named extends sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -952,7 +950,7 @@ class sandbox_named extends sandbox
      */
     protected function reserved_names(): array
     {
-        log_err('The dummy parent method reserved_names has been called, which should never happen');
+        log_err('The dummy parent method reserved_names has been called for ' . $this::class . ', which should never happen');
         return [];
     }
 
@@ -961,7 +959,7 @@ class sandbox_named extends sandbox
      */
     protected function fixed_names(): array
     {
-        log_err('The dummy parent method fixed_names has been called, which should never happen');
+        log_err('The dummy parent method fixed_names has been called for ' . $this::class . ', which should never happen');
         return [];
     }
 
@@ -1043,10 +1041,11 @@ class sandbox_named extends sandbox
      * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): bool
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1063,12 +1062,12 @@ class sandbox_named extends sandbox
             $log->set_field($tbl_name . '_name');
 
             $log->row_id = $this->id();
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 // TODO Prio 2 activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
                 if ($this->sql_write_prepared()) {
                     $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list());
-                    $usr_msg = $db_con->update($qp, $this::class . ' update name');
+                    $db_con->update($qp, $this::class . ' update name', $usr_msg);
                     $result = $usr_msg->get_message();
                 } else {
                     $db_con->set_class($this::class);

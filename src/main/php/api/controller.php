@@ -46,6 +46,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -99,15 +100,16 @@ class controller
     ): void
     {
         $result = ''; // reset the json message string
+        $usr_msg = new user_message();
 
         $dbo->api_mapper($api_json);
 
         // add the db object e.g. word
-        $add_result = $dbo->save();
+        $dbo->save($usr_msg);
 
         // if update was fine ...
-        if ($add_result->is_ok()) {
-            $id = $add_result->get_row_id();
+        if ($usr_msg->is_ok()) {
+            $id = $usr_msg->get_row_id();
             if ($id == 0) {
                 $id = $dbo->id();
             }
@@ -115,7 +117,7 @@ class controller
             $result = $dbo->api_json([api_type::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
-            $msg .= $add_result->all_message_text();
+            $msg .= $usr_msg->all_message_text();
         }
         // return either the api json with the id of the created db object e.g. word
         // or the message why the adding has failed
@@ -146,20 +148,21 @@ class controller
     ): void
     {
         $result = ''; // reset the json message string
+        $usr_msg = new user_message();
 
         $dbo->api_mapper($api_json);
         $dbo->id = $id;
 
         // update the db object e.g. word
-        $upd_result = $dbo->save();
+        $dbo->save($usr_msg);
 
         // if update was fine ...
-        if ($upd_result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             // TODO Prio 1 return only the id of the added word?
             $result = $dbo->api_json([api_type::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
-            $msg .= $upd_result->all_message_text();
+            $msg .= $usr_msg->all_message_text();
         }
         // return either the api json with the id of the created word
         // or the message why the adding of the word has failed
@@ -187,18 +190,19 @@ class controller
     ): void
     {
         $result = ''; // reset the json message string
+        $usr_msg = new user_message();
 
         if ($id > 0) {
             $dbo->load_by_id($id);
 
             // delete or exclude the word
-            $del_result = $dbo->del();
+            $dbo->del($usr_msg);
 
-            if ($del_result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 $result = $dbo->api_json([api_type::HEADER], $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
-                $msg .= $del_result->all_message_text();
+                $msg .= $usr_msg->all_message_text();
             }
         } else {
             $lib = new library();
@@ -363,10 +367,11 @@ class controller
             case rest_ctrl::DELETE:
                 // return the api json or the error message
                 if ($msg == '') {
+                    $usr_msg = new user_message();
 
                     if ($id > 0) {
-                        $result = $obj->del();
-                        if ($result->is_ok()) {
+                        $obj->del($usr_msg);
+                        if ($usr_msg->is_ok()) {
                             // set response code - 200 OK
                             http_response_code(200);
                         } else {
@@ -374,7 +379,7 @@ class controller
                             http_response_code(409);
 
                             echo json_encode(
-                                array(url_var::RESULT => $result->get_last_message())
+                                array(url_var::RESULT => $usr_msg->get_last_message())
                             );
                         }
                     }

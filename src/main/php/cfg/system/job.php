@@ -528,12 +528,12 @@ class job extends db_object_seq_id_user
 
     /**
      * remove the old requests from the database if they are closed since a while
-     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

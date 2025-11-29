@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views as views;
@@ -59,7 +60,7 @@ $html = new html_base();
 $frm_id = $_GET[url_var::ID] ?? 0;
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -126,10 +127,10 @@ if ($usr->id() > 0) {
         if ($frm->usr_text <> '') {
 
             // update the formula if it has been changed
-            $upd_result = $frm->save()->get_last_message();
+            $frm->save($usr_msg);
 
             // if update was successful ...
-            if (str_replace('1', '', $upd_result) == '') {
+            if ($usr_msg->is_ok()) {
                 // ... display the calling view
                 // because formula changing may need several updates the edit view is shown again
                 //$result .= dsp_go_back($back, $usr);
@@ -140,9 +141,6 @@ if ($usr->id() > 0) {
                     $phr_lst = $frm->assign_phr_lst();
                     //$res_list = $frm->calc($phr_lst);
                 }
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
             }
         }
 
@@ -152,7 +150,7 @@ if ($usr->id() > 0) {
             $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // display the view to change the formula
             $frm->load_by_id($frm_id); // reload to formula object to display the real database values

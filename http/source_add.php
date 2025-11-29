@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -59,7 +60,7 @@ $html = new html_base();
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -109,18 +110,15 @@ if ($usr->id() > 0) {
             // if the parameters are fine
             if ($msg == '') {
                 // add the new source to the database
-                $add_result = $src->save()->get_last_message();
+                $src->save($usr_msg);
 
                 // if adding was successful ...
-                if (str_replace('1', '', $add_result) == '') {
+                if ($usr_msg->is_ok()) {
                     // remember the source for the next values to add
                     $usr->set_source($src->id());
 
                     // ... and display the calling view
                     $result .= $html->dsp_go_back($back, $usr);
-                } else {
-                    // ... or in case of a problem prepare to show the message
-                    $msg .= $add_result;
                 }
             }
         }
@@ -132,7 +130,7 @@ if ($usr->id() > 0) {
         $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // display the add source view
         $scr_dsp = new source_ui($src->api_json());

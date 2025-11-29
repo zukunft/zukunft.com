@@ -187,7 +187,7 @@ class test_components
         $cmp->set_usage(test_const::DUMMY_USAGE_COMPONENT);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
         $cmp->ui_msg_code_id_vars = msg_id::DONE;
-        $cmp->ui_msg_code_id_exception = msg_id::ERROR;
+        $cmp->ui_msg_code_id_exception = msg_id::ERROR_TEXT;
         $cmp->ui_msg_value_exception = 0;
         $cmp->set_row_phrase($t_phr->year());
         $cmp->set_col_phrase($t_phr->canton());

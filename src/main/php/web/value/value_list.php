@@ -405,6 +405,7 @@ class value_list extends ListBase
 
     // creates a table of all values related to a word and a related word and all the sub words of the related word
     // e.g. for "ABB" ($this->phr) list all values for the cash flow statement ($phr_row)
+    /*
     function dsp_table($phr_row, $back): string
     {
         global $usr;
@@ -433,7 +434,7 @@ class value_list extends ListBase
 
         // if parameters are fine display the table
         if ($result == '') {
-            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name() . '" and user "' . $usr->name . '"');
+            log_debug('"' . $phr_row->name . '" for "' . $this->common_phrases()->name() . '" and user "' . $usr->name . '"');
 
             // init the display vars
             $val_main = null; // the "main" value used as a sample for a new value
@@ -446,13 +447,13 @@ class value_list extends ListBase
             $result .= '<br>';
 
             // get all values related to the selecting word, because this is probably the strongest selection and to save time reduce the number of records asap
-            $val_lst = $this->phr->val_lst();
+            //$val_lst = $this->common_phrases()->val_lst();
             log_debug('all values: ' . $lib->dsp_count($val_lst->lst));
 
             //$val_lst->load_phrases();
-            /*foreach ($val_lst->lst AS $val) {
+            foreach ($val_lst->lst AS $val) {
               zu_debug('value_list_dsp->dsp_table value: '.$val->number().' (group '.$val->grp_id.' and time '.$val->time_id.')');
-            }*/
+            }
 
             // get all words related to the value list to be able to define the column and the row names
             $phr_lst_all = $val_lst->phr_lst();
@@ -508,7 +509,7 @@ class value_list extends ListBase
             if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
-                    if ($common_word->id() <> $this->phr->id()) {
+                    if ($common_word->id() <> $common_word->phrase()->id()) {
                         $common_text .= $common_word->dsp_tbl_row();
                     }
                 }
@@ -785,6 +786,7 @@ class value_list extends ListBase
 
         return $result;
     }
+    */
 
     /**
      * return the html code to display all values related to a given word
@@ -898,19 +900,19 @@ class value_list extends ListBase
                     $result .= '    <td>';
                     $url = $html->url(views::VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
-                    $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->phr->id());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
                 $url = $html->url(views::VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
                 $url = $html->url(views::VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '  </tr>';
             }

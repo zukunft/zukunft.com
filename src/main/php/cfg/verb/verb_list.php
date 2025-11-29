@@ -674,21 +674,20 @@ class verb_list extends type_list
      * simple loop to save all verbs of the list
      * because there are hopefully never many verbs to save
      *
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
-                $usr_msg->add($vrb->save());
+                $vrb->save($usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

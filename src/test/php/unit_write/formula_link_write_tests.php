@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -61,6 +62,7 @@ class formula_link_write_tests
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write formula link ';
@@ -70,7 +72,7 @@ class formula_link_write_tests
         $t->assert_write_link($t_frm->formula_link_filled_add());
 
         $t->subheader($ts . 'specific');
-        $frm = $t_db->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
+        $frm = $t_db->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP, $usr_msg);
         $wrd = $t_db->test_word(words::TEST_ADD);
 
 
@@ -237,7 +239,7 @@ class formula_link_write_tests
         $wrd->load_by_name(words::TEST_ADD);
         $lnk = new formula_link($t->usr1);
         $lnk->load_by_link($frm, $wrd->phrase());
-        $lnk->del();
+        $lnk->del($usr_msg);
         foreach (formulas::TEST_FORMULAS as $frm_name) {
             $t->write_named_cleanup($frm, $frm_name);
         }
@@ -245,21 +247,22 @@ class formula_link_write_tests
             $t->write_named_cleanup($wrd, $wrd_name);
         }
 
-        $frm->del();
-        $wrd->del();
+        $frm->del($usr_msg);
+        $wrd->del($usr_msg);
 
     }
 
     function run_list(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write formula link list ';
         $t->header($ts);
 
         // prepare
-        $frm = $t_db->add_formula(formulas::INCREASE, formulas::INCREASE_EXP);
+        $frm = $t_db->add_formula(formulas::INCREASE, formulas::INCREASE_EXP, $usr_msg);
         $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
         $frm->link_phr($phr);
         $t_db->test_formula_link(formulas::INCREASE, words::YEAR_CAP);

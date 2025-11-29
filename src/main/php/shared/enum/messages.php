@@ -72,6 +72,16 @@ enum messages: string
      * use LABEL_* const only for fallback
     */
 
+    // the message types that defines what needs to be done next
+    const int FATAL = -4;
+    const int ERROR = -3;
+    const int NOK = -2;
+    const int WARNING = -1;
+    const int INFO = 0;
+    const int OK = 1;
+    const int YES_NO = 2;
+    const int CONFIRM_CANCEL = 3;
+
     // start and end maker for message id within a text to allow changing the order of vars within a message
     const string VAR_START = 'z$';
     const string VAR_END = '$z';
@@ -146,6 +156,8 @@ enum messages: string
     const string VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const string VAR_CLASS_NAME = 'VarClassName';
+    // the name of a function
+    const string VAR_FUNCTION_NAME = 'VarFunctionName';
     // value how many times the object is referenced
     const string VAR_USAGE = 'VarUsage';
     // the share permission of a sandbox object
@@ -199,7 +211,7 @@ enum messages: string
     case EXAMPLE_SHORT = 'e.g.';
 
     // special message id placeholders
-    case ERROR = 'error';
+    case ERROR_TEXT = 'error';
     case NONE = '';
 
     // messages with vars
@@ -882,6 +894,14 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';
 
+    case DB_PHRASE_MISSING = 'phrase '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is unexpected missing in database during import';
+    case DB_TERM_MISSING = 'term '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is unexpected missing in database during import';
+
+
     case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' != '
@@ -1329,7 +1349,7 @@ enum messages: string
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';
-    case YES_NO = 'yes or no';
+    case YES_NO_TEXT = 'yes or no';
     case UNDO_ADD = 'undo_add';
     case UNDO_EDIT = 'undo_edit';
     case UNDO_DEL = 'undo_del';
@@ -1361,7 +1381,16 @@ enum messages: string
         . '" already exists. Please use another name or merge with this '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '.';
-    case DUMMY_PARENT_ADD_FUNCTION_CALLED = 'The dummy parent add function has been called, which should never happen';
+
+    /*
+     * internal code errors
+     */
+
+    case MISSING_FUNCTION_OVERWRITE =
+        self::VAR_START . self::VAR_FUNCTION_NAME . self::VAR_END
+        . ' function is not overwritten by '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+
     case NOT_SIMILAR_OBJECTS =
         self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not similar '

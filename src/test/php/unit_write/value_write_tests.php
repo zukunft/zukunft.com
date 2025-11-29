@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
@@ -77,6 +78,7 @@ class value_write_tests
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write value ';
@@ -240,7 +242,8 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
-        $result = $add_val->save()->get_last_message();
+        $add_val->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $test_val_lst[] = $add_val->id();
@@ -275,7 +278,8 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
-        $result = $add_val2->save()->get_last_message();
+        $add_val2->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -286,7 +290,8 @@ class value_write_tests
         $add_val_ts->ids = $phr_lst_ts->ids;
         $add_val_ts->set_number(TV_ABB_PRICE_20200515;
         $add_val_ts->time_stamp = new DateTime('2020-05-15');
-        $result = $add_val_ts->save()->get_last_message();
+        $add_val_ts->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
@@ -312,7 +317,8 @@ class value_write_tests
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id);
         $added_val->set_number(self::NUMBER_ADD);
-        $result = $added_val->save()->get_last_message();
+        $added_val->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -340,7 +346,8 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(self::NUMBER_CHANGED);
-        $result = $val_usr2->save()->get_last_message();
+        $val_usr2->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -374,7 +381,8 @@ class value_write_tests
         $added_val_usr2 = new value($t->usr2);
         $added_val_usr2->load_by_grp($phr_grp);
         $added_val_usr2->set_number(self::NUMBER_ADD);
-        $result = $added_val_usr2->save()->get_last_message();
+        $added_val_usr2->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert($ts . $test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -382,7 +390,7 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
         if ($val_usr2->is_id_set()) {
-            $result = $t->log_last_by_field($val_usr2,  change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
+            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
@@ -434,11 +442,11 @@ class value_write_tests
         /*
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id);
-        $added_val->del();
+        $added_val->del($usr_msg);
 
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
-        $val_usr2->del();
+        $val_usr2->del($usr_msg);
         */
 
 

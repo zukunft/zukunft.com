@@ -234,11 +234,7 @@ class type_object extends db_object_seq_id
         ?data_object $dto = null
     ): bool
     {
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 

@@ -173,11 +173,7 @@ class sandbox_typed extends sandbox_named
             $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -344,8 +340,12 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        $msg = 'the type_name() function is not overwritten by the ' . $this::class . ' object';
-        return log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'type_name',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
 

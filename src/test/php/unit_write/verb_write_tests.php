@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -52,39 +53,38 @@ class verb_write_tests
 
         // init
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write verb ';
         $t->header($ts);
 
-        // check the loading of the "is a" verb
+        $test_name = 'check the loading of the "' . verbs::IS . ')" verb';
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->load_by_id($sys->typ_lst->vrb->id(verbs::IS));
-        $t->assert('verb->load ', $vrb->name(), verbs::IS_NAME);
+        $t->assert($test_name, $vrb->name(), verbs::IS_NAME);
 
-        // test the creation of a new verb
+        $test_name = 'test the creation of a new verb with name "' . verbs::TEST_ADD_NAME . ')" verb';
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->set_name(verbs::TEST_ADD_NAME);
-        $result = $vrb->save()->get_last_message();
-        $t->assert('verb->add', $result);
+        $t->assert_true($test_name, $vrb->save($usr_msg));
 
-        // ... test if adding the verb is part of the change log
+        $test_name = '... test if adding the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert('verb->add log', $result, 'zukunft.com system test added "System Test Verb"');
+        $t->assert($test_name, $result, 'zukunft.com system test added "System Test Verb"');
 
-        // test verb not yet used can be deleted
+        $test_name = 'test verb not yet used can be deleted';
         $vrb = new verb;
         $vrb->load_by_name(verbs::TEST_ADD_NAME);
         // TODO this setting of the user should actually not be needed
         $vrb->set_user($t->usr1);
-        $result = $vrb->del()->all_message_text();
-        $t->assert('verb->del ', $result);
+        $t->assert_true($test_name, $vrb->del($usr_msg));
 
-        // ... test if deleting the verb is part of the change log
+        $test_name = '... test if deleting the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert('verb->add log', $result, 'zukunft.com system test deleted "System Test Verb"');
+        $t->assert($test_name, $result, 'zukunft.com system test deleted "System Test Verb"');
 
         // TODO add more tests e.g. that a verb name cannot be used for a word any more
 

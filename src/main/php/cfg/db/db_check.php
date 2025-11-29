@@ -168,6 +168,7 @@ class db_check
 
         $cfg = new config();
         $lib = new library();
+        $usr_msg = new user_message();
         $sys->times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
@@ -384,14 +385,14 @@ class db_check
             if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 $sys_usr->load_by_name(users::SYSTEM_NAME);
                 $sys_usr->set_profile(user_profiles::SYSTEM);
-                $sys_usr->save_user($sys_usr);
+                $sys_usr->save_user($usr_msg, $sys_usr);
             }
             // add missing system users if needed
             $usr_admin = new user();
             if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
                 $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
                 $usr_admin->set_profile(user_profiles::ADMIN);
-                $usr_admin->save_user($sys_usr);
+                $usr_admin->save_user($usr_msg, $sys_usr);
             }
 
             // add missing system test users if needed
@@ -399,11 +400,11 @@ class db_check
             if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
                 $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
                 $test_usr->set_profile(user_profiles::TEST);
-                $test_usr->save_user($sys_usr);
+                $test_usr->save_user($usr_msg, $sys_usr);
                 $test_usr2 = new user();
                 $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
                 $test_usr2->set_profile(user_profiles::TEST);
-                $test_usr2->save_user($sys_usr);
+                $test_usr2->save_user($usr_msg, $sys_usr);
             }
 
             $test_usr_normal = new user();
@@ -411,7 +412,7 @@ class db_check
                 $test_usr_normal = new user();
                 $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
                 $test_usr_normal->set_profile(user_profiles::NORMAL);
-                $test_usr_normal->save_user($sys_usr);
+                $test_usr_normal->save_user($usr_msg, $sys_usr);
             }
         }
 

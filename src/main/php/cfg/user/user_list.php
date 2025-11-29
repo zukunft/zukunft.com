@@ -658,12 +658,10 @@ class user_list
      * because there are probably not many users to save at once
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(user|null $usr_req = null): user_message
+    function save(user_message $usr_msg, user|null $usr_req = null): void
     {
-        $usr_msg = new user_message();
-
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no users to save');
         } else {
@@ -672,14 +670,12 @@ class user_list
                     if ($usr->id == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
-                    $usr_msg->add($usr->del($usr_req));
+                    $usr->del($usr_msg, $usr_req);
                 } else {
-                    $usr_msg->add($usr->save_user($usr_req));
+                    $usr->save_user($usr_msg, $usr_req);
                 }
             }
         }
-
-        return $usr_msg;
     }
 
 }

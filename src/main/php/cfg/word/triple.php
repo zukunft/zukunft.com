@@ -414,7 +414,7 @@ class triple extends sandbox_link_named
             } else {
                 if (is_string($value)) {
                     if ($dto == null) {
-                        $this->set_from($this->import_phrase($value));
+                        $this->set_from($this->import_phrase($value, $usr_msg));
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
@@ -442,7 +442,7 @@ class triple extends sandbox_link_named
                 $usr_msg->add_id_with_vars(msg_id::TO_NAME_NOT_EMPTY, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
             } else {
                 if ($dto == null) {
-                    $this->set_to($this->import_phrase($value));
+                    $this->set_to($this->import_phrase($value, $usr_msg));
                 } else {
                     $phr = $dto->get_phrase_by_name($value);
                     if ($phr == null) {
@@ -473,7 +473,7 @@ class triple extends sandbox_link_named
                         $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
                         $vrb->set_user($this->user());
                         // TODO remove this exception
-                        $vrb->save();
+                        $vrb->save($usr_msg);
                     }
                     $dto?->add_verb($vrb);
                 } else {
@@ -519,11 +519,7 @@ class triple extends sandbox_link_named
             $this->name_generated = $this->generate_name();
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -651,7 +647,7 @@ class triple extends sandbox_link_named
      * @param string $name the name of the phrase
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name): phrase
+    private function import_phrase(string $name, user_message $usr_msg): phrase
     {
         global $db_con;
 
@@ -662,7 +658,7 @@ class triple extends sandbox_link_named
                 // if there is no word or triple with the name yet, automatically create a word
                 $wrd = new word($this->user());
                 $wrd->set_name($name);
-                $wrd->save();
+                $wrd->save($usr_msg);
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
                 } else {
@@ -710,7 +706,7 @@ class triple extends sandbox_link_named
         // save the triple in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             } else {
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
@@ -720,11 +716,7 @@ class triple extends sandbox_link_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2122,6 +2114,57 @@ class triple extends sandbox_link_named
 
 
     /*
+     * save helper
+     */
+
+    /**
+     * preform the pre save checks which means
+     * for these named objects check if the user has requested to use a preserved name
+     * and if yes return a message and a suggested solution to the user
+     *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if no preserved triple name is used and the triple can be saved to the database
+     */
+    protected function check_save(user_message $usr_msg): bool
+    {
+        return $this->check_preserved($usr_msg);
+    }
+
+    /**
+     * check if the user has requested to use a preserved name for the sandbox object
+     * and if yes return a message to the user
+     *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * * @return bool true if everything has been fine
+     */
+    protected function check_preserved(user_message $usr_msg): bool
+    {
+        global $usr;
+        global $mtr;
+
+        // init
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // system users are always allowed to add objects e.g. for the system views
+        if (!$usr->is_system()) {
+            if (in_array($this->name(), $this->reserved_names())) {
+                // the admin user needs to add the read test objects during initial load
+                if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
+                    $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                    ]);
+                }
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
      * save
      */
 
@@ -2177,6 +2220,7 @@ class triple extends sandbox_link_named
     function log_link_add(): change_link
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
+        $usr_msg = new user_message();
         $log = new change_link($this->user());
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::TRIPLE);
@@ -2184,7 +2228,7 @@ class triple extends sandbox_link_named
         $log->new_link = $this->verb();
         $log->new_to = $this->to();
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -2212,6 +2256,7 @@ class triple extends sandbox_link_named
     function log_del_link(): change_link
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
+        $usr_msg = new user_message();
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::TRIPLE);
@@ -2219,7 +2264,7 @@ class triple extends sandbox_link_named
         $log->old_link = $this->verb();
         $log->old_to = $this->to();
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -2431,8 +2476,13 @@ class triple extends sandbox_link_named
     /**
      * save updated the triple id fields (from, verb and to)
      * should only be called if the user is the owner and nobody has used the triple
+     * @param sql_db $db_con the active database connection
+     * @param sandbox|triple $db_rec the database record before the saving
+     * @param sandbox|triple $std_rec the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      */
-    function save_id_fields(sql_db $db_con, sandbox|triple $db_rec, sandbox|triple $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox|triple $db_rec, sandbox|triple $std_rec, user_message $usr_msg): bool
     {
         $result = '';
         if ($db_rec->from_id() <> $this->from_id()
@@ -2451,7 +2501,7 @@ class triple extends sandbox_link_named
             $log->std_to = $std_rec->to();
             $log->row_id = $this->id();
             //$log->set_field(triple_db::FLD_FROM);
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class(triple::class);
                 if (!$db_con->update_old($this->id(),
                     array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO),
@@ -2461,7 +2511,7 @@ class triple extends sandbox_link_named
             }
         }
         log_debug('triple->save_id_fields for ' . $this->dsp_id() . ' has been done');
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2472,17 +2522,17 @@ class triple extends sandbox_link_named
      * @param triple|sandbox $db_rec the database record before the saving
      * @param triple|sandbox $std_rec the database record defined as standard because it is used by most users
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @returns user_message a messages for the user what should be changed if something failed
+     * @param user_message $usr_msg a messages for the user what should be changed if something failed
+     * @return bool true if everything has been fine
      */
     function save_id_if_updated(
         sql_db         $db_con,
         triple|sandbox $db_rec,
         triple|sandbox $std_rec,
+        user_message   $usr_msg,
         bool           $use_func
-    ): user_message
+    ): bool
     {
-        $usr_msg = new user_message();
-
         if ($db_rec->from_id() <> $this->from_id()
             or $db_rec->verb_id() <> $this->verb_id()
             or $db_rec->to_id() <> $this->to_id()) {
@@ -2494,9 +2544,9 @@ class triple extends sandbox_link_named
             if ($db_chk->id() > 0) {
                 // ... if yes request to delete or exclude the record with the id parameters before the change
                 $to_del = clone $db_rec;
-                $msg = $to_del->del();
-                $usr_msg->add($msg);
-                if (!$msg->is_ok()) {
+                $to_del->del($usr_msg);
+                $usr_msg->add($usr_msg);
+                if (!$usr_msg->is_ok()) {
                     $usr_msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
                 }
                 if ($usr_msg->is_ok()) {
@@ -2515,14 +2565,14 @@ class triple extends sandbox_link_named
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
+                    $this->save_id_fields($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
-                    $msg = $to_del->del();
-                    $usr_msg->add($msg);
-                    if (!$msg->is_ok()) {
+                    $to_del->del($usr_msg);
+                    $usr_msg->add($usr_msg);
+                    if (!$usr_msg->is_ok()) {
                         $usr_msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
                     }
                     // ... and create a deletion request for all users ???
@@ -2530,30 +2580,30 @@ class triple extends sandbox_link_named
                     // ... and create a new triple
                     $this->id = 0;
                     $this->set_owner_id($this->user()->id);
-                    $usr_msg->add($this->add());
+                    $this->add($usr_msg);
                     log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
         }
 
         log_debug('triple->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add a new triple to the database
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug('triple->add new triple for "' . $this->from()->name() . '" ' . $this->verb_name() . ' "' . $this->to()->name() . '"');
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             // TODO review: do not set the generated name if it matches the name
@@ -2561,11 +2611,10 @@ class triple extends sandbox_link_named
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                $msg = 'add and log ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
 
@@ -2576,9 +2625,9 @@ class triple extends sandbox_link_named
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                    $msg = 'add ' . $this->dsp_id();
+                    if ($db_con->insert($qp, $msg, $usr_msg)) {
+                        $this->id = $usr_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class(triple::class);
@@ -2611,17 +2660,18 @@ class triple extends sandbox_link_named
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add or update a triple in the database or create a user triple
      * overwrite the sandbox save because for triple the reverse order should be checked
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
@@ -2638,9 +2688,7 @@ class triple extends sandbox_link_named
         }
 
         // check the preserved names
-        $usr_msg = $this->check_save();
-
-        if ($usr_msg->is_ok()) {
+        if ($this->check_save($usr_msg)) {
 
             // load the objects if needed
             $this->load_objects();
@@ -2699,7 +2747,7 @@ class triple extends sandbox_link_named
             if ($this->id() == 0) {
                 $usr_msg->add($this->is_name_used_msg($this->name()));
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->add($use_func));
+                    $this->add($usr_msg, $use_func);
                     if (!$usr_msg->is_ok()) {
                         log_info($usr_msg->get_last_message());
                     }
@@ -2733,7 +2781,7 @@ class triple extends sandbox_link_named
 
                 // check if the id parameters are supposed to be changed
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }
@@ -2754,7 +2802,7 @@ class triple extends sandbox_link_named
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /*
@@ -2780,9 +2828,10 @@ class triple extends sandbox_link_named
     /**
      * delete the phrase groups which where this triple is used
      *
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why deleting the triple links has failed and a suggested solution
+     * @return bool true if the triple links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
 
@@ -2797,14 +2846,14 @@ class triple extends sandbox_link_named
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $usr_msg->add($val_lst->del());
+            $val_lst->del($usr_msg);
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
         // TODO Prio 2 activate
-        //$usr_msg->add($grp_lst->del());
+        //$grp_lst->del($usr_msg);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -3233,7 +3282,8 @@ class triple extends sandbox_link_named
         log_debug("triple->dsp_del " . $this->id() . ".");
         $result = ''; // reset the html code var
 
-        $result .= btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        //$btn = new button();
+        //$result .= $btn->yes_no('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;

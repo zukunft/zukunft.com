@@ -7,6 +7,15 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
+    TODO the workflow should modify the url array and e.g. replace to_confirm with confirmed
+    TODO messages should be shown to the user in the top right corner with an evelopm symbol with a colored dot
+    TODO critical messages related to th just pressed button are should above the button so that the button move down
+    TODO make all private vars public that have a public set or get function 
+         and where the set and get does not hava any addition functionality
+         if the set and get functions have additional functionality use the build in php set and get in declaration
+         keep the vars private that are not accessed from outside
+    TODO add a color theme per view
     TODO use the view (db) version to update the database by using a next_step-php
     TODO create a seperate php session for backend, frontend and test and from test test the login prozess
     TODO cleanup init.php to speed up the api
@@ -610,7 +619,7 @@ admin
 - add median_user and set_owner to all user sandbox objects
 - check which functions can be private in the user sandbox
 - use private zukunft data to manage the zukunft payments for keeping data private and
-- don't check ip address if someone is trying to login
+- don't check ip address if someone is trying to log in
 
 Technical
 - move the JSON object creation to the classes
@@ -634,10 +643,11 @@ Table view
 - allow to add a sub row to the table view and allow to select a formula for the sub row
 
 value view
-- when displaying a value allow several display formats (template formatting including ...
+- when displaying a value allow several display formats 
+- template formatting including ...
 - ... sub values for related formula result
 - ... other user plus minus indicator
-- ... other user range chart)
+- ... other user range chart
 - show the values of other users also if the user has just an IP
 
 word view
@@ -651,7 +661,7 @@ log
 - add paging to the log view
 - combine changes and changes usage to one list
 - allow also to see the log of deleted words, values and formulas
-- in the log view show in an mondial view the details of the change
+- in the log view show in a mondial view the details of the change
 - move the undo button in the formula log view to the row
 - display the changes on display elements
 
@@ -670,11 +680,11 @@ features
 - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
 - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
 - make the phrase to value links for fast searching user specific
-- allow to undo just von change or to revert all changes (of this formulas or all formulas, words, values) up to this point of time
+- allow to undo just von change or to revert all changes (of these formulas or all formulas, words, values) up to this point of time
 - display in the formula (value, word) the values of other users
 - check the correct usage of verbs (see definition)
 - for the speed check use the speed log table with the url and the execution time if above a threshold
-- for wishes use the github issue tracker
+- for wishes use the GitHub issue tracker
 - base increase (this, prior) on the default time jump (e.g. for turnover the time jump would be "yoy")
 
 Bugs

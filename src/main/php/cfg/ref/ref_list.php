@@ -202,6 +202,13 @@ class ref_list extends type_list
         return $qp;
     }
 
+    // TODO Prio 1 acivate
+    function load_sql_by_source(): sql_db
+    {
+        $qp = new sql_db();
+        return $qp;
+    }
+
     /**
      * adding the refs used for unit tests to the dummy list
      * TODO Prio 3: load from csv
@@ -278,6 +285,10 @@ class ref_list extends type_list
         $this->key_lst[] = $item->key();
     }
 
+    function del(user_message $usr_msg): void
+    {
+    }
+
 
     /*
      * save
@@ -286,22 +297,21 @@ class ref_list extends type_list
     /**
      * store all references from this list in the database using grouped calls of predefined sql functions
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the estimate of the total save time
      * @param float $est_per_sec the expected number of sources that can be updated in the database per second
-     * @return user_message
+     * @return bool true if everything has been fine
      */
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::REFERENCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // TODO replace this slow solution
         foreach ($this->lst() as $ref) {
-            $usr_msg->add($ref->save());
+            $ref->save($usr_msg);
         }
         /*
         if ($this->is_empty()) {
@@ -328,7 +338,7 @@ class ref_list extends type_list
         }
         */
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

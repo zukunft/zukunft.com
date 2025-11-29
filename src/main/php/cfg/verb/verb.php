@@ -288,11 +288,7 @@ class verb extends type_object
 
         // the usage and impact var is not expected to be changed via import
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -650,7 +646,7 @@ class verb extends type_object
         // save the verb in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             } else {
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
@@ -660,11 +656,7 @@ class verb extends type_object
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -840,6 +832,7 @@ class verb extends type_object
     private function log_add(): change
     {
         log_debug('verb->log_add ' . $this->dsp_id());
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::VERB);
@@ -847,7 +840,7 @@ class verb extends type_object
         $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -867,6 +860,7 @@ class verb extends type_object
     private function log_del(): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::VERB);
@@ -874,7 +868,7 @@ class verb extends type_object
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -891,7 +885,7 @@ class verb extends type_object
             $new_value = $log->new_value;
             $std_value = $log->std_value;
         }
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
@@ -1052,7 +1046,7 @@ class verb extends type_object
                 if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
                   // ... if yes request to delete or exclude the record with the id parameters before the change
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and use it for the update
                   $this->id = $db_chk->id();
                   $this->set_owner_id($db_chk->owner_id());
@@ -1074,7 +1068,7 @@ class verb extends type_object
                   // if the target link has not yet been created
                   // ... request to delete the old
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and create a deletion request for all users ???
 
                   // ... and create a new display component link
@@ -1132,15 +1126,14 @@ class verb extends type_object
      * check if the user has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
-        global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1155,24 +1148,25 @@ class verb extends type_object
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         // check the preserved names
-        $usr_msg = $this->check_preserved();
+        $this->check_preserved($usr_msg);
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id);
@@ -1236,19 +1230,19 @@ class verb extends type_object
             log_info($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * exclude or delete a verb
-     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         log_debug('verb->del');
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // reload only if needed
         if ($this->name == '') {
@@ -1278,7 +1272,7 @@ class verb extends type_object
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /*

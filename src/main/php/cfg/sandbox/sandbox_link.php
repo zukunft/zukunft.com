@@ -732,6 +732,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change_link($this->user());
         $log->new_from = $this->fob;
@@ -742,7 +743,7 @@ class sandbox_link extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -755,6 +756,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
@@ -764,7 +766,7 @@ class sandbox_link extends sandbox
         $log->old_to = $this->tob();
 
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -798,29 +800,28 @@ class sandbox_link extends sandbox
 
     /**
      * create a new link object and log the change
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
      * TODO do a rollback in case of an error
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                $msg = 'add and log ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
 
@@ -833,9 +834,8 @@ class sandbox_link extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                    if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                        $this->id = $usr_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class($this::class);
@@ -873,7 +873,7 @@ class sandbox_link extends sandbox
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -916,7 +916,7 @@ class sandbox_link extends sandbox
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -933,7 +933,7 @@ class sandbox_link extends sandbox
             $log->std_to = $std_rec->tob();
 
             $log->row_id = $this->id();
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(),
@@ -1464,14 +1464,18 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * dummy function definition that should not be called
-     * TODO check why it is called
-     * @return user_message
+     * for most links there are no preserved names so the default value true
+     * which means that the link can be saved
+     * this function is overwritten by the triple object
+     * because that some triples are reserved for system testing and should never be used by a user
+     *
+     * @param user_message $usr_msg the message object why the link is reserved and which alternative names can be used
+     *                              of the internal error that an overwrite is missing to interupt the workflow
+     * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
-    protected function check_save(): user_message
+    protected function check_save(user_message $usr_msg): bool
     {
-        log_warning('The dummy parent method get_similar has been called, which should never happen');
-        return new user_message();
+        return true;
     }
 
 

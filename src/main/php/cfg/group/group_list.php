@@ -309,16 +309,15 @@ class group_list extends sandbox_list
 
     /**
      * delete all loaded phrase groups e.g. to delete al the phrase groups linked to a phrase
-     * @return user_message
+     * @param user_message $usr_msg
+     * @return bool true if all groups of the list have been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $phr_grp) {
-            $usr_msg->add($phr_grp->del());
+            $phr_grp->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 

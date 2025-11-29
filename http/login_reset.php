@@ -64,7 +64,7 @@ if ($db_con->is_open()) {
     // load the session user parameters
     $usr = new user;
     $result = $usr->get();
-    $msg = '';
+    $usr_msg = new user_message();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {

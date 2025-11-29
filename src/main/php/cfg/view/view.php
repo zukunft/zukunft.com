@@ -85,6 +85,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
@@ -322,11 +323,7 @@ class view extends sandbox_code_id
             $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -419,7 +416,7 @@ class view extends sandbox_code_id
             if ($this->name == '') {
                 $usr_msg->add_id(msg_id::VIEW_NAME_MISSING);
             } else {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
 
                 if ($usr_msg->is_ok()) {
                     // TODO save also the components
@@ -445,7 +442,7 @@ class view extends sandbox_code_id
                             '" as requested by the import of ');
                     }
                     if ($trm->id() != 0) {
-                        $this->add_term_db($trm);
+                        $this->add_term_db($trm, $usr_msg);
                     }
                 }
             }
@@ -458,11 +455,7 @@ class view extends sandbox_code_id
             ]);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -912,55 +905,6 @@ class view extends sandbox_code_id
     }
 
     /**
-     * save a new component to the database and add it to this view
-     * @param component $cmp the view component that should be added
-     * @param int|null $pos is set the position, where the
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return string an empty string if the new component link has been saved to the database
-     *                or the message that should be shown to the user
-     */
-    function save_component(
-        component $cmp,
-        ?int      $pos = null,
-        ?string   $pos_type_code_id = null,
-        ?string   $style_code_id = null,
-        ?object   $test_obj = null
-    ): string
-    {
-        $result = '';
-
-        // if no position is requested add the component at the end
-        if ($pos == null) {
-            $pos = $this->component_links() + 1;
-        }
-        if ($pos_type_code_id == null) {
-            $pos_type_code_id = position_types::DEFAULT;
-        }
-        if ($pos != null) {
-            if ($this->cmp_lnk_lst == null) {
-                $this->cmp_lnk_lst = new component_link_list($this->user());
-            }
-            if (!$test_obj) {
-                $cmp->save();
-                $cmp_lnk = new component_link($this->user());
-                $cmp_lnk->reset();
-                $cmp_lnk->view()->id = $this->id();
-                $cmp_lnk->component()->id = $cmp->id();
-                $cmp_lnk->order_nbr = $pos;
-                $cmp_lnk->set_pos_type($pos_type_code_id);
-                $cmp_lnk->set_style($style_code_id);
-                $cmp_lnk->save();
-                $this->cmp_lnk_lst->add($cmp_lnk->id(), $this, $cmp, $pos);
-            } else {
-                $this->cmp_lnk_lst->add($pos, $this, $cmp, $pos);
-            }
-        }
-        // compare with the database links and save the differences
-
-        return $result;
-    }
-
-    /**
      * move one view component one place up
      * in case of an error the error message is returned
      * if everything is fine an empty string is returned
@@ -1008,16 +952,15 @@ class view extends sandbox_code_id
     /**
      * link this view to the given term and save to the database
      * @param term $trm the term that should be linked
-     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     * @param user_message $usr_msg with the message to the user if something has gone wrong and the suggested solutions
+     * @return bool true if the term has been added
      */
-    function add_term_db(term $trm): user_message
+    function add_term_db(term $trm, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         $lnk = new term_view($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
-        $usr_msg->add($lnk->save());
-        return $usr_msg;
+        return $lnk->save($usr_msg);
     }
 
     /**
@@ -1141,25 +1084,28 @@ class view extends sandbox_code_id
      * add or update a view in the database or create a user view
      * overwrite the _sandbox function to save also the related component links
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
-        $usr_msg = parent::save($use_func);
-        if ($this->has_components()) {
-            $usr_msg->add($this->save_component_links());
+        if (parent::save($usr_msg, $use_func)) {
+            if ($this->has_components()) {
+                $this->save_component_links($usr_msg);
+            }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add or update the component links of this view in the database or create a user view
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save_component_links(): user_message
+    function save_component_links(user_message $usr_msg): bool
     {
-        return $this->component_link_list()->save();
+        return $this->component_link_list()->save($usr_msg);
     }
 
     /**
@@ -1220,12 +1166,12 @@ class view extends sandbox_code_id
 
     /**
      * delete the view component links of linked to this view
-     * @return user_message of the link removal and if needed the error messages that should be shown to the user
+     *
+     * @param user_message $usr_msg the message for the user why deleting the view links has failed and a suggested solution
+     * @return bool true if the view links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->user());
         $lnk_lst->load_by_view($this);
@@ -1233,10 +1179,19 @@ class view extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $usr_msg->add($lnk_lst->del());
+            $lnk_lst->del($usr_msg);
         }
 
-        return $usr_msg;
+        // collect all view relations where this view is used
+        $mrl_lst = new view_relation_list($this->user());
+        $mrl_lst->load_by_view($this);
+
+        // if there are links, delete if not used by anybody else than the user who has requested the deletion
+        // or exclude the links for the user if the link is used by someone else
+        if (!$mrl_lst->is_empty()) {
+            $mrl_lst->del($usr_msg);
+        }
+        return $usr_msg->is_ok();
     }
 
 

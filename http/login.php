@@ -60,7 +60,7 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         $result = ''; // reset the html code var
-        $msg = '';
+        $usr_msg = new user_message();
 
         $_SESSION['logged'] = FALSE;
         // the original calling page that should be shown after the login is finished

@@ -1433,7 +1433,12 @@ class sandbox_value extends sandbox_multi
      */
     function load_by_grp(group $grp, bool $by_source = false): bool
     {
-        return true;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
     }
 
     function load_phrases(): void
@@ -1573,6 +1578,7 @@ class sandbox_value extends sandbox_multi
     protected function log_add_common(change|change_value $log): change|change_value
     {
         log_debug($this->dsp_id());
+        $usr_msg = new user_message();
         $log->set_action(change_actions::ADD);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
@@ -1580,7 +1586,7 @@ class sandbox_value extends sandbox_multi
         $log->new_value = $this->value();
 
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1602,6 +1608,7 @@ class sandbox_value extends sandbox_multi
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change($this->user());
         $log->set_action(change_actions::DELETE);
@@ -1612,7 +1619,7 @@ class sandbox_value extends sandbox_multi
         $log->new_value = null;
 
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1623,16 +1630,17 @@ class sandbox_value extends sandbox_multi
      * @param sql_db $db_con the active database connection
      * @param sandbox_multi $db_rec the database record before the saving
      * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $msg = 'ERROR: The user sandbox save_id_fields does not support changing the phrase for ' . $class_name;
         log_err($msg);
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1699,6 +1707,7 @@ class sandbox_value extends sandbox_multi
     ): string
     {
         $result = '';
+        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($log->new_id > 0) {
@@ -1709,7 +1718,7 @@ class sandbox_value extends sandbox_multi
             $std_value = $log->std_value;
         }
         $ext = $this->table_extension();
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 $sql_fld_typ = $sc->get_sql_par_type($new_value);
                 if ($new_value == $std_value) {
@@ -1721,7 +1730,7 @@ class sandbox_value extends sandbox_multi
                         $fvt_lst = new sql_par_field_list();
                         $fvt_lst->add_field($log->field(), null, sql_par_type::CONST);
                         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
-                        $usr_msg = $db_con->update($qp, $msg);
+                        $db_con->update($qp, $msg, $usr_msg);
                         $result = $usr_msg->get_message();
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
@@ -1733,7 +1742,7 @@ class sandbox_value extends sandbox_multi
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
-                    $usr_msg = $db_con->update($qp, $msg);
+                    $db_con->update($qp, $msg, $usr_msg);
                     $result = $usr_msg->get_message();
                 }
             } else {
@@ -1757,7 +1766,7 @@ class sandbox_value extends sandbox_multi
                         $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     }
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->update($qp, $msg);
+                    $db_con->update($qp, $msg, $usr_msg);
                     $result = $usr_msg->get_message();
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }
@@ -2281,6 +2290,11 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'db_changed',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return [];
     }
 

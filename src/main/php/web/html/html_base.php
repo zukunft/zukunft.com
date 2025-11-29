@@ -865,7 +865,8 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            // TODO Prio 1 review
+            //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 

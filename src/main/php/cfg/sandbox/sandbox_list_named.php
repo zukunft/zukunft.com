@@ -327,11 +327,7 @@ class sandbox_list_named extends sandbox_list
         ?data_object $dto = null
     ): bool
     {
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -872,18 +868,19 @@ class sandbox_list_named extends sandbox_list
      * @param import $imp the import object with the estimate of the total save time
      * @param string $cfg_wrd the word related to the class to select the config values
      * @param string $class the class name of the list entries that should be saved e.g. word or formula
-     * @return user_message the problem description what has failed and a suggested solution
+     * @param sandbox_list_named $db_lst
+     * @param user_message $usr_msg the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
     function save_block_wise(
         import             $imp,
         string             $cfg_wrd,
         string             $class,
-        sandbox_list_named $db_lst
-    ): user_message
+        sandbox_list_named $db_lst,
+        user_message       $usr_msg
+    ): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -910,7 +907,7 @@ class sandbox_list_named extends sandbox_list
             $usr_msg->add($this->delete($db_lst, true, $imp, $class, $del_per_sec));
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1295,13 +1292,12 @@ class sandbox_list_named extends sandbox_list
      * overwrite
      */
 
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         $msg = 'sandbox_list_named function save not overwritten';
         log_err($msg);
-        $usr_msg = new user_message();
         $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

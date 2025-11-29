@@ -352,11 +352,7 @@ class result extends sandbox_value
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -950,8 +946,6 @@ class result extends sandbox_value
     {
         global $db_con;
 
-        $usr_msg = new user_message();
-
         $this->import_mapper($in_ex_json, $usr_msg);
 
         if ($db_con->is_open()) {
@@ -1004,18 +998,14 @@ class result extends sandbox_value
         // save the result in the database
         if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $this->save()->get_last_message();
+                $this->save($usr_msg);
                 log_debug($this->dsp_id());
             } else {
                 log_debug($usr_msg->all_message_text());
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1209,6 +1199,7 @@ class result extends sandbox_value
     function update_depending(): array
     {
         $lib = new library();
+        $usr_msg = new user_message();
         log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->user()->name . ")");
 
         global $db_con;
@@ -1239,7 +1230,8 @@ class result extends sandbox_value
                 $res_upd->load_by_id($val_row[result_db::FLD_ID]);
                 $res_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
-                $result[] = $res_upd->save()->get_last_message();
+                $res_upd->save($usr_msg);
+                $result[] = $usr_msg->get_last_message();
             }
         }
 
@@ -1269,11 +1261,14 @@ class result extends sandbox_value
         }
     }
 
+    // TODO Prio 0 review
     private function save_without_time(): string
     {
+        $usr_msg = new user_message();
         $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
-        return $res_no_time->save()->get_last_message();
+        $res_no_time->save($usr_msg);
+        return $usr_msg->get_last_message();
     }
 
 
@@ -1294,10 +1289,12 @@ class result extends sandbox_value
     }
 
     // check if a single formula result needs to be saved to the database
+    // TODO Prio 0 review
     function save_if_updated(bool $has_result_phrases = false): bool
     {
         global $debug;
         $result = true;
+        $usr_msg = new user_message();
 
         // don't save the result if some needed numbers are missing
         if ($this->val_missing) {
@@ -1395,7 +1392,7 @@ class result extends sandbox_value
                     }
 
                     // save the result
-                    $this->save()->get_last_message();
+                    $this->save($usr_msg);
                     $res_id = $this->id();
 
                     if ($debug > 0) {
@@ -1419,15 +1416,15 @@ class result extends sandbox_value
      * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
 
         global $db_con;
         global $debug;
-        $usr_msg = new user_message();
 
         // check the parameters e.g. a result must always be linked to a formula
         if ($this->frm->id() <= 0) {
@@ -1474,8 +1471,7 @@ class result extends sandbox_value
                     $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_update($sc, $res_db);
-                    $upd_msg = $db_con->update($qp, $msg);
-                    if ($upd_msg->is_ok()) {
+                    if ($db_con->update($qp, $msg, $usr_msg)) {
                         $usr_msg->set_db_row_id($row_id);
                     }
                 } else {
@@ -1489,15 +1485,14 @@ class result extends sandbox_value
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $upd_msg = $db_con->insert($qp, $msg);
-                if ($upd_msg->is_ok()) {
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
                     $usr_msg->set_db_row_id($row_id);
                 }
             }
         }
 
         log_debug("id (" . $usr_msg->get_row_id() . ")");
-        return $usr_msg;
+        return $usr_msg->is_ok();
 
     }
 

@@ -177,12 +177,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @return user_message if the deletion cannot be done the reason why for the user
+     * @param user_message $usr_msg if the deletion cannot be done the reason why for the user
+     * @return bool true if everything has been fine
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         global $usr;
-        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
@@ -217,7 +217,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -235,7 +235,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $usr_req, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
+        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
         return $usr_msg;
@@ -471,11 +471,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_message_text($msg);
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 }

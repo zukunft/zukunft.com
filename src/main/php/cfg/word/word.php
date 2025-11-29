@@ -388,11 +388,7 @@ class word extends sandbox_code_id
             $this->type_id = $sys->typ_lst->phr_typ->default_id();
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -1121,22 +1117,19 @@ class word extends sandbox_code_id
      * @param word $child the word that should be added as a child
      * @return bool
      */
-    function add_child(word $child): bool
+    function add_child(word $child, user_message $usr_msg): bool
     {
         global $sys;
 
-        $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->set_from($child->phrase());
             $wrd_lnk->set_verb($sys->typ_lst->vrb->get_verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
-            if ($wrd_lnk->save() == '') {
-                $result = true;
-            }
+            $wrd_lnk->save($usr_msg);
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1558,6 +1551,7 @@ class word extends sandbox_code_id
     function log_upd_view($view_id): change
     {
         log_debug($this->dsp_id() . ' for user ' . $this->user()->name);
+        $usr_msg = new user_message();
         $msk_new = new view($this->user());
         $msk_new->load_by_id($view_id);
 
@@ -1577,7 +1571,7 @@ class word extends sandbox_code_id
         $log->new_value = $msk_new->name();
         $log->new_id = $msk_new->id();
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1614,7 +1608,7 @@ class word extends sandbox_code_id
         }
 
         if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add($this->save());
+            $this->save($usr_msg);
         }
 
         return $usr_msg;
@@ -1636,7 +1630,7 @@ class word extends sandbox_code_id
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id;
                 if ($this->can_change()) {
-                    $usr_msg->add($this->update('view of word'));
+                    $this->update('view of word', $usr_msg);
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
@@ -1644,7 +1638,7 @@ class word extends sandbox_code_id
                         }
                     }
                     if ($usr_msg == '') {
-                        $usr_msg->add($this->update('user view of word'));
+                        $this->update('user view of word', $usr_msg);
                     }
                 }
             }
@@ -1765,9 +1759,10 @@ class word extends sandbox_code_id
      * delete the references to this word
      * which includes the phrase groups, the triples and values
      *
-     * @return user_message of the link removal and if needed the error messages that should be shown to the user
+     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @return bool true if the word links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
 
@@ -1786,19 +1781,19 @@ class word extends sandbox_code_id
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $usr_msg->add($val_lst->del());
+            $val_lst->del($usr_msg);
         }
 
         // if there are still triples, ask if they really should be deleted
         if ($trp_lst->has_values()) {
-            $usr_msg->add($trp_lst->del());
+            $trp_lst->del($usr_msg);
         }
 
         // delete the phrase groups
         // TODO Prio 2 activate
-        //$usr_msg->add($grp_lst->del());
+        //$grp_lst->del($usr_msg);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
@@ -55,7 +56,7 @@ $db_con = $app->start("component_del");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -82,7 +83,7 @@ if ($usr->id > 0) {
         $cmp_del->load_by_id($cmp_del_id);
 
         if ($confirm == 1) {
-            $cmp_del->del();
+            $cmp_del->del($usr_msg);
 
             $result .= $html->dsp_go_back($back, $usr);
         } else {

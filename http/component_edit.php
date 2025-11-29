@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -55,7 +56,7 @@ $db_con = $app->start("component_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user
 $usr = new user;
@@ -131,16 +132,8 @@ if ($usr->id > 0) {
             } //
 
             // save the changes
-            $upd_result .= $cmp->save()->get_last_message();
+            $cmp->save($usr_msg);
 
-            // if update was fine ...
-            if (str_replace('1', '', $upd_result) == '') {
-                // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
-                // $result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
-            }
         }
 
         // if nothing yet done display the add view (and any message on the top)
@@ -148,7 +141,7 @@ if ($usr->id > 0) {
             // in view edit views the view cannot be changed
             $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0
             $add_link = 0;

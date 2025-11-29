@@ -73,7 +73,7 @@ class user_log_display
 
     public int $id;                // the database id of the word, phrase, value or formula object
     public ?object $obj = null;    // the calling object
-    public user $usr;              // the user of the person for whom the value is loaded, so to say the viewer
+    public ?user $usr = null;      // the user of the person for whom the value is loaded, so to say the viewer
     public string $type;           // either "word", "phrase", "value" or "formula" to select the object to display
     public int $page;              // the page to display
     public bool $condensed = True; // display the changes in a few columns with reduced details
@@ -82,7 +82,7 @@ class user_log_display
     public string $back = '';      //
 
     /**
-     * define the settings for this log object
+     * for a user log it is always needed to know who wants to seen the log
      */
     function __construct()
     {

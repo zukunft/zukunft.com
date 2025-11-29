@@ -81,6 +81,7 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
@@ -114,6 +115,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -412,11 +414,7 @@ class component extends sandbox_code_id
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -1334,39 +1332,38 @@ class component extends sandbox_code_id
      * link
      */
 
-    // link a view component to a view
-    function link($dsp, $order_nbr): string
+    /**
+     * link this component to a view
+     * @param view $msk the view object to which this component should be added
+     * @param int $order_nbr the position where the component should be added and all existing component should be move one position further
+     * @param user_message $usr_msg the message for the user why adding of the component has failed and the potential solutions
+     * @return bool true if the component has been added
+     */
+    function link(view $msk, int $order_nbr, user_message $usr_msg): bool
     {
-        log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
-
-        $dsp_lnk = new component_link($this->user());
-        $dsp_lnk->reset();
-        $dsp_lnk->set_view($dsp);
-        $dsp_lnk->set_component($this);
-        $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->set_pos_type(position_types::BELOW);
-        return $dsp_lnk->save()->get_last_message();
+        $cmp_lnk = new component_link($this->user());
+        $cmp_lnk->reset();
+        $cmp_lnk->set_view($msk);
+        $cmp_lnk->set_component($this);
+        $cmp_lnk->order_nbr = $order_nbr;
+        $cmp_lnk->set_pos_type(position_types::BELOW);
+        return $cmp_lnk->save($usr_msg);
     }
 
-    // remove a view component from a view
-    // TODO check if the view component is not linked anywhere else
-    // and if yes, delete the view component after confirmation
-    function unlink($dsp): string
+    /**
+     * remove a view component from a view
+     * TODO check if the view component is not linked anywhere else
+     *        and if yes, delete the view component after confirmation
+     * @param view $msk the view from where this component should be removed
+     * @param user_message $usr_msg explain to the user why the component cannot be removed from the view
+     * @return bool true if the component has been removed from the view
+     */
+    function unlink(view $msk, user_message $usr_msg): bool
     {
-        $result = '';
-
-        if (isset($dsp) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from "' . $dsp->name() . '" (' . $dsp->id() . ')');
-            $dsp_lnk = new component_link($this->user());
-            $dsp_lnk->load_by_link($dsp, $this);
-            $dsp_lnk->load_objects();
-            $msg = $dsp_lnk->del();
-            $result .= $msg->get_last_message();
-        } else {
-            $result .= log_err("Cannot unlink view component, because view is not set.", "component.php");
-        }
-
-        return $result;
+        $dsp_lnk = new component_link($this->user());
+        $dsp_lnk->load_by_link($msk, $this);
+        $dsp_lnk->load_objects();
+        return $dsp_lnk->del($usr_msg);
     }
 
 
@@ -1614,12 +1611,12 @@ class component extends sandbox_code_id
 
     /**
      * delete the view component links of linked to this view component
-     * @return user_message of the link removal and if needed the error messages that should be shown to the user
+     *
+     * @param user_message $usr_msg the message for the user why deleting the component links has failed and a suggested solution
+     * @return bool true if the component links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
         $lnk_lst->load_by_component($this);
@@ -1627,10 +1624,10 @@ class component extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $usr_msg->add($lnk_lst->del());
+            $lnk_lst->del($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

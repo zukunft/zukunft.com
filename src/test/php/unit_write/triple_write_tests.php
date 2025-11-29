@@ -40,6 +40,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -66,6 +67,7 @@ class triple_write_tests
         $lib = new library();
         $t_trp = new test_triples($t);
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // start the test section (ts)
         $ts = 'db write triple ';
@@ -94,15 +96,15 @@ class triple_write_tests
         $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp_del = new triple($t->usr1);
         $trp_del->load_by_id($trp->id());
-        $trp_del->del();
+        $trp_del->del($usr_msg);
         $trp_del = new triple($t->usr2);
         $trp_del->load_by_id($trp->id());
-        $trp_del->del();
+        $trp_del->del($usr_msg);
 
         $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_user($t->usr1);
         $trp->include();
-        $trp->save();
+        $trp->save($usr_msg);
 
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
         $test_name = 'check the correct logging of adding a triple  "' . words::TEST_RENAMED . '" ' . verbs::IS . ' "' . words::TEST_PARENT . '" based on the id of the added test word, verb and the parent test word';
@@ -129,7 +131,7 @@ class triple_write_tests
         $test_name = ' ... check if the link is shown correctly also for the second user "' . $t->usr2->name . '"';
         $trp->set_user($t->usr2);
         $trp->include();
-        $trp->save();
+        $trp->save($usr_msg);
         $lnk2 = new triple($t->usr2);
         $lnk2->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $result = $lnk2->name();
@@ -141,8 +143,8 @@ class triple_write_tests
         $test_name = 'triple the second user "' . $t->usr2->name . '" deletes it';
         $trp = new triple($t->usr2);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
-        $result = $msg->get_last_message();
+        $trp->del($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -181,8 +183,8 @@ class triple_write_tests
         // if the first user also removes the link, both records should be deleted
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
-        $result = $msg->get_last_message();
+        $trp->del($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
         $t->assert('triple->del "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -207,7 +209,8 @@ class triple_write_tests
         // check if the name of a triple can be changed
         $trp = $t_db->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_name(triples::SYSTEM_TEST_ADD);
-        $result = $trp->save()->get_last_message();
+        $trp->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $t->assert('triple->save name to ' . triples::SYSTEM_TEST_ADD, $result);
 
         // ... and if the name check if the name of a triple can be changed
@@ -229,7 +232,9 @@ class triple_write_tests
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);
         $wrd->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $result = $wrd->save()->get_last_message_translated();
+        $usr_msg = new user_message();
+        $wrd->save($usr_msg);
+        $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. ' .
             'Please use another word name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
@@ -238,7 +243,9 @@ class triple_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $result = $vrb->save()->get_last_message_translated();
+        $usr_msg = new user_message();
+        $vrb->save($usr_msg);
+        $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have a standard triple name', $result, $target);
@@ -246,32 +253,36 @@ class triple_write_tests
         // ... and no formula either
         $frm = new formula($t->usr1);
         $frm->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $result = $frm->save()->get_last_message_translated();
+        $usr_msg = new user_message();
+        $frm->save($usr_msg);
+        $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
 
         $test_name = 'triple clean up tests';
         $trp = new triple($t->usr1);
+        $usr_msg = new user_message();
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
-        $result = $msg->get_last_message_translated();
+        $trp->del($usr_msg);
+        $result = $usr_msg->get_last_message_translated();
         $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $trp = new triple($t->usr2);
+        $usr_msg = new user_message();
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
-        $result = $msg->get_last_message_translated();
+        $trp->del($usr_msg);
+        $result = $usr_msg->get_last_message_translated();
         $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $t->subheader($ts . 'cleanup');
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
+        $msg = $trp->del($usr_msg);
         $trp = new triple($t->usr2);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
-        $msg = $trp->del();
+        $msg = $trp->del($usr_msg);
 
 
         // ... and the values have been updated
@@ -300,18 +311,20 @@ class triple_write_tests
 
     function create_test_triples(all_tests $t): void
     {
+
         // start the test section (ts)
         $ts = 'db create test create_test_triples ';
         $t->header($ts);
 
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message();
 
         // activate the excluded objects to check the setup
         $trp = new triple($t->usr2);
         $trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
         if ($trp->id() != 0) {
             $trp->set_excluded(false);
-            $trp->save();
+            $trp->save($usr_msg);
         }
 
         // check if the standard samples for triples still exist and if not, create the samples
@@ -337,7 +350,7 @@ class triple_write_tests
         $trp = new triple($t->usr2);
         $trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
         $trp->set_excluded(true);
-        $trp->save();
+        $trp->save($usr_msg);
     }
 
     function create_base_times(test_cleanup $t): void

@@ -370,7 +370,7 @@ class import
 
             // write to the database
             $this->step_main_start(msg_id::SAVE, $this->est_time_store);
-            $usr_msg = $dto->save($this);
+            $dto->save($usr_msg, $this);
             $usr_msg->set_checksum($dto->value_list()->count());
             $this->step_main_end();
         }
@@ -423,7 +423,7 @@ class import
 
             // write to the database
             $this->step_main_start(msg_id::SAVE, $this->est_time_store);
-            $usr_msg->add($dto->save($this));
+            $dto->save($usr_msg, $this);
             $this->step_main_end();
 
         }

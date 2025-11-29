@@ -220,11 +220,7 @@ class view_relation extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 

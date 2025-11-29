@@ -361,11 +361,7 @@ class ref extends sandbox_link
             $this->set_phrase($phr);
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -1047,6 +1043,7 @@ class ref extends sandbox_link
     function log_link_add(): change_link
     {
         log_debug('ref->log_add ' . $this->dsp_id());
+        $usr_msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1065,7 +1062,7 @@ class ref extends sandbox_link
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1076,6 +1073,7 @@ class ref extends sandbox_link
     function log_link_upd($db_rec): change_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
+        $usr_msg = new user_message();
         $log = new change_link($this->user());
         $log->set_action(change_actions::UPDATE);
         $log->set_table(change_tables::REF);
@@ -1086,7 +1084,7 @@ class ref extends sandbox_link
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1097,6 +1095,7 @@ class ref extends sandbox_link
     function log_link_del(): change_link
     {
         log_debug('ref->log_del ' . $this->dsp_id());
+        $usr_msg = new user_message();
 
         // check that the minimal parameters are set
         if ($this->phrase() == null) {
@@ -1113,7 +1112,7 @@ class ref extends sandbox_link
         $log->old_link = $this->type();
         $log->old_to = $this;
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1255,25 +1254,26 @@ class ref extends sandbox_link
 
     /**
      * update a ref in the database or update the existing
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the database id of the created reference or 0 if not successful
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
             // log the insert attempt first
@@ -1313,7 +1313,7 @@ class ref extends sandbox_link
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1339,15 +1339,15 @@ class ref extends sandbox_link
      * update a ref in the database or update the existing
      * TODO review by comparing with sandbox function
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the id of the updated or created reference
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug();
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -1375,7 +1375,7 @@ class ref extends sandbox_link
         // create a new object or update an existing
         if ($this->id() <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $usr_msg->add($this->add($use_func));
+            $this->add($usr_msg, $use_func);
         } else {
             log_debug('update ' . $this->dsp_id());
 
@@ -1405,14 +1405,37 @@ class ref extends sandbox_link
             // update the
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
+    }
+
+
+    /**
+     * delete the phrase groups which where this triple is used
+     *
+     * @param user_message $usr_msg the message for the user why deleting the triple links has failed and a suggested solution
+     * @return bool true if the triple links has been deleted
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        $usr_msg = new user_message();
+
+        // collect all ... related to this ref
+        //$val_lst = new value_list($this->user());
+        //$val_lst->load_by_phr($this->phrase());
+
+        // if there are still values, ask if they really should be deleted
+        //if ($val_lst->has_values()) {
+        //    $val_lst->del($usr_msg);
+        //}
+
+        return $usr_msg->is_ok();
     }
 
 

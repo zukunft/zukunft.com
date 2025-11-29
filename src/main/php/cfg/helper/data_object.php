@@ -124,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -784,14 +785,13 @@ class data_object
     /**
      * add all words, triples and values to the database
      * or update the database
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(import $imp): user_message
+    function save(user_message $usr_msg, import $imp): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -801,11 +801,11 @@ class data_object
         // save the data lists in order of the dependencies
 
         // start with the system configuration
-        $usr_msg->add($this->save_users($imp));
-        $usr_msg->add($this->save_ip_ranges($imp));
+        $this->save_users($usr_msg, $imp);
+        $this->save_ip_ranges($usr_msg, $imp);
 
         // import first the words
-        $usr_msg->add($this->save_words($imp));
+        $this->save_words($usr_msg, $imp);
 
         // clone the list as cache to filter the phrases already fine
         // without removing the fine words or triples from the original lists
@@ -815,13 +815,11 @@ class data_object
         $phr_lst->filter_valid();
 
         // import the verbs before the triples
-        $usr_msg->add($this->save_verbs($imp));
+        $this->save_verbs($usr_msg, $imp);
 
         // import the triples
-        $usr_msg->add($this->save_triples($imp, $phr_lst));
-
         // add the id of the triples just added to the values
-        if ($usr_msg->is_ok()) {
+        if ($this->save_triples($usr_msg, $imp, $phr_lst)) {
             $phr_lst = $this->phrase_list();
             foreach ($this->value_list()->lst() as $val) {
                 foreach ($val->phrase_list()->lst() as $phr) {
@@ -830,7 +828,7 @@ class data_object
                             $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
                         } else {
                             $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                            $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                            $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
                         }
                     }
                 }
@@ -838,7 +836,7 @@ class data_object
         }
 
         // import the sources
-        $usr_msg->add($this->save_sources($imp));
+        $this->save_sources($usr_msg, $imp);
 
         // add the id of the phrases just added to the references
         if ($usr_msg->is_ok()) {
@@ -850,7 +848,7 @@ class data_object
                         $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
                     } else {
                         $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                        $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                        $this->set_phrase_id($phr, $phr_reloaded, $usr_msg);
                     }
                 }
             }
@@ -861,7 +859,7 @@ class data_object
             $ref_lst = $this->reference_list();
             $ref_est = $ref_lst->count() / $ref_per_sec;
             $imp->step_start(msg_id::SAVE, ref::class, $ref_lst->count(), $ref_est);
-            $usr_msg->add($ref_lst->save($imp, $ref_per_sec));
+            $ref_lst->save($usr_msg, $imp, $ref_per_sec);
             $imp->step_end($ref_lst->count(), $ref_per_sec);
         } else {
             log_debug('references not imported because ' . $usr_msg->all_message_text());
@@ -873,7 +871,7 @@ class data_object
             $val_lst = $this->value_list();
             $val_est = $val_lst->count() / $val_per_sec;
             $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
-            $usr_msg->add($val_lst->save($imp, $val_per_sec));
+            $val_lst->save($usr_msg, $imp, $val_per_sec);
             $imp->step_end($val_lst->count(), $val_per_sec);
             $imp->values_done = $val_lst->count();
         } else {
@@ -886,28 +884,27 @@ class data_object
         $trm_lst->merge($this->vrb_lst->term_list());
 
         // import the formulas
-        $usr_msg->add($this->save_formulas($imp, $trm_lst));
+        $this->save_formulas($usr_msg, $imp, $trm_lst);
 
         // import the components before the view because the views use the components
-        $usr_msg->add($this->save_components($imp));
+        $this->save_components($usr_msg, $imp);
 
         // import the views
         // TODO Prio 1 review and use predefined functions for save view list
-        $usr_msg->add($this->save_views($imp));
+        $this->save_views($usr_msg, $imp);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add or update all users to the database
      * TODO add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
-    private function save_users(import $imp): user_message
+    private function save_users(user_message $usr_msg, import $imp): void
     {
         global $cfg;
-        $usr_msg = new user_message();
 
         $usr_per_sec = $cfg->get_by([words::USERS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
@@ -915,64 +912,61 @@ class data_object
         if (!$usr_lst->is_empty()) {
             $usr_est = $usr_lst->count() / $usr_per_sec;
             $imp->step_start(msg_id::SAVE, user::class, $usr_lst->count(), $usr_est);
-            $usr_msg->add($usr_lst->save($imp->usr));
+            $usr_lst->save($usr_msg, $imp->usr);
             $imp->step_end($usr_lst->count(), $usr_per_sec);
         }
-        return $usr_msg;
     }
 
     /**
      * add or update all ip ranges to the database
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
-    private function save_ip_ranges(import $imp): user_message
+    private function save_ip_ranges(user_message $usr_msg, import $imp): void
     {
-        return $this->save_sandbox_list($imp, words::IP_RANGES, $this->ip_range_list(), ip_range::class);
+        $this->save_sandbox_list($imp, words::IP_RANGES, $this->ip_range_list(), ip_range::class, $usr_msg);
     }
 
     /**
      * add or update all words to the database
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
-    private function save_words(import $imp): user_message
+    private function save_words(user_message $usr_msg, import $imp): void
     {
-        return $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class);
+        $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class, $usr_msg);
     }
 
     /**
      * add or update all verbs to the database
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
-    private function save_verbs(import $imp): user_message
+    private function save_verbs(user_message $usr_msg, import $imp): void
     {
         global $cfg;
-        $usr_msg = new user_message();
 
-        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1, $usr_msg);
 
         $vrb_lst = $this->verb_list();
         if (!$vrb_lst->is_empty()) {
             $vrb_est = $vrb_lst->count() / $vrb_per_sec;
             $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
-            $usr_msg->add($vrb_lst->save());
+            $vrb_lst->save($usr_msg);
             $imp->step_end($vrb_lst->count(), $vrb_per_sec);
         }
-        return $usr_msg;
     }
 
     /**
      * add or update all triples to the database
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      * @param phrase_list $cache with the db words saved until now and filled up with the triples saved
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @return bool true if everything has been fine
      */
-    private function save_triples(import $imp, phrase_list $cache): user_message
+    private function save_triples(user_message $usr_msg, import $imp, phrase_list $cache): bool
     {
         global $cfg;
-        $usr_msg = new user_message();
 
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
@@ -980,35 +974,34 @@ class data_object
         if (!$trp_lst->is_empty()) {
             $trp_est = $trp_lst->count() / $trp_per_sec;
             $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-            $usr_msg->add($trp_lst->save_with_cache($imp, $cache));
+            $trp_lst->save_with_cache($usr_msg, $imp, $cache);
             $imp->step_end($trp_lst->count(), $trp_per_sec);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->triple_list()->fill_by_name($trp_lst);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add or update all sources to the database
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
-    private function save_sources(import $imp): user_message
+    private function save_sources(user_message $usr_msg, import $imp): void
     {
-        return $this->save_sandbox_list($imp, words::SOURCES, $this->source_list(), source::class);
+        $this->save_sandbox_list($imp, words::SOURCES, $this->source_list(), source::class, $usr_msg);
     }
 
     /**
      * add or update all formulas to the database
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
      * @param term_list $cache with the db words saved until now and filled up with the formulas saved
-     * @return user_message ok or the error message for the user with the suggested solution
      */
-    private function save_formulas(import $imp, term_list $cache): user_message
+    private function save_formulas(user_message $usr_msg, import $imp, term_list $cache): void
     {
         global $cfg;
-        $usr_msg = new user_message();
 
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
@@ -1043,27 +1036,26 @@ class data_object
             // fill up the data_object list to prevent reloading the same triples again
             $this->formula_list()->fill_by_name($frm_lst);
         }
-        return $usr_msg;
     }
 
     /**
      * add or update all views to the database
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
      */
-    private function save_views(import $imp): user_message
+    private function save_views(user_message $usr_msg, import $imp): void
     {
-        return $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class);
+        $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class, $usr_msg);
     }
 
     /**
      * add or update all components to the database
      * @param import $imp the import object that includes the start time of the import
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @return void ok or the error message for the user with the suggested solution
      */
-    private function save_components(import $imp): user_message
+    private function save_components(user_message $usr_msg, import $imp): void
     {
-        $usr_msg = $this->save_sandbox_list($imp, words::COMPONENTS, $this->component_list(), component::class);
+        $this->save_sandbox_list($imp, words::COMPONENTS, $this->component_list(), component::class, $usr_msg);
 
         // add the id of the components just added to the views
         if ($usr_msg->is_ok()) {
@@ -1090,7 +1082,6 @@ class data_object
             }
         }
 
-        return $usr_msg;
     }
 
     /**
@@ -1099,31 +1090,30 @@ class data_object
      * @param string $cfg_wrd the word name used to select the configuration values
      * @param sandbox_list_named|ip_range_list $sbx_lst the list of named sandbox objects that should be saved to the database
      * @param string $class the class name of the list objects e.g. words::SOURCES
-     * @return user_message ok or the error message for the user with the suggested solution
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      */
     private function save_sandbox_list(
         import                           $imp,
         string                           $cfg_wrd,
         sandbox_list_named|ip_range_list $sbx_lst,
-        string                           $class
-    ): user_message
+        string                           $class,
+        user_message                     $usr_msg
+    ): void
     {
         global $cfg;
-        $usr_msg = new user_message();
 
         $per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if (!$sbx_lst->is_empty()) {
             $est = $sbx_lst->count() / $per_sec;
             $imp->step_start(msg_id::SAVE, $class, $sbx_lst->count(), $est);
-            $usr_msg->add($sbx_lst->save($imp));
+            $sbx_lst->save($usr_msg, $imp);
             if (!$usr_msg->is_ok()) {
                 $lib = new library();
                 log_debug($lib->class_to_name($class) . 's not imported because ' . $usr_msg->all_message_text());
             }
             $imp->step_end($sbx_lst->count(), $per_sec);
         }
-        return $usr_msg;
     }
 
     /**
@@ -1168,7 +1158,7 @@ class data_object
                 if ($trm_reloaded == null) {
                     $trp_self_ref = true;
                 } else {
-                    $usr_msg->add($this->set_term_id($trm, $trm_reloaded));
+                    $this->set_term_id($trm, $trm_reloaded, $usr_msg);
                 }
             }
         }
@@ -1179,34 +1169,38 @@ class data_object
      * set the missing id in the phrase based on the given database phrase
      * @param phrase $phr which might have a missing id
      * @param phrase|null $db_phr which might have the missing id
-     * @return user_message warning if something has been missing
+     * @param user_message $usr_msg warning if something has been missing
      */
-    private function set_phrase_id(phrase $phr, phrase|null $db_phr): user_message
+    private function set_phrase_id(phrase $phr, phrase|null $db_phr, user_message $usr_msg): void
     {
-        $usr_msg = new user_message();
         if ($phr->id() == 0) {
             if ($db_phr != null) {
                 $phr->set_id($db_phr->id());
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::DB_PHRASE_MISSING, [
+                    msg_id::VAR_NAME => $phr->dsp_id()
+                ]);
             }
         }
-        return $usr_msg;
     }
 
     /**
      * set the missing id in the term based on the given database term
      * @param term $trm which might have a missing id
      * @param term|null $db_trm which might have the missing id
-     * @return user_message warning if something has been missing
+     * @param user_message $usr_msg warning if something has been missing
      */
-    private function set_term_id(term $trm, term|null $db_trm): user_message
+    private function set_term_id(term $trm, term|null $db_trm, user_message $usr_msg): void
     {
-        $usr_msg = new user_message();
         if ($trm->id() == 0) {
             if ($db_trm != null) {
                 $trm->set_id($db_trm->id());
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::DB_TERM_MISSING, [
+                    msg_id::VAR_NAME => $trm->dsp_id()
+                ]);
             }
         }
-        return $usr_msg;
     }
 
 }

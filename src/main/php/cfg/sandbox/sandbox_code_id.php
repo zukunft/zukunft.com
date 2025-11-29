@@ -187,11 +187,7 @@ class sandbox_code_id extends sandbox_typed
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
 

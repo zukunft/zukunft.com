@@ -556,6 +556,11 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return self::FLD_NAME;
     }
 
@@ -1229,15 +1234,15 @@ class group extends sandbox_multi
      * check if the user has requested a group with a preserved name
      * and yes if return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
         global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
         $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
@@ -1253,7 +1258,7 @@ class group extends sandbox_multi
                 ]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1450,26 +1455,24 @@ class group extends sandbox_multi
      * add a new group to the database
      *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return user_message $usr_msg with status ok
+     *                               or if something went wrong
+     *                               the message that should be shown to the user
+     *                               including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1480,9 +1483,8 @@ class group extends sandbox_multi
                 // TODO check that always before a db action is called the db type is set correctly
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                     $this->set_saved();
                 }
 
@@ -1500,7 +1502,7 @@ class group extends sandbox_multi
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1702,19 +1704,18 @@ class group extends sandbox_multi
      * the word and triple links related to this phrase group are also removed
      * TODO maybe move this to del_exe
      *
+     * @param user_message $usr_msg
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message
+     * @return bool
      */
-    function del(?bool $use_func = null): user_message
+    function del(user_message $usr_msg, ?bool $use_func = null): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($use_func) {
             $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
-            $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
-            $usr_msg->add($del_msg);
+            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         } else {
 
             // log the delete attempt first
@@ -1728,12 +1729,11 @@ class group extends sandbox_multi
             if ($log->id() > 0) {
                 $db_con->set_class(group::class);
                 $qp = $this->sql_delete($sc);
-                $msg = $db_con->delete($qp, 'del ' . $this->dsp_id());
-                $usr_msg->add($msg);
+                $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

@@ -409,8 +409,9 @@ class frontend
         } else {
             $duration = microtime(true) - $this->start_time;
         }
+        // TODO Prio 0 review
         if ($duration > 1) {
-
+            log_debug();
         }
 
         // Free result test
@@ -648,7 +649,7 @@ class frontend
         // if the save bottom has been pressed
         if ($step > 0 and $action == url_var::CRUD_CREATE) {
             $dbo->url_mapper($url_array, $usr_msg, $dto);
-            $upd_result = $dbo->add_via_api($usr);
+            $upd_result = $dbo->add_via_api($usr, $usr_msg);
 
             // if update was fine ...
             if ($upd_result->is_ok()) {

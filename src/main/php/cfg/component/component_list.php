@@ -306,11 +306,7 @@ class component_list extends sandbox_list_named
             }
         }
 
-        if ($usr_msg->is_ok()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -334,13 +330,12 @@ class component_list extends sandbox_list_named
      * similar to triple_list->save_with_cache but using the term_list
      *
      * @param import|null $imp the import object with the filename and the estimated time of arrival
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -430,7 +425,7 @@ class component_list extends sandbox_list_named
 
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
