@@ -93,6 +93,15 @@ if ($db_con->is_open()) {
                 $t_db = new test_db_load($t);
                 $t_db->type_list_recreate($t, $t->usr1);
 
+                // check and update the fixed csv files
+                // e.g. to have an indication which words might be missing due to the code changes
+                // after a database reset and refill with the initial setup data
+                // the main database tables should always contain the same rows
+                // or there is a good reason due to some code changes
+                // these fixed csv files help to detect the impact of code changes
+                // e.g. if some words are missing due to different error handling
+                $t_db->csv_recreate();
+
                 // display the test results
                 if ($t->format == text_log_format::HTML) {
                     $t->dsp_result_html();

@@ -302,7 +302,7 @@ class system_tests
 
         $t->subheader($ts . 'user message');
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $test_name = 'message is translated';
         $usr_msg->add_id(msg_id::CHECK);
         $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
@@ -371,7 +371,7 @@ class system_tests
 
         $t->subheader($ts . 'im- and export');
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();

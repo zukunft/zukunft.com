@@ -32,19 +32,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\unit_env;
-use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\triple_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\word_list_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\localhost_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -54,11 +43,20 @@ include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
-include_once test_paths::UNIT_WRITE . 'word_url_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\unit_env;
+use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class a_selected_test extends test_cleanup
 {
@@ -145,13 +143,17 @@ class a_selected_test extends test_cleanup
              * unit testing - with system users
              */
 
+            // check and update the fixed csv files
+            // e.g. to have an indication which words might be missing due to the code changes
+            //$t_db->csv_recreate();
+
             // new horizontal_tests()->run($t);
 
             /*
              * prepare db testing
              */
 
-            $t_db->type_list_recreate($this, $usr);
+            //$t_db->type_list_recreate($this, $usr);
 
             //$this->create_test_db_entries($t);
 
@@ -167,6 +169,8 @@ class a_selected_test extends test_cleanup
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
             //new import_write_tests()->run($t);
+            $imf = new import_file();
+            //$imf->json_file(files::MESSAGE_PATH . files::TIME_FILE, $usr, false);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
@@ -188,9 +192,9 @@ class a_selected_test extends test_cleanup
              */
 
             $api_test = new api_tests();
-            $api_test->run($this);
+            //$api_test->run($this);
 
-            new localhost_ui_tests()->run($this);
+            //new localhost_ui_tests()->run($this);
 
 
             /*
@@ -198,8 +202,8 @@ class a_selected_test extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            new word_list_read_tests()->run($this);
-            new triple_list_read_tests()->run($this);
+            //new word_list_read_tests()->run($this);
+            //new triple_list_read_tests()->run($this);
             // run the selected db read tests
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);
@@ -216,7 +220,7 @@ class a_selected_test extends test_cleanup
              * user interface
              */
 
-            new horizontal_ui_tests()->run($this);
+            //new horizontal_ui_tests()->run($this);
 
             /*
              * db write
@@ -232,7 +236,7 @@ class a_selected_test extends test_cleanup
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
+            new formula_write_tests()->run($this);
             //new formula_link_write_tests()->run($this);
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);

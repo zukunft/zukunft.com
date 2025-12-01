@@ -376,7 +376,7 @@ class change_log extends db_object_seq_id_user
                         $tbl = new type_object(
                             $this->table_id . $field_name,
                             $this->table_id . $field_name,
-                            '',
+                            $field_name,
                             $this->field_id);
                         $sys->typ_lst->cng_fld->add($tbl);
                         $db_changed = true;

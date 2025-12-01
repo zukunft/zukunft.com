@@ -1417,29 +1417,6 @@ class ref extends sandbox_link
     }
 
 
-    /**
-     * delete the phrase groups which where this triple is used
-     *
-     * @param user_message $usr_msg the message for the user why deleting the triple links has failed and a suggested solution
-     * @return bool true if the triple links has been deleted
-     */
-    function del_links(user_message $usr_msg): bool
-    {
-        $usr_msg = new user_message();
-
-        // collect all ... related to this ref
-        //$val_lst = new value_list($this->user());
-        //$val_lst->load_by_phr($this->phrase());
-
-        // if there are still values, ask if they really should be deleted
-        //if ($val_lst->has_values()) {
-        //    $val_lst->del($usr_msg);
-        //}
-
-        return $usr_msg->is_ok();
-    }
-
-
     /*
      * sql write fields
      */

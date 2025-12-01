@@ -67,6 +67,7 @@ class sql
     const string WHERE = 'WHERE';
 
     // sorting
+    const string ORDER_BY = 'ORDER BY';
     const string ORDER_ASC = 'ASC';
     const string ORDER_DESC = 'DESC';
 

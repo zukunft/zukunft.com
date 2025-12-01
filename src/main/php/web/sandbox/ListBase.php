@@ -125,7 +125,7 @@ class ListBase extends ListOfIdObjects
     {
         $msg = 'set_from_json_array not overwritten by child object ' . $this::class;
         log_err($msg);
-        return new user_message($msg);
+        return new user_message(new user(), $msg);
     }
 
     /**

@@ -47,6 +47,7 @@ class files
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
+    CONST string CSV = '.csv';
 
 
     /*
@@ -124,6 +125,8 @@ class files
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
     CONST string IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
+
+    CONST string FIXED_DB_CSV = 'list' . self::CSV;
 
     const array TEST_DIRECT_IMPORT_FILE_LIST = [
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,

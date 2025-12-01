@@ -121,7 +121,7 @@ class view_read_tests
         $t->subheader($ts . 'api creation');
 
         $test_name = views::START_NAME;
-        $cmp = $t_db->load_word(views::START_NAME, $t->usr1);
+        $cmp = $t_db->load_word(views::START_NAME);
         $t->assert_export_reload($ts . $test_name, $cmp);
 
 

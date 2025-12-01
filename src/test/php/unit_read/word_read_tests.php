@@ -97,13 +97,13 @@ class word_read_tests
         $t->subheader($ts . 'api creation');
 
         $test_name = words::MATH;
-        $wrd = $t_db->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
         $t->subheader($ts . 'frontend');
 
         $test_name = 'get the most useful view for a word';
-        $wrd = $t_db->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH);
         $dsp_id = $wrd->calc_view_id();
         $t->assert($test_name, $dsp_id, 0);
 

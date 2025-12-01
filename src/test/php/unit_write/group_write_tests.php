@@ -240,7 +240,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if (!$grp->is_saved()) {
@@ -274,7 +274,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($old_name);
         if ($grp->is_saved()) {
@@ -308,7 +308,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if ($grp->is_saved()) {

@@ -71,7 +71,7 @@ class user_message
      * @param string $txt an initial message text
      *                         if this text is not empty it is assumed that something went wrong
      */
-    function __construct(string $txt = '')
+    function __construct(?user $usr = null, string $txt = '')
     {
         $this->txt = [];
         if ($txt == '') {
@@ -83,7 +83,7 @@ class user_message
         $this->db_row_id = 0;
         $this->msg_id_lst = [];
         $this->msg_var_lst = [];
-        $this->usr = null;
+        $this->usr = $usr;
     }
 
 

@@ -41,6 +41,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
@@ -51,6 +52,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'change_link.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_SYSTEM . 'job_type.php';
 //include_once paths::MODEL_SYSTEM . 'session.php';
@@ -64,6 +66,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_REF . 'source.php';
 //include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_REF . 'source_type.php';
+//include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
 //include_once paths::MODEL_RESULT . 'result.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
@@ -95,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
@@ -111,6 +115,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
@@ -118,9 +123,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
-use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
@@ -131,6 +135,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
@@ -138,6 +143,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class def
@@ -580,5 +586,16 @@ class def
         'users_user_id_seq',
         'user_profiles_user_profile_id_seq'
     ];
+
+    // list of database fields that are also in test volatile
+    // and that should be ignored in unit tests
+    const array VOLATILE_DB_FIELDS = [
+        [value::class, sandbox_multi::FLD_LAST_UPDATE],
+        [formula::class, formula_db::FLD_LAST_UPDATE],
+        [user::class, user_db::FLD_CREATED],
+        [user::class, user_db::FLD_LAST_LOGIN],
+        [user::class, user_db::FLD_LAST_LOGOUT],
+    ];
+
 
 }

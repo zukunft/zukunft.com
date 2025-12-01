@@ -103,6 +103,7 @@ class user_message
 
     /**
      * assumes that normally everything is fine
+     * @param user|null $usr the user for whom the messages should be created
      * @param string $msg_text an initial message text
      *                         if this text is not empty it is assumed that something went wrong
      */

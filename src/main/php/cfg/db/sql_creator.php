@@ -5524,6 +5524,25 @@ class sql_creator
         return $qp;
     }
 
+    /**
+     * return a sql statement to get all rows and all fields of the given class
+     * should not be used for big tables because it might take long
+     *
+     * @param string $class
+     * @return sql_par
+     */
+    function sql_all(string $class): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par($class);
+        $this->set_class($class);
+        $sql = sql::SELECT . ' * ' . sql::FROM . ' ' . $this->name_sql_esc($this->table) . ' '
+            . sql::ORDER_BY . ' ' . $lib->class_to_id_field($class);
+        $qp->name .= 'all';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, []);
+        return $qp;
+    }
+
 
     /*
      * user sandbox fields

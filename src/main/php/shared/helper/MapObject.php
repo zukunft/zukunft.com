@@ -35,6 +35,7 @@
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_HELPER . 'db_object.php';
@@ -111,6 +112,43 @@ class MapObject
     }
 
     /**
+     * get the corresponding frontend object to the given backend object
+     *
+     * @param db_object_seq_id|db_object_multi_user $obj the backend object to select the frontend object
+     * @return db_object_ui the empty frontend object corresponding to the frontend object
+     */
+    function uiObject(db_object_seq_id|db_object_multi_user $obj): db_object_ui
+    {
+        if ($obj::class == user::class) {
+            return new user_ui();
+        } elseif ($obj::class == word::class) {
+            return new word_ui();
+        } elseif ($obj::class == verb::class) {
+            return new verb_ui();
+        } elseif ($obj::class == triple::class) {
+            return new triple_ui();
+        } elseif ($obj::class == source::class) {
+            return new source_ui();
+        } elseif ($obj::class == ref::class) {
+            return new ref_ui();
+        } elseif ($obj::class == value::class) {
+            return new value_ui();
+        } elseif ($obj::class == formula::class) {
+            return new formula_ui();
+        } elseif ($obj::class == result::class) {
+            return new result_ui();
+        } elseif ($obj::class == view::class) {
+            return new view_ui();
+        } elseif ($obj::class == component::class) {
+            return new component_ui();
+        } elseif ($obj::class == view_relation::class) {
+            return new view_relation_ui();
+        } else {
+            return new db_object_ui();
+        }
+    }
+
+    /**
      * convert a frontend object to a backend object via api json
      * @param db_object_ui $ui_obj the filled frontend object
      * @param user|null $usr the frontend user used to define the owner of the backend object
@@ -121,6 +159,19 @@ class MapObject
         $db_obj = $this->dbObject($ui_obj, $usr);
         $db_obj->api_mapper($ui_obj->api_array(), $usr_msg);
         return $db_obj;
+    }
+
+    /**
+     * convert a frontend object to a backend object via api json
+     * @param db_object_seq_id|db_object_multi_user|user $obj the backend object filled with the value from the frontend object
+     * @param user_message_ui $usr_msg the frontend user used to define the owner of the backend object
+     * @return db_object_ui|user_ui the filled frontend object
+     */
+    function convertToUi(db_object_seq_id|db_object_multi_user|user $obj, user_message_ui $usr_msg): db_object_ui|user_ui
+    {
+        $ui_obj = $this->uiObject($obj);
+        $ui_obj->api_mapper($obj->api_json_array(new api_type_list([])), $usr_msg);
+        return $ui_obj;
     }
 
     /**

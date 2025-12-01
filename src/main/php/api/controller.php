@@ -100,7 +100,7 @@ class controller
     ): void
     {
         $result = ''; // reset the json message string
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
 
         $dbo->api_mapper($api_json, $usr_msg);
 

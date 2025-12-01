@@ -87,7 +87,8 @@ class import_file
 
     /**
      * import a single json file
-     * TODO return a user message instead of a string
+     * TODO add user_message as a parameter
+     * TODO set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
@@ -98,7 +99,7 @@ class import_file
     {
         global $cfg;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -143,13 +144,13 @@ class import_file
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str);
+                    $imp->put_json_direct($json_str, $usr_msg);
                 } else {
-                    $import_result = $imp->put_json($json_str, $usr_msg);
+                    $imp->put_json($json_str, $usr_msg);
                 }
 
                 // show the summery to the user
-                if ($import_result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $usr_msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
@@ -170,14 +171,13 @@ class import_file
                         $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-                    $usr_msg->add($import_result);
 
                     // TODO Prio 0 activate
                     // TODO Prio 1 move to calling function and include save
                     //if (!$usr_msg->is_ok()) {
                     //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
                     //}
-                    //$usr_msg->add_message_text('import of ' . $filename . ' failed');
+                    $usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
         }

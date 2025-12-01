@@ -94,7 +94,7 @@ class test_cleanup extends test_api
         global $test_val_lst;
 
         $t_db = new test_db_load($this);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->usr1);
 
         $result = ''; // the combine error message of all cleanup actions
 

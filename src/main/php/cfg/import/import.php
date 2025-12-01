@@ -383,12 +383,12 @@ class import
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user_message $usr_msg to enrich with warnings, problems and solutions
-     * @return user_message the result of the import
+     * @return bool true if the import has been finished without error
      */
     function put_json(
-        string $json_str,
+        string       $json_str,
         user_message $usr_msg
-    ): user_message
+    ): bool
     {
         global $cfg;
 
@@ -431,20 +431,21 @@ class import
         // show the import result
         $this->end($size, $store_per_sec, $usr_msg);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * drop a zukunft.com json message direct to the database
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
-     * @return user_message the result of the import
+     * @param user_message $usr_msg the result of the import
+     * @return bool true if the import has been finished without error
      */
     function put_json_direct(
-        string $json_str,
-    ): user_message
+        string       $json_str,
+        user_message $usr_msg
+    ): bool
     {
-        $usr_msg = new user_message();
         $json_array = json_decode($json_str, true);
         if ($json_array == null) {
             if ($json_str != '') {
@@ -453,26 +454,27 @@ class import
                 $usr_msg->add_id(msg_id::JSON_STRING_EMPTY);
             }
         } else {
-            $usr_msg = $this->put($json_array);
+            $this->put($json_array, $usr_msg);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * drop a zukunft.com json object to the database
      *
      * @param array $json_array the zukunft.com JSON message to import as an array
-     * @return user_message the result of the import
+     * @param user_message $usr_msg the result of the import
+     * @return bool true if the import has been finished without error
      */
     public function put(
-        array $json_array
-    ): user_message
+        array $json_array,
+        user_message $usr_msg
+    ): bool
     {
         global $usr;
 
         log_debug();
         $lib = new library();
-        $usr_msg = new user_message();
         $this->last_display_time = microtime(true);
 
         // get the user first to allow user specific validation
@@ -755,7 +757,7 @@ class import
         // show 100% before validation starts
         $this->display_progress();
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

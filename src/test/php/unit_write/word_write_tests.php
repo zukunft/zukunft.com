@@ -72,7 +72,7 @@ class word_write_tests
 
         // init
         $lib = new library();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $t_wrd = new test_words($t);
         $t_db = new test_db_load($t);
         $t->name = 'word db write->';
@@ -91,7 +91,7 @@ class word_write_tests
         $t->assert_write_named($t_wrd->word_filled_add(), words::TEST_ADD);
 
         $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
-        $wrd_time = $t_db->test_word(words::TEST_2021, phrase_type_shared::TIME, $t->usr1);
+        $wrd_time = $t_db->test_word(words::TEST_2021, phrase_type_shared::TIME);
         $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
@@ -104,7 +104,7 @@ class word_write_tests
         $t->assert('word->is_measure for ' . words::TEST_2021, $result, false);
 
         // is measure
-        $wrd_measure = $t_db->test_word(words::TEST_CHF, phrase_type_shared::MEASURE, $t->usr1);
+        $wrd_measure = $t_db->test_word(words::TEST_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . words::TEST_CHF, $result, true);
 
@@ -113,7 +113,7 @@ class word_write_tests
         $t->assert('word->is_scaling for ' . words::TEST_CHF, $result, false);
 
         // is scaling
-        $wrd_scaling = $t_db->test_word(words::MIO, phrase_type_shared::SCALING, $t->usr1);
+        $wrd_scaling = $t_db->test_word(words::MIO, phrase_type_shared::SCALING);
         $result = $wrd_scaling->is_scaling();
         $t->assert('word->is_scaling for ' . words::MIO, $result, true);
 
@@ -122,12 +122,12 @@ class word_write_tests
         $t->assert('word->is_percent for ' . words::MIO, $result, false);
 
         // is percent
-        $wrd_pct = $t_db->test_word(words::PCT, phrase_type_shared::PERCENT, $t->usr1);
+        $wrd_pct = $t_db->test_word(words::PCT, phrase_type_shared::PERCENT);
         $result = $wrd_pct->is_percent();
         $t->assert('word->is_percent for ' . words::PCT, $result, true);
 
         // next word
-        $wrd_time_next = $t_db->test_word(words::TEST_2022, phrase_type_shared::TIME, $t->usr1);
+        $wrd_time_next = $t_db->test_word(words::TEST_2022, phrase_type_shared::TIME);
         $t_db->test_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
         $target = $wrd_time_next->name();
         $wrd_next = $wrd_time->next();
@@ -290,8 +290,7 @@ class word_write_tests
         $test_name = 'check if saving a word with an existing name (' . words::MATH . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set_name(words::MATH);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $wrd_new->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A word with the name "'.words::MATH.'" already exists. Please use another word name.';
@@ -300,16 +299,14 @@ class word_write_tests
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'user message translation for position -1 not found';
         $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $wrd_add->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
@@ -319,7 +316,7 @@ class word_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(words::TEST_ADD);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $vrb->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
@@ -330,8 +327,7 @@ class word_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::PI_NAME);
         $trp->set_name(words::TEST_ADD);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $trp->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
@@ -342,8 +338,7 @@ class word_write_tests
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SCALE_TO_SEC);
         $frm->set_name(words::TEST_ADD);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $frm->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
@@ -371,8 +366,7 @@ class word_write_tests
 
         $test_name = 'check if the word "' . words::TEST_ADD . '" can be renamed to "' . words::TEST_RENAMED . '"';
         $wrd_added->set_name(words::TEST_RENAMED);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $t->assert_true($test_name, $wrd_added->save($usr_msg), $t::TIMEOUT_LIMIT_DB);
 
         // check if the word renaming was successful
@@ -389,8 +383,7 @@ class word_write_tests
         $wrd_renamed->plural = words::TEST_RENAMED . 's';
         $wrd_renamed->description = words::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::OTHER);
-        $usr_msg = new user_message();
-        $usr_msg->usr = $t->usr1;
+        $usr_msg = new user_message($t->usr1);
         $wrd_renamed->save($usr_msg);
         $result = $usr_msg->get_last_message();
         $target = '';
@@ -485,14 +478,14 @@ class word_write_tests
         $t->assert('word->display "' . words::MATH . '"', $result, $target);
 
         // check if user 2 can exclude a word without influencing user 1
-        $wrd_usr1 = $t_db->load_word(words::TEST_RENAMED, $t->usr1);
+        $wrd_usr1 = $t_db->load_word(words::TEST_RENAMED);
         $wrd_usr2 = $t_db->load_word(words::TEST_RENAMED, $t->usr2);
         $wrd_usr2->del($usr_msg);
         $wrd_usr2_reloaded = $t_db->load_word(words::TEST_RENAMED, $t->usr2);
         $target = '';
         $result = $wrd_usr2_reloaded->name_dsp();
         $t->assert('user 2 has deleted word "' . words::TEST_RENAMED . '"', $result, $target);
-        $wrd_usr1_reloaded = $t_db->load_word(words::TEST_RENAMED, $t->usr1);
+        $wrd_usr1_reloaded = $t_db->load_word(words::TEST_RENAMED);
         $target = $wrd_usr1->name_dsp();
         $result = $wrd_usr1_reloaded->name_dsp();
         $t->assert('but the word "' . words::TEST_RENAMED . '" is still the same for user 1', $result, $target);

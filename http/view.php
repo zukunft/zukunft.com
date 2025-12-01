@@ -73,7 +73,7 @@ if ($db_con->is_open()) {
         $usr->load_usr_data();
 
         $usr_dsp = new user_ui();
-        $usr_dsp->set_from_json($usr->api_json());
+        $usr_dsp->set_from_json($usr->api_json(), $usr_msg);
 
         // load the user changeable configuration once via api
         // TODO Prio 1 load the config from cache if nothing has been changed

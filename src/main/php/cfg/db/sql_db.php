@@ -5938,6 +5938,15 @@ class sql_db
         return $result;
     }
 
+    function csv_from_class(string $class): array
+    {
+        $lib = new library();
+        $sc = new sql_creator();
+        $qp = $sc->sql_all($class);
+        $db_lst = $this->get($qp);
+        return $lib->csv_form_db_lst($db_lst, $class);
+    }
+
 
     /*
      * db type const

@@ -997,6 +997,7 @@ class test_base
     ): bool
     {
         global $usr;
+        // TODO Prio 1 review
         if ($usr == null) {
             $usr = $this->user_system();
         }
@@ -1030,7 +1031,7 @@ class test_base
      */
     function assert_ex_and_import(object $obj, user $usr_req): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr_req);
         $json_before = $obj->api_json([api_type::TEST_MODE]);
         $json_ex = $obj->export_json(false);
         $new_obj = $obj->clone_all();
@@ -2476,8 +2477,7 @@ class test_base
      */
     function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr1;
+        $usr_msg = new user_message($this->usr1);
         // add the named object and remember the name
         $name = $sbx->name();
         $sbx->save($usr_msg, $use_func);
@@ -3119,7 +3119,7 @@ class test_base
         bool                                    $check = false
     ): void
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
         if ($check) {
@@ -3141,7 +3141,7 @@ class test_base
      */
     function write_link_cleanup(sandbox_link $lnk, int $id, bool $check = false): void
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->usr1);
         $lnk->set_user($this->usr1);
         $lnk->load_by_id($id);
         if ($check) {
@@ -3179,7 +3179,7 @@ class test_base
     function write_add(user|ip_range $obj, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $class = $lib->class_to_name($obj::class);
         $name = $obj->unique_value();
         $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
@@ -3203,8 +3203,7 @@ class test_base
     function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr1;
+        $usr_msg = new user_message($this->usr1);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
@@ -3220,7 +3219,7 @@ class test_base
     function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -3244,7 +3243,7 @@ class test_base
     function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -3383,8 +3382,7 @@ class test_base
     private
     function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr1;
+        $usr_msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
         $name = $sbx->name();
@@ -3413,7 +3411,7 @@ class test_base
     private
     function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3431,8 +3429,7 @@ class test_base
     private
     function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->usr = $this->usr1;
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3484,7 +3481,7 @@ class test_base
     private
     function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3520,7 +3517,7 @@ class test_base
     private
     function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3578,7 +3575,7 @@ class test_base
     private
     function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $name = $sbx->name();
         $sbx->set_user($usr);

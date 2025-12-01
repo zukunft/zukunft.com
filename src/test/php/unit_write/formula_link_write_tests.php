@@ -62,7 +62,7 @@ class formula_link_write_tests
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula link ';
@@ -255,7 +255,7 @@ class formula_link_write_tests
     function run_list(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula link list ';

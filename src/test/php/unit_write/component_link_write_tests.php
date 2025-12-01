@@ -55,7 +55,7 @@ class component_link_write_tests
     {
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write component link ';
@@ -73,8 +73,7 @@ class component_link_write_tests
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
         $order_nbr = $cmp->next_nbr($msk->id());
         $result = $cmp->link($msk, $order_nbr, $usr_msg);
-        $target = '';
-        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $test_name = 'check log of linking the component "' . $cmp->name() . '" to the view "' . $msk->name() . '"';
         $log = new change_link($t->usr1);
@@ -100,12 +99,12 @@ class component_link_write_tests
         // ... check if the value update has been triggered
 
         // if second user removes the new link
+        $test_name = 'view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"';
         $cmp = $t_db->load_component(components::TEST_ADD_NAME, $t->usr2);
         $msk = new view($t->usr2);
         $msk->load_by_name(views::TEST_ADD_NAME, view::class);
         $result = $cmp->unlink($msk, $usr_msg);
-        $target = '';
-        $t->assert('view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
@@ -139,9 +138,9 @@ class component_link_write_tests
         // ... check if the values for the first user are still the same
 
         // if the first user also removes the link, both records should be deleted
+        $test_name = 'view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '"';
         $result = $cmp->unlink($msk, $usr_msg);
-        $target = '';
-        $t->assert('view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_link($t->usr1);
@@ -180,16 +179,16 @@ class component_link_write_tests
         $t->assert('component->save for adding a second one "' . $cmp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // insert the link again for the first user
+        $test_name = 'view component_link->link_dsp again for user 1 "' . $msk->name() . '" to "' . $cmp->name() . '"';
         $order_nbr = $cmp->next_nbr($msk->id());
         $result = $cmp->link($msk, $order_nbr, $usr_msg);
-        $target = '';
-        $t->assert('view component_link->link_dsp again for user 1 "' . $msk->name() . '" to "' . $cmp->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // add a second element for the first user to test the order change
+        $test_name = 'view component_link->link_dsp the second for user 1 "' . $msk->name() . '" to "' . $cmp2->name() . '"';
         $order_nbr2 = $cmp2->next_nbr($msk->id());
         $result = $cmp2->link($msk, $order_nbr2, $usr_msg);
-        $target = '';
-        $t->assert('view component_link->link_dsp the second for user 1 "' . $msk->name() . '" to "' . $cmp2->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the order of the view components are correct for the first user
         if (isset($msk)) {

@@ -461,7 +461,7 @@ class word extends sandbox_code_id
      */
     function tr(): string
     {
-        return (new html_base())->tr($this->td());
+        return new html_base()->tr($this->td());
     }
 
     /**

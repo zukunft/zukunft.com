@@ -49,7 +49,7 @@ function run_sandbox_test(all_tests $t): void
     // start the test section (ts)
     $ts = 'db write sandbox ';
     $t->header($ts);
-    $usr_msg = new user_message();
+    $usr_msg = new user_message($t->usr1);
     $usr_msg->usr = $t->usr1;
 
     $t->subheader($ts . 'is_same and is_similar');

@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
@@ -130,6 +132,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use DateTime;
 use Exception;
@@ -1144,6 +1148,55 @@ class library
                 $use[] = $path;
                 if ($class != '') {
                     $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
+    function csv_form_class(string $class): array
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
+        $file = test_files::FIXED_DB_CSV;
+        return file($path . $file);
+    }
+
+    function csv_form_db_lst(array $db_lst, string $class): array
+    {
+        $lib = new library();
+        $header = '';
+        $header_lst = [];
+        $csv = [];
+        foreach ($db_lst as $db_row) {
+            if ($header == '') {
+                foreach ($db_row as $col_key => $db_col) {
+                    if (!is_numeric($col_key)) {
+                        if (!$lib->is_volatile_db_field($class, $col_key)) {
+                            $header_lst[$col_key] = $col_key;
+                        }
+                    }
+                }
+                $header = implode(',', $header_lst);
+                $csv[] = $header . "\n";
+            }
+            $db_row = array_intersect_key($db_row, $header_lst);
+            $line = implode(',', $db_row);
+            // remove line feeds to make compare easier
+            $line = str_replace("\n", ' ', $line);
+            $csv[] = $line . "\n";
+        }
+        return $csv;
+    }
+
+    function is_volatile_db_field(string $class, string $fld): bool
+    {
+        $result = false;
+        foreach (def::VOLATILE_DB_FIELDS as $tbl_fld) {
+            if ($class == $tbl_fld[0]) {
+                if ($fld == $tbl_fld[1]) {
+                    $result = true;
                 }
             }
         }
@@ -2445,6 +2498,10 @@ class library
                 break;
             case sys_log::class;
                 $id_fld = sys_log::FLD_ID;
+                break;
+            case result::class:
+            case value::class;
+                $id_fld = group::FLD_ID;
                 break;
         }
         return $id_fld;

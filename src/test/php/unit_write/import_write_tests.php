@@ -82,7 +82,7 @@ class import_write_tests
 
         // init
         $t_usr = new test_users();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write import ';
@@ -211,7 +211,7 @@ class import_write_tests
 
         $lib = new library();
         $imf = new import_file();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);
@@ -277,7 +277,7 @@ class import_write_tests
 
         $lib = new library();
         $imf = new import_file();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);

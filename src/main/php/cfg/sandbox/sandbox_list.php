@@ -322,9 +322,10 @@ class sandbox_list extends base_list
         user_message                                   $usr_msg,
         int                                            $limit = 0,
         int                                            $offset = 0
-    ): sql_db
+    ): sql_par
     {
         $qp = new sql_db();
+        // TODO Prio 0 fill
         return $qp;
     }
 

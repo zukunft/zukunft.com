@@ -53,7 +53,7 @@ class formula_trigger_tests
 
         // init
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula trigger ';

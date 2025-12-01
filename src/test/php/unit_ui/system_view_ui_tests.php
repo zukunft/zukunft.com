@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -105,12 +106,15 @@ class system_view_ui_tests
         $tl = new test_lib();
         $t_usr = new test_users();
         $t_map = new test_mappers($t);
-        $usr_msg = new user_message();
+        $msp_ui = new MapObject();
 
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
         $t->usr1 = $t_usr->user_sys_test();
+        $usr_msg = new user_message();
+        $usr_ui = $msp_ui->convertToUi($t->usr1, $usr_msg);
+        $usr_msg->usr = $usr_ui;
 
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects

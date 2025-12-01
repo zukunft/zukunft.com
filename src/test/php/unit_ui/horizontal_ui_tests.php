@@ -71,7 +71,7 @@ class horizontal_ui_tests
         $lib = new library();
         $t_map = new test_mappers($t);
         $usr_msg_ui = new user_message_ui();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
 

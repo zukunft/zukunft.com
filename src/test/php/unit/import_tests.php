@@ -43,6 +43,8 @@ include_once test_paths::CONST . 'files.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
@@ -55,6 +57,7 @@ class import_tests
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
         $imp->usr = $usr;
+        $usr_msg = new user_message($usr);
 
         // start the test section (ts)
         $ts = 'unit import ';
@@ -111,9 +114,9 @@ class import_tests
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(test_files::IMPORT_WARNING);
         $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
-        $result = $imp->put_json_direct($json_str, $usr, test_paths::IMPORT . 'warning_and_error_test.json');
+        $imp->put_json_direct($json_str, $usr_msg);
         $target = 'Unknown element "test"';
-        $t->assert($test_name, $result->get_last_message_translated(), $target);
+        $t->assert($test_name, $usr_msg->get_last_message_translated(), $target);
 
         $t->subheader($ts . 'convert');
 

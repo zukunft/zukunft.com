@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -73,6 +74,7 @@ include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'library.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'formula_link_write_tests.php';
@@ -89,6 +91,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -113,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\formula_link_write_tests;
@@ -179,8 +183,10 @@ class test_db_load
     ): word
     {
         global $sys;
-        $usr_msg = new user_message();
-        $usr_msg->usr = $test_usr;
+        if ($test_usr == null) {
+            $test_usr = $this->env->usr1;
+        }
+        $usr_msg = new user_message($test_usr);
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
@@ -190,6 +196,14 @@ class test_db_load
         }
         if ($wrd->id <= 0) {
             log_err('Cannot create word ' . $wrd_name);
+        }
+        if ($wrd->id > 0) {
+            if ($wrd->excluded) {
+                $wrd->include();
+                if (!$wrd->save($usr_msg)) {
+                    log_err('cannot include word ' . $wrd->dsp_id() . ' due to ' . $usr_msg->get_last_message());
+                }
+            }
         }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $sys->typ_lst->phr_typ->id($wrd_type_code_id);
@@ -231,6 +245,9 @@ class test_db_load
         ?user   $test_usr = null
     ): word
     {
+        if ($test_usr == null) {
+            $test_usr = $this->env->usr1;
+        }
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
         $this->env->assert('add_word', $wrd->name(), $wrd_name, test_base::TIMEOUT_LIMIT_DB_MULTI);
         return $wrd;
@@ -246,7 +263,7 @@ class test_db_load
      */
     function assert_db_sandbox_object(sandbox $sbx, ?user $test_usr = null): bool
     {
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($test_usr);
         $test_name = 'db ';
         $result = '';
         $target = '';
@@ -361,7 +378,7 @@ class test_db_load
     {
         global $sys;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($this->env->usr1);
         $result = new triple($this->env->usr1);
 
         // load the phrases to link and create words if needed
@@ -526,7 +543,7 @@ class test_db_load
             $phr_lst->load_by_names($phr_names);
             $grp = $this->create_group($phr_lst, $test_usr);
             $grp->set_name($grp_name);
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($test_usr);
             if (!$grp->save($usr_msg)) {
                 log_err('add group failed due to: ' . $usr_msg->get_last_message());
             }
@@ -798,7 +815,7 @@ class test_db_load
 
         $val = new value($this->env->usr1);
         if ($phr_grp == null) {
-            log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
+            log_warning('Cannot get phrase group for ' . $phr_lst->dsp_id());
         } else {
             $val->load_by_grp($phr_grp);
         }
@@ -811,6 +828,16 @@ class test_db_load
         if (!$val->is_saved()) {
             $phr_lst = $this->load_phrase_list($array_of_word_str);
             $phr_grp = $phr_lst->get_grp_id();
+
+            // add missing words
+            if (count($array_of_word_str) > $phr_lst->count()) {
+                foreach ($array_of_word_str as $wrd_txt) {
+                    $this->add_word($wrd_txt);
+                }
+                // retry
+                $phr_lst = $this->load_phrase_list($array_of_word_str);
+                $phr_grp = $phr_lst->get_grp_id();
+            }
 
             // getting the latest value if selected without time phrase should be done when reading the value
             //$time_phr = $phr_lst->time_useful();
@@ -1062,8 +1089,7 @@ class test_db_load
     function add_component(string $cmp_name, user $test_usr, string $type_code_id = ''): component
     {
         global $sys;
-        $usr_msg = new user_message();
-        $usr_msg->usr = $test_usr;
+        $usr_msg = new user_message($test_usr);
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
@@ -1189,6 +1215,30 @@ class test_db_load
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
         $t->assert_api($ui_cfg, '', [api_type::HEADER]);
+
+    }
+
+    function csv_recreate(): bool
+    {
+        global $db_con;
+        $lib = new library();
+
+        $diff = '';
+
+        foreach (def::MAIN_CLASSES as $class) {
+            $csv_db = $db_con->csv_from_class($class);
+            $csv_file = $lib->csv_form_class($class);
+            $diff .= $lib->diff_msg($csv_db, $csv_file);
+            if ($diff != '') {
+                $target = implode("", $csv_db);
+                log_err('after database reset these words have been unexpected changed: ' . $diff) . ' target is ' . substr($target, 0, 1000);
+            }
+        }
+        if ($diff == '') {
+            return true;
+        } else {
+            return false;
+        }
 
     }
 

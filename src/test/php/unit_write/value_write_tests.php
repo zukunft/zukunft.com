@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -78,7 +79,8 @@ class value_write_tests
         $t_db = new test_db_load($t);
         $tl = new test_lib();
         $lib = new library();
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
+        $usr_msg_ui = new user_message_ui();
 
         // start the test section (ts)
         $ts = 'db write value ';
@@ -198,7 +200,7 @@ class value_write_tests
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_ui();
-        $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]));
+        $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]), $usr_msg_ui);
         $fig = $mio_val->figure();
         $fig_dsp = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_dsp->display_linked('1');

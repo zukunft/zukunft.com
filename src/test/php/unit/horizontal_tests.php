@@ -135,7 +135,7 @@ class horizontal_tests
         $t->subheader($ts . 'frontend api');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'frontend of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($t->usr1);
             $usr_msg_ui = new user_message_ui();
             $filled_obj = $t_map->class_to_filled_object($class);
             if (in_array($class, def::SANDBOX_CLASSES)) {
@@ -162,7 +162,7 @@ class horizontal_tests
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
-            $usr_msg = new user_message();
+            $usr_msg = new user_message($t->usr1);
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);

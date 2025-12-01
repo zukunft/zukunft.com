@@ -1231,6 +1231,18 @@ class sandbox_link extends sandbox
         return $fvt_lst_out;
     }
 
+    /**
+     * deleting the references of links is usually needed
+     * so no action is done and just true is returned
+     *
+     * @param user_message $usr_msg the message object just to allow overwrites e.g. for triples
+     * @return bool true because a link usually does not have references
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        return true;
+    }
+
 
     /*
      * sql write fields

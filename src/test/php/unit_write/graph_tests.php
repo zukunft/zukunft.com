@@ -52,7 +52,7 @@ class graph_tests
 
         // init
         $t_vrb = new test_verbs($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $back = 0;
 
         // start the test section (ts)

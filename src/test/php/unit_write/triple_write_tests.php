@@ -67,7 +67,7 @@ class triple_write_tests
         $lib = new library();
         $t_trp = new test_triples($t);
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write triple ';
@@ -232,7 +232,7 @@ class triple_write_tests
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);
         $wrd->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $wrd->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. ' .
@@ -243,7 +243,7 @@ class triple_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $vrb->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. '
@@ -253,7 +253,7 @@ class triple_write_tests
         // ... and no formula either
         $frm = new formula($t->usr1);
         $frm->set_name(triples::SYSTEM_TEST_ADD_AUTO);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $frm->save($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'A triple with the name "System Test Triple" already exists. '
@@ -262,14 +262,14 @@ class triple_write_tests
 
         $test_name = 'triple clean up tests';
         $trp = new triple($t->usr1);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $trp->del($usr_msg);
         $result = $usr_msg->get_last_message_translated();
         $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $trp = new triple($t->usr2);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $trp->del($usr_msg);
         $result = $usr_msg->get_last_message_translated();
@@ -317,7 +317,7 @@ class triple_write_tests
         $t->header($ts);
 
         $t_db = new test_db_load($t);
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($t->usr1);
 
         // activate the excluded objects to check the setup
         $trp = new triple($t->usr2);
