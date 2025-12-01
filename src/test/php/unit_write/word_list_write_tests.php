@@ -150,8 +150,7 @@ class word_list_write_tests
         $parents = $wrd_lst->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
         $result = $lib->dsp_array($parents->names());
         $target = words::TEST_ASSETS_CURRENT . "," . words::TEST_ASSETS;
-        // TODO Prio 0 activate
-        //$t->assert('word_list->foaf_parent for "' . words::ZH . '" "' . verbs::IS . '" up', $result, $target);
+        $t->assert('word_list->foaf_parent for "' . words::ZH . '" "' . verbs::IS . '" up', $result, $target);
 
         // test add parent step 1
         $wrd_lst = new word_list($usr);
@@ -159,8 +158,7 @@ class word_list_write_tests
         $parents = $wrd_lst->parents($sys->typ_lst->vrb->get_verb(verbs::PART_NAME), 1);
         $result = $lib->dsp_array($parents->names());
         $target = words::TEST_ASSETS_CURRENT;
-        // TODO Prio 0 activate
-        //$t->assert('word_list->parents for "' . words::TEST_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . words::TEST_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
 
         // test add parent step 2
         $wrd_lst = new word_list($usr);
@@ -168,8 +166,7 @@ class word_list_write_tests
         $parents = $wrd_lst->parents($sys->typ_lst->vrb->get_verb(verbs::PART_NAME), 2);
         $result = $lib->dsp_array($parents->names());
         $target = words::TEST_ASSETS_CURRENT . "," . words::TEST_ASSETS;
-        // TODO Prio 0 activate
-        //$t->assert('word_list->parents for "' . words::TEST_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . words::TEST_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
 
         // test add child and contains
         $wrd_lst = new word_list($usr);
@@ -209,8 +206,7 @@ class word_list_write_tests
         $lst_contains = $wrd_lst->contains();
         $wrd = $t_db->load_word(words::TEST_TAX_REPORT);
         $result = $lst_contains->does_contain($wrd);
-        // TODO Prio 0 activate
-        //$t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_TAX_REPORT, $result, true);
+        $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_TAX_REPORT, $result, true);
 
         // test "are and contains"
         // e.g. "a Cash Flow Statement is a Financial Report, and it contains the tax statement ..."
@@ -220,12 +216,10 @@ class word_list_write_tests
         $lst_related = $wrd_lst->are_and_contains();
         $wrd_cf = $t_db->load_word(words::TEST_CASH_FLOW);
         $result = $lst_related->does_contain($wrd_cf);
-        // TODO Prio 0 activate
-        //$t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_CASH_FLOW, $result, true);
+        $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_CASH_FLOW, $result, true);
         $wrd_tax = $t_db->load_word(words::TEST_TAX_REPORT);
         $result = $lst_related->does_contain($wrd_tax);
-        // TODO Prio 0 activate
-        //$t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_TAX_REPORT, $result, true);
+        $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_TAX_REPORT, $result, true);
 
         // test "differentiators"
         // e.g. a "sector" "can contain" "Energy"
@@ -245,8 +239,7 @@ class word_list_write_tests
         $lst_differentiators = $wrd_lst->differentiators_all();
         $wrd_wind = $t_db->load_word(words::TEST_WIND_ENERGY);
         $result = $lst_differentiators->does_contain($wrd_wind);
-        // TODO Prio 0 activate
-        //$t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_WIND_ENERGY, $result, true);
+        $t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_WIND_ENERGY, $result, true);
 
         // test "differentiators_filtered"
         // e.g. a "sector" "can contain" "Wind Energy" and "Energy" can be filtered
@@ -256,8 +249,7 @@ class word_list_write_tests
         $wrd_lst_filter->load_by_names(array(words::TEST_ENERGY));
         $lst_differentiators = $wrd_lst->differentiators_filtered($wrd_lst_filter);
         $result = $lst_differentiators->does_contain($wrd_energy);
-        // TODO Prio 0 activate
-        //$t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_ENERGY, $result, true);
+        $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_ENERGY, $result, true);
         $wrd_wind = $t_db->load_word(words::TEST_WIND_ENERGY);
         $result = $lst_differentiators->does_contain($wrd_wind);
         $t->assert('word_list->differentiators_filtered "' . implode('","', $wrd_lst->names()) . '", which contains not ' . words::TEST_WIND_ENERGY, $result, false);
