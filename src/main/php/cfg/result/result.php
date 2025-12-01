@@ -227,20 +227,21 @@ class result extends sandbox_value
      * TODO move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         // make sure that there are no unexpected leftovers but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
 
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
-            if ($usr_msg->is_ok()) {
+            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $usr_msg)) {
                 $this->grp()->set_phrase_list($phr_lst);
             }
         }
@@ -259,7 +260,7 @@ class result extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

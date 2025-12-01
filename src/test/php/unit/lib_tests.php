@@ -720,7 +720,8 @@ class lib_tests
         $usr_msg = new user_message();
         $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
 
-        $usr_msg = new user_message('first message text');
+        $usr_msg = new user_message();
+        $usr_msg->add_message_text('first message text');
         $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
         $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
 

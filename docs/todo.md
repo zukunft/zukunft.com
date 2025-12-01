@@ -45,8 +45,12 @@ A proper issue ticket should be created for these TODOs notes:
                 and is not user specific and for easy check how many times the code writes
          - $db_con for the database connection
          - $cac for the backend cache of user specific data_object and the user configuration
-         - $ui_sys for the frontend cache including the session user
-         - $t_cac for the test environment 
+         - $ui_cac for the frontend cache including the session user
+         - $mtr for the message translation use as the last step in the frontend
+         - $t for the base test object with the functions for assert and cleanup
+         - $t_sys for error counting and the execution times 
+         - $debug to activate additional logging levels 
+         - maybe $t_cac for the test environment 
          - maybe $cfg for the user configuration that changes more often than the types and the system views  
          pro using a global var:
            - less parameters for functions, so easier to read and maybe faster
@@ -54,6 +58,15 @@ A proper issue ticket should be created for these TODOs notes:
            - parameters make it easier to simulate test scenaries (can be avoided by using the cache as a parameter)
          result:
            - use the global vars if not a test scenario is needed
+    TODO move the old global vars to
+         - $usr to the $usr_msg parameter which is the user who has started the script 
+                which may differ from the user whos object configuration has been loaded
+                which may differ from the object owner
+                TODO if an admin user wants to check a user object the frontend configuration may differ from the viewer
+         - $cfg the user configuration should be part of $cac
+         - $cfg_sys the system configuration should be part of $cac
+         - $errors move the $t_sys
+         - $log_txt move the $t_sys
     TODO add backend cache objects:
          $trg = new trigger(); // to trigger cache refresh on next database access
          $pus = new push_message() // to push an update message to the frontend f9r data cached in frontend

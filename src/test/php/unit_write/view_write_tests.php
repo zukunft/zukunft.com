@@ -259,6 +259,7 @@ class view_write_tests
     {
         $t_db = new test_db_load($t);
         $usr_msg = new user_message();
+        $usr_msg->usr = $t->usr1;
 
         // start the test section (ts)
         $ts = 'db create test views ';

@@ -116,10 +116,10 @@ class MapObject
      * @param user|null $usr the frontend user used to define the owner of the backend object
      * @return db_object_seq_id|db_object_multi_user|user the backend object filled with the value from the frontend object
      */
-    function convertToDb(db_object_ui $ui_obj, ?user $usr = null): db_object_seq_id|db_object_multi_user|user
+    function convertToDb(db_object_ui $ui_obj, user_message $usr_msg, ?user $usr = null): db_object_seq_id|db_object_multi_user|user
     {
         $db_obj = $this->dbObject($ui_obj, $usr);
-        $db_obj->api_mapper($ui_obj->api_array());
+        $db_obj->api_mapper($ui_obj->api_array(), $usr_msg);
         return $db_obj;
     }
 
@@ -143,7 +143,7 @@ class MapObject
     function convertMsgToUi(user_message $db_msg): user_message_ui
     {
         $ui_msg = new user_message_ui();
-        $ui_msg->api_mapper($ui_msg->api_array());
+        $ui_msg->api_mapper($db_msg->api_array());
         return $ui_msg;
     }
 

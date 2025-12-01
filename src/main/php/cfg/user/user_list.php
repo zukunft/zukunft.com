@@ -80,8 +80,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
-global $system_users;
-
 // TODO base it on the base_list object
 class user_list
 {
@@ -335,17 +333,6 @@ class user_list
     {
         $qp = $this->load_sql_by_profile_and_higher($db_con->sql_creator(), $profile_id);
         return $this->load($db_con, $qp);
-    }
-
-    /**
-     * load all system users that have a code id
-     */
-    function load_system(sql_db $db_con): bool
-    {
-        global $system_users;
-        $this->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
-        $system_users = clone $this;
-        return true;
     }
 
 

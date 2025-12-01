@@ -395,16 +395,17 @@ class sandbox extends db_object_seq_id_user
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         // make sure that there are no unexpected leftovers
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
 
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::SHARE, $api_json)) {
             $this->share_id = $api_json[json_fields::SHARE];
@@ -413,7 +414,7 @@ class sandbox extends db_object_seq_id_user
             $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -535,11 +536,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @return user_message
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_api(string $api_json): user_message
+    function set_from_api(string $api_json, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true));
+        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
     }
 
     /**
@@ -1702,6 +1704,7 @@ class sandbox extends db_object_seq_id_user
      */
     function db_ready(): user_message
     {
+        // TODO Prio 2 use user_message from calling function
         $usr_msg = new user_message();
 
         if ($this->user() == null) {
@@ -2113,7 +2116,7 @@ class sandbox extends db_object_seq_id_user
      */
     function save_field(sql_db $db_con, change|change_link $log): string
     {
-        $result = '';
+        $usr_msg = new user_message();
 
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
@@ -2124,10 +2127,10 @@ class sandbox extends db_object_seq_id_user
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id);
             if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
+                $usr_msg->add_message_text('update of value for ' . $log->field() . ' to ' . $new_value . ' failed');
             }
         }
-        return $result;
+        return $usr_msg->all_message_text();
     }
 
     /**
@@ -2863,7 +2866,11 @@ class sandbox extends db_object_seq_id_user
                     }
                     log_debug('of ' . $this->dsp_id() . ' done');
                 } else {
-                    log_err('Delete failed for ' . $class_name, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                    log_err('Delete failed for ' . $class_name,
+                        $this::class . '->del_exe',
+                        'Delete failed, because removing the user settings for '
+                        . $class_name . ' ' . $this->dsp_id() . ' returns '
+                        . $usr_msg->all_message_text(), (new Exception)->getTraceAsString(), $this->user());
                 }
             }
         }
@@ -3680,7 +3687,6 @@ class sandbox extends db_object_seq_id_user
 
         // add the change action field to the field list for the log entries
         global $sys;
-        global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $sys->typ_lst->cng_act->id(change_actions::ADD),

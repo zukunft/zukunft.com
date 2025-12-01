@@ -285,6 +285,50 @@ class sandbox_list extends base_list
     }
 
     /**
+     * load the changes that the given user has done compared to the standard
+     *
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
+     * @param user $usr the user whose changes should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one object has been loaded
+     */
+    function load_user_changes(
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        user                                           $usr,
+        user_message                                   $usr_msg,
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): bool
+    {
+
+        global $db_con;
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $usr_msg->is_ok();
+    }
+
+    protected function load_sql_user_changes(
+        sql_creator                                    $sc,
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        user                                           $usr,
+        user_message                                   $usr_msg,
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): sql_db
+    {
+        $qp = new sql_db();
+        return $qp;
+    }
+
+    /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @param bool $load_all force to include also the excluded phrases e.g. for admins

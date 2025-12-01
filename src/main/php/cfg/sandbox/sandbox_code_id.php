@@ -148,17 +148,18 @@ class sandbox_code_id extends sandbox_typed
      * so mapping the code id is only allowed if the code id is empty
      *
      * @param array $api_json an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
         if ($this->code_id() == null) {
             if (array_key_exists(json_fields::CODE_ID, $api_json)) {
                 $this->set_code_id_db($api_json[json_fields::CODE_ID]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

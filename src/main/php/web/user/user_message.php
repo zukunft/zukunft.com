@@ -61,6 +61,8 @@ class user_message
     // at the predefined and language specific place
     private array $msg_var_lst;
 
+    public ?user $usr;
+
     // a list of solutions suggested by the program
     //private user_actions $actions;
 
@@ -81,6 +83,7 @@ class user_message
         $this->db_row_id = 0;
         $this->msg_id_lst = [];
         $this->msg_var_lst = [];
+        $this->usr = null;
     }
 
 
@@ -146,6 +149,9 @@ class user_message
         }
         $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
         $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
+        if ($this->usr != null) {
+            $vars[json_fields::USER] = $this->usr->api_array();
+        }
         return $vars;
     }
 
@@ -178,6 +184,14 @@ class user_message
         if (array_key_exists(json_fields::USER_MESSAGES_STATUS, $api_json)) {
             $this->msg_status = $api_json[json_fields::USER_MESSAGES_STATUS];
         }
+        if (array_key_exists(json_fields::USER, $api_json)) {
+            $usr = new user();
+            $usr_msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER],$usr_msg);
+            if ($usr_msg->is_ok()) {
+                $this->usr = $usr;
+            }
+        }
     }
 
 
@@ -206,6 +220,21 @@ class user_message
                 $this->set_not_ok();
             }
         }
+    }
+
+    /**
+     * add a error message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_err($msg);
     }
 
     /**
@@ -379,6 +408,34 @@ class user_message
     /*
      * internal
      */
+
+    /**
+     * TODO should pick the last either from msg_var_lst or msg_id_lst
+     * @return string with latest added message translated to the user language
+     */
+    function get_last_message_translated(): string
+    {
+        return $this->get_message_translated(count($this->msg_var_lst));
+    }
+
+    /**
+     * simple return a translated message text with vars
+     * TODO review
+     * @param int $pos used to get other message than the main message
+     * @return string simple the message text
+     */
+    function get_message_translated(int $pos = 1): string
+    {
+        // the first message should have the position 1 not 0 like in php array
+        $pos = $pos - 1;
+        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
+            return $this->var_message_text();
+        } else {
+            $msg = 'user message translation for position ' . $pos . ' not found';
+            log_warning($msg);
+            return $msg;
+        }
+    }
 
     /**
      * @return array with all the text messages

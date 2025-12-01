@@ -331,11 +331,12 @@ class component extends sandbox_code_id
     /**
      * map a component api json to this model component object
      * @param array $api_json the api array with the values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // it is expected that the code id is set via import by an admin not via api
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
@@ -363,7 +364,7 @@ class component extends sandbox_code_id
         }
         // TODO map e.g. the $row_phrase
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -462,14 +463,16 @@ class component extends sandbox_code_id
 
     /**
      * get a formula either with the id set or with all fields set based on an api json
+     * TODO Prio 1 add user_message as parameter
      * @param int|array $value either the id itself or an array with the id
      * @return formula with at least the id set
      */
     private function formula_from_api_json(int|array $value): formula
     {
+        $usr_msg = new user_message();
         $frm = new formula($this->user());
         if (is_array($value)) {
-            $frm->api_mapper($value);
+            $frm->api_mapper($value, $usr_msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache

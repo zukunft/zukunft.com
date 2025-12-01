@@ -121,6 +121,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -253,9 +254,11 @@ include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
 
+// load the unit testing modules for the api
+include_once test_paths::UNIT_API . 'api_tests.php';
+
 // load the unit testing modules with database read only
 //include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
-include_once test_paths::UNIT_READ . 'api_tests.php';
 include_once test_paths::UNIT_READ . 'system_read_tests.php';
 include_once test_paths::UNIT_READ . 'system_views_read_tests.php';
 include_once test_paths::UNIT_READ . 'sql_db_read_tests.php';
@@ -924,6 +927,7 @@ class test_base
     {
         $lib = new library();
         $tl = new test_lib();
+        $usr_msg_ui = new user_message_ui();
 
         // create the filename of the expected result
         $folder = '';
@@ -959,12 +963,12 @@ class test_base
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
-            $dbo_dsp->set_from_json($dbo_api_msg);
+            $dbo_dsp->set_from_json($dbo_api_msg, $usr_msg_ui);
         }
 
         // create the view for the user
         $dsp_html = new view_ui;
-        $dsp_html->set_from_json($api_msg);
+        $dsp_html->set_from_json($api_msg, $usr_msg_ui);
         if ($cfg == null) {
             $ui = new frontend('');
             $ui->load_cache();
@@ -2473,6 +2477,7 @@ class test_base
     function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
         $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr1;
         // add the named object and remember the name
         $name = $sbx->name();
         $sbx->save($usr_msg, $use_func);
@@ -3199,6 +3204,7 @@ class test_base
     {
         $lib = new library();
         $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr1;
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
@@ -3378,6 +3384,7 @@ class test_base
     function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
         $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr1;
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
         $name = $sbx->name();
@@ -3425,6 +3432,7 @@ class test_base
     function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
         $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr1;
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -4173,7 +4181,7 @@ function zu_test_time_setup(test_cleanup $t): string
         $end_year = $this_year + $test_years;
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
-            $t_db->test_word(strval($this_year));
+            $t_db->test_word(strval($this_year), null, $t->usr_system);
             $wrd_lnk = $t_db->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {

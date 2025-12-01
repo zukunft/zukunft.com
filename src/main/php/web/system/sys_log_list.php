@@ -105,8 +105,7 @@ class sys_log_list
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = new sys_log();
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
+            $new->api_mapper($value, $usr_msg);
             $this->add($new);
         }
         return $usr_msg;

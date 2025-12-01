@@ -102,7 +102,7 @@ class controller
         $result = ''; // reset the json message string
         $usr_msg = new user_message();
 
-        $dbo->api_mapper($api_json);
+        $dbo->api_mapper($api_json, $usr_msg);
 
         // add the db object e.g. word
         $dbo->save($usr_msg);
@@ -150,7 +150,7 @@ class controller
         $result = ''; // reset the json message string
         $usr_msg = new user_message();
 
-        $dbo->api_mapper($api_json);
+        $dbo->api_mapper($api_json, $usr_msg);
         $dbo->id = $id;
 
         // update the db object e.g. word

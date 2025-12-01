@@ -180,6 +180,7 @@ class test_db_load
     {
         global $sys;
         $usr_msg = new user_message();
+        $usr_msg->usr = $test_usr;
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
@@ -979,7 +980,7 @@ class test_db_load
     function reference_put_json(): array
     {
         global $db_con;
-        global $reference_types;
+        global $sys;
         $t_wrd = new test_words($this->env);
         $msg = new api_message();
         $pod_name = $msg->api_site_name($db_con);
@@ -988,7 +989,7 @@ class test_db_load
         $ref->set_external_key(refs::SYSTEM_TEST_API_ADD_KEY);
         $ref->description = refs::SYSTEM_TEST_API_ADD_COM;
         $ref->set_url(refs::SYSTEM_TEST_API_ADD_URL);
-        $ref->predicate_id = $reference_types->id(source_types::PDF);
+        $ref->predicate_id = $sys->typ_lst->ref_typ->id(source_types::PDF);
         $body_array = $ref->api_json_array(new api_type_list([]));
         return $msg->api_header_array($pod_name, ref::class, $this->env->usr1, $body_array);
     }
@@ -1062,6 +1063,7 @@ class test_db_load
     {
         global $sys;
         $usr_msg = new user_message();
+        $usr_msg->usr = $test_usr;
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {

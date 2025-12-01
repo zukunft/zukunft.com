@@ -76,11 +76,12 @@ class job extends db_object
     /**
      * set the vars of this batch job html object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
@@ -134,7 +135,7 @@ class job extends db_object
         } else {
             $this->set_priority(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_request_time(DateTime $iso_time_str): void

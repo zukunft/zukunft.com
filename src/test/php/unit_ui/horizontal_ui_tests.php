@@ -40,11 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -57,9 +53,12 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
-use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,6 +70,7 @@ class horizontal_ui_tests
         // init
         $lib = new library();
         $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
         $usr_msg = new user_message();
         $url_test = new test_mappers($t);
         $url_map = new url_mapper();
@@ -99,14 +99,14 @@ class horizontal_ui_tests
             $url = $url_test->test_url($t_map->class_to_url_add($class, 1));
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
-            $url_array = $url_map->url_to_standard($url_array, $usr_msg);
+            $url_array = $url_map->url_to_standard($url_array, $usr_msg_ui);
             $ui_obj = $t_map->class_to_ui_object($class);
             $filled_obj = $t_map->class_to_filled_object($class);
-            $ui_obj->url_mapper($url_array, $usr_msg);
+            $ui_obj->url_mapper($url_array, $usr_msg_ui);
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;
             $refilled_obj->reset();
-            $refilled_obj->api_mapper($api_msg);
+            $refilled_obj->api_mapper($api_msg, $usr_msg);
             // fill the id that is not set by the add url
             $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the crud action

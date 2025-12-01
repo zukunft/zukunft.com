@@ -1333,12 +1333,9 @@ class sql_db
         global $sys;
         $sys->typ_lst = new type_lists();
 
-        // TODO use system user cache
-        global $system_users;
         // TODO use user profile cache
         global $sys;
         global $sys;
-        global $sys_msk_cac;
 
         // TODO Prio 2 activate or remove
         //$system_users =[];
@@ -5848,8 +5845,8 @@ class sql_db
     function create_internal_words(user $usr): user_message
     {
         $usr_msg = new user_message();
+        $usr_msg->usr = $usr;
 
-        global $sys;
         global $sys;
 
         if ($usr->is_admin() or $usr->is_system()) {

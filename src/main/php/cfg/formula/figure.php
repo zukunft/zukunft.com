@@ -130,26 +130,24 @@ class figure extends combine_object
     /**
      * map a figure api json to this model figure object
      * @param array $api_json the api array with the figure values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($api_json[json_fields::ID] > 0) {
             $val = new value($this->user());
-            $usr_msg->add($val->api_mapper($api_json));
-            if ($usr_msg->is_ok()) {
+            if ($val->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $val;
             }
         } else {
             $res = new result($this->user());
             $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-            $usr_msg->add($res->api_mapper($api_json));
-            if ($usr_msg->is_ok()) {
+            if ($res->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $res;
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

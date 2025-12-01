@@ -269,6 +269,7 @@ class base_ui_tests
 
         // test if a simple text component can be created
         $cmp = new component($usr);
+        $usr_msg = new user_message();
         $cmp->type_id = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
@@ -287,13 +288,13 @@ class base_ui_tests
         $test_name = 'a sandbox object e.g. source change button html code';
         $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
         $src = new source();
-        $src->set_from_json($t_src->source()->api_json());
+        $src->set_from_json($t_src->source()->api_json(), $usr_msg);
         $t->assert($test_name, $src->btn_edit('1'), $target);
 
         $test_name = 'a sandbox object e.g. formula delete button html code';
         $target = '<a href="/http/view.php?m=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
         $frm = new formula();
-        $frm->set_from_json($t_frm->formula()->api_json());
+        $frm->set_from_json($t_frm->formula()->api_json(), $usr_msg);
         $t->assert($test_name, $frm->btn_del('1'), $target);
 
 

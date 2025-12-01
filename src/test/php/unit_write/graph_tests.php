@@ -32,6 +32,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -51,6 +52,7 @@ class graph_tests
 
         // init
         $t_vrb = new test_verbs($t);
+        $usr_msg = new user_message();
         $back = 0;
 
         // start the test section (ts)
@@ -128,7 +130,7 @@ class graph_tests
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
         $dsp_trp_list = new triple_list_ui();
-        $dsp_trp_list->api_mapper($api_json);
+        $dsp_trp_list->api_mapper($api_json, $usr_msg);
         $result = $dsp_trp_list->tbl($back);
         $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);
         $t->assert_text_contains($test_name . words::CANTON, $result, words::COMPANY);

@@ -36,8 +36,24 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\unit_env;
+use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -48,29 +64,12 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT . 'permission_tests.php';
-include_once test_paths::UNIT_READ . 'api_tests.php';
+include_once test_paths::UNIT_API . 'api_tests.php';
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
-use Zukunft\ZukunftCom\test\php\create\test_types;
-use Zukunft\ZukunftCom\test\php\create\test_users;
-use Zukunft\ZukunftCom\test\php\create\unit_env;
-use Zukunft\ZukunftCom\test\php\unit_read\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class all_unit_tests extends test_cleanup
 {
@@ -168,17 +167,6 @@ class all_unit_tests extends test_cleanup
         new api_tests()->run_openapi_test($this);
         new base_ui_tests()->run($this);
 
-        // load the types from the api message
-        $api_msg = $t_typ->type_lists_api($this->usr1);
-        new type_list_ui($api_msg);
-
-        // test the html ui on localhost without api
-        $ui = new frontend('unit ui tests');
-        $ui->load_dummy_cache_from_test_resources($this->usr1);
-        new all_ui_tests()->run($this, $ui);
-
-        // test the html ui on localhost with api
-        // (new all_ui_api_tests()->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

@@ -143,17 +143,28 @@ const ONLY_UNIT_TESTS = true; // set to true if only the unit tests should be pe
 const ONLY_UNIT_TESTS_DEV = false; // dito for development
 const RESET_DB = false; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
 const RESET_DB_DEV = true; // dito for development
-const RESET_DB_ONLY = false; // true to force resetting the database without any other tests
 const QUICK_TEST_ONLY = false; // true to run only a single test for faster debugging
+const API_TEST = true; // perform also the api requests and check the results
+const FRONTEND_TEST = true; // create the HTML frontend pages b ase on the URLs
+const WORKFLOW_TEST = true; // perform also the workflow tests
 const WRITE_TEST = true; // perform also the db write tests
+const INTEGRATION_TEST = true; // perform also actual requests to external systems like wikidata and check if the responses are as expected
 
 
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_API . 'all_api_tests.php';
+include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\unit_api\all_api_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\all_workflow_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 use Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 class all_tests extends all_unit_write_tests
 {
@@ -165,37 +176,62 @@ class all_tests extends all_unit_write_tests
         // init
         $errors = 0;
         $t_db = new test_db_load($this);
+        $usr_msg = new user_message();
+        $map = new MapObject();
+        $usr_msg_ui = $map->convertMsgToUi($usr_msg);
 
         // start the test section (ts)
         $ts = 'Start of all zukunft.com tests ';
         $this->header($ts);
 
+        // if requested only run some selected tests
         if (QUICK_TEST_ONLY) {
             $t_sel = new a_selected_test();
             $t_sel->run();
-        }
+        } else {
+            // ... otherwise run the test starting with internal unit test
 
-        // run the unit tests without database connection
-        if (!QUICK_TEST_ONLY) {
+            // first run the unit tests without database connection
             $this->run_unit();
-        }
 
-        // run the database read tests
-        if ($errors <= ERROR_LIMIT and !$this->only_unit_tests() and !RESET_DB_ONLY and !QUICK_TEST_ONLY) {
-            $this->run_unit_db_tests($this);
-        }
+            // run the database read tests also to check if the test results are influenced by any leftovers
+            if ($errors <= ERROR_LIMIT) {
+                $this->run_unit_db_tests($this);
+            }
 
-        if ($this->db_reset_allowed() and $errors <= ERROR_LIMIT and !$this->only_unit_tests() and !QUICK_TEST_ONLY) {
-            $this->run_db_recreate();
-        }
+            // check if database reading via api still produces the expected results
+            if ($errors <= ERROR_LIMIT and API_TEST) {
+                $t_api = new all_api_tests();
+                $t_api->run_api_tests($this, $this->usr1, $usr_msg_ui);
+            }
 
-        if ($errors <= ERROR_LIMIT and !$this->only_unit_tests() and !RESET_DB_ONLY and !QUICK_TEST_ONLY and WRITE_TEST) {
-            $this->run_db_write_tests($this);
-        }
+            // database reset is switched off here for better detection of leftovers
+            // it can be started via reset_db
+            if ($this->db_reset_allowed() and $errors <= ERROR_LIMIT and !$this->only_unit_tests()) {
+                $this->run_db_recreate();
+            }
 
-        // recreate the type list api message based on the updated db
-        // because this json is used for the unit tests
-        $t_db->type_list_recreate($this, $this->usr1);
+            // html page creation based on the url
+            if ($errors <= ERROR_LIMIT and FRONTEND_TEST) {
+                // test the html ui on localhost without api
+                $ui = new frontend('unit ui tests');
+                $ui->load_dummy_cache_from_test_resources($this->usr1);
+                new all_ui_tests()->run($this, $ui);
+            }
+
+            if ($errors <= ERROR_LIMIT and WORKFLOW_TEST) {
+                $t_wf = new all_workflow_tests();
+                $t_wf->run_workflow_tests($this, $this->usr1, $usr_msg_ui);
+            }
+
+            if ($errors <= ERROR_LIMIT and WRITE_TEST) {
+                $this->run_db_write_tests($this);
+            }
+
+            // recreate the type list api message based on the updated db
+            // because this json is used for the unit tests
+            $t_db->type_list_recreate($this, $this->usr1);
+        }
 
         // display the test results
         if ($this->format == text_log_format::HTML) {

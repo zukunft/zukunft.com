@@ -246,11 +246,12 @@ class group extends sandbox_multi
      * map a group api json to this model group object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the group values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
@@ -262,7 +263,7 @@ class group extends sandbox_multi
             $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 

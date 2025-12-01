@@ -35,8 +35,26 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\unit\lib_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -53,25 +71,7 @@ include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
-include_once test_paths::UNIT_WRITE . 'word_url_tests.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\const\def;
-use Zukunft\ZukunftCom\main\php\cfg\const\files;
-use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
-use Zukunft\ZukunftCom\test\php\unit\lib_tests;
-use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
-use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
+include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 
 class all_unit_write_tests extends all_unit_read_tests
 {

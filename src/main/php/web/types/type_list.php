@@ -83,6 +83,7 @@ class type_list
 
     /**
      * set the vars of these list display objects bases on the api json array
+     * TODO Prio 1 add user_message parameter
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -92,7 +93,7 @@ class type_list
         foreach ($json_array as $value) {
             if ($class == verb::class) {
                 $vrb = new verb();
-                $vrb->api_mapper($value);
+                $vrb->api_mapper($value, $usr_msg);
                 $this->add_obj($vrb);
             } elseif ($class == ref_type::class) {
                 $ref_typ = new ref_type(

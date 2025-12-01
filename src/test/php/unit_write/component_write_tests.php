@@ -251,16 +251,17 @@ class component_write_tests
     {
         $t_db = new test_db_load($t);
         $usr_msg = new user_message();
+        $usr_msg->usr = $t->usr1;
 
         // start the test section (ts)
         $ts = 'db create test components ';
         $t->header($ts);
 
-        $t_db->test_component(components::TEST_TITLE_NAME, comp_type_shared::PHRASE_NAME);
-        $t_db->test_component(components::TEST_VALUES_NAME, comp_type_shared::VALUES_ALL);
-        $t_db->test_component(components::TEST_RESULTS_NAME, comp_type_shared::FORMULA_RESULTS);
-        $t_db->test_component(components::TEST_EXCLUDED_NAME, comp_type_shared::PHRASE_NAME);
-        $t_db->test_component(components::TEST_TABLE_NAME, comp_type_shared::NUMERIC_VALUE);
+        $t_db->test_component(components::TEST_TITLE_NAME, comp_type_shared::PHRASE_NAME, $t->usr1);
+        $t_db->test_component(components::TEST_VALUES_NAME, comp_type_shared::VALUES_ALL, $t->usr1);
+        $t_db->test_component(components::TEST_RESULTS_NAME, comp_type_shared::FORMULA_RESULTS, $t->usr1);
+        $t_db->test_component(components::TEST_EXCLUDED_NAME, comp_type_shared::PHRASE_NAME, $t->usr1);
+        $t_db->test_component(components::TEST_TABLE_NAME, comp_type_shared::NUMERIC_VALUE, $t->usr1);
 
         // modify the special test cases
         global $usr;

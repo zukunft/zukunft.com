@@ -69,7 +69,7 @@ class start_ui_read_tests
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
         $dto_dsp = new data_object();
-        $dto_dsp->set_offline();
+        $dto_dsp->online = false;
         $dto_dsp->add_phrases($t_phr->phrase_list_start_view_ui());
         $dto_dsp->typ_lst_cache = $ui->dto->typ_lst_cache;
 

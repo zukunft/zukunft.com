@@ -82,8 +82,7 @@ class db_cl
     function sys_usr_id(string $code_id): int
     {
         global $sys;
-        global $system_users;
-        return $system_users->id($code_id);
+        return $sys->usr_sys->id($code_id);
     }
 
     function user_profile_id(string $code_id): int
@@ -342,8 +341,8 @@ class db_cl
 
     function sys_usr_name(int $id): string
     {
-        global $system_users;
-        return $system_users->name($id);
+        global $sys;
+        return $sys->usr_sys->name($id);
     }
 
     function user_profile_name(int $id): string

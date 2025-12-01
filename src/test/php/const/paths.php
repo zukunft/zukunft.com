@@ -49,10 +49,12 @@ class paths
     // path for unit tests
     const string UNIT = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;              // for unit tests
     const string UNIT_READ = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;    // for the unit tests with database read only
+    const string UNIT_API = TEST_PHP_PATH . 'unit_api' . DIRECTORY_SEPARATOR;      // for the unit tests of the api
     const string UNIT_DSP = self::UNIT . 'html' . DIRECTORY_SEPARATOR;             // for the unit tests that create HTML code
     const string UNIT_HTML = TEST_PHP_PATH . 'unit_display' . DIRECTORY_SEPARATOR; // for the unit tests that create HTML code
     const string UNIT_UI = TEST_PHP_PATH . 'unit_ui' . DIRECTORY_SEPARATOR;        // for the unit tests that create JSON messages for the frontend
     const string UNIT_WRITE = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;  // for the unit tests that save to database (and cleanup the test data after completion)
+    const string UNIT_WORKFLOW = TEST_PHP_PATH . 'unit_workflow' . DIRECTORY_SEPARATOR;  // to check the url based user workflow
     const string UNIT_INT = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
     const string DEV = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency

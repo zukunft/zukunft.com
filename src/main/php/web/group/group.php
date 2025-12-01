@@ -190,12 +190,13 @@ class group extends sandbox_named
     /**
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         if (array_key_exists(json_fields::ID, $json_array)) {
-            $usr_msg = parent::api_mapper($json_array);
+            parent::api_mapper($json_array, $usr_msg);
             if (array_key_exists(json_fields::PHRASES, $json_array)) {
                 $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
@@ -209,7 +210,7 @@ class group extends sandbox_named
                 $this->set_phrase_from_json_array($phr_json);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -231,18 +232,20 @@ class group extends sandbox_named
 
 
     /**
+     * TODO Prio 1 add user_message parameter
      * @param array $phr_json the json array of a phrase
      * @return void
      */
     private function set_phrase_from_json_array(array $phr_json): void
     {
+        $usr_msg = new user_message();
         $wrd_or_trp = new word();
         if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
             if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $wrd_or_trp = new triple();
             }
         }
-        $wrd_or_trp->api_mapper($phr_json);
+        $wrd_or_trp->api_mapper($phr_json, $usr_msg);
         $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;

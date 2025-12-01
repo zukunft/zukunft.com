@@ -130,17 +130,16 @@ class db_object_seq_id extends db_object
     /**
      * fill the vars with this database id object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
-
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

@@ -112,10 +112,11 @@ class test_api extends test_base
     function assert_api_to_ui(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
         $lib = new library();
+        $usr_msg_ui = new user_message_ui();
         $class = $this->class_to_api($usr_obj::class);
         $api_types[] = api_type::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
-        $dsp_obj->set_from_json($msg_to_frontend);
+        $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
         $array_to_backend = $dsp_obj->api_array();
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($msg_to_frontend) should not contain empty fields
@@ -175,6 +176,7 @@ class test_api extends test_base
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
+        $usr_msg = new user_message();
 
         // is excluded api json empty?
         $test_name = $class_api . ' excluded json is empty';
@@ -224,7 +226,7 @@ class test_api extends test_base
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->api_mapper(json_decode($json_api, true));
+            $clone_obj->api_mapper(json_decode($json_api, true), $usr_msg);
             $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
@@ -673,6 +675,7 @@ class test_api extends test_base
     /**
      * check if the REST POST call returns a JSON message with the id of the object just added
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
@@ -684,12 +687,13 @@ class test_api extends test_base
     {
         $lib = new library();
         $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
         $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
 
         $dbo = $t_map->class_to_add_object($class);
         $name = $dbo->name();
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json());
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         //$add_result = $dbo_ui->add_via_api();
 
         // TODO Prio 1 remove reloading and use $add_result instead
@@ -702,6 +706,7 @@ class test_api extends test_base
     /**
      * check if the REST POST call returns a JSON message with the id of the object just added
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
@@ -716,12 +721,13 @@ class test_api extends test_base
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
 
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
         $dbo = $t_map->class_to_add_object($class);
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json());
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         // replacement for the api call
         $name = $dbo->name();
         $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, $msg);
@@ -733,6 +739,7 @@ class test_api extends test_base
     /**
      * check if the REST DELETE call returns an empty JSON message if the excusion has been successful
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
@@ -747,13 +754,14 @@ class test_api extends test_base
         $lib = new library();
         $ctrl = new controller();
         $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
 
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
         $dbo = $t_map->class_to_add_object($class);
         $dbo->load_by_name($dbo->name());
         $dbo_ui = $t_map->class_to_ui_object($class);
-        $dbo_ui->set_from_json($dbo->api_json());
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         $ctrl->delete($dbo_ui->id(), $dbo, $usr, $msg);
 
         $dbo->load_by_name($dbo->name());

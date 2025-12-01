@@ -128,11 +128,12 @@ class sandbox_named extends sandbox
     /**
      * set the vars of this named sandbox object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::NAME, $json_array)) {
             $this->set_name($json_array[json_fields::NAME]);
         } else {
@@ -155,7 +156,7 @@ class sandbox_named extends sandbox
         } else {
             $this->usage = 0;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -207,6 +208,7 @@ class sandbox_named extends sandbox
 
     /**
      * load the named user sandbox object e.g. word by name via api
+     * TODO Prio 1 add user_message as parameter
      * @param string $name
      * @return bool
      */
@@ -214,10 +216,11 @@ class sandbox_named extends sandbox
     {
         $result = false;
 
+        $usr_msg = new user_message();
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body);
+            $this->api_mapper($json_body, $usr_msg);
             if ($this->id() != 0) {
                 $result = true;
             }

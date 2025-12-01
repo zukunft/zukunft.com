@@ -174,16 +174,17 @@ class triple extends sandbox_code_id
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
             $value = $json_array[json_fields::FROM_PHRASE];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value);
+                $phr->api_mapper($value, $usr_msg);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
@@ -192,7 +193,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::FROM];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value);
+                $phr->api_mapper($value, $usr_msg);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
@@ -204,7 +205,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::VERB];
             if (is_array($value)) {
                 $vrb = new verb();
-                $vrb->api_mapper($value);
+                $vrb->api_mapper($value, $usr_msg);
                 $this->set_verb($vrb);
             } else {
                 $this->set_verb_by_id($value);
@@ -216,7 +217,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::TO_PHRASE];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value);
+                $phr->api_mapper($value, $usr_msg);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);
@@ -225,7 +226,7 @@ class triple extends sandbox_code_id
             $value = $json_array[json_fields::TO];
             if (is_array($value)) {
                 $phr = new phrase();
-                $phr->api_mapper($value);
+                $phr->api_mapper($value, $usr_msg);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);
@@ -248,7 +249,7 @@ class triple extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

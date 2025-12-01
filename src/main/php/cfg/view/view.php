@@ -235,11 +235,12 @@ class view extends sandbox_code_id
      * map a view api json to this model view object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // it is expected that the code id is set via import by an admin not via api
 
@@ -247,7 +248,7 @@ class view extends sandbox_code_id
             $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1184,7 +1185,8 @@ class view extends sandbox_code_id
 
         // collect all view relations where this view is used
         $mrl_lst = new view_relation_list($this->user());
-        $mrl_lst->load_by_view($this);
+        // TODO Prio 0 activate
+        //$mrl_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else

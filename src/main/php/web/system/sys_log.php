@@ -74,11 +74,12 @@ class sys_log extends log
     /**
      * set the vars of this system log html object bases on the api json array
      * @param array $json_array an api json message including the api message header
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::TRACE, $json_array)) {
             $this->set_trace($json_array[json_fields::TRACE]);
         } else {
@@ -103,7 +104,7 @@ class sys_log extends log
         } else {
             $this->set_owner_id(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_trace(string $trace): void

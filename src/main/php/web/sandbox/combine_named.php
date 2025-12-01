@@ -39,10 +39,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'combine_object.php';
+include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class combine_named extends combine_object
@@ -145,17 +147,19 @@ class combine_named extends combine_object
 
     /**
      * load the phrase by name via api
+     * TODO Prio 1 add user_message as parameter
      * @param string $name
      * @return bool
      */
     function load_by_name(string $name): bool
     {
         $result = false;
+        $usr_msg = new user_message();
 
         $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body);
+            $this->api_mapper($json_body, $usr_msg);
             if ($this->obj_id() != 0) {
                 $result = true;
             }

@@ -376,12 +376,14 @@ class value_base extends sandbox_value
     /**
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         $lib = new library();
 
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // make sure that there are no unexpected leftovers but keep the user
         // TODO check that it is always moved to sandbox object
@@ -392,8 +394,7 @@ class value_base extends sandbox_value
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
-            if ($usr_msg->is_ok()) {
+            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $usr_msg)) {
                 $this->grp()->set_phrase_list($phr_lst);
             }
         }
@@ -439,7 +440,7 @@ class value_base extends sandbox_value
             $this->source = $src;
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1941,7 +1942,6 @@ class value_base extends sandbox_value
     function save_field_trigger_update($db_con): string
     {
         global $sys;
-        global $job_typ_cac;
         global $usr;
 
         $result = '';

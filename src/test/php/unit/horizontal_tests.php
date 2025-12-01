@@ -46,8 +46,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -58,6 +57,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
+include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UTILS . 'test_api.php';
@@ -65,11 +65,14 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -132,6 +135,8 @@ class horizontal_tests
         $t->subheader($ts . 'frontend api');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'frontend of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
+            $usr_msg = new user_message();
+            $usr_msg_ui = new user_message_ui();
             $filled_obj = $t_map->class_to_filled_object($class);
             if (in_array($class, def::SANDBOX_CLASSES)) {
                 $filled_obj->include();
@@ -140,11 +145,11 @@ class horizontal_tests
             $check_obj = $filled_obj->clone_all();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $ui_obj = $tl->obj_to_ui_obj($filled_obj);
-            $ui_obj->set_from_json($api_json);
+            $ui_obj->set_from_json($api_json, $usr_msg_ui);
             $check_obj->reset();
             $ui_json = $ui_obj->api_json();
             $api_json_ui = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
-            $check_obj->set_from_api($ui_json);
+            $check_obj->set_from_api($ui_json, $usr_msg);
             $diff = $check_obj->diff_msg($filled_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());

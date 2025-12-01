@@ -198,12 +198,11 @@ class type_object extends db_object_seq_id
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
@@ -215,9 +214,7 @@ class type_object extends db_object_seq_id
                 $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
-
-
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -245,11 +242,12 @@ class type_object extends db_object_seq_id
     /**
      * set the vars of this type object based on json string from the frontend object
      * @param string $api_json with the api message created by the frontend
-     * @return user_message with problems and suggested solutions for the user
+     * @param user_message $usr_msg with problems and suggested solutions for the user
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_api(string $api_json): user_message
+    function set_from_api(string $api_json, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true));
+        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
     }
 
     function set_name(string $name): void

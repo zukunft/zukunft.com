@@ -251,11 +251,12 @@ class ref extends sandbox_link
      * map a ref api json to this model ref object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
             if ($api_json[json_fields::PHRASE_ID] != '' and $api_json[json_fields::PHRASE_ID] != 0) {
@@ -280,7 +281,7 @@ class ref extends sandbox_link
             }
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**

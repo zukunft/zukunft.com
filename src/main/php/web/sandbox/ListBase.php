@@ -130,6 +130,7 @@ class ListBase extends ListOfIdObjects
 
     /**
      * set the vars of these list display objects bases on the api json array
+     * TODO Prio 1 add user_message parameter (to all function that return a user_message)
      * @param array $json_array an api list json message
      * @param db_object|IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
      * @return user_message ok or a warning e.g. if the server version does not match
@@ -139,8 +140,7 @@ class ListBase extends ListOfIdObjects
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone $dbo;
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
+            $new->api_mapper($value, $usr_msg);
             $this->add_obj($new, true);
         }
         return $usr_msg;
@@ -200,6 +200,27 @@ class ListBase extends ListOfIdObjects
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * refresh the list by id from the backend via api
+     *
+     * @param user_message $usr_msg the list class name that should be loaded e.g. formula_link_list
+     * @return bool true if the reload has been successful
+     */
+    function reload(user_message $usr_msg): bool
+    {
+        $id_lst = $this->id_lst();
+        /*
+        $data = array($url_var => $id);
+        $rest = new rest_call();
+        $json_body = $rest->api_get($class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        */
+        return $usr_msg->is_ok();
     }
 
 

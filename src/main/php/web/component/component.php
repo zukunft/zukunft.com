@@ -140,11 +140,12 @@ class component extends sandbox_code_id
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
@@ -189,7 +190,7 @@ class component extends sandbox_code_id
         } else {
             $this->style_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

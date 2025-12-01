@@ -202,10 +202,12 @@ class sandbox_named extends sandbox
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
@@ -217,7 +219,7 @@ class sandbox_named extends sandbox
         }
         // the usage is set by an internal batch and cannot be set by the api
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -341,6 +343,7 @@ class sandbox_named extends sandbox
      */
     function set_name(?string $name): user_message
     {
+        // TODO Prio 2 use user_message from calling function
         $usr_msg = new user_message();
 
         if ($name != null) {
@@ -921,7 +924,6 @@ class sandbox_named extends sandbox
      */
     protected function check_preserved(user_message $usr_msg): bool
     {
-        global $usr;
         global $mtr;
 
         // init
@@ -931,10 +933,10 @@ class sandbox_named extends sandbox
         $class_name = $lib->class_to_name($this::class);
 
         // system users are always allowed to add objects e.g. for the system views
-        if (!$usr->is_system()) {
+        if (!$usr_msg->usr->is_system()) {
             if (in_array($this->name(), $this->reserved_names())) {
                 // the admin user needs to add the read test objects during initial load
-                if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
+                if ($usr_msg->usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
                     $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
                         msg_id::VAR_NAME => $this->name(),
                         msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for

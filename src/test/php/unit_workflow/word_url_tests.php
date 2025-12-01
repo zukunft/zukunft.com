@@ -30,9 +30,17 @@
 
 */
 
-namespace Zukunft\ZukunftCom\test\php\unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_workflow;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -42,28 +50,22 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-
 class word_url_tests
 {
 
-    function run(test_cleanup $t): void
+    function run(test_base $t): void
     {
 
         // init
         global $mtr;
+        $usr_msg = new user_message();
         $ui = new frontend('view');
         $ui->load_cache();
-        $usr_dsp = new user_ui();
-        $usr_dsp->set_from_json($t->usr1->api_json());
-        $usr_msg = new user_message();
+        $usr_ui = new user_ui();
+        $usr_ui->set_from_json($t->usr1->api_json(), $usr_msg);
+        $usr_sys_ui = new user_ui();
+        $usr_sys_ui->set_from_json($t->usr_system->api_json(), $usr_msg);
+        $usr_msg->usr = $usr_sys_ui;
         $t->name = 'word url->';
 
         // start the test section (ts)
@@ -77,13 +79,13 @@ class word_url_tests
         $url_arr = [];
         $url_arr[url_var::VIEW] = views::WORD_EDIT_ID;
         $url_arr[url_var::ID] = words::MATH_ID;
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, words::MATH);
 
         $test_name = '... view with execution time measurement';
         $url_arr[url_var::DEBUG] = url_var::DEBUG_EXE_TIME_REPORT;
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, words::MATH);
 
@@ -92,25 +94,25 @@ class word_url_tests
         $url_arr[url_var::VIEW] = views::WORD_ADD_ID;
         $url_arr[url_var::ACTION] = url_var::CRUD_CREATE;
         $url_arr[url_var::NAME] = '';
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 1 activate
         //$t->assert_text_contains($test_name, $result, msg_id::WORD_NAME_MISSING->text());
 
         $test_name = '... with name ask the user to confirm adding the word';
         $url_arr[url_var::NAME] = words::TEST_ADD;
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, $mtr->get(msg_id::FORM_TITLE_CONFIRM_ADD->text()));
 
         $test_name = '... if confirmed the word is added';
         $url_arr[url_var::STEP] = url_var::STEP_CONFIRMED;
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
 
         $test_name = '... so it can be deleted';
         $url_arr[url_var::ACTION] = url_var::CRUD_DELETE;
-        $result = $ui->url_to_html($url_arr, $usr_dsp, $usr_msg, $ui->dto);
+        $result = $ui->url_to_html($url_arr, $usr_ui, $usr_msg, $ui->dto);
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $result, words::TEST_ADD);
 

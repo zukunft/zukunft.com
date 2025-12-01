@@ -121,15 +121,16 @@ class view_relation extends sandbox_link
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
 
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::PARENT_ID, $json_array)) {
             $this->set_parent_view_id($json_array[json_fields::PARENT_ID]);
         }
@@ -145,7 +146,7 @@ class view_relation extends sandbox_link
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
             $this->description = $json_array[json_fields::DESCRIPTION];
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

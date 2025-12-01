@@ -324,13 +324,15 @@ class sandbox_value extends sandbox_multi
     /**
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
             $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
         }
-        return parent::api_mapper($api_json);
+        return parent::api_mapper($api_json, $usr_msg);
     }
 
 

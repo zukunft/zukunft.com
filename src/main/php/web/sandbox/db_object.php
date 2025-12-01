@@ -117,14 +117,16 @@ class db_object extends TextIdObject
      */
 
     /**
+     * TODO Prio 1 add user_message parameter
      * the html display object are always filled base on the api message
      * @param string|null $api_json the api message to set all object vars
      */
     function __construct(?string $api_json = null)
     {
+        $usr_msg = new user_message();
         parent::__construct();
         if ($api_json != null) {
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $usr_msg);
         }
     }
 
@@ -171,11 +173,12 @@ class db_object extends TextIdObject
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
     }
 
     /**
@@ -183,12 +186,11 @@ class db_object extends TextIdObject
      * this function is expected to be extended by each child object that has additional object vars
      *
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
@@ -203,7 +205,7 @@ class db_object extends TextIdObject
         // remember to send the updates to the backend
         $this->set_modified();
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_id(int|string $id): void
@@ -223,6 +225,7 @@ class db_object extends TextIdObject
 
     /**
      * load the user sandbox object e.g. word by id via api
+     * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return bool
@@ -230,6 +233,7 @@ class db_object extends TextIdObject
     function load_by_id(int|string $id, array $data = []): bool
     {
         $result = false;
+        $usr_msg = new user_message();
 
         $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
@@ -239,7 +243,7 @@ class db_object extends TextIdObject
                 $excluded = $json_array[json_fields::EXCLUDED];
             }
             if (!$excluded) {
-                $this->api_mapper($json_array);
+                $this->api_mapper($json_array, $usr_msg);
                 if ($this->name() != '') {
                     $result = true;
                 }
@@ -538,8 +542,8 @@ class db_object extends TextIdObject
     {
         $map_obj = new MapObject();
         $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr);
-        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
         $add_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -563,8 +567,8 @@ class db_object extends TextIdObject
     {
         $map_obj = new MapObject();
         $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr);
-        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
         $upd_result = $db_obj->save($usr_msg_db);
         /*
          * TODO Prio 2 activate api call
@@ -588,8 +592,8 @@ class db_object extends TextIdObject
     {
         $map_obj = new MapObject();
         $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
-        $db_usr = $map_obj->convertToDb($usr);
-        $db_obj = $map_obj->convertToDb($this, $db_usr);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
         $del_result = $db_obj->del($usr_msg_db);
         /*
          * TODO Prio 2 activate api call

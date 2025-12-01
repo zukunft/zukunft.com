@@ -44,12 +44,16 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
+include_once paths::SHARED_CONST . 'users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 
 class system_object
 {
@@ -79,6 +83,9 @@ class system_object
     // all preloaded types
     public type_lists $typ_lst;
 
+    // the system users as a private var to restrict the access
+    private user_list $sys_usr_lst;
+
 
     /*
      * construct and map
@@ -99,6 +106,7 @@ class system_object
         $this->log_msg_lst = array();
         $this->typ_lst = new type_lists();
         $this->log_txt = new text_log();
+        $this->sys_usr_lst = new user_list();
     }
 
 
@@ -114,6 +122,15 @@ class system_object
     function load_type_lists(sql_db $db_con): bool
     {
         return $this->typ_lst->load($db_con);
+    }
+
+    /**
+     * load all system users that have a code id
+     */
+    function load_system_users(sql_db $db_con): bool
+    {
+        $this->sys_usr_lst->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
+        return true;
     }
 
 
@@ -134,6 +151,11 @@ class system_object
     function view_relation_code_id(?int $id): ?string
     {
         return $this->typ_lst->mrl_typ->code_id($id);
+    }
+
+    function system_users(): user_list
+    {
+        return $this->sys_usr_lst;
     }
 
 }

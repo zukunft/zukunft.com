@@ -338,30 +338,28 @@ class phrase extends combine_named
     /**
      * map a phrase api json to this model phrase object
      * @param array $api_json the api array with the phrase values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
         } else {
             if ($api_json[json_fields::ID] > 0) {
                 $wrd = new word($this->user());
-                $usr_msg->add($wrd->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } else {
                 $trp = new triple($this->user());
                 $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-                $usr_msg->add($trp->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

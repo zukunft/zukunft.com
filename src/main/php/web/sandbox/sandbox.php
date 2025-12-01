@@ -90,11 +90,12 @@ class sandbox extends db_object
      * do not set the default share and protection type to be able to identify forced updates to the default type
      *
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
 
         // TODO Prio 0 add dto cache object to api mapper
         //if ($this->has_id()) {
@@ -117,7 +118,7 @@ class sandbox extends db_object
         } else {
             $this->excluded = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

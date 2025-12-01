@@ -170,18 +170,19 @@ class sandbox_link extends sandbox
     /**
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
 
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::PREDICATE, $api_json)) {
             $this->predicate_id = $api_json[json_fields::PREDICATE];
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 

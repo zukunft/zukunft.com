@@ -372,6 +372,7 @@ class json_fields
     const string USER_MESSAGES = 'message_id_list';
     const string USER_MESSAGES_WITH_VARS = 'message_id_list_with_vars';
     const string USER_MESSAGES_STATUS = 'message_status';
+    const string USER = 'user';
 
     // list of json fields that are used for the api message to the frontend
     // but that are never used for the api message to the backend

@@ -38,6 +38,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -131,7 +132,7 @@ class test_lib
     function cast_user(user $usr): user_ui
     {
         $usr_ui = new user_ui();
-        $usr_ui->set_from_json($usr->api_json());
+        $usr_ui->set_from_json($usr->api_json(), new user_message());
         return $usr_ui;
     }
 
@@ -291,13 +292,15 @@ class test_lib
     }
 
     /**
+     * TODO Prio 1 add user_message as parameter
      * set the all values of the frontend object based on a backend object using the api object
      * @param object $model_obj the frontend object with the values of the backend object
      */
     function ui_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
     {
+        $usr_msg = new user_message();
         $api_json = $model_obj->api_json();
-        $dsp_obj->set_from_json($api_json);
+        $dsp_obj->set_from_json($api_json, $usr_msg);
         return $dsp_obj;
     }
 

@@ -42,11 +42,10 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
-use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
@@ -68,7 +67,6 @@ class all_unit_read_tests extends all_unit_tests
 
         // init
         $t_db = new test_db_load($t);
-        $t_typ = new test_types($t);
 
         // start the test section (ts)
         $ts = 'db read ';
@@ -129,13 +127,6 @@ class all_unit_read_tests extends all_unit_tests
         (new change_log_read_tests)->run($this);
         (new sys_log_read_tests)->run($this);
         (new job_read_tests)->run($this);
-
-        // load the types from the api message
-        $api_msg = $t_typ->type_lists_api($this->usr1);
-        new type_list_ui($api_msg);
-
-        $api_test = new api_tests();
-        $api_test->run($this);
 
         $t->subheader($ts . 'api based ui tests');
         $ui = new frontend('api based ui tests');

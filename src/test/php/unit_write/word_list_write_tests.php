@@ -97,7 +97,7 @@ class word_list_write_tests
         // e.g. ...
         $wrd_cf = $t_db->test_word(words::TEST_CASH_FLOW);
         $wrd_tax = $t_db->test_word(words::TEST_TAX_REPORT);
-        $wrd_time = $t_db->test_word(words::TEST_2021, phrase_type_shared::TIME);
+        $wrd_time = $t_db->test_word(words::TEST_2021, phrase_type_shared::TIME, $t->usr1);
         $t_db->test_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
 
         // create the test words and relations many mixed relations
@@ -106,7 +106,7 @@ class word_list_write_tests
         $t_db->test_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
 
         // is measure
-        $wrd_measure = $t_db->test_word(words::TEST_CHF, phrase_type_shared::MEASURE);
+        $wrd_measure = $t_db->test_word(words::TEST_CHF, phrase_type_shared::MEASURE, $t->usr1);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . words::TEST_CHF, $result, true);
 

@@ -139,17 +139,18 @@ class source extends sandbox_code_id
     /**
      * set the vars of this source frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::URL, $json_array)) {
             $this->url = $json_array[json_fields::URL];
         } else {
             $this->url = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

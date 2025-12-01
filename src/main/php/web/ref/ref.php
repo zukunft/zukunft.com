@@ -187,11 +187,12 @@ class ref extends sandbox
      * set the vars of this source frontend object bases on the api json array
      * because called from the constructor the null value must be set if the parameter is missing
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::PHRASE_ID, $json_array)) {
             $phr = new phrase();
             $wrd = new word();
@@ -208,7 +209,7 @@ class ref extends sandbox
             } else {
                 $phr = new phrase();
                 $phr_json = $phr_lst_json[0];
-                $phr->api_mapper($phr_json);
+                $phr->api_mapper($phr_json, $usr_msg);
             }
             $this->phr = $phr;
         } else {
@@ -239,7 +240,7 @@ class ref extends sandbox
         } else {
             $this->description = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function name(): string

@@ -223,11 +223,12 @@ class verb extends type_object
     /**
      * map a verb api json to this model verb object
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // TODO add user to request new verbs via api
 
@@ -250,7 +251,7 @@ class verb extends type_object
 
         // the usage and impact var is not expected to be changed via api
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

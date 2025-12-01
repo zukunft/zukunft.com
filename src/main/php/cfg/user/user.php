@@ -375,18 +375,17 @@ class user extends db_id_object_non_sandbox
     /**
      * fill this db id object vars with the values from the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
-
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // map the fields that are common for import and api json messages
-        $this->json_mapper($api_json, $usr, $usr_msg);
+        $this->json_mapper($api_json, $usr_msg->usr, $usr_msg);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -424,13 +423,13 @@ class user extends db_id_object_non_sandbox
      * the common mapping part for the api and import mapper
      *
      * @param array $json
-     * @param user $usr_req
+     * @param user|null $usr_req
      * @param user_message $usr_msg
      * @return void return value is not needed because the messages are written to the given user_message object
      */
     private function json_mapper(
         array        $json,
-        user         $usr_req,
+        ?user        $usr_req,
         user_message $usr_msg
     ): void
     {
@@ -455,16 +454,20 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::LAST_NAME, $json)) {
             $this->last_name = $json[json_fields::LAST_NAME];
         }
-        if (key_exists(json_fields::PROFILE, $json)) {
-            $profile_id_to_add = $sys->typ_lst->usr_pro->id($json[json_fields::PROFILE]);
-            if ($usr_req->can_set_profile($profile_id_to_add)) {
-                $this->profile_id = $profile_id_to_add;
-            } else {
-                $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
-                    msg_id::VAR_USER_NAME => $this->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
-                ]);
+        if ($usr_req != null) {
+            if (key_exists(json_fields::PROFILE, $json)) {
+                $profile_id_to_add = $sys->typ_lst->usr_pro->id($json[json_fields::PROFILE]);
+                if ($usr_req->can_set_profile($profile_id_to_add)) {
+                    $this->profile_id = $profile_id_to_add;
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                    ]);
+                }
             }
+        } else {
+            $this->profile_id = user_profiles::NORMAL_ID;
         }
         if (key_exists(json_fields::EXCLUDED, $json)) {
             $this->excluded = $json[json_fields::EXCLUDED];

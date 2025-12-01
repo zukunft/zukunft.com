@@ -222,10 +222,10 @@ class config_numbers extends value_list
     function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
         global $sys;
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         if ($this->is_cache_valid($usr, $phr)) {
             $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-            $this->read_cache($usr, $phr);
+            $this->read_cache($usr, $usr_msg, $phr);
         } else {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
@@ -277,12 +277,12 @@ class config_numbers extends value_list
         file_put_contents($file_name, $json);
     }
 
-    private function read_cache(user $usr, ?phrase $phr = null): void
+    private function read_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
     {
         $file_name = $this->cache_file($usr, $phr);
         $json = file_get_contents($file_name);
         $array = json_decode($json, true);
-        $this->api_mapper($array);
+        $this->api_mapper($array, $usr_msg);
     }
 
     private function cache_file(user $usr, ?phrase $phr = null): string

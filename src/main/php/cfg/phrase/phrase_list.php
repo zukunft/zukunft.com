@@ -153,20 +153,19 @@ class phrase_list extends sandbox_list_named
     /**
      * map a phrase list api json to this model phrase list object
      * @param array $api_json the api array with the phrases that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($api_json as $json_phr) {
             $phr = new phrase($this->user());
-            $usr_msg->add($phr->api_mapper($json_phr));
-            if ($usr_msg->is_ok()) {
+            if ($phr->api_mapper($json_phr, $usr_msg)) {
                 $this->add($phr);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

@@ -104,7 +104,6 @@ class unit_env
 
         // prepare the unit tests
         $this->init_sys_log_status();
-        $this->init_sys_users();
         $this->init_user_profiles();
         $this->init_job_types();
 
@@ -112,6 +111,7 @@ class unit_env
         $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::EMAIL);
         $usr_sys->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
         $usr->id = 1;
+        $this->init_sys_users($usr_sys);
 
         // continue with preparing unit tests
         $this->init_phrase_types();
@@ -152,15 +152,15 @@ class unit_env
     }
 
     /**
+     * TODO check usr profile
      * create the system user list for the unit tests without database connection
+     * @param user $usr the user who has requested the system user dummy list, which must be a system test admin user
      */
-    private function init_sys_users(): void
+    private function init_sys_users(user $usr): void
     {
-        global $usr_sys;
-        global $system_users;
-
-        $system_users = new user_list($usr_sys);
-        $system_users->load_dummy();
+        global $sys;
+        $sys->usr_sys = new user_list($usr);
+        $sys->usr_sys->load_dummy();
     }
 
     /**
@@ -214,11 +214,11 @@ class unit_env
      */
     private function init_formula_html_types(): void
     {
-        global $html_formula_types;
         global $sys;
 
-        $html_formula_types = new formula_type_list_ui();
-        $html_formula_types->set_from_json_array($sys->typ_lst->frm_typ->api_json_array());
+        $sys->typ_lst->frm_typ = new formula_type_list();
+        $sys->typ_lst->frm_typ->load_dummy();
+        //$sys->typ_lst->frm_typ->set_from_json_array($sys->typ_lst->frm_typ->api_json_array());
 
     }
 

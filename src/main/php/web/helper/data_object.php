@@ -185,7 +185,7 @@ class data_object
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
-    private bool $online;
+    public bool $online;
 
 
     /*
@@ -198,12 +198,13 @@ class data_object
      */
     function __construct(?string $api_json = null)
     {
+        $this->usr_msg = new user_message();
         if ($api_json != null) {
             $this->val_lst = new value_list();
             $this->res_lst = new result_list();
             $this->src_lst = new source_list();
             $this->ref_lst = new ref_list();
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $this->usr_msg);
             $this->usr = new user();
         } else {
             $this->reset();
@@ -228,7 +229,6 @@ class data_object
         $this->res_lst = new result_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
-        $this->usr_msg = new user_message();
         $this->chg_log = new change_log_list();
         $this->online = true;
     }
@@ -241,19 +241,28 @@ class data_object
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the object is filled
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         $this->reset();
         $json_array = json_decode($json_api_msg, true);
         if (array_key_exists(json_fields::WORDS, $json_array)) {
             $msg = $this->wrd_lst->api_mapper($json_array[json_fields::WORDS]);
             $usr_msg->add($msg);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
+
+    function refresh_words_via_api(user_message $usr_msg): bool
+    {
+        if ($this->online) {
+            $this->wrd_lst->reload($usr_msg);
+        }
+        return $usr_msg->is_ok();
+    }
+
 
     /**
      * set the formula_list of this data object
@@ -356,16 +365,6 @@ class data_object
     function value_list_cloned(): value_list
     {
         return clone $this->val_lst;
-    }
-
-    function set_online(): void
-    {
-        $this->online = true;
-    }
-
-    function set_offline(): void
-    {
-        $this->online = false;
     }
 
     /**
