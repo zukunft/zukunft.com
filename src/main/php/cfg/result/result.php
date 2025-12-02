@@ -183,9 +183,9 @@ class result extends sandbox_value
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->frm = new formula($this->user());
         $this->set_grp(new group($this->user()));
         $this->src_grp = new group($this->user());
@@ -233,9 +233,7 @@ class result extends sandbox_value
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         // make sure that there are no unexpected leftovers but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         parent::api_mapper($api_json, $usr_msg);
 
@@ -629,17 +627,13 @@ class result extends sandbox_value
 
         if ($id != 0) {
             // if the id is given load the result from the database
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $this->set_id($id);
         } else {
             // if the id is not given, refresh the object based pn the database
             if ($this->id() != 0) {
                 $id = $this->id();
-                $res_usr = $this->user();
-                $this->reset();
-                $this->set_user($res_usr);
+                $this->reset(true);
                 $this->set_id($id);
             } else {
                 log_err('The result id and the user must be set ' .
@@ -672,9 +666,7 @@ class result extends sandbox_value
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -701,9 +693,7 @@ class result extends sandbox_value
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_std_by_grp');
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_std_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -732,9 +722,7 @@ class result extends sandbox_value
         } elseif (!$grp->is_id_set()) {
             log_err('The phrase group id must be set to load a ' . self::class);
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -761,9 +749,7 @@ class result extends sandbox_value
         if ($frm->id() <= 0) {
             log_err('The formula id must be set to load a ' . self::class);
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -785,9 +771,7 @@ class result extends sandbox_value
         $result = false;
 
         if ($phr_lst->is_valid()) {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $grp = $phr_lst->get_grp_id();
             $result = $this->load_by_grp($grp);
         } else {

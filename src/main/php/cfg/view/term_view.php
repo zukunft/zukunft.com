@@ -147,9 +147,9 @@ class term_view extends sandbox_link
         $this->set_predicate(view_link_type::DEFAULT);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_predicate_id(null);
         $this->description = null;
     }

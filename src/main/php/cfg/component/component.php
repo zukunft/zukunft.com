@@ -229,11 +229,12 @@ class component extends sandbox_code_id
 
     /**
      * clear the view component object values
+     * @param bool $keep_user set to true to keep the original user
      * @return void
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->order_nbr = null;
         $this->type_id = null;

@@ -214,7 +214,7 @@ class value_tests
         $t->subheader($ts . 'database query creation');
 
         // sql to load a user specific value by phrase group id
-        $val->reset($usr);
+        $val->reset(true);
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
@@ -295,7 +295,7 @@ class value_tests
         //$t->assert_sql_standard($sc, $vts);
 
         // sql to load a user specific time series by phrase group id
-        $vts->reset($usr);
+        $vts->reset(true);
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
 

@@ -98,9 +98,9 @@ class sandbox_typed extends sandbox_named
      * construct and map
      */
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->type_id = null;
     }
 
@@ -136,16 +136,15 @@ class sandbox_typed extends sandbox_named
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successful
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
         parent::api_mapper($api_json, $usr_msg);
 
         if (key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr);
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
         }
         return $usr_msg->is_ok();
     }

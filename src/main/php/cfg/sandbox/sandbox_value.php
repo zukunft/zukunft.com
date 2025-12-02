@@ -286,9 +286,9 @@ class sandbox_value extends sandbox_multi
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_grp(new group($this->user()));
         $this->set_value(null);
         $this->set_last_update(null);

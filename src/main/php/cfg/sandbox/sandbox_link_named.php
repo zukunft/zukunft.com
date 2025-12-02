@@ -104,9 +104,9 @@ class sandbox_link_named extends sandbox_link
      * construct and map
      */
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->description = null;
         $this->type_id = null;
     }
@@ -157,8 +157,6 @@ class sandbox_link_named extends sandbox_link
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
-
         parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
@@ -170,7 +168,7 @@ class sandbox_link_named extends sandbox_link
             }
         }
         if (array_key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr);
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
         }
         return $usr_msg->is_ok();
     }

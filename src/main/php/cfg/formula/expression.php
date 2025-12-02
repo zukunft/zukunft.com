@@ -191,8 +191,8 @@ class expression extends shared_expression
 
     function __construct(user $usr)
     {
-        $this->usr = $usr;
         $this->reset();
+        $this->usr = $usr;
     }
 
 

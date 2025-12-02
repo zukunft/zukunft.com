@@ -239,10 +239,11 @@ class triple extends sandbox_link_named
 
     /**
      * reset the in memory fields used e.g. if some ids are updated
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_name(null);
         $this->name_given = null;
         $this->name_generated = '';

@@ -986,28 +986,28 @@ class test_base
     /**
      * check if an object json sample export file can be recreated by
      * importing the object and recreating the json with the export function
+     * TODO Prio 1 add user_message parameter
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
+     * @param user|null $usr with the user who have requested the test
      * @return bool true if the json has no relevant differences
      */
     function assert_json_file(
         object $usr_obj,
-        string $json_file_name
+        string $json_file_name,
+        ?user $usr = null
     ): bool
     {
-        global $usr;
-        // TODO Prio 1 review
         if ($usr == null) {
-            $usr = $this->user_system();
+            $usr = $usr_obj->user();
         }
-
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
         // TODO move to a lib function that fills an usr_msg object
         if ($json_in !== null) {
-            $dto = new data_object($usr);
+            $dto = new data_object($usr_msg->usr);
             $usr_obj->import_obj($json_in, $usr_msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
             $json_ex = $usr_obj->export_json(false);

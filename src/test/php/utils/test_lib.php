@@ -191,7 +191,7 @@ class test_lib
         $json_str = file_get_contents(files::SYSTEM_VIEWS);
         $size = strlen($json_str);
         $json_array = json_decode($json_str, true);
-        $usr_msg = new backend_user_message();
+        $usr_msg = new backend_user_message($usr);
         $dto = $imp->get_data_object($json_array, $usr_msg, $size);
         $dto_ui->set_view_list($this->cast_view_list($dto->view_list()));
         // add the view id because the import does not include the database id
@@ -200,7 +200,7 @@ class test_lib
         $json_str = file_get_contents(files::BASE_VIEWS);
         $size = strlen($json_str);
         $json_array = json_decode($json_str, true);
-        $usr_msg = new backend_user_message();
+        $usr_msg = new backend_user_message($usr);
         $dto_base = $imp->get_data_object($json_array, $usr_msg, $size);
         $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id

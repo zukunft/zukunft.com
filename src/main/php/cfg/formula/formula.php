@@ -225,11 +225,12 @@ class formula extends sandbox_code_id
 
     /**
      * clear the view component object values
+     * @param bool $keep_user set to true to keep the original user
      * @return void
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->ref_text = null;
         $this->ref_text_dirty = false;
@@ -392,9 +393,7 @@ class formula extends sandbox_code_id
         global $sys;
 
         // reset the all parameters for the formula object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {

@@ -62,7 +62,7 @@ class ListOf
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_lst(array());
     }

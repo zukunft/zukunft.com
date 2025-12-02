@@ -227,11 +227,12 @@ class word extends sandbox_code_id
 
     /**
      * clear the word object values
+     * @param bool $keep_user set to true to keep the original user
      * @return void
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->plural = null;
         $this->impact = null;
 
@@ -334,9 +335,7 @@ class word extends sandbox_code_id
         global $db_con;
 
         // reset all parameters for the word object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         // set the object vars based on the json
         parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);

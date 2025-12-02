@@ -155,12 +155,13 @@ class sandbox_named extends sandbox
      */
 
     /**
-     * reset the search values of this object
-     * needed to search for the standard object, because the search is work, value, formula or ... specific
+     * reset all object vars of this object to the null or default value
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->set_name(null);
         $this->description = null;

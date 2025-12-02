@@ -539,7 +539,7 @@ class import
                 $import_result = new user_message();
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
-                    $vrb->set_user($this->usr);
+                    $vrb->set_user($usr_msg->usr);
                     if ($vrb->import_obj($verb, $usr_msg)) {
                         $this->verbs_done++;
                     } else {

@@ -211,9 +211,9 @@ class component_link extends sandbox_link
         $this->reset_objects($usr);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->reset_objects($this->user());
 
@@ -310,9 +310,7 @@ class component_link extends sandbox_link
         global $db_con;
 
         // reset the all parameters for the view object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         // if for the component only the position and name is defined
@@ -344,7 +342,7 @@ class component_link extends sandbox_link
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
                 }
-                $cmp = new component($usr);
+                $cmp = new component($usr_msg->usr);
                 $cmp->set_name($in_ex_json[json_fields::NAME]);
             }
             $this->set_component($cmp);
@@ -353,7 +351,7 @@ class component_link extends sandbox_link
             $usr_msg->add_id_with_vars(msg_id::COMPONENT_CREATED, [
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $cmp = new component($usr);
+            $cmp = new component($usr_msg->usr);
             $cmp->import_mapper($in_ex_json, $usr_msg, $dto);
         }
 

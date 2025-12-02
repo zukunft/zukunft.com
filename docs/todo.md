@@ -9,6 +9,16 @@ A proper issue ticket should be created for these TODOs notes:
     TODO target approche to finish frontend: small commits and final solution
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
+    TODO add a coding rule test that checka
+         - there is at least one succes and on fail test for each function
+         - classes are no longer than 1000 lines
+         - functions are no longer than 20 lines
+         - each class has a unique var names
+         - the list of all vars names in alphabetic order is updated
+         - the list of all vars names groupd by usage is updated
+         - each class has the same sections order
+         - the same function name is always in the same section and in the same order
+         - the var names are using the three char based names whereas functions that might take longer use the full name
     TODO create a assert_user_message function that checks if an unexpected user_message has been created 
     TODO the workflow should modify the url array and e.g. replace to_confirm with confirmed
     TODO messages should be shown to the user in the top right corner with an evelopm symbol with a colored dot

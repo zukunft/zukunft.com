@@ -276,9 +276,9 @@ class value_base extends sandbox_value
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->set_grp(new group($this->user()));
         $this->source = null;
@@ -388,9 +388,7 @@ class value_base extends sandbox_value
         // make sure that there are no unexpected leftovers but keep the user
         // TODO check that it is always moved to sandbox object
         // TODO use sand
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->user());

@@ -146,7 +146,7 @@ class horizontal_tests
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $ui_obj = $tl->obj_to_ui_obj($filled_obj);
             $ui_obj->set_from_json($api_json, $usr_msg_ui);
-            $check_obj->reset();
+            $check_obj->reset(true);
             $ui_json = $ui_obj->api_json();
             $api_json_ui = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $check_obj->set_from_api($ui_json, $usr_msg);

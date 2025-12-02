@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -105,7 +106,7 @@ class user_tests
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/user/user_import.json';
-        $t->assert_json_file(new user(), $json_file);
+        $t->assert_json_file(new user(), $json_file, $t->usr_admin);
 
     }
 

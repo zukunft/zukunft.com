@@ -156,9 +156,9 @@ class source extends sandbox_code_id
         $this->rename_can_switch = def::UI_CAN_CHANGE_SOURCE_NAME;
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->url = null;
     }
 

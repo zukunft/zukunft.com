@@ -244,7 +244,7 @@ class term extends combine_named
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
     }

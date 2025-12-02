@@ -2,10 +2,10 @@
 
 /*
 
-    test_workflow.php - run the internal workflow tests without unit, db read or write tests
-    -----------------
+    test_horizontal.php - run the horizontal tests for the main classes
+    -------------------
 
-    checks that only developers and local admin can start the tests
+    check the fill, reset, api, diff, import, sql and usage functions
 
 
     This file is part of zukunft.com - calc with words
@@ -45,12 +45,12 @@ include_once test_paths::UTILS . 'test_base.php';
 // load the main test control class
 include_once test_paths::UTILS . 'all_tests.php';
 
-include_once test_paths::UNIT_WORKFLOW . 'all_workflow_tests.php';
+include_once test_paths::UNIT . 'horizontal_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\test\php\unit_workflow\all_workflow_tests;
+use Zukunft\ZukunftCom\test\php\unit\horizontal_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\test_app;
 
@@ -59,7 +59,7 @@ global $cac;
 
 // open the session, database and load the environment
 $app = new test_app();
-$db_con = $app->start("workflow tests", true);
+$db_con = $app->start("horizontal tests", true);
 if ($db_con->is_open()) {
 
     // load the session user parameters
@@ -75,13 +75,12 @@ if ($db_con->is_open()) {
 
             // init tests
             $t = new all_tests();
-            $t->header('Start zukunft.com workflow tests');
+            $t->header('Start zukunft.com horizontal tests');
             $t->set_users();
             $usr_msg = new user_message();
 
-            // run the workflow tests
-            $t_workflow = new all_workflow_tests();
-            $t_workflow->run_workflow_tests($t, $t->usr1, $usr_msg);
+            // run the horizontal tests
+            new horizontal_tests()->run($t);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

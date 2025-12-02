@@ -154,9 +154,9 @@ class verb extends type_object
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_user(null);
         $this->plural = null;
         $this->reverse = null;
@@ -611,9 +611,7 @@ class verb extends type_object
         $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this verb object but keep the user
-        $usr = $this->usr;
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
@@ -622,7 +620,7 @@ class verb extends type_object
             }
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                    if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
                         $this->code_id = $value;
                     }
                 }
@@ -1170,12 +1168,13 @@ class verb extends type_object
         $this->check_preserved($usr_msg);
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($usr_msg->usr->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
+            $this->set_user($usr_msg->usr);
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));

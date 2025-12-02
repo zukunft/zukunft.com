@@ -105,10 +105,11 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * reset the object vars e.g. to detect the vars changed by the api versus the db value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->code_id = null;
     }
 

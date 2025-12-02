@@ -64,9 +64,10 @@ class CombineObject
 
     /**
      * reset the vars of this object
-     * used to search for the standard object, because the search is word, value, formula or ... specific
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
     }

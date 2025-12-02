@@ -56,10 +56,11 @@ class sandbox_predicated_link extends sandbox_link
 
     /**
      * reset the type of the link object
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
     }
 
 

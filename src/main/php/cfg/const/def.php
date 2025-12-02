@@ -50,6 +50,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_field.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
@@ -102,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
@@ -227,6 +229,11 @@ class def
         component::class,
         user::class,
         view_relation::class
+    ];
+
+    // classes that have a frontend and backend object but are not user specific
+    const array SYSTEM_UI_CLASSES =[
+        change_log::class,
     ];
 
     // classes that have a code id

@@ -189,9 +189,9 @@ class view extends sandbox_code_id
         $this->rename_can_switch = def::UI_CAN_CHANGE_VIEW_NAME;
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->type_id = null;
         $this->style = null;
@@ -274,9 +274,7 @@ class view extends sandbox_code_id
         log_debug();
 
         // reset the all parameters for the view object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
         parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         // first save the parameters of the view itself
@@ -294,7 +292,7 @@ class view extends sandbox_code_id
             $json_lst = $in_ex_json[json_fields::COMPONENTS];
             $cmp_pos = 1;
             foreach ($json_lst as $json_cmp) {
-                $lnk = new component_link($usr);
+                $lnk = new component_link($usr_msg->usr);
                 if ($lnk->import_mapper($json_cmp, $usr_msg, $dto)) {
                     $this->add_component($lnk, $cmp_pos);
                     $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);

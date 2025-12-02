@@ -205,7 +205,7 @@ class group extends sandbox_multi
         $this->add_phrase_names($prh_names);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
         $this->name = null;
@@ -1427,8 +1427,7 @@ class group extends sandbox_multi
 
         // check potential duplicate by name
         $db_chk = clone $this;
-        $db_chk->reset();
-        $db_chk->set_user($this->user());
+        $db_chk->reset(true);
         // check with the standard namespace
         if ($db_chk->load_standard_by_name($this->name())) {
             if ($db_chk->id() > 0) {

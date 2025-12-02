@@ -295,11 +295,15 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * reset the search values of this object
-     * used to search for the standard object, because the search is word, value, formula or ... specific
+     * reset all object vars of this object to the null or default value
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->user();
+        }
         parent::reset();
         $this->usr_cfg_id = null;
         $this->set_owner_id(null);
@@ -308,6 +312,9 @@ class sandbox extends db_object_seq_id_user
         $this->include();
         // TODO move to the objects that actually use the type
         $this->type_id = null;
+        if ($keep_user) {
+            $this->set_user($usr);
+        }
     }
 
     /**

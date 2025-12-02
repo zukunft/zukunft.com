@@ -137,12 +137,12 @@ class value_time_series extends sandbox_value
 
         $this->rename_can_switch = def::UI_CAN_CHANGE_VALUE;
 
-        $this->reset($usr);
+        $this->reset(true);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->set_grp(new group($this->user()));
         $this->source = null;

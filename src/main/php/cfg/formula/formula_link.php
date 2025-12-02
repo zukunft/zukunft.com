@@ -185,9 +185,9 @@ class formula_link extends sandbox_link
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->reset_objects($this->user());
 
