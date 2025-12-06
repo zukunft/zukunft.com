@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -43,7 +44,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 echo 'logging off ...'; // reset the html code var
 
 // open database 
-$db_con = prg_start("logoff", "center_form");
+$app = new frontend();
+$db_con = $app->start("logoff", "center_form");
 
 if ($db_con->is_open()) {
 
@@ -64,7 +66,7 @@ if ($db_con->is_open()) {
     session_unset();
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con);
 
     echo 'logoff done.'; // reset the html code var
 

@@ -38,8 +38,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED . 'url_var.php';
 
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 
 class ui_rank
 {
@@ -51,7 +50,7 @@ class ui_rank
      *
      * @return string with the triple names as a vertical list
      */
-    function system_phrases(db_object_dsp $phr): string
+    function system_phrases(db_object $phr): string
     {
         // TODO review
         return $phr->name() . ' is ranked by time of discovery';

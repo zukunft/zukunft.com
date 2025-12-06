@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/result.php - the calculated numeric result of a formula
-    -------------------------------
+    model/result/result.php - the calculated numeric result of a formula
+    -----------------------
 
     TODO: add these function
     TODO rename to result
@@ -59,10 +59,12 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
@@ -91,9 +93,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
@@ -181,9 +185,9 @@ class result extends sandbox_value
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->frm = new formula($this->user());
         $this->set_grp(new group($this->user()));
         $this->src_grp = new group($this->user());
@@ -225,20 +229,19 @@ class result extends sandbox_value
      * TODO move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         // make sure that there are no unexpected leftovers but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
-            if ($usr_msg->is_ok()) {
+            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $usr_msg)) {
                 $this->grp()->set_phrase_list($phr_lst);
             }
         }
@@ -257,7 +260,7 @@ class result extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -265,18 +268,28 @@ class result extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        if ($dto != null) {
+            $frm_lst = $dto->formula_list();
+        } else {
+            $frm_lst = new formula_list($this->user());
+        }
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $usr_msg, $dto);
             if ($usr_msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
@@ -285,15 +298,17 @@ class result extends sandbox_value
 
         if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
             $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
-            $frm = $dto->formula_list()->get_by_name($frm_name);
+            $frm = $frm_lst->get_by_name($frm_name);
             if ($frm == null) {
-                $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
-                    msg_id::VAR_FORMULA => $frm_name,
-                    msg_id::VAR_JSON_TEXT => $in_ex_json
-                ]);
+                if ($db_con->is_open()) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                        msg_id::VAR_FORMULA => $frm_name,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                }
                 $frm = new formula($this->user());
                 $frm->set_name($frm_name);
-                $dto->source_list()->add_by_name($frm);
+                $frm_lst->add_by_name($frm);
             }
             $this->frm = $frm;
         }
@@ -307,12 +322,12 @@ class result extends sandbox_value
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
-     * @return user_message the enriched user message
+     * @return bool true if everything was fine
      */
     private function common_mapper(
         array        $in_ex_json,
         user_message $usr_msg
-    ): user_message
+    ): bool
     {
         $lib = new library();
 
@@ -338,7 +353,7 @@ class result extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -358,7 +373,7 @@ class result extends sandbox_value
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the source phrases if requested
-        if ($typ_lst->include_phrases()) {
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->source_group()->phrase_list();
             $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst);
         }
@@ -614,17 +629,13 @@ class result extends sandbox_value
 
         if ($id != 0) {
             // if the id is given load the result from the database
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $this->set_id($id);
         } else {
             // if the id is not given, refresh the object based pn the database
             if ($this->id() != 0) {
                 $id = $this->id();
-                $res_usr = $this->user();
-                $this->reset();
-                $this->set_user($res_usr);
+                $this->reset(true);
                 $this->set_id($id);
             } else {
                 log_err('The result id and the user must be set ' .
@@ -657,9 +668,7 @@ class result extends sandbox_value
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_grp');
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -686,9 +695,7 @@ class result extends sandbox_value
             log_err('The result phrase group id and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_std_by_grp');
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_std_by_grp($db_con->sql_creator(), $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -717,9 +724,7 @@ class result extends sandbox_value
         } elseif (!$grp->is_id_set()) {
             log_err('The phrase group id must be set to load a ' . self::class);
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_frm_grp($db_con->sql_creator(), $frm, $grp);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -746,9 +751,7 @@ class result extends sandbox_value
         if ($frm->id() <= 0) {
             log_err('The formula id must be set to load a ' . self::class);
         } else {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $qp = $this->load_sql_by_frm_grp_lst($db_con->sql_creator(), $frm, $lst);
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp);
@@ -770,9 +773,7 @@ class result extends sandbox_value
         $result = false;
 
         if ($phr_lst->is_valid()) {
-            $res_usr = $this->user();
-            $this->reset();
-            $this->set_user($res_usr);
+            $this->reset(true);
             $grp = $phr_lst->get_grp_id();
             $result = $this->load_by_grp($grp);
         } else {
@@ -920,32 +921,33 @@ class result extends sandbox_value
      * validate a formulas value by comparing the external object result with the calculated result
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        log_debug();
-        $result = parent::import_db_obj($this, $test_obj);
+        global $db_con;
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        $this->import_mapper($in_ex_json, $usr_msg);
+
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
+        // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $res) {
 
             // the phrases of the result
             if ($key == json_fields::WORDS) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($res, $test_obj));
-                if ($result->is_ok()) {
+                if ($phr_lst->import_lst($res, $usr_msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
@@ -956,8 +958,7 @@ class result extends sandbox_value
             // the phrases used to calculate the result
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($res, $test_obj));
-                if ($result->is_ok()) {
+                if ($phr_lst->import_lst($res, $usr_msg)) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got context ' . $phr_grp->dsp_id());
                     $this->set_src_grp($phr_grp);
@@ -982,27 +983,28 @@ class result extends sandbox_value
         }
 
         // save the result in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                $this->save()->get_last_message();
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
+                $this->save($usr_msg);
                 log_debug($this->dsp_id());
             } else {
-                log_debug($result->all_message_text());
+                log_debug($usr_msg->all_message_text());
             }
         }
 
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields of the result
      * to enable the validation of the results during import
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // the formula that has created the result
         $vars[json_fields::FORMULA_NAME] = $this->frm->name();
@@ -1185,6 +1187,7 @@ class result extends sandbox_value
     function update_depending(): array
     {
         $lib = new library();
+        $usr_msg = new user_message();
         log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->user()->name . ")");
 
         global $db_con;
@@ -1215,7 +1218,8 @@ class result extends sandbox_value
                 $res_upd->load_by_id($val_row[result_db::FLD_ID]);
                 $res_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
-                $result[] = $res_upd->save()->get_last_message();
+                $res_upd->save($usr_msg);
+                $result[] = $usr_msg->get_last_message();
             }
         }
 
@@ -1245,11 +1249,14 @@ class result extends sandbox_value
         }
     }
 
+    // TODO Prio 0 review
     private function save_without_time(): string
     {
+        $usr_msg = new user_message();
         $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
-        return $res_no_time->save()->get_last_message();
+        $res_no_time->save($usr_msg);
+        return $usr_msg->get_last_message();
     }
 
 
@@ -1270,10 +1277,12 @@ class result extends sandbox_value
     }
 
     // check if a single formula result needs to be saved to the database
+    // TODO Prio 0 review
     function save_if_updated(bool $has_result_phrases = false): bool
     {
         global $debug;
         $result = true;
+        $usr_msg = new user_message();
 
         // don't save the result if some needed numbers are missing
         if ($this->val_missing) {
@@ -1371,7 +1380,7 @@ class result extends sandbox_value
                     }
 
                     // save the result
-                    $this->save()->get_last_message();
+                    $this->save($usr_msg);
                     $res_id = $this->id();
 
                     if ($debug > 0) {
@@ -1395,15 +1404,15 @@ class result extends sandbox_value
      * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
 
         global $db_con;
         global $debug;
-        $usr_msg = new user_message();
 
         // check the parameters e.g. a result must always be linked to a formula
         if ($this->frm->id() <= 0) {
@@ -1450,8 +1459,7 @@ class result extends sandbox_value
                     $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_update($sc, $res_db);
-                    $upd_msg = $db_con->update($qp, $msg);
-                    if ($upd_msg->is_ok()) {
+                    if ($db_con->update($qp, $msg, $usr_msg)) {
                         $usr_msg->set_db_row_id($row_id);
                     }
                 } else {
@@ -1465,15 +1473,14 @@ class result extends sandbox_value
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $upd_msg = $db_con->insert($qp, $msg);
-                if ($upd_msg->is_ok()) {
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
                     $usr_msg->set_db_row_id($row_id);
                 }
             }
         }
 
         log_debug("id (" . $usr_msg->get_row_id() . ")");
-        return $usr_msg;
+        return $usr_msg->is_ok();
 
     }
 

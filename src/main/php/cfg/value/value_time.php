@@ -2,7 +2,7 @@
 
 /*
 
-    model/value/value_text.php - the main text value object using the prime, norm and big value keys
+    model/value/value_time.php - the main text value object using the prime, norm and big value keys
     --------------------------
 
 
@@ -48,6 +48,7 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_LOG . 'change_value_time.php';
 include_once paths::MODEL_LOG . 'change_values_time_prime.php';
@@ -63,6 +64,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value_time;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
@@ -217,12 +219,13 @@ class value_time extends value_base
      * create an array with the export json fields
      * differs from the api array by NOT using the internal id
      * instead of the names for a complete independent recreation
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // add the datetime value itself
         $vars[json_fields::TIME_VALUE] = $this->value();

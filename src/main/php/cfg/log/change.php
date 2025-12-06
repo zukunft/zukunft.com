@@ -179,7 +179,8 @@ class change extends change_log
     function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
         global $debug;
-        global $cng_fld_cac;
+        global $sys;
+
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -199,7 +200,7 @@ class change extends change_log
                 $this->new_id = $db_row[self::FLD_NEW_ID];
             }
 
-            $fld_tbl = $cng_fld_cac->get($this->field_id);
+            $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr_set = false;
@@ -315,8 +316,8 @@ class change extends change_log
 
     function load_sql_old(string $type, int $limit = 0): sql_par
     {
+        global $sys;
         global $db_con;
-        global $cng_tbl_cac;
 
         $result = ''; // reset the html code var
 
@@ -335,27 +336,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->user()->id . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD));
+            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -410,6 +411,20 @@ class change extends change_log
         $vars[json_fields::STD_ID] = $this->std_id;
 
         return $vars;
+    }
+
+
+    /*
+     * info
+     */
+
+    function use_type_id(): bool
+    {
+        if ($this->new_id != null or $this->old_id != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

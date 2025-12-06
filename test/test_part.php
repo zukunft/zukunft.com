@@ -32,31 +32,26 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
 
-// load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-// load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\a_selected_test;
 
 
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("selected tests", '', false, true);
+$app = new test_app();
+$db_con = $app->start("selected tests", '', false, true);
 
 // load the session user parameters
 $start_usr = new user;
@@ -70,11 +65,11 @@ if ($start_usr->id() > 0) {
 
         // init tests
         $errors = 0;
-        $t = new all_tests();
+        $t = new a_selected_test();
         $t->header('Run selected zukunft.com tests');
 
         // run a list of selected tests
-        $t->run_single($t);
+        $t->run();
 
         // display the test results
         if ($t->format == text_log_format::HTML) {
@@ -89,4 +84,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con, false);
+$app->end($db_con, false);

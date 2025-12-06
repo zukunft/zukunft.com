@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_description.php - adding the description and type field to the _sandbox superclass
-    -------------------------------------
+    model/sandbox/sandbox_link_named.php - adding the description and type field to the _sandbox superclass
+    ------------------------------------
 
     The main sections of this object are
     - object vars:       the variables of this sandbox object
@@ -104,9 +104,9 @@ class sandbox_link_named extends sandbox_link
      * construct and map
      */
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->description = null;
         $this->type_id = null;
     }
@@ -152,12 +152,12 @@ class sandbox_link_named extends sandbox_link
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
-
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
@@ -168,9 +168,9 @@ class sandbox_link_named extends sandbox_link
             }
         }
         if (array_key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr);
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
         }
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -178,13 +178,17 @@ class sandbox_link_named extends sandbox_link
      * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -195,7 +199,7 @@ class sandbox_link_named extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -276,9 +280,12 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        $msg = 'function name_field() missing in class ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -645,8 +652,6 @@ class sandbox_link_named extends sandbox_link
         user_message               $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
-
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);

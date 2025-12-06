@@ -90,6 +90,8 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_GROUP . 'group.php';
@@ -145,9 +147,11 @@ include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
@@ -262,7 +266,7 @@ class value_base extends sandbox_value
     {
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VALUE;
 
         $this->reset();
 
@@ -274,9 +278,9 @@ class value_base extends sandbox_value
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->set_grp(new group($this->user()));
         $this->source = null;
@@ -374,24 +378,23 @@ class value_base extends sandbox_value
     /**
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         $lib = new library();
 
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // make sure that there are no unexpected leftovers but keep the user
         // TODO check that it is always moved to sandbox object
         // TODO use sand
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         if (array_key_exists(json_fields::PHRASES, $api_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
-            if ($usr_msg->is_ok()) {
+            if ($phr_lst->api_mapper($api_json[json_fields::PHRASES], $usr_msg)) {
                 $this->grp()->set_phrase_list($phr_lst);
             }
         }
@@ -437,7 +440,7 @@ class value_base extends sandbox_value
             $this->source = $src;
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -445,18 +448,41 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
+        global $db_con;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $lib = new library();
+
+        if ($dto == null) {
+            $dto = new data_object($this->user());
+        }
+
+        if (key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
+                    msg_id::VAR_VALUE => $value
+                ]);
+            }
+        }
+
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
 
         if (key_exists(json_fields::WORDS, $in_ex_json)) {
             $phr_lst = new phrase_list($this->user());
-            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            $phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $usr_msg, $dto);
             if ($usr_msg->is_ok()) {
                 $phr_grp = $phr_lst->get_grp_id(false);
                 $this->set_grp($phr_grp);
@@ -465,19 +491,34 @@ class value_base extends sandbox_value
 
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = $dto->source_list()->get_by_name($src_name);
+            $src = $dto->source_list()?->get_by_name($src_name);
             if ($src == null) {
-                $usr_msg->add_id_with_vars(msg_id::SOURCE_MISSING_IMPORT,
-                    [
-                        msg_id::VAR_SOURCE_NAME => $src_name,
-                        msg_id::VAR_JSON_TEXT => $in_ex_json
-                    ],
-                );
+                if ($db_con->is_open()) {
+                    $usr_msg->add_id_with_vars(msg_id::SOURCE_MISSING_IMPORT,
+                        [
+                            msg_id::VAR_SOURCE_NAME => $src_name,
+                            msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                        ],
+                    );
+                }
                 $src = new source($this->user());
                 $src->set_name($src_name);
                 $dto->source_list()->add_by_name($src);
             }
             $this->source = $src;
+        }
+
+        if (key_exists(json_fields::TIMESTAMP, $in_ex_json)) {
+            $time_txt = $in_ex_json[json_fields::TIMESTAMP];
+            if (strtotime($time_txt)) {
+                $this->time_stamp = $lib->get_datetime($time_txt, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                        msg_id::VAR_VALUE => $time_txt,
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]
+                );
+            }
         }
 
         return $this->common_mapper($in_ex_json, $usr_msg);
@@ -489,12 +530,12 @@ class value_base extends sandbox_value
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
-     * @return user_message the enriched user message
+     * @return bool true if everything was fine
      */
     private function common_mapper(
         array        $in_ex_json,
         user_message $usr_msg
-    ): user_message
+    ): bool
     {
         $lib = new library();
 
@@ -520,7 +561,7 @@ class value_base extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1273,54 +1314,35 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        log_debug();
-        $result = parent::import_obj($in_ex_json, $dto, $test_obj);
+        global $db_con;
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
-        $get_ownership = false;
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == json_fields::WORDS) {
-                $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($value, $test_obj));
-                if ($result->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp_id($do_save);
-                    $this->set_grp($phr_grp);
-                }
-            }
-
-            $result->add($this->set_fields_from_json($key, $value, $result, $do_save));
-
-        }
 
         // save the value in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
+        if ($do_save) {
+            if ($usr_msg->is_ok()) {
+                $this->save($usr_msg);
             }
         }
 
-        // try to get the ownership if requested
-        if ($get_ownership) {
-            $this->take_ownership();
-        }
 
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1346,7 +1368,7 @@ class value_base extends sandbox_value
         $phr_lst = new phrase_list($this->user());
         $phr = new phrase($this->user());
         if ($do_save) {
-            $usr_msg = $phr->get_or_add($phr_name);
+            $phr->get_or_add($phr_name, $usr_msg);
         } else {
             $phr->set_name($phr_name);
         }
@@ -1359,7 +1381,7 @@ class value_base extends sandbox_value
 
             // save the value in the database
             if ($do_save) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             }
         }
 
@@ -1368,12 +1390,13 @@ class value_base extends sandbox_value
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // add the source
         if ($this->source != null) {
@@ -1393,8 +1416,7 @@ class value_base extends sandbox_value
      */
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         log_debug();
         $usr_msg = new user_message();
@@ -1432,11 +1454,11 @@ class value_base extends sandbox_value
         }
 
         if (array_key_exists(json_fields::SHARE, $api_json)) {
-            $this->set_share_id($shr_typ_cac->id($api_json[json_fields::SHARE]));
+            $this->set_share_id($sys->typ_lst->shr_typ->id($api_json[json_fields::SHARE]));
         }
 
         if (array_key_exists(json_fields::PROTECTION, $api_json)) {
-            $this->set_protection_id($ptc_typ_cac->id($api_json[json_fields::PROTECTION]));
+            $this->set_protection_id($sys->typ_lst->ptc_typ->id($api_json[json_fields::PROTECTION]));
             if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -1448,14 +1470,14 @@ class value_base extends sandbox_value
             if ($usr_msg->is_ok() and $do_save) {
                 $src->load_by_name($api_json[json_fields::SOURCE_NAME]);
                 if ($src->id() == 0) {
-                    $src->save();
+                    $src->save($usr_msg);
                 }
             }
             $this->source = $src;
         }
 
         if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add($this->save());
+            $this->save($usr_msg);
         }
 
         return $usr_msg;
@@ -1467,25 +1489,24 @@ class value_base extends sandbox_value
      *
      * @param string $key the json key
      * @param string|array $value the value from the json message or an array of sub json
-     * @param user_message $msg the user message object to remember the message that should be shown to the user
+     * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
      * @param bool $do_save false only for unit tests
      * @return user_message the enriched user message
      */
     private function set_fields_from_json(
         string       $key,
         string|array $value,
-        user_message $msg,
+        user_message $usr_msg,
         bool         $do_save = true): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
         $lib = new library();
 
         if ($key == json_fields::TIMESTAMP) {
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
                 );
             }
@@ -1495,7 +1516,7 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
                     msg_id::VAR_GROUP => $this->grp()->dsp_id(),
                     msg_id::VAR_VALUE => $value
                 ]);
@@ -1503,11 +1524,11 @@ class value_base extends sandbox_value
         }
 
         if ($key == json_fields::SHARE) {
-            $this->set_share_id($shr_typ_cac->id($value));
+            $this->set_share_id($sys->typ_lst->shr_typ->id($value));
         }
 
         if ($key == json_fields::PROTECTION) {
-            $this->set_protection_id($ptc_typ_cac->id($value));
+            $this->set_protection_id($sys->typ_lst->ptc_typ->id($value));
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -1516,16 +1537,16 @@ class value_base extends sandbox_value
         if ($key == json_fields::SOURCE_NAME) {
             $src = new source($this->user());
             $src->set_name($value);
-            if ($msg->is_ok() and $do_save) {
+            if ($usr_msg->is_ok() and $do_save) {
                 $src->load_by_name($value);
                 if ($src->id() == 0) {
-                    $src->save();
+                    $src->save($usr_msg);
                 }
             }
             $this->source = $src;
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
 
@@ -1655,6 +1676,7 @@ class value_base extends sandbox_value
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if (!$this->is_id_set()) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
@@ -1664,7 +1686,7 @@ class value_base extends sandbox_value
                 $result = false;
             }
         }
-        log_debug('value->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('value->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1692,11 +1714,12 @@ class value_base extends sandbox_value
     function is_std(): bool
     {
         $result = false;
+        $lib = new library();
         if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1720,7 +1743,7 @@ class value_base extends sandbox_value
     protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;
-        $result = true;
+        $usr_msg = new user_message();
 
         if (!$this->has_usr_cfg()) {
             log_debug('value->add_usr_cfg for "' . $this->id() . ' und user ' . $this->user()->name);
@@ -1737,11 +1760,10 @@ class value_base extends sandbox_value
                 $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
                 $qp = $this->sql_insert($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
-                $usr_msg = $db_con->insert($qp, 'add user specific value');
-                $result = $usr_msg->is_ok();
+                $db_con->insert($qp, 'add user specific value', $usr_msg);
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1920,7 +1942,7 @@ class value_base extends sandbox_value
      */
     function save_field_trigger_update($db_con): string
     {
-        global $job_typ_cac;
+        global $sys;
         global $usr;
 
         $result = '';
@@ -2071,11 +2093,12 @@ class value_base extends sandbox_value
      */
     function save_fields(sql_db $db_con, value_base|sandbox_multi $db_rec, value_base|sandbox_multi $std_rec): string
     {
+        $usr_msg = new user_message();
         $result = $this->save_field_number($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_share($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_protection($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
         log_debug('value->save_fields all fields for "' . $this->id() . '" has been saved');
         return $result;
     }
@@ -2083,11 +2106,22 @@ class value_base extends sandbox_value
     /**
      * updated the view component name (which is the id field)
      * should only be called if the user is the owner and nobody has used the display component link
+     * @param sql_db $db_con the active database connection
+     * @param value_base|sandbox_multi $db_rec the database record before the saving
+     * @param value_base|sandbox_multi $std_rec the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      */
-    function save_id_fields(sql_db $db_con, value_base|sandbox_multi $db_rec, value_base|sandbox_multi $std_rec): string
+    function save_id_fields(
+        sql_db $db_con,
+        value_base|sandbox_multi $db_rec,
+        value_base|sandbox_multi $std_rec,
+        user_message $usr_msg
+    ): bool
     {
         log_debug('value->save_id_fields');
         $result = '';
+        $usr_msg = new user_message();
 
         // to load any missing objects
         $db_rec->load_phrases();
@@ -2112,7 +2146,7 @@ class value_base extends sandbox_value
             $log->std_id = $std_rec->grp()->id();
             $log->row_id = $this->id();
             $log->set_field(change_fields::FLD_VALUE_GROUP);
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $ext = $this->grp()->table_extension();
                 $db_con->set_class(self::class, false, $ext);
                 $result = $db_con->update_old($this->id(),
@@ -2139,7 +2173,7 @@ class value_base extends sandbox_value
         }
         */
 
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2149,8 +2183,9 @@ class value_base extends sandbox_value
         sql_db                   $db_con,
         sandbox_multi|value_base $db_rec,
         sandbox_multi|value_base $std_rec,
+        user_message             $usr_msg,
         ?bool                    $use_func = null
-    ): string
+    ): bool
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
         $result = '';
@@ -2176,22 +2211,21 @@ class value_base extends sandbox_value
                     // in this case change is allowed and done
                     log_debug('value->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     //$this->load_objects();
-                    $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-                    if ($result != '') {
+                    if (!$this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg)) {
                         log_err('Excluding value has failed');
                     }
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = $db_rec->clone_all();
-                    $msg = $to_del->del();
+                    $msg = $to_del->del($usr_msg);
                     $result .= $msg->get_last_message();
                     // ... and create a deletion request for all users ???
 
                     // ... and create a new display component link
                     $this->set_id(0);
                     $this->set_owner_id($this->user()->id());
-                    $result .= $this->add($use_func)->get_last_message();
+                    $this->add($usr_msg, $use_func);
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
@@ -2200,36 +2234,35 @@ class value_base extends sandbox_value
         }
 
         log_debug('value->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
      * add a new value
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(?bool $use_func = null): user_message
+    function add(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug();
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id(), false, true);
-            $usr_msg->add($ins_msg);
+            $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
         } else {
 
             // log the insert attempt first
             $log = $this->log_add();
             if ($log->id() > 0) {
                 // insert the value
-                $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');
+                $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value', $usr_msg);
                 // the id of value is the given group id not a sequence
                 //if ($ins_result->has_row()) {
                 //    $this->set_id($ins_result->get_row_id());
@@ -2276,24 +2309,23 @@ class value_base extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * insert or update a value in the database or save a user specific number
      * similar to sandbox->save but does not return the id because the id is predefined by the group id
      *
+     * @param user_message $usr_msg in case of a problem the message that should be shown to the user
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message in case of a problem the message that should be shown to the user
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
         global $mtr;
-
-        $usr_msg = new user_message();
 
         // init
         $msg_reload = $mtr->txt(msg_id::RELOAD);
@@ -2325,7 +2357,7 @@ class value_base extends sandbox_value
             if (!$this->is_saved()) {
 
                 log_debug('add ' . $this->dsp_id());
-                $usr_msg->add($this->add($use_func));
+                $this->add($usr_msg, $use_func);
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->value() . '" for user ' . $this->user()->id());
                 // update a value
@@ -2362,7 +2394,7 @@ class value_base extends sandbox_value
 
                 // check if the id parameters are supposed to be changed
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message_text($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
@@ -2370,7 +2402,7 @@ class value_base extends sandbox_value
                 if ($usr_msg->is_ok()) {
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     if ($use_func) {
-                        $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                        $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                     } else {
                         $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
                     }
@@ -2385,7 +2417,7 @@ class value_base extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -2423,7 +2455,7 @@ class value_base extends sandbox_value
         user_message                           $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
@@ -2436,7 +2468,7 @@ class value_base extends sandbox_value
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
-                        $cng_fld_cac->id($table_id . source_db::FLD_ID),
+                        $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }

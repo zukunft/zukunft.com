@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_trigger_tests
@@ -49,7 +51,13 @@ class formula_trigger_tests
 
         global $usr;
 
-        $t->header('Test the formula calculation triggers');
+        // init
+        $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
+
+        // start the test section (ts)
+        $ts = 'db write formula trigger ';
+        $t->header($ts);
 
         // prepare the calculation trigger test
         $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019];
@@ -65,44 +73,45 @@ class formula_trigger_tests
         $phr_lst2 = clone $phr_lst1;
         $phr_lst1->add_name(words::YEAR_2019);
         $phr_lst2->add_name(words::YEAR_2020);
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
 
-        // add a number to the test word
+        $test_name = 'add a number ' . values::CH_INHABITANTS_2019_IN_MIO . ' for 2019';
         $val_add1 = new value($usr);
         $val_add1->set_grp($phr_lst1->get_grp_id());
         $val_add1->set_number(values::CH_INHABITANTS_2019_IN_MIO);
-        $result = $val_add1->save()->get_last_message();
-        // add a second number to the test word
+        $t->assert_true($test_name, $val_add1->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
+
+        $test_name = 'add second number ' . values::CH_INHABITANTS_2020_IN_MIO . ' for 2020';
         $val_add2 = new value($usr);
         $val_add2->set_grp($phr_lst2->get_grp_id());
         $val_add2->set_number(values::CH_INHABITANTS_2020_IN_MIO);
-        $result = $val_add2->save()->get_last_message();
+        $t->assert_true($test_name, $val_add2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the first number have been saved correctly
         $added_val = new value($usr);
         $added_val->load_by_grp($phr_lst1->get_grp_id());
         $result = $added_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($usr);
         $added_val2->load_by_grp($phr_lst2->get_grp_id());
         $result = $added_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
         $best_val->load_best($phr_ch_19);
         $result = $best_val->number();
         $target = values::CH_INHABITANTS_2019_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check best value for "' . $phr_lst1->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
         $best_val2->load_best($phr_ch_20);
         $result = $best_val2->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('value->check best value for "' . $phr_lst2->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
         $res_lst = $frm->calc($phr_lst2);
@@ -123,12 +132,11 @@ class formula_trigger_tests
         } else {
             $target = "0.79%";
         }
-        $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        $t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
-        $val_add1->del();
-        // TODO activate Prio 1
-        //$val_add2->del();
+        $val_add1->del($usr_msg);
+        $val_add2->del($usr_msg);
 
         // change the second number and test if the result has been updated
         // a second user changes the value back to the original value and check if for the second number the result is updated

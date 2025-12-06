@@ -2,8 +2,8 @@
 
 /*
 
-    web/view/component.php - function to add, change or delete a view component
-    ----------------------
+    web/component/component.php - function to add, change or delete a view component
+    ---------------------------
 
     to create the HTML code to display a component
 
@@ -59,10 +59,12 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -71,7 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
@@ -79,12 +81,14 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class component extends sandbox_code_id
 {
@@ -138,11 +142,18 @@ class component extends sandbox_code_id
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
+
+        // TODO Prio 1 set link id
+        if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
+            $this->set_id($json_array[json_fields::COMPONENT_ID]);
+        }
+
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
@@ -187,19 +198,22 @@ class component extends sandbox_code_id
         } else {
             $this->style_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 move $typ_lst array convert to one place
+     * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the json api message
      * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
         $vars = parent::api_array();
+
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
         $vars[json_fields::UI_MSG_CODE_ID_VARS] = $this->ui_msg_code_id_vars?->value;
         $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception?->value;
@@ -261,18 +275,25 @@ class component extends sandbox_code_id
      * info
      */
 
+    /**
+     * TODO Prio 1 apply this error handling to similar functions
+     * get the
+     * @param type_lists|null $typ_lst
+     * @return string
+     */
     function type_code_id(?type_lists $typ_lst): string
     {
 
         $type_code_id = '';
-        if ($typ_lst->html_component_types == null) {
+        if ($typ_lst?->html_component_types == null) {
             $this->log_err('html_component_types are empty');
         } else {
-            $err_msg = 'Component type code id for ' . $this->dsp_id()
-                . ' and type id ' . $this->type_id() . ' missing';
             if ($this->type_id() == null) {
+                $err_msg = 'Component type not set in ' . $this->dsp_id();
                 $this->log_err($err_msg);
             } else {
+                $err_msg = 'Component type code id for ' . $this->dsp_id()
+                    . ' and type id ' . $this->type_id() . ' missing';
                 $type_code_id = $typ_lst->html_component_types->code_id($this->type_id());
                 if ($type_code_id == '') {
                     $this->log_err($err_msg);
@@ -286,7 +307,7 @@ class component extends sandbox_code_id
     function pos_type_code_id(?type_lists $typ_lst): string
     {
         $pos_type_code_id = '';
-        if ($typ_lst->html_position_types == null) {
+        if ($typ_lst?->html_position_types == null) {
             $this->log_err('html_position_types are empty');
         } else {
             $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
@@ -329,7 +350,7 @@ class component extends sandbox_code_id
     function style_code_id(?type_lists $typ_lst): string
     {
         $style_name = '';
-        if ($typ_lst->html_view_styles == null) {
+        if ($typ_lst?->html_view_styles == null) {
             $this->log_err('html_view_styles are empty');
         } else {
             if ($this->style_id != null) {
@@ -369,11 +390,24 @@ class component extends sandbox_code_id
     }
 
     /**
+     * TODO Prio 1 can be removed due to the explicit combine position type
      * @return bool true if the component is a subheader to combine several lists
      */
     function is_list_group(?type_lists $typ_lst): bool
     {
         if (in_array($this->type_code_id($typ_lst), component_type::LIST_GROUP)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the component uses the style for the component not the row
+     */
+    function no_row_style(string $typ_code_id): bool
+    {
+        if (in_array($typ_code_id, component_type::LIST_HAS_STYLE)) {
             return true;
         } else {
             return false;
@@ -483,8 +517,8 @@ class component extends sandbox_code_id
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header
@@ -543,11 +577,20 @@ class component extends sandbox_code_id
         $result .= $html->dsp_form_hidden("back", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
+        $result .= $html->form_field(
+            url_var::NAME,
+            msg_id::FORM_FIELD_NAME_COMPONENT,
+            $this->name,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
         // TODO Prio 0 check if the generated component edit mask has the type and all other elements used here and remove this function
         //$result .= $this->dsp_type_selector($form_name); // allow to change the type
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
+        $result .= $html->form_field(
+            url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
+            $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
                 $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back->url_encode());
@@ -618,8 +661,8 @@ class component extends sandbox_code_id
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header
@@ -637,9 +680,9 @@ class component extends sandbox_code_id
      */
     function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        global $cmp_typ_cac;
+        global $sys;
         $base = new ui_base();
-        return match ($cmp_typ_cac->code_id($this->type_id())) {
+        return match ($sys->typ_lst->cmp_typ->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
             component_type::VALUES_RELATED => $base->table($dbo, $cfg),
@@ -660,8 +703,8 @@ class component extends sandbox_code_id
      */
     function word_name(phrase $phr): string
     {
-        global $cmp_typ_cac;
-        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        global $sys;
+        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';
@@ -740,8 +783,8 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $result .= $log_dsp->dsp_hist(component::class, $this->id(), $size, $page);
+        $log_ui = new user_log_display($this->user());
+        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");
         return $result;
@@ -753,14 +796,14 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = component::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = component::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         $this->log_debug("done");
         return $result;
@@ -778,7 +821,7 @@ class component extends sandbox_code_id
 
     /**
      * to select the word or triple
-     * @param phrase_list_dsp $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
+     * @param phrase_list_ui $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
      * @param string $form the name of the html form
      * @param int|null $selected the row id of the suggested phrase or the already selected phrase
@@ -793,7 +836,7 @@ class component extends sandbox_code_id
         string      $form,
         ?int        $selected = null,
         string      $pattern = '',
-        msg_id      $label_id = msg_id::LABEL_PHRASE,
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
         string      $style = view_styles::COL_SM_4
     ): string
     {

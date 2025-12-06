@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/component_link_type.php - db based ENUM of the component view link types
-    -----------------------------------
+    model/component/component_link_type.php - db based ENUM of the component view link types
+    ---------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -47,6 +47,7 @@ class component_link_type extends type_object
     // list of the component link types that have a coded functionality
     const string ALWAYS = "always"; // the component is always shown as it is
     const string EXPRESSION = "expression"; // the component is only shown if an expression is true
+    const string DEFAULT = self::ALWAYS;
 
 
     /*

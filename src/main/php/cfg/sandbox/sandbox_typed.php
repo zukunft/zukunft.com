@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_description.php - adding the description field to the _sandbox superclass
-    -------------------------------------
+    model/sandbox/sandbox_typed.php - adding the description field to the _sandbox superclass
+    -------------------------------
 
     This superclass should be used by the classes words, formula, ... su that users can link predefined behavior
 
@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::DB . 'sql_db.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
@@ -64,6 +65,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
@@ -98,9 +100,9 @@ class sandbox_typed extends sandbox_named
      * construct and map
      */
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->type_id = null;
     }
 
@@ -136,16 +138,17 @@ class sandbox_typed extends sandbox_named
     /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
+     * @param user_message $usr_msg with the requesting user and if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_type_id($api_json[json_fields::TYPE], $usr);
+            $this->set_type_id($api_json[json_fields::TYPE], $usr_msg->usr);
         }
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -154,18 +157,18 @@ class sandbox_typed extends sandbox_named
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add the type to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
             $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $usr_req);
@@ -173,7 +176,7 @@ class sandbox_typed extends sandbox_named
             $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -340,8 +343,12 @@ class sandbox_typed extends sandbox_named
      */
     function type_name(): string
     {
-        $msg = 'the type_name() function is not overwritten by the ' . $this::class . ' object';
-        return log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'type_name',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
 
@@ -366,12 +373,13 @@ class sandbox_typed extends sandbox_named
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // TODO use the code id additional to the name where ever possible
         if ($this->type_code_id() <> '') {

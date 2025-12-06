@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
@@ -55,14 +56,15 @@ function getRandomKey(int $length = 20): string
 
 
 // open database 
-$db_con = prg_start("login_reset", "center_form");
+$app = new frontend();
+$db_con = $app->start("login_reset", "center_form");
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $usr = new user;
     $result = $usr->get();
-    $msg = '';
+    $usr_msg = new user_message();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
@@ -128,5 +130,5 @@ if ($db_con->is_open()) {
     echo $result;
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con);
 }

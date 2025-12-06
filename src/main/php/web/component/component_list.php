@@ -2,8 +2,8 @@
 
 /*
 
-    component_list_dsp.php - a list function to create the HTML code to display a view component list
-    ---------------------
+    web/component/component_list.php - a list function to create the HTML code to display a view component list
+    --------------------------------
 
     This file is part of zukunft.com - calc with words
 

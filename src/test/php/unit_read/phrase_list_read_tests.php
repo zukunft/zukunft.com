@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_read_tests
@@ -57,11 +58,15 @@ class phrase_list_read_tests
         global $usr;
 
         // init
-        $t->header('phrase list database read tests');
+        $t_db = new test_db_load($t);
         $t->name = 'phrase list_read db->';
         $t->resource_path = 'db/phrase/';
 
-        $t->subheader('Load phrases');
+        // start the test section (ts)
+        $ts = 'db read phrase list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'load');
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new phrase_list($t->usr1);
@@ -76,7 +81,7 @@ class phrase_list_read_tests
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
         $lst->load_names(formulas::SCALE_TO_SEC);
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$t->assert_contains_not($test_name, $lst->names(), formulas::TN_READ);
         $test_name = 'api message of phrases list';
         $lst = new phrase_list($t->usr1);
@@ -93,7 +98,7 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $lst->names(), $switzerland->name());
 
 
-        $t->subheader('Get related phrases');
+        $t->subheader($ts . 'get related');
 
         // direct children
         $test_name = 'Switzerland is a country';
@@ -115,7 +120,7 @@ class phrase_list_read_tests
         $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich
-        $phr_canton = $t->load_phrase(words::CANTON);
+        $phr_canton = $t_db->load_phrase(words::CANTON);
         $phr_lst = $phr_canton->all_related();
         $test_name = 'The word Canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company

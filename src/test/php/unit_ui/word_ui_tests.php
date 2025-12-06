@@ -36,13 +36,18 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_ui_tests
 {
     function run(test_cleanup $t, type_lists $cfg): void
     {
+        // init
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_msk = new test_views($t);
 
         // start the test section (ts)
         $ts = 'unit ui html word ';
@@ -52,10 +57,10 @@ class word_ui_tests
         //      with an undo button to change back to the standard
         // TODO add this ui test for all main sandbox objects
 
-        $wrd = new word($t->word()->api_json());
-        $wrd_pi = new word($t->word_pi()->api_json());
-        $wrd_zh = new word($t->word_zh()->api_json());
-        $wrd_city = new word($t->word_city()->api_json());
+        $wrd = new word($t_wrd->word()->api_json());
+        $wrd_pi = new word($t_wrd->word_pi()->api_json());
+        $wrd_zh = new word($t_wrd->word_zh()->api_json());
+        $wrd_city = new word($t_wrd->word_city()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
@@ -67,8 +72,8 @@ class word_ui_tests
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, '', $cfg) . '<br>';
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_dsp()) . '<br>';
-        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui()) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_long_dsp(), 'view_long') . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());

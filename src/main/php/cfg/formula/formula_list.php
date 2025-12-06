@@ -39,6 +39,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -538,40 +540,36 @@ class formula_list extends sandbox_list_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $frm = new formula($this->user());
-            $usr_msg->add($frm->import_obj($value, $dto, $test_obj));
-            // add a dummy id for unit testing
-            if ($test_obj) {
-                $frm->id = $test_obj->seq_id();
+            if ($frm->import_obj($value, $usr_msg, $dto)) {
+                $this->add($frm);
             }
-            $this->add($frm);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields of this formula
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $frm_lst = [];
         foreach ($this->lst() as $frm) {
             if (get_class($frm) == formula::class) {
-                $frm_lst[] = $frm->export_json($do_load);
+                $frm_lst[] = $frm->export_json($exp_typ, $do_load);
             } else {
                 log_err('The function formula_list->export_json returns ' . $frm->dsp_id()
                     . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');
@@ -902,7 +900,7 @@ class formula_list extends sandbox_list_named
             $wrd = $frm->formula_word();
             $wrd_lst->add_by_name($wrd);
         }
-        $wrd_lst->save($imp);
+        $wrd_lst->save($usr_msg, $imp);
         foreach ($this->lst() as $frm) {
             $name_wrd = $wrd_lst->get_by_name($frm->name());
             if ($name_wrd->id() > 0) {
@@ -919,7 +917,7 @@ class formula_list extends sandbox_list_named
     protected function delete_depending(user_message $usr_msg): void
     {
         foreach ($this->lst() as $frm) {
-            $usr_msg->add($frm->del_links());
+            $frm->del_links($usr_msg);
         }
     }
 
@@ -967,7 +965,7 @@ class formula_list extends sandbox_list_named
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $frm) {
-            $usr_msg->add($frm->save());
+            $frm->save($usr_msg);
             $cache->add($frm->term());
         }
         return $usr_msg;

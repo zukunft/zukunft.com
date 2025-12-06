@@ -39,6 +39,7 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
@@ -165,6 +166,12 @@ class view_exe extends view_base
             $this->log_debug('no components for ' . $this->dsp_id());
         } else {
             $row = '';
+            // the standard is that each component has its own row
+            // and the default style of the component is used
+            // the style of the component can be overwritten for each view link
+            // if the position type is side the component in the same row as the previous component
+            // if the position type is combine the component below the previous component but within an explicitly defined row
+
             // if a row contains only standard for elements
             // the row start and end can be set automatically
             // if a row contains buttons, hidden components, subheader or related tables
@@ -175,21 +182,24 @@ class view_exe extends view_base
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
-                    //
+                    // position the next component in a new row
                     if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
                         if ($auto_row) {
                             // the full page width row if a row contains only standard form elements
                             // TODO easy move code to HTML class
-                            $result .= '<div class="row ';
-                            $result .= view_styles::COL_SM_12;
-                            $result .= '">' . $row . ' </div>';
+                            $result .= $html->div_row($row, view_styles::DEFAULT_ROW);
                         } else {
                             // the component html code is added without adding a table row
-                            $result .= $html->add_style($row, $style_id);;
+                            $result .= $html->add_style($row, $style_id);
                             $style_id = null;
                         }
                         $row = '';
                         $auto_row = true;
+                    }
+                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::COLUMN) {
+                        // the component html code is added without adding a table row using the same style
+                        $result .= $html->add_style($row, $style_id);
+                        $row = '';
                     }
                 }
                 if ($cfg == null) {
@@ -205,18 +215,16 @@ class view_exe extends view_base
                 $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
 
                 // remember the style to apply it to the complete row or column
+                // TODO Prio 1 use a row / col explicit style parameter instead
                 if ($cmp->style_id != null) {
                     $style_id = $cmp->style_id;
                 }
 
-                // Do not add the style if the style has been added by the component already
+                // Do not add the row or column style
+                // if the style has been added by the component already
+                // TODO Prio 1 find a more strait forward way to define it
                 $tc_id = $cmp->type_code_id($cfg->typ_lst_cache);
-                if ($tc_id == component_type::FORM_FIELD_NAME
-                    or $tc_id == component_type::FORM_FIELD_PLURAL
-                    or $tc_id == component_type::FORM_FIELD_REVERSE
-                    or $tc_id == component_type::FORM_FIELD_PLURAL_REVERSE
-                    or $tc_id == component_type::FORM_FIELD_NAME_IN_FORMULAS
-                    or $tc_id == component_type::FORM_FIELD_VALUE) {
+                if ($cmp->no_row_style($tc_id)) {
                     $style_id = null;
                 }
 
@@ -294,7 +302,7 @@ class view_exe extends view_base
     function dsp_edit($add_cmp, $wrd, $back): string
     {
         global $usr;
-        global $msk_typ_cac;
+        global $sys;
         global $cfg;
 
         $result = '';
@@ -302,7 +310,7 @@ class view_exe extends view_base
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($msk_typ_cac->id(view_type::DEFAULT));
+            $this->set_type_id($sys->typ_lst->msk_typ->id(view_type::DEFAULT));
         }
 
         // the header to add or change a view
@@ -331,16 +339,16 @@ class view_exe extends view_base
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8, "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8, "disabled");
             //$result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
             $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
+            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION, "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8);
+            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8);
             $result .= $this->dsp_type_selector($script);
             $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
+            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
         }
 
@@ -396,6 +404,7 @@ class view_exe extends view_base
     private function linked_components($add_cmp, $wrd, string $script, $back): string
     {
         $html = new html_base();
+        global $ui_cfg;
 
         $result = '';
 
@@ -426,14 +435,14 @@ class view_exe extends view_base
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected);
+                $result .= $this->component_selector($script, '', $id_selected, $ui_cfg->component_list());
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
-                $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
+                $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id());
+                $result .= $this->component_selector($script, '', $this->type_id(), $ui_cfg->component_list());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
@@ -461,8 +470,8 @@ class view_exe extends view_base
         ?back_trace $back = null
     ): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(view_exe::class, $this->id(), $size, $page, '', $back);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(view_exe::class, $this->id(), $size, $page, '', $back);
     }
 
     /**
@@ -473,14 +482,14 @@ class view_exe extends view_base
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = view_exe::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = view_exe::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         $this->log_debug("done");
         return $result;

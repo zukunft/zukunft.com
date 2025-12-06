@@ -41,22 +41,25 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::VERB . 'verb.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
-$db_con = prg_start("verb_edit");
+$app = new frontend();
+$db_con = $app->start("verb_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -69,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VERB_EDIT);
+    $msk->load_by_code_id(views::VERB_EDIT);
     $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
@@ -102,7 +105,7 @@ if ($usr->id() > 0) {
             }
 
             // save the changes
-            $upd_result = $vrb->save()->get_last_message();
+            $upd_result = $vrb->save($usr_msg);
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -121,13 +124,13 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $dto = new data_object();
             $result .= $msk_dsp->dsp_navbar($dto, $back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the verb and its relations, so that the user can change it
-            $vrb_dsp = new verb_dsp($vrb->api_json());
+            $vrb_dsp = new verb_ui($vrb->api_json());
             $result .= $vrb_dsp->dsp_edit($back);
         }
     }
@@ -135,4 +138,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

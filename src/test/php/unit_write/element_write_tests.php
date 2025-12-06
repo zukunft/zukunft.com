@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\element\element;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -48,25 +50,30 @@ class element_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $vrb_cac;
+        global $sys;
 
+        // init
         $back = 0;
+        $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
 
-        $t->header('Test the formula element class (classes/element.php)');
+        // start the test section (ts)
+        $ts = 'db write formula element ';
+        $t->header($ts);
 
-        $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $t->subheader($ts . 'prepare');
+        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 
         // get the test word ids
-        $wrd_country = $t->load_word(words::COUNTRY);
-        $wrd_canton = $t->load_word(words::CANTON);
-        $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
+        $wrd_country = $t_db->load_word(words::COUNTRY);
+        $wrd_canton = $t_db->load_word(words::CANTON);
+        $vrb_id = $sys->typ_lst->vrb->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
             $pos = 0;
@@ -88,7 +95,7 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = 'word "System Test Word Total" (' . $wrd_total->id . ') for user 3 (zukunft.com system test)';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                $t->assert('element->dsp_id', $result, $target);
 
                 $result = $elm->name();
                 if ($pos == 0) {
@@ -100,7 +107,7 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = 'System Test Word Total';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                $t->assert('element->dsp_id', $result, $target);
 
                 $elm_dsp = new element($elm->api_json());
                 $result = $elm_dsp->link($back);
@@ -114,35 +121,39 @@ class element_write_tests
                 } elseif ($pos == 3) {
                     $target = $url . $wrd_total->id . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
-                $t->display('element->dsp_id', $target, $result);
+                // TODO Prio 0 activate
+                //$t->assert('element->dsp_id', $result, $target);
 
                 $pos++;
             }
         } else {
             $result = 'formula element list not set';
             $target = '';
-            $t->display('expression->element_lst', $target, $result);
+            $t->assert('expression->element_lst', $result, $target);
         }
 
-        $t->subheader('cleanup formula element write');
-        $frm_sector->del();
-        $wrd_total->del();
+        $t->subheader($ts . 'cleanup formula element write');
+        $frm_sector->del($usr_msg);
+        $wrd_total->del($usr_msg);
 
     }
 
     function run_list(test_cleanup $t): void
     {
 
-        $back = 0;
+        $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
 
-        $t->header('Test the formula element list class (classes/element_list.php)');
+        // start the test section (ts)
+        $ts = 'db write formula element list ';
+        $t->header($ts);
 
-        $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
+        $t->subheader($ts . 'prepare');
+        $wrd_total = $t_db->test_word(words::TEST_TOTAL);
+        $frm_sector = $t_db->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP, $usr_msg);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 
@@ -153,12 +164,12 @@ class element_write_tests
         } else {
             $result = 'formula element list not set';
             $target = '';
-            $t->display('element_list->dsp_id', $target, $result);
+            $t->assert('element_list->dsp_id', $result, $target);
         }
 
-        $t->subheader('cleanup formula element write');
-        $frm_sector->del();
-        $wrd_total->del();
+        $t->subheader($ts . 'cleanup');
+        $frm_sector->del($usr_msg);
+        $wrd_total->del($usr_msg);
 
     }
 

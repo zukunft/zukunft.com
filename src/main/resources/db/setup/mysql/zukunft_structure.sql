@@ -3731,6 +3731,79 @@ CREATE TABLE IF NOT EXISTS user_term_views
 -- --------------------------------------------------------
 
 --
+-- table structure to define the behaviour of the relation between two views
+--
+
+CREATE TABLE IF NOT EXISTS view_relation_types
+(
+    view_relation_type_id smallint  NOT NULL COMMENT 'the internal unique primary index',
+    type_name      varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
+    PRIMARY KEY (view_relation_type_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the behaviour of the relation between two views';
+
+--
+-- AUTO_INCREMENT for table view_relation_types
+--
+ALTER TABLE view_relation_types
+    MODIFY view_relation_type_id smallint NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+--
+
+CREATE TABLE IF NOT EXISTS view_relations
+(
+    view_relation_id      bigint       NOT NULL COMMENT 'the internal unique primary index',
+    parent_view_id        bigint       NOT NULL COMMENT 'the parent view that should be modified by the child view for the used view',
+    child_view_id         bigint       NOT NULL COMMENT 'the child view that should modify the parent view for the used view',
+    user_id               bigint   DEFAULT NULL COMMENT 'the owner / creator of the view_relation',
+    view_relation_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = add components,2 = remove components as defined in view_relation_type',
+    start_pos             bigint   DEFAULT NULL,
+    description           text     DEFAULT NULL,
+    excluded              smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id         smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id            smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (view_relation_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view';
+
+--
+-- AUTO_INCREMENT for table view_relations
+--
+ALTER TABLE view_relations
+    MODIFY view_relation_id bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- table structure to save user specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+--
+
+CREATE TABLE IF NOT EXISTS user_view_relations
+(
+    view_relation_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id          bigint       NOT NULL COMMENT 'the changer of the view_relation',
+    start_pos        bigint   DEFAULT NULL,
+    description      text     DEFAULT NULL,
+    excluded         smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id    smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id       smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (view_relation_id, user_id)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to assign predefined behaviour to a component view link
 --
 
@@ -6010,6 +6083,35 @@ ALTER TABLE user_term_views
 -- --------------------------------------------------------
 
 --
+-- indexes for table view_relation_types
+--
+
+ALTER TABLE view_relation_types
+    ADD KEY view_relation_types_type_name_idx (type_name);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table view_relations
+--
+
+ALTER TABLE view_relations
+    ADD KEY view_relations_parent_view_idx (parent_view_id),
+    ADD KEY view_relations_child_view_idx (child_view_id),
+    ADD KEY view_relations_user_idx (user_id),
+    ADD KEY view_relations_view_relation_type_idx (view_relation_type_id);
+
+--
+-- indexes for table user_view_relations
+--
+
+ALTER TABLE user_view_relations
+    ADD KEY user_view_relations_view_relation_idx (view_relation_id),
+    ADD KEY user_view_relations_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table component_link_types
 --
 
@@ -7121,6 +7223,26 @@ ALTER TABLE user_term_views
     ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
     ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table view_relations
+--
+
+ALTER TABLE view_relations
+    ADD CONSTRAINT view_relations_view_fk FOREIGN KEY (parent_view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_relations_view2_fk FOREIGN KEY (child_view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT view_relations_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT view_relations_view_relation_type_fk FOREIGN KEY (view_relation_type_id) REFERENCES view_relation_types (view_relation_type_id);
+
+--
+-- constraints for table user_view_relations
+--
+
+ALTER TABLE user_view_relations
+    ADD CONSTRAINT user_view_relations_view_relation_fk FOREIGN KEY (view_relation_id) REFERENCES view_relations (view_relation_id),
+    ADD CONSTRAINT user_view_relations_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 -- --------------------------------------------------------
 

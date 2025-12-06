@@ -28,8 +28,8 @@ SELECT formula_link_delete_log_user (
                12,
                'scale minute to sec',
                'time period based',
-               'mathematics',
+               'minute',
                1,
                2,
-               1,
+               104,
                1);

@@ -40,9 +40,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -53,10 +55,11 @@ if ($debug > 1) {
 }
 
 // open database
-$db_con = prg_start("progress display");
+$app = new frontend();
+$db_con = $app->start("progress display");
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -91,7 +94,7 @@ if ($usr->id > 0) {
         // ---------------------------------------
 
         $html = new html_base();
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $html->echo($msk_dsp->dsp_navbar($dto, $back));
 
         $html->echo("loading of base configuration started<br>");
@@ -106,4 +109,4 @@ if ($usr->id > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

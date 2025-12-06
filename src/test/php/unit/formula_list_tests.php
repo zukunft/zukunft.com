@@ -29,6 +29,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -41,9 +42,10 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_tests
@@ -60,6 +62,7 @@ class formula_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
@@ -87,13 +90,13 @@ class formula_list_tests
         $this->assert_sql_by_formula_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr_lst($t, $db_con, $frm_lst);
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_sql_all($db_con, $frm);
 
 
         $t->subheader($ts . 'api');
 
-        $frm_lst = $t->formula_list_short();
+        $frm_lst = $t_frm->formula_list_short();
         $t->assert_api($frm_lst);
 
 
@@ -104,8 +107,8 @@ class formula_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->formula_list_short();
-        $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
+        $trp_lst = $t_frm->formula_list_short();
+        $t->assert_api_to_ui($trp_lst, new formula_list_ui());
 
     }
 

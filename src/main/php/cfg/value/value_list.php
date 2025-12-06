@@ -55,6 +55,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
@@ -866,38 +868,37 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
+        global $db_con;
 
-        log_debug();
-        $usr_msg = new user_message();
         $lib = new library();
 
         $val = new value($this->user());
         $phr_lst = new phrase_list($this->user());
 
-        if ($test_obj) {
-            $do_save = false;
-        } else {
+        if ($db_con->is_open()) {
             $do_save = true;
+        } else {
+            $do_save = false;
         }
 
         foreach ($json_obj as $key => $value) {
 
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->import_lst($value, $test_obj));
-                $val->set_grp($phr_lst->get_grp_id($do_save));
+                if ($phr_lst->import_lst($value, $usr_msg)) {
+                    $val->set_grp($phr_lst->get_grp_id($do_save));
+                }
             }
 
             if ($key == json_fields::TIMESTAMP) {
@@ -912,23 +913,21 @@ class value_list extends sandbox_value_list
             }
 
             if ($key == json_fields::SHARE) {
-                $val->set_share_id($shr_typ_cac->id($value));
+                $val->set_share_id($sys->typ_lst->shr_typ->id($value));
             }
 
             if ($key == json_fields::PROTECTION) {
-                $val->set_protection_id($ptc_typ_cac->id($value));
+                $val->set_protection_id($sys->typ_lst->ptc_typ->id($value));
             }
 
             if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 $src->set_name($value);
-                if ($test_obj) {
-                    $src->id = $test_obj->seq_id();
-                } else {
+                if ($do_save) {
                     if ($usr_msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
-                            $usr_msg->add($src->save());
+                            $src->save($usr_msg);
                         }
                     }
                 }
@@ -945,8 +944,7 @@ class value_list extends sandbox_value_list
                                 $val,
                                 $phr_lst,
                                 $do_save,
-                                $usr_msg,
-                                $test_obj);
+                                $usr_msg);
                         }
                     } else {
                         $usr_msg = $this->add_value(
@@ -955,14 +953,13 @@ class value_list extends sandbox_value_list
                             $val,
                             $phr_lst,
                             $do_save,
-                            $usr_msg,
-                            $test_obj);
+                            $usr_msg);
                     }
                 }
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     private function add_value(
@@ -971,40 +968,47 @@ class value_list extends sandbox_value_list
         value $val,
         phrase_list $phr_lst,
         bool $do_save,
-        user_message $usr_msg,
-        ?object $test_obj = null
+        user_message $usr_msg
     ): user_message
     {
+        global $db_con;
         $val_to_add = clone $val;
         $phr_lst_to_add = clone $phr_lst;
         $val_phr = new phrase($this->user());
-        if ($test_obj) {
-            $val_phr->set_name($val_key, word::class);
-            $val_phr->set_id($test_obj->seq_id());
-        } else {
+        if ($db_con->is_open()) {
             $val_phr->load_by_name($val_key);
-        }
-        $phr_lst_to_add->add($val_phr);
-        $val_to_add->set_number($val_number);
-        $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
-        if ($test_obj) {
-            $val_to_add->set_id($test_obj->seq_id());
+            $phr_lst_to_add->add($val_phr);
         } else {
-            $usr_msg->add($val_to_add->save());
+            $val_phr->set_name($val_key, word::class);
+            $phr_lst_to_add->add_by_name($val_phr);
         }
-        $this->add_obj($val_to_add);
+        $val_to_add->set_number($val_number);
+        $grp = $phr_lst_to_add->get_grp_id($do_save);
+        if ($grp != null) {
+            $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
+            if ($db_con->is_open()) {
+                $val_to_add->save($usr_msg);
+                $this->add_obj($val_to_add);
+            } else {
+                // TODO Prio 2 maybe use add_by_phr_names
+                $this->add_direct($val_to_add);
+            }
+        } else {
+            // TODO Prio 0 review error
+            log_warning('');
+        }
         return $usr_msg;
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         $vars = [];
 
@@ -1034,12 +1038,12 @@ class value_list extends sandbox_value_list
             }
 
             // add the share type
-            if ($val0->share_id() > 0 and $val0->share_id() <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            if ($val0->share_id() > 0 and $val0->share_id() <> $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC)) {
                 $vars[json_fields::SHARE] = $val0->share_type_code_id();
             }
 
             // add the protection type
-            if ($val0->protection_id() > 0 and $val0->protection_id() <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            if ($val0->protection_id() > 0 and $val0->protection_id() <> $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT)) {
                 $vars[json_fields::PROTECTION] = $val0->protection_type_code_id();
             }
 
@@ -1453,10 +1457,8 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
     {
-        $usr_msg = new user_message();
-
         $lib = new library();
         $name = $lib->class_to_table(value::class);
 
@@ -1485,7 +1487,7 @@ class value_list extends sandbox_value_list
                     if ($val->id() == 0) {
                         $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
                     } else {
-                        $usr_msg->add($val->save());
+                        $val->save($usr_msg);
                     }
                 }
                 $i++;
@@ -1500,22 +1502,21 @@ class value_list extends sandbox_value_list
             //      create blocks of update function calls
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
     /**
      * delete all loaded values e.g. to delete all the values linked to a phrase
-     * @return user_message
+     * @param user_message $usr_msg the message for the user why deleting the values has failed and a suggested solution
+     * @return bool true if all values has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $val) {
-            $usr_msg->add($val->del());
+            $val->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 }

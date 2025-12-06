@@ -40,5 +40,6 @@ enum change_actions: string
     const string ADD = 'add';
     const string UPDATE = 'update';
     const string DELETE = 'del';
+    const string SUB = 'sub';
 
 }

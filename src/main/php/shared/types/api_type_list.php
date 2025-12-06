@@ -103,6 +103,45 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the api message should include the components for the views
+     */
+    public function include_components(): bool
+    {
+        return in_array(api_type::INCL_COMPONENTS, $this->lst);
+    }
+
+    /**
+     * create the json by simple combining the json arrays
+     * which may lead to some repeating values
+     * instead of the simplified linked object json
+     * by using the link_id json field and move the subarray one layer higher
+     * e.g. instead of "components":[{"link_id":1,                         "id":1,"name":"Word","description":"simply show the word or triple name","type_id":8 ,"position":1,"position_type":1},{"link_id":2,                         "id":2,"name":"spreadsheet","description":"changeable sheet with words, number and formulas","type_id":35 ,"position":2,"position_type":1}]
+     *             use "components":[{     "id":1,"view_id":1,"component":{"id":1,"name":"Word","description":"simply show the word or triple name","type_id":8},"position":1,"position_type":1},     {"id":2,"view_id":1,"component":{"id":2,"name":"spreadsheet","description":"changeable sheet with words, number and formulas","type_id":35},"position":2,"position_type":1}]
+     * @return bool false and default if the api message should reduce the array depth
+     */
+    public function link_details(): bool
+    {
+        return in_array(api_type::LINK_DETAILS, $this->lst);
+    }
+
+    /**
+     * @return bool true if the api message should include the phrase names
+     */
+    public function phrase_names(): bool
+    {
+        return in_array(api_type::PHRASE_NAMES, $this->lst);
+    }
+
+    /**
+     * @return bool true if the api message should include the details of the view
+     *              otherwise just the view id is included in the apu message
+     */
+    public function include_views(): bool
+    {
+        return in_array(api_type::INCL_VIEWS, $this->lst);
+    }
+
+    /**
      * @return bool true if the api message should contain excluded objects with all details
      */
     public function with_excluded(): bool

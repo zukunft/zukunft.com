@@ -31,13 +31,13 @@
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+//include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
-include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view.php';
@@ -45,12 +45,13 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -293,7 +294,7 @@ function log_msg(string  $msg_text,
                  ?sql_db $given_db_con = null): string
 {
 
-    global $sys_log_msg_lst;
+    global $sys;
     global $db_con;
 
     $result = '';
@@ -309,7 +310,7 @@ function log_msg(string  $msg_text,
         $used_db_con = new sql_db();
     }
     // try to reconnect to the database
-    // TODO activate Prio 3
+    // TODO Prio 3 activate
     /*
     if (!$used_db_con->connected()) {
         if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {
@@ -344,12 +345,12 @@ function log_msg(string  $msg_text,
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
         $msg_type_text = $user_id . substr($msg_text, 0, 200);
-        if (!in_array($msg_type_text, $sys_log_msg_lst)) {
+        if (!in_array($msg_type_text, $sys->log_msg_lst)) {
             $used_db_con->usr_id = $user_id;
             $sys_log_id = 0;
 
-            $sys_log_msg_lst[] = $msg_type_text;
-            if ($msg_log_level > LOG_LEVEL or $force_log) {
+            $sys->log_msg_lst[] = $msg_type_text;
+            if ($msg_log_level > text_log::LOG_LEVEL or $force_log) {
                 $used_db_con->set_class(sys_log_function::class);
                 $function_id = $used_db_con->get_id($function_name);
                 if ($function_id <= 0) {
@@ -383,18 +384,18 @@ function log_msg(string  $msg_text,
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
                 //$sys_log_id = mysqli_insert_id();
             }
-            if ($msg_log_level >= MSG_LEVEL) {
+            if ($msg_log_level >= text_log::MSG_LEVEL) {
                 echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
                 if ($sys_log_id > 0) {
                     echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
                 }
             } else {
-                if ($msg_log_level >= DSP_LEVEL) {
+                if ($msg_log_level >= text_log::DSP_LEVEL) {
                     $usr = new user();
                     $usr->load_by_id($user_id);
                     $msk = new view($usr);
-                    $msk_dsp = new view_dsp($msk->api_json());
-                    $result .= $msk_dsp->dsp_navbar_simple();
+                    $msk_ui = new view_ui($msk->api_json());
+                    $result .= $msk_ui->dsp_navbar_simple();
                     $result .= $msg_text . " (by " . $function_name . ").<br><br>";
                 }
             }

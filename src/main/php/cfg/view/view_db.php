@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/ref_db.php - the database const for reference tables
-    --------------------
+    model/view/view_db.php - the database const for view tables
+    ----------------------
 
     The main sections of this object are
     - db const:          const for the database link

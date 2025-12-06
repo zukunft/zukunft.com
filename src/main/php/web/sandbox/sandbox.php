@@ -50,16 +50,16 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class sandbox extends db_object_dsp
+class sandbox extends db_object
 {
 
     // the share_id is used to define the access rights
@@ -75,10 +75,10 @@ class sandbox extends db_object_dsp
     public ?bool $excluded = null;
 
     // the user that has created the standard object
-    protected ?user_dsp $owner = null;
+    protected ?user $owner = null;
 
     // the id of the default view for this object
-    private ?int $view_id = null;
+    public ?int $view_id = null;
 
 
     /*
@@ -90,11 +90,18 @@ class sandbox extends db_object_dsp
      * do not set the default share and protection type to be able to identify forced updates to the default type
      *
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
+
+        // TODO Prio 0 add dto cache object to api mapper
+        //if ($this->has_id()) {
+        //    $cac_obj = $dto->get_object_by_id($this);
+        //    $this->fill($cac_obj, $this->user());
+        //}
 
         if (array_key_exists(json_fields::SHARE, $json_array)) {
             $this->share_id = $json_array[json_fields::SHARE];
@@ -111,18 +118,20 @@ class sandbox extends db_object_dsp
         } else {
             $this->excluded = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if (array_key_exists(url_var::SHARE, $url_array)) {
             $this->share_id = $url_array[url_var::SHARE];
         } else {
@@ -210,14 +219,16 @@ class sandbox extends db_object_dsp
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW_ID
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        return $msk_lst->selector($form, $view_id, $name, msg_id::LABEL_VIEW);
+        $msk_lst = $msk_lst->ex_system();
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
     /**

@@ -78,20 +78,19 @@ class figure_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->user());
-            $usr_msg->add($fig->api_mapper($json_phr));
-            if ($usr_msg->is_ok()) {
+            if ($fig->api_mapper($json_phr, $usr_msg)) {
                 $this->add($fig);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

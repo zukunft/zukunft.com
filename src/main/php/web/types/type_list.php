@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED . 'api.php';
@@ -54,7 +55,6 @@ include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
-use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -83,6 +83,7 @@ class type_list
 
     /**
      * set the vars of these list display objects bases on the api json array
+     * TODO Prio 1 add user_message parameter
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -92,7 +93,7 @@ class type_list
         foreach ($json_array as $value) {
             if ($class == verb::class) {
                 $vrb = new verb();
-                $vrb->api_mapper($value);
+                $vrb->api_mapper($value, $usr_msg);
                 $this->add_obj($vrb);
             } elseif ($class == ref_type::class) {
                 $ref_typ = new ref_type(
@@ -110,14 +111,14 @@ class type_list
                     $usr_msg->add_err('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME],
                         $value[json_fields::DESCRIPTION]
                     );
                 } else {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME]
@@ -341,15 +342,21 @@ class type_list
     function type_selector(
         string $form,
         ?int   $selected = null,
-        string $name,
-        msg_id $label_id = msg_id::LABEL_TYPE,
+        string $name = '',
+        msg_id $label_id = msg_id::FORM_FIELD_TYPE,
         string $style = view_styles::COL_SM_4
     ): string
     {
         $sel = new html_selector();
-        if ($label_id == msg_id::LABEL_TYPE) {
+        if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
             $std = $this->get_by_code_id(phrase_type::DEFAULT);
-            $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            if ($std != null) {
+                $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            } else {
+                $sel->lst = $this->lst_key_sort_by_name();
+            }
+        } elseif (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA)) {
+            $sel->lst = $this->lst_key_sort_by_name();
         } else {
             $sel->lst = $this->lst_key();
         }

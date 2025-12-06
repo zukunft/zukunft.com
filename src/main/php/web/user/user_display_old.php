@@ -2,8 +2,8 @@
 
 /*
 
-    web/user/user_old.php - to display the user specific settings
-    ---------------------
+    web/user/user_display_old.php - to display the user specific settings
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -35,22 +35,23 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::FORMULA . 'formula.php';
-include_once paths::MODEL_FORMULA . 'formula_db.php';
-include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::USER . 'user.php';
-include_once paths::MODEL_USER . 'user_db.php';
 include_once html_paths::VERB . 'verb.php';
-include_once paths::MODEL_VERB . 'verb_db.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
-include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -60,14 +61,15 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 
 class user_display_old extends user
@@ -102,14 +104,14 @@ class user_display_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new sys_log_list_dsp;
+        $err_lst = new sys_log_list;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list_dsp($err_lst->api_json());
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $result = $err_lst_dsp->get_html();
         }
 
@@ -215,7 +217,7 @@ class user_display_old extends user
 
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
-                $trp_usr = new triple($this);
+                $trp_usr = new triple();
                 $id = $sbx_row['id'];
                 if ($id != 0) {
                     $trp_usr->load_by_id($id);
@@ -619,7 +621,7 @@ class user_display_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
+                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
                         $sandbox_item_name = $phr_lst_dsp->name_linked();
                     }
 
@@ -761,7 +763,7 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp($this);
+                $dsp_usr = new view_ui($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_description'];
@@ -950,7 +952,7 @@ class user_display_old extends user
                     and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    //$dsp_usr->del_usr_cfg();
+                    $dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user component
@@ -1050,8 +1052,7 @@ class user_display_old extends user
 
         // get all values changed by the user to a non standard component_link
         $sql = '';
-        if (SQL_DB_TYPE == sql_db::POSTGRES) {
-        } else {
+        if (SQL_DB_TYPE != sql_db::POSTGRES) {
             if (SQL_DB_TYPE == sql_db::POSTGRES) {
                 $sql = "SELECT 
                     u.component_link_id AS id, 
@@ -1213,8 +1214,10 @@ class user_display_old extends user
         log_debug($this->id());
 
         global $db_con;
+        global $usr;
         $result = ''; // reset the html code var
         $html = new html_base();
+        $usr_msg = new user_message();
 
         // create the databased link
         $db_con->usr_id = $this->id();
@@ -1267,8 +1270,8 @@ class user_display_old extends user
                 $row_nbr++;
 
                 // create the source objects with the minimal parameter needed
-                $dsp_usr = new source($this);
-                $dsp_usr->set_id($sbx_row['id']);
+                $dsp_usr = new source($usr);
+                $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->set_url($sbx_row['usr_url']);
                 $dsp_usr->description = $sbx_row['usr_comment'];
@@ -1295,7 +1298,7 @@ class user_display_old extends user
                     and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
                     //$dsp_usr->del_usr_cfg();
-                    $dsp_usr->del();
+                    $dsp_usr->del($usr_msg);
                 } else {
 
                     // format the user source

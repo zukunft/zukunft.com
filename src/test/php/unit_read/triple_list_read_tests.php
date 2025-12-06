@@ -52,7 +52,9 @@ class triple_list_read_tests
         // init
         $t->name = 'triple list read db->';
 
-        $t->header('triple list database read tests');
+        // start the test section (ts)
+        $ts = 'db read triple list ';
+        $t->header($ts);
 
         // test loading triple names
         $test_name = 'loading triple names with pattern return the expected triple';

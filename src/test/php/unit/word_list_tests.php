@@ -34,25 +34,27 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -62,12 +64,13 @@ class word_list_tests
     {
 
         global $usr;
-        global $phr_typ_cac;
-        global $vrb_cac;
+        global $sys;
+        global $sys;
 
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
@@ -116,7 +119,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->id = 7;
         $wrd_lst->add($wrd);
-        $vrb = $vrb_cac->get_verb(verbs::IS);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -133,7 +136,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->id = 9;
         $wrd_lst->add($wrd);
-        $vrb = $vrb_cac->get_verb(verbs::IS);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader($ts . 'modify and filter word lists');
@@ -152,23 +155,23 @@ class word_list_tests
         $wrd_time = new word($usr);
         $wrd_time->id = 4;
         $wrd_time->set_name('time_word');
-        $wrd_time->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_time->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->id = 5;
         $wrd_time2->set_name('time_word2');
-        $wrd_time2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd_time2->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->id = 6;
         $wrd_scale->set_name('scale_word');
-        $wrd_scale->type_id = $phr_typ_cac->id(phrase_type_shared::SCALING);
+        $wrd_scale->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->id = 7;
         $wrd_percent->set_name('percent_word');
-        $wrd_percent->type_id = $phr_typ_cac->id(phrase_type_shared::PERCENT);
+        $wrd_percent->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->id = 8;
         $wrd_measure->set_name('measure_word');
-        $wrd_measure->type_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $wrd_measure->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);
@@ -251,7 +254,7 @@ class word_list_tests
 
         // filter by name
         $test_name = 'filtered word list by name does not contain ' . words::E_SYMBOL . ' any more';
-        $wrd_lst = $t->word_list();
+        $wrd_lst = $t_wrd->word_list();
         $filtered = $wrd_lst->filter_by_name([words::E_SYMBOL]);
         $t->assert_contains_not($test_name, $filtered->names(), words::E_SYMBOL);
         $test_name = 'filtered word list by name still contains ' . words::PI_SYMBOL;
@@ -291,7 +294,7 @@ class word_list_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = $wrd_lst->export_json();
+        $json = $wrd_lst->export_json([]);
         $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only
@@ -307,8 +310,8 @@ class word_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $wrd_lst = $t->word_list();
-        $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
+        $wrd_lst = $t_wrd->word_list();
+        $t->assert_api_to_ui($wrd_lst, new word_list_ui());
 
     }
 

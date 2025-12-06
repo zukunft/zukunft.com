@@ -1,8 +1,8 @@
 <?php
 /*
 
-    model/system/phrase_table_status.php - the status of a phrase table
-    ----------------------------------
+    model/phrase/phrase_table_status.php - the status of a phrase table
+    ------------------------------------
 
 
     This file is part of zukunft.com - calc with words

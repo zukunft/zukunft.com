@@ -35,25 +35,28 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("view_add");
+$app = new frontend();
+$db_con = $app->start("view_add");
 $html = new html_base();
 
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -66,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::VIEW_ADD));
+    $msk->load_by_id($sys_msk_cac->id(views::VIEW_ADD));
     $back = $_GET[url_var::BACK] = ''; //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -76,8 +79,8 @@ if ($usr->id() > 0) {
     if (isset($_GET[url_var::NAME])) {
         $msk_add->set_name($_GET[url_var::NAME]);
     }    // name of the new view to add
-    if (isset($_GET[url_var::COMMENT])) {
-        $msk_add->description = $_GET[url_var::COMMENT];
+    if (isset($_GET[url_var::DESCRIPTION])) {
+        $msk_add->description = $_GET[url_var::DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $msk_add->type_id = $_GET['type'];
@@ -90,7 +93,7 @@ if ($usr->id() > 0) {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
-            $add_result = $msk_add->save()->get_last_message();
+            $add_result = $msk_add->save($usr_msg);
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {
@@ -114,16 +117,16 @@ if ($usr->id() > 0) {
         }
 
         // show the header (in view edit views the view cannot be changed)
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         // show the form to create a new view
-        $msk_add_dsp = new view_dsp($msk_add->api_json());
+        $msk_add_dsp = new view_ui($msk_add->api_json());
         $result .= $msk_add_dsp->dsp_edit(0, $wrd, $back);
     }
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

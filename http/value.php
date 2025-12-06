@@ -35,21 +35,23 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("value");
+$app = new frontend();
+$db_con = $app->start("value");
 
 // get the parameters
 $wrd_names = $_GET['t'];
@@ -68,10 +70,10 @@ if ($usr->id > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VALUE_DISPLAY);
+    $msk->load_by_code_id(view_shared::VALUE);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
 
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -81,15 +83,15 @@ if ($usr->id > 0) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(explode(",", $wrd_names));
 
-        $wrd_lst_dsp = new word_list_dsp($wrd_lst->api_json());
+        $wrd_lst_dsp = new word_list_ui($wrd_lst->api_json());
         $result .= $wrd_lst_dsp->name_link();
         $result .= ' = ';
         $val = $wrd_lst->value();
-        $val_dsp = new value_dsp($val->api_json());
+        $val_dsp = new value_ui($val->api_json());
         $result .= $val_dsp->value_edit($back);
     }
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

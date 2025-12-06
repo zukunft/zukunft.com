@@ -63,7 +63,9 @@ class api
     const string CONFIG_USER = 'user';
 
     // the url name of the main script that is used in combination with the host url
-    const string MAIN_SCRIPT = 'http/view.php';
+    const string MAIN_SCRIPT_PATH = 'http' . DIRECTORY_SEPARATOR;
+    const string MAIN_SCRIPT = self::MAIN_SCRIPT_PATH . 'view.php';
+    const string URL_DEV = api::HOST_DEV . api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ;
 
 
     /*
@@ -79,6 +81,7 @@ class api
     const string JSON_TRIPLE = 'triple';
 
     //
+    const string JSON_TYPE_API_CONFIG = 'api_config';
     const string JSON_TYPE_LISTS = 'type_lists';
     const string JSON_LIST_USER_PROFILES = 'user_profiles';
     const string JSON_LIST_PHRASE_TYPES = 'phrase_types';
@@ -88,6 +91,7 @@ class api
     const string JSON_LIST_VIEW_TYPES = 'view_types';
     const string JSON_LIST_VIEW_STYLES = 'view_styles';
     const string JSON_LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const string JSON_LIST_VIEW_RELATION_TYPES = 'view_relation_types';
     const string JSON_LIST_COMPONENT_TYPES = 'component_types';
     // const string JSON_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const string JSON_LIST_COMPONENT_POSITION_TYPES = 'position_types';
@@ -141,7 +145,7 @@ class api
             if (array_key_exists($body_key, $api_msg)) {
                 $body = $api_msg[$body_key];
             } else {
-                // TODO activate Prio 3 next line and avoid these cases
+                // TODO Prio 3 activate next line and avoid these cases
                 // $msg_ok = false;
                 $body = $api_msg;
                 log_warning('message header missing in api message');

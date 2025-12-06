@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_link_type_list.php - to define the behaviour if a component is linked to a view
-    ---------------------------------------
+    model/component/component_link_type_list.php - to define the behaviour if a component is linked to a view
+    --------------------------------------------
 
     TODO check if really needed
 

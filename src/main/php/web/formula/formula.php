@@ -44,17 +44,18 @@
 namespace Zukunft\ZukunftCom\main\php\web\formula;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
 //include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::FORMULA . 'expression.php';
-include_once html_paths::FORMULA . 'formula_link_list.php';
+//include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -70,18 +71,21 @@ include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
@@ -95,11 +99,14 @@ use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula extends sandbox_code_id
@@ -141,16 +148,34 @@ class formula extends sandbox_code_id
      * set the vars of this formula frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::USER_EXPRESSION, $url_array)) {
+                if ($url_array[url_var::USER_EXPRESSION] != null) {
+                    $this->set_usr_text($url_array[url_var::USER_EXPRESSION]);
+                }
+            }
+            if (array_key_exists(url_var::NEED_ALL, $url_array)) {
+                if ($url_array[url_var::NEED_ALL] != null) {
+                    $this->need_all_val = $url_array[url_var::NEED_ALL];
+                } else {
+                    $this->need_all_val = false;
+                }
+            }
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {
                     $this->impact = $url_array[url_var::IMPACT];
+                } else {
+                    $this->impact = 0.0;
                 }
+            } else {
+                $this->impact = 0.0;
             }
         }
         return $usr_msg;
@@ -160,11 +185,12 @@ class formula extends sandbox_code_id
      * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg, ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {
@@ -194,7 +220,7 @@ class formula extends sandbox_code_id
         } else {
             $this->impact = 0.0;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -383,6 +409,33 @@ class formula extends sandbox_code_id
 
 
     /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a view usable for a formula
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with all suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->only_type(view_type::FORMULA);
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
+    }
+
+
+    /*
      * to review
      */
 
@@ -420,14 +473,14 @@ class formula extends sandbox_code_id
     // display the history of a formula
     private function dsp_hist_log($page, $size, $call, $back): user_log_display
     {
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = formula::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        return $log_dsp;
+        $log = new user_log_display();
+        $log->id = $this->id();
+        $log->type = formula::class;
+        $log->page = $page;
+        $log->size = $size;
+        $log->call = $call;
+        $log->back = $back;
+        return $log;
     }
 
     /**
@@ -453,6 +506,7 @@ class formula extends sandbox_code_id
     function dsp_edit($add, $wrd, $back): string
     {
         global $usr;
+        global $cac;
 
         log_debug(" for " . $wrd->name() . ", back:" . $back);
         $result = '';
@@ -484,14 +538,32 @@ class formula extends sandbox_code_id
             $result .= $html->dsp_form_hidden("back", $back);
         }
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($form_name);
+        $result .= $html->form_field(
+            url_var::NAME,
+            msg_id::FORM_FIELD_NAME_FORMULA,
+            $this->name,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
+        $result .= $this->dsp_type_selector($form_name, $cac->typ_lis->frm_typ);
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("description", $this->description, "Description:", view_styles::COL_SM_8);
+        $result .= $html->form_field(
+            url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
+            $this->description,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld(url_var::USER_EXPRESSION, $resolved_text, "Expression:", view_styles::COL_SM_12);
+            $result .= $html->form_field(
+                url_var::USER_EXPRESSION,
+                msg_id::FORM_FIELD_FORMULA_EXPRESSION,
+                $resolved_text,
+                html_base::INPUT_TEXT,
+                '',
+                view_styles::COL_SM_12);
         }
         $result .= $html->dsp_form_fld_checkbox(url_var::NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';

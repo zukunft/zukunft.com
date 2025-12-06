@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_tests
@@ -57,6 +58,7 @@ class component_link_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_cmp = new test_components($t);
         $t->name = 'component_link->';
         $t->resource_path = 'db/component/';
 
@@ -71,7 +73,7 @@ class component_link_tests
         $cmp_pos_typ = new position_type('');
         $t->assert_sql_table_create($cmp_pos_typ);
         $t->assert_sql_index_create($cmp_pos_typ);
-        $cmp_lnk = $t->component_link();
+        $cmp_lnk = $t_cmp->component_link();
         $t->assert_sql_table_create($cmp_lnk);
         $t->assert_sql_index_create($cmp_lnk);
         $t->assert_sql_foreign_key_create($cmp_lnk);
@@ -94,15 +96,15 @@ class component_link_tests
         $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader($ts . 'component link sql write');
-        $lnk = $t->component_link();
+        $lnk = $t_cmp->component_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $lnk = $t->component_link();
+        $lnk = $t_cmp->component_link();
         $lnk->exclude();
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $lnk_filled = $t->component_link_filled();
+        $lnk_filled = $t_cmp->component_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 2;
@@ -113,7 +115,7 @@ class component_link_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'component link base object handling');
-        $lnk = $t->component_link_filled();
+        $lnk = $t_cmp->component_link_filled();
         $t->assert_reset($lnk);
 
     }

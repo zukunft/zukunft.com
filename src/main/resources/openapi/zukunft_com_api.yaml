@@ -2357,7 +2357,7 @@ components:
         expression:
           type: string
           description: following the syntax of r-project, but using words and the "and" condition to select the value
-          example: percent = ( "is a" "Year" - "prior" "Year" ) / "prior" "Year"
+          example: percent = ( "is a" "year" - "prior" "year" ) / "prior" "year"
         type:
           type: string
           description: reference to the formula type that is used to assign a predefined behavior to the formula

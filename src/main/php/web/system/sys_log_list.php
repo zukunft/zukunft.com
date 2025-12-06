@@ -2,8 +2,8 @@
 
 /*
 
-    web/log/sys_log_list.php - the display extension of the system error log api object
-    ------------------------
+    web/system/sys_log_list.php - the display extension of the system error log api object
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -33,11 +33,11 @@
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -46,8 +46,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
@@ -105,8 +105,7 @@ class sys_log_list
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = new sys_log();
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
+            $new->api_mapper($value, $usr_msg);
             $this->add($new);
         }
         return $usr_msg;
@@ -125,22 +124,14 @@ class sys_log_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
         $vars = $this->api_array($typ_lst);
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
@@ -165,10 +156,10 @@ class sys_log_list
 
     /**
      * add a system log entry to the list
-     * @param sys_log_dsp $sys_log the log frontend entry that should be added to the list
+     * @param sys_log $sys_log the log frontend entry that should be added to the list
      * @returns bool true if the system log entry has been added
      */
-    function add(sys_log_dsp $sys_log): bool
+    function add(sys_log $sys_log): bool
     {
         $this->lst[] = $sys_log;
         return true;

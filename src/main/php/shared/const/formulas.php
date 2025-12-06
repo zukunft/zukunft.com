@@ -111,6 +111,8 @@ class formulas
     const string SYSTEM_TEST_SCALE_BIL = 'System Test Formula scale billions to one';
     const string SYSTEM_TEST_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
+    const string TEST_SPEED_PREFIX = 'System Test Formula for speed testing ';
+
     // formula names that are reserved either
     // for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas

@@ -33,7 +33,7 @@
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
@@ -41,8 +41,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
+
 // open database
-$db_con = prg_start("view_confirm");
+$app = new frontend();
+$db_con = $app->start("view_confirm");
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -71,7 +74,7 @@ if ($usr->id() > 0) {
     if ($word_id <= 0) {
         $result .= $html->dsp_err('word not found');
     } else {
-        $msk = new view_dsp();
+        $msk = new view_ui();
         //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
         $back = $word_id;
         $result .= $msk->dsp_navbar_no_view($back);
@@ -86,7 +89,7 @@ if ($usr->id() > 0) {
     if ($view_id <= 0) {
         $result .= $html->dsp_err('view not found');
     } else {
-        $msk = new view_dsp();
+        $msk = new view_ui();
         $msk->set_id($view_id);
         $result .= $msk->selector_page($word_id, $back);
     }
@@ -94,5 +97,5 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);
 

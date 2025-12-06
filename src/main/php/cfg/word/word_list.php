@@ -58,6 +58,8 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -67,7 +69,6 @@ include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -77,7 +78,6 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
-include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -85,10 +85,12 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -98,7 +100,6 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
@@ -108,7 +109,6 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -239,11 +239,11 @@ class word_list extends sandbox_list_named
         int                                            $offset = 0
     ): sql_par
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
-        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -496,38 +496,39 @@ class word_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $dto, $test_obj));
-            $this->add($wrd);
+            if ($wrd->import_obj($value, $usr_msg, $dto)) {
+                $this->add_by_name($wrd);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $wrd_lst = [];
         foreach ($this->lst() as $wrd) {
             if (get_class($wrd) == word::class) {
                 if ($wrd->has_cfg()) {
-                    $wrd_lst[] = $wrd->export_json($do_load);
+                    $wrd_lst[] = $wrd->export_json($exp_typ, $do_load);
                 }
             } else {
                 log_err('The function wrd_lst->export_json returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
@@ -601,7 +602,7 @@ class word_list extends sandbox_list_named
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
-            $max_loops = MAX_RECURSIVE;
+            $max_loops = def::MAX_RECURSIVE;
         }
         $loops = 0;
         $additional_added = clone $this;
@@ -614,7 +615,7 @@ class word_list extends sandbox_list_named
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
-            if ($loops >= MAX_RECURSIVE) {
+            if ($loops >= def::MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops reached.", "word_list->foaf_level");
             }
         } while (!empty($additional_added->lst()) and $loops < $max_loops);
@@ -694,8 +695,8 @@ class word_list extends sandbox_list_named
      */
     function is(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        global $sys;
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -708,9 +709,9 @@ class word_list extends sandbox_list_named
      */
     function are(): word_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS));
+        $wrd_lst = $this->children($sys->typ_lst->vrb->get_verb(verbs::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -722,8 +723,8 @@ class word_list extends sandbox_list_named
      */
     function contains(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::PART_NAME));
+        global $sys;
+        $wrd_lst = $this->children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -761,7 +762,7 @@ class word_list extends sandbox_list_named
                 }
                 $wrd_lst->merge($added_lst);
                 $loops++;
-            } while (count($next_lst->lst()) > 0 and $loops < MAX_LOOP);
+            } while (count($next_lst->lst()) > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -775,8 +776,8 @@ class word_list extends sandbox_list_named
      */
     function differentiators(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        global $sys;
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -788,10 +789,10 @@ class word_list extends sandbox_list_named
      */
     function differentiators_all(): word_list
     {
-        global $vrb_cac;
+        global $sys;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 
@@ -1051,9 +1052,9 @@ class word_list extends sandbox_list_named
         log_debug('for words "' . $this->dsp_id() . '"');
         $lib = new library();
 
-        global $phr_typ_cac;
+        global $sys;
         $result = new word_list($this->user());
-        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id() == $time_type) {
@@ -1107,13 +1108,13 @@ class word_list extends sandbox_list_named
      */
     function measure_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $measure_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $measure_type) {
@@ -1133,14 +1134,14 @@ class word_list extends sandbox_list_named
      */
     function scaling_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
+        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
@@ -1161,13 +1162,13 @@ class word_list extends sandbox_list_named
      */
     function percent_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $percent_type = $phr_typ_cac->id(phrase_type_shared::PERCENT);
+        $percent_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $percent_type) {
@@ -1326,6 +1327,8 @@ class word_list extends sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
+        $lib = new library();
+
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1335,7 +1338,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1345,6 +1348,7 @@ class word_list extends sandbox_list_named
     function has_measure(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1354,7 +1358,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1364,6 +1368,7 @@ class word_list extends sandbox_list_named
     function has_scaling(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1373,7 +1378,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1384,6 +1389,7 @@ class word_list extends sandbox_list_named
     function has_percent(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1393,7 +1399,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1525,7 +1531,7 @@ class word_list extends sandbox_list_named
           ar sort($time_lst);
           $time_keys = array_keys($time_lst);
           $wrd_id = $time_keys[0];
-          $wrd = New word_dsp;
+          $wrd = New word_ui;
           if ($wrd_id > 0) {
             $wrd->id = $wrd_id;
             $wrd->usr = $this->user();
@@ -1595,11 +1601,12 @@ class word_list extends sandbox_list_named
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()), $usr_msg);
     }
 
 }

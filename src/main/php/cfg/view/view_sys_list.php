@@ -160,8 +160,8 @@ class view_sys_list extends type_list
         parent::load_dummy();
         $msk = new view($this->usr);
         $msk->id = 2;
-        $msk->set_name(view_shared::WORD);
-        $msk->set_code_id_db(view_shared::WORD_CODE_ID);
+        $msk->set_name(view_shared::WORD_NAME);
+        $msk->set_code_id_db(view_shared::WORD);
         $this->add($msk);
     }
 
@@ -170,7 +170,7 @@ class view_sys_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_shared::WORD);
+        return parent::id(view_shared::WORD_NAME);
     }
 
 }

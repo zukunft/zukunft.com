@@ -38,14 +38,15 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -58,7 +59,8 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
-$db_con = prg_start("error_log");
+$app = new frontend();
+$db_con = $app->start("error_log");
 
 global $sys_msk_cac;
 
@@ -87,7 +89,7 @@ if ($usr->id > 0) {
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
@@ -98,13 +100,13 @@ if ($usr->id > 0) {
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);
 
 function err_dsp($err_id, $user_id): string
 {
     $log = new sys_log();
     $log->load_by_id($err_id);
-    $dsp = new sys_log_dsp($log->api_json());
+    $dsp = new sys_log_ui($log->api_json());
     return $dsp->page_view();
 }
 

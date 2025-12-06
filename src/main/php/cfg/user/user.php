@@ -83,10 +83,12 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 //include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -125,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -137,6 +140,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Exception;
@@ -373,18 +377,17 @@ class user extends db_id_object_non_sandbox
     /**
      * fill this db id object vars with the values from the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        global $usr;
-
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // map the fields that are common for import and api json messages
-        $this->json_mapper($api_json, $usr, $usr_msg);
+        $this->json_mapper($api_json, $usr_msg->usr, $usr_msg);
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -393,20 +396,17 @@ class user extends db_id_object_non_sandbox
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        // set the object vars based on the json
-        $usr_msg = new user_message();
-
         // map the fields that are common for import and api json messages
         $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
 
@@ -418,24 +418,24 @@ class user extends db_id_object_non_sandbox
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * the common mapping part for the api and import mapper
      *
      * @param array $json
-     * @param user $usr_req
+     * @param user|null $usr_req
      * @param user_message $usr_msg
      * @return void return value is not needed because the messages are written to the given user_message object
      */
     private function json_mapper(
         array        $json,
-        user         $usr_req,
+        ?user        $usr_req,
         user_message $usr_msg
     ): void
     {
-        global $usr_pro_cac;
+        global $sys;
 
         if (key_exists(json_fields::NAME, $json)) {
             $this->name = $json[json_fields::NAME];
@@ -456,16 +456,20 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::LAST_NAME, $json)) {
             $this->last_name = $json[json_fields::LAST_NAME];
         }
-        if (key_exists(json_fields::PROFILE, $json)) {
-            $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
-            if ($usr_req->can_set_profile($profile_id_to_add)) {
-                $this->profile_id = $profile_id_to_add;
-            } else {
-                $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
-                    msg_id::VAR_USER_NAME => $this->name(),
-                    msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
-                ]);
+        if ($usr_req != null) {
+            if (key_exists(json_fields::PROFILE, $json)) {
+                $profile_id_to_add = $sys->typ_lst->usr_pro->id($json[json_fields::PROFILE]);
+                if ($usr_req->can_set_profile($profile_id_to_add)) {
+                    $this->profile_id = $profile_id_to_add;
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                    ]);
+                }
             }
+        } else {
+            $this->profile_id = user_profiles::NORMAL_ID;
         }
         if (key_exists(json_fields::EXCLUDED, $json)) {
             $this->excluded = $json[json_fields::EXCLUDED];
@@ -875,9 +879,9 @@ class user extends db_id_object_non_sandbox
 
     function load_by_profile_code(string $profile_code_id): bool
     {
-        global $usr_pro_cac;
-        if ($usr_pro_cac != null) {
-            return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
+        global $sys;
+        if ($sys->typ_lst->usr_pro != null) {
+            return $this->load_by_profile($sys->typ_lst->usr_pro->id($profile_code_id));
         } else {
             return false;
         }
@@ -1069,16 +1073,19 @@ class user extends db_id_object_non_sandbox
      */
     function load_usr_data(): void
     {
+        global $sys;
         global $db_con;
-        global $vrb_cac;
+        global $sys;
         global $sys_msk_cac;
 
-        $vrb_cac = new verb_list($this);
-        $vrb_cac->load($db_con);
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $sys->typ_lst->vrb = new verb_list($this);
+        $sys->typ_lst->vrb->load($db_con);
 
         $sys_msk_cac = new view_sys_list($this);
         $sys_msk_cac->load($db_con);
 
+        $sys->times->switch(system_time_type::DEFAULT);
     }
 
     function has_any_user_this_profile(string $profile_code_id): bool
@@ -1138,6 +1145,7 @@ class user extends db_id_object_non_sandbox
         global $debug;
 
         $result = ''; // for the result message e.g. if the user is blocked
+        $usr_msg = new user_message();
 
         // test first if the IP is blocked
         if ($this->ip_addr == '') {
@@ -1168,12 +1176,12 @@ class user extends db_id_object_non_sandbox
                         // create the main system user upfront direct from the code
                         // but only if needed and allowed which is only the case directly after the database structure creation
                         // TODO switch this fallback off because it should anyway never be called
-                        $upd_result = $this->create_system_user();
+                        $this->create_system_user($usr_msg);
 
                     } else {
-                        $upd_result = $this->save_user();
+                        $this->save_user($usr_msg);
                     }
-                    $result = $upd_result->get_last_message();
+                    $result = $usr_msg->get_last_message();
                 }
             }
         }
@@ -1186,21 +1194,21 @@ class user extends db_id_object_non_sandbox
      * BUT only if the user table is empty
      * fixed code to create the initial system user
      * TODO move to system_user
-     * @return user_message ok if the system user have been created
+     * @param user_message $usr_msg ok if the system user have been created
+     * @return bool true if the system users have been created
      */
-    function create_system_user(): user_message
+    function create_system_user(user_message $usr_msg): bool
     {
         global $db_con;
 
-        $usr_msg = new user_message();
         if ($db_con->count(user::class) <= 0) {
             // reload user profiles if needed
-            global $usr_pro_cac;
-            if ($usr_pro_cac == null) {
+            global $sys;
+            if ($sys->typ_lst->usr_pro == null) {
                 log_warning('unexpected reload of user profiles');
-                $usr_pro_cac = new user_profile_list();
-                if (!$usr_pro_cac->load($db_con)) {
-                    $usr_pro_cac->load_dummy();
+                $sys->typ_lst->usr_pro = new user_profile_list();
+                if (!$sys->typ_lst->usr_pro->load($db_con)) {
+                    $sys->typ_lst->usr_pro->load_dummy();
                 };
             }
 
@@ -1237,7 +1245,7 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1334,9 +1342,9 @@ class user extends db_id_object_non_sandbox
     {
         $result = false;
 
-        global $usr_pro_cac;
+        global $sys;
 
-        $profile = $usr_pro_cac->get($profile_id);
+        $profile = $sys->typ_lst->usr_pro->get($profile_id);
         // the system users can assign all profiles
         if ($this->is_system()) {
             $result = true;
@@ -1443,20 +1451,21 @@ class user extends db_id_object_non_sandbox
     /**
      * import a user from a json data user object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
+        array        $in_ex_json,
+        user_message $usr_msg,
         ?data_object $dto = null,
         ?object      $test_obj = null,
         ?user        $usr_req = null
-    ): user_message
+    ): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         global $usr;
 
         if ($usr_req == null) {
@@ -1464,18 +1473,16 @@ class user extends db_id_object_non_sandbox
         }
         $profile_id = $usr_req->profile_id;
 
-        log_debug();
-
         // reset all parameters of this user object
         $this->reset();
 
-        $usr_msg = $this->import_mapper_user($json_obj, $usr_req, $dto);
+        $this->import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         // reset all parameters of this user object
         $this->reset();
 
         // TODO Prio 1 move to import_mapper
-        foreach ($json_obj as $key => $value) {
+        foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
@@ -1495,11 +1502,11 @@ class user extends db_id_object_non_sandbox
                 $this->code_id = $value;
             }
             if ($key == json_fields::PROFILE) {
-                $this->profile_id = $usr_pro_cac->id($value);
+                $this->profile_id = $sys->typ_lst->usr_pro->id($value);
             }
             if ($key == json_fields::CODE_ID) {
-                if ($profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-                    or $profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+                if ($profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+                    or $profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -1512,21 +1519,27 @@ class user extends db_id_object_non_sandbox
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
-                    $usr_msg->add($this->save_user($usr_req));
+                    $this->save_user($usr_msg, $usr_req);
                 }
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
         }
 
-
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
 
@@ -1637,11 +1650,11 @@ class user extends db_id_object_non_sandbox
      */
     function profile_code_id(): string
     {
-        global $usr_pro_cac;
+        global $sys;
 
         $result = '';
         if ($this->is_profile_valid()) {
-            $result = $usr_pro_cac->code_id($this->profile_id);
+            $result = $sys->typ_lst->usr_pro->code_id($this->profile_id);
         }
         return $result;
     }
@@ -1659,18 +1672,18 @@ class user extends db_id_object_non_sandbox
      */
     function is_unique(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::EMAIL)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::HUMAN)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYS_LINK)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::DEV)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::EMAIL)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::HUMAN)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYS_LINK)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1682,12 +1695,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_developer(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::DEV)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::DEV)) {
                 $result = true;
             }
         }
@@ -1699,12 +1712,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_admin(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -1716,13 +1729,20 @@ class user extends db_id_object_non_sandbox
      */
     function is_system(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
+        // TODO Prio 1 should never happen, so create a log_err instead of a log_warning
+        if ($sys->typ_lst->usr_pro == null) {
+            log_warning('unexpected creation of a user profile list because it has been empty');
+            $sys->typ_lst->usr_pro = new user_profile_list();
+            $sys->typ_lst->usr_pro->load_dummy();
+        }
+
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1734,12 +1754,12 @@ class user extends db_id_object_non_sandbox
      */
     function is_normal(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::NORMAL)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::NORMAL)) {
                 $result = true;
             }
         }
@@ -1762,13 +1782,13 @@ class user extends db_id_object_non_sandbox
     // true if the user has the right to import data
     function can_import(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
-            or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-            or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+        if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)
+            or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+            or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -1833,9 +1853,9 @@ class user extends db_id_object_non_sandbox
 
     function set_profile(string $profile_code_id): void
     {
-        global $usr_pro_cac;
-        $this->profile_id = $usr_pro_cac->id($profile_code_id);
-        //$this->profile = $usr_pro_cac->lst[$this->profile_id];
+        global $sys;
+        $this->profile_id = $sys->typ_lst->usr_pro->id($profile_code_id);
+        //$this->profile = $sys->typ_lst->usr_pro->lst[$this->profile_id];
     }
 
     /**
@@ -1869,6 +1889,7 @@ class user extends db_id_object_non_sandbox
     function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
     {
         $result = '';
+        $usr_msg = new user_message();
         if ($usr_par[$par_name] <> $db_value
             and $usr_par[$par_name] <> '') {
             $log = $this->log_upd();
@@ -1876,7 +1897,7 @@ class user extends db_id_object_non_sandbox
             $log->new_value = $usr_par[$par_name];
             $log->row_id = $this->id;
             $log->set_field($fld_name);
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class(user::class);
                 $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
@@ -1927,16 +1948,12 @@ class user extends db_id_object_non_sandbox
      * and if return a message to the user to suggest another name
      *
      * @param user $usr the user who has request the user adding or update
-     * @return user_message
+     * @param user_message $usr_msg
+     * @return bool true if ...
      */
     protected
-    function check_preserved(user $usr): user_message
+    function check_preserved(user_message $usr_msg, user $usr): bool
     {
-        global $mtr;
-
-        // init
-        $usr_msg = new user_message();
-
         // system users are always allowed to add users e.g. to add the system users
         if (!$usr->is_system()) {
             if (in_array($this->name(), users::RESERVED_NAMES)) {
@@ -1949,7 +1966,7 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function is_same(user $usr): bool
@@ -1971,10 +1988,10 @@ class user extends db_id_object_non_sandbox
      * add or update a user in the database
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @return user_message the message that should be shown to the user in case something went wrong
-     *                      or the database id of the user just added
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     *                              or the database id of the user just added
      */
-    function save_user(?user $usr_req = null): user_message
+    function save_user(user_message $usr_msg, ?user $usr_req = null): void
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
@@ -1993,12 +2010,10 @@ class user extends db_id_object_non_sandbox
         $db_con->set_usr($usr_req->id);
 
         // check the preserved names
-        $usr_msg = $this->check_preserved($usr_req);
-
-        // check if a user with the same name or email already exists
-        if ($usr_msg->is_ok()) {
-            // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->check_preserved($usr_msg, $usr_req)) {
+            // check if a user with the same name or email already exists
             if ($this->id == 0) {
+                // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar->id <> 0) {
@@ -2047,8 +2062,6 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-
-        return $usr_msg;
     }
 
     /**
@@ -2087,11 +2100,10 @@ class user extends db_id_object_non_sandbox
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
 
-        $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-        if ($ins_msg->is_ok()) {
-            $this->id = $ins_msg->get_row_id();
+        $msg = 'add and log ' . $this->dsp_id();
+        if ($db_con->insert($qp, $msg, $usr_msg)) {
+            $this->id = $usr_msg->get_row_id();
         }
-        $usr_msg->add($ins_msg);
 
         return $usr_msg;
     }
@@ -2172,11 +2184,10 @@ class user extends db_id_object_non_sandbox
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, $usr_req, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
-            $usr_msg->add($ins_msg);
         } else {
             log_debug('no permission to add user ' . $this->dsp_id());
             $usr_msg->add_id_with_vars(msg_id::USER_NO_ADD_PRIVILEGES, [
@@ -2216,12 +2227,11 @@ class user extends db_id_object_non_sandbox
 
             if (in_array($this->name(), users::TEST_NO_LOG)) {
                 $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
-                $upd_msg = $db_con->update($qp, 'update ' . $this->dsp_id());
+                $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
             } else {
                 $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
-                $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+                $db_con->update($qp, 'update and log ' . $this->dsp_id(), $usr_msg);
             }
-            $usr_msg->add($upd_msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
@@ -2284,10 +2294,10 @@ class user extends db_id_object_non_sandbox
         $par_lst_out = new sql_par_field_list();
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::ADD),
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -2386,6 +2396,7 @@ class user extends db_id_object_non_sandbox
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
+        global $sys;
         // clone the parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
@@ -2424,10 +2435,9 @@ class user extends db_id_object_non_sandbox
             $id_val = '_' . $id_fld;
 
             // add the change action field to the field list for the log entries
-            global $cng_act_cac;
             $fvt_lst->add_field(
                 change_action::FLD_ID,
-                $cng_act_cac->id(change_actions::UPDATE),
+                $sys->typ_lst->cng_act->id(change_actions::UPDATE),
                 type_object::FLD_ID_SQL_TYP
             );
 
@@ -2617,7 +2627,7 @@ class user extends db_id_object_non_sandbox
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -2633,7 +2643,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2650,7 +2660,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_IP_ADDR,
-                    $cng_fld_cac->id($table_id . user_db::FLD_IP_ADDR),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_IP_ADDR),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2669,7 +2679,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2686,7 +2696,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . user_db::FLD_CODE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2703,12 +2713,11 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PROFILE,
-                    $cng_fld_cac->id($table_id . user_db::FLD_PROFILE),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_PROFILE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $usr_pro_cac;
-            if ($usr_pro_cac == null) {
+            if ($sys->typ_lst->usr_pro == null) {
                 log_fatal('no user profile found', 'user->db_fields_changed');
             } else {
                 if ($this->profile_id() < 0) {
@@ -2722,7 +2731,7 @@ class user extends db_id_object_non_sandbox
                     type_object::FLD_NAME,
                     $this->profile_id(),
                     $db_usr->profile_id(),
-                    $usr_pro_cac);
+                    $sys->typ_lst->usr_pro);
             }
         }
 
@@ -2732,7 +2741,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
-                    $cng_fld_cac->id($table_id . user_db::FLD_TYPE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_TYPE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2752,7 +2761,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2769,7 +2778,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
-                    $cng_fld_cac->id($table_id . user_db::FLD_EMAIL),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_EMAIL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2786,7 +2795,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_FIRST_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_FIRST_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_FIRST_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2803,7 +2812,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_NAME,
-                    $cng_fld_cac->id($table_id . user_db::FLD_LAST_NAME),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_LAST_NAME),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2820,7 +2829,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TERM,
-                    $cng_fld_cac->id($table_id . user_db::FLD_TERM),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_TERM),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2837,7 +2846,7 @@ class user extends db_id_object_non_sandbox
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_SOURCE,
-                    $cng_fld_cac->id($table_id . user_db::FLD_SOURCE),
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_SOURCE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2881,16 +2890,15 @@ class user extends db_id_object_non_sandbox
      * exclude, archive or delete this user
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function del(user|null $usr_req = null): user_message
+    function del(user_message $usr_msg, user|null $usr_req = null): bool
     {
-        $usr_msg = new user_message();
         if ($this->never_used()) {
-            $usr_msg = new user_message();
             $lib = new library();
             $class_name = $lib->class_to_name($this::class);
             if ($this->id == 0) {
@@ -2929,13 +2937,13 @@ class user extends db_id_object_non_sandbox
                     }
                 }
             }
-            return $usr_msg;
+            return $usr_msg->is_ok();
         } else {
             $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
                 msg_id::VAR_USER_NAME => $this->name(),
             ]);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

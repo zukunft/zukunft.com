@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
@@ -47,16 +48,16 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
-$db_con = prg_start("error_update");
+$app = new frontend();
+$db_con = $app->start("error_update");
 $html = new html_base();
 
 global $sys_msk_cac;
-global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 
@@ -75,8 +76,8 @@ if ($usr->id > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->id = $sys_msk_cac->id(view_shared::ERR_UPD);
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk->id = $sys_msk_cac->id(views::ERR_UPD);
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -124,4 +125,4 @@ $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

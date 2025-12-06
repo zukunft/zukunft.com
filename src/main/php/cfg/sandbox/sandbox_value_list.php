@@ -71,7 +71,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -111,6 +110,24 @@ class sandbox_value_list extends sandbox_list
     function __construct(user $usr, array $lst = [])
     {
         parent::__construct($usr, $lst);
+    }
+
+    /**
+     * map a figure list api json to this model figure list object
+     * @param array $api_json the api array with the figures that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(array $api_json, user_message $usr_msg): bool
+    {
+        foreach ($api_json as $json_val) {
+            $val = new value($this->user());
+            if ($val->api_mapper($json_val, $usr_msg)) {
+                $this->add($val);
+            }
+        }
+
+        return $usr_msg->is_ok();
     }
 
 

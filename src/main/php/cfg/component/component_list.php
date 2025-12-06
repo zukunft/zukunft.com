@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_list.php - list of predefined system components
-    ------------------------
+    model/component/component_list.php - list of predefined system components
+    ----------------------------------
 
     The main sections of this object are
     - construct and map: including the mapping of the db row to this component link list object
@@ -48,6 +48,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
@@ -228,6 +230,7 @@ class component_list extends sandbox_list_named
         int         $offset = 0
     ): sql_par
     {
+        // TODO Prio 1 move the query name to a const
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(component::FLD_ID, $ids);
         $sc->set_order(component::FLD_ID, sql::ORDER_ASC);
@@ -288,36 +291,37 @@ class component_list extends sandbox_list_named
      * import a list of components from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->user());
-            $usr_msg->add($cmp->import_obj($dsp_json, $dto, $test_obj));
-            $this->add($cmp);
+            if ($cmp->import_obj($dsp_json, $usr_msg, $dto)) {
+                $this->add($cmp);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $cmp_lst = [];
         foreach ($this->lst() as $cmp) {
-            $cmp_lst[] = $cmp->export_json($do_load);
+            $cmp_lst[] = $cmp->export_json($exp_typ, $do_load);
         }
         return $cmp_lst;
     }
@@ -329,13 +333,12 @@ class component_list extends sandbox_list_named
      * similar to triple_list->save_with_cache but using the term_list
      *
      * @param import|null $imp the import object with the filename and the estimated time of arrival
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -425,7 +428,7 @@ class component_list extends sandbox_list_named
 
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

@@ -2,10 +2,10 @@
 
 /*
 
-    web/sandbox/sandbox.php - the superclass for the html frontend of database objects
-    -----------------------
+    web/sandbox/db_object.php - the superclass for the html frontend of database objects
+    -------------------------
 
-    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
+    This superclass should be used by the classes word_ui, formula_ui, ... to enable user specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -34,14 +34,15 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
-include_once html_paths::FORMULA . 'formula_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
+//include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::REF . 'source_list.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -49,35 +50,41 @@ include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
+//include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_HELPER . 'MapObject.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
 
 class db_object extends TextIdObject
 {
@@ -110,14 +117,16 @@ class db_object extends TextIdObject
      */
 
     /**
+     * TODO Prio 1 add user_message parameter
      * the html display object are always filled base on the api message
      * @param string|null $api_json the api message to set all object vars
      */
     function __construct(?string $api_json = null)
     {
+        $usr_msg = new user_message();
         parent::__construct();
         if ($api_json != null) {
-            $this->set_from_json($api_json);
+            $this->set_from_json($api_json, $usr_msg);
         }
     }
 
@@ -126,9 +135,11 @@ class db_object extends TextIdObject
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
         $usr_msg = new user_message();
         if (!$this->url_is_add_action($url_array)) {
@@ -151,11 +162,6 @@ class db_object extends TextIdObject
                 $is_add = true;
             }
         }
-        if (array_key_exists(url_var::ACTION_LONG, $url_array)) {
-            if ($url_array[url_var::ACTION_LONG] == url_var::CRUD_CREATE) {
-                $is_add = true;
-            }
-        }
         return $is_add;
     }
 
@@ -167,11 +173,12 @@ class db_object extends TextIdObject
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_json(string $json_api_msg): user_message
+    function set_from_json(string $json_api_msg, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true), $usr_msg);
     }
 
     /**
@@ -179,12 +186,11 @@ class db_object extends TextIdObject
      * this function is expected to be extended by each child object that has additional object vars
      *
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
@@ -199,7 +205,7 @@ class db_object extends TextIdObject
         // remember to send the updates to the backend
         $this->set_modified();
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_id(int|string $id): void
@@ -219,6 +225,7 @@ class db_object extends TextIdObject
 
     /**
      * load the user sandbox object e.g. word by id via api
+     * TODO Prio 1 add user_message as parameter
      * @param int|string $id the database id of the object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return bool
@@ -226,8 +233,9 @@ class db_object extends TextIdObject
     function load_by_id(int|string $id, array $data = []): bool
     {
         $result = false;
+        $usr_msg = new user_message();
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_array = $api->api_call_id($this::class, $id, $data);
         if ($json_array) {
             $excluded = false;
@@ -235,7 +243,7 @@ class db_object extends TextIdObject
                 $excluded = $json_array[json_fields::EXCLUDED];
             }
             if (!$excluded) {
-                $this->api_mapper($json_array);
+                $this->api_mapper($json_array, $usr_msg);
                 if ($this->name() != '') {
                     $result = true;
                 }
@@ -448,6 +456,13 @@ class db_object extends TextIdObject
         return $msg;
     }
 
+    function phrase_name(): ?string
+    {
+        $msg = 'ERROR: phrase_name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
     function value(): float|string|DateTime|null
     {
         $msg = 'ERROR: value not overwritten by ' . $this::class;
@@ -466,17 +481,17 @@ class db_object extends TextIdObject
         return 0;
     }
 
-    function phrase(): phrase_dsp
+    function phrase(): phrase_ui
     {
-        return new phrase_dsp();
+        return new phrase_ui();
     }
 
     /**
-     * @returns term_dsp the word object cast into a term object
+     * @returns term_ui the word object cast into a term object
      */
-    function term(): term_dsp
+    function term(): term_ui
     {
-        return new term_dsp();
+        return new term_ui();
     }
 
     /**
@@ -516,51 +531,79 @@ class db_object extends TextIdObject
      */
 
     /**
-     * add the frontend object via api to the database
+     * save the frontend object in the database
+     * TODO Prio 2 should be done via api
      *
-     * @return user_message
+     * @param user $usr the frontend user
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function add_via_api(): user_message
+    function add_via_api(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $add_result = $db_obj->save($usr_msg_db);
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_post($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
-        return $usr_msg;
+        */
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
     /**
      * update the frontend object via api in the database
      *
-     * @return user_message
+     * @param user $usr the frontend user
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function update(): user_message
+    function update(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $upd_result = $db_obj->save($usr_msg_db);
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_put($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
-        return $usr_msg;
+        */
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
     /**
      * exclude this frontend object via api from the database
      *
-     * @return user_message
+     * @param user $usr the frontend user
+     * @param user_message $usr_msg the frontend message object to collect the message to the user
+     * * @return user_message the frontend message object filled up with the backend message for the user
      */
-    function del(): user_message
+    function del(user $usr, user_message $usr_msg): user_message
     {
-        $usr_msg = new user_message();
+        $map_obj = new MapObject();
+        $usr_msg_db = $map_obj->convertMsgToDb($usr_msg);
+        $db_usr = $map_obj->convertToDb($usr, $usr_msg_db);
+        $db_obj = $map_obj->convertToDb($this, $usr_msg_db, $db_usr);
+        $del_result = $db_obj->del($usr_msg_db);
+        /*
+         * TODO Prio 2 activate api call
         $rest = new rest_call();
         $result = $rest->api_del($this::class, $this->api_array());
         foreach ($result as $msg) {
             $usr_msg->add_message_text($msg);
         }
-        return $usr_msg;
+        */
+        return $map_obj->convertMsgToUi($usr_msg_db);
     }
 
 
@@ -573,9 +616,12 @@ class db_object extends TextIdObject
      */
     function url(): ?string
     {
-        $msg = 'url not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'api_mapper',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -702,6 +748,19 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the html code to select the view relation type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view relation type
+     */
+    public function view_relation_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view relation type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
      * create the html code to select the formula link type
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
@@ -773,7 +832,7 @@ class db_object extends TextIdObject
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase_ui|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     public function phrase_selector_old(
@@ -783,7 +842,7 @@ class db_object extends TextIdObject
         string      $col_class = '',
         int         $selected = 0,
         string      $pattern = '',
-        ?phrase_dsp $phr = null
+        ?phrase_ui $phr = null
     ): string
     {
         $msg = 'phrase selector not defined for ' . $this::class;
@@ -809,7 +868,7 @@ class db_object extends TextIdObject
         string      $form,
         ?int        $selected = null,
         string      $pattern = '',
-        msg_id      $label_id = msg_id::LABEL,
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
         string      $style = view_styles::COL_SM_4
     ): string
     {
@@ -844,7 +903,7 @@ class db_object extends TextIdObject
     public function formula_selector(
         string       $form,
         formula_list $frm_lst,
-        string       $name = url_var::VIEW_ID
+        string       $name = url_var::FORMULA
     ): string
     {
         $msg = 'formula selector not defined for ' . $this::class;
@@ -878,7 +937,8 @@ class db_object extends TextIdObject
     public function view_selector(
         string    $form,
         view_list $msk_lst,
-        string    $name = url_var::VIEW_ID
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;
@@ -912,7 +972,7 @@ class db_object extends TextIdObject
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select a verb
      */
-    public function verb_selector(string $form, ?type_lists $typ_lst): string
+    public function verb_selector(string $form, ?type_lists $typ_lst, string $style = view_styles::COL_SM_3): string
     {
         $msg = 'verb selector not defined for ' . $this::class;
         log_err($msg);
@@ -923,9 +983,10 @@ class db_object extends TextIdObject
      * create the html code to select a source
      * @param string $form the name of the html form
      * @param string $pattern
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @return string the html code to select a source
      */
-    public function source_selector(string $form, string $pattern): string
+    public function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
         $msg = 'source selector not defined for ' . $this::class;
         log_err($msg);

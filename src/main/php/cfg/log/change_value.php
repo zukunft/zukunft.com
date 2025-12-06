@@ -132,7 +132,7 @@ class change_value extends change_log
      */
     function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
-        global $cng_fld_cac;
+        global $sys;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -146,7 +146,7 @@ class change_value extends change_log
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
             $this->new_value = $db_row[change::FLD_NEW_VALUE];
 
-            $fld_tbl = $cng_fld_cac->get($this->field_id);
+            $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr_set = false;

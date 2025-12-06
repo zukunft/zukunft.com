@@ -2,8 +2,8 @@
 
 /*
 
-    web/view/view_navbar.php - add the navigation bar to the view object to finish the frontend view object
-    ------------------------
+    web/view/view.php - the main frontend object to create the html code
+    -----------------
 
     add the function to create a navigation bar to the html frontend view object
 
@@ -38,6 +38,8 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
@@ -111,7 +113,7 @@ class view extends view_exe
 
         // check the all minimal input parameters are set
         if ($this->id() <= 0) {
-            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_dsp->dsp_navbar");
+            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_ui->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result = $this->dsp_navbar_bs(TRUE, $cfg->usr, $back);
@@ -124,6 +126,7 @@ class view extends view_exe
     }
 
     /**
+     * TODO Prio 1 use const and html functions where ever possible
      * same as dsp_navbar_html, but using bootstrap
      * JavaScript functions using bootstrap
      */
@@ -134,7 +137,7 @@ class view extends view_exe
         $result = '<nav class="navbar bg-light fixed-top">';
         $result .= $html->logo();
         $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
-        $result .= '<label for="pattern"></label>';
+        $result .= $html->label('', url_var::PATTERN );
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
@@ -208,7 +211,7 @@ class view extends view_exe
 
         // check the all minimal input parameters are set
         if ($this->user() == null) {
-            $this->log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
+            $this->log_err("The user id must be set to display a view.", "view_ui->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $usr = new user();
@@ -244,7 +247,7 @@ class view extends view_exe
     {
         $html = new html_base();
         return $html->input(
-            'pattern', '',
+            url_var::PATTERN, msg_id::FORM_FIELD_PATTERN, '',
             html_base::INPUT_SEARCH,
             view_styles::BS_SM_2,
             'word or formula');
@@ -276,7 +279,7 @@ class view extends view_exe
             $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
-        $result .= $this->dsp_user($back);
+        $result .= $this->dsp_user($usr);
         $result .= ' ';
         $result .= $this->dsp_logout();
         $result .= '</td>';
@@ -354,10 +357,10 @@ class view extends view_exe
      */
     function dsp_navbar_html_no_view(string $back = ''): string
     {
-
+        global $usr;
         $result = $this->html_navbar_start();
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
-        $result .= $this->dsp_user($back);
+        $result .= $this->dsp_user($usr);
         $result .= $this->dsp_logout();
         $result .= '</td>';
         $result .= $this->html_navbar_end();
@@ -376,14 +379,14 @@ class view extends view_exe
     function dsp_edit($add_cmp, $wrd, $back): string
     {
         global $usr;
-        global $msk_typ_cac;
+        global $sys;
 
         $result = '';
         $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($msk_typ_cac->id(view_type::DEFAULT));
+            $this->set_type_id($sys->typ_lst->msk_typ->id(view_type::DEFAULT));
         }
 
         // the header to add or change a view
@@ -410,16 +413,16 @@ class view extends view_exe
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8, "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8, "disabled");
             $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
             $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
+            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION, "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8);
+            $result .= $html->dsp_form_text("name", $this->name, msg_id::FORM_FIELD_NAME, view_styles::COL_SM_8);
             $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
             $result .= '</div>';
-            $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
+            $result .= $html->dsp_form_text_big("description", $this->description, msg_id::FORM_FIELD_DESCRIPTION);
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
         }
 
@@ -474,6 +477,7 @@ class view extends view_exe
     private function linked_components($add_cmp, $wrd, string $script, $back): string
     {
         $html = new html_base();
+        global $ui_cfg;
 
         $result = '';
 
@@ -499,16 +503,16 @@ class view extends view_exe
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
+                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
-                $result .= $this->component_selector($script, '', $id_selected);
+                $result .= $this->component_selector($script, '', $id_selected, $ui_cfg->component_list());
 
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
-                $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
+                $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
-                $result .= $this->component_selector($script, '', $this->type_id());
+                $result .= $this->component_selector($script, '', $this->type_id(), $ui_cfg->component_list());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');

@@ -57,7 +57,9 @@ class term_list_read_tests
         $lib = new library();
         $t->name = 'term list read db->';
 
-        $t->header('term list database read unit tests');
+        // start the test section (ts)
+        $ts = 'db read term list ';
+        $t->header($ts);
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new term_list($t->usr1);

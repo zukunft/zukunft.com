@@ -66,7 +66,7 @@ class share extends type_list
         string $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_SHARE, $style);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_SHARE_TYPE, $style);
     }
 
     /*

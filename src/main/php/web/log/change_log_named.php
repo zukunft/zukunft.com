@@ -2,8 +2,8 @@
 
 /*
 
-    web/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
-    ---------------------------
+    web/log/change_log_named.php - a list function to create the HTML code to display a list of user changes
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -85,11 +85,11 @@ class change_log_named extends change_log
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
             $this->old_value = $json_array[json_fields::OLD_VALUE];
         } else {
@@ -110,7 +110,7 @@ class change_log_named extends change_log
         } else {
             $this->new_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -240,9 +240,8 @@ class change_log_named extends change_log
      */
     private function action_code_id(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get($this->action_id);
         return $action->code_id;
     }
 
@@ -251,9 +250,8 @@ class change_log_named extends change_log
      */
     private function action_name(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get_by_id($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -262,9 +260,8 @@ class change_log_named extends change_log
      */
     private function field_code_id(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->code_id;
     }
 
@@ -273,9 +270,8 @@ class change_log_named extends change_log
      */
     private function field_description(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->description;
     }
 
@@ -284,9 +280,8 @@ class change_log_named extends change_log
      */
     private function table_name(): string
     {
-        global $cng_tbl_cac;
-
-        $table = $cng_tbl_cac->get($this->table_id);
+        global $sys;
+        $table = $sys->typ_lst->cng_tbl->get($this->table_id);
         return $table->name;
     }
 

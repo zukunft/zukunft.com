@@ -40,7 +40,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ui_link
@@ -50,12 +50,12 @@ class ui_link
      * @return string show a list of phrases with a suggested link type that might be linked to the object
      */
     function phrase_link(
-        db_object_dsp $phr,
-        string $form_name,
+        db_object   $phr,
+        string      $form_name,
         phrase_list $phr_lst
     ): string
     {
-        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE, $form_name, $phr->id());
     }
 
 }

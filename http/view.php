@@ -2,8 +2,8 @@
 
 /*
 
-    view.php - create the HTML code to display a zukunft.com view
-    --------
+    /http/view.php - create the HTML code to show a zukunft.com view to the user
+    --------------
 
     - the view contains the overall formatting like page size
     - the view component links to words, values or formulas
@@ -33,32 +33,33 @@
 
 */
 
-// for callable php files the standard zukunft.com header to load all classes and allow debugging
-// to allow debugging of errors in the library that only appear on the server
-$debug = $_GET['debug'] ?? 0;
-// get the root path from the path of this file (relative path)
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+$start_time = microtime(true);
 
-// set the other path once for all scripts
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-// load once the common const and vars used almost every time
-include_once PHP_PATH . 'init.php';
+include_once 'const.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // reset the html code var
 $html_str = '';
+$usr_msg = new user_message();
 
 // open database
-$db_con = prg_start("view", '', false);
+$app = new frontend();
+$db_con = $app->start("view");
+
+global $debug;
+global $sys;
 
 if ($db_con->is_open()) {
 
@@ -71,8 +72,8 @@ if ($db_con->is_open()) {
     if ($usr->id() > 0) {
         $usr->load_usr_data();
 
-        $usr_dsp = new user_dsp();
-        $usr_dsp->set_from_json($usr->api_json());
+        $usr_dsp = new user_ui();
+        $usr_dsp->set_from_json($usr->api_json(), $usr_msg);
 
         // load the user changeable configuration once via api
         // TODO Prio 1 load the config from cache if nothing has been changed
@@ -82,13 +83,23 @@ if ($db_con->is_open()) {
 
         $ui = new frontend('view');
         $ui->load_cache();
-        $html_str .= $ui->url_to_html($_GET, $usr_dsp);
+        $url_array = $_GET;
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $html_str .= $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+        $sys->times->switch(system_time_type::CLOSE);
     }
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con, false);
 } else {
     $html_str .= 'database connection lost';
+}
+
+if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
+    // TODO Prio 2 remove temp overwrite for debug
+    $end_time = microtime(true);
+    $duration = $end_time - $start_time;
+    $html_str .= '<br>Execution times for debugging: ' . $sys->times->report($duration);
 }
 
 // show the page

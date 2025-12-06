@@ -33,9 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'words.php';
-
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -44,10 +41,13 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
-use Zukunft\ZukunftCom\main\php\cfg\result\results;
-use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\test\php\create\test_results;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+
+include_once paths::SHARED_CONST . 'words.php';
 
 class result_tests
 {
@@ -61,6 +61,8 @@ class result_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_res = new test_results($t);
+        $t_wrd = new test_words($t);
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
 
@@ -69,16 +71,16 @@ class result_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql creation');
-        $res = $t->result_simple_1();
+        $res = $t_res->result_simple_1();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
-        $res_prime = $t->result_prime();
-        $res = $t->result();
-        $res_main = $t->result_main();
-        $res_big = $t->result_big();
+        $res_prime = $t_res->result_prime();
+        $res = $t_res->result();
+        $res_main = $t_res->result_main();
+        $res_big = $t_res->result_big();
         $t->assert_sql_by_id($sc, $res_prime);
         $t->assert_sql_by_id($sc, $res);
         $t->assert_sql_by_id($sc, $res_main);
@@ -99,14 +101,14 @@ class result_tests
         $t->subheader($ts . 'result sql write');
         // result changes are not logged because potentially they can be reproduced
         // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
-        $res_prime = $t->result_prime();
-        $res_prime_max = $t->result_prime_max();
-        $res_main = $t->result_main();
-        $res_main_max = $t->result_main_max();
-        $res_filled = $t->result_main_filled();
-        $res = $t->result();
-        $res_big = $t->result_big();
-        // TODO activate db write
+        $res_prime = $t_res->result_prime();
+        $res_prime_max = $t_res->result_prime_max();
+        $res_main = $t_res->result_main();
+        $res_main_max = $t_res->result_main_max();
+        $res_filled = $t_res->result_main_filled();
+        $res = $t_res->result();
+        $res_big = $t_res->result_big();
+        // TODO Prio 2 activate db write
         $t->assert_sql_insert($sc, $res_prime, [sql_type::STANDARD]);
         $t->assert_sql_insert($sc, $res_prime);
         $t->assert_sql_insert($sc, $res_prime, [sql_type::USER]);
@@ -118,7 +120,7 @@ class result_tests
         $t->assert_sql_insert($sc, $res);
         $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res_big);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         // TODO add tests for text, time and geo values
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
         $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);
@@ -126,7 +128,7 @@ class result_tests
         $db_res_filled = $res_filled->cloned(results::TV_FLOAT);
         $db_res = $res->cloned(results::TV_FLOAT);
         $db_res_big = $res_big->cloned(results::TV_FLOAT);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
@@ -137,14 +139,14 @@ class result_tests
         $t->assert_sql_update($sc, $res, $db_res);
         $t->assert_sql_update($sc, $res_big, $db_res_big);
         $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
         $t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
         $t->subheader($ts . 'result base object handling');
-        $res = $t->result_main_filled();
+        $res = $t_res->result_main_filled();
         $t->assert_reset($res);
 
 
@@ -152,7 +154,7 @@ class result_tests
 
         // test phrase based default formatter
         // ... for big values
-        $wrd_const = $t->new_word(words::MATH);
+        $wrd_const = $t_wrd->word_math();
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);
@@ -164,21 +166,21 @@ class result_tests
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
-        $res = $t->result_pct();
+        $res = $t_res->result_pct();
         $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->result(), $usr_sys);
-        $t->assert_ex_and_import($t->result_main_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_res->result(), $usr_sys);
+        $t->assert_ex_and_import($t_res->result_main_filled(), $usr_sys);
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $res = $t->result_simple_1();
-        $t->assert_api_to_dsp($res, new result_dsp());
+        $res = $t_res->result_simple_1();
+        $t->assert_api_to_ui($res, new result_ui());
 
     }
 

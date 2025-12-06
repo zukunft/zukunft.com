@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/user_profiles.php - the preloaded user profiles used for the html frontend
-    ---------------------------
+    web/types/user_profile.php - the preloaded user profiles used for the html frontend
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -38,10 +38,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user_profile extends type_list
@@ -54,15 +56,17 @@ class user_profile extends type_list
      * @param string $form the unique name of the html form
      * @param int|null $selected the id of the preselected user profile
      * @param string $name the unique name inside the form for this selector
+     * @param string $style the formatting code to adjust the formatting
      * @returns string the html code to select a type from this list
      */
     function selector(
         string   $form = '',
         int|null $selected = null,
-        string   $name = self::NAME
+        string   $name = self::NAME,
+        string   $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_USER_PROFILE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_USER_PROFILE, $style);
     }
 
 

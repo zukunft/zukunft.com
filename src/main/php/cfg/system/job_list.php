@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/ob_list.php - a list of calculation request
+    model/system/job_list.php - a list of calculation request
     -------------------------
 
     This list in "in memory only" to wrap the communication between the classes
@@ -113,8 +113,8 @@ class job_list extends base_list
      */
     function load_sql_by_type(sql_creator $sc, string $type_code_id = ''): sql_par
     {
-        global $job_typ_cac;
-        $type_id = $job_typ_cac->id($type_code_id);
+        global $sys;
+        $type_id = $sys->typ_lst->job_typ->id($type_code_id);
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
         $sc->add_where(job::FLD_TYPE, $type_id);

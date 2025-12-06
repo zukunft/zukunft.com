@@ -2,8 +2,8 @@
 
 /*
 
-    model/user/user_type.php - the superclass for word, formula and view types
-    ------------------------
+    model/user/user_official_type.php - the superclass for word, formula and view types
+    ---------------------------------
 
     types are used to assign coded functionality to a word, formula or view
     a user can create a new type to group words, formulas or views and request new functionality for the group

@@ -36,22 +36,24 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("verbs");
+$app = new frontend();
+$db_con = $app->start("verbs");
 
 $result = ''; // reset the html code var
 $back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
@@ -69,10 +71,10 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VERBS);
+    $msk->load_by_code_id(views::VERBS);
 
     // show the header
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     $result .= $msk_dsp->dsp_navbar($dto, $back);
 
@@ -80,7 +82,7 @@ if ($usr->id() > 0) {
     $result .= $html->dsp_text_h2("Word link types");
     $vrb_lst = new verb_list($usr);
     $vrb_lst->load($db_con);
-    $vrb_lst_dsp = new verb_list_dsp($vrb_lst->api_json());
+    $vrb_lst_dsp = new verb_list_ui($vrb_lst->api_json());
     $result .= $vrb_lst_dsp->dsp_list();
     //$result .= zul_dsp_list ($usr->id());
 }
@@ -88,4 +90,4 @@ if ($usr->id() > 0) {
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

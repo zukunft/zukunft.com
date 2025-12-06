@@ -172,26 +172,14 @@ class db_object_multi extends db_object_key
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
@@ -214,19 +202,21 @@ class db_object_multi extends db_object_key
      */
 
     /**
-     * general part to import a database object from a JSON array object
+     * general part to import a database multi table object from a JSON array object
      *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_db_obj(db_object_multi $db_obj, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->id = $test_obj->seq_id();
-        }
-        return $usr_msg;
+        $usr_msg->start_time = microtime(true);
+        return $usr_msg->is_ok();
     }
 
     /*
@@ -359,9 +349,9 @@ class db_object_multi extends db_object_key
         if ($this->id() != 0) {
             $id_fields = $this->id_field();
             if (is_array($id_fields)) {
-                $fld_dsp = ' (' . implode(', ', $id_fields);
-                $fld_dsp .= ' = ' . $this->id() . ')';
-                return $fld_dsp;
+                $fld_ui = ' (' . implode(', ', $id_fields);
+                $fld_ui .= ' = ' . $this->id() . ')';
+                return $fld_ui;
             } else {
                 return ' (' . $id_fields . ' ' . $this->id() . ')';
             }

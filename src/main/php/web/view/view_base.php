@@ -56,6 +56,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -69,8 +70,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -123,11 +125,13 @@ class view_base extends sandbox_code_id
     /**
      * set the vars of this view bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if (array_key_exists(url_var::STYLE, $url_array)) {
             $this->set_style_id($url_array[url_var::STYLE]);
         }
@@ -138,12 +142,13 @@ class view_base extends sandbox_code_id
      * set the vars this view bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         // the root view object
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::STYLE, $json_array)) {
             $this->set_style_id($json_array[json_fields::STYLE]);
         }
@@ -161,7 +166,7 @@ class view_base extends sandbox_code_id
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->api_mapper($dbo_json);
+                $this->dbo->api_mapper($dbo_json, $usr_msg);
             }
         }
         if (array_key_exists(api::API_TRIPLE, $json_array)) {
@@ -172,11 +177,11 @@ class view_base extends sandbox_code_id
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->api_mapper($dbo_json);
+                $this->dbo->api_mapper($dbo_json, $usr_msg);
             }
         }
         $this->cmp_lst = $cmp_lst;
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -188,11 +193,15 @@ class view_base extends sandbox_code_id
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
         $vars = parent::api_array();
         $vars[json_fields::STYLE] = $this->style_id();
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -216,6 +225,18 @@ class view_base extends sandbox_code_id
         return $this->style_id;
     }
 
+    function type_code_id(): ?string
+    {
+        global $ui_cac;
+        $msk_typ_lst = $ui_cac->typ_lst_cache->html_view_types;
+        $id = $this->type_id();
+        if ($id != null) {
+            return $msk_typ_lst->get($this->type_id())?->code_id();
+        } else {
+            return '';
+        }
+    }
+
 
     /*
      * load
@@ -229,7 +250,7 @@ class view_base extends sandbox_code_id
     function load_by_id_with(int $id): bool
     {
         $data = [];
-        $data[url_var::CHILDREN] = 1;
+        $data[url_var::LEVELS] = 1;
         return parent::load_by_id($id, $data);
     }
 
@@ -293,16 +314,16 @@ class view_base extends sandbox_code_id
      * * @return string the html code to select a component
      */
     function component_selector(
-        string $form,
-        string $pattern,
-        int $id,
+        string         $form,
+        string         $pattern,
+        int            $id,
         component_list $cmp_lst
     ): string
     {
         if ($pattern != '') {
             $cmp_lst->load_like($pattern);
         }
-        return $cmp_lst->selector($form, $id, url_var::COMPONENT,  msg_id::LABEL_COMPONENT_TYPE);
+        return $cmp_lst->selector($form, $id, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT);
     }
 
     function log_err(string $msg): void

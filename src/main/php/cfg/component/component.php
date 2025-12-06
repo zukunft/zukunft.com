@@ -64,8 +64,10 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_COMPONENT . 'component_db.php';
 include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -80,6 +82,7 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
@@ -91,6 +94,7 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -99,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
@@ -112,9 +117,9 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -177,7 +182,7 @@ class component extends sandbox_code_id
     public ?int $link_type_id = null;
 
     // for a table to defined second columns layer or the second axis in case of a chart
-    // e.g. for a "company cash flow statement" the "col word" could be "Year"
+    // e.g. for a "company cash flow statement" the "col word" could be "year"
     //      "col2 word" could be "Quarter" to show the Quarters between the year upon request
     public ?int $word_id_col2 = null;
 
@@ -221,16 +226,17 @@ class component extends sandbox_code_id
         $this->reset();
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
     }
 
     /**
      * clear the view component object values
+     * @param bool $keep_user set to true to keep the original user
      * @return void
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->order_nbr = null;
         $this->type_id = null;
@@ -328,11 +334,12 @@ class component extends sandbox_code_id
     /**
      * map a component api json to this model component object
      * @param array $api_json the api array with the values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // it is expected that the code id is set via import by an admin not via api
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
@@ -360,25 +367,25 @@ class component extends sandbox_code_id
         }
         // TODO map e.g. the $row_phrase
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * import a view component from a JSON object
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
             global $mtr;
@@ -411,7 +418,7 @@ class component extends sandbox_code_id
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -459,14 +466,16 @@ class component extends sandbox_code_id
 
     /**
      * get a formula either with the id set or with all fields set based on an api json
+     * TODO Prio 1 add user_message as parameter
      * @param int|array $value either the id itself or an array with the id
      * @return formula with at least the id set
      */
     private function formula_from_api_json(int|array $value): formula
     {
+        $usr_msg = new user_message();
         $frm = new formula($this->user());
         if (is_array($value)) {
-            $frm->api_mapper($value);
+            $frm->api_mapper($value, $usr_msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache
@@ -485,12 +494,13 @@ class component extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->order_nbr >= 0) {
             $vars[json_fields::POSITION] = $this->order_nbr;
@@ -548,13 +558,13 @@ class component extends sandbox_code_id
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $cmp_typ_cac;
-        if ($cmp_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->cmp_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->cmp_typ, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -566,11 +576,11 @@ class component extends sandbox_code_id
      */
     function set_style(?string $code_id): void
     {
-        global $msk_sty_cac;
+        global $sys;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_sty_cac->get_by_code_id($code_id);
+            $this->style = $sys->typ_lst->msk_sty->get_by_code_id($code_id);
         }
     }
 
@@ -582,11 +592,11 @@ class component extends sandbox_code_id
      */
     function set_style_by_id(?int $style_id): void
     {
-        global $msk_sty_cac;
+        global $sys;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_sty_cac->get($style_id);
+            $this->style = $sys->typ_lst->msk_sty->get($style_id);
         }
     }
 
@@ -884,8 +894,8 @@ class component extends sandbox_code_id
      */
     function set_link_type(string $type_code_id): void
     {
-        global $cmp_lnk_typ_cac;
-        $this->link_type_id = $cmp_lnk_typ_cac->id($type_code_id);
+        global $sys;
+        $this->link_type_id = $sys->typ_lst->cmp_lnk_typ->id($type_code_id);
     }
 
     /**
@@ -911,8 +921,8 @@ class component extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $cmp_typ_cac;
-        return $cmp_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->cmp_typ->code_id($this->type_id);
     }
 
     /**
@@ -920,8 +930,8 @@ class component extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $cmp_typ_cac;
-        return $cmp_typ_cac->name($this->type_id);
+        global $sys;
+        return $sys->typ_lst->cmp_typ->name($this->type_id);
     }
 
     /**
@@ -930,8 +940,8 @@ class component extends sandbox_code_id
      */
     function type_name_or_null(): ?string
     {
-        global $cmp_typ_cac;
-        return $cmp_typ_cac->name_or_null($this->type_id);
+        global $sys;
+        return $sys->typ_lst->cmp_typ->name_or_null($this->type_id);
     }
 
     /**
@@ -941,8 +951,8 @@ class component extends sandbox_code_id
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $cmp_typ_cac;
-        return $cmp_typ_cac->id($code_id);
+        global $sys;
+        return $sys->typ_lst->cmp_typ->id($code_id);
     }
 
 
@@ -1329,41 +1339,38 @@ class component extends sandbox_code_id
      * link
      */
 
-    // link a view component to a view
-    function link($dsp, $order_nbr): string
+    /**
+     * link this component to a view
+     * @param view $msk the view object to which this component should be added
+     * @param int $order_nbr the position where the component should be added and all existing component should be move one position further
+     * @param user_message $usr_msg the message for the user why adding of the component has failed and the potential solutions
+     * @return bool true if the component has been added
+     */
+    function link(view $msk, int $order_nbr, user_message $usr_msg): bool
     {
-        global $pos_typ_cac;
-
-        log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
-
-        $dsp_lnk = new component_link($this->user());
-        $dsp_lnk->reset();
-        $dsp_lnk->set_view($dsp);
-        $dsp_lnk->set_component($this);
-        $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->set_pos_type(position_types::BELOW);
-        return $dsp_lnk->save()->get_last_message();
+        $cmp_lnk = new component_link($this->user());
+        $cmp_lnk->reset();
+        $cmp_lnk->set_view($msk);
+        $cmp_lnk->set_component($this);
+        $cmp_lnk->order_nbr = $order_nbr;
+        $cmp_lnk->set_pos_type(position_types::BELOW);
+        return $cmp_lnk->save($usr_msg);
     }
 
-    // remove a view component from a view
-    // TODO check if the view component is not linked anywhere else
-    // and if yes, delete the view component after confirmation
-    function unlink($dsp): string
+    /**
+     * remove a view component from a view
+     * TODO check if the view component is not linked anywhere else
+     *        and if yes, delete the view component after confirmation
+     * @param view $msk the view from where this component should be removed
+     * @param user_message $usr_msg explain to the user why the component cannot be removed from the view
+     * @return bool true if the component has been removed from the view
+     */
+    function unlink(view $msk, user_message $usr_msg): bool
     {
-        $result = '';
-
-        if (isset($dsp) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from "' . $dsp->name() . '" (' . $dsp->id() . ')');
-            $dsp_lnk = new component_link($this->user());
-            $dsp_lnk->load_by_link($dsp, $this);
-            $dsp_lnk->load_objects();
-            $msg = $dsp_lnk->del();
-            $result .= $msg->get_last_message();
-        } else {
-            $result .= log_err("Cannot unlink view component, because view is not set.", "component.php");
-        }
-
-        return $result;
+        $dsp_lnk = new component_link($this->user());
+        $dsp_lnk->load_by_link($msk, $this);
+        $dsp_lnk->load_objects();
+        return $dsp_lnk->del($usr_msg);
     }
 
 
@@ -1611,12 +1618,12 @@ class component extends sandbox_code_id
 
     /**
      * delete the view component links of linked to this view component
-     * @return user_message of the link removal and if needed the error messages that should be shown to the user
+     *
+     * @param user_message $usr_msg the message for the user why deleting the component links has failed and a suggested solution
+     * @return bool true if the component links has been deleted
      */
-    function del_links(): user_message
+    function del_links(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
         $lnk_lst->load_by_component($this);
@@ -1624,10 +1631,10 @@ class component extends sandbox_code_id
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $usr_msg->add($lnk_lst->del());
+            $lnk_lst->del($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1680,7 +1687,7 @@ class component extends sandbox_code_id
         user_message      $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -1691,7 +1698,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1701,24 +1708,22 @@ class component extends sandbox_code_id
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
-            global $cmp_typ_cac;
             $lst->add_type_field(
                 component_db::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $cmp_typ_cac
+                $sys->typ_lst->cmp_typ
             );
         }
         if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_STYLE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_STYLE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_STYLE_MISSING, [
@@ -1731,14 +1736,14 @@ class component extends sandbox_code_id
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $msk_sty_cac
+                $sys->typ_lst->msk_sty
             );
         }
         if ($sbx->ui_msg_code_id !== $this->ui_msg_code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID,
-                    $cng_fld_cac->id($table_id . component_db::FLD_UI_MSG_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1753,7 +1758,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID_VARS,
-                    $cng_fld_cac->id($table_id . component_db::FLD_UI_MSG_ID_VARS),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID_VARS),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1768,7 +1773,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_ID_EXCEPTION,
-                    $cng_fld_cac->id($table_id . component_db::FLD_UI_MSG_ID_EXCEPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_ID_EXCEPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1783,7 +1788,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_UI_MSG_VAL_EXCEPTION,
-                    $cng_fld_cac->id($table_id . component_db::FLD_UI_MSG_VAL_EXCEPTION),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_UI_MSG_VAL_EXCEPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1798,7 +1803,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_ROW_PHRASE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_ROW_PHRASE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_ROW_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1817,7 +1822,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_COL_PHRASE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_COL_PHRASE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_COL_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1836,7 +1841,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_COL2_PHRASE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_COL2_PHRASE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_COL2_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1855,7 +1860,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ID,
-                    $cng_fld_cac->id($table_id . formula_db::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1875,7 +1880,7 @@ class component extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_db::FLD_LINK_TYPE,
-                    $cng_fld_cac->id($table_id . component_db::FLD_LINK_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . component_db::FLD_LINK_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1924,7 +1929,7 @@ class component extends sandbox_code_id
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {
-            log_err("The user id must be set to list the component links.", "component->assign_dsp_ids");
+            log_err("The user id must be set to list the component links.", "component->assign_ui_ids");
         }
 
         return $result;

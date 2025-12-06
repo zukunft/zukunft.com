@@ -50,9 +50,11 @@ class sys_log_read_tests
         // init
         $t->name = 'error log read db->';
 
-        $t->header('Unit database tests of the error log classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read error log ';
+        $t->header($ts);
 
-        $t->subheader('Load error log tests');
+        $t->subheader($ts . 'load');
 
         // use the system test user for the database updates
         $sys_usr = new user;
@@ -67,7 +69,7 @@ class sys_log_read_tests
         $result = $err_lst->load_all();
         $t->assert('system errors', $result, true);
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'api');
         $t->assert_api($err_lst, 'sys_log_list_setup', [api_type::HEADER], true);
 
     }

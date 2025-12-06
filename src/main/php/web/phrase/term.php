@@ -51,18 +51,14 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class term extends combine_named_dsp
+class term extends combine_named
 {
 
     /*
@@ -72,39 +68,39 @@ class term extends combine_named_dsp
     /**
      * set the vars of this term html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-            $wrd = new word_dsp();
-            $wrd->api_mapper($json_array);
+            $wrd = new word();
+            $wrd->api_mapper($json_array, $usr_msg);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-            $trp = new triple_dsp();
-            $trp->api_mapper($json_array);
+            $trp = new triple();
+            $trp->api_mapper($json_array, $usr_msg);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
-            $vrb = new verb_dsp();
-            $vrb->api_mapper($json_array);
+            $vrb = new verb();
+            $vrb->api_mapper($json_array, $usr_msg);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-            $frm = new formula_dsp();
-            $frm->api_mapper($json_array);
+            $frm = new formula();
+            $frm->api_mapper($json_array, $usr_msg);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
             $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
-    function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
+    function set_term_obj(word|triple|verb|formula|null $obj): void
     {
         $this->obj = $obj;
     }
@@ -220,12 +216,12 @@ class term extends combine_named_dsp
     private
     function load_word_by_id(int $id): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -387,7 +383,7 @@ class term extends combine_named_dsp
      */
     function is_word(): bool
     {
-        if ($this->obj()::class == word_dsp::class) {
+        if ($this->obj()::class == word::class) {
             return true;
         } else {
             return false;
@@ -399,7 +395,7 @@ class term extends combine_named_dsp
      */
     function is_triple(): bool
     {
-        if ($this->obj()::class == triple_dsp::class) {
+        if ($this->obj()::class == triple::class) {
             return true;
         } else {
             return false;
@@ -411,7 +407,7 @@ class term extends combine_named_dsp
      */
     function is_verb(): bool
     {
-        if ($this->obj()::class == verb_dsp::class) {
+        if ($this->obj()::class == verb::class) {
             return true;
         } else {
             return false;
@@ -423,7 +419,7 @@ class term extends combine_named_dsp
      */
     function is_formula(): bool
     {
-        if ($this->obj()::class == formula_dsp::class) {
+        if ($this->obj()::class == formula::class) {
             return true;
         } else {
             return false;
@@ -559,9 +555,9 @@ class term extends combine_named_dsp
         $trm_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $name = url_var::TERM_POS_LONG . $pos;
+            $name = url_var::TERM_POS . $pos;
         } else {
-            $name = url_var::TERM_LONG;
+            $name = url_var::TERM;
         }
         $label = "";
         if ($form != "value_add" and $form != "value_edit") {
@@ -573,7 +569,7 @@ class term extends combine_named_dsp
                 $label = "Word:";
             }
         }
-        // TODO activate Prio 3
+        // TODO Prio 3 activate
         // $sel->bs_class = $class;
 
         return $trm_lst->selector($form, $this->id(), $name);

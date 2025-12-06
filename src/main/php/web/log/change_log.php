@@ -2,8 +2,8 @@
 
 /*
 
-    web/user/user_log.php - the common change log object for the frontend API
-    ---------------------
+    web/log/change_log.php - the common change log object for the frontend API
+    ----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -71,17 +71,18 @@ class change_log extends sandbox
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::CHANGE_TIME, $json_array)) {
             try {
                 $this->change_time = new DateTime($json_array[json_fields::CHANGE_TIME]);
             } catch (Exception $e) {
-                $usr_msg = $json_array[json_fields::CHANGE_TIME]
-                    . ' has wrong change time format because ' . $e->getMessage();
+                $usr_msg->add_message_text($json_array[json_fields::CHANGE_TIME]
+                    . ' has wrong change time format because ' . $e->getMessage());
             }
         } else {
             $this->change_time = new DateTime();
@@ -110,7 +111,7 @@ class change_log extends sandbox
         } else {
             $this->row_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

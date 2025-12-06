@@ -33,6 +33,8 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
@@ -42,6 +44,7 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change.php';
@@ -156,19 +159,23 @@ class ip_range extends db_object_seq_id
      * set the vars of this ip range object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @return user_message
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-
         // set the object vars based on the json
         if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
             $this->from = $in_ex_json[json_fields::IP_FROM];
         } else {
             $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_FROM,
-                msg_id::VAR_IP_RANGE => $in_ex_json,
+                msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
         }
         if (key_exists(json_fields::IP_TO, $in_ex_json)) {
@@ -176,7 +183,7 @@ class ip_range extends db_object_seq_id
         } else {
             $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_TO,
-                msg_id::VAR_IP_RANGE => $in_ex_json,
+                msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
         }
         if (key_exists(json_fields::REASON, $in_ex_json)) {
@@ -186,7 +193,7 @@ class ip_range extends db_object_seq_id
             $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -303,21 +310,24 @@ class ip_range extends db_object_seq_id
     /**
      * import an ip range from an imported json object
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
-        ?data_object $dto = null,
-        ?object       $test_obj = null
-    ): user_message
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        global $db_con;
+
+        $this->import_mapper($in_ex_json, $usr_msg);
 
         // reset of object not needed, because the calling function has just created the object
-        foreach ($json_obj as $key => $value) {
+        // TODO Prio 0 switch to a key_exists
+        foreach ($in_ex_json as $key => $value) {
             if ($key == self::FLD_FROM) {
                 $this->from = $value;
             }
@@ -333,21 +343,22 @@ class ip_range extends db_object_seq_id
         }
 
         // save the ip range in the database
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
 
@@ -398,7 +409,7 @@ class ip_range extends db_object_seq_id
     private function save_field_do(sql_db $db_con, change $log): user_message
     {
         $usr_msg = new user_message();
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             $db_con->set_class(self::class);
             if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
                 $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
@@ -463,6 +474,7 @@ class ip_range extends db_object_seq_id
     {
         log_debug('->log_add ' . $this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
@@ -471,7 +483,7 @@ class ip_range extends db_object_seq_id
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -577,15 +589,15 @@ class ip_range extends db_object_seq_id
     /**
      * update an ip range in the database or update the existing
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the error message for the user if it has failed or an empty string
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = true): user_message
+    function save(user_message $usr_msg, ?bool $use_func = true): bool
     {
         log_debug('ip_range->save ' . $this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id);
@@ -620,7 +632,7 @@ class ip_range extends db_object_seq_id
                 $usr_msg->add($this->save_fields($db_con, $db_rec));
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

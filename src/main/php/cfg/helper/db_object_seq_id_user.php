@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_id_object_user.php - a base object for all user specific database id objects
-    ----------------------------------
+    model/helper/db_object_seq_id_user.php - a base object for all user specific database id objects
+    --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
@@ -44,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -51,6 +52,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -137,6 +139,15 @@ class db_object_seq_id_user extends db_object_seq_id
         return $usr_msg;
     }
 
+    function has_id(): bool
+    {
+        if ($this->id() !== null and $this->id() !== 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * modify
@@ -171,7 +182,7 @@ class db_object_seq_id_user extends db_object_seq_id
     {
         global $debug;
         $result = '';
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }

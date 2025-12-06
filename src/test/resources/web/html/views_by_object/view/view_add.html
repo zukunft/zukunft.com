@@ -10,50 +10,45 @@
 <div class="container">
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
-        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="kp"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="kp" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/http/view.php?m=64" title=""></a></li>
+                <li class="active"><a href="/http/view.php?m=74" title=""></a></li>
                 <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=29" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=29" title="create a new view"><i
+                <li class="active"><a href="/http/view.php?m=view_edit&id=30" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=30" title="create a new view"><i
                         class="far fa-plus-square"></i></a></li>
             </ul>
         </div>
     </nav>
     <br><br><br><br><br><h4>Add a new view</h4>
-    <form action="/http/view.php" id="view_add"><input class="form-control" type="hidden" name="m" id="m"
-                                                       value="29"><input class="form-control" type="hidden" name="id"
-                                                                         id="id" value="0"><input class="form-control"
-                                                                                                  type="hidden"
-                                                                                                  name="back" id="back"
-                                                                                                  value="0"><input
-            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+    <form action="/http/view.php" id="view_add"><input class="form-control" type="hidden" name="mask" id="m" value="30"><input
+            class="form-control" type="hidden" name="id" id="id" value="0"><input class="form-control" type="hidden"
+                                                                                  name="back" id="9" value="0"><input
+            class="form-control" type="hidden" name="confirm" id="z" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
-                                                                                  name="name" id="name"></div>
+            <div class="form-group col-md-8"><label for="k">Name</label><input class="form-control" type="text"
+                                                                               name="Name" id="k"></div>
             view type selector not defined for Zukunft\ZukunftCom\main\php\web\view\view
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"></div>
+            <div class="form-group col-md-12"><label for="o">Description</label><input class="form-control" type="text"
+                                                                                       name="Description" id="o"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
-                                                                                     form="view_add" id="style">
+            <div class="form-group col-md-4"><label for="cs">View style</label><select class="form-control" name="cs"
+                                                                                       form="view_add" id="cs">
                 <option value="0" selected>please select ...</option>
                 <option value="1">1/3 width</option>
                 <option value="2">2/3 width</option>
                 <option value="3">half width</option>
                 <option value="4">full width</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                     form="view_add" id="share">
+            <div class="form-group col-md-4"><label for="s">Share</label><select class="form-control" name="s"
+                                                                                 form="view_add" id="s">
                 <option value="1" selected>public</option>
                 <option value="2">personal</option>
                 <option value="3">group</option>
@@ -62,10 +57,8 @@
                 <option value="6">group log</option>
                 <option value="7">private log</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
-                                                                                               name="protection"
-                                                                                               form="view_add"
-                                                                                               id="protection">
+            <div class="form-group col-md-4"><label for="sp">Protection</label><select class="form-control" name="sp"
+                                                                                       form="view_add" id="sp">
                 <option value="1" selected>no protection</option>
                 <option value="2">user</option>
                 <option value="3">admin</option>

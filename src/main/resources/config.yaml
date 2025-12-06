@@ -34,6 +34,14 @@ zukunft.com:
             time:
               days: 100
               tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
+      cache:
+        config:
+          limit:
+            days: 150
+            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues to to potential refresh bugs"
+          validate:
+            type: "names"
+            tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
       import:
         limit:
           tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
@@ -211,6 +219,12 @@ zukunft.com:
           lists:
             tooltip-comment: "general parameters for lists e.g. the number of default entries"
             limit:
+              min names:
+                sys-conf-value: 4
+                tooltip-comment: "number of object names that should at least be shown"
+              min numbers:
+                sys-conf-value: 20
+                tooltip-comment: "number of object ids that should at least be shown"
               name list:
                 sys-conf-value: 10
                 tooltip-comment: "number of initial entries to show in a list names"

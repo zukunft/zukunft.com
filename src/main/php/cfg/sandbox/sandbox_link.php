@@ -21,6 +21,9 @@
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
 
+    TODO Prio 2 rename predicate to type
+                because predicate makes only sense for triples
+                where verb is the batter name for the reference to the object
     TODO add weight with int and 100'000 as 100% because
          humans usually cannot handle more than 100'000 words
          so weight sorted list has a single place for each word
@@ -55,6 +58,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -64,6 +69,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
@@ -72,6 +78,10 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_link_type.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
+//include_once paths::MODEL_VIEW . 'view_relation_type.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -85,6 +95,9 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -101,6 +114,10 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -155,33 +172,39 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * reset the search values of this object
-     * needed to search for the standard object, because the search is work, value, formula or ... specific
+     * reset all object vars of this object to the null or default value
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->fob = null;
         $this->tob = null;
         $this->predicate_id = null;
     }
 
+    // the row_mapper_sandbox function is not added here
+    // because the db field name for the predicate differs for all objects
+    // so the setting of the predicate anyway needs to be done in the overwrite function of each link
+
     /**
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
 
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
-        if (array_key_exists(json_fields::PREDICATE, $api_json)) {
-            $this->predicate_id = $api_json[json_fields::PREDICATE];
+        if (array_key_exists(json_fields::PREDICATE_ID, $api_json)) {
+            $this->predicate_id = $api_json[json_fields::PREDICATE_ID];
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -203,13 +226,29 @@ class sandbox_link extends sandbox
         // for triples the predicate is the verb and already included in the vars at this point
         if ($this::class != triple::class) {
             if ($this->predicate_id() != 0) {
+                // TODO Prio 3 review and check what is the best solution for the overwrites e.g. where is the PREDICATE really used
                 if ($this::class == formula_link::class) {
-                    global $frm_lnk_typ_cac;
-                    if ($this->predicate_id() != $frm_lnk_typ_cac->id(formula_link_type::DEFAULT)) {
-                        $vars[json_fields::PREDICATE] = $this->predicate_id();
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == view_relation::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->mrl_typ->id(view_relation_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == term_view::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == component_link::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->cmp_lnk_typ->id(component_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                     }
                 } else {
-                    $vars[json_fields::PREDICATE] = $this->predicate_id();
+                    $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                 }
             }
         }
@@ -719,6 +758,50 @@ class sandbox_link extends sandbox
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox link object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param sandbox|sandbox_link|CombineObject|db_object_seq_id $obj sandbox link object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox|sandbox_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->predicate_id() != null) {
+            $this->set_predicate_id($obj->predicate_id());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * add the link specific values to the export array
+     * which is actually only the predicate code id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+        if ($this->predicate_id != null) {
+            $vars[json_fields::PREDICATE] = $this->predicate_code_id();
+        }
+        return $vars;
+    }
+
+
+    /*
      * log
      */
 
@@ -732,6 +815,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change_link($this->user());
         $log->new_from = $this->fob;
@@ -742,7 +826,7 @@ class sandbox_link extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -755,6 +839,7 @@ class sandbox_link extends sandbox
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
@@ -764,7 +849,7 @@ class sandbox_link extends sandbox
         $log->old_to = $this->tob();
 
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -798,29 +883,28 @@ class sandbox_link extends sandbox
 
     /**
      * create a new link object and log the change
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
      * TODO do a rollback in case of an error
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
             if ($usr_msg->is_ok()) {
-                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                $msg = 'add and log ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
-                $usr_msg->add($ins_msg);
             }
         } else {
 
@@ -833,9 +917,8 @@ class sandbox_link extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                    if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                        $this->id = $usr_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class($this::class);
@@ -873,7 +956,7 @@ class sandbox_link extends sandbox
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -916,7 +999,7 @@ class sandbox_link extends sandbox
      * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
      * @throws Exception
      */
-    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_fields_link(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): string
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -933,7 +1016,7 @@ class sandbox_link extends sandbox
             $log->std_to = $std_rec->tob();
 
             $log->row_id = $this->id();
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(),
@@ -1230,6 +1313,18 @@ class sandbox_link extends sandbox
         return $fvt_lst_out;
     }
 
+    /**
+     * deleting the references of links is usually needed
+     * so no action is done and just true is returned
+     *
+     * @param user_message $usr_msg the message object just to allow overwrites e.g. for triples
+     * @return bool true because a link usually does not have references
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        return true;
+    }
+
 
     /*
      * sql write fields
@@ -1274,7 +1369,7 @@ class sandbox_link extends sandbox
         user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -1296,7 +1391,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                        $cng_fld_cac->id($table_id . $this->from_field()),
+                        $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1312,7 +1407,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                        $cng_fld_cac->id($table_id . $this->to_field()),
+                        $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1376,7 +1471,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $cng_fld_cac->id($table_id . $this->from_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1389,7 +1484,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $cng_fld_cac->id($table_id . $this->to_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1416,7 +1511,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $cng_fld_cac->id($table_id . $this->from_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1429,7 +1524,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $cng_fld_cac->id($table_id . $this->to_field()),
+                            $sys->typ_lst->cng_fld->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1464,14 +1559,18 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * dummy function definition that should not be called
-     * TODO check why it is called
-     * @return user_message
+     * for most links there are no preserved names so the default value true
+     * which means that the link can be saved
+     * this function is overwritten by the triple object
+     * because that some triples are reserved for system testing and should never be used by a user
+     *
+     * @param user_message $usr_msg the message object why the link is reserved and which alternative names can be used
+     *                              of the internal error that an overwrite is missing to interupt the workflow
+     * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
-    protected function check_save(): user_message
+    protected function check_save(user_message $usr_msg): bool
     {
-        log_warning('The dummy parent method get_similar has been called, which should never happen');
-        return new user_message();
+        return true;
     }
 
 

@@ -42,6 +42,7 @@ include_once paths::DB . 'sql_where.php';
 include_once paths::DB . 'sql_where_list.php';
 include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_ELEMENT . 'element.php';
 //include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -93,9 +94,11 @@ include_once paths::DB . 'sql.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 //include_once paths::MODEL_VALUE . 'value_time_series.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -137,6 +140,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
@@ -158,6 +162,15 @@ class sql_creator
     const string FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
     const string FILE_LOAD = 'load'; // for load unit test files
 
+    // name const used for the query name
+    // the separator between the query name parts
+    const string SEP = '_';
+    const string LOG = 'log';
+    const string ADD = 'add';
+    const string UPDATE = 'update';
+    const string DELETE = 'delete';
+    const string ID = 'id';
+
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     const array DB_TYPES_NOT_NAMED = [
@@ -172,6 +185,7 @@ class sql_creator
         element::class,
         component_link::class,
         term_view::class,
+        view_relation::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
@@ -297,7 +311,7 @@ class sql_creator
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
     private ?array $join_usr_geo_field_lst;    // list of fields that should be returned to the next select query that are taken from a joined table
-    // TODO activate or review
+    // TODO Prio 2 activate or review
     //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
     //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
     //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join
@@ -545,8 +559,8 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        global $cng_tbl_cac;
-        return $cng_tbl_cac->id($this->get_table_name($class));
+        global $sys;
+        return $sys->typ_lst->cng_tbl->id($this->get_table_name($class));
     }
 
 
@@ -715,7 +729,7 @@ class sql_creator
             $this->join4_field = $join_field;
             $this->join4_sub_query = true;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
 
 
@@ -864,7 +878,7 @@ class sql_creator
             $this->join4_usr_query = false;
             $this->join4_sub_query = false;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
     }
 
@@ -917,7 +931,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -967,7 +981,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -990,7 +1004,7 @@ class sql_creator
             $this->join_force_rename = $force_rename;
             $this->join_usr_fields = true;
         } else {
-            log_err('Max one geo table joins expected in version ' . PRG_VERSION);
+            log_err('Max one geo table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -2181,13 +2195,12 @@ class sql_creator
         sql_type_list      $sc_par_lst
     ): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
+        global $sys;
 
         // get the change table id
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
-        $table_id = $cng_tbl_cac->id($table_name);
+        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
 
         // select which log to use and set the parameters
         $num_fld = $sbx::FLD_VALUE;
@@ -2230,7 +2243,7 @@ class sql_creator
             sql_par_type::INT_SMALL);
         $par_lst_out->add_field(
             sql::FLD_LOG_FIELD_PREFIX . $num_fld,
-            $cng_fld_cac->id($table_id . $num_fld),
+            $sys->typ_lst->cng_fld->id($table_id . $num_fld),
             change::FLD_FIELD_ID_SQL_TYP
         );
         if ($sc_par_lst->is_update()) {
@@ -5179,6 +5192,9 @@ class sql_creator
         if ($result == 'view_link_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'view_relation_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'component_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -5505,6 +5521,25 @@ class sql_creator
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
         $qp->par = [implode(',', $id_lst)];
+        return $qp;
+    }
+
+    /**
+     * return a sql statement to get all rows and all fields of the given class
+     * should not be used for big tables because it might take long
+     *
+     * @param string $class
+     * @return sql_par
+     */
+    function sql_all(string $class): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par($class);
+        $this->set_class($class);
+        $sql = sql::SELECT . ' * ' . sql::FROM . ' ' . $this->name_sql_esc($this->table) . ' '
+            . sql::ORDER_BY . ' ' . $lib->class_to_id_field($class);
+        $qp->name .= 'all';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, []);
         return $qp;
     }
 

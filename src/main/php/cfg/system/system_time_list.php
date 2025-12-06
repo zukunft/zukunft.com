@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/sys_log_list.php - a list of system error objects
-    ---------------------------
+    model/system/system_time_list.php - a list of system error objects
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,23 +32,8 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'sql_par.php';
-include_once paths::DB . 'sql_par_type.php';
-include_once paths::MODEL_HELPER . 'db_object.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::MODEL_SYSTEM . 'base_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once html_paths::SYSTEM . 'sys_log_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
@@ -60,7 +45,10 @@ class system_time_list
      */
 
     // the protected main var
+    // list of the total execution times
     private array $lst = [];
+    // list of the execution times of the last section
+    private array $section_lst = [];
     private float $start_time = 0;
 
     private string $cur_cat = '';
@@ -105,14 +93,56 @@ class system_time_list
     {
         $total = 0.0;
         $time_report = '';
+        arsort($this->lst);
         foreach ($this->lst as $cat => $time) {
             if ($time_report != '') {
                 $time_report .= ', ';
             }
-            $time_report .= $cat . ': ' .  round($time, 4) . ' sec';
+            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
             $total = $total + $time;
         }
-        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expected - $total, 4);
+        $time_report .= ' -> measured ' . round($total, 4) .
+            ' / unmeasured ' . round($expected - $total, 4);
+        return $time_report;
+    }
+
+    /**
+     * @return string description of the execution times by category of the last section
+     */
+    function section_report(float $expected = 0): string
+    {
+        $total = 0.0;
+        $time_report = '';
+        foreach ($this->section_lst as $cat => $time) {
+            if ($time_report != '') {
+                $time_report .= ', ';
+            } else {
+                $time_report .= 'section ';
+            }
+            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
+            $total = $total + $time;
+        }
+        $unmeasured = $expected - $total;
+        // show only how much has been measured if this is relevant
+        $measured_relevant = false;
+        if (abs($total) > 0.1 and abs($unmeasured) > 0.01) {
+            $measured_relevant = true;
+        }
+        // if a relevant amount of time has not been measured, report it
+        $unmeasured_relevant = false;
+        if ($measured_relevant and abs($unmeasured) > 0.1) {
+            $unmeasured_relevant = true;
+        }
+        if ($measured_relevant) {
+            $time_report .= ' -> measured ' . round($total, 4);
+        }
+        if ($measured_relevant and $unmeasured_relevant) {
+            $time_report .= ' / ';
+        }
+        if ($unmeasured_relevant) {
+            $time_report .= 'unmeasured ' . round($expected - $total, 4);
+        }
+        $this->section_lst = [];
         return $time_report;
     }
 
@@ -133,11 +163,7 @@ class system_time_list
             $key = $this->cur_cat;
             $end_time = microtime(true);
             $duration = $end_time - $this->start_time;
-            if (array_key_exists($key, $this->lst)) {
-                $this->lst[$key] = $this->lst[$key] + $duration;
-            } else {
-                $this->lst[$key] = $duration;
-            }
+            $this->add($duration, $key);
         }
     }
 
@@ -148,13 +174,32 @@ class system_time_list
         $this->start($this->cur_cat);
     }
 
+
+    /*
+     * modify
+     */
+
+    function add(float $duration, string $key): void
+    {
+        if (array_key_exists($key, $this->lst)) {
+            $this->lst[$key] = $this->lst[$key] + $duration;
+        } else {
+            $this->lst[$key] = $duration;
+        }
+        if (array_key_exists($key, $this->section_lst)) {
+            $this->section_lst[$key] = $this->section_lst[$key] + $duration;
+        } else {
+            $this->section_lst[$key] = $duration;
+        }
+    }
+
+
     /*
      * save
      */
 
     private function save(): user_message
     {
-        $us_msg = new user_message();
-        return $us_msg;
+        return new user_message();
     }
 }

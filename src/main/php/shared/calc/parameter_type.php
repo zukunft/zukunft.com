@@ -2,8 +2,8 @@
 
 /*
 
-    shared/formula/parameter_type.php - enum to link the class string to a db id for a formula element
-    ---------------------------------
+    shared/calc/parameter_type.php - enum to link the class string to a db id for a formula element
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -50,10 +50,10 @@ use Zukunft\ZukunftCom\main\php\cfg\system\BasicEnum;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 class parameter_type extends BasicEnum
 {
@@ -71,10 +71,10 @@ class parameter_type extends BasicEnum
     const string FORMULA_CLASS = formula::class;  // a formula is used to include formula results of another formula
 
     // for the frontend
-    const string WORD_WEB_CLASS = word_dsp::class;        // a word is used for an AND selection of values
-    const string TRIPLE_WEB_CLASS = triple_dsp::class;    // a triple is used for an AND selection of values
-    const string VERB_WEB_CLASS = verb_dsp::class;        // a verb is used for dynamic usage of linked words for an AND selection
-    const string FORMULA_WEB_CLASS = formula_dsp::class;  // a formula is used to include formula results of another formula
+    const string WORD_WEB_CLASS = word_ui::class;        // a word is used for an AND selection of values
+    const string TRIPLE_WEB_CLASS = triple_ui::class;    // a triple is used for an AND selection of values
+    const string VERB_WEB_CLASS = verb_ui::class;        // a verb is used for dynamic usage of linked words for an AND selection
+    const string FORMULA_WEB_CLASS = formula_ui::class;  // a formula is used to include formula results of another formula
 
     protected static function get_description($value): string
     {

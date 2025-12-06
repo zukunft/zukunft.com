@@ -41,12 +41,15 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class horizontal_read_tests
 {
     function run(test_cleanup $t): void
     {
+        // init
+        $t_map = new test_mappers($t);
 
         // start the test section (ts)
         $ts = 'db read horizontal ';
@@ -54,7 +57,7 @@ class horizontal_read_tests
 
         $t->subheader($ts . 'load');
         foreach (def::MAIN_CLASSES as $class) {
-            $base_obj = $t->class_to_base_object($class);
+            $base_obj = $t_map->class_to_base_object($class);
             $t->assert_load_by_id($base_obj, $base_obj->id());
         }
 

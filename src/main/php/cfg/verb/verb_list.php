@@ -42,7 +42,7 @@ include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -57,8 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -486,8 +485,8 @@ class verb_list extends type_list
     {
         log_debug('verb_list->calc_usage');
 
+        global $sys;
         global $db_con;
-        global $sys_times;
 
         $sql = "UPDATE verbs v
                    SET words = ( SELECT COUNT(to_phrase_id) 
@@ -495,9 +494,9 @@ class verb_list extends type_list
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
         $db_con->usr_id = $this->user()->id;
-        $sys_times->switch(system_time_type::DB_WRITE);
+        $sys->times->switch(system_time_type::DB_WRITE);
         $result = $db_con->exe_try('Calculation of the verb usage', $sql);
-        $sys_times->switch();
+        $sys->times->switch();
         return $result;
     }
 
@@ -675,21 +674,20 @@ class verb_list extends type_list
      * simple loop to save all verbs of the list
      * because there are hopefully never many verbs to save
      *
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
-                $usr_msg->add($vrb->save());
+                $vrb->save($usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

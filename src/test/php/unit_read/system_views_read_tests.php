@@ -44,12 +44,15 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_read_tests
@@ -64,22 +67,31 @@ class system_views_read_tests
      */
     function run(test_cleanup $t): void
     {
+        // init
+        $t_frm = new test_formulas($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
+
+        // start the test section (ts)
+        $ts = 'db read system view by object ';
+        $t->header($ts);
+
         // create the stable test context that is not based on the database so that the test results rarely change
         // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache();
-        $cfg = new data_object_dsp();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
-        //$cfg = new data_object_dsp();
-        $cfg->set_formula_list($t->formula_list_dsp());
-        $cfg->set_view_list($t->view_list_dsp());
-        $cfg->set_component_list($t->component_list_dsp());
+        $cfg = new data_object_ui();
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+        //$cfg = new data_object_ui();
+        $cfg->set_formula_list($t_frm->formula_list_ui());
+        $cfg->set_view_list($t_msk->view_list_ui());
+        $cfg->set_component_list($t_cmp->component_list_ui());
         // create the test pages
-        $t->assert_view(views::WORD_CODE_ID, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::VERB_CODE_ID, $t->usr1, new verb(), 1, $cfg);
+        $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1, $cfg);
@@ -134,7 +146,7 @@ class system_views_read_tests
         $t->dsp_contains(", dsp_header", $target, $result);
 
         // check if the about page contains at least some basic keywords
-        // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
+        // TODO Prio 3 activate: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
         $target = 'zukunft.com AG';
         if (strpos($result, $target) > 0) {
             $result = $target;
@@ -145,15 +157,15 @@ class system_views_read_tests
         // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $is_connected = $t->dsp_web_test(
-            'http/privacy_policy.html',
+            api::MAIN_SCRIPT_PATH . 'privacy_policy.html',
             'Swiss purpose of data protection',
             ', frontend privacy_policy.php contains at least');
         $is_connected = $t->dsp_web_test(
-            'http/error_update.php?id=1',
+            api::MAIN_SCRIPT_PATH . 'error_update.php?id=1',
             'not permitted',
             ', frontend error_update.php contains at least', $is_connected);
         $t->dsp_web_test(
-            'http/find.php?pattern=' . words::ABB,
+            api::MAIN_SCRIPT_PATH . 'find.php?pattern=' . words::ABB,
             words::ABB,
             ', frontend find.php contains at least', $is_connected);
 

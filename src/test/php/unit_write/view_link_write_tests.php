@@ -32,7 +32,9 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_link_write_tests
@@ -41,13 +43,38 @@ class view_link_write_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('view link db write tests');
+        // init
+        $t_msk = new test_views($t);
+        $usr_msg = new user_message($t->usr1);
 
-        $t->subheader('view link write sandbox tests for ' . views::TEST_ADD_NAME);
-        // TODO activate (set object id instead of id)
-        //$t->assert_write_link($t->view_link_filled_add());
+        // start the test section (ts)
+        $ts = 'db write view link ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sandbox for ' . views::TEST_ADD_NAME);
+        $msk_lnk = $t_msk->term_view();
+        $msk_lnk->save($usr_msg);
+        // TODO Prio 2 activate (set object id instead of id)
+        //$t->assert_write_link($t_msk->view_link_filled_add());
 
 
+    }
+
+    /**
+     * check if the view links used for unit testing are created
+     * and if not create the missing links
+     *
+     * @param test_cleanup $t
+     * @return void
+     */
+    function create_base_view_links(test_cleanup $t): void
+    {
+        // init
+        $t_msk = new test_views($t);
+        $usr_msg = new user_message($t->usr1);
+
+        $msk_lnk = $t_msk->term_view_filled_add();
+        $msk_lnk->save($usr_msg);
     }
 
 }

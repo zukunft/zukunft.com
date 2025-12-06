@@ -38,11 +38,14 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_tests
@@ -56,6 +59,8 @@ class verb_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
 
@@ -74,11 +79,11 @@ class verb_tests
         $t->assert_sql_by_code_id($sc, $vrb);
 
         $t->subheader($ts . 'sql write');
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_insert($sc, $vrb);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_update($sc, $vrb);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_delete($sc, $vrb);
 
 
@@ -93,14 +98,14 @@ class verb_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $vrb = $t->verb();
-        $t->assert_api_to_dsp($vrb, new verb_dsp());
+        $vrb = $t_vrb->verb();
+        $t->assert_api_to_ui($vrb, new verb_ui());
 
 
         $t->subheader($ts . 'triple usage');
 
-        $this->assert_verb($t, verbs::IS, $t->triple_pi(), words::PI . ' (' . triples::MATH_CONST . ')');
-        $this->assert_verb($t, verbs::PART, $t->triple(), words::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . words::MATH);
+        $this->assert_verb($t, verbs::IS, $t_trp->triple_pi(), words::PI . ' (' . triples::MATH_CONST . ')');
+        $this->assert_verb($t, verbs::PART, $t_trp->triple(), words::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . words::MATH);
 
 
         // start the test section (ts)
@@ -131,9 +136,9 @@ class verb_tests
         string $name_generated
     ): void
     {
-        global $vrb_cac;
+        global $sys;
         $test_name = 'the sample triple generated name for verb ';
-        $vrb = $vrb_cac->get_verb($code_id);
+        $vrb = $sys->typ_lst->vrb->get_verb($code_id);
         $t->assert($test_name . $vrb->name(), $trp->generate_name(), $name_generated);
     }
 

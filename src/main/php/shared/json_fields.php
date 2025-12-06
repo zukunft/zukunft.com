@@ -47,6 +47,10 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
+    // the messages that should be shown to the user e.g. name already used. please use another name
+    // TODO Prio 0 add unit test case
+    const string MSG = 'message';
+
 
     // the unique name of the object which is also a database index
     const string NAME = 'name';
@@ -62,6 +66,7 @@ class json_fields
     // the json field name in the api json message which is supposed to contain
     // the database id (or in some cases still the code id) of an object type
     // e.g. for the word api message it contains the id of the phrase type
+    // for link types use PREDICATE
     const string TYPE = 'type_id';
     // the json field name in the im- and export json message which is supposed to contain
     // the code id of an object type
@@ -73,7 +78,6 @@ class json_fields
 
     // object lists
     const string PHRASES = 'phrases';
-    const string COMPONENTS = 'components';
 
     // single objects
     const string REFERENCE = 'reference';
@@ -128,22 +132,38 @@ class json_fields
     const string ID = 'id'; // the unique database id used to save the changes
 
     // reference fields e.g. to link a phrase to an external reference
-    const string PHRASE = 'phrase_id';
+    const string PHRASE_ID = 'phrase_id';
+    const string PHRASE = 'phrase'; // the phrase object as a sub array
+    const string TERM_ID = 'term_id';
+    const string TERM = 'term'; // the term object as a sub array
     const string SOURCE = 'source_id';
     const string USER_ID = 'user_id';
     //const string GROUP_ID = 'group_id';
     const string FORMULA_ID = 'formula_id';
+    const string FORMULA = 'formula'; // the formula object as a sub array
 
     // for link api objects the id of the preloaded link type
-    const string PREDICATE = 'predicate_id';
+    // for the type of one object that is not a link use TYPE
+    const string PREDICATE_ID = 'predicate_id';
+    const string PREDICATE = 'predicate'; // the link type code id
     const string FROM = 'from_id';
     const string FROM_PHRASE = 'from_phrase';
     const string TO = 'to_id';
     const string TO_PHRASE = 'to_phrase';
     const string VERB = 'verb_id';
     const string WEIGHT = 'weight';
-    // the json field names in the api json message which is supposed to be the same as the var $id
+
+    // the parent object with detail fields used e.g. for the parent view of view relations
     const string PARENT = 'parent';
+    // the parent id used e.g. for the parent view of view relations
+    const string PARENT_ID = 'parent_id';
+
+    // the child object with detail fields used e.g. for the child view of view relations
+    const string CHILD = 'child';
+
+    // the child id used e.g. for the child view of view relations
+    const string CHILD_ID = 'child_id';
+
 
     const string USR_TEXT = 'user_text'; // the formula expression in the user readable format
     const string SHARE = 'share'; // the field name used for the JSON im- and export
@@ -180,9 +200,6 @@ class json_fields
 
     // the database id e.g. of a component_link
     const string LINK_ID = 'link_id';
-
-    // e.g. the order of the components within a view
-    const string POS = 'position';
 
     // the phrase to select the row name of a view component
     const string PHRASE_ROW = 'word_row';
@@ -253,6 +270,7 @@ class json_fields
     const string LIST_VIEW_TYPES = 'view_types';
     const string LIST_VIEW_STYLES = 'view_styles';
     const string LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const string LIST_VIEW_RELATION_TYPES = 'view_relation_types';
     const string LIST_COMPONENT_TYPES = 'component_types';
     const string LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const string LIST_COMPONENT_POSITION_TYPES = 'position_types';
@@ -276,9 +294,15 @@ class json_fields
 
 
     // name of the view to show a word, triple or formula
-    const string VIEW = 'view';
+    const string VIEW_ID = 'view_id';
+    const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+
+    // name of the component that is part of a view
+    const string COMPONENT_ID = 'component_id';
+    const string COMPONENT = 'component'; // the component as a sub array
+    const string COMPONENTS = 'components';
 
     // a list of users
     const string USERS = 'users';
@@ -331,6 +355,7 @@ class json_fields
     const string EXPRESSION = 'expression';
     const string ASSIGNED_WORD = 'assigned_word';
     const string FORMULAS = 'formulas';
+    const string FORMULA_LINKS = 'formula_links';
 
 
     // for results
@@ -349,6 +374,12 @@ class json_fields
     // and for value lists to reduce the number of phrase for each value
     // also used to select the phrases used to filter the values for calculating this result
     const string CONTEXT = 'context';
+
+    // for user messages
+    const string USER_MESSAGES = 'message_id_list';
+    const string USER_MESSAGES_WITH_VARS = 'message_id_list_with_vars';
+    const string USER_MESSAGES_STATUS = 'message_status';
+    const string USER = 'user';
 
     // list of json fields that are used for the api message to the frontend
     // but that are never used for the api message to the backend

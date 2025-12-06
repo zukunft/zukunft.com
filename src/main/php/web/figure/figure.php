@@ -2,8 +2,8 @@
 
 /*
 
-    web/formula/figure.php - to create the html code to display a value or result
-    ----------------------
+    web/figure/figure.php - to create the html code to display a value or result
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -54,14 +54,14 @@ use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class figure extends combine_named_dsp
+class figure extends combine_named
 {
 
     /*
@@ -71,19 +71,20 @@ class figure extends combine_named_dsp
     /**
      * set the vars of this figure html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_dsp = new result();
-                $res_dsp->api_mapper($json_array);
+                $res_dsp->api_mapper($json_array, $usr_msg);
                 $this->set_obj($res_dsp);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
-                $val->api_mapper($json_array);
+                $val->api_mapper($json_array, $usr_msg);
                 $this->set_obj($val);
             } else {
                 $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
@@ -91,7 +92,7 @@ class figure extends combine_named_dsp
         } else {
             $usr_msg->add_err('Json class missing, but expected for a figure');
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

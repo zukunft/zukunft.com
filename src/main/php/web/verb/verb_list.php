@@ -83,6 +83,7 @@ class verb_list extends type_list
 
     /**
      * set the vars of a term object based on the given json
+     * TODO Prio 1 add user_message as parameter
      * @param array $json_array an api single object json message
      * @param string $class to force to use the verb child class of the type object
      * @return user_message ok or a warning e.g. if the server version does not match
@@ -92,9 +93,9 @@ class verb_list extends type_list
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone new verb();
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
-            $this->add_obj($new);
+            if ($new->api_mapper($value, $usr_msg)) {
+                $this->add_obj($new);
+            }
         }
         return $usr_msg;
     }

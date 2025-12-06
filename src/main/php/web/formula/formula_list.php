@@ -34,7 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'list_dsp.php';
+//include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::FORMULA . 'formula.php';
@@ -46,15 +46,14 @@ include_once paths::SHARED_CONST . 'formulas.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
-use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 
-class formula_list extends list_dsp
+class formula_list extends ListBase
 {
 
     /*
@@ -68,7 +67,7 @@ class formula_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new formula_dsp());
+        return parent::api_mapper_list($json_array, new formula());
     }
 
 
@@ -193,7 +192,7 @@ class formula_list extends list_dsp
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
                     $frm_dsp = $frm->dsp_obj_old();
-                    $frm_html = new formula_dsp($frm->api_json());
+                    $frm_html = new formula($frm->api_json());
                     $result = '';
                     if ($frm->name_wrd != null) {
                         $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);

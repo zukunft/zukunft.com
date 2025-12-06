@@ -11,9 +11,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_tests
@@ -26,6 +27,7 @@ class triple_tests
 
         // init
         $sc = new sql_creator();
+        $t_trp = new test_triples($t);
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
@@ -34,7 +36,7 @@ class triple_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $trp = $t->triple();
+        $trp = $t_trp->triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
@@ -58,12 +60,12 @@ class triple_tests
         $t->assert_sql_standard($sc, $trp);
 
         $t->subheader($ts . 'sql write insert');
-        $trp = $t->triple();
+        $trp = $t_trp->triple();
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
-        $trp_excl = $t->triple();
+        $trp_excl = $t_trp->triple();
         $trp_excl->set_excluded(true);
         $t->assert_sql_insert($sc, $trp_excl);
         $trp_excl->description = '';
@@ -79,7 +81,7 @@ class triple_tests
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql delete');
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         $t->assert_sql_delete($sc, $trp);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
         $t->assert_sql_delete($sc, $trp, [sql_type::LOG]);
@@ -88,32 +90,32 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'view base object handling');
-        $trp = $t->triple_filled_add();
+        $trp = $t_trp->triple_filled_add();
         $t->assert_reset($trp);
 
         $t->subheader($ts . 'api');
-        $trp = $t->triple();
+        $trp = $t_trp->triple();
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
         $t->subheader($ts . 'frontend');
-        $trp = $t->triple_pi();
-        $t->assert_api_to_dsp($trp, new triple_dsp());
+        $trp = $t_trp->triple_pi();
+        $t->assert_api_to_ui($trp, new triple_ui());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->triple(), $usr_sys);
-        $t->assert_ex_and_import($t->triple_filled_add(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple(), $usr_sys);
+        $t->assert_ex_and_import($t_trp->triple_filled_add(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 
 
         $test_name = 'check if database would not be updated if only the name is given in import';
-        $in_trp = $t->triple_name_only();
-        $db_trp = $t->triple();
+        $in_trp = $t_trp->triple_name_only();
+        $db_trp = $t_trp->triple();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
 
-        $in_trp = $t->triple_link_only();
-        $db_trp = $t->triple();
+        $in_trp = $t_trp->triple_link_only();
+        $db_trp = $t_trp->triple();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
 
     }

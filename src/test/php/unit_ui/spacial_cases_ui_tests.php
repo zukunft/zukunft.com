@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class spacial_cases_ui_tests
@@ -48,6 +49,7 @@ class spacial_cases_ui_tests
     {
 
         $html = new html_base();
+        $t_wrd = new test_words($t);
         $ui = new frontend('spacial_cases_ui_tests');
         $ui->load_dummy_cache_from_test_resources($t->usr1);
 
@@ -58,18 +60,20 @@ class spacial_cases_ui_tests
         // test the type list display functions
         $test_page = $html->text_h2('add word');
         $back = '';
-        $wrd = $t->word_dsp();
+        $wrd = $t_wrd->word_dsp();
 
         // check if the system views have set
-        $msk = $ui->typ_lst_cache->html_system_views->get_by_code_id(view_shared::WORD_ADD);
+        $msk = $ui->dto->typ_lst_cache->html_system_views->get_by_code_id(view_shared::WORD_ADD);
         $cfg = new data_object();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page .= $msk->show($wrd, $cfg, $back) . '<br>';
 
         // TODO review and combine with read db tests
         $t->html_view_test($test_page, view_shared::WORD_ADD);
 
         // TODO add a word edit page with no usage to test the switch to the exception message
+
+        $test_name = 'view with message';
     }
 
 }

@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link superclass
-    ----------------------------------------
+    model/sandbox/sandbox_predicated_link.php - adding the type field to the user sandbox link superclass
+    -----------------------------------------
 
     similar to sandbox_link_named, but for links without name
 
@@ -35,8 +35,12 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 class sandbox_predicated_link extends sandbox_link
 {
@@ -52,10 +56,11 @@ class sandbox_predicated_link extends sandbox_link
 
     /**
      * reset the type of the link object
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
     }
 
 
@@ -82,8 +87,12 @@ class sandbox_predicated_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        $msg = 'ERROR: the type name function should have been overwritten by the child object';
-        return log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'predicate_name',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
 }

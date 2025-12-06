@@ -49,6 +49,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\word;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
@@ -58,6 +59,7 @@ include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::FORMULA . 'formula.php';
 //include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'change_log_named.php';
 //include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -69,6 +71,7 @@ include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::VIEW . 'view_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -85,6 +88,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
@@ -99,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -132,6 +137,7 @@ class word extends sandbox_code_id
      */
 
     // the language specific forms
+    // TODO make most ui vars public and check the mappings
     private ?string $plural = null;
 
     // the main parent phrase
@@ -139,9 +145,6 @@ class word extends sandbox_code_id
 
     // the impact used to sort the words
     private float $impact = 0.0;
-
-    // the default view
-    private ?view $msk = null;
 
 
     /*
@@ -152,30 +155,27 @@ class word extends sandbox_code_id
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::PLURAL, $url_array)) {
                 $this->set_plural($url_array[url_var::PLURAL]);
             } else {
                 $this->set_plural(null);
             }
-            if (array_key_exists(url_var::VIEW, $url_array)) {
-                if ($url_array[url_var::VIEW] != null) {
-                    $this->set_view_id($url_array[url_var::VIEW]);
-                }
-            }
             if (array_key_exists(url_var::IMPACT, $url_array)) {
                 if ($url_array[url_var::IMPACT] != null) {
                     $this->impact = $url_array[url_var::IMPACT];
                 }
             }
-            if (array_key_exists(url_var::VIEW_LONG, $url_array)) {
-                if ($url_array[url_var::VIEW_LONG] != null) {
-                    $this->set_view_id($url_array[url_var::VIEW_LONG]);
+            if (array_key_exists(url_var::VIEW, $url_array)) {
+                if ($url_array[url_var::VIEW] != null) {
+                    $this->view_id = $url_array[url_var::VIEW];
                 }
             }
         }
@@ -186,15 +186,16 @@ class word extends sandbox_code_id
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
 
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->set_plural($json_array[json_fields::PLURAL]);
         } else {
@@ -219,7 +220,7 @@ class word extends sandbox_code_id
         } else {
             $this->set_parent(null);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -276,19 +277,7 @@ class word extends sandbox_code_id
 
     function set_view_id(?int $view_id): void
     {
-        $msk = new view();
-        $msk->set_id($view_id);
-        $this->set_view($msk);
-    }
-
-    function set_view(?view $view): void
-    {
-        $this->msk = $view;
-    }
-
-    function view(): ?view
-    {
-        return $this->msk;
+        $this->view_id = $view_id;
     }
 
     /**
@@ -296,11 +285,11 @@ class word extends sandbox_code_id
      */
     function set_type(?string $code_id): void
     {
-        global $phr_typ_cac;
+        global $sys;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phr_typ_cac->id($code_id));
+            $this->set_type_id($sys->typ_lst->phr_typ->id($code_id));
         }
     }
 
@@ -426,10 +415,10 @@ class word extends sandbox_code_id
      */
     function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
     {
-        global $phr_typ_cac;
+        global $sys;
         $result = '';
-        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
-            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
+        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+            $result .= ' type: ' . $sys->typ_lst->phr_typ->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
         }
@@ -472,7 +461,7 @@ class word extends sandbox_code_id
      */
     function tr(): string
     {
-        return (new html_base())->tr($this->td());
+        return new html_base()->tr($this->td());
     }
 
     /**
@@ -524,7 +513,7 @@ class word extends sandbox_code_id
      */
     function log_view(back_trace $back): string
     {
-        $log_dsp = new change_log_named();
+        $log_ui = new change_log_named();
         return '';
     }
 
@@ -544,10 +533,10 @@ class word extends sandbox_code_id
      */
     function is_type(string $type): bool
     {
-        global $phr_typ_cac;
+        global $sys;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phr_typ_cac->id($type)) {
+            if ($this->type_id() == $sys->typ_lst->phr_typ->id($type)) {
                 $result = true;
             }
         }
@@ -578,6 +567,15 @@ class word extends sandbox_code_id
     function is_measure(): bool
     {
         return $this->is_type(phrase_type::MEASURE);
+    }
+
+    /**
+     * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
+     * if used for a value these phrases are shown only as a tooltip
+     */
+    function is_info(): bool
+    {
+        return $this->is_type(phrase_type::INFO);
     }
 
     /**
@@ -636,7 +634,7 @@ class word extends sandbox_code_id
         } else {
             // load the word parameters if not yet done
             if ($this->name == "") {
-                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_dsp->dsp_header');
+                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_ui->ui_header');
             }
 
             //$default_view_id = cl(DBL_VIEW_WORD);
@@ -679,8 +677,8 @@ class word extends sandbox_code_id
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text("plural", $this->get_plural());
-            $detail_fields .= $html->form_text("description", $this->description());
+            $detail_fields .= $html->form_text(url_var::PLURAL, $this->get_plural(), msg_id::FORM_FIELD_PLURAL);
+            $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->description(), msg_id::FORM_FIELD_DESCRIPTION);
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
@@ -695,36 +693,6 @@ class word extends sandbox_code_id
 
 
     /**
-     * @return string HTML code to edit all word fields
-     */
-    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, string $back): string
-    {
-        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
-        $result = '';
-        $html = new html_base();
-
-        $form = "word_add";
-        $result .= $html->dsp_text_h2('Add a new word');
-        $result .= $html->dsp_form_start($form);
-        $result .= $html->dsp_form_hidden("back", $back);
-        $result .= $html->dsp_form_hidden("confirm", '1');
-        $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", view_styles::COL_SM_4);
-        $result .= $this->dsp_type_selector($form, view_styles::COL_SM_4);
-        $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
-        $result .= '</div>';
-        $result .= 'which ';
-        $result .= '<div class="form-row">';
-        //$result .= $this->selector_link($vrb_id, $form, $back);
-        $result .= $this->selector_word($wrd_to, 0, $form);
-        $result .= '</div>';
-        $result .= $html->dsp_form_end('', $back);
-
-        log_debug('word_dsp->dsp_add ... done');
-        return $result;
-    }
-
-    /**
      * HTML code to edit all word fields
      */
     function dsp_edit(string $back = ''): string
@@ -736,7 +704,7 @@ class word extends sandbox_code_id
         $phr_lst_down = $this->children();
         $dsp_graph = $phr_lst_up->dsp_graph($this->phrase(), $back);
         $dsp_graph .= $phr_lst_down->dsp_graph($this->phrase(), $back);
-        $wrd_dsp = $this;
+        $wrd_ui = $this;
         // collect the display code for the user changes
         $dsp_log = '';
         $changes = $this->dsp_hist(1, $row_limit, '', $back);
@@ -749,10 +717,10 @@ class word extends sandbox_code_id
             $dsp_log .= $html->dsp_text_h3("Latest link changes related to this word", "change_hist");
             $dsp_log .= $changes;
         }
-        return $wrd_dsp->form_edit(
+        return $wrd_ui->form_edit(
             $dsp_graph,
             $dsp_log,
-            $this->dsp_formula($back),
+            //$this->dsp_formula($back),
             $this->dsp_type_selector(views::WORD_EDIT),
             $back);
     }
@@ -829,8 +797,9 @@ class word extends sandbox_code_id
         $phr_lst = new word_list();
         $phr_lst->load_like($pattern);
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, url_var::WORD_LONG, msg_id::LABEL_WORD);
+        return $phr_lst->selector($form, $id, url_var::WORD, msg_id::FORM_SELECT_WORD);
     }
+
 
     /*
      * select
@@ -846,11 +815,11 @@ class word extends sandbox_code_id
         $phr_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $name = url_var::WORD_POS_LONG . $pos;
+            $name = url_var::WORD_POS . $pos;
         } else {
-            $name = url_var::WORD_LONG;
+            $name = url_var::WORD;
         }
-        return $phr_lst->selector($form, $id, $name, msg_id::LABEL_WORD);
+        return $phr_lst->selector($form, $id, $name, msg_id::FORM_SELECT_WORD);
     }
 
     /**
@@ -860,8 +829,8 @@ class word extends sandbox_code_id
      */
     function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
-        $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(word::class, $this->id(), $size, $page, '', null);
+        $log_ui = new user_log_display();
+        return $log_ui->dsp_hist(word::class, $this->id(), $size, $page, '', null);
     }
 
     /**
@@ -872,37 +841,60 @@ class word extends sandbox_code_id
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = word::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = word::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         log_debug('done');
         return $result;
     }
 
-    function dsp_formula(string $back = ''): string
-    {
-        global $phr_typ_cac;
-        $html = new html_base();
 
-        $result = '';
-        if ($this->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
-            $result .= $html->dsp_form_hidden("name", $this->name);
-            $result .= '  to change the name of "' . $this->name . '" rename the ';
-            $frm = new formula();
-            $frm->load_by_name($this->name());
-            $result .= $frm->name_link($back);
-            $result .= '.<br> ';
-        } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);
+    /*
+     * selectors
+     */
+
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
         }
-        return $result;
+        $msk_lst = $msk_lst->ex_system();
+        $msk_lst = $msk_lst->ex_non_phrase();
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
+
+
+    /*
+     * fixed
+     */
+
+    function math(): word
+    {
+        $wrd = new word();
+        $wrd->id = words::MATH_ID;
+        $wrd->name = words::MATH;
+        return $wrd;
+    }
+
 
     /*
      * internal

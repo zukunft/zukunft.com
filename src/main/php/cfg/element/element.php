@@ -197,11 +197,12 @@ class element extends db_object_seq_id_user
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
         } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
@@ -209,14 +210,12 @@ class element extends db_object_seq_id_user
         } else {
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word($this->user());
-                $usr_msg->add($wrd->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->user());
-                $usr_msg->add($trp->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
@@ -226,15 +225,14 @@ class element extends db_object_seq_id_user
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->user());
-                $usr_msg->add($frm->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($frm->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $frm;
                 }
             } else {
                 $this->obj = null;
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

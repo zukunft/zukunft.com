@@ -43,6 +43,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 //include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -53,6 +54,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+//include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -65,6 +67,8 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -117,7 +121,11 @@ class sandbox_list extends base_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        log_err('Unexpected call of the parent rows_mapper function');
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'rows_mapper',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return false;
     }
 
@@ -279,6 +287,51 @@ class sandbox_list extends base_list
     }
 
     /**
+     * load the changes that the given user has done compared to the standard
+     *
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
+     * @param user $usr the user whose changes should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one object has been loaded
+     */
+    function load_user_changes(
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        user                                           $usr,
+        user_message                                   $usr_msg,
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): bool
+    {
+
+        global $db_con;
+
+        // check the all minimal input parameters are set
+        if ($this->user()->id <= 0) {
+            log_err('The user must be set to load ' . self::class, self::class . '->load');
+        } else {
+            $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
+            $db_lst = $db_con->get($qp);
+            $result = $this->rows_mapper($db_lst);
+        }
+        return $usr_msg->is_ok();
+    }
+
+    protected function load_sql_user_changes(
+        sql_creator                                    $sc,
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        user                                           $usr,
+        user_message                                   $usr_msg,
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): sql_par
+    {
+        $qp = new sql_db();
+        // TODO Prio 0 fill
+        return $qp;
+    }
+
+    /**
      * load a list of sandbox objects (e.g. phrases or values) based on the given query parameters
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
@@ -326,14 +379,15 @@ class sandbox_list extends base_list
 
     /**
      * create an array with one export json array for each list item
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array of export json arrays
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $exp_lst = [];
         foreach ($this->lst() as $sbx) {
-            $exp_lst[] = $sbx->export_json($do_load);
+            $exp_lst[] = $sbx->export_json($exp_typ, $do_load);
         }
         return $exp_lst;
     }
@@ -442,6 +496,7 @@ class sandbox_list extends base_list
         return $usr_msg;
     }
 
+
     /*
      * debug
      */
@@ -461,11 +516,11 @@ class sandbox_list extends base_list
         // show at least 4 elements by name
         $min_names = $debug;
         $min_num = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
-        if ($min_num < LIST_MIN_NUM) {
-            $min_num = LIST_MIN_NUM;
+        if ($min_num < def::LIST_MIN_NUM) {
+            $min_num = def::LIST_MIN_NUM;
         }
 
         $id = $this->ids_txt($min_num);
@@ -483,9 +538,9 @@ class sandbox_list extends base_list
                     $result .= $val->dsp();
                 }
                 if (is_array($id_field)) {
-                    $fld_dsp = ' (' . implode(', ', $id_field);
-                    $fld_dsp .= ' = ' . $id . ')';
-                    $result .= $fld_dsp;
+                    $fld_ui = ' (' . implode(', ', $id_field);
+                    $fld_ui .= ' = ' . $id . ')';
+                    $result .= $fld_ui;
                 } else {
                     $result .= ' (' . $id_field . ' ' . $id . ')';
                 }
@@ -516,7 +571,7 @@ class sandbox_list extends base_list
         if (count($this->lst()) > $pos) {
             $result .= ' ... total ' . $lib->dsp_count($this->lst());
         }
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }

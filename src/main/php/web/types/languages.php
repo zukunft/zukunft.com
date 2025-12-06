@@ -60,7 +60,7 @@ class languages extends type_list
         string   $name = self::NAME
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_LANGUAGE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_LANGUAGE);
     }
 
 }

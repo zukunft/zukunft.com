@@ -32,6 +32,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_CONST . 'def.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+
 class values
 {
 
@@ -48,6 +54,9 @@ class values
     const int E_ID = 32771;
     CONST float E_CONST = 0.57721566490153; // Euler const
     const int E_CONST_ID = 32771;
+    const int TRANSITION_OF_CS = 9192631770;
+    const int SPEED_OF_LIGHT = 299792458;
+    const string SPEED_OF_LIGHT_TXT = "299'792'458";
     CONST int SAMPLE_INT = 123456;
     CONST string SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
     CONST float SAMPLE_FLOAT = 123.456;
@@ -67,7 +76,7 @@ class values
     const string NESN_SALES_2016_FORM = '89\'469';
 
     CONST string TIME = '2025-06-07 12:30:00 UTC'; // to test time values
-    CONST string TEXT = POD_NAME; // to test text values
+    CONST string TEXT = def::POD_NAME; // to test text values
     CONST string GEO = '47.263179, 8.684730'; // to test geo values
     CONST string DB_TEXT = 'old db text sample value'; // to test updating text values
 

@@ -54,7 +54,12 @@ class ui_log
         // if the given change og is empty use the global cache
         if ($log_lst->is_empty()) {
             global $ui_cac;
-            $log_lst = $ui_cac->chg_log;
+            if ($ui_cac == null) {
+                log_warning('ui cache is empty');
+                $log_lst = new change_log_list();
+            } else {
+                $log_lst = $ui_cac->chg_log;
+            }
         }
         // filter the change log based on the given object
         $log_lst = $log_lst->filter($dbo);

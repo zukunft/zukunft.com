@@ -38,10 +38,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_list_ui_tests
@@ -50,6 +51,7 @@ class component_list_ui_tests
     {
 
         $html = new html_base();
+        $t_cmp = new test_components($t);
 
         // start the test section (ts)
         $ts = 'unit ui html component list ';
@@ -57,13 +59,14 @@ class component_list_ui_tests
 
         // test the component list display functions
         $form = 'component_list_ui_test';
-        $lst = new component_list_dsp($t->component_list()->api_json());
+        $lst = new component_list($t_cmp->component_list()->api_json());
         $test_page = $html->text_h2('component list display test');
         $test_page .= 'component list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'component list with link: ' . $lst->name_link() . '<br>';
 
-        $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector($form, 0, url_var::COMPONENT_LONG, msg_id::LABEL_COMPONENT) . '<br>';
+        $from_rows = '<br>' . $html->text_h2('Selector tests');
+        $from_rows .= $lst->selector($form, 0, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'component_list', 'component_list', $t);
     }

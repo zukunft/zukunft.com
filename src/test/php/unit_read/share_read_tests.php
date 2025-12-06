@@ -46,15 +46,17 @@ class share_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $shr_typ_cac;
 
         // init
         $t->name = 'share read db->';
 
-        $t->header('Unit database tests of the share handling');
+        // start the test section (ts)
+        $ts = 'db read share ';
+        $t->header($ts);
 
-        $t->subheader('Share types tests');
+        $t->subheader($ts . 'types');
 
         // load the share types
         $lst = new share_type_list();
@@ -62,7 +64,7 @@ class share_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $shr_typ_cac->id(share_type_shared::PUBLIC);
+        $result = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
         $t->assert('check ' . share_type_shared::PUBLIC, $result, 1);
     }
 

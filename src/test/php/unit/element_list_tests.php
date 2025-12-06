@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_list_tests
@@ -47,10 +48,11 @@ class element_list_tests
     function run(test_cleanup $t): void
     {
 
-        global $elm_typ_cac;
+        global $sys;
 
         // init
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'element_list->';
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
@@ -62,15 +64,15 @@ class element_list_tests
         $t->subheader($ts . 'load');
 
         $test_name = 'sql to load all elements of one formula';
-        $frm = $t->formula();
+        $frm = $t_frm->formula();
         $t->assert_sql_by_frm_id($sc, $elm_lst, $frm->id(), $test_name);
 
         $test_name = 'sql to load one type of elements related in one formula';
-        $elm_type_id = $elm_typ_cac->id(element_type::WORD_SELECTOR);
+        $elm_type_id = $sys->typ_lst->elm_typ->id(element_type::WORD_SELECTOR);
         $this->assert_sql_by_frm_and_type_id($t, $sc, $elm_lst, $frm->id(), $elm_type_id, $test_name);
 
-        $test_name = 'sql to delete a list of elemets';
-        $elm_lst = $t->element_list();
+        $test_name = 'sql to delete a list of elements';
+        $elm_lst = $t_frm->element_list();
         $this->assert_sql_del_by_id_lst($t, $sc, $elm_lst, $test_name);
 
     }

@@ -44,12 +44,15 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_tests
@@ -67,11 +70,14 @@ class phrase_list_tests
     {
 
         global $usr;
-        global $vrb_cac;
+        global $sys;
 
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
@@ -113,9 +119,9 @@ class phrase_list_tests
         $wrd = new word($usr);
         $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $vrb_cac->get_verb(verbs::PART_NAME);
+        $vrb = $sys->typ_lst->vrb->get_verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
@@ -125,13 +131,13 @@ class phrase_list_tests
         $phr_lst = $this->get_phrase_list();
         $phr_lst_ex_time = clone $phr_lst;
         $phr_lst_ex_time->ex_time();
-        $t->display('phrase_list->ex_time', true, true);
+        $t->assert('phrase_list->ex_time', true, true);
         $result = $phr_lst_ex_time->dsp_id();
         $target = $this->get_phrase_list_ex_time()->dsp_id();
-        $t->display('phrase_list->ex_time names', $target, $result);
+        $t->assert('phrase_list->ex_time names', $result, $target);
 
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
         $t->assert($test_name, $wrd_lst->count(), 4);
 
@@ -141,26 +147,26 @@ class phrase_list_tests
         $t->subheader($ts . 'FOAF');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
-        $wrd_city = $t->word_city();
-        $city_lst = $wrd_city->are($t->phrase_list_all());
-        $target = $t->phrase_list_cities();
-        // TODO activate Prio 2
+        $wrd_city = $t_wrd->word_city();
+        $city_lst = $wrd_city->are($t_phr->phrase_list_all());
+        $target = $t_phr->phrase_list_cities();
+        // TODO Prio 2 activate
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
         $t->subheader($ts . 'api');
 
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $t->assert_api($phr_lst);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $phr_lst = $t->phrase_list();
-        $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
+        $phr_lst = $t_phr->phrase_list();
+        $t->assert_api_to_ui($phr_lst, new phrase_list_ui());
 
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
-        $phr_lst_dsp = $t->phrase_list_dsp();
+        $phr_lst_dsp = $t_phr->phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
         if ($phr != null) {
             $t->assert_text_contains('Main word is "math"', $phr->name(), words::MATH);
@@ -212,11 +218,11 @@ class phrase_list_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
-        global $phr_typ_cac;
+        global $sys;
 
         $wrd = new word($usr);
         $wrd->set(words::CONST_ID, words::TEST_RENAMED);
-        $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }
 

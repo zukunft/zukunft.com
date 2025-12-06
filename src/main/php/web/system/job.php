@@ -44,7 +44,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -53,7 +53,7 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class job extends db_object_dsp
+class job extends db_object
 {
 
     /*
@@ -76,11 +76,12 @@ class job extends db_object_dsp
     /**
      * set the vars of this batch job html object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
@@ -134,7 +135,7 @@ class job extends db_object_dsp
         } else {
             $this->set_priority(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_request_time(DateTime $iso_time_str): void

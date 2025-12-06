@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_link_list.php - a list of links between a view and a component
-    ----------------------------------
+    model/component/component_link_list.php - a list of links between a view and a component
+    ---------------------------------------
 
     This links list object is used to update or delete a list of links with one SQL statement
 
@@ -51,6 +51,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
@@ -59,6 +60,7 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -232,14 +234,15 @@ class component_link_list extends sandbox_link_list
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = [];
         foreach ($this->lst() as $lnk) {
-            $vars[] = $lnk->export_json($do_load);
+            $vars[] = $lnk->export_json($exp_typ, $do_load);
         }
         return $vars;
     }
@@ -253,7 +256,7 @@ class component_link_list extends sandbox_link_list
      * add a view component link to the list without saving it to the database
      * @return true if the link has been added
      */
-    function add_by_name(component_link $lnk_to_add): bool
+    function add_by_name(component_link $lnk_to_add, user_message $usr_msg): bool
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {
@@ -265,18 +268,17 @@ class component_link_list extends sandbox_link_list
 
     /**
      * delete all loaded view component links e.g. to delete all the links assigned to a view
-     * @return user_message
+     * @param user_message $usr_msg the message for the user why deleting this component links has failed and a suggested solution
+     * @return bool true if the component links has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $usr_msg->add($dsp_cmp_lnk->del());
+                $dsp_cmp_lnk->del($usr_msg);
             }
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 
@@ -346,23 +348,23 @@ class component_link_list extends sandbox_link_list
      * simple but slow function to add of update all list items in the database
      * TODO faster mass db update
      *
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         foreach ($this->lst() as $sbx) {
             // save upfront and missing components
             $cmp = $sbx->component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready()) {
-                    $usr_msg->add($cmp->save());
+                    $cmp->save($usr_msg);
                 }
             }
             // save the link of the view to the component
-            $usr_msg->add($sbx->save());
+            $sbx->save($usr_msg);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

@@ -65,6 +65,8 @@ class ref_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
+    // TODO Prio 2 add a status and use it to show an easy switch off button
+    // TODO Prio 2 an update methode and frequency for push updates or daily weekly or idle update retries
     const string FLD_ID = 'ref_id';
     const string FLD_USER_COM = 'the user who has created or adjusted the reference';
     const string FLD_EX_KEY_COM = 'the unique external key used in the other system';

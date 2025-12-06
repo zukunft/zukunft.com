@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_non_sandbox.php - a base object for not user specific database id objects
-    -------------------------------------
+    model/helper/db_id_object_non_sandbox.php - a base object for not user specific database id objects
+    -----------------------------------------
 
     used for the user, ip_range, pod and job
 
@@ -87,17 +87,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * fill the vars with this db id object based on the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->id = $api_json[json_fields::ID];
         }
-
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -119,11 +117,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @return user_message
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_api(string $api_json): user_message
+    function set_from_api(string $api_json, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true));
+        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
     }
 
 
@@ -177,12 +176,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @return user_message if the deletion cannot be done the reason why for the user
+     * @param user_message $usr_msg if the deletion cannot be done the reason why for the user
+     * @return bool true if everything has been fine
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         global $usr;
-        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
@@ -217,7 +216,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -235,7 +234,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $usr_req, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
+        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
         return $usr_msg;
@@ -296,8 +295,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $cng_act_cac;
-        global $cng_fld_cac;
+        global $sys;
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
@@ -333,14 +331,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($key_fld != '') {
             // add the field_id of the field actually changed if needed
             $fvt_lst_out->add_field(
                 sql::FLD_LOG_FIELD_PREFIX . $key_fld,
-                $cng_fld_cac->id($table_id . $key_fld),
+                $sys->typ_lst->cng_fld->id($table_id . $key_fld),
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
@@ -464,15 +462,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
         $msg = 'import_mapper_user used but not overwritten in ' . $this::class;
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_message_text($msg);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

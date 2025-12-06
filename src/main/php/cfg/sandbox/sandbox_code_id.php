@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/sandbox/sandbox_named_code_id.php - superclass for handling objects with a code id
-    -------------------------------------
+    cfg/sandbox/sandbox_code_id.php - superclass for handling objects with a code id
+    -------------------------------
 
     This superclass adds the code_id handling to named classes words, formula, ...
 
@@ -56,6 +56,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -105,10 +107,11 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * reset the object vars e.g. to detect the vars changed by the api versus the db value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->code_id = null;
     }
 
@@ -148,17 +151,18 @@ class sandbox_code_id extends sandbox_typed
      * so mapping the code id is only allowed if the code id is empty
      *
      * @param array $api_json an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
         if ($this->code_id() == null) {
             if (array_key_exists(json_fields::CODE_ID, $api_json)) {
                 $this->set_code_id_db($api_json[json_fields::CODE_ID]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -168,18 +172,18 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
@@ -187,7 +191,7 @@ class sandbox_code_id extends sandbox_typed
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -207,7 +211,9 @@ class sandbox_code_id extends sandbox_typed
         $vars = parent::api_json_array($typ_lst, $usr);
         // the code id is included in the api message towards the frontend
         // but not overwritten via api message
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id();
+        }
         return $vars;
     }
 
@@ -218,12 +224,13 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
         // include the code id in the api message so that the frontend can execute some behavior
         if ($this->code_id() != '' and $this->code_id() != null) {
             $vars[json_fields::CODE_ID] = $this->code_id();
@@ -419,7 +426,7 @@ class sandbox_code_id extends sandbox_typed
         user_message            $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -430,7 +437,7 @@ class sandbox_code_id extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_CODE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

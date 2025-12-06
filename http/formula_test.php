@@ -44,6 +44,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
@@ -53,9 +54,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -63,7 +64,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("start formula_test.php");
+$app = new frontend();
+$db_con = $app->start("start formula_test.php");
 $html = new html_base();
 
 global $sys_msk_cac;
@@ -80,9 +82,9 @@ if ($session_usr->id > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->id = $sys_msk_cac->id(view_shared::FORMULA_TEST);
+    $msk->id = $sys_msk_cac->id(views::FORMULA_TEST);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
-    $msk_dsp = new view_dsp($msk->api_json());
+    $msk_dsp = new view_ui($msk->api_json());
     $dto = new data_object();
     echo $msk_dsp->dsp_navbar($dto, $back);
 
@@ -172,7 +174,7 @@ if ($session_usr->id > 0) {
             ob_end_flush();
             log_debug("create the calculation queue ... ");
             $calc_pos = 0;
-            $last_msg_time = time();
+            $last_msg_time =microtime(true);
 
             // build the calculation queue
             // the standard value will always be checked first
@@ -226,7 +228,7 @@ if ($session_usr->id > 0) {
                         }
 
                         // show the user the progress every two seconds
-                        if ($last_msg_time + $ui_response_time < time()) {
+                        if ($last_msg_time + $ui_response_time < microtime(true)) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($res->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";
@@ -235,7 +237,7 @@ if ($session_usr->id > 0) {
                             }
                             ob_flush();
                             flush();
-                            $last_msg_time = time();
+                            $last_msg_time = microtime(true);
                         }
                     }
                 }
@@ -260,4 +262,4 @@ if ($session_usr->id > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

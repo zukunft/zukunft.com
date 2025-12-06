@@ -43,6 +43,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\service;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -251,7 +252,7 @@ class config extends db_object_seq_id
 
         $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
+            $result = $this->set(config::SITE_NAME, def::POD_NAME, $db_con, $description);
         }
         return $result;
     }
@@ -357,7 +358,7 @@ class config extends db_object_seq_id
 
         switch ($code_id) {
             case self::VERSION_DB:
-                $result = FIRST_VERSION;
+                $result = def::FIRST_VERSION;
                 break;
             case self::AVG_CALC_TIME:
                 $result = self::AVG_CALC_TIME_SEC;

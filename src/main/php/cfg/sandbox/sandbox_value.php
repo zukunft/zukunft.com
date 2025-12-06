@@ -47,6 +47,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
@@ -286,9 +288,9 @@ class sandbox_value extends sandbox_multi
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_grp(new group($this->user()));
         $this->set_value(null);
         $this->set_last_update(null);
@@ -324,13 +326,15 @@ class sandbox_value extends sandbox_multi
     /**
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
             $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
         }
-        return parent::api_mapper($api_json);
+        return parent::api_mapper($api_json, $usr_msg);
     }
 
 
@@ -338,10 +342,12 @@ class sandbox_value extends sandbox_multi
      * set and get
      */
 
-    function set_grp(group $grp): void
+    function set_grp(?group $grp): void
     {
-        $this->grp = $grp;
-        $this->id = $grp->id();
+        if ($grp != null) {
+            $this->grp = $grp;
+            $this->id = $grp->id();
+        }
     }
 
     function grp(): group
@@ -1431,7 +1437,12 @@ class sandbox_value extends sandbox_multi
      */
     function load_by_grp(group $grp, bool $by_source = false): bool
     {
-        return true;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'load_by_grp',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return false;
     }
 
     function load_phrases(): void
@@ -1498,7 +1509,7 @@ class sandbox_value extends sandbox_multi
             $vars[json_fields::DESCRIPTION] = $this->description();
         }
 
-        if ($typ_lst->include_phrases()) {
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->grp()->phrase_list();
             $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
         }
@@ -1514,12 +1525,13 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // reload the value parameters
         if ($do_load) {
@@ -1571,6 +1583,7 @@ class sandbox_value extends sandbox_multi
     protected function log_add_common(change|change_value $log): change|change_value
     {
         log_debug($this->dsp_id());
+        $usr_msg = new user_message();
         $log->set_action(change_actions::ADD);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
@@ -1578,7 +1591,7 @@ class sandbox_value extends sandbox_multi
         $log->new_value = $this->value();
 
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1600,6 +1613,7 @@ class sandbox_value extends sandbox_multi
     {
         log_debug($this->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         $log = new change($this->user());
         $log->set_action(change_actions::DELETE);
@@ -1610,7 +1624,7 @@ class sandbox_value extends sandbox_multi
         $log->new_value = null;
 
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -1621,16 +1635,17 @@ class sandbox_value extends sandbox_multi
      * @param sql_db $db_con the active database connection
      * @param sandbox_multi $db_rec the database record before the saving
      * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $msg = 'ERROR: The user sandbox save_id_fields does not support changing the phrase for ' . $class_name;
         log_err($msg);
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1697,6 +1712,7 @@ class sandbox_value extends sandbox_multi
     ): string
     {
         $result = '';
+        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($log->new_id > 0) {
@@ -1707,7 +1723,7 @@ class sandbox_value extends sandbox_multi
             $std_value = $log->std_value;
         }
         $ext = $this->table_extension();
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 $sql_fld_typ = $sc->get_sql_par_type($new_value);
                 if ($new_value == $std_value) {
@@ -1719,7 +1735,7 @@ class sandbox_value extends sandbox_multi
                         $fvt_lst = new sql_par_field_list();
                         $fvt_lst->add_field($log->field(), null, sql_par_type::CONST);
                         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
-                        $usr_msg = $db_con->update($qp, $msg);
+                        $db_con->update($qp, $msg, $usr_msg);
                         $result = $usr_msg->get_message();
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
@@ -1731,7 +1747,7 @@ class sandbox_value extends sandbox_multi
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
-                    $usr_msg = $db_con->update($qp, $msg);
+                    $db_con->update($qp, $msg, $usr_msg);
                     $result = $usr_msg->get_message();
                 }
             } else {
@@ -1755,7 +1771,7 @@ class sandbox_value extends sandbox_multi
                         $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     }
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->update($qp, $msg);
+                    $db_con->update($qp, $msg, $usr_msg);
                     $result = $usr_msg->get_message();
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }
@@ -1952,10 +1968,10 @@ class sandbox_value extends sandbox_multi
         $fvt_lst_log = new sql_par_field_list();
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst_log->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -2105,7 +2121,7 @@ class sandbox_value extends sandbox_multi
         user_message                $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -2140,7 +2156,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
-                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        $sys->typ_lst->cng_fld->id($table_id . self::FLD_VALUE),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2164,7 +2180,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TIME,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TIME),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_TIME),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2188,7 +2204,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TEXT,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TEXT),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_TEXT),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2212,7 +2228,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_GEO,
-                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_GEO),
+                        $sys->typ_lst->cng_fld->id($table_id . value_db::FLD_VALUE_GEO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2236,7 +2252,7 @@ class sandbox_value extends sandbox_multi
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
-                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        $sys->typ_lst->cng_fld->id($table_id . self::FLD_VALUE),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2279,6 +2295,11 @@ class sandbox_value extends sandbox_multi
      */
     function db_changed(sandbox_value $sbv): array
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'db_changed',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return [];
     }
 
@@ -2398,9 +2419,9 @@ class sandbox_value extends sandbox_multi
             $sc_par_lst->add($this->value_type());
             $id_fields = $this->id_field($sc_par_lst);
             if (is_array($id_fields)) {
-                $fld_dsp = ' (' . implode(', ', $id_fields);
-                $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';
-                $result .= $fld_dsp;
+                $fld_ui = ' (' . implode(', ', $id_fields);
+                $fld_ui .= ' = ' . $this->grp()->dsp_id_short() . ')';
+                $result .= $fld_ui;
             } else {
                 $result .= ' (' . $id_fields . ' ' . $this->id() . ')';
             }

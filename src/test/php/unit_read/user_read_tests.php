@@ -51,11 +51,13 @@ class user_read_tests
         global $db_con;
 
         // init
-        $t->header('Unit database tests of the user handling');
         $t->name = 'unit read db->';
 
+        // start the test section (ts)
+        $ts = 'db read user ';
+        $t->header($ts);
 
-        $t->subheader('User db read tests');
+        $t->subheader($ts . 'load');
 
         $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
@@ -75,7 +77,7 @@ class user_read_tests
         // TODO test type and view
 
 
-        $t->subheader('User profile tests');
+        $t->subheader($ts . 'profile');
 
         // load the user_profile types
         $lst = new user_profile_list();
@@ -83,8 +85,8 @@ class user_read_tests
         $t->assert('user profile load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $usr_pro_cac;
-        $result = $usr_pro_cac->id(user_profiles::NORMAL);
+        global $sys;
+        $result = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         $t->assert('user profile check ' . user_profiles::NORMAL, $result, user_profiles::NORMAL_ID);
     }
 

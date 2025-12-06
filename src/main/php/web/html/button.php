@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::PHRASE . 'phrase_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class button
 {
@@ -245,7 +247,7 @@ class button
                 } else {
                     $this->title = "add new value";
                 }
-                // TODO activate
+                // TODO Prio 2 activate
                 //$url_phr = $phr_lst->id_url_long();
             }
         }
@@ -303,10 +305,10 @@ class button
         $result .= '        <div class="modal-body">';
         $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
-        $result .= $html->input('phrases', implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
-        $result .= $html->input('back', $back, html_base::INPUT_HIDDEN);
-        $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
-        $result .= $html->input('value', '0', html_base::INPUT_TEXT);
+        $result .= $html->input(url_var::PHRASE_LIST, msg_id::FORM_FIELD_PHRASE_LIST, implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_STEP,'1', html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::VALUE, msg_id::FORM_FIELD_VALUE,  '0', html_base::INPUT_TEXT);
         $result .= '            ' . $common_lst_ex_main->name_dsp();
         $result .= '          </form>';
         $result .= '        </div>';

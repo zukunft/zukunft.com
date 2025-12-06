@@ -37,9 +37,11 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_style_list extends type_list
@@ -52,15 +54,17 @@ class view_style_list extends type_list
      * @param string $form the unique name of the html form
      * @param int|null $selected the database id of the view style used until now
      * @param string $name the unique name of the field with the html form which should be a url_var const
+     * @param string $style e.g. to overwrite the size of the select field
      * @returns string the html code to select a type from this list
      */
     function selector(
         string $form = '',
         ?int   $selected = null,
-        string $name = self::NAME
+        string $name = self::NAME,
+        string $style = view_styles::COL_SM_4
     ): string
     {
-        return parent::type_selector($form, $selected, $name, msg_id::LABEL_STYLE);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_VIEW_STYLE, $style);
     }
 
     /**

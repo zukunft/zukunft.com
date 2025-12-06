@@ -38,6 +38,23 @@ enum api_type: string
     // include the phrases in the value list api message
     case INCL_PHRASES = 'incl_phrases';
 
+    // include only the phrase names for a short list that is at least somehow user human-readable
+    case PHRASE_NAMES = 'phrase_names';
+
+    // include the view details with the components in the api message
+    case INCL_VIEWS = 'incl_views';
+
+    // include the components details with the view or component_link api message
+    case INCL_COMPONENTS = 'incl_components';
+
+    // if set create the json by simple combining the json arrays
+    // which may lead to some repeating values
+    // if not set the simplified linked object json is used
+    // by using the link_id json field and move the subarray one layer higher
+    // e.g. instead of "components":[{"link_id":1,                         "id":1,"name":"Word","description":"simply show the word or triple name","type_id":8 ,"position":1,"position_type":1},{"link_id":2,                         "id":2,"name":"spreadsheet","description":"changeable sheet with words, number and formulas","type_id":35 ,"position":2,"position_type":1}]
+    //             use "components":[{     "id":1,"view_id":1,"component":{"id":1,"name":"Word","description":"simply show the word or triple name","type_id":8},"position":1,"position_type":1},     {"id":2,"view_id":1,"component":{"id":2,"name":"spreadsheet","description":"changeable sheet with words, number and formulas","type_id":35},"position":2,"position_type":1}]
+    case LINK_DETAILS = 'link_details';
+
     // include objects that have been excluded by the user e.g. so that the user can include the objects again
     // by default excluded objects are not send to the frontend
     case WITH_EXCLUDED = 'with_excluded';

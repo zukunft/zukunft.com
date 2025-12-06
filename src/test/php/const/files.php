@@ -46,6 +46,8 @@ class files
     CONST string HTML = '.html';
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
+    CONST string MD = '.md';
+    CONST string CSV = '.csv';
 
 
     /*
@@ -53,6 +55,13 @@ class files
      */
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+
+
+    /*
+     * docs
+     */
+
+    CONST string DOCS_OBJECTS = test_paths::DOCS . 'code_objects_all' . self::MD;
 
 
     /*
@@ -104,48 +113,29 @@ class files
 
     CONST string IMPORT_WARNING = test_paths::IMPORT . 'warning_and_error_test' . self::JSON;
 
-    CONST string IMPORT_COUNTRIES = test_paths::IMPORT . 'countries' . self::JSON;
     CONST string IMPORT_COMPANIES = test_paths::IMPORT . 'companies' . self::JSON;
-    CONST string IMPORT_WIND_INVESTMENT = test_paths::IMPORT . 'wind_investment' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO_WIKI = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166-wiki' . self::JSON;
     CONST string IMPORT_COUNTRY_ISO_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166-context' . self::JSON;
     CONST string IMPORT_DEMOCRACY_INDEX = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
     CONST string IMPORT_DEMOCRACY_INDEX_TXT = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::TXT;
-    CONST string IMPORT_CURRENCY = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
     CONST string IMPORT_CURRENCY_CONVERT = test_paths::IMPORT_WIKIPEDIA . 'currency-convert' . self::JSON;
     CONST string IMPORT_CURRENCY_WIKI = test_paths::IMPORT_WIKIPEDIA . 'currency-wiki' . self::JSON;
     CONST string IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
-    CONST string IMPORT_CURRENCIES = test_paths::IMPORT . 'currencies' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
     CONST string IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
     CONST string IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
 
-    const array TEST_IMPORT_FILE_LIST = [
-        self::IMPORT_COUNTRIES,
-        self::IMPORT_COUNTRY_ISO,
-        self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCY,
-        self::IMPORT_COMPANIES,
-        self::IMPORT_CURRENCIES,
-        self::IMPORT_WIND_INVESTMENT
-    ];
+    CONST string FIXED_DB_CSV = 'list' . self::CSV;
 
     const array TEST_DIRECT_IMPORT_FILE_LIST = [
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
     ];
 
     const array TEST_IMPORT_FILE_LIST_ALL = [
-        self::IMPORT_CURRENCY,
-        self::IMPORT_COUNTRIES,
-        self::IMPORT_COUNTRY_ISO,
-        self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCIES,
-        self::IMPORT_WIND_INVESTMENT,
         self::IMPORT_TRAVEL_SCORING,
         self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
         self::IMPORT_COMPANIES,
-        self::IMPORT_WIND_INVESTMENT,
         'ABB_2013.json',
         'ABB_2017.json',
         'ABB_2019.json',

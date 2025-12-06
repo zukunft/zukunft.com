@@ -60,6 +60,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -474,38 +476,39 @@ class triple_list extends sandbox_list_named
      * import a triple list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $trp = new triple($this->user());
-            $usr_msg->add($trp->import_obj($value, $dto, $test_obj));
-            $this->add($trp);
+            if ($trp->import_obj($value, $usr_msg, $dto)) {
+                $this->add_by_name($trp);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json triples
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $trp_lst = [];
 
         foreach ($this->lst() as $trp) {
             if (get_class($trp) == triple::class) {
-                $trp_lst[] = $trp->export_json($do_load);
+                $trp_lst[] = $trp->export_json($exp_typ, $do_load);
             } else {
                 log_err('The function triple_list->export_json returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
             }
@@ -533,16 +536,15 @@ class triple_list extends sandbox_list_named
 
     /**
      * delete all loaded triples e.g. to delete all the triples linked to a word
-     * @return user_message
+     * @param user_message $usr_msg the message for the user why deleting the triples has failed and a suggested solution
+     * @return bool true if all triples has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $trp) {
-            $usr_msg->add($trp->del());
+            $trp->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -678,15 +680,14 @@ class triple_list extends sandbox_list_named
      * starting with the $cache that contains the words
      * add the triples that does not yet have a database id
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the filename and the estimated time of arrival
      * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
-     * @return user_message
+     * @return bool true if everything has been fine
      */
-    function save_with_cache(import $imp, phrase_list $cache): user_message
+    function save_with_cache(user_message $usr_msg, import $imp, phrase_list $cache): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::TRIPLES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -794,7 +795,7 @@ class triple_list extends sandbox_list_named
 
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -876,13 +877,13 @@ class triple_list extends sandbox_list_named
 
     function fill_missing_verbs(): user_message
     {
-        global $vrb_cac;
+        global $sys;
 
         $usr_msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
                 if ($phr->verb() == null) {
-                    $phr->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
+                    $phr->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_SET, [
                         msg_id::VAR_ID => $phr->dsp_id(),
                         msg_id::VAR_VALUE => verbs::NOT_SET

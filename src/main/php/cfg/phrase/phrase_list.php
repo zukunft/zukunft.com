@@ -62,11 +62,13 @@ namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -94,16 +96,17 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
@@ -151,34 +154,40 @@ class phrase_list extends sandbox_list_named
     /**
      * map a phrase list api json to this model phrase list object
      * @param array $api_json the api array with the phrases that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($api_json as $json_phr) {
             $phr = new phrase($this->user());
-            $usr_msg->add($phr->api_mapper($json_phr));
-            if ($usr_msg->is_ok()) {
+            if ($phr->api_mapper($json_phr, $usr_msg)) {
                 $this->add($phr);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * import a phrase list from an inner part of a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $json_obj, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array        $json_obj,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        $phr_lst = $dto->phrase_list();
+        if ($dto != null) {
+            $phr_lst = $dto->phrase_list();
+        } else {
+            $phr_lst = new phrase_list($this->user());
+        }
 
         foreach ($json_obj as $phr_name) {
             if ($phr_name == '') {
@@ -187,17 +196,24 @@ class phrase_list extends sandbox_list_named
                 if ($usr_msg->is_ok()) {
                     $phr = $phr_lst->get_by_name($phr_name);
                     if ($phr == null) {
-                        $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
+                        // TODO Prio 3 check if in some cases a warning message might be useful
+                        // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
                         $phr = new phrase($this->user());
                         $phr->set_name($phr_name);
                         $phr_lst->add_by_name($phr);
+                        $this->add_by_name($phr);
+                    } else {
+                        if ($phr->id() != 0) {
+                            $this->add($phr);
+                        } elseif ($phr->name() != '') {
+                            $this->add_by_name($phr);
+                        }
                     }
-                    $this->add_by_name($phr);
                 }
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -503,21 +519,25 @@ class phrase_list extends sandbox_list_named
 
     /**
      * import a phrase list from an inner part of a JSON array object
+     * TODO replace it with the phrase list save function
      *
      * @param array $json_obj an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @return bool true if everything was fine
      */
-    function import_lst(array $json_obj, ?object $test_obj = null): user_message
+    function import_lst(
+        array        $json_obj,
+        user_message $usr_msg
+    ): bool
     {
-        global $phr_typ_cac;
+        global $sys;
+        global $db_con;
 
-        $usr_msg = new user_message();
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
                 $phr = new phrase($this->user());
                 if ($usr_msg->is_ok()) {
-                    if (!$test_obj) {
+                    if ($db_con->is_open()) {
                         // TODO prevent that this happens at all
                         if (is_array($phr_name)) {
                             $lib = new library();
@@ -537,8 +557,8 @@ class phrase_list extends sandbox_list_named
                                 $wrd->load_by_name($phr_name);
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
-                                    $wrd->type_id = $phr_typ_cac->default_id();
-                                    $usr_msg->add($wrd->save());
+                                    $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
+                                    $wrd->save($usr_msg);
                                 }
                                 if ($wrd->id() == 0) {
                                     log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -547,23 +567,23 @@ class phrase_list extends sandbox_list_named
                                 }
                             }
                         }
+                        $this->add($phr);
                     } else {
                         // fallback for unit tests
                         $phr->set_name($phr_name, word::class);
-                        $phr->set_id($test_obj->seq_id());
+                        $this->add_by_name($phr);
                     }
                 }
-                $this->add($phr);
             }
         }
 
         // save the word in the database
         // TODO check why this is needed
-        if ($usr_msg == '' and $test_obj == null) {
-            $usr_msg->add($this->save());
+        if ($usr_msg->is_ok() and $db_con->is_open()) {
+            $this->save($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -605,7 +625,7 @@ class phrase_list extends sandbox_list_named
     function import_names(array $json_obj, ?data_object $dto = null): user_message
     {
         $usr_msg = $this->import_map_names($json_obj, $dto);
-        $this->save();
+        $this->save($usr_msg);
 
         return $usr_msg;
     }
@@ -624,16 +644,16 @@ class phrase_list extends sandbox_list_named
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
-                    $import_result = $wrd->import_mapper_user($word, $usr);
-                    $this->add_by_name($wrd->phrase());
-                    $usr_msg->add($import_result);
+                    if ($wrd->import_mapper_user($word, $usr, $usr_msg)) {
+                        $this->add_by_name($wrd->phrase());
+                    }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr);
-                    $import_result = $trp->import_mapper($triple);
-                    $this->add_by_name($trp->phrase());
-                    $usr_msg->add($import_result);
+                    if ($trp->import_mapper($triple, $usr_msg)) {
+                        $this->add_by_name($trp->phrase());
+                    }
                 }
             }
         }
@@ -642,16 +662,17 @@ class phrase_list extends sandbox_list_named
 
     /**
      * create an array with the export json phrases
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $phr_lst = [];
 
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class or get_class($phr) == triple::class) {
-                $phr_lst[] = $phr->export_json($do_load);
+                $phr_lst[] = $phr->export_json($exp_typ, $do_load);
             } else {
                 log_err('The function phrase_list->export_json returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
             }
@@ -732,7 +753,7 @@ class phrase_list extends sandbox_list_named
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
-            $max_loops = MAX_RECURSIVE;
+            $max_loops = def::MAX_RECURSIVE;
         }
         $loops = $level;
 
@@ -785,7 +806,7 @@ class phrase_list extends sandbox_list_named
             // accumulate the list used as a base for the search
             $accumulated_list->merge($added_phr_lst);
 
-            if ($loops >= MAX_RECURSIVE) {
+            if ($loops >= def::MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
             }
         } while ((
@@ -973,8 +994,8 @@ class phrase_list extends sandbox_list_named
      */
     function is(): phrase_list
     {
-        global $vrb_cac;
-        $phr_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        global $sys;
+        $phr_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -987,9 +1008,9 @@ class phrase_list extends sandbox_list_named
      */
     function are(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug($this->dsp_id());
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::IS));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -1001,8 +1022,8 @@ class phrase_list extends sandbox_list_named
      */
     function contains(): phrase_list
     {
-        global $vrb_cac;
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::PART_NAME));
+        global $sys;
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1238,7 +1259,7 @@ class phrase_list extends sandbox_list_named
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1249,9 +1270,9 @@ class phrase_list extends sandbox_list_named
      */
     function differentiators(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1263,10 +1284,10 @@ class phrase_list extends sandbox_list_named
      */
     function differentiators_all(): phrase_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1275,7 +1296,7 @@ class phrase_list extends sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->all_children($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+                $next_lst = $added_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
@@ -1284,7 +1305,7 @@ class phrase_list extends sandbox_list_named
                 }
                 $phr_lst->merge($added_lst);
                 $loops++;
-            } while ($added_lst->count() > 0 and $loops < MAX_LOOP);
+            } while ($added_lst->count() > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($phr_lst->name() . ' for ' . $this->dsp_id());
         return $phr_lst;
@@ -1659,6 +1680,7 @@ class phrase_list extends sandbox_list_named
     function has_time(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check (' . $phr->name() . ')');
@@ -1668,7 +1690,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1679,6 +1701,7 @@ class phrase_list extends sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
@@ -1688,7 +1711,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1698,6 +1721,7 @@ class phrase_list extends sandbox_list_named
     function has_scaling(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             log_debug('check ' . $phr->dsp_id());
@@ -1707,7 +1731,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1717,6 +1741,7 @@ class phrase_list extends sandbox_list_named
     function has_percent(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             // temp solution for testing
@@ -1728,7 +1753,7 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1739,19 +1764,18 @@ class phrase_list extends sandbox_list_named
      */
     function time_lst_old(): array
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_debug($this->dsp_id());
 
         $result = array();
-        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
+        $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $time_type) {
                 $result[] = $phr;
             }
         }
-        //zu_debug('phrase_list->time_lst_old -> ('.zu_lst_dsp($result).')');
         return $result;
     }
 
@@ -1871,12 +1895,12 @@ class phrase_list extends sandbox_list_named
      */
     function measure_lst(): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $measure_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class) {
@@ -1901,14 +1925,14 @@ class phrase_list extends sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
 
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
+        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
@@ -2050,7 +2074,8 @@ class phrase_list extends sandbox_list_named
     {
         $grp = null;
         if ($this->is_empty()) {
-            log_err('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
+            // TODO Prio 0 switch back to error
+            log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
             $grp = new group($this->user());
             $grp_id = new group_id();
@@ -2171,13 +2196,12 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message the message that should be shown to the user if something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        $usr_msg = new user_message();
-
         // get the phrase names that are already in the database
         $db_lst = clone $this;
         $db_lst->reset();
@@ -2201,14 +2225,14 @@ class phrase_list extends sandbox_list_named
 
         // add the missing phrase
         foreach ($add_lst->lst() as $phr) {
-            $usr_msg->add($phr->save());
+            $phr->save($usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
-            $usr_msg->add($phr->save());
+            $phr->save($usr_msg);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -2263,7 +2287,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = '';
         if ($limit == null) {
-            $limit = LIST_MIN_NAMES;
+            $limit = def::LIST_MIN_NAMES;
         }
         $lib = new library();
         $name_lst = $this->names();
@@ -2388,7 +2412,7 @@ class phrase_list extends sandbox_list_named
         if ($type->id() > 0) {
             $sql_from = "triples l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id
-                        AND l.verb_id = " . $vrb_cac->id(verbs::IS_A) . "
+                        AND l.verb_id = " . $sys->typ_lst->vrb->id(verbs::IS_A) . "
                         AND l.to_phrase_id = " . $type->id();
         } else {
             $sql_from = "words w";
@@ -2525,7 +2549,12 @@ class phrase_list extends sandbox_list_named
         $wrd_lst = new word_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_word()) {
-                $wrd_lst->add($phr->obj());
+                $wrd = $phr->obj();
+                if ($wrd->id() == 0 and $wrd->name() != '') {
+                    $wrd_lst->add_by_name($wrd);
+                } else {
+                    $wrd_lst->add($wrd);
+                }
             }
         }
         return $wrd_lst;
@@ -2540,7 +2569,12 @@ class phrase_list extends sandbox_list_named
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
-                $trp_lst->add($phr->obj());
+                $trp = $phr->obj();
+                if ($trp->id() == 0 and $trp->name() != '') {
+                    $trp_lst->add_by_name($trp);
+                } else {
+                    $trp_lst->add($trp);
+                }
             }
         }
         return $trp_lst;

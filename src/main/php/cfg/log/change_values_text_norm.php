@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/change_values_norm.php - log object for changes of values with a standard group id
-    ------------------------------
+    model/log/change_values_text_norm.php - log object for changes of values with a standard group id
+    -------------------------------------
 
     This file is part of zukunft.com - calc with words
 

@@ -98,9 +98,10 @@
   ],
   "views": [
     {
-      "name": "Word",
+      "name": "Word (default)",
       "description": "the default view for words",
-      "code_id": "word",
+      "code_id": "word_default",
+      "type": "word",
       "components": [
         {
           "position": "1",
@@ -115,7 +116,8 @@
     {
       "name": "Verb",
       "description": "the default view for verbs",
-      "code_id": "verb",
+      "code_id": "verb_default",
+      "type": "verb",
       "components": [
         {
           "position": "1",
@@ -128,9 +130,10 @@
       ]
     },
     {
-      "name": "Triple",
+      "name": "Triple (default)",
       "description": "the default view for triples",
-      "code_id": "triple",
+      "code_id": "triple_default",
+      "type": "triple",
       "components": [
         {
           "position": "1",
@@ -145,7 +148,8 @@
     {
       "name": "Source",
       "description": "the default view for sources",
-      "code_id": "source",
+      "code_id": "source_default",
+      "type": "source",
       "components": [
         {
           "position": "1",
@@ -160,7 +164,8 @@
     {
       "name": "Reference",
       "description": "the default view for references",
-      "code_id": "ref",
+      "code_id": "ref_default",
+      "type": "ref",
       "components": [
         {
           "position": "1",
@@ -175,7 +180,8 @@
     {
       "name": "Language",
       "description": "the default view for languages",
-      "code_id": "language",
+      "code_id": "language_default",
+      "type": "language",
       "components": [
         {
           "position": "1",
@@ -190,7 +196,8 @@
     {
       "name": "Display Number",
       "description": "the default view for values",
-      "code_id": "value",
+      "code_id": "value_default",
+      "type": "value",
       "components": [
         {
           "position": "1",
@@ -201,6 +208,8 @@
     {
       "name": "Formula",
       "description": "Show a formula and the related results and words",
+      "code_id": "formula_default",
+      "type": "formula",
       "components": [
         {
           "position": "1",
@@ -223,7 +232,8 @@
     {
       "name": "Result",
       "description": "the default view for results",
-      "code_id": "result",
+      "code_id": "result_default",
+      "type": "result",
       "components": [
         {
           "position": "1",
@@ -254,8 +264,9 @@
       ]
     },
     {
-      "name": "science",
+      "name": "Science",
       "description": "show mainly related words that are relevant in sciences",
+      "code_id": "science",
       "assigned": [
         "mathematics"
       ]
@@ -263,6 +274,7 @@
     {
       "name": "Historic",
       "description": "show the related words in historic order",
+      "code_id": "hist",
       "assigned": [
         "mathematics"
       ]
@@ -270,6 +282,7 @@
     {
       "name": "Biological",
       "description": "show what is relevant from the biological point of view",
+      "code_id": "bio",
       "assigned": [
         "Tomatoes"
       ]
@@ -277,6 +290,7 @@
     {
       "name": "Education",
       "description": "sort related topics by difficulty",
+      "code_id": "edu",
       "assigned": [
         "mathematics"
       ]
@@ -284,6 +298,7 @@
     {
       "name": "Touristic",
       "description": "show things to see",
+      "code_id": "touristic",
       "assigned": [
         "mathematics"
       ]
@@ -291,6 +306,7 @@
     {
       "name": "Graph",
       "description": "show the related topics as a visual graph",
+      "code_id": "graph",
       "assigned": [
         "mathematics"
       ]
@@ -298,13 +314,15 @@
     {
       "name": "Simple",
       "description": "show only the most relevant facts",
+      "code_id": "simple",
       "assigned": [
         "mathematics"
       ]
     },
     {
-      "name": "math const",
+      "name": "Mathematical constance",
       "description": "Show a mathematical constance and the related words and formulas",
+      "code_id": "math_const",
       "components": [
         {
           "position": "1",

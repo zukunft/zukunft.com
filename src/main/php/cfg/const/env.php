@@ -59,6 +59,10 @@ const ENV_MYSQL_PORT = 'MYSQL_PORT';
 const ENV_MYSQL_ZUKUNFT_VERSION = 'MYSQL_ZUKUNFT_VERSION';
 const ENV_WWW_ROOT = 'WWW_ROOT';
 
+const ENV_SYSTEM_TIME_LIMIT_INFO = 'SYSTEM_TIME_LIMIT_INFO';
+const ENV_SYSTEM_TIME_LIMIT_WARN = 'SYSTEM_TIME_LIMIT_WARN';
+const ENV_SYSTEM_TIME_LIMIT_ERR = 'SYSTEM_TIME_LIMIT_ERR';
+
 const ENV_VARS = [
     ENV_OS,
     ENVIRONMENT,
@@ -193,3 +197,11 @@ define('SQL_DB_ADMIN_DB_MYSQL', getenv(ENV_MYSQL_ADMIN_DATABASE) ?: 'mysql');
 // the MySQL admin user e.g. if several databases are running on the server to recreate the zukunft database and user
 define('SQL_DB_ADMIN_USER_MYSQL', getenv(ENV_MYSQL_ADMIN_USERNAME) ?: 'root');
 define('SQL_DB_ADMIN_PASSWD_MYSQL', getenv(ENV_MYSQL_ADMIN_PASSWORD) ?: '');
+
+// system execution time control
+// write an info log entry if the execution time of the script is longer than 2 seconds
+define('SYSTEM_TIME_TIME_LIMIT_INFO', getenv(ENV_SYSTEM_TIME_LIMIT_INFO) ?: 2);
+// write a warning log entry if the execution time of the script is longer than 3 seconds
+define('SYSTEM_TIME_TIME_LIMIT_WARN', getenv(ENV_SYSTEM_TIME_LIMIT_WARN) ?: 3);
+// write an error log entry if the execution time of the script is longer than 5 seconds
+define('SYSTEM_TIME_TIME_LIMIT_ERR', getenv(ENV_SYSTEM_TIME_LIMIT_ERR) ?: 5);

@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\test\php\create\test_jobs;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_tests
@@ -79,17 +81,19 @@ class job_tests
         $t->assert_sql_by_id($sc, $job);
 
         // sql to load a list of open batch jobs
-        $sys_usr = $t->system_user();
+        $t_usr = new test_users();
+        $sys_usr = $t_usr->system_user();
         $job_lst = new job_list($sys_usr);
         $t->assert_sql_list_by_type($sc, $job_lst, job_type_list::BASE_IMPORT);
 
 
         $t->subheader($ts . 'api');
 
-        $job = $t->job();
+        $t_job = new test_jobs();
+        $job = $t_job->job();
         $t->assert_api($job);
 
-        $job_lst = $t->job_list();
+        $job_lst = $t_job->job_list();
         $t->assert_api($job_lst);
 
     }

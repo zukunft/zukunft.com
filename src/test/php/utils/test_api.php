@@ -40,6 +40,20 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::LOG . 'change_log_list.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once test_paths::UTILS . 'test_base.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -57,11 +71,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use DateTime;
-use Exception;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -70,17 +83,13 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use DateTime;
+use Exception;
 
-include_once paths::MODEL_LOG . 'change_log.php';
-include_once paths::MODEL_LOG . 'change_field.php';
-include_once paths::MODEL_LOG . 'change_field_list.php';
-include_once paths::MODEL_LOG . 'change_log_list.php';
-include_once paths::MODEL_SYSTEM . 'job.php';
-include_once html_paths::LOG . 'change_log_list.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-
-class test_api extends create_test_objects
+class test_api extends test_base
 {
     // path
     const string API_PATH = 'api';
@@ -99,14 +108,15 @@ class test_api extends create_test_objects
      * @param array $api_types to check the different message type e.g.to test if excluded object can be reactivated
      * @return bool true if the test has been successful
      */
-    function assert_api_to_dsp(object $usr_obj, object $dsp_obj, array $api_types = []): bool
+    function assert_api_to_ui(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
         $lib = new library();
+        $usr_msg_ui = new user_message_ui();
         $class = $this->class_to_api($usr_obj::class);
         $api_types[] = api_type::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
-        $dsp_obj->set_from_json($msg_to_frontend);
-        $array_to_backend = $dsp_obj->api_array();
+        $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
+        $array_to_backend = $dsp_obj->api_array($api_types);
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($msg_to_frontend) should not contain empty fields
         // because they are irrelevant for the user and this reduces traffic
@@ -116,6 +126,12 @@ class test_api extends create_test_objects
         $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
         $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
+        // and also remove fields of linked objects because each object is updated by its own
+        // whereas the object to the frontend are sometimes combined to reduce traffic
+        // e.g. the components are included in the view
+        if ($usr_obj::class == component_link::class) {
+            $array_to_frontend = $this->json_remove_component_fields($array_to_frontend);
+        }
         return $this->assert_api_compare($class, $array_to_frontend, $array_to_backend);
     }
 
@@ -141,10 +157,9 @@ class test_api extends create_test_objects
     {
         // check and norm the parameters
         if (is_array($typ_lst)) {
-            $typ_lst[] = api_type::TEST_MODE;
-        } else {
-            $typ_lst->add(api_type::TEST_MODE);
+            $typ_lst = new api_type_list($typ_lst);
         }
+        $typ_lst->add(api_type::TEST_MODE);
         $class = $this->class_to_api($usr_obj::class);
 
         // create the json api message and revert it to an array for better compare
@@ -165,6 +180,7 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
+        $usr_msg = new user_message($usr_obj->user());
 
         // is excluded api json empty?
         $test_name = $class_api . ' excluded json is empty';
@@ -214,7 +230,7 @@ class test_api extends create_test_objects
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->api_mapper(json_decode($json_api, true));
+            $clone_obj->api_mapper(json_decode($json_api, true), $usr_msg);
             $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
             $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
             $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
@@ -234,11 +250,17 @@ class test_api extends create_test_objects
      * @param array $data the database id of the db row that should be used for testing
      * @return int the id of the added user sandbox object
      */
-    function assert_api_put(string $class, array $data = [], bool $ignore_id = false): int
+    function assert_api_put(
+        string       $class,
+        test_cleanup $t,
+        array        $data = [],
+        bool         $ignore_id = false
+    ): int
     {
+        $t_db = new test_db_load($t);
         // get default data
         if ($data == array()) {
-            $data = $this->source_put_json();
+            $data = $t_db->source_put_json();
         }
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
@@ -440,12 +462,12 @@ class test_api extends create_test_objects
             case word::class:
                 $wrd = new word($usr);
                 $wrd->id = $id;
-                $usr_msg = $wrd->del();
+                $wrd->del($usr_msg);
                 break;
             case source::class:
                 $src = new source($usr);
                 $src->id = $id;
-                $usr_msg = $src->del();
+                $src->del($usr_msg);
                 break;
             default:
                 log_err($class . ' not yet mapped in assert_api_del_no_rest');
@@ -502,7 +524,7 @@ class test_api extends create_test_objects
         $url = $this->class_to_url($class);
         if ($levels > 0) {
             $url .= '?' . url_var::ID . '=' . $id;
-            $url .= '&' . url_var::CHILDREN . '=' . $levels;
+            $url .= '&' . url_var::LEVELS . '=' . $levels;
         }
         // Check if backend is reading the id
         $data = array(url_var::ID => $id);
@@ -524,7 +546,7 @@ class test_api extends create_test_objects
             $filename = 'value_non_std';
         }
         if ($levels > 0) {
-            $filename = $class_api . '_with_components';
+            $filename = $class_api . '_with_component_id';
         }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, '', false, $ignore_id);
     }
@@ -562,11 +584,13 @@ class test_api extends create_test_objects
     function assert_api_get_list(
         string       $class,
         array|string $ids = [1, 2],
-        string       $id_fld = 'ids',
+        string       $id_fld = url_var::ID_LST,
         string       $filename = '',
         bool         $contains = false): bool
     {
         $lib = new library();
+        $url_map = new url_mapper();
+        $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
         $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
@@ -579,8 +603,9 @@ class test_api extends create_test_objects
 
         // TODO remove
         if ($class == $lib->class_to_name(phrase_list::class)) {
-            if ($filename == '' and $id_fld != 'ids') {
-                $filename = $class . '_without_link' . '_by_' . $id_fld;
+            if ($filename == '' and $id_fld != url_var::ID_LST) {
+                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $filename = $class . '_without_link' . '_by_' . $file_by_name;
             } else {
                 $filename = $class . '_without_link';
             }
@@ -592,8 +617,9 @@ class test_api extends create_test_objects
             $filename = $class . '_without_link';
         }
 
-        if ($filename == '' and $id_fld != 'ids') {
-            $filename = $class . '_by_' . $id_fld;
+        if ($filename == '' and $id_fld != url_var::ID_LST) {
+            $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+            $filename = $class . '_by_' . $file_by_name;
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
@@ -620,7 +646,7 @@ class test_api extends create_test_objects
         int        $page = 0
     ): bool
     {
-        $log_lst = new change_log_list_dsp();
+        $log_lst = new change_log_list_ui();
         $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
         $actual = json_decode($json, true);
 
@@ -653,22 +679,26 @@ class test_api extends create_test_objects
     /**
      * check if the REST POST call returns a JSON message with the id of the object just added
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
      */
     function assert_api_post(
-        string $class
+        string       $class,
+        test_cleanup $t
     ): bool
     {
         $lib = new library();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
         $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
 
-        $dbo = $this->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_object($class);
         $name = $dbo->name();
-        $dbo_dsp = $this->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
-        $add_result = $dbo_dsp->add_via_api();
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        //$add_result = $dbo_ui->add_via_api();
 
         // TODO Prio 1 remove reloading and use $add_result instead
         $dbo->load_by_name($name);
@@ -680,27 +710,31 @@ class test_api extends create_test_objects
     /**
      * check if the REST POST call returns a JSON message with the id of the object just added
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
      */
     function assert_api_post_direct(
-        string $class,
-        user   $usr,
-        string $msg = ''
+        string       $class,
+        user         $usr,
+        test_cleanup $t,
+        string       $msg = ''
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
 
         $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
 
-        $dbo = $this->class_to_add_object($class);
-        $dbo_dsp = $this->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
+        $dbo = $t_map->class_to_add_object($class);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
         // replacement for the api call
         $name = $dbo->name();
-        $ctrl->post_json($dbo_dsp->api_array(), $dbo, $usr, $msg);
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, $msg);
         $dbo->load_by_name($name);
 
         return $this->assert_greater_zero($test_name, $dbo->id());
@@ -709,26 +743,30 @@ class test_api extends create_test_objects
     /**
      * check if the REST DELETE call returns an empty JSON message if the excusion has been successful
      * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
      *
      * @param string $class the class name of the object to test
      * @return bool true if the json has no relevant differences
      */
     function assert_api_del_direct(
-        string $class,
-        user   $usr,
-        string $msg = ''
+        string       $class,
+        user         $usr,
+        test_cleanup $t,
+        string       $msg = ''
     ): bool
     {
         $lib = new library();
         $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
 
         $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
 
-        $dbo = $this->class_to_add_object($class);
+        $dbo = $t_map->class_to_add_object($class);
         $dbo->load_by_name($dbo->name());
-        $dbo_dsp = $this->class_to_ui_object($class);
-        $dbo_dsp->set_from_json($dbo->api_json());
-        $ctrl->delete($dbo_dsp->id(), $dbo, $usr, $msg);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        $ctrl->delete($dbo_ui->id(), $dbo, $usr, $msg);
 
         $dbo->load_by_name($dbo->name());
         return $this->assert($test_name, $dbo->id(), 0);
@@ -826,7 +864,7 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         if ($class == ref::class) {
-            $class = url_var::REFERENCE;
+            $class = url_var::REF_API;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
         return api::HOST_TESTING . url_var::API_PATH . $url_class;
@@ -837,12 +875,16 @@ class test_api extends create_test_objects
      * @param string $class the class name that should be used
      * @return string the api url
      */
-    private function class_to_put_msg(string $class): array
+    private function class_to_put_msg(
+        string       $class,
+        test_cleanup $t
+    ): array
     {
+        $t_db = new test_db_load($t);
         $put_msg = array();
         switch ($class) {
             case source::class:
-                $put_msg = $this->source_put_json();
+                $put_msg = $t_db->source_put_json();
                 break;
             default:
                 break;

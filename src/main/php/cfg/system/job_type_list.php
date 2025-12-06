@@ -40,8 +40,6 @@ include_once paths::MODEL_HELPER . 'type_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
-global $job_typ_cac;
-
 class job_type_list extends type_list
 {
     // list of the predefined system batch jobs

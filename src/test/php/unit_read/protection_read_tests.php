@@ -46,15 +46,17 @@ class protection_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $ptc_typ_cac;
 
         // init
         $t->name = 'protection read db->';
 
-        $t->header('Unit database tests of the protection handling');
+        // start the test section (ts)
+        $ts = 'db read protection ';
+        $t->header($ts);
 
-        $t->subheader('Protection types tests');
+        $t->subheader($ts . 'types');
 
         // load the protection types
         $lst = new protection_type_list();
@@ -62,7 +64,7 @@ class protection_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
+        $result = $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT);
         $t->assert('check ' . protect_type_shared::NO_PROTECT, $result, 1);
     }
 

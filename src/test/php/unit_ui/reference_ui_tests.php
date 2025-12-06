@@ -33,21 +33,22 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class reference_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
+        $t_ref = new test_refs($t);
 
         // start the test section (ts)
         $ts = 'unit ui html reference ';
         $t->header($ts);
 
-        $ref = new ref_dsp($t->reference()->api_json());
+        $ref = new ref($t_ref->reference()->api_json());
         $test_page = $html->text_h2('reference display test');
         $test_page .= 'with tooltip: ' . $ref->name_tip() . '<br>';
         $test_page .= 'with link: ' . $ref->name_link() . '<br>';

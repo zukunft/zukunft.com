@@ -122,8 +122,8 @@ class words
     const int TIME_ID = 103;
     const string YEAR = 'year';
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
-    const string YEAR_CAP = 'Year';
-    const int YEAR_CAP_ID = 134;
+    const string YEAR_CAP = 'year';
+    const int YEAR_CAP_ID = 109;
     const string CALCULATION = 'calculation';
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string MIN = 'min';
@@ -191,7 +191,6 @@ class words
     // to group the user data and configuration within the system configuration
     const string PASSWORD = 'password';
     const string OPEN_API = 'OpenAPI';
-    const string DEFINITION = 'definition';
 
 
     /*
@@ -238,6 +237,31 @@ class words
     const string YEAR_2020 = '2020';
     const int YEAR_2020_ID = 140;
     const string YEAR_2020_COM = 'the year 2020';
+
+    // SI units for testing
+    const string LIGHT = 'light';
+    const int LIGHT_ID = 86;
+    const string SPEED = 'speed';
+    const int SPEED_ID = 87;
+    const string METER = 'meter';
+    const int METER_ID = 1126;
+    const string HYPERFINE = 'hyperfine';
+    const int HYPERFINE_ID = 131;
+    const string TRANSITION = 'transition';
+    const int TRANSITION_ID = 132;
+    const string FREQUENCY = 'frequency';
+    const int FREQUENCY_ID = 98;
+    const string CS_133 = 'Caesium-133';
+    const int CS_133_ID = 134;
+    const string HZ = 'Hz';
+    const int HZ_ID = 42;
+    const string HZ_COM = 'Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second';
+    const string DEFINITION = 'definition';
+    const int DEFINITION_ID = 135;
+    const string YEAR_1983 = '1983';
+    const int YEAR_1983_ID = 138;
+    const string YEAR_1967 = '1967';
+    const int YEAR_1967_ID = 136;
 
     // words from import file scaling.json in order of appearance
     const string MIO = 'million';
@@ -317,6 +341,8 @@ class words
     const int TRILLION_ID = 255;
     const string CHF = 'CHF';
     const int CHF_ID = 257;
+    const string EUR = 'Euro';
+    const int EUR_ID = 266;
     const string USD = 'USD';
     const int USD_ID = 258;
 
@@ -324,7 +350,7 @@ class words
     const string SALES = 'sales';
     const int SALES_ID = 280;
     const string CASH = 'cash';
-    const int CASH_ID = 282;
+    const int CASH_ID = 281;
     const string STATEMENT = 'statement';
     const int STATEMENT_ID = 282;
     const string PARTS = 'parts';
@@ -440,6 +466,7 @@ class words
     const string TEST_UPD_API = 'System Test Word API Renamed';
     const string TEST_UPD_API_COM = 'System Test Word API Description Renamed';
     const string TEST_ADD_VALUE = 'System Test Word for value curl testing';
+    const string TEST_SPEED_PREFIX = 'System Test Word for speed testing ';
 
 
     // list of often used words used as a default selection e.g. for the phrase selection
@@ -694,68 +721,79 @@ class words
 
     // list of words where the id is used for system testing
     const array TEST_WORD_IDS = array(
-        [self::ABB_ID, self::ABB],
-        [self::BE_ID, self::BE],
-        [self::BILLION_ID, self::BILLION],
-        [self::CANTON_ID, self::CANTON],
-        [self::CASH_ID, self::CASH],
-        [self::FLOW_ID, self::FLOW],
-        [self::STATEMENT_ID, self::STATEMENT],
-        [self::CH_ID, self::CH],
-        [self::CHF_ID, self::CHF],
-        [self::CIRCUMFERENCE_ID, self::CIRCUMFERENCE],
-        [self::CITY_ID, self::CITY],
-        [self::CLIMATE_ID, self::CLIMATE],
-        [self::COMPANY_ID, self::COMPANY],
-        [self::CONST_ID, self::CONST_NAME],
-        [self::DIAMETER_ID, self::DIAMETER],
-        [self::E_ID, self::E],
-        [self::EDUCATION_ID, self::EDUCATION],
-        [self::GE_ID, self::GE],
-        [self::GLOBAL_ID, self::GLOBAL],
-        [self::HAPPY_ID, self::HAPPY],
-        [self::HEALTH_ID, self::HEALTH],
-        [self::HTP_ID, self::HTP],
-        [self::INCOME_ID, self::INCOME],
-        [self::INHABITANT_ID, self::INHABITANTS],
-        [self::LAUNCH_ID, self::LAUNCH],
-        [self::MASTER_POD_NAME_ID, self::MASTER_POD_NAME],
-        [self::MATH_ID, self::MATH],
-        [self::MINUTE_ID, self::MINUTE],
-        [self::MIO_ID, self::MIO],
-        [self::ONE_ID, self::ONE],
-        [self::PARTS_ID, self::PARTS],
-        [self::PCT_ID, self::PCT],
-        [self::PI_ID, self::PI],
-        [self::POD_ID, self::POD],
-        [self::POINT_ID, self::POINT],
-        [self::POINTS_ID, self::POINTS],
-        [self::POPULISM_ID, self::POPULISM],
-        [self::POVERTY_ID, self::POVERTY],
-        [self::PRIOR_ID, self::PRIOR_NAME],
-        [self::POTENTIAL_ID, self::POTENTIAL],
-        [self::PROBLEM_ID, self::PROBLEM],
-        [self::SALES_ID, self::SALES],
-        [self::SECOND_ID, self::SECOND],
-        [self::TAX_ID, self::TAX],
-        [self::THIS_ID, self::THIS_NAME],
-        [self::TIME_ID, self::TIME],
-        [self::TOTAL_ID, self::TOTAL_PRE],
-        [self::TRILLION_ID, self::TRILLION],
-        [self::URL_ID, self::URL],
-        [self::USD_ID, self::USD],
-        [self::VESTAS_ID, self::VESTAS],
-        [self::WARMER_ID, self::WARMER],
-        [self::YEAR_2013_ID, self::YEAR_2013],
-        [self::YEAR_2014_ID, self::YEAR_2014],
-        [self::YEAR_2015_ID, self::YEAR_2015],
-        [self::YEAR_2016_ID, self::YEAR_2016],
-        [self::YEAR_2017_ID, self::YEAR_2017],
-        [self::YEAR_2018_ID, self::YEAR_2018],
-        [self::YEAR_2019_ID, self::YEAR_2019],
-        [self::YEAR_2020_ID, self::YEAR_2020],
-        [self::YEAR_CAP_ID, self::YEAR_CAP],
-        [self::ZH_ID, self::ZH],
+        self::ABB_ID => self::ABB,
+        self::BE_ID => self::BE,
+        self::BILLION_ID => self::BILLION,
+        self::CANTON_ID => self::CANTON,
+        self::CASH_ID => self::CASH,
+        self::FLOW_ID => self::FLOW,
+        self::STATEMENT_ID => self::STATEMENT,
+        self::CH_ID => self::CH,
+        self::CHF_ID => self::CHF,
+        self::CIRCUMFERENCE_ID => self::CIRCUMFERENCE,
+        self::CITY_ID => self::CITY,
+        self::CLIMATE_ID => self::CLIMATE,
+        self::COMPANY_ID => self::COMPANY,
+        self::CONST_ID => self::CONST_NAME,
+        self::DIAMETER_ID => self::DIAMETER,
+        self::E_ID => self::E,
+        self::EDUCATION_ID => self::EDUCATION,
+        self::GE_ID => self::GE,
+        self::GLOBAL_ID => self::GLOBAL,
+        self::HAPPY_ID => self::HAPPY,
+        self::HEALTH_ID => self::HEALTH,
+        self::HTP_ID => self::HTP,
+        self::INCOME_ID => self::INCOME,
+        self::INHABITANT_ID => self::INHABITANTS,
+        self::LAUNCH_ID => self::LAUNCH,
+        self::MASTER_POD_NAME_ID => self::MASTER_POD_NAME,
+        self::MATH_ID => self::MATH,
+        self::MINUTE_ID => self::MINUTE,
+        self::MIO_ID => self::MIO,
+        self::ONE_ID => self::ONE,
+        self::PARTS_ID => self::PARTS,
+        self::PCT_ID => self::PCT,
+        self::PI_ID => self::PI,
+        self::POD_ID => self::POD,
+        self::POINT_ID => self::POINT,
+        self::POINTS_ID => self::POINTS,
+        self::POPULISM_ID => self::POPULISM,
+        self::POVERTY_ID => self::POVERTY,
+        self::PRIOR_ID => self::PRIOR_NAME,
+        self::POTENTIAL_ID => self::POTENTIAL,
+        self::PROBLEM_ID => self::PROBLEM,
+        self::SALES_ID => self::SALES,
+        self::SECOND_ID => self::SECOND,
+        self::TAX_ID => self::TAX,
+        self::THIS_ID => self::THIS_NAME,
+        self::TIME_ID => self::TIME,
+        self::TOTAL_ID => self::TOTAL_PRE,
+        self::TRILLION_ID => self::TRILLION,
+        self::URL_ID => self::URL,
+        self::USD_ID => self::USD,
+        self::VESTAS_ID => self::VESTAS,
+        self::WARMER_ID => self::WARMER,
+        self::YEAR_2013_ID => self::YEAR_2013,
+        self::YEAR_2014_ID => self::YEAR_2014,
+        self::YEAR_2015_ID => self::YEAR_2015,
+        self::YEAR_2016_ID => self::YEAR_2016,
+        self::YEAR_2017_ID => self::YEAR_2017,
+        self::YEAR_2018_ID => self::YEAR_2018,
+        self::YEAR_2019_ID => self::YEAR_2019,
+        self::YEAR_2020_ID => self::YEAR_2020,
+        self::LIGHT_ID => self::LIGHT,
+        self::SPEED_ID => self::SPEED,
+        self::METER_ID => self::METER,
+        self::HYPERFINE_ID => self::HYPERFINE,
+        self::TRANSITION_ID => self::TRANSITION,
+        self::FREQUENCY_ID => self::FREQUENCY,
+        self::CS_133_ID => self::CS_133,
+        self::HZ_ID => self::HZ,
+        self::DEFINITION_ID => self::DEFINITION,
+        self::YEAR_1983_ID => self::YEAR_1983,
+        self::YEAR_1967_ID => self::YEAR_1967,
+        self::YEAR_CAP_ID => self::YEAR_CAP,
+        self::ZH_ID => self::ZH,
     );
 
 }

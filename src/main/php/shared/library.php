@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/library.php - some useful function e.g. for string handling
-    ------------------------
+    shared/library.php - some useful function e.g. for string handling
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
@@ -68,6 +70,8 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -114,22 +118,26 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
-use DateTime;
-use Exception;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
+use DateTime;
+use Exception;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class library
 {
@@ -211,6 +219,19 @@ class library
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return string the text of a boolean var
+     */
+    function dsp_bool(bool $bool_var): string
+    {
+        if ($bool_var) {
+            $result = 'true';
+        } else {
+            $result = 'false';
+        }
+        return $result;
     }
 
     /**
@@ -601,6 +622,26 @@ class library
         }
 
         return $array;
+    }
+
+    /**
+     * if an array contains an array get the first two columns and create a key / value array
+     * e.g. if the original array entry ['key','value','default'] the result is 'key' => 'value'
+     *
+     * @param array $array an array that has an array for each entry with at least two entries
+     * @return array an array with the first two columns of the array where the first is the key
+     */
+    function array_get_first_two_col(array $array): array
+    {
+        $return = [];
+        foreach ($array as $row) {
+            if (array_key_exists(0, $row) and array_key_exists(1, $row)) {
+                $return[$row[0]] = $row[1];
+            } else {
+                log_err(implode(',', $array) . ' must have at least two col');
+            }
+        }
+        return $return;
     }
 
     /**
@@ -1015,6 +1056,38 @@ class library
         return $result;
     }
 
+
+    /*
+     * version
+     */
+
+    /**
+     * returns true if the version to check is older than this program version
+     * used e.g. for import to allow importing of files of an older version without warning
+     */
+    function prg_version_is_newer($prg_version_to_check, $this_version = def::PRG_VERSION): bool
+    {
+        $is_newer = false;
+
+        $this_prg_version_parts = explode(".", $this_version);
+        $to_check = explode(".", $prg_version_to_check);
+        $is_older = false;
+        foreach ($this_prg_version_parts as $key => $this_part) {
+            if (!$is_newer and !$is_older) {
+                if ($this_part < $to_check[$key]) {
+                    $is_newer = true;
+                } else {
+                    if ($this_part > $to_check[$key]) {
+                        $is_older = true;
+                    }
+                }
+            }
+        }
+
+        return $is_newer;
+    }
+
+
     /*
      * file
      */
@@ -1075,6 +1148,55 @@ class library
                 $use[] = $path;
                 if ($class != '') {
                     $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
+    function class_csv_file_path(string $class): string
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
+        $file = test_files::FIXED_DB_CSV;
+        return $path . $file;
+    }
+
+    function csv_form_db_lst(array $db_lst, string $class): array
+    {
+        $lib = new library();
+        $header = '';
+        $header_lst = [];
+        $csv = [];
+        foreach ($db_lst as $db_row) {
+            if ($header == '') {
+                foreach ($db_row as $col_key => $db_col) {
+                    if (!is_numeric($col_key)) {
+                        if (!$lib->is_volatile_db_field($class, $col_key)) {
+                            $header_lst[$col_key] = $col_key;
+                        }
+                    }
+                }
+                $header = implode(',', $header_lst);
+                $csv[] = $header . "\n";
+            }
+            $db_row = array_intersect_key($db_row, $header_lst);
+            $line = implode(',', $db_row);
+            // remove line feeds to make compare easier
+            $line = str_replace("\n", ' ', $line);
+            $csv[] = $line . "\n";
+        }
+        return $csv;
+    }
+
+    function is_volatile_db_field(string $class, string $fld): bool
+    {
+        $result = false;
+        foreach (def::VOLATILE_DB_FIELDS as $tbl_fld) {
+            if ($class == $tbl_fld[0]) {
+                if ($fld == $tbl_fld[1]) {
+                    $result = true;
                 }
             }
         }
@@ -1146,6 +1268,23 @@ class library
         return $result;
     }
 
+    private function php_code_get_section(string $class, array $lines): ?string
+    {
+        $result = null;
+        $use_lines = $this->php_code_use_sorted($lines);
+        foreach ($use_lines as $line) {
+            if ($result === null) {
+                $class_with_path = trim($this->str_between($line, 'use', ';'));
+                $line_class = $this->str_right_of_or_all($class_with_path, '\\');
+                if ($line_class == $class) {
+                    $path = $this->str_left_of_last($class_with_path, '\\' . $class);
+                    $result = $this->php_code_path_to_section($path);
+                }
+            }
+        }
+        return $result;
+    }
+
     function php_code_include(array $lines): array
     {
         $result = [];
@@ -1164,6 +1303,79 @@ class library
             }
         }
         return $result;
+    }
+
+    /**
+     * extract the elements from a class that all zukunft.com classes should have
+     * this includes the name, parent, path and description
+     *
+     * @param array $lines
+     * @param string $section
+     * @return array with the class_name, parent_name (both names have additional "Shared" or "Ui"),
+     *               path from the header and the description
+     */
+    function php_code_parent(array $lines, string $section, $file_path): array
+    {
+        $result = [];
+        $header_line = '';
+        $path = '';
+        $description = '';
+        foreach ($lines as $line) {
+            if ($header_line == '') {
+                if (str_contains($line, '.php - ')) {
+                    $header_line = $this->str_left_of_or_all($line, "\n");
+                    $path = trim($this->str_left_of($header_line, '.php - '));
+                    $description = $this->str_right_of($header_line, '.php - ');
+                }
+            }
+            if (str_starts_with($line, 'class')) {
+                $class = trim($this->str_between($line, 'class', 'extends'));
+                $line = $this->str_left_of_or_all($line, "\n");
+                if ($class == '') {
+                    $class = trim($this->str_right_of($line, 'class'));
+                    $parent = '';
+                } else {
+                    $parent = trim($this->str_right_of($line, 'extends'));
+                    $parent_section = $this->php_code_get_section($parent, $lines);
+                    if ($parent_section !== null) {
+                        $parent = $parent . $parent_section;
+                    } else {
+                        if ($section != '') {
+                            $parent = $parent . $section;
+                        }
+                    }
+                }
+                if ($section != '') {
+                    $class = $class . $section;
+                }
+                // check
+                if (!str_contains($file_path, $path)) {
+                    // TODO Prio 3 remove exception
+                    $file_path = str_replace('cfg','model', $file_path);
+                    if (!str_contains($file_path, $path)) {
+                        log_err('class header path ' . $path . ' does not match ' . $file_path);
+                    }
+                }
+                if ($class != '') {
+                    $result[$class] = [$parent, $path, $description];
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function php_code_path_to_section(string $path): string
+    {
+        $section = '';
+        $shared_path = $this->str_right_of(paths::SHARED, paths::SRC);
+        $web_path = $this->str_right_of(paths::WEB, paths::SRC);
+        $path = str_replace('\\', '/', $path);
+        if (str_contains($path, $shared_path)) {
+            $section = paths::SHARED_SECTION;
+        } elseif (str_contains($path, $web_path)) {
+            $section = paths::WEB_SECTION;
+        }
+        return $section;
     }
 
 
@@ -1194,6 +1406,7 @@ class library
             'Zukunft\ZukunftCom\main\php\api\log' => 'API_LOG_PATH',
             'Zukunft\ZukunftCom\main\php\controller', 'Zukunft\ZukunftCom\main\php\api' => 'paths::API_OBJECT',
             'Zukunft\ZukunftCom\main\php\controller\system', 'Zukunft\ZukunftCom\main\php\api\system' => 'API_SYSTEM_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg' => 'paths::MODEL',
             'Zukunft\ZukunftCom\main\php\cfg\db' => 'paths::DB',
             'Zukunft\ZukunftCom\main\php\cfg\log' => 'paths::MODEL_LOG',
             'Zukunft\ZukunftCom\main\php\cfg\const' => 'paths::MODEL_CONST',
@@ -1202,6 +1415,7 @@ class library
             'Zukunft\ZukunftCom\main\php\cfg\system' => 'paths::MODEL_SYSTEM',
             'Zukunft\ZukunftCom\main\php\cfg\formula' => 'paths::MODEL_FORMULA',
             'Zukunft\ZukunftCom\main\php\cfg\element' => 'paths::MODEL_ELEMENT',
+            'Zukunft\ZukunftCom\main\php\cfg\log_text' => 'paths::MODEL_LOG_TEXT',
             'Zukunft\ZukunftCom\main\php\cfg\result' => 'paths::MODEL_RESULT',
             'Zukunft\ZukunftCom\main\php\cfg\phrase' => 'paths::MODEL_PHRASE',
             'Zukunft\ZukunftCom\main\php\cfg\sandbox' => 'paths::MODEL_SANDBOX',
@@ -1247,8 +1461,10 @@ class library
             'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
             'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
             'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
+            'Zukunft\ZukunftCom\test\php\unit_write' => 'test_paths::UNIT_WRITE',
+            'Zukunft\ZukunftCom\test\php\unit' => 'test_paths::UNIT',
             'Zukunft\ZukunftCom\test\php\utils' => 'test_paths::UTILS',
-            'Zukunft\ZukunftCom\test\php\const' => 'TEST_CONST_PATH',
+            'Zukunft\ZukunftCom\test\php\const' => 'test_paths::CONST',
             default => 'missing path for ' . $use_path,
         };
     }
@@ -2244,6 +2460,7 @@ class library
         $result = $this->str_right_of_or_all($class, '\\');
         // for some lists and exceptions
         switch ($class) {
+            case view_relation_types::class;
             case phrase_types::class;
                 $result = str_replace('_types', '_type', $result);
                 break;
@@ -2259,6 +2476,12 @@ class library
         // TODO avoid and remove exception
         if ($class == source::class) {
             $class = ref::class;
+        } elseif ($class == formula_link::class) {
+            $class = formula::class;
+        } elseif ($class == term_view::class) {
+            $class = view::class;
+        } elseif ($class == component_link::class) {
+            $class = component::class;
         }
         $name = $this->class_to_name($class);
         return 'db/' . $name . '/';
@@ -2281,6 +2504,10 @@ class library
                 break;
             case sys_log::class;
                 $id_fld = sys_log::FLD_ID;
+                break;
+            case result::class:
+            case value::class;
+                $id_fld = group::FLD_ID;
                 break;
         }
         return $id_fld;
@@ -2328,7 +2555,7 @@ class library
     {
         $msg_id = msg_id::ADD;
         switch ($class) {
-            case verb_dsp::class;
+            case verb_ui::class;
                 $msg_id = msg_id::VERB_ADD;
                 break;
         }
@@ -2385,6 +2612,10 @@ class library
             case verb::class:
             case triple::class:
             case ref::class;
+            case formula_link::class;
+            case view_relation::class;
+            case term_view::class;
+            case component_link::class;
                 $json = test_api::JSON_ARRAY_ONLY;
                 break;
             default:
@@ -2464,11 +2695,11 @@ class library
      */
     function ui_class_to_table_id_list(string $class): array
     {
-        global $cng_tbl_cac;
+        global $sys;
 
         $result = [];
 
-        $result[] = $cng_tbl_cac->id($this->class_to_table($class));
+        $result[] = $sys->typ_lst->cng_tbl->id($this->class_to_table($class));
         // TODO Prio 2 add a test case for a table rename
         //if ($class == word_dsp::class) {
         //    $result[] = 5;
@@ -2568,6 +2799,7 @@ class library
             case $this->class_to_name(view_type::class):
             case $this->class_to_name(view_style::class):
             case $this->class_to_name(view_link_type::class):
+            case $this->class_to_name(view_relation_type::class):
                 $result = 'type';
                 break;
         }
@@ -2622,6 +2854,28 @@ class library
             }
         }
         return $result;
+    }
+
+    function url_array(string $url): array
+    {
+        $url_part = parse_url($url);
+        parse_str($url_part["query"], $url_array);
+        return $url_array;
+    }
+
+    /**
+     * allow to add a thirs col with the default value to the url array
+     * @param string $url
+     * @return array
+     */
+    function url_array_with(string $url): array
+    {
+        $url_array = $this->url_array($url);
+        $array_with = [];
+        foreach ($url_array as $key => $val) {
+            $array_with[] = [$key, $val];
+        }
+        return $array_with;
     }
 
     /*

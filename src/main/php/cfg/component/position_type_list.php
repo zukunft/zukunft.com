@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/position_type_list.php - to link coded functionality to a view component position
-    ---------------------------------
+    model/component/position_type_list.php - to link coded functionality to a view component position
+    --------------------------------------
 
     This file is part of zukunft.com - calc with words
 

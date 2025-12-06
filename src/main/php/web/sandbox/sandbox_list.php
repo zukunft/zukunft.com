@@ -43,12 +43,12 @@ namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
-class sandbox_list extends list_dsp
+class sandbox_list extends ListBase
 {
 
     /*
@@ -82,7 +82,12 @@ class sandbox_list extends list_dsp
      */
     function name(?int $limit = null): string
     {
-        return '"' . implode('","', $this->names(false, $limit)) . '"';
+        return '"' . $this->name_pur($limit) . '"';
+    }
+
+    function name_pur(?int $limit = null): string
+    {
+        return implode('","', $this->names($limit));
     }
 
     /**

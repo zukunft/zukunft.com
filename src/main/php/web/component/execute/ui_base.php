@@ -2,7 +2,7 @@
 
 /*
 
-    web/component/execute/base_ui.php - the main html user interface components
+    web/component/execute/ui_base.php - the main html user interface components
     ---------------------------------
 
 

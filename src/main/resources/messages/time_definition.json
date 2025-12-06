@@ -48,13 +48,13 @@
       ]
     },
     {
-      "name": "Year",
-      "plural": "Years",
+      "name": "year",
+      "plural": "years",
       "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "year",
           "type": "wikipedia"
         }
       ]
@@ -195,6 +195,12 @@
       "name": "latest",
       "type": "latest",
       "protection": "admin_protection"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "percent"
     }
   ],
   "formulas": [
@@ -225,7 +231,7 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "assigned_word": "increase"
+      "assigned_word": "year"
     }
   ]
 }

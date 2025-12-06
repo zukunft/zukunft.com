@@ -250,24 +250,24 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->user());
-            $usr_msg->add($msk->import_obj($dsp_json, $dto, $test_obj));
-            $this->add($msk);
+            if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
+                $this->add($msk);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -275,18 +275,19 @@ class view_list extends sandbox_list_named
      * TODO create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(?import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        $usr_msg = parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()), $usr_msg);
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
-                $usr_msg->add($msk->save_component_links());
+                $msk->save_component_links($usr_msg);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

@@ -2,8 +2,8 @@
 
 /*
 
-    web/html/selector.php - to select a word (or formula or verb)
-    ---------------------
+    web/html/html_selector.php - to select a word (or formula or verb)
+    --------------------------
 
     this should be as easy as possible that's why it got its own class
 
@@ -48,7 +48,7 @@ class html_selector
     public ?array $lst = null;      // list of objects from which the user can select
     public string $name = '';       // the HTML form field name
     public string $form = '';       // the name of the HTML form
-    public msg_id $label_id = msg_id::LABEL;  // the label of the HTML form
+    public msg_id $label_id = msg_id::FORM_SELECT;  // the message of for label of the HTML form that is translated to the frontend language
     public string $style = '';      // to add addition class information for the bootstrap version
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
@@ -93,11 +93,14 @@ class html_selector
     }
 
     /**
+     * TODO Prio 0 easy use html function and html names
      * @returns string the HTML code that starts a selector field
      */
     private function start_selector(): string
     {
         global $mtr;
+
+        $html = new html_base();
 
         $result = '';
         // 06.11.2019: removed, check the calling functions
@@ -111,7 +114,7 @@ class html_selector
         if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->style . '">';
             if ($label != "") {
-                $result .= '<label for="' . $this->name . '">' . $label . '</label>';
+                $result .= $html->label($label, $this->name);
             }
             $bs_class = 'form-control';
             /*
@@ -120,7 +123,11 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute;
+                if (array_key_exists($this->selected, $this->lst)) {
+                    $result .= ' ' . html_names::VALUE . '="' . $this->lst[$this->selected] . '"';
+                }
+                $result .= '>';
                 $result .= '<datalist id="' . $this->name . '_list">';
             } else {
                 if ($this->form != "") {

@@ -41,13 +41,15 @@ namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
-use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class element_group_write_tests
 {
@@ -56,16 +58,21 @@ class element_group_write_tests
     {
 
         global $usr;
-        $lib = new library();
 
-        $t->header('Test the formula element group list class (classes/element_group_list.php)');
+        // init
+        $t_db = new test_db_load($t);
+        $tl = new test_lib();
+
+        // start the test section (ts)
+        $ts = 'db write formula element group ';
+        $t->header($ts);
 
         // load the test ids
-        $frm_this = $t->load_formula(formulas::THIS_NAME);
-        $frm_prior = $t->load_formula(formulas::PRIOR);
+        $frm_this = $t_db->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t_db->load_formula(formulas::PRIOR);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();
@@ -77,7 +84,7 @@ class element_group_write_tests
         $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 
-        $t->header('Test the formula element group class (classes/element_group.php)');
+        $t->subheader($ts . 'element group');
 
         // define the element group object to retrieve the value
         if (count($elm_grp_lst->lst()) > 0) {
@@ -98,12 +105,12 @@ class element_group_write_tests
                 . words::INHABITANTS . '","'
                 . words::MIO . '","'
                 . words::CH . '"';
-            $t->display('element_group->dsp_id', $target, $result);
+            $t->assert('element_group->dsp_id', $result, $target);
 
             // test symbol for text replacement in the formula expression text
             $result = $elm_grp->build_symbol();
             $target = '{f' . $frm_this->id() . '}';
-            $t->display('element_group->build_symbol', $target, $result);
+            $t->assert('element_group->build_symbol', $result, $target);
 
             // test if the values for an element group are displayed correctly
             $elm_grp_dsp = new element_group($elm_grp->api_json());
@@ -111,12 +118,12 @@ class element_group_write_tests
             //$result = $elm_grp_dsp->dsp_values();
             //$fig_lst = $elm_grp->figures();
             //$target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            //$t->display('element_group->dsp_values', $target, $result);
+            //$t->assert('element_group->dsp_values', $result, $target);
 
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
 
-            $t->header('figure database write tests');
+            $t->subheader($ts . 'figure');
 
             // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
             $fig_count = 0;
@@ -130,24 +137,24 @@ class element_group_write_tests
 
                 if (isset($fig)) {
                     $t = new test_api();
-                    $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
+                    $fig_dsp = $tl->ui_obj($fig, new figure_ui());
                     $result = $fig_dsp->display();
                     $target = "8.51";
-                    $t->display('figure->display', $target, $result);
+                    $t->assert('figure->display', $result, $target);
 
                     $result = $fig_dsp->display_linked();
                     //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '" title="8.51">8.51</a>';
-                    $t->display('figure->display_linked', $target, $result);
+                    $t->assert('figure->display_linked', $result, $target);
                 }
             } else {
                 $result = 'figure list is empty';
                 $target = 'this (3) and "System Test Word Parent e.g. '  . words::CH . '","System Test Word Unit e.g. inhabitant"';
-                $t->display('element_group->figures', $target, $result);
+                $t->assert('element_group->figures', $result, $target);
             }
 
 
-            $t->header('Test the figure list class (classes/figure_lst.php)');
+            $t->subheader($ts . 'figure list');
 
             // TODO fix it
             $fig_lst->load_phrases();
@@ -163,7 +170,7 @@ class element_group_write_tests
             $fig_lst_dsp = new figure_list($fig_lst->api_json());
             $result = $fig_lst_dsp->display();
             $target = "8.51 ";
-            $t->display('figure_list->display', $target, $result);
+            $t->assert('figure_list->display', $result, $target);
 
         } else {
             $result = 'formula element group list is empty';
@@ -173,7 +180,7 @@ class element_group_write_tests
                 . words::CHF . '","'
                 . words::MIO . '","'
                 . words::YEAR_2015 . '"@';
-            $t->display('element_group->dsp_names', $target, $result);
+            $t->assert('element_group->dsp_names', $result, $target);
         }
 
     }

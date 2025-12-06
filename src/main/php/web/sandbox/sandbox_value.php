@@ -2,8 +2,8 @@
 
 /*
 
-    web/user/sandbox_value.php - the superclass for the html frontend of value sandbox objects
-    ---------------------------
+    web/sandbox/sandbox_value.php - the superclass for the html frontend of value sandbox objects
+    -----------------------------
 
     This superclass should be used by the classes value_dsp, result_dsp, ...
 
@@ -35,24 +35,27 @@
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use DateTime;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
 
 class sandbox_value extends sandbox
 {
@@ -107,21 +110,30 @@ class sandbox_value extends sandbox
     /**
      * set the vars of this value frontend object bases on the url array
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        // even if the value is added set already the id if possible because if might contain the phrase list
+        if ($this->url_is_add_action($url_array)) {
+            if (array_key_exists(url_var::ID, $url_array)) {
+                $this->set_id($url_array[url_var::ID]);
+            }
+        }
+        // the other normal fields
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(url_var::PHRASE_LIST_LONG, $url_array)) {
-                $id_lst = explode(',', $url_array[url_var::PHRASE_LIST_LONG]);
+            if (array_key_exists(url_var::PHRASE_LIST, $url_array)) {
+                $id_lst = explode(',', $url_array[url_var::PHRASE_LIST]);
                 if (count($id_lst) > 0) {
                     $this->set_phrases_by_is_list($id_lst);
                 }
             }
-            if (array_key_exists(url_var::NUMERIC_VALUE_LONG, $url_array)) {
-                if ($url_array[url_var::NUMERIC_VALUE_LONG] != null) {
-                    $this->number = $url_array[url_var::NUMERIC_VALUE_LONG];
+            if (array_key_exists(url_var::NUMERIC_VALUE, $url_array)) {
+                if ($url_array[url_var::NUMERIC_VALUE] != null) {
+                    $this->number = $url_array[url_var::NUMERIC_VALUE];
                 }
             }
         }
@@ -201,11 +213,12 @@ class sandbox_value extends sandbox
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
 
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
@@ -230,11 +243,11 @@ class sandbox_value extends sandbox
         }
         $this->grp = new group();
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
-            $this->grp->api_mapper($json_array[json_fields::PHRASES]);
+            $this->grp->api_mapper($json_array[json_fields::PHRASES], $usr_msg);
         } else {
             $usr_msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

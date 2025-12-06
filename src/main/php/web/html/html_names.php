@@ -43,5 +43,6 @@ class html_names
     const string HTML_CLASS = 'class';
     const string TITLE = 'title';
     const string INPUT = 'input';
+    const string VALUE = 'value';
 
 }

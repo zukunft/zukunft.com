@@ -93,6 +93,12 @@ class users
     // an internal zukunft.com user to automatically create normal users
     const string SYSTEM_SIGNUP_CODE_ID = 'signup';
 
+    // an internal zukunft.com user to automatically create normal users
+    const int DEV_ID = 7;
+    const string DEV_NAME = 'zukunft.com developer';
+    const string DEV_COM = 'a virtual internal zukunft.com system user for unit testing that is allowed to set the code id on import';
+    const string DEV_CODE_ID = 'developer'; // unique id to select the user
+    const string DEV_EMAIL = 'developer@zukunft.com';
 
     // system testing
     const string TEST_NAME = 'standard user view for all users';

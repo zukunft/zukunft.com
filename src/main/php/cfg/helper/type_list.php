@@ -93,6 +93,8 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_type.php';
+include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
@@ -157,6 +159,8 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
@@ -382,6 +386,7 @@ class type_list
             view_type_list::class => view_type::class,
             view_style_list::class => view_style::class,
             view_link_type_list::class => view_link_type::class,
+            view_relation_type_list::class => view_relation_type::class,
             component_type_list::class => component_type::class,
             component_link_type_list::class => component_link_type::class,
             position_type_list::class => position_type::class,
@@ -501,26 +506,14 @@ class type_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
@@ -531,7 +524,7 @@ class type_list
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
                 or $typ::class == view::class) {
-                $typ_vars = $typ->api_json_array();
+                $typ_vars = $typ->api_json_array($typ_lst);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
                 $typ_vars[json_fields::CODE_ID] = $typ->code_id();
@@ -789,7 +782,7 @@ class type_list
         return array_key_exists($name, $this->name_hash);
     }
 
-    function get_by_name(string $name): ?type_object
+    function get_by_name(string $name): verb|type_object|null
     {
         $result = null;
         if (array_key_exists($name, $this->name_hash)) {
@@ -852,11 +845,11 @@ class type_list
      */
     function view_id_list(array $code_id_list): array
     {
-        global $msk_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $msk_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->msk_typ->id($code_id);
         }
         return $result;
     }
@@ -867,11 +860,11 @@ class type_list
      */
     function component_id_list(array $code_id_list): array
     {
-        global $cmp_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $cmp_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->cmp_typ->id($code_id);
         }
         return $result;
     }

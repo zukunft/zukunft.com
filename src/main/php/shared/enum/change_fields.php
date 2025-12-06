@@ -60,6 +60,7 @@ enum change_fields: string
     const string FLD_FORMULA_ALL = 'all_values_needed';
     const string FLD_SOURCE_NAME = 'source_name';
     const string FLD_SOURCE_URL = 'url';
+    const string FLD_REF_KEY = 'external_key';
     const string FLD_VIEW_NAME = 'view_name';
     const string FLD_COMPONENT_NAME = 'component_name';
     const string FLD_COMPONENT_TYPE = 'component_type_id';

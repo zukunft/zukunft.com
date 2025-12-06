@@ -40,13 +40,17 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user_type_list extends type_list
 {
+
+    const string NAME = url_var::USER_TYPE;
 
     function list(string $class, string $title = ''): string
     {
@@ -67,7 +71,7 @@ class user_type_list extends type_list
     function selector(
         string $form = '',
         int $selected = 0,
-        string $name = ''
+        string $name = self::NAME
     ): string
     {
         $sel = new html_selector();

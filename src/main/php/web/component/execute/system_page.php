@@ -120,7 +120,7 @@ class system_page extends component
                 $msg_txt = '';
 
                 // TODO Prio 1 move to a general function
-                if ($msg_id == msg_id::SYSTEM_SUB_TITLE_VAR_USAGE->value) {
+                if ($msg_id == msg_id::FORM_SUB_TITLE_VAR_USAGE->value) {
                     $msg_txt = msg_id::SYS_MSG_USAGE;
                     $msg_txt = $lib->msg_var_replace(
                         $msg_txt->value,

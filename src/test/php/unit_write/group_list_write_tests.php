@@ -46,7 +46,9 @@ class group_list_write_tests
 
         global $usr;
 
-        $t->header('Test the phrase group list class (src/main/php/model/phrase/group_list.php)');
+        // start the test section (ts)
+        $ts = 'db write group list ';
+        $t->header($ts);
 
         // define some phrase groups for testing
 
@@ -84,7 +86,7 @@ class group_list_write_tests
             . words::INHABITANTS . ','
             . words::MIO . ','
             . words::ZH;
-        $t->display('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
 
         // test getting the common phrases of several group
@@ -103,7 +105,7 @@ class group_list_write_tests
         $phr_lst = $grp_lst->common_phrases();
         $result = $phr_lst->dsp_name();
         $target = '"' . words::INHABITANTS . '","' . words::MIO . '"';
-        $t->display('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $target, $result);
+        $t->assert('phrase_group_list->common_phrases of ' . $grp_lst->dsp_id(), $result, $target);
 
     }
 

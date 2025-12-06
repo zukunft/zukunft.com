@@ -32,10 +32,21 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once test_paths::CREATE . 'test_links.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_links;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_view_tests
@@ -47,6 +58,7 @@ class term_view_tests
 
         // init
         $sc = new sql_creator();
+        $t_lnk = new test_links($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -63,14 +75,14 @@ class term_view_tests
         $t->subheader($ts . 'term_view sql read');
         $lnk = new term_view($usr);
         $t->assert_sql_by_id($sc, $lnk);
-        $lnk = $t->term_view();
+        $lnk = $t_lnk->term_view();
         $t->assert_sql_standard($sc, $lnk);
         // TODO check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader($ts . 'term_view sql write insert');
-        $lnk = $t->term_view();
+        $lnk = $t_lnk->term_view();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $lnk->description = views::LINK_COM;
@@ -94,7 +106,7 @@ class term_view_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'triple api');
-        $lnk = $t->term_view();
+        $lnk = $t_lnk->term_view();
         //$t->assert_api_json($lnk);
     }
 

@@ -39,12 +39,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
-$db_con = prg_start("values_paste");
+$app = new frontend();
+$db_con = $app->start("values_paste");
 
 $result = ''; // reset the html code var
 
@@ -127,4 +129,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

@@ -73,6 +73,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
+//include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
@@ -138,6 +139,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
@@ -305,10 +307,11 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * reset the search values of this object
-     * needed to search for the standard object, because the search is work, value, formula or ... specific
+     * reset all object vars of this object to the null or default value
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->id = 0;
         $this->usr_cfg_id = null;
@@ -389,21 +392,19 @@ class sandbox_multi extends db_object_multi_user
      */
     function row_mapper_std(): void
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-        $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
-        $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
+        global $sys;
+        $this->share_id = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
+        $this->protection_id = $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT);
     }
 
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         // make sure that there are no unexpected leftovers
         $usr = $this->user();
         $this->reset();
@@ -416,7 +417,7 @@ class sandbox_multi extends db_object_multi_user
             $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -424,19 +425,22 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
+    function import_mapper(
+        array $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
-            $this->share_id = $shr_typ_cac->id(
+            $this->share_id = $sys->typ_lst->shr_typ->id(
                 $in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
                 $lib = new library();
@@ -447,7 +451,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         if (key_exists(json_fields::PROTECTION, $in_ex_json)) {
-            $this->protection_id = $ptc_typ_cac->id(
+            $this->protection_id = $sys->typ_lst->ptc_typ->id(
                 $in_ex_json[json_fields::PROTECTION]);
             if ($this->protection_id < 0) {
                 $lib = new library();
@@ -458,7 +462,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -475,22 +479,21 @@ class sandbox_multi extends db_object_multi_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         $vars = [];
 
         // add the share type
         if ($this->share_id != null
             and $this->share_id > 0
-            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            and $this->share_id <> $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC)) {
             $vars[json_fields::SHARE] = $this->share_id;
         }
 
         // add the protection type
         if ($this->protection_id != null
             and $this->protection_id > 0
-            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_id;
         }
 
@@ -505,11 +508,12 @@ class sandbox_multi extends db_object_multi_user
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @return user_message
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_api(string $api_json): user_message
+    function set_from_api(string $api_json, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true));
+        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
     }
 
     /**
@@ -871,8 +875,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function load_objects(): bool
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return true;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'load_objects',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->is_ok();
     }
 
 
@@ -956,8 +964,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function share_type_code_id(): string
     {
-        global $shr_typ_cac;
-        return $shr_typ_cac->code_id($this->share_id);
+        global $sys;
+        return $sys->typ_lst->shr_typ->code_id($this->share_id);
     }
 
     /**
@@ -965,15 +973,14 @@ class sandbox_multi extends db_object_multi_user
      */
     function share_type_name(): string
     {
-        global $shr_typ_cac;
+        global $sys;
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
+            $this->share_id = $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC);
         }
 
-        global $shr_typ_cac;
-        return $shr_typ_cac->name($this->share_id);
+        return $sys->typ_lst->shr_typ->name($this->share_id);
     }
 
     /**
@@ -981,8 +988,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function protection_type_code_id(): string
     {
-        global $ptc_typ_cac;
-        return $ptc_typ_cac->code_id($this->protection_id);
+        global $sys;
+        return $sys->typ_lst->ptc_typ->code_id($this->protection_id);
     }
 
     /**
@@ -990,14 +997,14 @@ class sandbox_multi extends db_object_multi_user
      */
     function protection_type_name(): string
     {
-        global $ptc_typ_cac;
+        global $sys;
 
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
+            $this->protection_id = $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT);
         }
 
-        return $ptc_typ_cac->name($this->protection_id);
+        return $sys->typ_lst->ptc_typ->name($this->protection_id);
     }
 
 
@@ -1057,23 +1064,33 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        $usr_msg = new user_message();
+
+        $this->import_mapper($in_ex_json, $usr_msg);
+
+
+        // try to get the ownership if requested
+        // TODO Prio 2 check where and in which cases this is needed probably if json_fields::PROTECTION != protect_type_shared::NO_PROTECT
+        //if ($get_ownership) {
+        //    $this->take_ownership();
+        //}
+
+        // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
+                $this->share_id = $sys->typ_lst->shr_typ->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::SHARE_TYPE_NOT_EXPECTED, [
@@ -1083,7 +1100,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
+                $this->protection_id = $sys->typ_lst->ptc_typ->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
@@ -1093,32 +1110,32 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         $vars = [];
 
         // add the share type
         if ($this->share_id != null
             and $this->share_id > 0
-            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            and $this->share_id <> $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC)) {
             $vars[json_fields::SHARE] = $this->share_type_code_id();
         }
 
         // add the protection type
         if ($this->protection_id != null
             and $this->protection_id > 0
-            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 
@@ -1127,22 +1144,21 @@ class sandbox_multi extends db_object_multi_user
 
     private function common_json(): array
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
+        global $sys;
 
         $vars = [];
 
         // add the share type
         if ($this->share_id != null
             and $this->share_id > 0
-            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            and $this->share_id <> $sys->typ_lst->shr_typ->id(share_type_shared::PUBLIC)) {
             $vars[json_fields::SHARE] = $this->share_type_code_id();
         }
 
         // add the protection type
         if ($this->protection_id != null
             and $this->protection_id > 0
-            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protect_type_shared::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 
@@ -1237,15 +1253,15 @@ class sandbox_multi extends db_object_multi_user
      * if the user is an admin the user can force to be the owner of this object
      * TODO review
      */
-    function take_ownership(): bool
+    function take_ownership(user_message $usr_msg): bool
     {
         $result = false;
         log_debug($this->dsp_id());
 
         if ($this->user()->is_admin()) {
-            // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->user()->id); // TODO remove double getting of the user object
-            // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
+            // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
+            $result = $this->set_owner($this->user()->id, $usr_msg); // TODO remove double getting of the user object
+            // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
 
         log_debug($this->dsp_id() . ' done');
@@ -1258,12 +1274,11 @@ class sandbox_multi extends db_object_multi_user
      * and that all user values
      * TODO review sql and object field compare of user and standard
      */
-    function set_owner(int $new_owner_id): bool
+    function set_owner(int $new_owner_id, user_message $usr_msg): bool
     {
         log_debug($this->dsp_id() . ' to ' . $new_owner_id);
 
         global $db_con;
-        $result = true;
 
         if ($this->id() > 0 and $new_owner_id > 0) {
             // to recreate the calling object
@@ -1282,11 +1297,11 @@ class sandbox_multi extends db_object_multi_user
                 if ($new_owner->load_by_id($new_owner_id)) {
                     $std->set_user($new_owner);
                 }
-                $std->save();
+                $std->save($usr_msg);
             } else {
                 if (!$db_con->update_old(
                     $this->id(), user_db::FLD_ID, $new_owner_id, group::FLD_ID)) {
-                    $result = false;
+                    $usr_msg->add_message_text('cannot set owner');
                 }
             }
 
@@ -1295,12 +1310,12 @@ class sandbox_multi extends db_object_multi_user
             if ($new_owner->load_by_id($new_owner_id)) {
                 $this->set_user($new_owner);
             } else {
-                $result = false;
+                $usr_msg->add_message_text('cannot set owner');
             }
 
-            log_debug('for ' . $this->dsp_id() . ' to ' . $new_owner_id . ': number of db updates: ' . $result);
+            log_debug('owner of ' . $this->dsp_id() . ' to ' . $new_owner_id);
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     // true if no other user has modified the object
@@ -1310,12 +1325,13 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id() . ' by someone else than the owner ' . $this->owner_id());
 
+        $lib = new library();
         $other_usr_id = $this->changer();
         if ($other_usr_id > 0) {
             $result = false;
         }
 
-        log_debug($this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug($this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1328,12 +1344,13 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
+        $lib = new library();
         $using_usr_id = $this->median_user();
         if ($using_usr_id > 0) {
             $result = false;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1450,6 +1467,7 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
+        $lib = new library();
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
         if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $changer_id = $this->changer();
@@ -1460,7 +1478,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        log_debug(': ' . zu_dsp_bool($result));
+        log_debug(': ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1473,6 +1491,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $result = false;
 
+        $lib = new library();
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
@@ -1480,7 +1499,7 @@ class sandbox_multi extends db_object_multi_user
             $result = true;
         }
 
-        log_debug($this::class . zu_dsp_bool($result));
+        log_debug($this::class . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -1515,11 +1534,12 @@ class sandbox_multi extends db_object_multi_user
     function has_usr_cfg(): bool
     {
         $result = false;
+        $lib = new library();
         if ($this->usr_cfg_id > 0) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1533,6 +1553,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug($this->dsp_id() . ' und user ' . $this->user()->name);
         $lib = new library();
+        $usr_msg = new user_message();
         $class_name = $lib->class_to_name($this::class);
 
         $result = false;
@@ -1542,7 +1563,7 @@ class sandbox_multi extends db_object_multi_user
         $db_con->set_class($this::class, true);
         try {
             $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
-            $usr_msg = $db_con->delete($qp, $this::class . ' user exclusions');
+            $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
             $msg = $usr_msg->get_message();
             if ($msg == '') {
                 $this->usr_cfg_id = null;
@@ -1772,13 +1793,14 @@ class sandbox_multi extends db_object_multi_user
     protected function log_add_common(change|change_value $log): change|change_value
     {
         $lib = new library();
+        $usr_msg = new user_message();
         $log->set_action(change_actions::ADD);
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
         return $log;
     }
 
@@ -1787,7 +1809,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function log_link_add(): change_link
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
+        log_err('The dummy parent method log_link_add has been called for ' . $this::class . ', which should never happen');
         return new change_link($this->user());
     }
 
@@ -1940,7 +1962,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function log_del_link(): change_link
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'log_del_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new change_link($this->user());
     }
 
@@ -1999,25 +2025,30 @@ class sandbox_multi extends db_object_multi_user
     private function log_del_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
     {
         $lib = new library();
+        $usr_msg = new user_message();
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = $this->name();
         $log->new_value = null;
         $log->row_id = 0;
         $log->set_action(change_actions::DELETE);
-        $log->add();
+        $log->add($usr_msg);
         return $log;
     }
 
     /**
      * dummy function definition that will be overwritten by the child object
      * check if the user requested a preserved name and if yes return a message to the user
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'check_preserved',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2061,9 +2092,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-        $msg = 'ERROR: save_fields not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'save_fields',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -2076,6 +2110,7 @@ class sandbox_multi extends db_object_multi_user
     function save_field_user(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
+        $usr_msg = new user_message();
 
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
@@ -2084,7 +2119,7 @@ class sandbox_multi extends db_object_multi_user
             $new_value = $log->new_value;
             $std_value = $log->std_value;
         }
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 if ($new_value == $std_value) {
                     if ($this->has_usr_cfg()) {
@@ -2225,8 +2260,7 @@ class sandbox_multi extends db_object_multi_user
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $cng_act_cac;
-        global $cng_fld_cac;
+        global $sys;
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
@@ -2290,14 +2324,14 @@ class sandbox_multi extends db_object_multi_user
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($this->is_named_obj()) {
             // add the field_id of the field actually changed if needed
             $fvt_lst_out->add_field(
                 sql::FLD_LOG_FIELD_PREFIX . $name_fld,
-                $cng_fld_cac->id($table_id . $name_fld),
+                $sys->typ_lst->cng_fld->id($table_id . $name_fld),
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
@@ -2392,9 +2426,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function name_field(): string
     {
-        $msg = 'ERROR: name_field not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -2408,13 +2445,14 @@ class sandbox_multi extends db_object_multi_user
     function save_field(sql_db $db_con, change|change_link $log): string
     {
         $result = '';
+        $usr_msg = new user_message();
 
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
         } else {
             $new_value = $log->new_value;
         }
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id);
             if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
@@ -2455,14 +2493,14 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_db $db_con the active database connection that should be used
      * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
      * @param sandbox_multi $std_rec the default object without user specific changes
+     * @param user_message $usr_msg a messages for the user what should be changed if something failed
      * returns false if something has gone wrong
      */
-    function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_field_excluded(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): string
     {
         log_debug($this->dsp_id());
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        $result = '';
 
         if ($db_rec->is_excluded() <> $this->is_excluded()) {
             $log = $this->save_field_excluded_log($db_rec);
@@ -2474,33 +2512,33 @@ class sandbox_multi extends db_object_multi_user
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $result .= 'excluding of ' . $class_name . ' failed';
+                    $usr_msg->add_message_text('excluding of ' . $class_name . ' failed');
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
-                        $result = 'creation of user sandbox to exclude failed';
+                        $usr_msg->add_message_text('creation of user sandbox to exclude failed');
                     }
                 }
-                if ($result == '') {
+                if ($usr_msg->is_ok() == '') {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result .= 'include of ' . $class_name . ' for user failed';
+                            $usr_msg->add_message_text('include of ' . $class_name . ' for user failed');
                         }
                     } else {
                         if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $result .= 'excluding of ' . $class_name . ' for user failed';
+                            $usr_msg->add_message_text('excluding of ' . $class_name . ' for user failed');
                         }
                     }
                     if (!$this->del_usr_cfg_if_not_needed()) {
-                        $result .= ' and user sandbox cannot be cleaned';
+                        $usr_msg->add_message_text(' and user sandbox cannot be cleaned');
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2513,6 +2551,7 @@ class sandbox_multi extends db_object_multi_user
     function save_field_share(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_debug($this->dsp_id());
+        $usr_msg = new user_message();
         $result = '';
 
         if ($db_rec->share_id <> $this->share_id) {
@@ -2535,7 +2574,7 @@ class sandbox_multi extends db_object_multi_user
                 $new_value = $log->new_value;
                 $std_value = $log->std_value;
             }
-            if ($log->add()) {
+            if ($log->add($usr_msg)) {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
                         $result = 'creation of user sandbox for share type failed';
@@ -2547,8 +2586,8 @@ class sandbox_multi extends db_object_multi_user
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, sql_par_type::INT_SMALL);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->update($qp, 'setting of share type');
-                    $result = $usr_msg->get_message();
+                    $db_con->update($qp, 'setting of share type', $usr_msg);
+                    $usr_msg->get_message();
                 }
             }
         }
@@ -2606,11 +2645,16 @@ class sandbox_multi extends db_object_multi_user
     /**
      * dummy function definition that will be overwritten by the child objects
      * check if the id parameters are supposed to be changed
-     * @param sandbox $db_rec the object data as it is now in the database
+     * @param sandbox_multi $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
     function is_id_updated(sandbox_multi $db_rec): bool
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'is_id_updated',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return false;
     }
 
@@ -2645,16 +2689,21 @@ class sandbox_multi extends db_object_multi_user
      * and change the id (which can start a longer lasting confirmation process)
      *
      * @param sql_db $db_con the active database connection
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @returns string an empty string if everything is fine or a messages for the user what should be changed
+     * @param sandbox_multi $db_rec the database record before the saving
+     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    function save_id_if_updated(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_id_if_updated(
+        sql_db $db_con,
+        sandbox_multi $db_rec,
+        sandbox_multi $std_rec,
+        user_message $usr_msg
+    ): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        $result = '';
 
         if ($this->is_id_updated($db_rec)) {
             $db_chk = $this->get_obj_with_same_id_fields();
@@ -2663,11 +2712,10 @@ class sandbox_multi extends db_object_multi_user
                 if ($this->rename_can_switch) {
                     // ... if yes request to delete or exclude the record with the id parameters before the change
                     $to_del = clone $db_rec;
-                    $msg = $to_del->del();
-                    if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this::class;
+                    if (!$to_del->del($usr_msg)) {
+                        $usr_msg->add_message_text('Failed to delete the unused ' . $this::class);
                     }
-                    if ($result = '') {
+                    if ($usr_msg->is_ok()) {
                         // .. and use it for the update
                         // TODO review the logging: from the user view this is a change not a delete and update
                         $this->id = $db_chk->id();
@@ -2676,16 +2724,17 @@ class sandbox_multi extends db_object_multi_user
                         // force the include again
                         $this->include();
                         $db_rec->exclude();
-                        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-                        if ($result == '') {
+                        $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
+                        if (!$usr_msg->is_ok()) {
                             log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                         } else {
                             //$result = 'Failed to exclude the unused ' . $this::class ;
-                            $result .= 'A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.';
+                            $usr_msg->add_message_text('A ' . $class_name . ' with the name "' . $this->name() . '" already exists. Please use another name or merge with this ' . $class_name . '.');
                         }
                     }
                 } else {
-                    $result .= $this->msg_id_already_used();
+                    // TODO Prio 1 review
+                    $usr_msg->add_message_text($this->msg_id_already_used());
                 }
             } else {
                 log_debug('target does not yet exist');
@@ -2696,7 +2745,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO check if next line is needed
                     //$this->load_objects();
                     if ($this->is_named_obj()) {
-                        $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
+                        $this->save_id_fields($db_con, $db_rec, $std_rec, $usr_msg);
                     } else {
                         log_info('Save of id field for ' . $class_name . ' not expected');
                     }
@@ -2704,23 +2753,22 @@ class sandbox_multi extends db_object_multi_user
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
-                    $msg = $to_del->del();
-                    if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused ' . $this::class;
+                    if (!$to_del->del($usr_msg)) {
+                        $usr_msg->add_message_text('Failed to delete the unused ' . $this::class);
                     }
                     // TODO .. and create a deletion request for all users ???
 
-                    if ($result = '') {
+                    if ($usr_msg->is_ok()) {
                         // ... and create a new display component link
                         $this->set_id(0);
                         $this->set_owner_id($this->user()->id);
-                        $result .= $this->add()->get_last_message();
+                        $this->add($usr_msg);
                     }
                 }
             }
         }
 
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2731,14 +2779,17 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_db $db_con the active database connection
      * @param sandbox_multi $db_rec the database record before the saving
      * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @returns string either the id of the updated or created source or a message to the user with the reason, why it has failed
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if the id fields have been saved
      */
-    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec, user_message $usr_msg): bool
     {
-        log_warning($this->dsp_id());
-        $msg = 'ERROR: save_id_fields not overwritten by ' . $this::class;
-        log_err($msg);
-        return $msg;
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'save_id_fields',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
     /*
@@ -2754,6 +2805,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same_std(object $obj_to_check): bool
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'is_same_std',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return false;
     }
 
@@ -2765,7 +2821,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same($obj_to_check): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
 
@@ -2786,11 +2842,11 @@ class sandbox_multi extends db_object_multi_user
                         $result = true;
                     } else {
                         if ($obj_to_check::class == formula::class
-                            and $this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+                            and $this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)
-                            or $obj_to_check->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+                        } elseif ($this->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)
+                            or $obj_to_check->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -2854,7 +2910,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function get_similar(): sandbox_multi
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'get_similar',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new sandbox_multi($this->user());
     }
 
@@ -2867,18 +2927,19 @@ class sandbox_multi extends db_object_multi_user
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
      *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
+     * @param user_message $usr_msg with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
-        $usr_msg = new user_message();
-        $msg = 'The dummy parent add function has been called, which should never happen';
-        log_err($msg);
-        $usr_msg->add_id(msg_id::DUMMY_PARENT_ADD_FUNCTION_CALLED);
-        return $usr_msg;
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'add',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->is_ok();
     }
 
     /*
@@ -2887,7 +2948,7 @@ class sandbox_multi extends db_object_multi_user
      *
      */
 
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
@@ -2903,9 +2964,7 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // check the preserved names (only used for group names)
-        $usr_msg = $this->check_preserved();
-
-        if ($usr_msg->is_ok()) {
+        if ($this->check_preserved($usr_msg)) {
 
             // load the objects if needed
             if ($this->is_link_obj()) {
@@ -2954,7 +3013,7 @@ class sandbox_multi extends db_object_multi_user
         if ($usr_msg->is_ok()) {
             if (!$this->is_saved()) {
                 log_debug('add');
-                $usr_msg->add($this->add($use_func));
+                $this->add($usr_msg, $use_func);
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {
@@ -3023,7 +3082,7 @@ class sandbox_multi extends db_object_multi_user
 
                     // check if the id parameters are supposed to be changed
                     if ($usr_msg->is_ok()) {
-                        $usr_msg->add_message_text($this->save_id_if_updated($db_con, $db_rec, $std_rec));
+                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
@@ -3031,7 +3090,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO add function based saving
                     if ($usr_msg->is_ok()) {
                         if ($use_func) {
-                            $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                         } else {
                             $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
                         }
@@ -3043,7 +3102,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -3055,17 +3114,16 @@ class sandbox_multi extends db_object_multi_user
      * delete the complete object (the calling function del must have checked that no one uses this object)
      * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(): string
+    private function del_exe(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
 
         $msg = '';
-        $usr_msg = new user_message();
 
         // log the deletion request
         if ($this->is_link_obj()) {
@@ -3113,9 +3171,8 @@ class sandbox_multi extends db_object_multi_user
                 if ($usr_msg->is_ok()) {
                     $wrd = new word($this->user());
                     $wrd->load_by_name($this->name());
-                    $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
-                    $msg = $wrd->del();
-                    $usr_msg->add($msg);
+                    $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
+                    $wrd->del($usr_msg);
                 }
 
             }
@@ -3137,8 +3194,7 @@ class sandbox_multi extends db_object_multi_user
                 // TODO always use the qp based setup
                 if ($this::class == value::class) {
                     $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
-                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $usr_msg->add($msg);
+                    $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id);
@@ -3153,8 +3209,7 @@ class sandbox_multi extends db_object_multi_user
                 // finally, delete the object
                 if ($this::class == value::class) {
                     $qp = $this->sql_delete($db_con->sql_creator());
-                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $usr_msg->add($msg);
+                    $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
                 } else {
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id);
@@ -3184,14 +3239,13 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(?bool $use_func = null): user_message
+    function del(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        $usr_msg = new user_message();
         $msg = '';
 
         // decide which db write method should be used
@@ -3223,7 +3277,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 // check if the object simply can be deleted, because it has never been used
                 if (!$this->used_by_someone_else()) {
-                    $msg .= $this->del_exe();
+                    $msg .= $this->del_exe($usr_msg);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id() == $this->user()->id) {
@@ -3238,7 +3292,7 @@ class sandbox_multi extends db_object_multi_user
                             // TODO change the original object, so that it uses the configuration of the new owner
 
                             // set owner
-                            if (!$this->set_owner($new_owner_id)) {
+                            if (!$this->set_owner($new_owner_id, $usr_msg)) {
                                 $msg .= 'Setting of owner while deleting ' . $class_name . ' failed';
                                 log_err($msg, $this::class . '->del');
 
@@ -3258,7 +3312,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug('can delete ' . $this->dsp_id() . ' after owner change');
-                        $msg .= $this->del_exe($use_func);
+                        $this->del_exe($usr_msg);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
                         $this->exclude();
@@ -3271,8 +3325,8 @@ class sandbox_multi extends db_object_multi_user
                         if ($db_rec->load_by_id($this->id())) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                         }
-                        if ($msg == '') {
-                            $std_rec = clone $this;
+                        $std_rec = clone $this;
+                        if ($usr_msg->is_ok()) {
                             $std_rec->reset();
                             $std_rec->set_id($this->id());
                             $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
@@ -3283,9 +3337,9 @@ class sandbox_multi extends db_object_multi_user
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
                             if ($use_func) {
-                                $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                             } else {
-                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
                             }
                         }
                     }
@@ -3296,7 +3350,7 @@ class sandbox_multi extends db_object_multi_user
         }
 
         $usr_msg->add_message_text($msg);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -3306,12 +3360,16 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_multi $db_obj the database record before the saving
      * @param sandbox_multi $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message with the description of any problems for the user and the suggested solution
+     * @param user_message $usr_msg with the description of any problems for the user and the suggested solution
+     * @return bool true if everything has been fine
      */
-    function save_fields_func(sql_db $db_con, sandbox_multi $db_obj, sandbox_multi $norm_obj): user_message
+    function save_fields_func(
+        sql_db $db_con,
+        sandbox_multi $db_obj,
+        sandbox_multi $norm_obj,
+        user_message $usr_msg = new user_message()
+    ): bool
     {
-        // always return a user message and if everything is fine, it is just empty
-        $usr_msg = new user_message();
         // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
         // the sql function should include the log of the changes
@@ -3331,7 +3389,7 @@ class sandbox_multi extends db_object_multi_user
             if ($this->no_diff($norm_obj)) {
                 if ($this->has_usr_cfg()) {
                     $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
                 }
             } else {
                 // apply the changes directly to the norm db record
@@ -3341,11 +3399,11 @@ class sandbox_multi extends db_object_multi_user
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
-                    $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
+                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $usr_msg);
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
                         $qp = $this->sql_delete($sc, $sc_par_lst);
-                        $usr_msg->add($db_con->delete($qp, 'del user ' . $obj_name));
+                        $db_con->delete($qp, 'del user ' . $obj_name, $usr_msg);
                     }
                 }
             }
@@ -3359,7 +3417,7 @@ class sandbox_multi extends db_object_multi_user
             if ($db_obj->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj)) {
                     $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
@@ -3367,7 +3425,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO compare sql_write with sql_update_switch
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
                     if ($qp != null) {
-                        $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
+                        $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
                     }
                 }
             } else {
@@ -3384,13 +3442,13 @@ class sandbox_multi extends db_object_multi_user
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
                     // TODO compare sql_write with sql_insert_switch
-                    $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
+                    $db_con->insert($qp, 'add user ' . $obj_name, $usr_msg, true);
                 }
             }
         }
 
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -3493,10 +3551,10 @@ class sandbox_multi extends db_object_multi_user
         $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::STANDARD);
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::ADD),
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -3642,7 +3700,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
-        log_err('function id_fvt_lst missing for class ' . $this::class);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'id_fvt_lst',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new sql_par_field_list;
     }
 
@@ -3653,7 +3715,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        log_err('function db_fields_all missing for class ' . $this::class);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'db_fields_all',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return [];
     }
 
@@ -3690,6 +3756,10 @@ class sandbox_multi extends db_object_multi_user
         user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'db_fields_changed',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new sql_par_field_list();
     }
 
@@ -3801,10 +3871,10 @@ class sandbox_multi extends db_object_multi_user
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
         // add the change action field to the field list for the log entries
-        global $cng_act_cac;
+        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::ADD),
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -3925,6 +3995,7 @@ class sandbox_multi extends db_object_multi_user
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
+        global $sys;
 
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
@@ -3933,10 +4004,9 @@ class sandbox_multi extends db_object_multi_user
         $id_val = '_' . $id_fld;
 
         // add the change action field to the list for the log entries
-        global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::UPDATE),
+            $sys->typ_lst->cng_act->id(change_actions::UPDATE),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -3988,11 +4058,10 @@ class sandbox_multi extends db_object_multi_user
         if ($this->excluded and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
-                    global $cng_fld_cac;
                     $table_id = $sc->table_id($this::class);
                     $par_lst_out->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                        $cng_fld_cac->id($table_id . $this->name_field()),
+                        $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                     $par_lst_out->add_field(
@@ -4226,7 +4295,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function del_links(): user_message
     {
-        return new user_message();
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'del_links',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg;
     }
 
     /**
@@ -4255,7 +4329,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_changed_sandbox_list(sandbox_multi $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
@@ -4265,7 +4339,7 @@ class sandbox_multi extends db_object_multi_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -4285,7 +4359,7 @@ class sandbox_multi extends db_object_multi_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
-                    $cng_fld_cac->id($table_id . self::FLD_SHARE),
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_SHARE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -4300,7 +4374,7 @@ class sandbox_multi extends db_object_multi_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
-                    $cng_fld_cac->id($table_id . self::FLD_PROTECT),
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_PROTECT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -4379,8 +4453,12 @@ class sandbox_multi extends db_object_multi_user
      */
     function type_name(): string
     {
-        $msg = 'ERROR: the type name function should have been overwritten by the child object';
-        return log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'type_name',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->get_last_message();
     }
 
 
@@ -4555,7 +4633,7 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param object $dsp_obj the object that should be filled with all user sandbox values
      */
-    function fill_dsp_obj(object $dsp_obj): void
+    function fill_ui_obj(object $dsp_obj): void
     {
         $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;

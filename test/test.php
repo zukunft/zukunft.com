@@ -34,21 +34,19 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'init.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
+
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+include_once test_paths::UTILS . 'test_base.php';
 
 // load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -57,7 +55,8 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit and integration testing", '', false, true);
+$app = new test_app();
+$db_con = $app->start("unit and integration testing", '', false, true);
 
 if ($db_con->is_open()) {
 
@@ -78,5 +77,5 @@ if ($db_con->is_open()) {
     }
 
     // Closing connection
-    prg_end($db_con, false);
+    $app->end($db_con, false);
 }

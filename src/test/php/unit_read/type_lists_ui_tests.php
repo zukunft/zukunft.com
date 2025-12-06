@@ -32,7 +32,32 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::TYPES . 'component_type_list.php';
+include_once html_paths::TYPES . 'formula_link_type_list.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::TYPES . 'ref_type_list.php';
+include_once html_paths::TYPES . 'share.php';
+include_once html_paths::TYPES . 'source_type_list.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'view_type_list.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CREATE . 'test_types.php';
+include_once test_paths::CREATE . 'test_words.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
+
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -44,21 +69,16 @@ use Zukunft\ZukunftCom\main\php\web\types\protection;
 use Zukunft\ZukunftCom\main\php\web\types\ref_type_list;
 use Zukunft\ZukunftCom\main\php\web\types\share;
 use Zukunft\ZukunftCom\main\php\web\types\source_type_list;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\types\user_profile;
 use Zukunft\ZukunftCom\main\php\web\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
 use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-
-include_once html_paths::TYPES . 'type_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::TYPES . 'formula_type_list.php';
-include_once html_paths::TYPES . 'phrase_types.php';
-include_once html_paths::TYPES . 'view_style_list.php';
-include_once html_paths::TYPES . 'protection.php';
 
 class type_lists_ui_tests
 {
@@ -66,21 +86,23 @@ class type_lists_ui_tests
     {
 
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_typ = new test_types($t);
 
         // start the test section (ts)
-        $ts = 'unit ui html preloaded lists ';
+        $ts = 'db read type list ui ';
         $t->header($ts);
 
         // load the types from the api message
-        $api_msg = $t->type_lists_api($t->usr1);
-        $ui_cache = new type_list_dsp($api_msg);
+        $api_msg = $t_typ->type_lists_api($t->usr1);
+        $ui_cache = new type_lists($api_msg);
 
         // use the system view to start the HTML test page
         $msk = $ui_cache->html_system_views->get_by_code_id(views::START_CODE);
-        $wrd = $t->word_dsp();
+        $wrd = $t_wrd->word_dsp();
         $wrd->set_name('All type selectors');
         $cfg = new data_object();
-        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page = $msk->show($wrd, $cfg, '') . '<br><br>';
 
         // test the type list selectors

@@ -3,7 +3,11 @@
 /*
 
     model/log/change_field.php - the field where a user has done a change including deprecated field names
-    ------------------------
+    --------------------------
+
+    TODO Prio 1 add a column with the short name that should be shown to the user
+                and for the selection the unique name should be "name (word)" instead of 5word_name
+                and use the description of the e.g. word_db object for the code_link csv file
 
 
     This file is part of zukunft.com - calc with words

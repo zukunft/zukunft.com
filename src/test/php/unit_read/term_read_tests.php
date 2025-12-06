@@ -67,7 +67,9 @@ class term_read_tests
         // init
         $t->name = 'term->';
 
-        $t->header('term database read tests');
+        // start the test section (ts)
+        $ts = 'db read term ';
+        $t->header($ts);
 
         // test load by term by a word db row
         $wrd = new word($t->usr1); // create a word object just to create the query parameters

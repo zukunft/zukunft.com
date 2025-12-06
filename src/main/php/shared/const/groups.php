@@ -44,6 +44,10 @@ class groups
     const string ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
     const string ZH_CITY_INHABITANTS_COM = words::INHABITANTS . ' in the ' . words::CITY . ' of ' . words::ZH;
 
+    // si units
+    const string TIME_DEFINITION = 'hyperfine transition frequency of Cs';
+    const string LENGTH_DEFINITION = 'speed of light';
+
     // persevered group names for database write tests
     const string TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
     const string TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';

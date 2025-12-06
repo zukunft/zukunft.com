@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/combine_named.php - parent object for a phrase or term objects
-    -------------------------------
+    model/helper/combine_named.php - parent object for a phrase or term objects
+    ------------------------------
 
     phrase and term have the fields name, description and type in common
 
@@ -81,10 +81,11 @@ class combine_named extends combine_object
 
     /**
      * set the object vars of a phrase or term to the neutral initial value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        $this->obj?->reset();
+        $this->obj?->reset($keep_user);
     }
 
 

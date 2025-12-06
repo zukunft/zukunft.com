@@ -288,7 +288,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_dsp(view $msk, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_ui(view $msk, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -405,7 +405,7 @@ class change_log_list extends base_list
             $result = $field_name . '_of_src';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == view::class) {
-            $result = $field_name . '_of_dsp';
+            $result = $field_name . '_of_msk';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == component::class) {
             $result = $field_name . '_of_cmp';
@@ -435,16 +435,15 @@ class change_log_list extends base_list
         string|int  $id,
         user        $usr): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
+        global $sys;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $lib = new library();
         $table_name = $lib->class_to_table($class);
-        $table_id = $cng_tbl_cac->id($table_name);
+        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($field_name != '') {
             $table_field_name = $table_id . $field_name;
-            $table_field_id = $cng_fld_cac->id($table_field_name);
+            $table_field_id = $sys->typ_lst->cng_fld->id($table_field_name);
         } else {
             $table_field_id = $table_id;
         }
@@ -510,9 +509,6 @@ class change_log_list extends base_list
         string|int  $id,
         user        $usr): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, '');

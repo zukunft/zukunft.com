@@ -75,6 +75,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -111,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -338,30 +340,28 @@ class phrase extends combine_named
     /**
      * map a phrase api json to this model phrase object
      * @param array $api_json the api array with the phrase values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
         } else {
             if ($api_json[json_fields::ID] > 0) {
                 $wrd = new word($this->user());
-                $usr_msg->add($wrd->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } else {
                 $trp = new triple($this->user());
                 $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-                $usr_msg->add($trp->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -708,9 +708,45 @@ class phrase extends combine_named
      * im- and export
      */
 
+    /**
+     * set the vars of this phrase object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
+            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD)  {
+                $wrd = new word($this->user());
+                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($wrd);
+            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+                $trp = new triple($this->user());
+                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($trp);
+            } else {
+                // TODO Prio 0 review
+                $usr_msg->add_err_with_vars(msg_id::IMPORT_FAILED, []);
+            }
+        }
+
+        return $usr_msg->is_ok();
+    }
+
     function export_json(): array
     {
-        return $this->obj()->export_json();
+        return $this->obj()->export_json([]);
     }
 
 
@@ -929,8 +965,8 @@ class phrase extends combine_named
 
     function type_code_id(): string
     {
-        global $phr_typ_cac;
-        return $phr_typ_cac->code_id($this->type_id());
+        global $sys;
+        return $sys->typ_lst->phr_typ->code_id($this->type_id());
     }
 
     /**
@@ -1227,12 +1263,13 @@ class phrase extends combine_named
         log_debug($this->dsp_id() . ',' . $related_phrase->name);
 
         $result = false;
+        $lib = new library();
         $is_phrases = $this->is(); // should be taken from the original array to increase speed
         if (in_array($related_phrase->id, $is_phrases->id_lst())) {
             $result = true;
         }
 
-        log_debug(zu_dsp_bool($result) . $this->id());
+        log_debug($lib->dsp_bool($result) . $this->id());
         return $result;
     }
 
@@ -1242,7 +1279,7 @@ class phrase extends combine_named
     {
         log_debug();
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $sql_type_from = '';
         $sql_type_where = '';
@@ -1277,7 +1314,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . ' ) AS a 
+                                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1289,7 +1326,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
+                                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1316,7 +1353,7 @@ class phrase extends combine_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
+                           AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -1408,11 +1445,11 @@ class phrase extends combine_named
      */
     function is_percent(): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1433,11 +1470,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new phrase($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id;
@@ -1462,11 +1499,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         $result = new word($this->user());
 
-        $link_id = $vrb_cac->id(verbs::FOLLOW);
+        $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
@@ -1487,17 +1524,16 @@ class phrase extends combine_named
      */
 
     /**
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg): bool
     {
-        global $phr_typ_cac;
-
-        $usr_msg = new user_message();
+        global $sys;
 
         /*
         if (isset($this->obj)) {
-            $usr_msg = $this->obj()->save();
+            $this->obj()->save($usr_msg);
         }
         */
 
@@ -1516,8 +1552,8 @@ class phrase extends combine_named
                 // create a word if neither the word nor the triple exists
                 $wrd = new word($this->user());
                 $wrd->set_name($this->name());
-                $wrd->type_id = $phr_typ_cac->default_id();
-                $usr_msg->add($wrd->save());
+                $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
+                $wrd->save($usr_msg);
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
                 } else {
@@ -1526,53 +1562,48 @@ class phrase extends combine_named
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * delete either a word or triple
-     * @return user_message an empty string if deleting has been successful
+     * @param user_message $usr_msg an empty string if deleting has been successful
+     * @return bool true if the phrase has been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
-        $usr_msg = new user_message();
 
         // direct delete if the object is loaded
         if ($this->is_triple()) {
-            $lnk = $this->obj;
-            if ($lnk != null) {
-                $usr_msg->add($lnk->del());
-            }
+            $lnk = $this->triple();
+            $lnk?->del($usr_msg);
         } elseif ($this->is_word()) {
-            $wrd = $this->obj;
-            if ($wrd != null) {
-                $usr_msg->add($wrd->del());
-            }
+            $wrd = $this->word();
+            $wrd?->del($usr_msg);
         } else {
             log_err('Unknown object type of ' . $this->dsp_id());
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * @param string $name the name of the phrase
-     * @return user_message if something fails the explanation for the user what has happened
-     *                      and the possible solutions with a suggestion
+     * @param user_message $usr_msg if something fails the explanation for the user what has happened
+     *                              and the possible solutions with a suggestion
+     * @return bool true if the phrase has been added
      */
-    function get_or_add(string $name): user_message
+    function get_or_add(string $name, user_message $usr_msg): bool
     {
-        // init the result
-        $usr_msg = new user_message();
         // load the word or triple if it exists
         $this->load_by_name($name);
         if ($this->id() == 0) {
             // add a simple word if it does not yet exist
             $wrd = new word($this->user());
             $wrd->set_name($name);
-            $usr_msg->add($wrd->save());
+            $wrd->save($usr_msg);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1669,6 +1700,15 @@ class phrase extends combine_named
 
         $wrd = $this->main_word();
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
+    }
+
+    function predicate_id(): ?int
+    {
+        $id = null;
+        if ($this->is_triple()) {
+            $id = $this->triple()->predicate_id();
+        }
+        return $id;
     }
 
 }

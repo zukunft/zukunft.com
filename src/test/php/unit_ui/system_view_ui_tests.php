@@ -32,9 +32,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -42,7 +47,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -53,12 +58,16 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::CREATE . 'test_mappers.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -73,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -81,6 +91,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
@@ -92,49 +104,66 @@ class system_view_ui_tests
         // init
         $lib = new library();
         $tl = new test_lib();
+        $t_usr = new test_users();
+        $t_map = new test_mappers($t);
+        $msp_ui = new MapObject();
 
         // start the test section (ts)
         $ts = 'unit ui system views ';
         $t->header($ts);
-        $t->usr1 = $t->user_sys_test();
+        $t->usr1 = $t_usr->user_sys_test();
+        $usr_msg = new user_message();
+        $usr_ui = $msp_ui->convertToUi($t->usr1, $usr_msg);
+        $usr_msg->usr = $usr_ui;
 
         // test the system views by id
         // similar to horizontal_ui_tests which tests the curl view for the main objects
         $t->subheader($ts . 'by id');
         $ui = new frontend('unit test');
-        $dto = $tl->dummy_test_cache($t->usr1);
+        $dto = $tl->ui_test_cache($t->usr1, $t);
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
-        for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
-            $dbo = $this->view_id_to_dbo($id, $t->usr1);
-            $action = $this->view_id_to_url_action($id);
-            $url = $t->class_to_filled_url($dbo::class, $id, $action);
-            $url_part = parse_url($url);
-            parse_str($url_part["query"], $url_array);
-            $usr_dsp = $tl->cast_user($t->usr1);
-            $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
-            $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
-            // create the filename of the expected result
-            $dbo_name = $id . '_';
-            if ($dbo::class == db_object::class) {
-                $folder = 'start_page' . DIRECTORY_SEPARATOR;
-                $dbo_name .= 'start_page';
-                $test_name = 'start_page view';
-            } else {
-                $class = $lib->class_to_name($dbo::class);
-                $folder = $class . DIRECTORY_SEPARATOR;
-                $dbo_name .= $class;
-                $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
-                if ($action != change_actions::SHOW) {
-                    $dbo_name .= '_' . $action;
+        for ($msk_typ = 1; $msk_typ < 2; $msk_typ++) {
+            for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
+                // TODO Prio 0 remove temp
+                if ($id == 24) {
+                    log_info('formula add');
                 }
-                if ($dbo_id != 0) {
-                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                $dbo = $this->view_id_to_dbo($id, $t->usr1);
+                $action = $this->view_id_to_url_action($id);
+                // TODO Prio 3 review and use random?
+                if ($msk_typ == 1) {
+                    $url = $t_map->class_to_filled_url($dbo::class, $id, $action);
+                } else {
+                    $url = $t_map->class_to_filled_url($dbo::class, $id, $action, url_var::MASK);
                 }
+                $url_part = parse_url($url);
+                parse_str($url_part["query"], $url_array);
+                $usr_dsp = $tl->cast_user($t->usr1);
+                $html = $ui->url_to_html($url_array, $usr_dsp, $usr_msg, $ui->dto);
+                $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
+                // create the filename of the expected result
+                $dbo_name = $id . '_';
+                if ($dbo::class == db_object::class) {
+                    $folder = 'start_page' . DIRECTORY_SEPARATOR;
+                    $dbo_name .= 'start_page';
+                    $test_name = 'start_page view';
+                } else {
+                    $class = $lib->class_to_name($dbo::class);
+                    $folder = $class . DIRECTORY_SEPARATOR;
+                    $dbo_name .= $class;
+                    $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+                    if ($action != change_actions::SHOW) {
+                        $dbo_name .= '_' . $action;
+                    }
+                    if ($dbo_id != 0) {
+                        $dbo_name .= '_' . $lib->str_to_file($dbo_id);
+                    }
+                }
+                $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+                $t->assert_html_page($test_name, $html, $file_path);
             }
-            $file_path = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-            $t->assert_html_page($test_name, $html, $file_path);
         }
 
     }
@@ -142,6 +171,13 @@ class system_view_ui_tests
     private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
     {
         // select the backend object to display
+        // TODO add any missing system views like
+        //      term_view_links, formula_link, component_links, styles, view_types,
+        //      time_series, geo and text values, ip ranges, language, pod,
+        //      add types (phrase_type, formula_type, formula_link_types, source_types,
+        //                 ref_types, position_types, view_types, view_link_types,
+        //                 component_types, component_link_types, pod_types, pod_status)
+        //     (at least all curl views)
         if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
             $dbo = new word($usr);
         } elseif (in_array($view_id, view_shared::VERB_MASKS_IDS)) {
@@ -164,6 +200,14 @@ class system_view_ui_tests
             $dbo = new view($usr);
         } elseif (in_array($view_id, view_shared::COMPONENT_MASKS_IDS)) {
             $dbo = new component($usr);
+        } elseif (in_array($view_id, view_shared::VIEW_LINK_MASKS_IDS)) {
+            $dbo = new term_view($usr);
+        } elseif (in_array($view_id, view_shared::COMPONENT_LINK_MASKS_IDS)) {
+            $dbo = new component_link($usr);
+        } elseif (in_array($view_id, view_shared::FORMULA_LINK_MASKS_IDS)) {
+            $dbo = new formula_link($usr);
+        } elseif (in_array($view_id, view_shared::VIEW_RELATION_MASKS_IDS)) {
+            $dbo = new view_relation($usr);
         } else {
             $dbo = new db_object();
         }
@@ -182,6 +226,8 @@ class system_view_ui_tests
             $action = change_actions::UPDATE;
         } elseif (in_array($view_id, view_shared::DEL_MASKS_IDS)) {
             $action = change_actions::DELETE;
+        } elseif (in_array($view_id, view_shared::SUB_MASKS_IDS)) {
+            $action = change_actions::SUB;
         } else {
             $action = 'unknown';
         }

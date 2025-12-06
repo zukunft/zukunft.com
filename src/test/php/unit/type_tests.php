@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -143,6 +144,11 @@ class type_tests
 
         $t->subheader($ts . 'view term link type sql setup');
         $dsp_lnk_typ = new view_link_type('');
+        $t->assert_sql_table_create($dsp_lnk_typ);
+        $t->assert_sql_index_create($dsp_lnk_typ);
+
+        $t->subheader($ts . 'view relation type sql setup');
+        $dsp_lnk_typ = new view_relation_type('');
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
     }

@@ -48,14 +48,15 @@ class component_read_tests
         // init
         $t->name = 'component read db->';
 
+        // start the test section (ts)
+        $ts = 'db read component ';
+        $t->header($ts);
 
-        $t->header('component db read tests');
-
-        $t->subheader('component load');
+        $t->subheader($ts . 'load');
         $msk = new view($t->usr1);
         $t->assert_load($msk, views::START_NAME);
 
-        $t->subheader('Component link db read tests');
+        $t->subheader($ts . 'link');
         $test_name = 'load component link ' . views::START_NAME . ' to ' . components::WORD_NAME . ' by id';
         $msk = new view($t->usr1);
         $msk->load_by_name(views::START_NAME);

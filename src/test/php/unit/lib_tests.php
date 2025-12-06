@@ -33,13 +33,13 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user_message.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -720,7 +720,8 @@ class lib_tests
         $usr_msg = new user_message();
         $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
 
-        $usr_msg = new user_message('first message text');
+        $usr_msg = new user_message();
+        $usr_msg->add_message_text('first message text');
         $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
         $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
 

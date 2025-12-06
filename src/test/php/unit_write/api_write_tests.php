@@ -63,9 +63,9 @@ class api_write_tests
         // TODO Prio 0 activate
         //foreach (def::MAIN_CLASSES as $class) {
         //$t->assert_api_post($class);
-        $t->assert_api_post_direct(word::class, $t->usr1);
+        $t->assert_api_post_direct(word::class, $t->usr1, $t);
         //$t->assert_api_put(word::class);
-        $t->assert_api_del_direct(word::class, $t->usr1);
+        $t->assert_api_del_direct(word::class, $t->usr1, $t);
         //}
 
         $t->subheader($ts . ' api login');
@@ -81,7 +81,7 @@ class api_write_tests
         //$t->assert_api_del(word::class);
         //}
         // TODO remove temp
-        //$t->assert_api_del_direct(word::class, $t->usr1);
+        //$t->assert_api_del_direct(word::class, $t->usr1, $t);
     }
 
 }

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_read_tests
@@ -46,15 +47,18 @@ class group_read_tests
         global $usr;
 
         // init
+        $t_wrd = new test_words($t);
         $t->name = 'phrase_group->';
 
-        $t->header('group db read tests');
+        // start the test section (ts)
+        $ts = 'db read group ';
+        $t->header($ts);
 
-        $t->subheader('load');
+        $t->subheader($ts . 'load');
 
         $test_name = 'group by word names';
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names($t->words_canton_zh_inhabitants());
+        $wrd_lst->load_by_names($t_wrd->words_canton_zh_inhabitants());
         $test_name .= ' for ' . $wrd_lst->dsp_id();
         $phr_grp = new group($usr);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());

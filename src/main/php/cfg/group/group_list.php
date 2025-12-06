@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -46,6 +47,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -307,16 +309,15 @@ class group_list extends sandbox_list
 
     /**
      * delete all loaded phrase groups e.g. to delete al the phrase groups linked to a phrase
-     * @return user_message
+     * @param user_message $usr_msg
+     * @return bool true if all groups of the list have been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $phr_grp) {
-            $usr_msg->add($phr_grp->del());
+            $phr_grp->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 
@@ -382,7 +383,7 @@ class group_list extends sandbox_list
     add all phrase groups to the list that have a value with at least one word in each word list
 
     add all formula results to the list for ONE formula based on
-    - $frm_linked: the words and triples assigned to the formula e.g. "Year" for "increase"
+    - $frm_linked: the words and triples assigned to the formula e.g. "year" for "increase"
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
     the function is should be based on the group table which is supposed to be always up to date
@@ -408,8 +409,8 @@ class group_list extends sandbox_list
     - if a formula is only uses normal words e.g. "Net profit"           only the group selection should be used and all times          should be included
     - if a formula is only uses both         e.g. "Net profit next year" only the group selection should be used and the time selection should be used
 
-    - if a formula is assigned to "Year" and "2018" all value and result that have "Year" OR "2018" should be updated
-    - if a formula is assigned to the triple "2018 (Year)" only the value and result for the "Year" "2018" should be updated
+    - if a formula is assigned to "year" and "2018" all value and result that have "year" OR "2018" should be updated
+    - if a formula is assigned to the triple "2018 (year)" only the value and result for the "year" "2018" should be updated
 
     - if a normal phrase is assigned but not used no value should be selected
     - if a   time word   is assigned but not used no value should be selected
@@ -661,8 +662,8 @@ class group_list extends sandbox_list
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
         $result = '';

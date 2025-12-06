@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_seq_id.php - a base object for all database objects which have a unique id based on an extra long key e.g. 512bit key
-    ---------------------------------
+    shared/helper/TextIdObject.php - a base object for all database objects which have a unique id based on an extra long key e.g. 512bit key
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words

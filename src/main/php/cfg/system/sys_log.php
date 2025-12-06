@@ -229,8 +229,8 @@ class sys_log extends db_object_seq_id
      */
     function status_name(): string
     {
-        global $sys_log_sta_cac;
-        return $sys_log_sta_cac->name($this->status_id);
+        global $sys;
+        return $sys->typ_lst->sys_log_sta->name($this->status_id);
     }
 
 
@@ -403,7 +403,8 @@ class sys_log extends db_object_seq_id
     {
         log_debug();
         $result = true;
-        if ($log->add()) {
+        $usr_msg = new user_message();
+        if ($log->add($usr_msg)) {
             $db_con->set_class(sys_log::class);
             $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
         }
@@ -419,12 +420,12 @@ class sys_log extends db_object_seq_id
     private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
-        global $sys_log_sta_cac;
+        global $sys;
 
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
-            $log->old_value = $sys_log_sta_cac->name($db_rec->status_id);
+            $log->old_value = $sys->typ_lst->sys_log_sta->name($db_rec->status_id);
             $log->old_id = $db_rec->status_id;
             $log->new_value = $this->status_name();
             $log->new_id = $this->status_id;
@@ -436,15 +437,15 @@ class sys_log extends db_object_seq_id
     }
 
     /**
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message either an empty string if saving has been successful or a message to the user with the reason, why it has failed
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug();
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id);
@@ -466,7 +467,7 @@ class sys_log extends db_object_seq_id
             log_err($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

@@ -2,8 +2,8 @@
 
 /*
 
-    web/log/sys_log.php - create the html code to display on system log entry
-    -------------------
+    web/system/sys_log.php - create the html code to display on system log entry
+    ----------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -44,7 +44,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\log\log as log_dsp;
+use Zukunft\ZukunftCom\main\php\web\log\log;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -52,7 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTimeInterface;
 
-class sys_log extends log_dsp
+class sys_log extends log
 {
 
     /*
@@ -74,11 +74,12 @@ class sys_log extends log_dsp
     /**
      * set the vars of this system log html object bases on the api json array
      * @param array $json_array an api json message including the api message header
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::TRACE, $json_array)) {
             $this->set_trace($json_array[json_fields::TRACE]);
         } else {
@@ -103,7 +104,7 @@ class sys_log extends log_dsp
         } else {
             $this->set_owner_id(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_trace(string $trace): void
@@ -194,7 +195,7 @@ class sys_log extends log_dsp
      */
     function display_admin(user $usr, ?string $back = '', string $style = ''): string
     {
-        global $sys_log_sta_cac;
+        global $sys;
 
         $html = new html_base();
         $row = '';
@@ -210,7 +211,7 @@ class sys_log extends log_dsp
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
-            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
             $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
             $row .= $html->td($html->ref($url, 'close'));
         }
@@ -249,9 +250,9 @@ class sys_log extends log_dsp
         return $html->tr($result);
     }
 
-    function get_html(user $usr = null, string $back = ''): string
+    function get_html(?user $usr = null, string $back = ''): string
     {
-        global $sys_log_sta_cac;
+        global $sys;
 
         $html = new html_base();
         $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
@@ -272,7 +273,7 @@ class sys_log extends log_dsp
         $row_text .= $html->td($this->status_name());
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys->typ_lst->sys_log_sta->id(sys_log_statuus::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }
@@ -328,8 +329,8 @@ class sys_log extends log_dsp
 
     private function status_text(): string
     {
-        global $sys_log_sta_cac;
-        return $sys_log_sta_cac->name($this->status());
+        global $sys;
+        return $sys->typ_lst->sys_log_sta->name($this->status());
     }
 
 }

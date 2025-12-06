@@ -31,6 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\api;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
@@ -39,7 +40,8 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use DateTime;
 use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -49,45 +51,88 @@ class api_message
 {
 
     /**
-     * create and set the api message header information
-     * @param sql_db $db_con the active database link to get the configuration from the database
+     * create the api json message string of this combine object for the frontend
+     * @param string $pod_name the site_name or the pod name that has created this message
      * @param string $class the class of the message
-     * @param user|user_dsp|null $usr the user view that the api message should contain
+     * @param array $vars the json array for the message body
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|user_ui|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(
+        string              $pod_name,
+        string              $class,
+        array               $vars,
+        api_type_list|array $typ_lst = [],
+        user|user_ui|null   $usr = null
+    ): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($pod_name, $class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * create and set the api message header information
+     * @param string $pod_name the site_name or the pod name that has created this message
+     * @param string $class the class of the message
+     * @param user|user_ui|null $usr the user view that the api message should contain
      * @param array $vars the json array for the message body
      * @return array the json array including the message header
      */
     function api_header_array(
-        sql_db             $db_con,
-        string             $class,
-        user|user_dsp|null $usr,
-        array              $vars
+        string            $pod_name,
+        string            $class,
+        user|user_ui|null $usr,
+        array             $vars
     ): array
     {
         $lib = new library();
-        $cfg = new config();
         $class = $lib->class_to_name($class);
         $msg = [];
-        if ($db_con->connected()) {
-            $msg[json_fields::POD] = $cfg->get_db(config::SITE_NAME, $db_con);
-            // TODO remove this fallback case
-            if ($msg[json_fields::POD] == '') {
-                $msg[json_fields::POD] = POD_NAME;
-            }
-        } else {
-            // for unit tests use the default pod name
-            $msg[json_fields::POD] = POD_NAME;
-        }
+        $msg[json_fields::POD] = $pod_name;
         $msg[json_fields::TYPE_NAME] = $class;
         if ($usr != null) {
             $msg[json_fields::USER_ID] = $usr->id();
             $msg[json_fields::USER_NAME] = $usr->name();
         }
-        $msg[json_fields::VERSION] = PRG_VERSION;
+        $msg[json_fields::VERSION] = def::PRG_VERSION;
         $msg[json_fields::TIMESTAMP] = new DateTime()->format(DateTimeInterface::ATOM);
         $msg[json_fields::BODY] = $vars;
 
         return $msg;
 
+    }
+
+    // TODO call once in global $sys
+    function api_site_name(sql_db $db_con): string
+    {
+        $cfg = new config();
+        // for unit tests use the default pod name
+        $site_name = def::POD_NAME;
+        if ($db_con->connected()) {
+            $site_name = $cfg->get_db(config::SITE_NAME, $db_con);
+            // TODO remove this fallback case
+            if ($site_name == '') {
+                $site_name = def::POD_NAME;
+            }
+        }
+        return $site_name;
     }
 
     /**

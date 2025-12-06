@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/group_triple_link.php - only for fast selection of the phrase group assigned to one triple
-    -----------------------------------------
+    model/group/group_link.php - only for fast selection of the phrase group assigned to one triple
+    --------------------------
 
     replication of the words linked to a phrase group saved in the triple_ids field
 

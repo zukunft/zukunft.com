@@ -52,14 +52,16 @@ class verb_read_tests
     {
 
         global $db_con;
-        global $vrb_cac;
+        global $sys;
 
         // init
         $t->name = 'verb read db->';
 
-        $t->header('verb database read tests');
+        // start the test section (ts)
+        $ts = 'db read verb ';
+        $t->header($ts);
 
-        $t->subheader('Verb tests');
+        $t->subheader($ts . 'load');
 
         // test if loading by code id and id result in the same name
         $vrb = new verb();
@@ -107,7 +109,7 @@ class verb_read_tests
         //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done
 
 
-        $t->subheader('Verb list tests');
+        $t->subheader($ts . 'list');
         $t->name = 'verb list read db->';
 
         // load the verbs
@@ -116,7 +118,7 @@ class verb_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical verb is loaded
-        $result = $vrb_cac->id(verbs::IS);
+        $result = $sys->typ_lst->vrb->id(verbs::IS);
         // just check if the verb is around, because the position may vary depending on the historic creation of the database
         $target = 0;
         if ($result > 0) {

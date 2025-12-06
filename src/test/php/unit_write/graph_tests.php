@@ -32,12 +32,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class graph_tests
@@ -48,9 +50,14 @@ class graph_tests
 
         global $usr;
 
+        // init
+        $t_vrb = new test_verbs($t);
+        $usr_msg = new user_message($t->usr1);
         $back = 0;
 
-        $t->header('Test the graph class (classes/triple_list.php)');
+        // start the test section (ts)
+        $ts = 'db write graph ';
+        $t->header($ts);
 
         // get values related to a phrase list
         // e.g. to get top 10 cities by the number of inhabitants
@@ -84,7 +91,7 @@ class graph_tests
         }
         // step 4: get the word links for the used phrases
         //         these are the word links that are needed for a complete export
-        // TODO activate Prio 1
+        // TODO Prio 1 activate
         $lnk_lst = new triple_list($usr);
         //$lnk_lst->load_by_phr_lst($phr_lst_used, null, foaf_direction::UP);
         //$result = $lnk_lst->name();
@@ -116,14 +123,14 @@ class graph_tests
         $ZH->load_by_name(words::ZH);
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($usr);
-        $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
+        $zh_lst->load_by_phr($ZH->phrase(), $t_vrb->verb_is(), foaf_direction::UP);
         // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();
         $zh_types = $trp_lst->phrase_parts();
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
-        $dsp_trp_list = new triple_list_dsp();
-        $dsp_trp_list->api_mapper($api_json);
+        $dsp_trp_list = new triple_list_ui();
+        $dsp_trp_list->api_mapper($api_json, $usr_msg);
         $result = $dsp_trp_list->tbl($back);
         $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);
         $t->assert_text_contains($test_name . words::CANTON, $result, words::COMPANY);

@@ -69,6 +69,8 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -86,7 +88,9 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -94,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -108,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class source extends sandbox_code_id
 {
@@ -149,12 +155,12 @@ class source extends sandbox_code_id
         $this->reset();
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_SOURCE_NAME;
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->url = null;
     }
 
@@ -189,17 +195,18 @@ class source extends sandbox_code_id
      * map a source api json to this model source object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::URL, $api_json)) {
             $this->set_url($api_json[json_fields::URL]);
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -207,26 +214,24 @@ class source extends sandbox_code_id
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $src_typ_cac;
-
-        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->set_url($in_ex_json[json_fields::URL]);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -279,7 +284,7 @@ class source extends sandbox_code_id
         }
 
         if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add($this->save());
+            $this->save($usr_msg);
         }
 
         return $usr_msg;
@@ -292,12 +297,13 @@ class source extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->url() <> '') {
             $vars[json_fields::URL] = $this->url();
@@ -320,13 +326,13 @@ class source extends sandbox_code_id
      */
     function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
-        global $src_typ_cac;
-        if ($src_typ_cac->has_code_id($code_id_or_name)) {
+        global $sys;
+        if ($sys->typ_lst->src_typ->has_code_id($code_id_or_name)) {
             return parent::set_type_by_code_id(
-                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
         } else {
             return parent::set_type_by_name(
-                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+                $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
         }
     }
 
@@ -350,8 +356,8 @@ class source extends sandbox_code_id
      */
     function type_code_id(): string|null
     {
-        global $src_typ_cac;
-        return $src_typ_cac->code_id($this->type_id);
+        global $sys;
+        return $sys->typ_lst->src_typ->code_id($this->type_id);
     }
 
     /**
@@ -359,11 +365,11 @@ class source extends sandbox_code_id
      */
     function type_name(): string
     {
-        global $src_typ_cac;
+        global $sys;
 
         $type_name = '';
         if ($this->type_id > 0) {
-            $type_name = $src_typ_cac->name($this->type_id);
+            $type_name = $sys->typ_lst->src_typ->name($this->type_id);
         }
         return $type_name;
     }
@@ -501,6 +507,7 @@ class source extends sandbox_code_id
         global $db_con;
         $result = true;
 
+        $lib = new library();
         if ($this->id() == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
@@ -511,7 +518,7 @@ class source extends sandbox_code_id
                 $result = false;
             }
         }
-        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -596,6 +603,40 @@ class source extends sandbox_code_id
 
 
     /*
+     * del
+     */
+
+    /**
+     * delete the references to this source
+     *
+     * @param user_message $usr_msg the message for the user why deleting the word links has failed and a suggested solution
+     * @return bool true if the word links has been deleted
+     */
+    function del_links(user_message $usr_msg): bool
+    {
+        $usr_msg = new user_message();
+
+        // collect all phrase groups where this word is used
+        // TODO Prio 2 activate
+        //$grp_lst = new group_list($this->user());
+        //$grp_lst->load_by_phr($this->phrase());
+
+        // collect all references where this source is used
+        $ref_lst = new ref_list($this->user());
+        // TODO Prio 1 activate
+        $ref_lst->load_sql_by_source($this);
+
+        // if there are still triples, ask if they really should be deleted
+        if (!$ref_lst->is_empty()) {
+            // TODO Prio 1 activate
+            $ref_lst->del($usr_msg);
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
      * sql write fields
      */
 
@@ -633,7 +674,7 @@ class source extends sandbox_code_id
         user_message   $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
@@ -644,7 +685,7 @@ class source extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . source_db::FLD_TYPE),
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -659,7 +700,7 @@ class source extends sandbox_code_id
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
-                    $cng_fld_cac->id($table_id . source_db::FLD_URL),
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

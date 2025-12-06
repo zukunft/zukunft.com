@@ -46,6 +46,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
@@ -56,6 +57,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -133,14 +135,14 @@ class value_time_series extends sandbox_value
     {
         parent::__construct($usr);
 
-        $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
+        $this->rename_can_switch = def::UI_CAN_CHANGE_VALUE;
 
-        $this->reset($usr);
+        $this->reset(true);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
         $this->set_grp(new group($this->user()));
         $this->source = null;
@@ -309,18 +311,18 @@ class value_time_series extends sandbox_value
 
     /**
      * add a new time series
+     * @param user_message $usr_msg with status ok
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(?bool $use_func = null): user_message
+    function add(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug('->add');
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -351,7 +353,7 @@ class value_time_series extends sandbox_value
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /*
@@ -378,14 +380,14 @@ class value_time_series extends sandbox_value
     /**
      * insert or update a time series in the database or save user specific time series numbers
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @param user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug('->save');
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // build the database object because the is anyway needed
         $db_con->set_class(value_time_series::class);
@@ -402,7 +404,7 @@ class value_time_series extends sandbox_value
         }
 
         if ($this->id() <= 0) {
-            $usr_msg->add($this->add());
+            $this->add($usr_msg);
         } else {
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
@@ -421,14 +423,14 @@ class value_time_series extends sandbox_value
             }
 
             // check if the id parameters are supposed to be changed
-            $usr_msg->add_message_text($this->save_id_if_updated($db_con, $db_rec, $std_rec));
+            $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             // TODO add function based db saving
             if ($usr_msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
+                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec, $usr_msg));
             }
 
         }
@@ -437,7 +439,7 @@ class value_time_series extends sandbox_value
             log_err($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

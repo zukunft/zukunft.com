@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -45,7 +46,8 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::MODEL_USER . 'user_db.php';
 
 // open database
-$db_con = prg_start("login", "center_form");
+$app = new frontend();
+$db_con = $app->start("login", "center_form");
 $html = new html_base();
 
 if ($db_con->is_open()) {
@@ -58,7 +60,7 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
 
         $result = ''; // reset the html code var
-        $msg = '';
+        $usr_msg = new user_message();
 
         $_SESSION['logged'] = FALSE;
         // the original calling page that should be shown after the login is finished
@@ -128,5 +130,5 @@ if ($db_con->is_open()) {
     echo $result;
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con);
 }

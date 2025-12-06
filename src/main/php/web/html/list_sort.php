@@ -59,12 +59,12 @@ class list_sort
     /**
      * TODO review
      * @param phrase $phr the start phrase to select the rows
-     * @param data_object|null $dbo the data cache use to reduce the backend traffic
+     * @param data_object|null $cac the data cache use to reduce the backend traffic
      * @return string html code to display a spreadsheet
      */
     function list_sort(
         phrase       $phr,
-        ?data_object $dbo = null
+        ?data_object $cac = null
     ): string
     {
         // create the table
@@ -75,7 +75,7 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list(), $dbo->typ_lst_cache);
+        $phr_lst = $phr->is_or_can_be($cac?->phr_lst, $cac->typ_lst_cache);
 
         // TODO remove temp hardcoded solution
         if ($phr_lst->is_empty()) {
@@ -105,10 +105,24 @@ class list_sort
             $htp = new word();
             $htp->load_by_name('htp');
         } else {
-            $trillion = $phr_lst->get_by_name(words::TRILLION);
-            $billion = $phr_lst->get_by_name(words::BILLION);
-            $usd = $phr_lst->get_by_name(words::USD);
-            $htp = $phr_lst->get_by_name(words::HTP);
+            $trillion = $cac?->phr_lst->get_by_name(words::TRILLION);
+            $billion = $cac?->phr_lst->get_by_name(words::BILLION);
+            $usd = $cac?->phr_lst->get_by_name(words::USD);
+            $htp = $cac?->phr_lst->get_by_name(words::HTP);
+        }
+
+        // check if the phrase list has at least the most necessary entries
+        if ($trillion == null) {
+            log_err('trillion is null');
+        }
+        if ($billion == null) {
+            log_err('billion is null');
+        }
+        if ($usd == null) {
+            log_err('usd is null');
+        }
+        if ($htp == null) {
+            log_err('htp is null');
         }
 
         // get the most relevant result

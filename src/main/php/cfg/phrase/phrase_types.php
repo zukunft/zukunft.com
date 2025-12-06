@@ -2,7 +2,7 @@
 
 /*
 
-    model/word/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
+    model/phrase/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
     TODO rename to phrase type

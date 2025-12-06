@@ -126,4 +126,4 @@ component fields
 Like words components have the name, description and type field and additional:
 
 - user interface message id - a unique id to translate a text to the language that the user is using
-- triples - a list of triples that are used to configure the component e.g. Year is used as a column
+- triples - a list of triples that are used to configure the component e.g. year is used as a column

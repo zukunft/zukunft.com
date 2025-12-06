@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -43,37 +44,41 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_sandbox_test(all_tests $t): void
 {
+    global $sys;
 
-    global $phr_typ_cac;
+    // start the test section (ts)
+    $ts = 'db write sandbox ';
+    $t->header($ts);
+    $usr_msg = new user_message($t->usr1);
+    $usr_msg->usr = $t->usr1;
 
-    $t->header('sandbox unit tests');
-
-    $t->subheader('Test the is_same and is_similar function');
+    $t->subheader($ts . 'is_same and is_similar');
 
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
-    $wrd1->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+    $wrd1->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
     $wrd1->set_name(words::MIO);
     $wrd2 = new word($t->usr1);
-    $wrd2->type_id = $phr_typ_cac->default_id();
+    $wrd2->type_id = $sys->typ_lst->phr_typ->default_id();
     $wrd2->set_name(words::MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
-    $t->display("a word is not the same as the same word that represents a formula", $target, $result);
+    $t->assert("a word is not the same as the same word that represents a formula", $result, $target);
 
     // ... but it is similar
     $target = true;
     $result = $wrd1->is_similar_named($wrd2);
-    $t->display("... but it is similar", $target, $result);
+    $t->assert("... but it is similar", $result, $target);
 
-    $t->subheader('Test the saving function');
+    $t->subheader($ts . 'saving');
 
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
-    $result = $src->save()->get_last_message();
+    $src->save($usr_msg);
+    $result = $usr_msg->get_last_message();
     $target = '';
-    $t->display('_sandbox->save create a new source', $target, $result);
+    $t->assert('_sandbox->save create a new source', $result, $target);
 
     // remember the id
     $src_id = 0;
@@ -87,15 +92,16 @@ function run_sandbox_test(all_tests $t): void
         $result = $src->name();
     }
     $target = sources::IPCC_AR6_SYNTHESIS;
-    $t->display('_sandbox->save check created source', $target, $result);
+    $t->assert('_sandbox->save check created source', $result, $target);
 
     // update the source url by name (_sandbox->save case 2)
     $src = new source($t->usr1);
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
     $src->set_url(sources::IPCC_AR6_SYNTHESIS_URL);
-    $result = $src->save()->get_last_message();
+    $src->save($usr_msg);
+    $result = $usr_msg->get_last_message();
     $target = '';
-    $t->display('_sandbox->save update the source url by name', $target, $result);
+    $t->assert('_sandbox->save update the source url by name', $result, $target);
 
     // remember the id
     $src_id = 0;
@@ -109,7 +115,7 @@ function run_sandbox_test(all_tests $t): void
         $result = $src->url();
     }
     $target = sources::IPCC_AR6_SYNTHESIS_URL;
-    $t->display('_sandbox->save check if the source url has been updates', $target, $result);
+    $t->assert('_sandbox->save check if the source url has been updates', $result, $target);
 
 }
 

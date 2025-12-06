@@ -154,14 +154,13 @@ class ip_range_list extends base_list
     /**
      * store all ip ranges from this list in the database using grouped calls of predefined sql functions
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the estimate of the total save time
-     * @return user_message
+     * @return bool true if everything has been fine
      */
-    function save(import $imp): user_message
+    function save(user_message $usr_msg, import $imp): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::IP_RANGES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $upd_per_sec = $cfg->get_by([words::IP_RANGES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -172,7 +171,7 @@ class ip_range_list extends base_list
 
             // TODO replace this slow temp solution with the proper block saving like indicated in the comment below
             foreach ($this->lst() as $ip) {
-                $usr_msg->add($ip->save());
+                $ip->save($usr_msg);
             }
 
             /*
@@ -193,7 +192,7 @@ class ip_range_list extends base_list
             */
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

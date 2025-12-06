@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/term_view_list.php - a list of assignments from terms to views
-    --------------------------------
+    model/view/term_view_list.php - a list of assignments from terms to views
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 

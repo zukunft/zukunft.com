@@ -73,97 +73,107 @@ class component_type
     const int FORM_FIELD_DESCRIPTION_ID = 22;
 
     // select object fields
-    const string FORM_SELECT_PHRASE = "system_form_select_phrase";
+    const string FORM_SELECT_PHRASE = "form_select_phrase";
     const int FORM_SELECT_PHRASE_ID = 23;
-    const string FORM_SELECT_PHRASES = "system_form_select_multi_phrases";
+    const string FORM_SELECT_PHRASES = "form_select_multi_phrases";
     const int FORM_SELECT_PHRASES_ID = 75;
-    const string FORM_SELECT_VERB = "system_form_select_verb";
+    const string FORM_SELECT_VERB = "form_select_verb";
     const int FORM_SELECT_VERB_ID = 24;
-    const string FORM_SELECT_VERBS = "system_form_select_multi_verbs";
+    const string FORM_SELECT_VERBS = "form_select_multi_verbs";
     const int FORM_SELECT_VERBS_ID = 76;
-    const string FORM_SELECT_SOURCE = "system_form_select_source";
+    const string FORM_SELECT_SOURCE = "form_select_source";
     const int FORM_SELECT_SOURCE_ID = 118;
-    const string FORM_SELECT_SOURCES = "system_form_select_multi_sources";
+    const string FORM_SELECT_SOURCES = "form_select_multi_sources";
     const int FORM_SELECT_SOURCES_ID = 119;
-    const string FORM_SELECT_REF = "system_form_select_ref";
+    const string FORM_SELECT_REF = "form_select_ref";
     const int FORM_SELECT_REF_ID = 120;
-    const string FORM_SELECT_REFS = "system_form_select_multi_refs";
+    const string FORM_SELECT_REFS = "form_select_multi_refs";
     const int FORM_SELECT_REFS_ID = 121;
     const string FORM_FIELD_VALUE = "system_form_field_value";
     const int FORM_FIELD_VALUE_ID = 139;
-    const string FORM_SELECT_VALUE = "system_form_select_value";
+    const string FORM_SELECT_VALUE = "form_select_value";
     const int FORM_SELECT_VALUE_ID = 81;
-    const string FORM_SELECT_VALUES = "system_form_select_multi_values";
+    const string FORM_SELECT_VALUES = "form_select_multi_values";
     const int FORM_SELECT_VALUES_ID = 82;
-    const string FORM_SELECT_FORMULA = "system_form_select_formula";
+    const string FORM_SELECT_FORMULA = "form_select_formula";
     const int FORM_SELECT_FORMULA_ID = 77;
-    const string FORM_SELECT_FORMULAS = "system_form_select_multi_formulas";
+    const string FORM_SELECT_FORMULAS = "form_select_multi_formulas";
     const int FORM_SELECT_FORMULAS_ID = 78;
-    const string FORM_SELECT_TERM = "system_form_select_term";
+    const string FORM_SELECT_TERM = "form_select_term";
     const int FORM_SELECT_TERM_ID = 79;
-    const string FORM_SELECT_TERMS = "system_form_select_multi_terms";
+    const string FORM_SELECT_TERMS = "form_select_multi_terms";
     const int FORM_SELECT_TERMS_ID = 80;
-    const string FORM_SELECT_RESULT = "system_form_select_result";
+    const string FORM_SELECT_RESULT = "form_select_result";
     const int FORM_SELECT_RESULT_ID = 83;
-    const string FORM_SELECT_RESULTS = "system_form_select_multi_results";
+    const string FORM_SELECT_RESULTS = "form_select_multi_results";
     const int FORM_SELECT_RESULTS_ID = 84;
-    const string FORM_SELECT_VIEW = "system_form_select_view";
+    const string FORM_SELECT_VIEW = "form_select_view";
     const int FORM_SELECT_VIEW_ID = 85;
-    const string FORM_SELECT_VIEWS = "system_form_select_multi_views";
+    const string FORM_SELECT_VIEWS = "form_select_multi_views";
     const int FORM_SELECT_VIEWS_ID = 86;
-    const string FORM_SELECT_COMPONENT = "system_form_select_component";
+    const string FORM_SELECT_PARENT_VIEW = "form_select_parent_view";
+    const int FORM_SELECT_PARENT_VIEW_ID = 171;
+    const string FORM_SELECT_CHILD_VIEW = "form_select_child_view";
+    const int FORM_SELECT_CHILD_VIEW_ID = 172;
+    const string FORM_SELECT_COMPONENT = "form_select_component";
     const int FORM_SELECT_COMPONENT_ID = 87;
-    const string FORM_SELECT_COMPONENTS = "system_form_select_multi_components";
+    const string FORM_SELECT_COMPONENTS = "form_select_multi_components";
     const int FORM_SELECT_COMPONENTS_ID = 88;
 
     // select access and protection
-    const string FORM_SHARE_TYPE = "system_form_select_share";
+    const string FORM_SHARE_TYPE = "form_select_share";
     const int FORM_SHARE_TYPE_ID = 26;
-    const string FORM_PROTECTION_TYPE = "system_form_select_protection";
+    const string FORM_PROTECTION_TYPE = "form_select_protection";
     const int FORM_PROTECTION_TYPE_ID = 27;
 
     // select object types
-    const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
+    const string FORM_SELECT_PHRASE_TYPE = "form_select_phrase_type";
     const int FORM_SELECT_PHRASE_TYPE_ID = 25;
     const string LIST_VIEWS = "view_list";
     const int LIST_VIEWS_ID = 122;
-    const string FORM_SELECT_SOURCE_TYPE = "system_form_select_source_type";
+    const string FORM_SELECT_SOURCE_TYPE = "form_select_source_type";
     const int FORM_SELECT_SOURCE_TYPE_ID = 39;
-    const string FORM_SELECT_REF_TYPE = "system_form_select_ref_type";
+    const string FORM_SELECT_REF_TYPE = "form_select_ref_type";
     const int FORM_SELECT_REF_TYPE_ID = 48;
-    const string FORM_SELECT_VALUE_TYPE = "system_form_select_value_type";
+    const string FORM_SELECT_VALUE_TYPE = "form_select_value_type";
     const int FORM_SELECT_VALUE_TYPE_ID = 123;
-    const string FORM_SELECT_FORMULA_TYPE = "system_form_select_formula_type";
+    const string FORM_SELECT_FORMULA_TYPE = "form_select_formula_type";
     const int FORM_SELECT_FORMULA_TYPE_ID = 49;
-    const string FORM_SELECT_VIEW_TYPE = "system_form_select_view_type";
+    const string FORM_SELECT_VIEW_TYPE = "form_select_view_type";
     const int FORM_SELECT_VIEW_TYPE_ID = 50;
-    const string FORM_SELECT_VIEW_STYLE = "system_form_select_view_style";
+    const string FORM_SELECT_VIEW_STYLE = "form_select_view_style";
     const int FORM_SELECT_VIEW_STYLE_ID = 51;
-    const string FORM_SELECT_COMPONENT_TYPE = "system_form_select_component_type";
+    const string FORM_SELECT_COMPONENT_TYPE = "form_select_component_type";
     const int FORM_SELECT_COMPONENT_TYPE_ID = 52;
-    const string FORM_SELECT_COMPONENT_STYLE = "system_form_select_component_style";
+    const string FORM_SELECT_COMPONENT_STYLE = "form_select_component_style";
     const int FORM_SELECT_COMPONENT_STYLE_ID = 124;
+    const string FORM_SELECT_VIEW_RELATION_TYPE = "form_select_view_relation_type";
+    const int FORM_SELECT_VIEW_RELATION_TYPE_ID = 173;
+    const string FORM_FIELD_VIEW_RELATION_START_POS = "system_form_field_view_relation_start_pos";
+    const int FORM_FIELD_VIEW_RELATION_START_POS_ID = 174;
 
     // select link types and priority
-    const string FORM_SELECT_FORMULA_LINK_TYPE = "system_form_select_formula_link_type";
+    const string FORM_SELECT_FORMULA_LINK_TYPE = "form_select_formula_link_type";
     const int FORM_SELECT_FORMULA_LINK_TYPE_ID = 100;
-    const string FORM_SELECT_FORMULA_LINK_PRIORITY = "system_form_select_formula_link_priority";
+    const string FORM_SELECT_FORMULA_LINK_PRIORITY = "form_select_formula_link_priority";
     const int FORM_SELECT_FORMULA_LINK_PRIORITY_ID = 127;
-    const string FORM_SELECT_VIEW_LINK_TYPE = "system_form_select_view_link_type";
+    const string FORM_SELECT_VIEW_LINK_TYPE = "form_select_view_link_type";
     const int FORM_SELECT_VIEW_LINK_TYPE_ID = 101;
-    const string FORM_SELECT_VIEW_LINK_PRIORITY = "system_form_select_view_link_priority";
+    const string FORM_SELECT_VIEW_LINK_PRIORITY = "form_select_view_link_priority";
     const int FORM_SELECT_VIEW_LINK_PRIORITY_ID = 125;
-    const string FORM_SELECT_COMPONENT_LINK_TYPE = "system_form_select_component_link_type";
+    const string FORM_SELECT_COMPONENT_LINK_TYPE = "form_select_component_link_type";
     const int FORM_SELECT_COMPONENT_LINK_TYPE_ID = 99;
-    const string FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER = "system_form_select_component_link_order_number";
+    const string FORM_SELECT_COMPONENT_POS_TYPE = "form_select_component_position_type";
+    const int FORM_SELECT_COMPONENT_POS_TYPE_ID = 153;
+    const string FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER = "form_select_component_link_order_number";
     const int FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID = 126;
 
     // other select fields
-    const string FORM_SELECT_VIEW_DEFAULT = "system_form_select_view_default";
+    const string FORM_SELECT_VIEW_DEFAULT = "form_select_view_default";
     const int FORM_SELECT_VIEW_DEFAULT_ID = 90;
-    const string FORM_SELECT_FILE = "system_form_select_file";
+    const string FORM_SELECT_FILE = "form_select_file";
     const int FORM_SELECT_FILE_ID = 91;
-    const string FORM_SELECT_FORMAT_EXPORT = "system_form_select_export_format";
+    const string FORM_SELECT_FORMAT_EXPORT = "form_select_export_format";
     const int FORM_SELECT_FORMAT_EXPORT_ID = 92;
 
     // verb only fields
@@ -175,6 +185,22 @@ class component_type
     const int FORM_FIELD_PLURAL_REVERSE_ID = 136;
     const string FORM_FIELD_NAME_IN_FORMULAS = "system_form_field_name_in_formulas";
     const int FORM_FIELD_NAME_IN_FORMULAS_ID = 149;
+
+    // verb only fields
+    const string SYSTEM_SHOW_REF_TYPE = "system_show_field_ref_type";
+    const int FORM_FIELD_REF_TYPE_ID = 163;
+    const string SYSTEM_SHOW_REF_KEY = "system_show_field_ref_key";
+    const int FORM_FIELD_REF_KEY_ID = 164;
+    const string SYSTEM_SHOW_REF_SOURCE = "system_show_field_ref_source";
+    const int FORM_FIELD_REF_SOURCE_ID = 165;
+    const string SYSTEM_SHOW_REF_URL = "system_show_field_ref_url";
+    const int FORM_FIELD_REF_URL_ID = 166;
+    const string FORM_FIELD_EXTERNAL_KEY = "system_form_field_external_key";
+    const int FORM_FIELD_EXTERNAL_KEY_ID = 167;
+
+    // triple only fields
+    const string FORM_FIELD_WEIGHT = "system_form_field_weight";
+    const int FORM_FIELD_WEIGHT_ID = 150;
 
     // value only fields
     const string FORM_FIELD_GROUP = "system_form_field_group";
@@ -218,6 +244,18 @@ class component_type
     const string FORM_HIDDEN_STEP = "system_form_confirm_status";
     const int FORM_HIDDEN_STEP_ID = 19;
 
+    // admin user edit form fields
+    const string ADMIN_FORM_FIELD_USER_NAME = "admin_form_field_username";
+    const int ADMIN_FORM_FIELD_USER_NAME_ID = 168;
+    const string ADMIN_FORM_FIELD_USER_EMAIL = "admin_form_field_user_email";
+    const int ADMIN_FORM_FIELD_USER_EMAIL_ID = 168;
+    const string ADMIN_FORM_FIELD_USER_PASSWORD = "admin_form_field_user_password";
+    const int ADMIN_FORM_FIELD_USER_PASSWORD_ID = 170;
+    const string ADMIN_FORM_FIELD_LANGUAGE_SYMBOL = "admin_form_field_language_symbol";
+    const int ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID = 179;
+    const string FIELD_LANGUAGE_SYMBOL = "field_language_symbol";
+    const int FIELD_LANGUAGE_SYMBOL_ID = 180;
+
     // buttons
     const string FORM_BUTTON_CANCEL = "system_button_cancel";
     const int FORM_BUTTON_CANCEL_ID = 29;
@@ -234,6 +272,27 @@ class component_type
     const string FORM_END = "form_end";
     const int FORM_END_ID = 32;
 
+    // show changes if confirmed
+    const string SYSTEM_SHOW_RESULT_DIFF = "system_show_result_diff";
+    const int SYSTEM_SHOW_RESULT_DIFF_ID = 154;
+
+    // TODO Prio 0 group and move the lines below
+    const string SYSTEM_PASTE_TABLE_CONTEXT = "system_paste_table_context";
+    const int SYSTEM_PASTE_TABLE_CONTEXT_ID = 155;
+    const string SYSTEM_PASTE_TABLE_BODY = "system_paste_table_body";
+    const int SYSTEM_PASTE_TABLE_BODY_ID = 156;
+    const string SYSTEM_SELECTION_TEXT = "system_selection_text";
+    const int SYSTEM_SELECTION_TEXT_ID = 157;
+    const string SYSTEM_POPUP_TITLE = "system_popup_title";
+    const int SYSTEM_POPUP_TITLE_ID = 158;
+    const string FORM_CLASS = "form_class";
+    const int FORM_CLASS_ID = 159;
+    const string FORM_CHANGES = "form_changes";
+    const int FORM_CHANGES_ID = 160;
+    const string FORM_IMPACT = "form_impact";
+    const int FORM_IMPACT_ID = 161;
+    const string SYSTEM_SHOW_VIEW_DIFF = "system_show_view_diff";
+    const int SYSTEM_SHOW_VIEW_DIFF_ID = 162;
 
     /*
      * fixed system pages
@@ -318,6 +377,10 @@ class component_type
     const int LIST_CHILDREN_OF_WORD_ID = 48;
     const string LIST_TRIPLES_OF_VERB = "triples_by_verb";
     const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const string LIST_VALUES_BY_TRIPLE = "values_by_triple";
+    const int LIST_VALUES_BY_TRIPLE_ID = 151;
+    const string LIST_VALUES_BY_SOURCE = "values_by_source";
+    const int LIST_VALUES_BY_SOURCE_ID = 152;
     const string LIST_FORMULAS_OF_VERB = "formulas_by_verb";
     const int LIST_FORMULAS_OF_VERB_ID = 148;
     const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
@@ -363,6 +426,14 @@ class component_type
     const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
+    const string SYSTEM_FIELD_PARENT_VIEW = "system_show_parent_view";
+    const int SYSTEM_FIELD_PARENT_VIEW_ID = 175;
+    const string SYSTEM_FIELD_CHILD_VIEW = "system_show_child_view";
+    const int SYSTEM_FIELD_CHILD_VIEW_ID = 176;
+    const string SHOW_FIELD_RELATION_TYPE = "system_show_view_relation_type";
+    const int SHOW_FIELD_RELATION_TYPE_ID = 177;
+    const string SHOW_FIELD_START_POS = "system_show_view_start_pos";
+    const int SHOW_FIELD_START_POS_ID = 178;
     const string VIEW_AFTER_CHANGE = "system_show_after_change";
     const int VIEW_AFTER_CHANGE_ID = 143;
     const string VIEW_BEFORE_CHANGE = "system_show_before_change";
@@ -425,6 +496,7 @@ class component_type
         self::FORM_FIELD_PLURAL,
         self::FORM_FIELD_FORMULA_EXPRESSION,
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
+        self::FORM_FIELD_WEIGHT,
         self::FORM_FIELD_GROUP,
         self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_SOURCE_GROUP,
@@ -451,6 +523,8 @@ class component_type
         self::FORM_SELECT_RESULTS,
         self::FORM_SELECT_VIEW,
         self::FORM_SELECT_VIEWS,
+        self::FORM_SELECT_PARENT_VIEW,
+        self::FORM_SELECT_CHILD_VIEW,
         self::FORM_SELECT_COMPONENT,
         self::FORM_SELECT_COMPONENTS,
         self::FORM_SELECT_VIEW_DEFAULT,
@@ -466,11 +540,14 @@ class component_type
         self::FORM_SELECT_VIEW_STYLE,
         self::FORM_SELECT_COMPONENT_TYPE,
         self::FORM_SELECT_COMPONENT_STYLE,
+        self::FORM_SELECT_VIEW_RELATION_TYPE,
+        self::FORM_FIELD_VIEW_RELATION_START_POS,
         self::FORM_SELECT_FORMULA_LINK_TYPE,
         self::FORM_SELECT_FORMULA_LINK_PRIORITY,
         self::FORM_SELECT_VIEW_LINK_TYPE,
         self::FORM_SELECT_VIEW_LINK_PRIORITY,
         self::FORM_SELECT_COMPONENT_LINK_TYPE,
+        self::FORM_SELECT_COMPONENT_POS_TYPE,
         self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
@@ -486,9 +563,27 @@ class component_type
         self::ROW_END,
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
+        self::ADMIN_FORM_FIELD_USER_NAME,
+        self::ADMIN_FORM_FIELD_USER_EMAIL,
+        self::ADMIN_FORM_FIELD_USER_PASSWORD,
+        self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL,
+        self::FIELD_LANGUAGE_SYMBOL,
         self::SHOW_NAME,
         self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
+        self::SYSTEM_FIELD_PARENT_VIEW,
+        self::SYSTEM_FIELD_CHILD_VIEW,
+        self::SHOW_FIELD_RELATION_TYPE,
+        self::SHOW_FIELD_START_POS,
+        self::SYSTEM_SHOW_RESULT_DIFF,
+        self::SYSTEM_PASTE_TABLE_CONTEXT,
+        self::SYSTEM_PASTE_TABLE_BODY,
+        self::SYSTEM_SELECTION_TEXT,
+        self::SYSTEM_POPUP_TITLE,
+        self::FORM_CLASS,
+        self::FORM_CHANGES,
+        self::FORM_IMPACT,
+        self::SYSTEM_SHOW_VIEW_DIFF,
         self::VIEW_AFTER_CHANGE,
         self::VIEW_BEFORE_CHANGE,
         self::WORD_RESULTS,
@@ -526,6 +621,20 @@ class component_type
         self::LIST_REF,
     );
 
+    // list of component types that are used to combine lists
+    const array LIST_HAS_STYLE = array(
+        self::FORM_FIELD_NAME,
+        self::FORM_FIELD_PLURAL,
+        self::FORM_FIELD_REVERSE,
+        self::FORM_FIELD_PLURAL_REVERSE,
+        self::FORM_FIELD_NAME_IN_FORMULAS,
+        self::FORM_FIELD_WEIGHT,
+        self::FORM_FIELD_VALUE,
+        self::ROW_START,
+        self::ROW_RIGHT,
+        self::ROW_END,
+    );
+
     // list of the component types used for unit testing
     // in order of const definition which should be also the thematic order
     // TODO align with component_types.csv
@@ -540,6 +649,12 @@ class component_type
         [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
         [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
         [self::FORM_FIELD_NAME_IN_FORMULAS, self::FORM_FIELD_NAME_IN_FORMULAS_ID],
+        [self::SYSTEM_SHOW_REF_TYPE, self::FORM_FIELD_REF_TYPE_ID],
+        [self::SYSTEM_SHOW_REF_KEY, self::FORM_FIELD_REF_KEY_ID],
+        [self::SYSTEM_SHOW_REF_SOURCE, self::FORM_FIELD_REF_SOURCE_ID],
+        [self::SYSTEM_SHOW_REF_URL, self::FORM_FIELD_REF_URL_ID],
+        [self::FORM_FIELD_EXTERNAL_KEY, self::FORM_FIELD_EXTERNAL_KEY_ID],
+        [self::FORM_FIELD_WEIGHT, self::FORM_FIELD_WEIGHT_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_LIST_FORMULAS, self::FORM_LIST_FORMULAS_ID],
@@ -569,6 +684,8 @@ class component_type
         [self::FORM_SELECT_RESULTS, self::FORM_SELECT_RESULTS_ID],
         [self::FORM_SELECT_VIEW, self::FORM_SELECT_VIEW_ID],
         [self::FORM_SELECT_VIEWS, self::FORM_SELECT_VIEWS_ID],
+        [self::FORM_SELECT_PARENT_VIEW, self::FORM_SELECT_PARENT_VIEW_ID],
+        [self::FORM_SELECT_CHILD_VIEW, self::FORM_SELECT_CHILD_VIEW_ID],
         [self::FORM_SELECT_COMPONENT, self::FORM_SELECT_COMPONENT_ID],
         [self::FORM_SELECT_COMPONENTS, self::FORM_SELECT_COMPONENTS_ID],
         [self::FORM_SELECT_VIEW_DEFAULT, self::FORM_SELECT_VIEW_DEFAULT_ID],
@@ -583,11 +700,14 @@ class component_type
         [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
         [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
         [self::FORM_SELECT_COMPONENT_STYLE, self::FORM_SELECT_COMPONENT_STYLE_ID],
+        [self::FORM_SELECT_VIEW_RELATION_TYPE, self::FORM_SELECT_VIEW_RELATION_TYPE_ID],
+        [self::FORM_FIELD_VIEW_RELATION_START_POS, self::FORM_FIELD_VIEW_RELATION_START_POS_ID],
         [self::FORM_SELECT_FORMULA_LINK_TYPE, self::FORM_SELECT_FORMULA_LINK_TYPE_ID],
         [self::FORM_SELECT_FORMULA_LINK_PRIORITY, self::FORM_SELECT_FORMULA_LINK_PRIORITY_ID],
         [self::FORM_SELECT_VIEW_LINK_TYPE, self::FORM_SELECT_VIEW_LINK_TYPE_ID],
         [self::FORM_SELECT_VIEW_LINK_PRIORITY, self::FORM_SELECT_VIEW_LINK_PRIORITY_ID],
         [self::FORM_SELECT_COMPONENT_LINK_TYPE, self::FORM_SELECT_COMPONENT_LINK_TYPE_ID],
+        [self::FORM_SELECT_COMPONENT_POS_TYPE, self::FORM_SELECT_COMPONENT_POS_TYPE_ID],
         [self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER, self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
@@ -600,6 +720,11 @@ class component_type
         [self::FORM_PREVIEW, self::FORM_PREVIEW_ID],
         [self::FORM_HIDDEN_BACK, self::FORM_HIDDEN_BACK_ID],
         [self::FORM_HIDDEN_STEP, self::FORM_HIDDEN_STEP_ID],
+        [self::ADMIN_FORM_FIELD_USER_NAME, self::ADMIN_FORM_FIELD_USER_NAME_ID],
+        [self::ADMIN_FORM_FIELD_USER_EMAIL, self::ADMIN_FORM_FIELD_USER_EMAIL_ID],
+        [self::ADMIN_FORM_FIELD_USER_PASSWORD, self::ADMIN_FORM_FIELD_USER_PASSWORD_ID],
+        [self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL, self::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL_ID],
+        [self::FIELD_LANGUAGE_SYMBOL, self::FIELD_LANGUAGE_SYMBOL_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
@@ -632,6 +757,9 @@ class component_type
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
         [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
+        [self::LIST_FORMULAS_OF_VERB, self::LIST_FORMULAS_OF_VERB_ID],
+        [self::LIST_VALUES_BY_TRIPLE, self::LIST_VALUES_BY_TRIPLE_ID],
+        [self::LIST_VALUES_BY_SOURCE, self::LIST_VALUES_BY_SOURCE_ID],
         [self::LIST_PHRASES_OF_FORMULA, self::LIST_PHRASES_OF_FORMULA_ID],
         [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
@@ -648,6 +776,19 @@ class component_type
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::SYSTEM_FIELD_PARENT_VIEW, self::SYSTEM_FIELD_PARENT_VIEW_ID],
+        [self::SYSTEM_FIELD_CHILD_VIEW, self::SYSTEM_FIELD_CHILD_VIEW_ID],
+        [self::SHOW_FIELD_RELATION_TYPE, self::SHOW_FIELD_RELATION_TYPE_ID],
+        [self::SHOW_FIELD_START_POS, self::SHOW_FIELD_START_POS_ID],
+        [self::SYSTEM_SHOW_RESULT_DIFF, self::SYSTEM_SHOW_RESULT_DIFF_ID],
+        [self::SYSTEM_PASTE_TABLE_CONTEXT, self::SYSTEM_PASTE_TABLE_CONTEXT_ID],
+        [self::SYSTEM_PASTE_TABLE_BODY, self::SYSTEM_PASTE_TABLE_BODY_ID],
+        [self::SYSTEM_SELECTION_TEXT, self::SYSTEM_SELECTION_TEXT_ID],
+        [self::SYSTEM_POPUP_TITLE, self::SYSTEM_POPUP_TITLE_ID],
+        [self::FORM_CLASS, self::FORM_CLASS_ID],
+        [self::FORM_CHANGES, self::FORM_CHANGES_ID],
+        [self::FORM_IMPACT, self::FORM_IMPACT_ID],
+        [self::SYSTEM_SHOW_VIEW_DIFF, self::SYSTEM_SHOW_VIEW_DIFF_ID],
         [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
         [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],
         [self::WORD_RESULTS, self::WORD_RESULTS_ID],

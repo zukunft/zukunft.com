@@ -116,7 +116,7 @@ class Translator
                 ]);
                 $msg = $usr_msg->var_message_text();
                 log_err($msg);
-                return msg_id::ERROR;
+                return msg_id::ERROR_TEXT;
             }
         }
     }

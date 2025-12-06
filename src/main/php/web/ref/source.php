@@ -42,24 +42,29 @@ namespace Zukunft\ZukunftCom\main\php\web\ref;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -89,14 +94,38 @@ class source extends sandbox_code_id
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this source frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::URL, $url_array)) {
+                $this->url = $url_array[url_var::URL];
+            } else {
+                $this->url = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * set and get
      */
 
-    function set_url(?string $url): void
-    {
-        $this->url = $url;
-    }
-
+    /**
+     * as a function to overwrite the parent function
+     * @return string|null
+     */
     function url(): ?string
     {
         return $this->url;
@@ -110,17 +139,18 @@ class source extends sandbox_code_id
     /**
      * set the vars of this source frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::URL, $json_array)) {
-            $this->set_url($json_array[json_fields::URL]);
+            $this->url = $json_array[json_fields::URL];
         } else {
-            $this->set_url(null);
+            $this->url = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -130,7 +160,7 @@ class source extends sandbox_code_id
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::URL] = $this->url;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -165,95 +195,55 @@ class source extends sandbox_code_id
      */
 
     /**
-     * @param string $form the name of the html form
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the source type
-     */
-    private function dsp_select_type(string $form, ?type_lists $typ_lst): string
-    {
-        return $typ_lst->html_source_types->selector($form);
-    }
-
-    /**
      * @param string $form
      * @param string $pattern
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @return string
      */
-    function source_selector(string $form, string $pattern): string
+    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
-        $src_lst = new source_list();
-        $src_lst->load_like($pattern);
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
-    }
-
-
-    /*
-     * to review
-     */
-
-    // display a html view to change the source name and url
-    function dsp_edit(string $back = ''): string
-    {
-        log_debug($this->dsp_id());
-        $html = new html_base();
-        $result = '';
-
-        if ($this->id() <= 0) {
-            $script = "source_add";
-            $result .= $html->dsp_text_h2("Add source");
-        } else {
-            $script = "source_edit";
-            $result .= $html->dsp_text_h2('Edit source "' . $this->name . '"');
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $src_lst->load_like($pattern);
         }
-        $result .= $html->dsp_form_start($script);
-        //$result .= dsp_tbl_start();
-        $result .= $html->dsp_form_hidden("id", $this->id());
-        $result .= $html->dsp_form_hidden("back", $back);
-        $result .= $html->dsp_form_hidden("confirm", 1);
-        $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
-        $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, new type_lists()) . '</td></tr>';
-        $result .= $html->dsp_form_fld("url", $this->url(), "URL:");
-        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
-        //$result .= dsp_tbl_end ();
-        $result .= $html->dsp_form_end('', $back);
-
-        log_debug('done');
-        return $result;
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
-     * display a selector for the value source
-     */
-    function dsp_select(string $form_name, string $back): string
-    {
-        global $usr;
-        log_debug($this->dsp_id());
-        $result = ''; // reset the html code var
-
-        // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
-        if ($this->id() <= 0 and $form_name == "value_add") {
-            $this->id = $usr->source_id();
-        }
-
-        log_debug("source id used (" . $this->id() . ")");
-        $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
-        $result .= '    <td>' . $this->btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . $this->btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
-        return $result;
-    }
-
-    /**
-     * @param string $form
+     * called from \web\component\execute\system_form to select the source type
+     * @param string $form name of the html form where the type selector should be added
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string
+     * @return string the html code to select the source type within a form
      */
-    public function source_type_selector(string $form, ?type_lists $typ_lst): string
+    function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
             $used_source_type_id = $typ_lst->html_source_types->default_id();
         }
         return $typ_lst->html_source_types->selector($form, $used_source_type_id);
+    }
+
+    /**
+     * create the HTML code to select a view usable for a source
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with all suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW,
+        msg_id    $msg_id = msg_id::FORM_SELECT_VIEW
+    ): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        $msk_lst = $msk_lst->only_type(view_type::SOURCE);
+        return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 
 }

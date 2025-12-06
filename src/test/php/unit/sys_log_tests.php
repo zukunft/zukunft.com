@@ -34,15 +34,15 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
-use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\test\php\create\test_sys_log;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_tests
@@ -86,8 +86,9 @@ class sys_log_tests
 
         $t->subheader($ts . 'api');
 
-        $log_lst = $t->sys_log_list();
-        $t->assert_api($log_lst, '', [api_type::HEADER]);
+        $t_sys = new test_sys_log();
+        $log_lst = $t_sys->sys_log_list();
+        $t->assert_api($log_lst, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
 
 
         $t->subheader($ts . 'system time type sql setup');

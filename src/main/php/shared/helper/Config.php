@@ -43,7 +43,9 @@ class Config
     const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
     // number of entries initial to show in a named list
-    const int LIMIT_NAME_LIST = 10;
+    const int LIMIT_NAME_LIST = 4;
 
+    // number of entries initial to show in a value list
+    const int LIMIT_VALUE_LIST = 6;
 
 }

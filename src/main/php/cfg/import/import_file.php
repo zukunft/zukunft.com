@@ -43,13 +43,11 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
-include_once TEST_CONST_PATH . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -89,7 +87,8 @@ class import_file
 
     /**
      * import a single json file
-     * TODO return a user message instead of a string
+     * TODO add user_message as a parameter
+     * TODO set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
@@ -100,7 +99,7 @@ class import_file
     {
         global $cfg;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -145,13 +144,13 @@ class import_file
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str);
+                    $imp->put_json_direct($json_str, $usr_msg);
                 } else {
-                    $import_result = $imp->put_json($json_str);
+                    $imp->put_json($json_str, $usr_msg);
                 }
 
                 // show the summery to the user
-                if ($import_result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $usr_msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
@@ -172,8 +171,13 @@ class import_file
                         $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-                    $usr_msg->add($import_result);
-                    //$usr_msg->add_message_text('import of ' . $filename . ' failed');
+
+                    // TODO Prio 0 activate
+                    // TODO Prio 1 move to calling function and include save
+                    //if (!$usr_msg->is_ok()) {
+                    //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                    //}
+                    $usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
         }
@@ -224,6 +228,8 @@ class import_file
      */
     function import_config_yaml(user $usr, bool $validate = false): user_message
     {
+        global $sys;
+        global $db_con;
         global $mtr;
         global $log_txt;
 
@@ -264,7 +270,8 @@ class import_file
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
                     $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load();
+                    $load_msg = $dto->load($db_con);
+                    $sys->typ_lst->load($db_con);
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values
@@ -391,7 +398,7 @@ class import_file
             $usr, true
         );
 
-        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

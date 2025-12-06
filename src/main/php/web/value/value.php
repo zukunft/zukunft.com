@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -65,6 +66,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -116,20 +118,22 @@ class value extends sandbox_value
      * set the vars of this value frontend object bases on the url array
      * TODO do the mapping always on normal, long and pod vars
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
+        parent::url_mapper($url_array, $usr_msg, $dto);
         if ($usr_msg->is_ok()) {
             if (array_key_exists(url_var::SOURCE, $url_array)) {
                 if ($url_array[url_var::SOURCE] != null) {
                     $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
-            if (array_key_exists(url_var::SOURCE_LONG, $url_array)) {
-                if ($url_array[url_var::SOURCE_LONG] != null) {
-                    $this->set_source_id($url_array[url_var::SOURCE_LONG]);
+            if (array_key_exists(url_var::SOURCE, $url_array)) {
+                if ($url_array[url_var::SOURCE] != null) {
+                    $this->set_source_id($url_array[url_var::SOURCE]);
                 }
             }
         }
@@ -139,17 +143,17 @@ class value extends sandbox_value
     /**
      * set the vars of this value object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
 
         if (array_key_exists(json_fields::SOURCE, $json_array)) {
             $this->set_source_id($json_array[json_fields::SOURCE]);
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -345,6 +349,46 @@ class value extends sandbox_value
     }
 
     /**
+     * create the html code to show the value formatted based on the user settings
+     * and the unit after the value
+     * and with the information only phrases move the tooltip of the group name
+     * and with the group name as a link to see the details of the value
+     * @return string the description with links and the formatted value
+     */
+    function with_unit_and_info(string $back = ''): string
+    {
+        $html = new html_base();
+        $lib = new library();
+        $phr_lst = $this->grp->phr_lst();
+        $unit_phr_lst = $phr_lst->measure_list();
+        $info_phr_lst = $phr_lst->info_list();
+        $phr_lst = $phr_lst->ex_measure_list();
+        $phr_lst = $phr_lst->ex_info_list();
+        if ($unit_phr_lst->count() > 1) {
+            log_err($this->dsp_id() . ' is not expected to have more than one unit');
+        }
+        $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
+        $name_txt = $phr_lst->name_link_list();
+        $val_txt = $this->value();
+        if (!$info_phr_lst->is_empty()) {
+            $val_txt = $html->ref($url, $val_txt, $info_phr_lst->name_pur());
+        } else {
+            $val_txt = $html->span($val_txt, '', $info_phr_lst->name_pur());
+        }
+        $unit_txt = $unit_phr_lst->name_link_list();
+        return $name_txt . ' ' . $val_txt . ' ' . $unit_txt;
+    }
+
+    /**
+     * perform the fixed validation tests that are never expected to be changes e.g. a value has only one unit
+     * @return string the warning text translated to the frontend language as defined by the user
+     */
+    function warning_text(): string
+    {
+        return '';
+    }
+
+    /**
      * @return string interface function to align the value with the other sandbox objects
      */
     function name(): string
@@ -421,16 +465,16 @@ class value extends sandbox_value
     /**
      * @param string $form
      * @param string $pattern
+     * @param source_list|null $src_lst the frontend cache with the configuration, the preloaded source and the cached objects
      * @return string
      */
-    function source_selector(string $form, string $pattern): string
+    function source_selector(string $form, string $pattern, ?source_list $src_lst): string
     {
-        $src_lst = new source_list();
         // TODO review and maybe use test_mode parameter
         if ($pattern != '') {
             $src_lst->load_like($pattern);
         }
-        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE,  msg_id::FORM_SELECT_SOURCE);
     }
 
     /**
@@ -445,7 +489,7 @@ class value extends sandbox_value
         if ($pattern != '') {
             $ref_lst->load_like($pattern);
         }
-        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::LABEL_STYLE);
+        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::FORM_SELECT_VIEW_STYLE);
     }
 
     /*
@@ -460,8 +504,11 @@ class value extends sandbox_value
     function has_phrase(phrase $phr): bool
     {
         $result = false;
-        foreach ($this->grp->phr_lst() as $val_phr) {
-            if ($val_phr->id() == $phr->id()) {
+        $phr_lst = $this->grp->phr_lst();
+        foreach ($phr_lst->lst() as $val_phr) {
+            if ($val_phr->is_same($phr)) {
+                $result = true;
+            } elseif ($val_phr->is_type_phrase($phr)) {
                 $result = true;
             }
         }
@@ -768,8 +815,8 @@ class value extends sandbox_value
         if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
-            $result .= $html->input(\Zukunft\ZukunftCom\main\php\shared\url_var::ID, $this->id(), html_base::INPUT_HIDDEN);
-            $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
+            $result .= $html->input(url_var::ID, msg_id::FORM_FIELD_ID, $this->id(), html_base::INPUT_HIDDEN);
+            $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_CONFIRM, '1', html_base::INPUT_HIDDEN);
 
             // reset the phrase sample settings
             $main_wrd = null;
@@ -1028,7 +1075,7 @@ class value extends sandbox_value
             // display similar values as a sample for the user to force a consistent type of entry e.g. cost should always be a negative number
             if (isset($main_wrd)) {
                 $main_wrd->load();
-                // TODO activate based on a group load
+                // TODO Prio 2 activate based on a group load
                 /*
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");

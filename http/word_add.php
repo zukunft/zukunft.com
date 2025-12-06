@@ -51,6 +51,7 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -59,9 +60,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
-use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 
@@ -70,11 +72,12 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 include_once paths::SHARED_CONST . 'views.php';
 
 /* open database */
-$db_con = prg_start(view_shared::WORD_ADD);
+$app = new frontend();
+$db_con = $app->start(views::WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -87,7 +90,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::WORD_ADD);
+    $msk->load_by_code_id(views::WORD_ADD);
     $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -168,7 +171,7 @@ if ($usr->id() > 0) {
             $add_result = '';
             // ... add the new word to the database
             if ($wrd->name() <> "") {
-                $add_result .= $wrd->save()->get_last_message();
+                $add_result .= $wrd->save($usr_msg);
             } else {
                 $wrd->load_by_id($wrd_id);
             }
@@ -180,7 +183,7 @@ if ($usr->id() > 0) {
                 $lnk->from()->id = $wrd->id();
                 $lnk->set_verb_id($vrb_id);
                 $lnk->to()->id = $wrd_to;
-                $add_result .= $lnk->save()->get_last_message();
+                $add_result .= $lnk->save($usr_msg);
             }
 
             // if adding was successful ...
@@ -200,16 +203,16 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $msk_dsp = new view_dsp($msk->api_json());
+        $msk_dsp = new view_ui($msk->api_json());
         $dto = new data_object();
         $result .= $msk_dsp->dsp_navbar($dto, $back);
-        $result .= $html->dsp_err($msg);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
-        $wrd_dsp = new word_dsp($wrd->api_json());
-        $result .= $wrd_dsp->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
+        $wrd_dsp = new word_ui($wrd->api_json());
+        //$result .= $wrd_dsp->dsp_add($wrd_id, $wrd_to, $vrb_id, $back);
     }
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

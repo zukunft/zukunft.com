@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/group.php - a combination of a word list and a triple_list
-    -----------------------------
+    model/group/group.php - a combination of a word list and a triple_list
+    ---------------------
 
     the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
     the index group is designed to be useful for structured values e.g.
@@ -63,6 +63,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -91,6 +92,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -203,7 +205,7 @@ class group extends sandbox_multi
         $this->add_phrase_names($prh_names);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
         $this->name = null;
@@ -244,11 +246,12 @@ class group extends sandbox_multi
      * map a group api json to this model group object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the group values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
@@ -260,7 +263,7 @@ class group extends sandbox_multi
             $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -284,13 +287,13 @@ class group extends sandbox_multi
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::ID] = $this->id();
-            if ($this->name != null or !$typ_lst->include_phrases()) {
+            if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
             }
             if ($this->description() != null) {
                 $vars[json_fields::DESCRIPTION] = $this->description();
             }
-            if ($typ_lst->include_phrases()) {
+            if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
                 $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
             }
@@ -554,6 +557,11 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return self::FLD_NAME;
     }
 
@@ -1227,15 +1235,15 @@ class group extends sandbox_multi
      * check if the user has requested a group with a preserved name
      * and yes if return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
         global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
         $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
@@ -1251,7 +1259,7 @@ class group extends sandbox_multi
                 ]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1419,8 +1427,7 @@ class group extends sandbox_multi
 
         // check potential duplicate by name
         $db_chk = clone $this;
-        $db_chk->reset();
-        $db_chk->set_user($this->user());
+        $db_chk->reset(true);
         // check with the standard namespace
         if ($db_chk->load_standard_by_name($this->name())) {
             if ($db_chk->id() > 0) {
@@ -1448,26 +1455,24 @@ class group extends sandbox_multi
      * add a new group to the database
      *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return user_message $usr_msg with status ok
+     *                               or if something went wrong
+     *                               the message that should be shown to the user
+     *                               including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1478,9 +1483,8 @@ class group extends sandbox_multi
                 // TODO check that always before a db action is called the db type is set correctly
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                     $this->set_saved();
                 }
 
@@ -1498,7 +1502,7 @@ class group extends sandbox_multi
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1600,7 +1604,7 @@ class group extends sandbox_multi
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(group::class);
-                // TODO activate Prio 2
+                // TODO Prio 2 activate
                 /*
                 if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
@@ -1700,19 +1704,18 @@ class group extends sandbox_multi
      * the word and triple links related to this phrase group are also removed
      * TODO maybe move this to del_exe
      *
+     * @param user_message $usr_msg
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message
+     * @return bool
      */
-    function del(?bool $use_func = null): user_message
+    function del(user_message $usr_msg, ?bool $use_func = null): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($use_func) {
             $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
-            $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
-            $usr_msg->add($del_msg);
+            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         } else {
 
             // log the delete attempt first
@@ -1726,12 +1729,11 @@ class group extends sandbox_multi
             if ($log->id() > 0) {
                 $db_con->set_class(group::class);
                 $qp = $this->sql_delete($sc);
-                $msg = $db_con->delete($qp, 'del ' . $this->dsp_id());
-                $usr_msg->add($msg);
+                $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1926,7 +1928,7 @@ class group extends sandbox_multi
             }
         }
         global $debug;
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }

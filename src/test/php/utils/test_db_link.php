@@ -39,14 +39,16 @@ use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_db_link_test(all_tests $t): void
 {
-    global $cng_tbl_cac;
+    global $sys;
 
-    $t->header('Test database link functions');
+    // start the test section (ts)
+    $ts = 'db write link ';
+    $t->header($ts);
 
     // test code link
     $id = change_tables::WORD;
     $target = 5;
-    $result = $cng_tbl_cac->id($id);
-    $t->display(", sql_code_link " . $id, $target, $result);
+    $result = $sys->typ_lst->cng_tbl->id($id);
+    $t->assert(", sql_code_link " . $id, $result, $target);
 
 }

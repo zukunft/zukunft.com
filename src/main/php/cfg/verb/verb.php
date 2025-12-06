@@ -36,6 +36,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::DB . 'sql.php';
@@ -43,6 +44,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -63,10 +65,12 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -152,9 +156,9 @@ class verb extends type_object
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->set_user(null);
         $this->plural = null;
         $this->reverse = null;
@@ -221,11 +225,12 @@ class verb extends type_object
     /**
      * map a verb api json to this model verb object
      * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
         // TODO add user to request new verbs via api
 
@@ -248,7 +253,7 @@ class verb extends type_object
 
         // the usage and impact var is not expected to be changed via api
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -257,18 +262,18 @@ class verb extends type_object
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_mapper_user(
         array        $in_ex_json,
         user         $usr_req,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
@@ -286,7 +291,7 @@ class verb extends type_object
 
         // the usage and impact var is not expected to be changed via import
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -591,33 +596,33 @@ class verb extends type_object
     /**
      * add a verb in the database from an imported json object of external database from
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
-        ?data_object $dto = null,
-        ?object      $test_obj = null
-    ): user_message
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $vrb_cac;
+        global $db_con;
+        global $sys;
 
-        log_debug();
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this verb object but keep the user
-        $usr = $this->usr;
-        $this->reset();
-        $this->set_user($usr);
-        foreach ($json_obj as $key => $value) {
+        $this->reset(true);
+
+        // TODO Prio 0 switch to a key_exists
+        foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                    if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
                         $this->code_id = $value;
                     }
                 }
@@ -640,23 +645,30 @@ class verb extends type_object
         }
 
         // save the verb in the database
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
@@ -673,7 +685,7 @@ class verb extends type_object
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protection_type::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
         */
@@ -784,6 +796,7 @@ class verb extends type_object
         global $db_con;
         $result = true;
 
+        $lib = new library();
         /*
         $change_user_id = 0;
         $sql = "SELECT user_id
@@ -799,7 +812,7 @@ class verb extends type_object
         }
         */
 
-        log_debug('verb->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('verb->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -807,12 +820,13 @@ class verb extends type_object
     function can_change(): bool
     {
         log_debug('verb->can_change ' . $this->id());
+        $lib = new library();
         $can_change = false;
         if ($this->usage == null or $this->usage == 0) {
             $can_change = true;
         }
 
-        log_debug(zu_dsp_bool($can_change));
+        log_debug($lib->dsp_bool($can_change));
         return $can_change;
     }
 
@@ -820,6 +834,7 @@ class verb extends type_object
     private function log_add(): change
     {
         log_debug('verb->log_add ' . $this->dsp_id());
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::VERB);
@@ -827,7 +842,7 @@ class verb extends type_object
         $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -847,6 +862,7 @@ class verb extends type_object
     private function log_del(): change
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::VERB);
@@ -854,7 +870,7 @@ class verb extends type_object
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -871,7 +887,7 @@ class verb extends type_object
             $new_value = $log->new_value;
             $std_value = $log->std_value;
         }
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
@@ -1032,7 +1048,7 @@ class verb extends type_object
                 if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
                   // ... if yes request to delete or exclude the record with the id parameters before the change
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and use it for the update
                   $this->id = $db_chk->id();
                   $this->set_owner_id($db_chk->owner_id());
@@ -1054,7 +1070,7 @@ class verb extends type_object
                   // if the target link has not yet been created
                   // ... request to delete the old
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and create a deletion request for all users ???
 
                   // ... and create a new display component link
@@ -1112,15 +1128,14 @@ class verb extends type_object
      * check if the user has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
-        global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1135,32 +1150,34 @@ class verb extends type_object
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         // check the preserved names
-        $usr_msg = $this->check_preserved();
+        $this->check_preserved($usr_msg);
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($usr_msg->usr->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
+            $this->set_user($usr_msg->usr);
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));
@@ -1216,19 +1233,19 @@ class verb extends type_object
             log_info($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * exclude or delete a verb
-     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
         log_debug('verb->del');
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // reload only if needed
         if ($this->name == '') {
@@ -1258,7 +1275,7 @@ class verb extends type_object
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /*
@@ -1272,7 +1289,7 @@ class verb extends type_object
     {
         global $debug;
         $result = parent::dsp_id();
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
                 $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }

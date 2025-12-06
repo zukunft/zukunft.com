@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/ref_types.php - to link coded functionality to a reference
-    -----------------------
+    model/ref/ref_type_list.php - to link coded functionality to a reference
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words

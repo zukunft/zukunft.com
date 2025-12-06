@@ -42,14 +42,14 @@ class component_list_read_tests
 
     function run(test_cleanup $t): void
     {
-
         global $usr;
-        $lib = new library();
 
         // init
         $t->name = 'component list read db->';
 
-        $t->header('component list database read tests');
+        // start the test section (ts)
+        $ts = 'db read component list ';
+        $t->header($ts);
 
         // test loading component names
         $test_name = 'loading component names with pattern return the expected component';

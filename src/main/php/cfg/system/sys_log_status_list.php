@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_error_log_status_list.php - list of the system log statuus
-    ---------------------------------------------
+    model/system/sys_log_status_list.php - list of the system log statuus
+    ------------------------------------
 
     This file is part of zukunft.com - calc with words
 
