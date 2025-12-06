@@ -412,4 +412,25 @@ class data_object
             }
         }
     }
+
+    /**
+     * add the database id of the known test views to view list
+     * @return void
+     */
+    function add_components_to_views(): void
+    {
+        $msk_lst = $this->msk_lst;
+        foreach ($msk_lst->lst() as $msk) {
+            if ($msk->id > 0) {
+                foreach ($msk->component_list()->lst() as $cmp) {
+                    if ($cmp->id == 0) {
+                        $filled = $this->component_list()->get_by_id($cmp->id);
+                        if ($filled != null) {
+                            $cmp->fill($filled);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

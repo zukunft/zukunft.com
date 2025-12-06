@@ -84,6 +84,11 @@ if ($db_con->is_open()) {
                 $t->run_unit();
                 $t->run_db_recreate();
 
+                // create the test dataset to check the basic write functions
+                // TODO Prio 3 make sure that all are created by import instead
+                $t_db = new test_db_load($t);
+                $t_db->create_unit_test_db_entries($t);
+
                 // recreate the type list api message based on the updated db
                 // because this json is used for the unit tests
                 // if the type_list created by this reset_db script differs

@@ -68,6 +68,7 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -286,7 +288,9 @@ class sandbox_named extends sandbox
         } else {
             $vars[json_fields::DESCRIPTION] = $this->description();
         }
-        $vars[json_fields::USAGE] = $this->usage();
+        if ($this->usage() != null) {
+            $vars[json_fields::USAGE] = $this->usage();
+        }
 
         return $vars;
     }
@@ -298,12 +302,13 @@ class sandbox_named extends sandbox
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
         $vars[json_fields::NAME] = $this->name();
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
@@ -919,9 +924,12 @@ class sandbox_named extends sandbox
     /**
      * check if the user has requested to use a preserved name for the sandbox object
      * and if yes return a message to the user
+     * if the user is a system user or an admin user true is returned
+     * so that admin user can change reserved objects
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * * @return bool true if everything has been fine
+     * @return bool true if the named sandbox object is not using a reserved name
+     *              or also true if the user is allowed to add and change reserved named
      */
     protected function check_preserved(user_message $usr_msg): bool
     {
@@ -936,12 +944,18 @@ class sandbox_named extends sandbox
         // system users are always allowed to add objects e.g. for the system views
         if (!$usr_msg->usr->is_system()) {
             if (in_array($this->name(), $this->reserved_names())) {
-                // the admin user needs to add the read test objects during initial load
-                if ($usr_msg->usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
-                    $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
-                        msg_id::VAR_NAME => $this->name(),
-                        msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
-                    ]);
+                // if the name is a reserved name
+                // to add the read test objects during initial load
+                if (in_array($this->name(), $this->fixed_names())) {
+                    // an admin user is needed
+                    // so if the user is not an admin add a message
+                    // which will return false
+                    if (!$usr_msg->usr->is_admin()) {
+                        $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                            msg_id::VAR_NAME => $this->name(),
+                            msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                        ]);
+                    }
                 }
             }
         }

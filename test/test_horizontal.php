@@ -46,11 +46,14 @@ include_once test_paths::UTILS . 'test_base.php';
 include_once test_paths::UTILS . 'all_tests.php';
 
 include_once test_paths::UNIT . 'horizontal_tests.php';
+include_once test_paths::UNIT_READ . 'horizontal_read_tests.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\unit\horizontal_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\horizontal_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\horizontal_ui_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\test_app;
 
@@ -81,6 +84,8 @@ if ($db_con->is_open()) {
 
             // run the horizontal tests
             new horizontal_tests()->run($t);
+            new horizontal_read_tests()->run($t);
+            new horizontal_ui_tests()->run($t);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

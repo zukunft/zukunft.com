@@ -66,6 +66,7 @@ class json_fields
     // the json field name in the api json message which is supposed to contain
     // the database id (or in some cases still the code id) of an object type
     // e.g. for the word api message it contains the id of the phrase type
+    // for link types use PREDICATE
     const string TYPE = 'type_id';
     // the json field name in the im- and export json message which is supposed to contain
     // the code id of an object type
@@ -77,7 +78,6 @@ class json_fields
 
     // object lists
     const string PHRASES = 'phrases';
-    const string COMPONENTS = 'components';
 
     // single objects
     const string REFERENCE = 'reference';
@@ -134,6 +134,8 @@ class json_fields
     // reference fields e.g. to link a phrase to an external reference
     const string PHRASE_ID = 'phrase_id';
     const string PHRASE = 'phrase'; // the phrase object as a sub array
+    const string TERM_ID = 'term_id';
+    const string TERM = 'term'; // the term object as a sub array
     const string SOURCE = 'source_id';
     const string USER_ID = 'user_id';
     //const string GROUP_ID = 'group_id';
@@ -141,7 +143,9 @@ class json_fields
     const string FORMULA = 'formula'; // the formula object as a sub array
 
     // for link api objects the id of the preloaded link type
-    const string PREDICATE = 'predicate_id';
+    // for the type of one object that is not a link use TYPE
+    const string PREDICATE_ID = 'predicate_id';
+    const string PREDICATE = 'predicate'; // the link type code id
     const string FROM = 'from_id';
     const string FROM_PHRASE = 'from_phrase';
     const string TO = 'to_id';
@@ -204,9 +208,6 @@ class json_fields
 
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
-
-    // the relation type that defines e.g. how a child view changes the parent view
-    const string RELATION_TYPE = 'relation_type';
 
     // id the select a predefined text for the user that is translated into the user interface language
     const string UI_MSG_CODE_ID = 'ui_msg_code_id';
@@ -293,9 +294,15 @@ class json_fields
 
 
     // name of the view to show a word, triple or formula
-    const string VIEW = 'view';
+    const string VIEW_ID = 'view_id';
+    const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+
+    // name of the component that is part of a view
+    const string COMPONENT_ID = 'component_id';
+    const string COMPONENT = 'component'; // the component as a sub array
+    const string COMPONENTS = 'components';
 
     // a list of users
     const string USERS = 'users';

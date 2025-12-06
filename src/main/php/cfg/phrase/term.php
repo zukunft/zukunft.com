@@ -54,6 +54,8 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
@@ -72,8 +74,10 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -82,6 +86,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
@@ -98,6 +103,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class term extends combine_named
@@ -1099,6 +1105,7 @@ class term extends combine_named
         return $this->id_used_msg($obj_to_add)->get_last_message_translated();
     }
 
+
     /*
      * info functions
      */
@@ -1172,6 +1179,92 @@ class term extends combine_named
     function is_valid(): bool
     {
         return $this->obj()->is_valid();
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * set the vars of this term object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
+            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD)  {
+                $wrd = new word($this->user());
+                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($wrd);
+            } elseif ($class == json_fields::CLASS_VERB)  {
+                $vrb = new verb();
+                $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($vrb);
+            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+                $trp = new triple($this->user());
+                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($trp);
+            } elseif ($class == json_fields::CLASS_FORMULA)  {
+                $frm = new formula($this->user());
+                $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($frm);
+            } else {
+                // TODO Prio 0 review
+                $usr_msg->add_err_with_vars(msg_id::IMPORT_FAILED, []);
+            }
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * create an array with the export json fields of this component
+     * which does not include the internal database id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        if ($this->is_word()) {
+            $wrd = $this->get_word();
+            $vars = $wrd->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+        } elseif ($this->is_verb()) {
+            $vrb = $this->get_verb();
+            $vars = $vrb->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+        } elseif ($this->is_triple()) {
+            $trp = $this->get_triple();
+            $vars = $trp->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+        } elseif ($this->is_formula()) {
+            $frm = $this->get_formula();
+            $vars = $frm->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+        } else {
+            $msg = 'term with unknown object';
+            log_err($msg);
+            $vars = [];
+        }
+        return $vars;
     }
 
 

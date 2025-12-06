@@ -59,6 +59,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -146,6 +148,12 @@ class component extends sandbox_code_id
     function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         parent::api_mapper($json_array, $usr_msg);
+
+        // TODO Prio 1 set link id
+        if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
+            $this->set_id($json_array[json_fields::COMPONENT_ID]);
+        }
+
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
@@ -195,14 +203,17 @@ class component extends sandbox_code_id
 
     /**
      * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 move $typ_lst array convert to one place
+     * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the json api message
      * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
         $vars = parent::api_array();
+
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
         $vars[json_fields::UI_MSG_CODE_ID_VARS] = $this->ui_msg_code_id_vars?->value;
         $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception?->value;
@@ -264,6 +275,12 @@ class component extends sandbox_code_id
      * info
      */
 
+    /**
+     * TODO Prio 1 apply this error handling to similar functions
+     * get the
+     * @param type_lists|null $typ_lst
+     * @return string
+     */
     function type_code_id(?type_lists $typ_lst): string
     {
 
@@ -271,11 +288,12 @@ class component extends sandbox_code_id
         if ($typ_lst?->html_component_types == null) {
             $this->log_err('html_component_types are empty');
         } else {
-            $err_msg = 'Component type code id for ' . $this->dsp_id()
-                . ' and type id ' . $this->type_id() . ' missing';
             if ($this->type_id() == null) {
+                $err_msg = 'Component type not set in ' . $this->dsp_id();
                 $this->log_err($err_msg);
             } else {
+                $err_msg = 'Component type code id for ' . $this->dsp_id()
+                    . ' and type id ' . $this->type_id() . ' missing';
                 $type_code_id = $typ_lst->html_component_types->code_id($this->type_id());
                 if ($type_code_id == '') {
                     $this->log_err($err_msg);

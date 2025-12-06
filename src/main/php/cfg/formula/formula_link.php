@@ -55,7 +55,9 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -84,7 +86,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -232,6 +236,142 @@ class formula_link extends sandbox_link
         return $result;
     }
 
+    /**
+     * map a formula link api json to this model formula link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(
+        array        $api_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        parent::api_mapper($api_json, $usr_msg);
+
+        if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
+            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $usr_msg, $dto);
+        }
+        if (array_key_exists(json_fields::FORMULA, $api_json)) {
+            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $usr_msg);
+        }
+        if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
+            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $usr_msg, $dto);
+        }
+        if (array_key_exists(json_fields::PHRASE, $api_json)) {
+            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $usr_msg);
+        }
+        if (array_key_exists(json_fields::PRIORITY, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::PRIORITY];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * set the vars of this formula link object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+
+        // import the formula
+        if (array_key_exists(json_fields::FORMULA, $in_ex_json)) {
+            $frm_json = $in_ex_json[json_fields::FORMULA];
+            if (is_array($frm_json)) {
+                if (count($frm_json) == 1 and array_key_exists(json_fields::NAME, $frm_json)) {
+                    $frm_json = $frm_json[json_fields::NAME];
+                }
+            }
+            if (is_string($frm_json)) {
+                $frm = $dto?->get_formula_by_name($frm_json);
+                if ($frm == null) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                        msg_id::VAR_FORMULA => $frm_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $frm = new formula($usr_msg->usr);
+                    $frm->set_name($frm_json);
+                }
+                $this->set_formula($frm);
+            } elseif (is_array($frm_json)) {
+                $frm = new formula($usr_msg->usr);
+                $frm->import_mapper($frm_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_formula($frm);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::FORMULA_CREATED, [
+                msg_id::VAR_FORMULA_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $frm = new formula($usr_msg->usr);
+            $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_formula($frm);
+        }
+
+        // import the phrase
+        if (array_key_exists(json_fields::PHRASE, $in_ex_json)) {
+            $phr_json = $in_ex_json[json_fields::PHRASE];
+            if (is_array($phr_json)) {
+                if (count($phr_json) == 1 and array_key_exists(json_fields::NAME, $phr_json)) {
+                    $phr_json = $phr_json[json_fields::NAME];
+                }
+            }
+            if (is_string($phr_json)) {
+                $phr = $dto?->get_phrase_by_name($phr_json);
+                if ($phr == null) {
+                    $usr_msg->add_id_with_vars(msg_id::PHRASE_MISSING_IMPORT, [
+                        msg_id::VAR_PHRASE => $phr_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $phr = new phrase($usr_msg->usr);
+                    $phr->set_name($phr_json);
+                }
+                $this->set_phrase($phr);
+            } elseif (is_array($phr_json)) {
+                $phr = new phrase($usr_msg->usr);
+                $phr->import_mapper($phr_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_phrase($phr);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::PHRASE_CREATED, [
+                msg_id::VAR_PHRASE_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $phr = new phrase($usr_msg->usr);
+            //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_phrase($phr);
+        }
+
+        if (array_key_exists(json_fields::PREDICATE, $in_ex_json)) {
+            global $sys;
+            $this->predicate_id = $sys->typ_lst->frm_lnk_typ->id($in_ex_json[json_fields::PREDICATE]);;
+        }
+
+        if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
+            $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
 
     /*
      * api
@@ -289,6 +429,61 @@ class formula_link extends sandbox_link
     }
 
     /**
+     * set the formula of this link based on the formula array
+     * @param int|array $api_msg_part either the id itself or an array with the id and the formula details
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return void true if setting the formula has been successful
+     */
+    private function set_formula_from_api_json(
+        int|array    $api_msg_part,
+        user_message $usr_msg
+    ): void
+    {
+        $frm = new formula($this->user());
+        if (is_array($api_msg_part)) {
+            $frm->api_mapper($api_msg_part, $usr_msg);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_formula($frm);
+        }
+    }
+
+    /**
+     * set the formula of this link based on the id
+     * and fill the formula based on the cache if possible
+     * @param int|array $api_msg_part the id itself or an array which leads to an user error message
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return void true if setting the formula has been successful
+     */
+    private function set_formula_from_id(
+        int|array    $api_msg_part,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): void
+    {
+        $frm = new formula($this->user());
+        if (is_int($api_msg_part)) {
+            if ($dto != null) {
+                $frm = $dto->get_formula_by_id($api_msg_part, $frm);
+            } else {
+                $frm->id = $api_msg_part;
+            }
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_formula($frm);
+        }
+    }
+
+    /**
      * rename and cast the parent from object function
      * @param formula $frm the formula that should be linked
      * @return void
@@ -296,6 +491,61 @@ class formula_link extends sandbox_link
     function set_formula(formula $frm): void
     {
         $this->set_fob($frm);
+    }
+
+    /**
+     * set the phrase of this link based on the phrase array
+     * @param int|array $api_msg_part either the id itself or an array with the id and the phrase details
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return void true if setting the phrase has been successful
+     */
+    private function set_phrase_from_api_json(
+        int|array    $api_msg_part,
+        user_message $usr_msg
+    ): void
+    {
+        $phr = new phrase($this->user());
+        if (is_array($api_msg_part)) {
+            $phr->api_mapper($api_msg_part, $usr_msg);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_phrase($phr);
+        }
+    }
+
+    /**
+     * set the phrase of this link based on the id
+     * and fill the phrase based on the cache if possible
+     * @param int|array $api_msg_part the id itself or an array which leads to an user error message
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported phrases
+     * @return void true if setting the phrase has been successful
+     */
+    private function set_phrase_from_id(
+        int|array    $api_msg_part,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): void
+    {
+        $phr = new phrase($this->user());
+        if (is_int($api_msg_part)) {
+            if ($dto != null) {
+                $phr = $dto->get_phrase_by_id($api_msg_part, $phr);
+            } else {
+                $phr->set_id($api_msg_part);
+            }
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_phrase($phr);
+        }
     }
 
     /**
@@ -353,6 +603,24 @@ class formula_link extends sandbox_link
     function pos(): ?int
     {
         return $this->order_nbr;
+    }
+
+    /**
+     * overwrite the link type function
+     * @return string|null the code id of the verb
+     */
+    function predicate_code_id(): ?string
+    {
+        global $sys;
+        $id = $this->predicate_id();
+        $typ = $sys->typ_lst->frm_lnk_typ->get($this->predicate_id());
+        if ($typ != null) {
+            return $typ->code_id();
+        } else {
+            $msg = 'formula link type with id ' . $id . ' is missing';
+            log_err($msg);
+            return $msg;
+        }
     }
 
 
@@ -551,6 +819,40 @@ class formula_link extends sandbox_link
     function name_field(): string
     {
         return '';
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields of this component
+     * which does not include the internal database id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+        if ($this->formula()?->name() != null) {
+            $vars[json_fields::FORMULA] = $this->formula()->export_json($exp_typ, $do_load);
+        }
+        if ($this->phrase()?->name() != null) {
+            $vars[json_fields::PHRASE] = $this->phrase()->export_json($exp_typ, $do_load);
+        }
+
+        // do not include the default link type in the export
+        global $sys;
+        if ($this->predicate_id == $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+            unset($vars[json_fields::PREDICATE]);
+        }
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+
+        return $vars;
     }
 
 

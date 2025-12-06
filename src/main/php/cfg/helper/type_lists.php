@@ -287,6 +287,9 @@ class type_lists
             $result = $this->cmp_typ->load($db_con);
         }
         if ($result) {
+            $result = $this->cmp_lnk_typ->load($db_con);
+        }
+        if ($result) {
             $result = $this->pos_typ->load($db_con);
         }
         if ($result) {

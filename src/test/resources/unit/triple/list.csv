@@ -42,7 +42,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 41,,26,126,1,per kWh,,,,,,18,,,,,,,,3
 42,,26,130,1,per t,,,,,,18,,,,,,,,3
 43,,26,124,1,per l,,,,,,18,,,,,,,,3
-44,103,20,109,1,per year,,,,,,,,,,,,,,3
+44,103,26,109,1,per year,,,,,,,,,,,,,,3
 45,132,20,131,1,hyperfine transition,,,,,,,,,,,,,,3
 46,136,2,109,1,1967 (year),,,,,,,,,,,,,,
 47,137,2,109,1,1979 (year),,,,,,,,,,,,,,
@@ -61,7 +61,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 60,27,26,-18,1,metre per second cubed,,,,,,3,,,,,,,,3
 61,,18,-32,1,rad/s,,,,,,3,,,,,,,,3
 62,43,26,-17,1,radian per second squared,,,,,,3,,,,,,,,3
-63,1126,26,24,1,m/s,,,,,,,,,,,,,,3
+63,1126,18,24,1,m/s,,,,,,,,,,,,,,3
 64,,18,-37,1,Hz/s,,,,,,3,,,,,,,,3
 65,100,5,-38,1,volumetric flow rate,,,,,,3,,,,,,,,3
 66,-45,7,98,1,hyperfine transition frequency,,,,,,,,,,,,,,3
@@ -90,7 +90,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 89,28,29,157,1,m is symbol for million,,,,,,,,,,,,,,
 90,161,29,158,1,b is symbol for billion,,,,,,,,,,,,,,
 91,205,20,193,1,global problem,,,,,,,,,,,,,,
-92,22,1,186,1,system configuration,,,,,,,,,,,,,,
+92,22,30,186,1,system configuration,,,,,,,,,,,,,,
 93,213,2,187,1,Zurich (City),,,,,,,,,,,,,,
 94,213,2,185,1,Zurich (Canton),,,,,,,,,,,,,,
 95,184,2,187,1,Bern (City),,,,,,,,,,,,,,

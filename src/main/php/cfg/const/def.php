@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\const;
 
 //include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 //include_once paths::MODEL_COMPONENT . 'component_type.php';
 //include_once paths::MODEL_COMPONENT . 'component_link_type.php';
@@ -43,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_type.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
 //include_once paths::MODEL_LANGUAGE . 'language_form.php';
@@ -56,7 +58,9 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
 //include_once paths::MODEL_SYSTEM . 'job_type.php';
+//include_once paths::MODEL_SYSTEM . 'pod.php';
 //include_once paths::MODEL_SYSTEM . 'session.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 //include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
@@ -77,6 +81,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_list.php';
 //include_once paths::MODEL_VIEW . 'view_type.php';
@@ -91,6 +96,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
@@ -100,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
@@ -120,7 +127,9 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
@@ -134,6 +143,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
@@ -211,12 +221,13 @@ class def
     // corresponding frontend object,
     // a database table and
     // can be im- and exported
-    // TODO add term_view_links, formula_link, component_links, styles, view_types,
+    // TODO add group, term_view_links, formula_link, component_links, styles, view_types,
     //          time_series, geo and text values, ip ranges, language, pod,
     //          add types (phrase_type, formula_type, formula_link_types, source_types,
     //                     ref_types, position_types, view_types, view_link_types,
     //                     component_types, component_link_types, pod_types, pod_statu
     const array MAIN_CLASSES = [
+        user::class,
         word::class,
         verb::class,
         triple::class,
@@ -224,16 +235,22 @@ class def
         ref::class,
         value::class,
         formula::class,
+        formula_link::class,
         result::class,
         view::class,
+        view_relation::class,
+        term_view::class,
         component::class,
-        user::class,
-        view_relation::class
+        component_link::class,
     ];
 
     // classes that have a frontend and backend object but are not user specific
-    const array SYSTEM_UI_CLASSES =[
+    const array SYSTEM_UI_CLASSES = [
+        language::class,
+        pod::class,
+        job::class,
         change_log::class,
+        sys_log::class,
     ];
 
     // classes that have a code id
@@ -338,6 +355,11 @@ class def
         view::class,
         component::class,
         view_relation::class
+    ];
+
+    // list of classes that have n:m object links e.g. view has components linked
+    const array CLASSES_WITH_LINKS = [
+        view::class,
     ];
 
     // list of classes that use a database table but where the changes do not need to be logged

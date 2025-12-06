@@ -36,9 +36,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -50,6 +48,7 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::VIEW . 'view_relation.php';
+include_once html_paths::VIEW . 'term_view.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -58,9 +57,12 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -74,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -85,7 +88,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
@@ -98,12 +103,14 @@ use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase as list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
@@ -196,6 +203,8 @@ class test_lib
         $dto_ui->set_view_list($this->cast_view_list($dto->view_list()));
         // add the view id because the import does not include the database id
         $dto_ui->add_id_to_views();
+        // add the components to the views
+        //$dto_ui->add_components_to_views();
         // import the base views
         $json_str = file_get_contents(files::BASE_VIEWS);
         $size = strlen($json_str);
@@ -205,6 +214,8 @@ class test_lib
         $dto_base_dsp->set_view_list($this->cast_view_list($dto_base->view_list()));
         // add the view id because the import does not include the database id
         $dto_base_dsp->add_id_to_views();
+        // add the components to the views
+        //$dto_base_dsp->add_components_to_views();
         $dto_ui->merge_view_list($dto_base_dsp->view_list());
 
         // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
@@ -262,18 +273,23 @@ class test_lib
     ): false|db_object_ui|list_ui
     {
         $result =  match ($dbo::class) {
+            user::class => new user_ui(),
             word::class => new word_ui(),
             verb::class => new verb_ui(),
             triple::class => new triple_ui(),
             source::class => new source_ui(),
             ref::class => new ref_ui(),
             value::class => new value_ui(),
+            // TODO Prio 0 activate and add to MAIN_CLASSES
             //group::class => new group_ui(),
             formula::class => new formula_ui(),
+            formula_link::class => new formula_link_ui(),
             result::class => new result_ui(),
             view::class => new view_ui(),
+            view_relation::class => new view_relation_ui(),
+            term_view::class => new term_view_ui(),
             component::class => new component_ui(),
-            user::class => new user_ui(),
+            component_link::class => new component_link_ui(),
             word_list::class => new word_list_ui(),
             triple_list::class => new triple_list_ui(),
             ref_list::class => new ref_list_ui(),
@@ -282,7 +298,6 @@ class test_lib
             formula_list::class => new formula_list_ui(),
             formula_link_list::class => new formula_link_list_ui(),
             change_log_list::class => new change_log_list_ui(),
-            view_relation::class => new view_relation_ui(),
             default => false,
         };
         if (!$result) {

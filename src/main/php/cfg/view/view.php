@@ -70,6 +70,8 @@ include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_COMPONENT . 'position_type.php';
 include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::EXPORT . 'export_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -109,6 +111,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -459,12 +463,13 @@ class view extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         global $sys;
 
@@ -489,7 +494,11 @@ class view extends sandbox_code_id
             $this->load_components();
         }
         if ($this->cmp_lnk_lst != null) {
-            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json();
+            if (is_array($exp_typ)) {
+                $exp_typ = new export_type_list($exp_typ);
+            }
+            $exp_typ->add(export_type::IGNORE_FROM);
+            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json($exp_typ, $do_load);
         }
         return $vars;
     }

@@ -230,8 +230,8 @@ class ref extends sandbox
         } else {
             $this->url = null;
         }
-        if (array_key_exists(json_fields::PREDICATE, $json_array)) {
-            $this->set_predicate_id($json_array[json_fields::PREDICATE]);
+        if (array_key_exists(json_fields::PREDICATE_ID, $json_array)) {
+            $this->set_predicate_id($json_array[json_fields::PREDICATE_ID]);
         } else {
             $this->set_predicate_id();
         }
@@ -369,7 +369,7 @@ class ref extends sandbox
         $vars[json_fields::SOURCE] = $this->source?->id();
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
-        $vars[json_fields::PREDICATE] = $this->predicate_id();
+        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

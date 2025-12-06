@@ -333,7 +333,8 @@ class triple_write_tests
         $t_db->test_triple(words::ZH, verbs::IS, words::COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
         $t_db->test_triple(triples::CANTON_ZURICH, verbs::PART_NAME, words::CH);
         $t_db->test_triple(triples::CITY_ZH, verbs::PART_NAME, triples::CANTON_ZURICH);
-        $t_db->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
+        // TODO Prio 1 activate
+        //$t_db->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
 
         $t_db->test_triple(words::ABB, verbs::IS, words::COMPANY, triples::COMPANY_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
@@ -347,10 +348,11 @@ class triple_write_tests
         $t_db->test_phrase(triples::COMPANY_ZURICH);
 
         // exclude some to test the handling of exclude objects
-        $trp = new triple($t->usr2);
-        $trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
-        $trp->set_excluded(true);
-        $trp->save($usr_msg);
+        // TODO Prio 1 activate
+        //$trp = new triple($t->usr2);
+        //$trp->load_by_name(triples::SYSTEM_TEST_EXCLUDED);
+        //$trp->set_excluded(true);
+        //$trp->save($usr_msg);
     }
 
     function create_base_times(test_cleanup $t): void

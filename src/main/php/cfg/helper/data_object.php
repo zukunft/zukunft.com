@@ -464,6 +464,23 @@ class data_object
     }
 
     /**
+     * get a phrase by the id from this cache object
+     * @param int $id the name of the phrase
+     * @param phrase $phr the phrase object with the user as fallback if the phrase is not yet in the cache
+     * @return phrase if found the phrase from cache with all parameters otherwise with just the id set
+     */
+    function get_phrase_by_id(int $id, phrase $phr): phrase
+    {
+        $phr_cac = $this->phrase_list()->get_by_id($id);
+        if ($phr_cac == null) {
+            $phr->set_id($id);
+        } else {
+            $phr = $phr_cac;
+        }
+        return $phr;
+    }
+
+    /**
      * get a word or triple by the name from this cache object
      * @param string $name the name of the word or triple
      * @return phrase|null
@@ -494,6 +511,23 @@ class data_object
     }
 
     /**
+     * get a formula by the id from this cache object
+     * @param int $id the name of the formula
+     * @param formula $frm the formula object with the user as fallback if the formula is not yet in the cache
+     * @return formula if found the formula from cache with all parameters otherwise with just the id set
+     */
+    function get_formula_by_id(int $id, formula $frm): formula
+    {
+        $frm_cac = $this->formula_list()->get_by_id($id);
+        if ($frm_cac == null) {
+            $frm->id = $id;
+        } else {
+            $frm = $frm_cac;
+        }
+        return $frm;
+    }
+
+    /**
      * get a formula by the name from this cache object
      * @param string $name the name of the formula
      * @return formula|IdObject|null
@@ -501,6 +535,34 @@ class data_object
     function get_formula_by_name(string $name): formula|IdObject|null
     {
         return $this->formula_list()->get_by_name($name);
+    }
+
+    /**
+     * get a word, verb, triple or formula by the name from this cache object
+     * @param string $name the name of the word, verb, triple or formula
+     * @return term|null the term from cache or null if not found in cache
+     */
+    function get_term_by_name(string $name): ?term
+    {
+        if ($this->trm_lst_dirty) {
+            $wrd = $this->word_list()->get_by_name($name);
+            $trm = $wrd?->term();
+            if ($trm == null) {
+                $vrb = $this->verb_list()->get_by_name($name);
+                $trm = $vrb?->term();
+            }
+            if ($trm == null) {
+                $trp = $this->triple_list()->get_by_name($name);
+                $trm = $trp?->term();
+            }
+            if ($trm == null) {
+                $frm = $this->formula_list()->get_by_name($name);
+                $trm = $frm?->term();
+            }
+            return $trm;
+        } else {
+            return $this->term_list()->get_by_name($name);
+        }
     }
 
     /**
@@ -676,6 +738,27 @@ class data_object
     {
         $this->trm_lst_dirty = true;
         $this->frm_lst->add_by_name_direct($frm);
+    }
+
+    /**
+     * add a name term without db id to the list
+     * @param term $trm with the name set
+     * @return void
+     */
+    function add_term(term $trm): void
+    {
+        if ($trm->is_word()) {
+            $this->add_word($trm->get_word());
+        } elseif ($trm->is_verb()) {
+            $this->add_verb($trm->get_verb());
+        } elseif ($trm->is_triple()) {
+            $this->add_triple($trm->get_triple());
+        } elseif ($trm->is_formula()) {
+            $this->add_formula($trm->get_formula());
+        } else {
+            log_err('');
+            $this->add_word($trm->get_word());
+        }
     }
 
     /**

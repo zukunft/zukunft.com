@@ -84,6 +84,8 @@ include_once test_paths::UNIT_WRITE . 'source_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'triple_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'value_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_relation_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
 //include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UTILS . 'test_base.php';
@@ -125,6 +127,8 @@ use Zukunft\ZukunftCom\test\php\unit_write\group_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\source_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\triple_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\value_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\view_link_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\view_relation_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\view_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\word_write_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
@@ -621,7 +625,8 @@ class test_db_load
             $frm->save($usr_msg);
             // TODO add this check to all add functions
             if (!$usr_msg->is_ok()) {
-                log_err('add formula failed due to: ' . $usr_msg->get_last_message());
+                $reason = $usr_msg->all_message_text();
+                log_err('add formula failed due to: ' . $reason);
             }
         }
         return $frm;
@@ -1175,8 +1180,28 @@ class test_db_load
     }
 
     /**
+     * check if the database rows used for unit testing are created
+     * and create any missing
+     *
+     * @param test_cleanup $t object with the user for testing and to collect the error messages
+     * @return void maybe return true if all tests are successful
+     * TODO Prio 2 use a user_message object with the given user as parameter
+     */
+    function create_unit_test_db_entries(test_cleanup $t): void
+    {
+        new view_relation_write_tests()->create_base_view_relations($t);
+        new view_link_write_tests()->create_base_view_links($t);
+    }
+
+    /**
      * create all database entries used for the read db unit tests
-     * the created database rows can be accessed by the users but are not expected to be changed and cannot be changed
+     * the created database rows can be accessed by the users
+     * but are not expected to be changed and cannot be changed
+     * all entries should be remove once the tests are done
+     *
+     * to if the test db entries for the unit tests are created
+     * use the ... function
+     * the db rows used for unit testing does not need to be removed after testing
      *
      * @param all_tests $t the test object to collect the errors and calculate the execution times
      * @return void
@@ -1191,7 +1216,6 @@ class test_db_load
         new formula_write_tests()->create_test_formulas($t);
         new formula_link_write_tests()->create_test_formula_links($t);
         new view_write_tests()->create_test_views($t);
-        // new view_link_write_tests()->create_test_views($t);
         new component_write_tests()->create_test_components($t);
         new component_link_write_tests()->create_test_component_links($t);
         new value_write_tests()->create_test_values($t);
@@ -1214,7 +1238,7 @@ class test_db_load
 
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $t->assert_api($ui_cfg, '', [api_type::HEADER]);
+        $t->assert_api($ui_cfg, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
 
     }
 
@@ -1224,14 +1248,20 @@ class test_db_load
         $lib = new library();
 
         $diff = '';
-
         foreach (def::MAIN_CLASSES as $class) {
             $csv_db = $db_con->csv_from_class($class);
-            $csv_file = $lib->csv_form_class($class);
-            $diff .= $lib->diff_msg($csv_db, $csv_file);
-            if ($diff != '') {
-                $target = implode("", $csv_db);
-                log_err('after database reset these words have been unexpected changed: ' . $diff) . ' target is ' . substr($target, 0, 1000);
+            $csv_file_path = $lib->class_csv_file_path($class);
+            $csv_file = file($csv_file_path);
+            if ($csv_file === false) {
+                log_err('csv file ' . $csv_file_path . ' for fixed base table entries not found');
+            } else {
+                $diff = $lib->diff_msg($csv_db, $csv_file);
+                if ($diff != '') {
+                    $target = implode("", $csv_db);
+                    log_err('after database reset these ' . $lib->class_to_name($class)
+                        . 's have been unexpected changed in ' . $csv_file_path . ': ' . $diff)
+                    . ' target is ' . substr($target, 0, 1000);
+                }
             }
         }
         if ($diff == '') {

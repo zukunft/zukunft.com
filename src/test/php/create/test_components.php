@@ -399,7 +399,7 @@ class test_components
         $lnk->set(1, $t_msk->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_types::SIDE);
-        $lnk->set_style(view_styles::COL_SM_4);
+        $lnk->set_style(view_styles::COL_SM_8);
         $lnk->exclude();
         $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
         $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));

@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
         if ($wrd_id != 0) {
             $wrd = new word($usr);
             $wrd->load_by_id($wrd_id);
-            $result = json_encode($wrd->export_json());
+            $result = json_encode($wrd->export_json([]));
         } else {
             $msg = 'word id missing';
         }

@@ -870,11 +870,11 @@ class test_base
     function assert_export_reload(string $test_name, object $usr_obj): bool
     {
         $lib = new library();
-        $original_json = $usr_obj->export_json();
+        $original_json = $usr_obj->export_json([]);
         $db_obj = $usr_obj->clone_all();
         $db_obj->reset();
         $db_obj->load_by_id($usr_obj->id());
-        $recreated_json = $db_obj->export_json();
+        $recreated_json = $db_obj->export_json([]);
         $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
@@ -953,7 +953,7 @@ class test_base
         }
 
         // create the api message that send to the frontend
-        $api_msg = $msk->api_json();
+        $api_msg = $msk->api_json([api_type::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the database object json to the api message
             // to send only one message to the frontend
@@ -1010,7 +1010,7 @@ class test_base
             $dto = new data_object($usr_msg->usr);
             $usr_obj->import_obj($json_in, $usr_msg, $dto);
             //$this->set_id_for_unit_tests($usr_obj);
-            $json_ex = $usr_obj->export_json(false);
+            $json_ex = $usr_obj->export_json([], false);
             // TODO remove, for faster debugging only
             $json_in_txt = json_encode($json_in);
             $json_ex_txt = json_encode($json_ex);
@@ -1033,7 +1033,7 @@ class test_base
     {
         $usr_msg = new user_message($usr_req);
         $json_before = $obj->api_json([api_type::TEST_MODE]);
-        $json_ex = $obj->export_json(false);
+        $json_ex = $obj->export_json([], false);
         $new_obj = $obj->clone_all();
         $new_obj->reset();
         $dto = new data_object($usr_req);
@@ -1085,7 +1085,7 @@ class test_base
     }
 
     /**
-     * remove the fields from an json array that are send to the frontend
+     * remove the fields from a json array that are send to the frontend
      * but are not send back to the backend
      * because they should not be updated via api
      * e.g. the usage which is calculated by a backend job
@@ -1105,6 +1105,37 @@ class test_base
                     }
                 }
             }
+        }
+
+        return $json_to_db;
+    }
+
+    /**
+     * remove the fields from a json array that are send to the frontend
+     * but are not send back to the backend
+     * because they should not be updated via api
+     * e.g. the usage which is calculated by a backend job
+     * @param array $json_to_ui the array with the unidirectional fields
+     * @return array the array without the unidirectional fields
+     */
+    function json_remove_component_fields(array $json_to_ui): array
+    {
+        $json_to_db = $json_to_ui;
+        if (array_key_exists(json_fields::LINK_ID, $json_to_db)) {
+            if (array_key_exists(json_fields::ID, $json_to_db)) {
+                $json_to_db[json_fields::COMPONENT_ID] = $json_to_db[json_fields::ID];
+                $json_to_db[json_fields::ID] = $json_to_db[json_fields::LINK_ID];
+            }
+            unset($json_to_db[json_fields::LINK_ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $json_to_db)) {
+            unset($json_to_db[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $json_to_db)) {
+            unset($json_to_db[json_fields::DESCRIPTION]);
+        }
+        if (array_key_exists(json_fields::TYPE, $json_to_db)) {
+            unset($json_to_db[json_fields::TYPE]);
         }
 
         return $json_to_db;

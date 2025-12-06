@@ -524,7 +524,7 @@ class type_list
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
                 or $typ::class == view::class) {
-                $typ_vars = $typ->api_json_array();
+                $typ_vars = $typ->api_json_array($typ_lst);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
                 $typ_vars[json_fields::CODE_ID] = $typ->code_id();
@@ -782,7 +782,7 @@ class type_list
         return array_key_exists($name, $this->name_hash);
     }
 
-    function get_by_name(string $name): ?type_object
+    function get_by_name(string $name): verb|type_object|null
     {
         $result = null;
         if (array_key_exists($name, $this->name_hash)) {

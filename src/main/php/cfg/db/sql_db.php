@@ -152,6 +152,7 @@ include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -237,6 +238,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -282,7 +284,6 @@ use mysqli;
 use mysqli_result;
 use PDOException;
 use PgSql\Connection;
-use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
 class sql_db
 {
@@ -1212,11 +1213,22 @@ class sql_db
             $import->import_test_config($usr);
             $this->db_check_missing_owner();
 
-            // create the test dataset to check the basic write functions
-            // TODO use import instead
-            //$t = new all_tests();
-            //$t->set_users();
-            //$t->create_test_db_entries($t);
+            // TODO Prio 0 review
+            $usr_msg = new user_message($usr);
+            $msk_lnk = new term_view($usr);
+            $wrd = new word($usr);
+            $wrd->set(words::MATH_ID, words::MATH);
+            $wrd->description = words::MATH_COM;
+            $wrd->set_type(phrase_type_shared::NORMAL, $usr);
+            $msk = new view($usr);
+            $msk->set(views::START_ID, views::START_NAME);
+            $msk->description = views::START_COM;
+            $msk_lnk->set_term($wrd->term());
+            $msk_lnk->set_predicate(view_link_type::DEFAULT);
+            $msk_lnk->set_view($msk);
+            $msk_lnk->description = 'add usage and log of a word';
+            $msk_lnk->id = 0;
+            $msk_lnk->save($usr_msg);
 
             // remove the test dataset for a clean database
             // TODO use the user message object instead of a string

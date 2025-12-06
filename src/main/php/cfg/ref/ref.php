@@ -78,6 +78,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -115,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -201,7 +203,6 @@ class ref extends sandbox_link
     {
         parent::reset($keep_user);
         $this->create_objects($this->user());
-        $this->set_predicate_id(0);
         $this->external_key = '';
         $this->source = null;
         $this->url = null;
@@ -230,7 +231,6 @@ class ref extends sandbox_link
         string $id_fld = ''
     ): bool
     {
-        global $sys;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
@@ -394,9 +394,6 @@ class ref extends sandbox_link
             if ($this->source()?->id() != null) {
                 $vars[json_fields::SOURCE] = $this->source()?->id();
             }
-            if ($this->predicate_id() != 0) {
-                $vars[json_fields::PREDICATE] = $this->predicate_id();
-            }
             $vars[json_fields::DESCRIPTION] = $this->description;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -413,17 +410,19 @@ class ref extends sandbox_link
 
     /**
      * create an array with the export json fields of this reference excluding e.g. the database id
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->source() != null) {
             $vars[json_fields::SOURCE_NAME] = $this->source()->name();
         }
         if ($this->predicate_id > 0) {
+            unset($vars[json_fields::PREDICATE]);
             $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
         }
         if ($this->external_key() <> '') {

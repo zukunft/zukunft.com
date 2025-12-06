@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
@@ -51,12 +53,16 @@ include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_link.php';
 include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
@@ -68,6 +74,7 @@ include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_relation.php';
+include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -77,7 +84,9 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
@@ -91,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -100,7 +110,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
@@ -112,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
+use Zukunft\ZukunftCom\main\php\web\view\term_view as view_link_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -180,17 +193,26 @@ class test_mappers
             case formula::class;
                 $obj = $t_frm->formula();
                 break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link();
+                break;
             case result::class;
                 $obj = $t_res->result();
                 break;
             case view::class;
                 $obj = $t_msk->view();
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation();
+                break;
+            case term_view::class;
+                $obj = $t_msk->term_view();
+                break;
             case component::class;
                 $obj = $t_cmp->component();
                 break;
-            case view_relation::class;
-                $obj = $t_msk->view_relation();
+            case component_link::class;
+                $obj = $t_cmp->component_link();
                 break;
             default:
                 log_err('no base object defined for ' . $class);
@@ -201,9 +223,9 @@ class test_mappers
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
+     * @return triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): triple|ref|value|result|formula_link|view_relation|term_view|component_link|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         $t_usr = new test_users();
@@ -242,17 +264,26 @@ class test_mappers
             case formula::class;
                 $obj = $t_frm->formula_filled();
                 break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_filled();
+                break;
             case result::class;
                 $obj = $t_res->result_main_filled();
                 break;
             case view::class;
                 $obj = $t_msk->view_filled();
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_filled();
+                break;
+            case term_view::class;
+                $obj = $t_msk->term_view_filled();
+                break;
             case component::class;
                 $obj = $t_cmp->component_filled();
                 break;
-            case view_relation::class;
-                $obj = $t_msk->view_relation_filled();
+            case component_link::class;
+                $obj = $t_cmp->component_link_filled();
                 break;
             default:
                 log_err('no filled object defined for ' . $class);
@@ -355,17 +386,26 @@ class test_mappers
             case formula::class;
                 $obj = new formula_ui();
                 break;
+            case formula_link::class;
+                $obj = new formula_link_ui();
+                break;
             case result::class;
                 $obj = new result_ui();
                 break;
             case view::class;
                 $obj = new view_ui();
                 break;
+            case view_relation::class;
+                $obj = new view_relation_ui();
+                break;
+            case term_view::class;
+                $obj = new view_link_ui();
+                break;
             case component::class;
                 $obj = new component_ui();
                 break;
-            case view_relation::class;
-                $obj = new view_relation_ui();
+            case component_link::class;
+                $obj = new component_link_ui();
                 break;
             default:
                 log_err('no frontend object defined for ' . $class);
@@ -589,6 +629,11 @@ class test_mappers
                 $obj_array = $this->formula_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case formula_link::class;
+                $obj = $t_frm->formula_link_filled();
+                $obj_array = $this->formula_link_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case result::class;
                 $obj = $t_res->result_main_filled();
                 $obj_array = $this->result_url($obj, $type);
@@ -599,14 +644,24 @@ class test_mappers
                 $obj_array = $this->view_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
+            case view_relation::class;
+                $obj = $t_msk->view_relation_filled();
+                $obj_array = $this->view_relation_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
+            case term_view::class;
+                $obj = $t_msk->term_view_filled();
+                $obj_array = $this->view_link_url($obj, $type);
+                $url_array = array_merge($url_array, $obj_array);
+                break;
             case component::class;
                 $obj = $t_cmp->component_filled();
                 $obj_array = $this->component_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
-            case view_relation::class;
-                $obj = $t_msk->view_relation_filled();
-                $obj_array = $this->view_relation_url($obj, $type);
+            case component_link::class;
+                $obj = $t_cmp->component_link_filled();
+                $obj_array = $this->component_link_url($obj, $type);
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case db_object::class;
@@ -977,6 +1032,19 @@ class test_mappers
         return $url_array;
     }
 
+    private function formula_link_url(formula_link $frm_lnk, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::FORMULA, $frm_lnk->formula_id()];
+        $url_array[] = [url_var::PHRASE, $frm_lnk->phrase_id()];
+        $url_array[] = [url_var::NAME, $frm_lnk->name()];
+        $url_array[] = [url_var::POSITION, $frm_lnk->order_nbr];
+        $url_array[] = [url_var::TYPE, $frm_lnk->predicate_id()];
+        $url_array[] = [url_var::SHARE, $frm_lnk->share_id()];
+        $url_array[] = [url_var::PROTECTION, $frm_lnk->protection_id()];
+        return $url_array;
+    }
+
     private function result_url(result $res, string $type): array
     {
         $url_array = [];
@@ -1000,6 +1068,31 @@ class test_mappers
         return $url_array;
     }
 
+    private function view_relation_url(view_relation $mrl, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::VIEW_PARENT, $mrl->parent()?->id()];
+        $url_array[] = [url_var::VIEW_CHILD, $mrl->child()?->id()];
+        $url_array[] = [url_var::NAME, $mrl->name()];
+        $url_array[] = [url_var::DESCRIPTION, $mrl->description];
+        $url_array[] = [url_var::TYPE, $mrl->predicate_id()];
+        $url_array[] = [url_var::SHARE, $mrl->share_id()];
+        $url_array[] = [url_var::PROTECTION, $mrl->protection_id()];
+        return $url_array;
+    }
+
+    private function view_link_url(term_view $msk_lnk, string $type): array
+    {
+        $url_array = [];
+        $url_array[] = [url_var::VIEW, $msk_lnk->view()->id()];
+        $url_array[] = [url_var::TERM, $msk_lnk->term()->id()];
+        $url_array[] = [url_var::DESCRIPTION, $msk_lnk->description];
+        $url_array[] = [url_var::TYPE, $msk_lnk->predicate_id()];
+        $url_array[] = [url_var::SHARE, $msk_lnk->share_id()];
+        $url_array[] = [url_var::PROTECTION, $msk_lnk->protection_id()];
+        return $url_array;
+    }
+
     private function component_url(component $cmp, string $type): array
     {
         $url_array = [];
@@ -1011,14 +1104,17 @@ class test_mappers
         return $url_array;
     }
 
-    private function view_relation_url(view_relation $mrl, string $type): array
+    private function component_link_url(component_link $cmp_lnk, string $type): array
     {
         $url_array = [];
-        $url_array[] = [url_var::NAME, $mrl->name()];
-        $url_array[] = [url_var::DESCRIPTION, $mrl->description];
-        $url_array[] = [url_var::TYPE, $mrl->predicate_id()];
-        $url_array[] = [url_var::SHARE, $mrl->share_id()];
-        $url_array[] = [url_var::PROTECTION, $mrl->protection_id()];
+        $url_array[] = [url_var::VIEW, $cmp_lnk->view()->id()];
+        $url_array[] = [url_var::COMPONENT, $cmp_lnk->component()->id()];
+        $url_array[] = [url_var::POSITION, $cmp_lnk->order_nbr];
+        $url_array[] = [url_var::POSITION_TYPE, $cmp_lnk->pos_type_id()];
+        $url_array[] = [url_var::STYLE, $cmp_lnk->style_id()];
+        $url_array[] = [url_var::TYPE, $cmp_lnk->predicate_id()];
+        $url_array[] = [url_var::SHARE, $cmp_lnk->share_id()];
+        $url_array[] = [url_var::PROTECTION, $cmp_lnk->protection_id()];
         return $url_array;
     }
 

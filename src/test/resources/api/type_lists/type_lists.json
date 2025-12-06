@@ -8006,7 +8006,38 @@
         "id": 180
       }
     ],
-    "component_link_types": [],
+    "component_link_types": [
+      {
+        "name": "always",
+        "code_id": "always",
+        "description": "the component is always shown as it is",
+        "id": 1
+      },
+      {
+        "name": "expression",
+        "code_id": "expression",
+        "description": "the component is only shown if an expression is true",
+        "id": 2
+      },
+      {
+        "name": "add",
+        "code_id": "add",
+        "description": "adds this component in the child view that is not in the parent view",
+        "id": 3
+      },
+      {
+        "name": "overwrite",
+        "code_id": "overwrite",
+        "description": "overwrite this component in the child view with the component of the parent view",
+        "id": 4
+      },
+      {
+        "name": "remove",
+        "code_id": "remove",
+        "description": "remove this component from the child view that is in the parent view",
+        "id": 5
+      }
+    ],
     "position_types": [
       {
         "name": "below",
@@ -8053,7 +8084,6 @@
         "protection": 3,
         "name": "Start view",
         "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
-        "usage": null,
         "type_id": 2,
         "code_id": "entry_view",
         "components": [
@@ -8082,7 +8112,6 @@
         "protection": 3,
         "name": "Add new word",
         "description": "Create a new word with all parameters e.g. the phrase type",
-        "usage": null,
         "type_id": 7,
         "code_id": "word_add",
         "components": [
@@ -8254,7 +8283,6 @@
         "protection": 3,
         "name": "Change word",
         "description": "Change name, description or settings of a word",
-        "usage": null,
         "type_id": 7,
         "code_id": "word_edit",
         "components": [
@@ -8577,7 +8605,6 @@
         "protection": 3,
         "name": "Delete word",
         "description": "Exclude or delete a word",
-        "usage": null,
         "type_id": 7,
         "code_id": "word_del",
         "components": [
@@ -8841,7 +8868,6 @@
         "protection": 3,
         "name": "word usage and log",
         "description": "subview to show the usage and changes of a word",
-        "usage": null,
         "type_id": 7,
         "code_id": "word_usage",
         "components": [
@@ -9003,7 +9029,6 @@
         "protection": 3,
         "name": "Add new verb",
         "description": "Request to add a new verb\/predicate",
-        "usage": null,
         "type_id": 7,
         "code_id": "verb_add",
         "components": [
@@ -9155,7 +9180,6 @@
         "protection": 3,
         "name": "Change verb",
         "description": "Rename a verb\/predicate",
-        "usage": null,
         "type_id": 7,
         "code_id": "verb_edit",
         "components": [
@@ -9406,7 +9430,6 @@
         "protection": 3,
         "name": "Delete verb",
         "description": "Exclude or delete a verb",
-        "usage": null,
         "type_id": 7,
         "code_id": "verb_del",
         "components": [
@@ -9618,7 +9641,6 @@
         "protection": 3,
         "name": "Add new triple",
         "description": "Create a new triple with all parameters",
-        "usage": null,
         "type_id": 7,
         "code_id": "triple_add",
         "components": [
@@ -9862,7 +9884,6 @@
         "protection": 3,
         "name": "Change triple",
         "description": "Rename a triple",
-        "usage": null,
         "type_id": 7,
         "code_id": "triple_edit",
         "components": [
@@ -10277,7 +10298,6 @@
         "protection": 3,
         "name": "Delete triple",
         "description": "Exclude or delete a triple",
-        "usage": null,
         "type_id": 7,
         "code_id": "triple_del",
         "components": [
@@ -10561,7 +10581,6 @@
         "protection": 3,
         "name": "Add new source",
         "description": "Create a new source with all parameters e.g. the type",
-        "usage": null,
         "type_id": 7,
         "code_id": "source_add",
         "components": [
@@ -10732,7 +10751,6 @@
         "protection": 3,
         "name": "Change source",
         "description": "Rename a triple or change the type",
-        "usage": null,
         "type_id": 7,
         "code_id": "source_edit",
         "components": [
@@ -11042,7 +11060,6 @@
         "protection": 3,
         "name": "Delete source",
         "description": "To confirm the exclusion or deleting of an external source",
-        "usage": null,
         "type_id": 7,
         "code_id": "source_del",
         "components": [
@@ -11294,7 +11311,6 @@
         "protection": 3,
         "name": "Add new reference",
         "description": "Create a new data link to external systems",
-        "usage": null,
         "type_id": 7,
         "code_id": "ref_add",
         "components": [
@@ -11480,7 +11496,6 @@
         "protection": 3,
         "name": "Change reference",
         "description": "Change then link to external system",
-        "usage": null,
         "type_id": 7,
         "code_id": "ref_edit",
         "components": [
@@ -11718,7 +11733,6 @@
         "protection": 3,
         "name": "Delete reference",
         "description": "To confirm the exclusion or deleting of a reference",
-        "usage": null,
         "type_id": 7,
         "code_id": "ref_del",
         "components": [
@@ -11930,7 +11944,6 @@
         "protection": 3,
         "name": "Add new number",
         "description": "Create a new value",
-        "usage": null,
         "type_id": 7,
         "code_id": "value_add",
         "components": [
@@ -12102,7 +12115,6 @@
         "protection": 3,
         "name": "Change number",
         "description": "Change a number",
-        "usage": null,
         "type_id": 7,
         "code_id": "value_edit",
         "components": [
@@ -12284,7 +12296,6 @@
         "protection": 3,
         "name": "Delete number",
         "description": "Exclude or delete a number",
-        "usage": null,
         "type_id": 7,
         "code_id": "value_del",
         "components": [
@@ -12387,7 +12398,6 @@
         "protection": 3,
         "name": "Add a group name",
         "description": "Add a new group name",
-        "usage": null,
         "type_id": 7,
         "code_id": "group_add",
         "components": [
@@ -12483,7 +12493,6 @@
         "protection": 3,
         "name": "Change group",
         "description": "Change a group name",
-        "usage": null,
         "type_id": 7,
         "code_id": "group_edit",
         "components": [
@@ -12579,7 +12588,6 @@
         "protection": 3,
         "name": "Delete group",
         "description": "Exclude or delete a group name",
-        "usage": null,
         "type_id": 7,
         "code_id": "group_del",
         "components": [
@@ -12662,7 +12670,6 @@
         "protection": 3,
         "name": "Add new formula",
         "description": "Create a new formula with all parameters e.g. the type",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_add",
         "components": [
@@ -12844,7 +12851,6 @@
         "protection": 3,
         "name": "Change formula",
         "description": "Change a formula, the name or the type",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_edit",
         "components": [
@@ -13175,7 +13181,6 @@
         "protection": 3,
         "name": "Delete formula",
         "description": "To confirm the exclusion or deleting of a formula",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_del",
         "components": [
@@ -13397,7 +13402,6 @@
         "protection": 3,
         "name": "Add result number",
         "description": "Administrator can add manually a formula result e.g. for debugging",
-        "usage": null,
         "type_id": 7,
         "code_id": "result_add",
         "components": [
@@ -13569,7 +13573,6 @@
         "protection": 3,
         "name": "Change result",
         "description": "Overwrite a result",
-        "usage": null,
         "type_id": 7,
         "code_id": "result_edit",
         "components": [
@@ -13741,7 +13744,6 @@
         "protection": 3,
         "name": "Delete result",
         "description": "Exclude or delete a result",
-        "usage": null,
         "type_id": 7,
         "code_id": "result_del",
         "components": [
@@ -13844,7 +13846,6 @@
         "protection": 3,
         "name": "Add view",
         "description": "Create a new view and set the type",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_add",
         "components": [
@@ -14004,7 +14005,6 @@
         "protection": 3,
         "name": "Change view",
         "description": "Rename a view",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_edit",
         "components": [
@@ -14164,7 +14164,6 @@
         "protection": 3,
         "name": "Delete view",
         "description": "Exclude or delete a view",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_del",
         "components": [
@@ -14247,7 +14246,6 @@
         "protection": 3,
         "name": "Add new view component",
         "description": "Create a new view component with all parameters",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_add",
         "components": [
@@ -14462,7 +14460,6 @@
         "protection": 3,
         "name": "Change view component",
         "description": "Adjust a view component",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_edit",
         "components": [
@@ -14666,7 +14663,6 @@
         "protection": 3,
         "name": "Delete view component",
         "description": "Exclude or delete a view component",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_del",
         "components": [
@@ -14749,7 +14745,6 @@
         "protection": 3,
         "name": "Add view link",
         "description": "Create a new link between a view and a term",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_link_add",
         "components": [
@@ -14919,7 +14914,6 @@
         "protection": 3,
         "name": "Change view link",
         "description": "Change a link between a view and a term",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_link_edit",
         "components": [
@@ -15089,7 +15083,6 @@
         "protection": 3,
         "name": "Delete view link",
         "description": "To confirm the exclusion or deleting of a view link",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_link_del",
         "components": [
@@ -15193,7 +15186,6 @@
         "protection": 3,
         "name": "Add component link",
         "description": "Create a new link between a component and a view",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_link_add",
         "components": [
@@ -15374,7 +15366,6 @@
         "protection": 3,
         "name": "Change component link",
         "description": "Change a link between a component and a view",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_link_edit",
         "components": [
@@ -15555,7 +15546,6 @@
         "protection": 3,
         "name": "Delete component link",
         "description": "To confirm the exclusion or deleting of a component link",
-        "usage": null,
         "type_id": 7,
         "code_id": "component_link_del",
         "components": [
@@ -15659,7 +15649,6 @@
         "protection": 3,
         "name": "Add view relation",
         "description": "Create a new relation between two views",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_relation_add",
         "components": [
@@ -15839,7 +15828,6 @@
         "protection": 3,
         "name": "Change view relation",
         "description": "Change a relation between a component and a view",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_relation_edit",
         "components": [
@@ -16018,7 +16006,6 @@
         "protection": 3,
         "name": "Delete view relation",
         "description": "To confirm the exclusion or deleting of a view relation",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_relation_del",
         "components": [
@@ -16160,7 +16147,6 @@
         "protection": 3,
         "name": "Add formula link",
         "description": "Create a new link between a formula and a phrase",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_add",
         "components": [
@@ -16330,7 +16316,6 @@
         "protection": 3,
         "name": "Change formula link",
         "description": "Change a link between a formula and a phrase",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_edit",
         "components": [
@@ -16500,7 +16485,6 @@
         "protection": 3,
         "name": "Delete formula link",
         "description": "To confirm the exclusion or deleting of a formula link",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_link_del",
         "components": [
@@ -16603,7 +16587,6 @@
         "protection": 3,
         "name": "Admin add user",
         "description": "View for administrators to create a new user",
-        "usage": null,
         "type_id": 7,
         "code_id": "admin_user_add",
         "components": [
@@ -16729,7 +16712,6 @@
         "protection": 3,
         "name": "Admin change user",
         "description": "View for administrators to update a user",
-        "usage": null,
         "type_id": 7,
         "code_id": "admin_user_edit",
         "components": [
@@ -16855,7 +16837,6 @@
         "protection": 3,
         "name": "Admin delete user",
         "description": "View for administrators to delete or exclude a new user",
-        "usage": null,
         "type_id": 7,
         "code_id": "admin_user_del",
         "components": [
@@ -16960,7 +16941,6 @@
         "protection": 3,
         "name": "Add language",
         "description": "Add a language by an admin user",
-        "usage": null,
         "type_id": 7,
         "code_id": "language_add",
         "components": [
@@ -17086,7 +17066,6 @@
         "protection": 3,
         "name": "Change language",
         "description": "Change a language name or symbol by an admin user",
-        "usage": null,
         "type_id": 7,
         "code_id": "language_edit",
         "components": [
@@ -17212,7 +17191,6 @@
         "protection": 3,
         "name": "Delete language",
         "description": "View for administrators to delete a language",
-        "usage": null,
         "type_id": 7,
         "code_id": "language_del",
         "components": [
@@ -17326,7 +17304,6 @@
         "protection": 3,
         "name": "Confirm adding",
         "description": "Ask the user for confirmation of the changes to be written to the database",
-        "usage": null,
         "type_id": 7,
         "code_id": "confirm_add",
         "components": [
@@ -17450,7 +17427,6 @@
         "protection": 3,
         "name": "Confirm update",
         "description": "Show the impact of the changes to the user and ask the user for confirmation",
-        "usage": null,
         "type_id": 7,
         "code_id": "confirm_update",
         "components": [
@@ -17583,7 +17559,6 @@
         "protection": 3,
         "name": "Confirm delete",
         "description": "Show the impact of the deletion to the user and ask the user for confirmation",
-        "usage": null,
         "type_id": 7,
         "code_id": "confirm_delete",
         "components": [
@@ -17705,7 +17680,6 @@
         "protection": 3,
         "name": "Change confirm view",
         "description": "show the old and the new view and let the user confirm the change",
-        "usage": null,
         "type_id": 7,
         "code_id": "view_preview",
         "components": [
@@ -17808,7 +17782,6 @@
         "id": 58,
         "name": "about",
         "description": "Show the about page",
-        "usage": null,
         "type_id": 7,
         "code_id": "about",
         "components": [
@@ -17839,7 +17812,6 @@
         "id": 59,
         "name": "Setup",
         "description": "The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation",
-        "usage": null,
         "type_id": 7,
         "code_id": "setup",
         "components": [
@@ -17870,7 +17842,6 @@
         "id": 60,
         "name": "Signup",
         "description": "the system signup form",
-        "usage": null,
         "type_id": 7,
         "code_id": "signup",
         "components": [
@@ -17901,7 +17872,6 @@
         "id": 61,
         "name": "Login",
         "description": "the system login form",
-        "usage": null,
         "type_id": 7,
         "code_id": "login",
         "components": [
@@ -17932,7 +17902,6 @@
         "id": 62,
         "name": "Login activate",
         "description": "the system login activate form",
-        "usage": null,
         "type_id": 7,
         "code_id": "login_activate",
         "components": [
@@ -17963,7 +17932,6 @@
         "id": 63,
         "name": "Login reset",
         "description": "reset the password of a login user name",
-        "usage": null,
         "type_id": 7,
         "code_id": "login_reset",
         "components": [
@@ -17994,7 +17962,6 @@
         "id": 64,
         "name": "Logout",
         "description": "the system logout form",
-        "usage": null,
         "type_id": 7,
         "code_id": "logout",
         "components": [
@@ -18025,7 +17992,6 @@
         "id": 65,
         "name": "Error Log",
         "description": "simple confirm page for a new error that has been logged in the database",
-        "usage": null,
         "type_id": 7,
         "code_id": "error_log",
         "components": [
@@ -18056,7 +18022,6 @@
         "id": 66,
         "name": "System Error List",
         "description": "List the system errors and allow the user to change the status",
-        "usage": null,
         "type_id": 7,
         "code_id": "error_update",
         "components": [
@@ -18087,7 +18052,6 @@
         "id": 67,
         "name": "Search",
         "description": "The search page for all words, triples, verbs and formulas",
-        "usage": null,
         "type_id": 7,
         "code_id": "word_find",
         "components": [
@@ -18118,7 +18082,6 @@
         "id": 68,
         "name": "Search detail",
         "description": "The full search page for all words, triples, verbs and formulas",
-        "usage": null,
         "type_id": 7,
         "code_id": "search_full",
         "components": [
@@ -18150,7 +18113,6 @@
         "protection": 3,
         "name": "Value detail",
         "description": "show all details of one value",
-        "usage": null,
         "type_id": 7,
         "code_id": "value_detail",
         "components": [
@@ -18182,7 +18144,6 @@
         "protection": 3,
         "name": "Explain result",
         "description": "explains one formula result",
-        "usage": null,
         "type_id": 7,
         "code_id": "result_explain",
         "components": [
@@ -18214,7 +18175,6 @@
         "protection": 3,
         "name": "Formula test",
         "description": "debug the formula results",
-        "usage": null,
         "type_id": 7,
         "code_id": "formula_test",
         "components": [
@@ -18245,7 +18205,6 @@
         "id": 72,
         "name": "Sandbox",
         "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
-        "usage": null,
         "type_id": 7,
         "code_id": "sandbox",
         "components": [
@@ -18276,7 +18235,6 @@
         "id": 73,
         "name": "Undo",
         "description": "show the last changes of the user and offer selective undo",
-        "usage": null,
         "type_id": 7,
         "code_id": "undo",
         "components": [
@@ -18307,7 +18265,6 @@
         "id": 74,
         "name": "User Settings",
         "description": "to change the user settings",
-        "usage": null,
         "type_id": 7,
         "code_id": "user",
         "components": [
@@ -18339,7 +18296,6 @@
         "protection": 3,
         "name": "Paste table",
         "description": "add more than one values by pasting a table",
-        "usage": null,
         "type_id": 7,
         "code_id": "paste_table",
         "components": [
@@ -18382,7 +18338,6 @@
         "id": 76,
         "name": "Import",
         "description": "Select a file to import data",
-        "usage": null,
         "type_id": 7,
         "code_id": "import",
         "components": [
@@ -18455,7 +18410,6 @@
         "id": 77,
         "name": "Export",
         "description": "Show the control page to export a selection from this pod in the selected format",
-        "usage": null,
         "type_id": 10,
         "code_id": "export_in_selected_format",
         "components": [
@@ -18593,7 +18547,6 @@
         "id": 78,
         "name": "Export JSON",
         "description": "Show the control page to export a selection from this pod in the json format",
-        "usage": null,
         "type_id": 10,
         "code_id": "export_json",
         "components": [
@@ -18720,7 +18673,6 @@
         "id": 79,
         "name": "Export XML",
         "description": "Show the control page to export a selection from this pod in the xml format",
-        "usage": null,
         "type_id": 10,
         "code_id": "export_xml",
         "components": [
@@ -18847,7 +18799,6 @@
         "id": 80,
         "name": "Export CSV",
         "description": "Show the control page to export a selection from this pod in the csv format",
-        "usage": null,
         "type_id": 10,
         "code_id": "export_csv",
         "components": [
@@ -18974,7 +18925,6 @@
         "id": 81,
         "name": "Export ODS",
         "description": "Show the control page to export a selection from this pod in the ods format",
-        "usage": null,
         "type_id": 10,
         "code_id": "export_ods",
         "components": [
@@ -19101,7 +19051,6 @@
         "id": 82,
         "name": "Asynchronous process",
         "description": "Show the progress of one asynchronous process",
-        "usage": null,
         "type_id": 7,
         "code_id": "job_async",
         "components": [
@@ -19132,7 +19081,6 @@
         "id": 83,
         "name": "Job and process overview",
         "description": "Show all batch progress jobs with the progress and offer process control",
-        "usage": null,
         "type_id": 7,
         "code_id": "job_control",
         "components": [
@@ -19163,7 +19111,6 @@
         "id": 84,
         "name": "Job overview",
         "description": "Show the control board to start and monitor the system consistency check e.g. to calc again all formula results",
-        "usage": null,
         "type_id": 7,
         "code_id": "job_check",
         "components": [
@@ -19194,7 +19141,6 @@
         "id": 85,
         "name": "Verb List",
         "description": "List all available ways how to link two words",
-        "usage": null,
         "type_id": 7,
         "code_id": "verbs",
         "components": []
@@ -19203,7 +19149,6 @@
         "id": 86,
         "name": "Complete",
         "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-        "usage": null,
         "type_id": null,
         "code_id": "complete",
         "components": [
@@ -19272,7 +19217,6 @@
         "id": 87,
         "name": "base units",
         "description": "view the base units with the formulas",
-        "usage": null,
         "type_id": 6,
         "code_id": "base_units",
         "components": [
@@ -19291,7 +19235,6 @@
         "id": 88,
         "name": "Word (default)",
         "description": "the default view for words",
-        "usage": null,
         "type_id": 11,
         "code_id": "word_default",
         "components": [
@@ -19319,7 +19262,6 @@
         "id": 89,
         "name": "Verb",
         "description": "the default view for verbs",
-        "usage": null,
         "type_id": 12,
         "code_id": "verb_default",
         "components": [
@@ -19347,7 +19289,6 @@
         "id": 90,
         "name": "Triple (default)",
         "description": "the default view for triples",
-        "usage": null,
         "type_id": 13,
         "code_id": "triple_default",
         "components": [
@@ -19375,7 +19316,6 @@
         "id": 91,
         "name": "Source",
         "description": "the default view for sources",
-        "usage": null,
         "type_id": 14,
         "code_id": "source_default",
         "components": [
@@ -19403,7 +19343,6 @@
         "id": 92,
         "name": "Reference",
         "description": "the default view for references",
-        "usage": null,
         "type_id": 15,
         "code_id": "ref_default",
         "components": [
@@ -19431,7 +19370,6 @@
         "id": 93,
         "name": "Language",
         "description": "the default view for languages",
-        "usage": null,
         "type_id": 16,
         "code_id": "language_default",
         "components": [
@@ -19459,7 +19397,6 @@
         "id": 94,
         "name": "Display Number",
         "description": "the default view for values",
-        "usage": null,
         "type_id": 17,
         "code_id": "value_default",
         "components": [
@@ -19478,7 +19415,6 @@
         "id": 95,
         "name": "Formula",
         "description": "Show a formula and the related results and words",
-        "usage": null,
         "type_id": 18,
         "code_id": "formula_default",
         "components": [
@@ -19514,7 +19450,6 @@
         "id": 96,
         "name": "Result",
         "description": "the default view for results",
-        "usage": null,
         "type_id": 19,
         "code_id": "result_default",
         "components": [
@@ -19533,7 +19468,6 @@
         "id": 97,
         "name": "Ranking",
         "description": "the default view for all phrases where a better could be selected",
-        "usage": null,
         "type_id": null,
         "code_id": "ranking",
         "components": [
@@ -19570,7 +19504,6 @@
         "id": 98,
         "name": "Science",
         "description": "show mainly related words that are relevant in sciences",
-        "usage": null,
         "type_id": null,
         "code_id": "science",
         "components": []
@@ -19579,7 +19512,6 @@
         "id": 99,
         "name": "Historic",
         "description": "show the related words in historic order",
-        "usage": null,
         "type_id": null,
         "code_id": "hist",
         "components": []
@@ -19588,7 +19520,6 @@
         "id": 100,
         "name": "Biological",
         "description": "show what is relevant from the biological point of view",
-        "usage": null,
         "type_id": null,
         "code_id": "bio",
         "components": []
@@ -19597,7 +19528,6 @@
         "id": 101,
         "name": "Education",
         "description": "sort related topics by difficulty",
-        "usage": null,
         "type_id": null,
         "code_id": "edu",
         "components": []
@@ -19606,7 +19536,6 @@
         "id": 102,
         "name": "Touristic",
         "description": "show things to see",
-        "usage": null,
         "type_id": null,
         "code_id": "touristic",
         "components": []
@@ -19615,7 +19544,6 @@
         "id": 103,
         "name": "Graph",
         "description": "show the related topics as a visual graph",
-        "usage": null,
         "type_id": null,
         "code_id": "graph",
         "components": []
@@ -19624,7 +19552,6 @@
         "id": 104,
         "name": "Simple",
         "description": "show only the most relevant facts",
-        "usage": null,
         "type_id": null,
         "code_id": "simple",
         "components": []
@@ -19633,7 +19560,6 @@
         "id": 105,
         "name": "Mathematical constance",
         "description": "Show a mathematical constance and the related words and formulas",
-        "usage": null,
         "type_id": null,
         "code_id": "math_const",
         "components": [

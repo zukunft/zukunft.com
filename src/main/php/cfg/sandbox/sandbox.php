@@ -87,6 +87,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -139,6 +140,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -408,9 +410,7 @@ class sandbox extends db_object_seq_id_user
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $this->reset(true);
 
         parent::api_mapper($api_json, $usr_msg);
 
@@ -419,6 +419,9 @@ class sandbox extends db_object_seq_id_user
         }
         if (array_key_exists(json_fields::PROTECTION, $api_json)) {
             $this->protection_id = $api_json[json_fields::PROTECTION];
+        }
+        if (array_key_exists(json_fields::EXCLUDED, $api_json)) {
+            $this->set_excluded($api_json[json_fields::EXCLUDED]);
         }
 
         return $usr_msg->is_ok();
@@ -443,9 +446,6 @@ class sandbox extends db_object_seq_id_user
 
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
-        if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
-            $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
-        }
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $sys->typ_lst->shr_typ->id($in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
@@ -465,6 +465,9 @@ class sandbox extends db_object_seq_id_user
                     msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
                 ]);
             }
+        }
+        if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
+            $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
         }
 
         return $usr_msg->is_ok();
@@ -487,16 +490,15 @@ class sandbox extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded()) {
-            $vars[json_fields::EXCLUDED] = true;
-        }
         if ($this->share_id != null) {
             $vars[json_fields::SHARE] = $this->share_id;
         }
         if ($this->protection_id != null) {
             $vars[json_fields::PROTECTION] = $this->protection_id;
         }
-
+        if ($this->is_excluded()) {
+            $vars[json_fields::EXCLUDED] = true;
+        }
 
         return $vars;
     }
@@ -508,10 +510,11 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         global $sys;
 
@@ -775,9 +778,6 @@ class sandbox extends db_object_seq_id_user
     {
         $usr_msg = parent::fill($obj, $usr_req);
         // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
-        if ($obj->is_exclusion_set()) {
-            $this->set_excluded($obj->is_excluded());
-        }
         if ($obj->owner_id() != null) {
             $this->set_owner_id($obj->owner_id());
         }
@@ -786,6 +786,9 @@ class sandbox extends db_object_seq_id_user
         }
         if ($obj->protection_id() != null) {
             $this->set_protection_id($obj->protection_id());
+        }
+        if ($obj->is_exclusion_set()) {
+            $this->set_excluded($obj->is_excluded());
         }
         return $usr_msg;
     }

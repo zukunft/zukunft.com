@@ -75,6 +75,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -111,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -706,9 +708,45 @@ class phrase extends combine_named
      * im- and export
      */
 
+    /**
+     * set the vars of this phrase object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
+            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD)  {
+                $wrd = new word($this->user());
+                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($wrd);
+            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+                $trp = new triple($this->user());
+                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($trp);
+            } else {
+                // TODO Prio 0 review
+                $usr_msg->add_err_with_vars(msg_id::IMPORT_FAILED, []);
+            }
+        }
+
+        return $usr_msg->is_ok();
+    }
+
     function export_json(): array
     {
-        return $this->obj()->export_json();
+        return $this->obj()->export_json([]);
     }
 
 
@@ -1662,6 +1700,15 @@ class phrase extends combine_named
 
         $wrd = $this->main_word();
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
+    }
+
+    function predicate_id(): ?int
+    {
+        $id = null;
+        if ($this->is_triple()) {
+            $id = $this->triple()->predicate_id();
+        }
+        return $id;
     }
 
 }

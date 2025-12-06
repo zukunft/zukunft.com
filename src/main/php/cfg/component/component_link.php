@@ -63,8 +63,10 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
@@ -75,8 +77,10 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -91,7 +95,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
@@ -103,10 +109,12 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class component_link extends sandbox_link
 {
@@ -276,11 +284,12 @@ class component_link extends sandbox_link
     {
         parent::api_mapper($api_json, $usr_msg);
 
+        if (array_key_exists(json_fields::COMPONENT_ID, $api_json)) {
+            $this->set_component(new component($this->user()));
+            $this->component()->id = $api_json[json_fields::COMPONENT_ID];
+        }
         if (array_key_exists(json_fields::POSITION, $api_json)) {
             $this->order_nbr = $api_json[json_fields::POSITION];
-        }
-        if (array_key_exists(json_fields::TYPE, $api_json)) {
-            $this->set_predicate_id($api_json[json_fields::TYPE]);
         }
         if (array_key_exists(json_fields::POS_TYPE, $api_json)) {
             $this->set_pos_type_by_id($api_json[json_fields::POS_TYPE]);
@@ -347,12 +356,97 @@ class component_link extends sandbox_link
             }
             $this->set_component($cmp);
 
-        } else {
+        } elseif (array_key_exists(json_fields::NAME, $in_ex_json)) {
+            // assign components just be the name to a view
             $usr_msg->add_id_with_vars(msg_id::COMPONENT_CREATED, [
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
             $cmp = new component($usr_msg->usr);
             $cmp->import_mapper($in_ex_json, $usr_msg, $dto);
+        } elseif (array_key_exists(json_fields::VIEW, $in_ex_json)
+            and array_key_exists(json_fields::COMPONENT, $in_ex_json)) {
+            // import a component link independent of the view
+
+            // import the view
+            // TODO Prio 1 move as function "get_from_import_json" to the view object
+            if (array_key_exists(json_fields::VIEW, $in_ex_json)) {
+                $msk_json = $in_ex_json[json_fields::VIEW];
+                if (is_array($msk_json)) {
+                    if (count($msk_json) == 1 and array_key_exists(json_fields::NAME, $msk_json)) {
+                        $msk_json = $msk_json[json_fields::NAME];
+                    }
+                }
+                if (is_string($msk_json)) {
+                    $msk = $dto?->get_view_by_name($msk_json);
+                    if ($msk == null) {
+                        $usr_msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                            msg_id::VAR_VIEW => $msk_json,
+                            msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                        ]);
+                        $msk = new view($usr_msg->usr);
+                        $msk->set_name($msk_json);
+                    }
+                    $this->set_view($msk);
+                } elseif (is_array($msk_json)) {
+                    $msk = new view($usr_msg->usr);
+                    $msk->import_mapper($msk_json, $usr_msg, $dto);
+                    if ($usr_msg->is_ok()) {
+                        $this->set_view($msk);
+                    }
+                }
+            } else {
+                $usr_msg->add_info_with_vars(msg_id::VIEW_CREATED, [
+                    msg_id::VAR_VIEW_NAME => $in_ex_json[json_fields::NAME]
+                ]);
+                $msk = new view($usr_msg->usr);
+                $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_view($msk);
+            }
+
+            // import the component
+            // TODO Prio 1 move as function "get_from_import_json" to the component object
+            if (array_key_exists(json_fields::COMPONENT, $in_ex_json)) {
+                $msk_json = $in_ex_json[json_fields::COMPONENT];
+                if (is_array($msk_json)) {
+                    if (count($msk_json) == 1 and array_key_exists(json_fields::NAME, $msk_json)) {
+                        $msk_json = $msk_json[json_fields::NAME];
+                    }
+                }
+                if (is_string($msk_json)) {
+                    $msk = $dto?->get_component_by_name($msk_json);
+                    if ($msk == null) {
+                        $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING_IMPORT, [
+                            msg_id::VAR_COMPONENT => $msk_json,
+                            msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                        ]);
+                        $msk = new component($usr_msg->usr);
+                        $msk->set_name($msk_json);
+                    }
+                    $this->set_component($msk);
+                } elseif (is_array($msk_json)) {
+                    $msk = new component($usr_msg->usr);
+                    $msk->import_mapper($msk_json, $usr_msg, $dto);
+                    if ($usr_msg->is_ok()) {
+                        $this->set_component($msk);
+                    }
+                }
+            } else {
+                $usr_msg->add_info_with_vars(msg_id::COMPONENT_CREATED, [
+                    msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
+                ]);
+                $msk = new component($usr_msg->usr);
+                $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_component($msk);
+            }
+
+        } else {
+            $msg = 'unexpected component link json format';
+            log_err($msg);
+        }
+
+        if (array_key_exists(json_fields::PREDICATE, $in_ex_json)) {
+            global $sys;
+            $this->predicate_id = $sys->typ_lst->cmp_lnk_typ->id($in_ex_json[json_fields::PREDICATE]);;
         }
 
         // set the link position and type
@@ -385,23 +479,61 @@ class component_link extends sandbox_link
     {
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
-            if ($this->id() != 0) {
-                $vars[json_fields::LINK_ID] = $this->id();
+
+            $vars = parent::api_json_array($typ_lst, $usr);
+
+            if ($typ_lst->link_details()) {
+                // the full object detail version
+                if ($this->view() != null) {
+                    if ($typ_lst->include_views()) {
+                        $vars[json_fields::VIEW] = $this->view()->api_json_array($typ_lst, $usr);
+                    } else {
+                        if ($this->view()->id() != 0) {
+                            $vars[json_fields::VIEW_ID] = $this->view()->id();
+                        }
+                    }
+                }
+                if ($this->component() != null) {
+                    if ($typ_lst->include_components()) {
+                        $vars[json_fields::COMPONENT] = $this->component()->api_json_array($typ_lst, $usr);
+                    } else {
+                        if ($this->component()->id() != 0) {
+                            $vars[json_fields::COMPONENT_ID] = $this->component()->id();
+                        }
+                    }
+                }
+            } else {
+                // the single layer json array version
+                if ($this->id() != 0) {
+                    // move the id of the link to json field "link_id"
+                    // so that the json field "id" can be used for the component id
+                    $vars[json_fields::LINK_ID] = $this->id();
+                    unset($vars[json_fields::ID]);
+                }
+                if ($typ_lst->include_components()) {
+                    if ($this->component() != null) {
+                        $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
+                    }
+                } else {
+                    if ($this->component()->id() != 0) {
+                        $vars[json_fields::ID] = $this->component()->id();
+                    }
+                }
             }
-            if ($this->component() != null) {
-                $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
-            }
+
+            // to order the component is only defined on the component link itself
             if ($this->order_nbr != component_link::START_ORDER_NBR or $this->id() != 0) {
                 $vars[json_fields::POSITION] = $this->order_nbr;
             }
-            // TODO Prio 2 activate
-            //$vars[json_fields::TYPE] = $this->type_id();
+            // the position type is mainly defined on the component link but there is a default setting
             if ($this->pos_type_code_id() != position_types::DEFAULT or $this->id() != 0) {
                 $vars[json_fields::POS_TYPE] = $this->pos_type_id();
             }
+            // overwrite the style of the component with the style of the link
             if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
+
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             if ($this->id() != 0) {
                 $vars[json_fields::ID] = $this->id();
@@ -649,6 +781,53 @@ class component_link extends sandbox_link
         $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->pos());
+    }
+
+    /**
+     * overwrite the link type function
+     * @return string|null the code id of the verb
+     */
+    function predicate_code_id(): ?string
+    {
+        global $sys;
+        $id = $this->predicate_id();
+        $typ = $sys->typ_lst->cmp_lnk_typ->get($id);
+        if ($typ != null) {
+            return $typ->code_id();
+        } else {
+            $msg = 'component link type with id ' . $id . ' is missing';
+            log_err($msg);
+            return $msg;
+        }
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this component link object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param component_link|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(component_link|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->order_nbr != null) {
+            $this->order_nbr = $obj->order_nbr;
+        }
+        if ($obj->pos_type != null) {
+            $this->pos_type = $obj->pos_type;
+        }
+        if ($obj->style != null) {
+            $this->style = $obj->style;
+        }
+        return $usr_msg;
     }
 
 
@@ -959,13 +1138,57 @@ class component_link extends sandbox_link
     /**
      * create an array with the export json fields of this component
      * which does not include the internal database id
+     * TODO Prio 1 add export type list with the potential option not to include the view
+     *             so that it can be used to export the linked components of a view
+     *             and add a unit test outside the horizontal tests for this case
+     * TODO Prio 1 add export type list with the potential to export only the name and position
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = $this->component()->export_json($do_load);
+        global $sys;
 
+        if (is_array($exp_typ)) {
+            $exp_typ = new export_type_list($exp_typ);
+        }
+
+        $vars = parent::export_json($exp_typ, $do_load);
+        if (!$exp_typ->ignore_from()) {
+            if ($this->view()?->name() != null) {
+                $vars[json_fields::VIEW] = $this->view()->export_json($exp_typ, $do_load);
+            }
+            if ($this->component()?->name() != null) {
+                $vars[json_fields::COMPONENT] = $this->component()->export_json($exp_typ, $do_load);
+            }
+        } else {
+            if ($this->component()?->name() != null) {
+                $vars[json_fields::NAME] = $this->component()->name();
+            }
+        }
+
+        // do not include the default link type in the export
+        // if the export message is imported into a new version where the default is changed
+        // the expectation is not to change the default which means to use the changed default value
+        // to be discussed again on real cases
+        if ($this->predicate_id == $sys->typ_lst->cmp_lnk_typ->id(component_link_type::DEFAULT)) {
+            unset($vars[json_fields::PREDICATE]);
+        }
+        /*
+        if ($this->pos_type_id >= 0
+            and $this->pos_type_id == $sys->typ_lst->pos_typ->id(position_types::DEFAULT)) {
+            $vars[json_fields::POSITION] = $sys->typ_lst->pos_typ->id(position_types::DEFAULT);
+        }
+        */
+        if ($this->pos_type != null
+            and $this->pos_type?->code_id() != position_types::DEFAULT) {
+            $vars[json_fields::POS_TYPE] = $this->pos_type->code_id();
+        }
+        if ($this->style != null
+            and $this->style?->code_id() != view_styles::DEFAULT) {
+            $vars[json_fields::STYLE] = $this->style->code_id();
+        }
         if ($this->order_nbr >= 0) {
             $vars[json_fields::POSITION] = $this->order_nbr;
         }

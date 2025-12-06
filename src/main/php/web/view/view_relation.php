@@ -104,9 +104,6 @@ class view_relation extends sandbox_link
             if (array_key_exists(url_var::VIEW_CHILD, $url_array)) {
                 $this->set_child_view_id($url_array[url_var::VIEW_CHILD]);
             }
-            if (array_key_exists(url_var::TYPE, $url_array)) {
-                $this->set_type_id($url_array[url_var::TYPE]);
-            }
             if (array_key_exists(url_var::POSITION, $url_array)) {
                 $this->start_pos = $url_array[url_var::POSITION];
             }
@@ -137,9 +134,6 @@ class view_relation extends sandbox_link
         if (array_key_exists(json_fields::CHILD_ID, $json_array)) {
             $this->set_child_view_id($json_array[json_fields::CHILD_ID]);
         }
-        if (array_key_exists(json_fields::RELATION_TYPE, $json_array)) {
-            $this->set_type_id($json_array[json_fields::RELATION_TYPE]);
-        }
         if (array_key_exists(json_fields::POSITION, $json_array)) {
             $this->start_pos = $json_array[json_fields::POSITION];
         }
@@ -165,7 +159,6 @@ class view_relation extends sandbox_link
 
         $vars[json_fields::PARENT_ID] = $this->parent()?->id();
         $vars[json_fields::CHILD_ID] = $this->child()?->id();
-        $vars[json_fields::RELATION_TYPE] = $this->type_id;
         $vars[json_fields::POSITION] = $this->start_pos;
         $vars[json_fields::DESCRIPTION] = $this->description;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -198,11 +191,6 @@ class view_relation extends sandbox_link
     function set_child_view(?view $view): void
     {
         $this->tob = $view;
-    }
-
-    function set_type_id(?int $type_id = null): void
-    {
-        $this->type_id = $type_id;
     }
 
 
@@ -266,7 +254,7 @@ class view_relation extends sandbox_link
      */
     function relation_type(): ?string
     {
-        return $this->type_id;
+        return $this->predicate_id;
     }
 
 }

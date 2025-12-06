@@ -36,24 +36,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\const\users;
-use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_ui;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\test\php\create\test_types;
-use Zukunft\ZukunftCom\test\php\create\test_users;
-use Zukunft\ZukunftCom\test\php\create\unit_env;
-use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\all_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
-use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
-use Zukunft\ZukunftCom\test\php\utils\all_tests;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -70,6 +54,20 @@ include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
 include_once test_paths::UTILS . 'all_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\unit_env;
+use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class all_unit_tests extends test_cleanup
 {

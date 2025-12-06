@@ -70,6 +70,7 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
@@ -557,7 +559,6 @@ class triple extends sandbox_link_named
                     }
                 }
                 if ($this->verb() != null) {
-                    //$vars[json_fields::VERB] = $this->verb()->api_json_array($typ_lst);
                     $vars[json_fields::VERB] = $this->verb()->id();
                 }
                 $to = $this->to()->obj();
@@ -725,14 +726,15 @@ class triple extends sandbox_link_named
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         global $sys;
 
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->name_ex_generated() <> '') {
             $vars[json_fields::NAME] = $this->name_ex_generated();
@@ -749,6 +751,7 @@ class triple extends sandbox_link_named
             $vars[json_fields::EX_FROM] = $this->from()->name();
         }
         if ($this->verb_name() <> '') {
+            unset($vars[json_fields::PREDICATE]);
             $vars[json_fields::EX_VERB] = $this->verb_name();
         }
         if ($this->to()->name() <> '') {
@@ -768,13 +771,17 @@ class triple extends sandbox_link_named
         if (count($this->ref_lst) > 0) {
             $ref_lst = [];
             foreach ($this->ref_lst as $ref) {
-                $ref_lst[] = $ref->export_json();
+                $ref_lst[] = $ref->export_json([]);
             }
             $vars[json_fields::REFS] = $ref_lst;
         }
         // the impact is only included in the export as an indication to validate the consistency
-        $vars[json_fields::USAGE] = $this->usage();
-        $vars[json_fields::IMPACT] = $this->impact();
+        if ($this->usage() != null) {
+            $vars[json_fields::USAGE] = $this->usage();
+        }
+        if ($this->impact() != null) {
+            $vars[json_fields::IMPACT] = $this->impact();
+        }
 
         return $vars;
     }
@@ -889,6 +896,7 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * TODO Prio 1 use msg_id for messages
      * @return string the name of the verb
      */
     function verb_name(): string
@@ -896,7 +904,7 @@ class triple extends sandbox_link_named
         global $sys;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $sys->typ_lst->vrb->get($this->predicate_id());
+            $vrb = $sys->typ_lst->vrb->get($id);
             if ($vrb != null) {
                 return $vrb->name();
             } else {
@@ -905,7 +913,7 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } elseif ($id < 0) {
-            $vrb = $sys->typ_lst->vrb->get($this->predicate_id() * -1);
+            $vrb = $sys->typ_lst->vrb->get($id * -1);
             if ($vrb != null) {
                 return $vrb->reverse();
             } else {
@@ -926,7 +934,7 @@ class triple extends sandbox_link_named
         global $sys;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $sys->typ_lst->vrb->get($this->predicate_id());
+            $vrb = $sys->typ_lst->vrb->get($id);
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {
@@ -935,7 +943,7 @@ class triple extends sandbox_link_named
                 return $msg;
             }
         } elseif ($id < 0) {
-            $vrb = $sys->typ_lst->vrb->get($this->predicate_id() * -1);
+            $vrb = $sys->typ_lst->vrb->get($id * -1);
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {

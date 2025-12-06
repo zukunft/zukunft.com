@@ -5,6 +5,8 @@
     model/view/term_view.php - to define the view for a word, triple, verb or formula
     ------------------------
 
+    TODO Prio 1 rename to view_link (or all view_link to term_view)
+
     The main sections of this object are
     - db const:          const for the database link
     - set and get:       to capsule the vars from unexpected changes
@@ -50,14 +52,22 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -67,15 +77,23 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class term_view extends sandbox_link
 {
@@ -102,6 +120,7 @@ class term_view extends sandbox_link
     );
     // all database field names, excluding the id, used to identify if there are some user specific changes
     // TODO check if this is used in all relevant objects
+    // TODO Prio 2 maybe add a priority
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         sql_db::FLD_DESCRIPTION,
@@ -184,6 +203,166 @@ class term_view extends sandbox_link
         return $result;
     }
 
+    /**
+     * fill the vars with this link type view link object based on the given api json array
+     * basically use the json field type instead of predicate and
+     * @param array $api_json the api array with the word values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(array $api_json, user_message $usr_msg): bool
+    {
+
+        parent::api_mapper($api_json, $usr_msg);
+
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->predicate_id = $api_json[json_fields::TYPE];
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->description = $api_json[json_fields::DESCRIPTION];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * set the vars of this view link object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+
+        // import the view
+        if (array_key_exists(json_fields::VIEW, $in_ex_json)) {
+            $msk_json = $in_ex_json[json_fields::VIEW];
+            if (is_array($msk_json)) {
+                if (count($msk_json) == 1 and array_key_exists(json_fields::NAME, $msk_json)) {
+                    $msk_json = $msk_json[json_fields::NAME];
+                }
+            }
+            if (is_string($msk_json)) {
+                $msk = $dto?->get_view_by_name($msk_json);
+                if ($msk == null) {
+                    $usr_msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                        msg_id::VAR_VIEW => $msk_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $msk = new view($usr_msg->usr);
+                    $msk->set_name($msk_json);
+                }
+                $this->set_view($msk);
+            } elseif (is_array($msk_json)) {
+                $msk = new view($usr_msg->usr);
+                $msk->import_mapper($msk_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_view($msk);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::VIEW_CREATED, [
+                msg_id::VAR_VIEW_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $msk = new view($usr_msg->usr);
+            $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_view($msk);
+        }
+
+        // import the term
+        if (array_key_exists(json_fields::TERM, $in_ex_json)) {
+            $trm_json = $in_ex_json[json_fields::TERM];
+            if (is_array($trm_json)) {
+                if (count($trm_json) == 1 and array_key_exists(json_fields::NAME, $trm_json)) {
+                    $trm_json = $trm_json[json_fields::NAME];
+                }
+            }
+            if (is_string($trm_json)) {
+                $trm = $dto?->get_term_by_name($trm_json);
+                if ($trm == null) {
+                    $usr_msg->add_id_with_vars(msg_id::TERM_MISSING_IMPORT, [
+                        msg_id::VAR_TERM => $trm_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $trm = new term($usr_msg->usr);
+                    $trm->set_name($trm_json);
+                }
+                $this->set_term($trm);
+            } elseif (is_array($trm_json)) {
+                $trm = new term($usr_msg->usr);
+                $trm->import_mapper($trm_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_term($trm);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::TERM_CREATED, [
+                msg_id::VAR_TERM_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $trm = new term($usr_msg->usr);
+            //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_term($trm);
+        }
+
+        if (array_key_exists(json_fields::PREDICATE, $in_ex_json)) {
+            global $sys;
+            $this->predicate_id = $sys->typ_lst->msk_lnk_typ->id($in_ex_json[json_fields::PREDICATE]);;
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];;
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        if ($this->view()?->id() != 0) {
+            if ($typ_lst->include_views()) {
+                $vars[json_fields::VIEW] = $this->view()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::VIEW_ID] = $this->view()->id();
+            }
+        }
+        if ($this->term()?->id() != 0) {
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::TERM] = $this->term()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::TERM_ID] = $this->term()->id();
+            }
+        }
+
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -236,22 +415,63 @@ class term_view extends sandbox_link
 
     /**
      * interface function to get the view
-     * @return object but actually the view object
+     * @return view|sandbox_named|combine_named|null but actually the view object
      */
-    function view(): object
+    function view(): view|sandbox_named|combine_named|null
     {
         return $this->fob();
     }
 
     /**
      * interface function to get the term
-     * @return object but actually the term object
+     * @return term|sandbox_named|combine_named|null but actually the term object
      */
-    function term(): object
+    function term(): view|sandbox_named|combine_named|null
     {
         return $this->tob();
     }
 
+    /**
+     * overwrite the link type function with the view link
+     * @return string|null the code id of the verb
+     */
+    function predicate_code_id(): ?string
+    {
+        global $sys;
+        $id = $this->predicate_id();
+        $typ = $sys->typ_lst->msk_lnk_typ->get($this->predicate_id());
+        if ($typ != null) {
+            return $typ->code_id();
+        } else {
+            // TODO Prio 0 use msg_id
+            $msg = 'term view link type with id ' . $id . ' is missing';
+            log_err($msg);
+            return $msg;
+        }
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this view link object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param view_relation|sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(view_relation|sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $usr_msg;
+    }
 
     /*
      * fields
@@ -437,6 +657,39 @@ class term_view extends sandbox_link
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields of this component
+     * which does not include the internal database id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+        if ($this->view()?->name() != null) {
+            $vars[json_fields::VIEW] = $this->view()->export_json($exp_typ, $do_load);
+        }
+        if ($this->term()?->name() != null) {
+            $vars[json_fields::TERM] = $this->term()->export_json($exp_typ, $do_load);
+        }
+
+        global $sys;
+        if ($this->predicate_id == $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+            unset($vars[json_fields::PREDICATE]);
+        }
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        return $vars;
     }
 
 

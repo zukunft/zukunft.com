@@ -62,7 +62,7 @@ if ($db_con->is_open()) {
     if ($usr->id > 0) {
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $result = $ui_cfg->api_json([api_type::HEADER], $usr);
+        $result = $ui_cfg->api_json([api_type::HEADER, api_type::INCL_COMPONENTS], $usr);
     }
 
     $ctrl = new controller();

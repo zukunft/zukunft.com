@@ -83,6 +83,7 @@ class all_unit_read_tests extends all_unit_tests
         $usr = $this->usr1;
 
         // check that the main database test entries are still active
+        $t_db->create_unit_test_db_entries($t);
         $t_db->create_test_db_entries($t);
 
         // run the unit database tests

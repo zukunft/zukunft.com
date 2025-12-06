@@ -258,7 +258,7 @@ class ListBase extends ListOfIdObjects
         $result = array();
         foreach ($this->lst() as $obj) {
             if ($obj != null) {
-                $result[] = $obj->api_array();
+                $result[] = $obj->api_array($typ_lst);
             }
         }
         return $result;

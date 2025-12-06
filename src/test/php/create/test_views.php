@@ -38,8 +38,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
-include_once paths::SHARED_CONST . 'views.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -52,6 +54,8 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
@@ -347,12 +351,63 @@ class test_views
     function view_relation_filled(): view_relation
     {
         global $sys;
+        // TODO Prio 0 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
         $mrl->description = 'add usage and log of a word';
         $mrl->exclude();
         $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
         $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
         return $mrl;
+    }
+
+    /**
+     * @return view_relation with all fields set and a reserved test name for testing the db write function
+     */
+    function view_relation_filled_add(): view_relation
+    {
+        $msk_rel = $this->view_relation_filled();
+        $msk_rel->include();
+        $msk_rel->id = 0;
+        // TODO Prio 3 maybe used the added test view and component
+        //$msk_rel->set_parent($this->view_filled_add());
+        //$msk_rel->set_child($this->view_part_filled_add());
+        return $msk_rel;
+    }
+
+    function term_view(): term_view
+    {
+        $trm_msk = new term_view($this->env->usr1);
+        $t_wrd = new test_words($this->env);
+        $trm_msk->id = 1;
+        $trm_msk->set_term($t_wrd->word()->term());
+        $trm_msk->set_predicate(view_link_type::DEFAULT);
+        $trm_msk->set_view($this->view());
+        return $trm_msk;
+    }
+
+    function term_view_filled(): term_view
+    {
+        global $sys;
+        $trm_msk = $this->term_view();
+        $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->exclude();
+        $trm_msk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $trm_msk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        return $trm_msk;
+    }
+
+    /**
+     * @return term_view with all fields set and a reserved test name for testing the db write function
+     */
+    function term_view_filled_add(): term_view
+    {
+        $msk_lnk = $this->term_view_filled();
+        $msk_lnk->include();
+        $msk_lnk->id = 0;
+        // TODO Prio 3 maybe used the added test view and component
+        //$msk_lnk->set_parent($this->view_filled_add());
+        //$msk_lnk->set_child($this->view_part_filled_add());
+        return $msk_lnk;
     }
 
 }

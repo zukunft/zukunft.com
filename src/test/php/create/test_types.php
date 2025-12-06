@@ -115,7 +115,7 @@ class test_types
             // add views
             $t_msk = new test_views($this->env);
             $sys_msk_cac = $t_msk->view_list();
-            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([]));
+            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([api_type::INCL_COMPONENTS]));
         }
 
         global $db_con;

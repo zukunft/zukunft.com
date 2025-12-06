@@ -32,7 +32,31 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::TYPES . 'component_type_list.php';
+include_once html_paths::TYPES . 'formula_link_type_list.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::TYPES . 'ref_type_list.php';
+include_once html_paths::TYPES . 'share.php';
+include_once html_paths::TYPES . 'source_type_list.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'view_type_list.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'url_var.php';
+include_once test_paths::CREATE . 'test_types.php';
+include_once test_paths::CREATE . 'test_words.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
@@ -50,18 +74,11 @@ use Zukunft\ZukunftCom\main\php\web\types\user_profile;
 use Zukunft\ZukunftCom\main\php\web\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
 use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
-use Zukunft\ZukunftCom\test\php\create\test_types;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_types;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
-
-include_once html_paths::TYPES . 'type_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::TYPES . 'formula_type_list.php';
-include_once html_paths::TYPES . 'phrase_types.php';
-include_once html_paths::TYPES . 'view_style_list.php';
-include_once html_paths::TYPES . 'protection.php';
 
 class type_lists_ui_tests
 {

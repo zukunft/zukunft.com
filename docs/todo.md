@@ -7,8 +7,13 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
+    TODO type versus predicate:
+         - a type assigns coded functionality to one object
+         - a predicate assigns coded functionality to an object link between two objects
+         - a specific predicate can be named ..._type e.g. view_relation_type is actually a predicate
     TODO add a coding rule test that checka
          - there is at least one succes and on fail test for each function
          - classes are no longer than 1000 lines

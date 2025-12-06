@@ -21,6 +21,9 @@
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
 
+    TODO Prio 2 rename predicate to type
+                because predicate makes only sense for triples
+                where verb is the batter name for the reference to the object
     TODO add weight with int and 100'000 as 100% because
          humans usually cannot handle more than 100'000 words
          so weight sorted list has a single place for each word
@@ -55,6 +58,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_COMPONENT . 'component_link_type.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -64,6 +69,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
@@ -72,6 +78,10 @@ include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_link_type.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
+//include_once paths::MODEL_VIEW . 'view_relation_type.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -85,6 +95,9 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -101,6 +114,10 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -168,6 +185,10 @@ class sandbox_link extends sandbox
         $this->predicate_id = null;
     }
 
+    // the row_mapper_sandbox function is not added here
+    // because the db field name for the predicate differs for all objects
+    // so the setting of the predicate anyway needs to be done in the overwrite function of each link
+
     /**
      * fill the vars with this link type sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
@@ -179,8 +200,8 @@ class sandbox_link extends sandbox
 
         parent::api_mapper($api_json, $usr_msg);
 
-        if (array_key_exists(json_fields::PREDICATE, $api_json)) {
-            $this->predicate_id = $api_json[json_fields::PREDICATE];
+        if (array_key_exists(json_fields::PREDICATE_ID, $api_json)) {
+            $this->predicate_id = $api_json[json_fields::PREDICATE_ID];
         }
 
         return $usr_msg->is_ok();
@@ -205,13 +226,29 @@ class sandbox_link extends sandbox
         // for triples the predicate is the verb and already included in the vars at this point
         if ($this::class != triple::class) {
             if ($this->predicate_id() != 0) {
+                // TODO Prio 3 review and check what is the best solution for the overwrites e.g. where is the PREDICATE really used
                 if ($this::class == formula_link::class) {
                     global $sys;
                     if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
-                        $vars[json_fields::PREDICATE] = $this->predicate_id();
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == view_relation::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->mrl_typ->id(view_relation_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == term_view::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
+                    }
+                } elseif ($this::class == component_link::class) {
+                    global $sys;
+                    if ($this->predicate_id() != $sys->typ_lst->cmp_lnk_typ->id(component_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                     }
                 } else {
-                    $vars[json_fields::PREDICATE] = $this->predicate_id();
+                    $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                 }
             }
         }
@@ -718,6 +755,50 @@ class sandbox_link extends sandbox
         }
     }
     */
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox link object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param sandbox|sandbox_link|CombineObject|db_object_seq_id $obj sandbox link object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox|sandbox_link|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->predicate_id() != null) {
+            $this->set_predicate_id($obj->predicate_id());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * add the link specific values to the export array
+     * which is actually only the predicate code id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+        if ($this->predicate_id != null) {
+            $vars[json_fields::PREDICATE] = $this->predicate_code_id();
+        }
+        return $vars;
+    }
 
 
     /*

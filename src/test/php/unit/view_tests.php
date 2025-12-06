@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -132,7 +133,11 @@ class view_tests
 
         $t->subheader($ts . 'with components api');
         $msk = $t_msk->view_with_components();
-        $t->assert_api($msk, 'view_with_components');
+        $t->assert_api($msk, 'view_with_component_id');
+        $msk = $t_msk->view_with_components();
+        $t->assert_api($msk, 'view_with_components', [api_type::INCL_COMPONENTS]);
+        $msk = $t_msk->view_with_components();
+        $t->assert_api($msk, 'view_with_component_details', [api_type::INCL_COMPONENTS, api_type::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'im- and export');

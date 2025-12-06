@@ -39,6 +39,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -558,15 +560,16 @@ class formula_list extends sandbox_list_named
 
     /**
      * create an array with the export json fields of this formula
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $frm_lst = [];
         foreach ($this->lst() as $frm) {
             if (get_class($frm) == formula::class) {
-                $frm_lst[] = $frm->export_json($do_load);
+                $frm_lst[] = $frm->export_json($exp_typ, $do_load);
             } else {
                 log_err('The function formula_list->export_json returns ' . $frm->dsp_id()
                     . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');

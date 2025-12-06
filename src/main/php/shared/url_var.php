@@ -177,7 +177,7 @@ class url_var
     const string WORD_POS = 'wp'; // with a number the word id of the x word e.g. of the form field of a group
     const string WORDS = 'wl'; // array of ids to select or add the words
     const string CONTEXT = 'x'; // list of terms to describe the context used for the view
-    const string TYPE = 'y'; // the type id of a form field
+    const string TYPE = 'y'; // the type id or predicate id of a form field
     const string STEP = 'z'; // the user process (proZess) step (e.g. show, to_confirm, confirmed)
 
 

@@ -72,6 +72,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -124,6 +125,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -1740,13 +1742,14 @@ class formula extends sandbox_code_id
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if the result should be validated again before export
      * *                    use false for a faster export and unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         global $sys;
 
@@ -1768,7 +1771,7 @@ class formula extends sandbox_code_id
             $phr_lst = $this->assign_phr_lst_direct();
             if ($phr_lst != null) {
                 foreach ($phr_lst->lst() as $phr) {
-                    $exp_lst[] = $phr->export_json();
+                    $exp_lst[] = $phr->export_json([]);
                 }
                 $vars[json_fields::ASSIGNED_WORD] = $exp_lst;
             }

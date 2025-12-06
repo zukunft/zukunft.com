@@ -175,6 +175,7 @@ enum messages: string
 
     const string VAR_JSON_TEXT = 'VarJsonText';
     const string VAR_SOURCE_NAME = 'VarSourceName';
+    const string VAR_FORMULA_NAME = 'VarFormulaName';
     const string VAR_COMPONENT_NAME = 'VarComponentName';
     const string VAR_FILE_TYPE = 'VarFileType';
     const string VAR_FILE_NAME = 'VarFileName';
@@ -189,7 +190,11 @@ enum messages: string
     const string VAR_URL_KEY = 'VarUrlKey';
 
     // for the object main parameters created by the dsp_id function
+    const string VAR_PHRASE = 'VarObjPhrase';
     const string VAR_FORMULA = 'VarObjFormula';
+    const string VAR_TERM = 'VarObjTerm';
+    const string VAR_VIEW = 'VarObjView';
+    const string VAR_COMPONENT = 'VarObjComponent';
     const string VAR_EXPRESSION = 'VarObjExpression';
     const string VAR_JSON_PART = 'VarJsonPart';
     const string VAR_VERB_NAME = 'VarVerbName';
@@ -546,15 +551,50 @@ enum messages: string
         . '" is not found any more after expected to be added to the database';
 
     case SOURCE_MISSING_IMPORT = 'source "'
-        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
         . '" is missing in the import message '
-        . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PHRASE_MISSING_IMPORT = 'phrase "'
+        . self::VAR_START . self::VAR_PHRASE . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PHRASE_CREATED = 'phrase with name "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" created';
     case FORMULA_MISSING_IMPORT = 'formula "'
-        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing in the import message '
-        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case FORMULA_ID_MISSING = 'formula id is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case FORMULA_JSON_MISSING = 'formula JSON is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
+    case FORMULA_CREATED = 'formula with name "'
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . '" created';
+
+    case TERM_MISSING_IMPORT = 'term "'
+        . self::VAR_START . self::VAR_TERM . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case TERM_CREATED = 'term with name "'
+        . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
+        . '" created';
+
+    case VIEW_MISSING_IMPORT = 'view "'
+        . self::VAR_START . self::VAR_VIEW . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case VIEW_CREATED = 'view with name "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '" created';
+
+    case COMPONENT_MISSING_IMPORT = 'component "'
+        . self::VAR_START . self::VAR_COMPONENT . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case COMPONENT_MISSING = 'component with name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" missing when importing json part '

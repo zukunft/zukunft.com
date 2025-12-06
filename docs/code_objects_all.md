@@ -28,6 +28,7 @@ the object structure is:
 +-- sql_where - structure for one where parameter for a sql statement
 +-- sql_where_list - list to create the sql where condition
 +-- export - create an object to export data - the object can be converted to a json, yaml or XML message
++-- export_type_list - a list of parameters to configure the export message
 +-- xml_serializer - turning an array or object into XML using PHP
 +-- fig_ids - helper class for figure id lists
 +-- formula_db - the database const for formula tables
@@ -292,6 +293,7 @@ the object structure is:
             \-- refUi - the extension of the reference API objects to create ref base html code
             \-- sandbox_linkUi
                 \-- formula_linkUi - create HTML code to display a formula link
+                \-- term_viewUi - create HTML code to display a n:m link between a term and a view
                 \-- view_relationUi - create HTML code to display a n:m link between two views
             \-- sandbox_namedUi
                 \-- groupUi - the extension of the phrase group api object to create the HTML code to display a word or triple
@@ -333,6 +335,7 @@ the object structure is:
 +-- view_stylesShared - db based ENUM of the view and component styles
 +-- view_typeShared - db based ENUM of the view types
 +-- url_varShared - all names used for the url and the form field names
++-- component_linkUi - create HTML code to display a view component links
 \-- ui_baseUi
     \-- ui_im_exportUi - html user interface components for im- and export
     \-- ui_listUi - create the html for listed related to an object
@@ -393,5 +396,4 @@ the object structure is:
 \-- type_objectUi
     \-- ref_typeUi - the child class for reference types which has additional the url
 +-- user_messageUi - messages created by the frontend for the user
-+-- component_linkUi - create HTML code to display a view component links
 ```

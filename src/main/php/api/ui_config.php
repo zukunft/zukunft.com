@@ -50,6 +50,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 
@@ -76,8 +77,13 @@ class ui_config
         global $sys;
         global $db_con;
         global $cac;
-        $vars = $sys->typ_lst->api_json_array();
-        $vars[json_fields::LIST_SYSTEM_VIEWS] = $cac->sys_msk->api_json_array();
+
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        $vars = $sys->typ_lst->api_json_array($typ_lst);
+        $vars[json_fields::LIST_SYSTEM_VIEWS] = $cac->sys_msk->api_json_array($typ_lst);
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name($db_con);
         return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);

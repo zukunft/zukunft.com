@@ -56,6 +56,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -75,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
@@ -209,7 +211,9 @@ class sandbox_code_id extends sandbox_typed
         $vars = parent::api_json_array($typ_lst, $usr);
         // the code id is included in the api message towards the frontend
         // but not overwritten via api message
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id();
+        }
         return $vars;
     }
 
@@ -220,12 +224,13 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
         // include the code id in the api message so that the frontend can execute some behavior
         if ($this->code_id() != '' and $this->code_id() != null) {
             $vars[json_fields::CODE_ID] = $this->code_id();

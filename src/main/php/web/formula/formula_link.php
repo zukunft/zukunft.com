@@ -34,15 +34,19 @@ namespace Zukunft\ZukunftCom\main\php\web\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::SANDBOX . 'sandbox_link.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula_link extends sandbox_link
 {
@@ -90,8 +94,40 @@ class formula_link extends sandbox_link
     }
 
 
+    /*
+     * construct and map
+     */
+
     /**
-     * set the vars this formula bases on the api json array
+     * set the vars of this word frontend object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::FORMULA, $url_array)) {
+                $frm = new formula();
+                $frm->set_id($url_array[url_var::FORMULA]);
+                // TODO Prio 2 get from cache (or api)
+                $this->set_formula($frm);
+            }
+            if (array_key_exists(url_var::PHRASE, $url_array)) {
+                $phr = new phrase();
+                $phr->set_id($url_array[url_var::PHRASE]);
+                // TODO Prio 2 get from cache (or api)
+                $this->set_phrase($phr);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars this formula link bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
      * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
@@ -129,6 +165,26 @@ class formula_link extends sandbox_link
         }
         */
         return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an api json array for the backend based on this frontend object
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[json_fields::FORMULA_ID] = $this->formula()?->id();
+        $vars[json_fields::PHRASE_ID] = $this->phrase()?->id();
+        $vars[json_fields::POSITION] = $this->order_nbr;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

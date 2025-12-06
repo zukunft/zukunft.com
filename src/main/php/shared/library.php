@@ -1154,13 +1154,13 @@ class library
         return $result;
     }
 
-    function csv_form_class(string $class): array
+    function class_csv_file_path(string $class): string
     {
         $lib = new library();
         $name = $lib->class_to_name($class);
         $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
         $file = test_files::FIXED_DB_CSV;
-        return file($path . $file);
+        return $path . $file;
     }
 
     function csv_form_db_lst(array $db_lst, string $class): array
@@ -2476,6 +2476,12 @@ class library
         // TODO avoid and remove exception
         if ($class == source::class) {
             $class = ref::class;
+        } elseif ($class == formula_link::class) {
+            $class = formula::class;
+        } elseif ($class == term_view::class) {
+            $class = view::class;
+        } elseif ($class == component_link::class) {
+            $class = component::class;
         }
         $name = $this->class_to_name($class);
         return 'db/' . $name . '/';
@@ -2606,7 +2612,10 @@ class library
             case verb::class:
             case triple::class:
             case ref::class;
+            case formula_link::class;
             case view_relation::class;
+            case term_view::class;
+            case component_link::class;
                 $json = test_api::JSON_ARRAY_ONLY;
                 break;
             default:

@@ -54,6 +54,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+//include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
@@ -67,6 +68,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
@@ -377,14 +379,15 @@ class sandbox_list extends base_list
 
     /**
      * create an array with one export json array for each list item
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array of export json arrays
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $exp_lst = [];
         foreach ($this->lst() as $sbx) {
-            $exp_lst[] = $sbx->export_json($do_load);
+            $exp_lst[] = $sbx->export_json($exp_typ, $do_load);
         }
         return $exp_lst;
     }

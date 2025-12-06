@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL . 'application.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -142,6 +144,13 @@ class a_selected_test extends test_cleanup
             /*
              * unit testing - with system users
              */
+            $t_db = new test_db_load($this);
+            $t_db->type_list_recreate($this, $this->usr1);
+
+
+            $ui = new frontend('api based ui tests');
+            $ui->load_cache();
+            new type_lists_ui_tests()->run($this, $ui);
 
             // check and update the fixed csv files
             // e.g. to have an indication which words might be missing due to the code changes

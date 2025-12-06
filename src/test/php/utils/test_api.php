@@ -39,10 +39,8 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
-use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 
@@ -55,6 +53,7 @@ include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once test_paths::UTILS . 'test_base.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -117,7 +116,7 @@ class test_api extends test_base
         $api_types[] = api_type::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
         $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
-        $array_to_backend = $dsp_obj->api_array();
+        $array_to_backend = $dsp_obj->api_array($api_types);
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($msg_to_frontend) should not contain empty fields
         // because they are irrelevant for the user and this reduces traffic
@@ -127,6 +126,12 @@ class test_api extends test_base
         $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
         $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
+        // and also remove fields of linked objects because each object is updated by its own
+        // whereas the object to the frontend are sometimes combined to reduce traffic
+        // e.g. the components are included in the view
+        if ($usr_obj::class == component_link::class) {
+            $array_to_frontend = $this->json_remove_component_fields($array_to_frontend);
+        }
         return $this->assert_api_compare($class, $array_to_frontend, $array_to_backend);
     }
 
@@ -152,10 +157,9 @@ class test_api extends test_base
     {
         // check and norm the parameters
         if (is_array($typ_lst)) {
-            $typ_lst[] = api_type::TEST_MODE;
-        } else {
-            $typ_lst->add(api_type::TEST_MODE);
+            $typ_lst = new api_type_list($typ_lst);
         }
+        $typ_lst->add(api_type::TEST_MODE);
         $class = $this->class_to_api($usr_obj::class);
 
         // create the json api message and revert it to an array for better compare
@@ -542,7 +546,7 @@ class test_api extends test_base
             $filename = 'value_non_std';
         }
         if ($levels > 0) {
-            $filename = $class_api . '_with_components';
+            $filename = $class_api . '_with_component_id';
         }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, '', false, $ignore_id);
     }

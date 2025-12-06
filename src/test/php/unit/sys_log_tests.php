@@ -88,7 +88,7 @@ class sys_log_tests
 
         $t_sys = new test_sys_log();
         $log_lst = $t_sys->sys_log_list();
-        $t->assert_api($log_lst, '', [api_type::HEADER]);
+        $t->assert_api($log_lst, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
 
 
         $t->subheader($ts . 'system time type sql setup');
