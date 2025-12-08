@@ -702,7 +702,7 @@ class formula_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
@@ -737,7 +737,7 @@ class formula_link extends sandbox_link
         $result = false;
 
         if ($this->is_unique()) {
-            $qp = $this->load_standard_sql($db_con->sql_creator());
+            $qp = $this->load_sql_standard($db_con->sql_creator());
 
             if ($qp->name <> '') {
                 $db_frm = $db_con->get1($qp);
@@ -872,16 +872,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if no one else has changed the formula link
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc->set_class(formula_link::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * @return bool true if no other user has modified the formula link
      */
     function not_changed(): bool
@@ -901,6 +891,16 @@ class formula_link extends sandbox_link
         }
         log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
         return $result;
+    }
+
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if no one else has changed the formula link
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $sc->set_class(formula_link::class);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -1185,7 +1185,7 @@ class formula_link extends sandbox_link
 
         $this->reload_objects();
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $result = $this->formula()->name_link($back) . ' to ' . $this->phrase()->display_linked();
+            $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
         } else {
             $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
         }

@@ -677,7 +677,7 @@ class library
                     if ($txt != '') {
                         $txt .= ', ';
                     }
-                    $txt .= $value . ' should be before ' . $compare[$pre] ;
+                    $txt .= $value . ' should be before ' . $compare[$pre];
                 } else {
                     $pre = $pos;
                 }
@@ -1706,9 +1706,12 @@ class library
             '__construct', 'reset', 'row_mapper_sandbox',
             'api_mapper', 'import_mapper', 'import_mapper_user'
             => 'construct and map',
-            'load_standard' => 'load',
+            'load_standard'
+            => 'load',
             'type_code_id', 'type_name', 'type_name_or_null', 'type_id_by_code_id', 'predicate_name'
             => 'preloaded',
+            'value_list', 'link_types'
+            => 'related',
             'name_field', 'from_field', 'to_field', 'type_field', 'all_sandbox_fields'
             => 'sql fields',
             'api_json_array', 'set_by_api_json'
@@ -1718,15 +1721,25 @@ class library
             => 'modify',
             'diff_msg', 'needs_db_update', 'next_nbr', 'view_ids', 'cmp_ids', 'names'
             => 'info',
+            'phrase', 'phrase_list', 'term'
+            => 'cast',
+            'parents', 'add_child', 'children', 'is_phrases', 'is_part', 'is_mainly', 'are',
+            'verb_list_up', 'verb_list_down', 'phrase_list_up', 'phrase_list_down',
+            'parts', 'direct_parts', 'are_and_contains', 'next', 'prior'
+            => 'foaf',
             'link', 'unlink'
             => 'link',
+            'calc_usage', 'calc_view_id', 'view_sql'
+            => 'ui support',
+            'has_cfg', 'not_used', 'not_changed', 'not_changed_sql'
+            => 'sandbox',
             'get_similar', 'add_insert'
             => 'save',
-            'get_ready'
+            'get_ready', 'reserved_names', 'fixed_names'
             => 'save helper',
             'db_fields_all', 'db_fields_changed'
             => 'sql write fields',
-            'dsp_id', 'assigned_msk_ids'
+            'dsp_id', 'assigned_msk_ids', 'name_dsp'
             => 'debug',
             'db_check', 'db_move_time_phrase_to_group'
             => 'upgrade',
@@ -1743,7 +1756,9 @@ class library
             } elseif (str_starts_with($fnc_name, 'load_')) {
                 $result = 'load';
             } elseif (str_starts_with($fnc_name, 'reload_')) {
-                $result = 'retrieval';
+                $result = 'related';
+            } elseif (str_starts_with($fnc_name, 'is_')) {
+                $result = 'info';
             } elseif (str_starts_with($fnc_name, 'log_')) {
                 $result = 'log';
             } elseif (str_starts_with($fnc_name, 'save')) {

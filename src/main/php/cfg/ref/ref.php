@@ -841,7 +841,7 @@ class ref extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -851,7 +851,7 @@ class ref extends sandbox_link
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
 
     /**
@@ -862,7 +862,7 @@ class ref extends sandbox_link
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {

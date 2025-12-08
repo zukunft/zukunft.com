@@ -387,7 +387,7 @@ class source extends sandbox_code_id
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {
@@ -402,7 +402,7 @@ class source extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -412,7 +412,7 @@ class source extends sandbox_code_id
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
 
     /**
@@ -488,16 +488,6 @@ class source extends sandbox_code_id
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if the source has been changed
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc->set_class(source::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * @return bool true if no other user has modified the source
      */
     function not_changed(): bool
@@ -520,6 +510,16 @@ class source extends sandbox_code_id
         }
         log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
         return $result;
+    }
+
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the source has been changed
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $sc->set_class(source::class);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**

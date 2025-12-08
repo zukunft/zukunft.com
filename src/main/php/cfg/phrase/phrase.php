@@ -576,9 +576,9 @@ class phrase extends combine_named
     /**
      * @return float|null a higher number indicates a higher impact
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
-        return $this->obj()->impact();
+        return $this->obj()->get_impact();
     }
 
     /**

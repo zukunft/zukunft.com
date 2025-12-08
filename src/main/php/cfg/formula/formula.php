@@ -457,11 +457,11 @@ class formula extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
             $vars[json_fields::REF_TEXT] = $this->ref_text;
-            $vars[json_fields::IMPACT] = $this->impact();
+            $vars[json_fields::IMPACT] = $this->get_impact();
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
-            $vars[json_fields::IMPACT] = $this->impact();
+            $vars[json_fields::IMPACT] = $this->get_impact();
         }
 
         return $vars;
@@ -505,7 +505,7 @@ class formula extends sandbox_code_id
     /**
      * @return int the id of the default view for this word or null if no view is preferred
      */
-    function view_id(): int
+    function get_view_id(): int
     {
         if ($this->view == null) {
             return 0;
@@ -528,7 +528,7 @@ class formula extends sandbox_code_id
         $this->generate_ref_text($trm_lst);
     }
 
-    function usr_text(): string
+    function get_usr_text(): string
     {
         if ($this->usr_text_dirty) {
             $this->generate_usr_text();
@@ -536,7 +536,7 @@ class formula extends sandbox_code_id
         return $this->usr_text;
     }
 
-    function ref_text(): ?string
+    function get_ref_text(): ?string
     {
         if ($this->ref_text_dirty) {
             $this->generate_ref_text();
@@ -560,7 +560,7 @@ class formula extends sandbox_code_id
     /**
      * @return float|null a higher number indicates a higher relevance
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
         return $this->impact;
     }
@@ -601,7 +601,7 @@ class formula extends sandbox_code_id
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {
@@ -616,7 +616,7 @@ class formula extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -626,8 +626,13 @@ class formula extends sandbox_code_id
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create the common part of an SQL statement to retrieve
@@ -649,7 +654,7 @@ class formula extends sandbox_code_id
      * @param bool $with_automatic_error_fixing to add any missing words automatically
      * @return bool true if the word has been loaded
      */
-    function load_wrd(bool $with_automatic_error_fixing = true): bool
+    function reload_wrd(bool $with_automatic_error_fixing = true): bool
     {
         $result = true;
         $usr_msg = new user_message();
@@ -684,6 +689,11 @@ class formula extends sandbox_code_id
         return $result;
     }
 
+
+    /*
+     * sql fields
+     */
+
     function name_field(): string
     {
         return formula_db::FLD_NAME;
@@ -692,117 +702,6 @@ class formula extends sandbox_code_id
     function all_sandbox_fields(): array
     {
         return formula_db::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * word
-     */
-
-
-    /**
-     * create the corresponding name word object for the formula name
-     * @return word with the name of the formula
-     */
-    function formula_word(): word
-    {
-        global $sys;
-
-        // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-        return $name_wrd;
-    }
-
-
-    /**
-     * add the corresponding name word for the formula name to the database
-     * @return bool true if adding the word has been successful
-     */
-    function wrd_add(user_message $usr_msg): bool
-    {
-        log_debug('formula wrd_add for ' . $this->dsp_id());
-
-        // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = $this->formula_word();
-        $name_wrd->save($usr_msg);
-        if ($name_wrd->id > 0) {
-            $this->name_wrd = $name_wrd;
-        } else {
-            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
-        }
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * rename the corresponding name word if the formula is renamed
-     * @return bool true if renaming the word has been successful
-     */
-    function wrd_rename(string $old_name, user_message $usr_msg): bool
-    {
-        log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
-
-        $wrd = new word($this->user());
-        $wrd->load_by_name($old_name);
-        if (!$wrd->is_loaded()) {
-            log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
-        } else {
-            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
-            } else {
-                $wrd->set_name($this->name());
-                $wrd->save($usr_msg);
-            }
-        }
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * remove the corresponding name word if the formula is deleted
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if deleting the word has been successful
-     */
-    function wrd_del(user_message $usr_msg): bool
-    {
-        log_debug('formula wrd_del for ' . $this->dsp_id());
-
-        $wrd = new word($this->user());
-        $wrd->load_by_name($this->name());
-        if (!$wrd->is_loaded()) {
-            log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
-        } else {
-            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
-            } else {
-                $wrd->del($usr_msg);
-            }
-        }
-        return $usr_msg->is_ok();
-    }
-
-    /**
-     * add the corresponding name word for the formula name to the database without similar check
-     * this should only be used to fix internal errors
-     */
-    function wrd_add_fix(user_message $usr_msg): bool
-    {
-        global $sys;
-
-        log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
-
-        // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->name = $this->name();
-        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
-        $name_wrd->add($usr_msg);
-        if ($name_wrd->id() > 0) {
-            //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
-            $this->name_wrd = $name_wrd;
-        } else {
-            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
-        }
-        return $usr_msg->is_ok();
     }
 
 
@@ -841,8 +740,8 @@ class formula extends sandbox_code_id
                 $this->last_update = $used_obj->last_update;
             }
         }
-        if ($obj->impact() != null) {
-            $this->set_impact($obj->impact());
+        if ($obj->get_impact() != null) {
+            $this->set_impact($obj->get_impact());
         }
 
         return $usr_msg;
@@ -905,13 +804,13 @@ class formula extends sandbox_code_id
     function needs_db_update(formula|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->ref_text() != null) {
-            if ($this->ref_text() != $db_obj->ref_text()) {
+        if ($this->get_ref_text() != null) {
+            if ($this->get_ref_text() != $db_obj->get_ref_text()) {
                 $result = true;
             }
         }
-        if ($this->usr_text() != null) {
-            if ($this->usr_text() != $db_obj->usr_text()) {
+        if ($this->get_usr_text() != null) {
+            if ($this->get_usr_text() != $db_obj->get_usr_text()) {
                 $result = true;
             }
         }
@@ -928,8 +827,8 @@ class formula extends sandbox_code_id
                 $result = true;
             }
         }
-        if ($this->view_id() != null) {
-            if ($this->view_id() != $db_obj->view_id()) {
+        if ($this->get_view_id() != null) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }
@@ -1554,7 +1453,7 @@ class formula extends sandbox_code_id
 
                             // add the formula name also to the result phrase e.g. increase
                             if (is_null($this->name_wrd)) {
-                                $this->load_wrd();
+                                $this->reload_wrd();
                             }
                             if (is_null($this->name_wrd)) {
                                 log_warning('Cannot load word for formula ' . $this->dsp_id());
@@ -1777,7 +1676,7 @@ class formula extends sandbox_code_id
             }
         }
         // the impact is only included in the export as an indication to validate the consistency
-        $vars[json_fields::IMPACT] = $this->impact();
+        $vars[json_fields::IMPACT] = $this->get_impact();
 
         return $vars;
     }
@@ -2183,17 +2082,6 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if the formula has been changed
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $lib = new library();
-        $sc->set_class($lib->class_to_name(self::class));
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * true if no other user has modified the formula
      * assuming that in this case not confirmation from the other users for a formula rename is needed
      */
@@ -2218,6 +2106,17 @@ class formula extends sandbox_code_id
         }
         log_debug('->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
+    }
+
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the formula has been changed
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $lib = new library();
+        $sc->set_class($lib->class_to_name(self::class));
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -2864,6 +2763,111 @@ class formula extends sandbox_code_id
      */
 
     /**
+     * create the corresponding name word object for the formula name
+     * @return word with the name of the formula
+     */
+    function formula_word(): word
+    {
+        global $sys;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->set_name($this->name());
+        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
+        return $name_wrd;
+    }
+
+
+    /**
+     * add the corresponding name word for the formula name to the database
+     * @return bool true if adding the word has been successful
+     */
+    function wrd_add(user_message $usr_msg): bool
+    {
+        log_debug('formula wrd_add for ' . $this->dsp_id());
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = $this->formula_word();
+        $name_wrd->save($usr_msg);
+        if ($name_wrd->id > 0) {
+            $this->name_wrd = $name_wrd;
+        } else {
+            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * rename the corresponding name word if the formula is renamed
+     * @return bool true if renaming the word has been successful
+     */
+    function wrd_rename(string $old_name, user_message $usr_msg): bool
+    {
+        log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
+
+        $wrd = new word($this->user());
+        $wrd->load_by_name($old_name);
+        if (!$wrd->is_loaded()) {
+            log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
+        } else {
+            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
+            } else {
+                $wrd->set_name($this->name());
+                $wrd->save($usr_msg);
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * remove the corresponding name word if the formula is deleted
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if deleting the word has been successful
+     */
+    function wrd_del(user_message $usr_msg): bool
+    {
+        log_debug('formula wrd_del for ' . $this->dsp_id());
+
+        $wrd = new word($this->user());
+        $wrd->load_by_name($this->name());
+        if (!$wrd->is_loaded()) {
+            log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
+        } else {
+            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
+            } else {
+                $wrd->del($usr_msg);
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * add the corresponding name word for the formula name to the database without similar check
+     * this should only be used to fix internal errors
+     */
+    function wrd_add_fix(user_message $usr_msg): bool
+    {
+        global $sys;
+
+        log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->name = $this->name();
+        $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd->add($usr_msg);
+        if ($name_wrd->id() > 0) {
+            //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
+            $this->name_wrd = $name_wrd;
+        } else {
+            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
      * @return array with the reserved formula names
      */
     protected function reserved_names(): array
@@ -3053,7 +3057,7 @@ class formula extends sandbox_code_id
                 sql_field_type::TIME
             );
         }
-        if ($sbx->view_id() !== $this->view_id()) {
+        if ($sbx->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
@@ -3068,7 +3072,7 @@ class formula extends sandbox_code_id
                 $sbx->view
             );
         }
-        if ($sbx->impact() !== $this->impact()) {
+        if ($sbx->get_impact() !== $this->get_impact()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -3078,9 +3082,9 @@ class formula extends sandbox_code_id
             }
             $lst->add_field(
                 sql_db::FLD_IMPACT,
-                $this->impact(),
+                $this->get_impact(),
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $sbx->impact()
+                $sbx->get_impact()
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

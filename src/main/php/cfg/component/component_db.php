@@ -13,7 +13,7 @@
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql and other load helper functions
-    - retrieval:         get related objects assigned to this component
+    - related:           load related objects assigned to this component from the database
     - cast:              create an api object and set the vars from an api json
     - im- and export:    create an export object and set the vars from an import object
     - info:              functions to make code easier to read

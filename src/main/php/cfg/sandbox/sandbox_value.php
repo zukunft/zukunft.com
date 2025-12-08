@@ -1084,7 +1084,7 @@ class sandbox_value extends sandbox_multi
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(
+    function load_sql_standard(
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par

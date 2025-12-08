@@ -436,7 +436,7 @@ class verb extends type_object
     /**
      * @return float a higher number indicates a higher impact
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
         return $this->impact;
     }
@@ -581,7 +581,7 @@ class verb extends type_object
         $vars[json_fields::REV_PLURAL] = $this->reverse_plural();
         $vars[json_fields::FRM_NAME] = $this->formula_name();
         $vars[json_fields::USAGE] = $this->usage();
-        $vars[json_fields::IMPACT] = $this->impact();
+        $vars[json_fields::IMPACT] = $this->get_impact();
         $vars[json_fields::ID] = $this->id();
 
         return $vars;
@@ -750,23 +750,6 @@ class verb extends type_object
      * save
      */
 
-    // TODO to review: additional check the database foreign keys
-    function not_used_sql(sql_db $db_con): sql_par
-    {
-        $qp = new sql_par(verb::class);
-
-        $qp->name .= 'usage';
-        $db_con->set_class(word::class);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(verb_db::FLD_NAMES);
-        $db_con->set_where_std($this->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
     /**
      * @returns bool true if no one has used this verb
      */
@@ -786,6 +769,23 @@ class verb extends type_object
         }
 
         return $result;
+    }
+
+    // TODO to review: additional check the database foreign keys
+    function not_used_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(verb::class);
+
+        $qp->name .= 'usage';
+        $db_con->set_class(word::class);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->user()->id);
+        $db_con->set_fields(verb_db::FLD_NAMES);
+        $db_con->set_where_std($this->id());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
     }
 
     // true if no other user has modified the verb

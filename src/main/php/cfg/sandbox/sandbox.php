@@ -1034,7 +1034,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;

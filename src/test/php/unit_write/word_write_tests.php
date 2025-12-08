@@ -223,7 +223,7 @@ class word_write_tests
 
         // word is e.g. Zurich as a Canton ...
         $target = $wrd_canton->name();
-        $phr_lst = $wrd_ZH->is();
+        $phr_lst = $wrd_ZH->is_phrases();
         if ($phr_lst->does_contain($wrd_canton)) {
             $result = $wrd_canton->name();
         } else {
@@ -233,7 +233,7 @@ class word_write_tests
 
         // ... and Zurich is a City
         $target = $wrd_city->name();
-        $phr_lst = $wrd_ZH->is();
+        $phr_lst = $wrd_ZH->is_phrases();
         if ($phr_lst->does_contain($wrd_city)) {
             $result = $wrd_city->name();
         } else {

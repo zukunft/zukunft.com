@@ -537,7 +537,7 @@ class sandbox_link extends sandbox
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);

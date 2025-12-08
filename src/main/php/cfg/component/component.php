@@ -15,7 +15,7 @@
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql and other load helper functions
-    - retrieval:         get related objects assigned to this component
+    - related:           load related objects assigned to this component from the database
     - cast:              create an api object and set the vars from an api json
     - info:              functions to make code easier to read
     - log:               write the changes to the log
@@ -998,7 +998,7 @@ class component extends sandbox_code_id
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {
@@ -1016,7 +1016,7 @@ class component extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -1026,7 +1026,7 @@ class component extends sandbox_code_id
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
 
     /*

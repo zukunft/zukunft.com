@@ -491,10 +491,10 @@ class result extends sandbox_value
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID));
-        return parent::load_standard_sql($sc, $fld_lst);
+        return parent::load_sql_standard($sc, $fld_lst);
     }
 
     /**
@@ -571,7 +571,7 @@ class result extends sandbox_value
         $sc->set_fields(array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID)));
 
         $qp = $this->load_sql_by_grp_prepare($sc, $grp);
-        return parent::load_standard_sql_by($sc, $qp);
+        return parent::load_sql_standard_by($sc, $qp);
     }
 
     /**

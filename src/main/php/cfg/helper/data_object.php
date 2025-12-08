@@ -642,7 +642,7 @@ class data_object
         $this->wrd_lst->add_by_name($wrd);
 
         // add word references
-        foreach ($wrd->ref_array() as $ref) {
+        foreach ($wrd->ref_lst as $ref) {
             $this->add_reference($ref);
         }
     }

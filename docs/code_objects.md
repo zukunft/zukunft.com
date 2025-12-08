@@ -12,7 +12,7 @@ most objects have these sections in this order
 - load - database access object (DAO) functions
 - load sql - create the sql statements for database loading
 - sql fields - create the field names for sql statements
-- retrieval - get related objects assigned to this component
+- related - load related objects assigned to this component from the database
 - cast - create an api object and set the vars from an api json
 - api - create an api array for the frontend and set the vars based on a frontend api message
 - im- and export - create an export object and set the vars from an import object

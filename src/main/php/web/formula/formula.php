@@ -235,7 +235,7 @@ class formula extends sandbox_code_id
         }
     }
 
-    function usr_text(): string
+    function get_usr_text(): string
     {
         return $this->usr_text;
     }
@@ -281,7 +281,7 @@ class formula extends sandbox_code_id
     {
         $vars = parent::api_array();
 
-        $vars[json_fields::USER_TEXT] = $this->usr_text();
+        $vars[json_fields::USER_TEXT] = $this->get_usr_text();
         // usage and impact are not included here because this system value is never updated by the frontend
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -719,7 +719,7 @@ class formula extends sandbox_code_id
     {
         $exp = new expression();
         $exp->set_ref_text($this->ref_text(), $trm_lst);
-        $exp->set_user_text($this->usr_text(), $trm_lst);
+        $exp->set_user_text($this->get_usr_text(), $trm_lst);
         log_debug('->expression ' . $exp->ref_text());
         return $exp;
     }

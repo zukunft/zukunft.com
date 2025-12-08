@@ -186,10 +186,10 @@ class value_time_series extends sandbox_value
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
-        return parent::load_standard_sql($sc, $fld_lst);
+        return parent::load_sql_standard($sc, $fld_lst);
     }
 
     /**
@@ -223,7 +223,7 @@ class value_time_series extends sandbox_value
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         return parent::load_standard($qp);
     }
 

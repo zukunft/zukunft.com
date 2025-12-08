@@ -674,7 +674,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst list of fields for the value, result or group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(
+    function load_sql_standard(
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par
@@ -758,7 +758,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par $qp the query parameters with the class and name already set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql_by(sql_creator $sc, sql_par $qp): sql_par
+    function load_sql_standard_by(sql_creator $sc, sql_par $qp): sql_par
     {
         $qp->name .= '_std';
         $sc->set_name($qp->name);

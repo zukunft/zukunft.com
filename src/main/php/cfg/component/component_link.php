@@ -909,7 +909,7 @@ class component_link extends sandbox_link
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
@@ -927,7 +927,7 @@ class component_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
@@ -1310,7 +1310,7 @@ class component_link extends sandbox_link
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         //$cmp_lnk = new component_link($this->user());
                         //$msk = new view($this->user());
-                        //$msk->load_by_id($this->view_id());
+                        //$msk->load_by_id($this->get_view_id());
                         //$cmp_lnk->load_by_link($msk, $entry);
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {

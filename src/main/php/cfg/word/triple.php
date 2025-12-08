@@ -579,7 +579,7 @@ class triple extends sandbox_link_named
                     $vars[json_fields::NAME] = $this->generate_name();
                 }
                 $vars[json_fields::USAGE] = $this->usage();
-                $vars[json_fields::IMPACT] = $this->impact();
+                $vars[json_fields::IMPACT] = $this->get_impact();
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -759,7 +759,7 @@ class triple extends sandbox_link_named
         }
 
         if ($this->view != null) {
-            if ($this->view_id() > 0 and $this->view->name() == '') {
+            if ($this->get_view_id() > 0 and $this->view->name() == '') {
                 if ($do_load) {
                     $this->load_view();
                 }
@@ -779,8 +779,8 @@ class triple extends sandbox_link_named
         if ($this->usage() != null) {
             $vars[json_fields::USAGE] = $this->usage();
         }
-        if ($this->impact() != null) {
-            $vars[json_fields::IMPACT] = $this->impact();
+        if ($this->get_impact() != null) {
+            $vars[json_fields::IMPACT] = $this->get_impact();
         }
 
         return $vars;
@@ -1106,9 +1106,10 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * the impact as a function to enable overwrite in the combine objects phrase and term
      * @return float|null a higher number indicates a higher relevance
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
         return $this->impact;
     }
@@ -1202,7 +1203,7 @@ class triple extends sandbox_link_named
     /**
      * @return int the id of the default view for this triple or null if no view is preferred
      */
-    function view_id(): int
+    function get_view_id(): int
     {
         if ($this->view == null) {
             return 0;
@@ -1312,8 +1313,8 @@ class triple extends sandbox_link_named
         if ($obj->usage() != null) {
             $this->set_usage($obj->usage());
         }
-        if ($obj->impact() != null) {
-            $this->set_impact($obj->impact());
+        if ($obj->get_impact() != null) {
+            $this->set_impact($obj->get_impact());
         }
         return $usr_msg;
     }
@@ -1555,7 +1556,7 @@ class triple extends sandbox_link_named
         // after every load call from outside the class the order should be checked and reversed if needed
         $this->check_order();
 
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
 
         $db_lnk = $db_con->get1($qp);
         $result = $this->row_mapper_sandbox($db_lnk, true);
@@ -1585,7 +1586,7 @@ class triple extends sandbox_link_named
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
@@ -1920,9 +1921,9 @@ class triple extends sandbox_link_named
         if ($this->view != null) {
             $result = $this->view;
         } else {
-            if ($this->view_id() > 0) {
+            if ($this->get_view_id() > 0) {
                 $result = new view($this->user());
-                if ($result->load_by_id($this->view_id())) {
+                if ($result->load_by_id($this->get_view_id())) {
                     $this->view = $result;
                     log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
                 }
@@ -2192,16 +2193,6 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if the triple has been changed
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc->set_class(triple::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * @returns bool true if no other user has modified the triple
      */
     function not_changed(): bool
@@ -2223,6 +2214,16 @@ class triple extends sandbox_link_named
         }
         log_debug('triple->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
+    }
+
+    /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the triple has been changed
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $sc->set_class(triple::class);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -3139,7 +3140,7 @@ class triple extends sandbox_link_named
                 $sbx->impact
             );
         }
-        if ($sbx->view_id() !== $this->view_id()) {
+        if ($sbx->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,

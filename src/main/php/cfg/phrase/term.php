@@ -606,9 +606,9 @@ class term extends combine_named
         return $this->obj()->usage();
     }
 
-    function impact(): ?float
+    function get_impact(): ?float
     {
-        return $this->obj()->impact();
+        return $this->obj()->get_impact();
     }
 
 

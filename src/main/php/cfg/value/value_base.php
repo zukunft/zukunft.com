@@ -776,7 +776,7 @@ class value_base extends sandbox_value
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         return parent::load_standard($qp);
     }
 
@@ -837,7 +837,7 @@ class value_base extends sandbox_value
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
         if ($this->is_numeric()) {
             $fld_lst = array_merge(
@@ -873,7 +873,7 @@ class value_base extends sandbox_value
                 array(user_db::FLD_ID)
             );
         }
-        return parent::load_standard_sql($sc, $fld_lst);
+        return parent::load_sql_standard($sc, $fld_lst);
     }
 
 
@@ -1652,21 +1652,6 @@ class value_base extends sandbox_value
     }
 
     /**
-     * TODO switch to sql creator
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if the value has been changed
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc_par_lst = new sql_type_list();
-        $sc_par_lst->add($this->table_type());
-        $sc_par_lst->add($this->value_type());
-        $sc->set_class($this::class, $sc_par_lst);
-        $ext = $this->table_extension();
-        return $sc->load_sql_not_changed_multi($this->id(), $this->owner_id(), $this->id_field(), $ext, $sc_par_lst);
-    }
-
-    /**
      * true if no other user has modified the value
      */
     function not_changed(): bool
@@ -1688,6 +1673,21 @@ class value_base extends sandbox_value
         }
         log_debug('value->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
+    }
+
+    /**
+     * TODO switch to sql creator
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the value has been changed
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add($this->value_type());
+        $sc->set_class($this::class, $sc_par_lst);
+        $ext = $this->table_extension();
+        return $sc->load_sql_not_changed_multi($this->id(), $this->owner_id(), $this->id_field(), $ext, $sc_par_lst);
     }
 
     /**
