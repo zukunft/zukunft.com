@@ -838,7 +838,7 @@ class word extends sandbox_code_id
         return $frm;
     }
 
-    function view(): ?view
+    function get_view(): ?view
     {
         return $this->load_view();
     }

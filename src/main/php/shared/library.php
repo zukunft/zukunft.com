@@ -625,6 +625,179 @@ class library
     }
 
     /**
+     * check if the order of two array matches
+     * and only return false if the short array has a different order than the long array
+     * @param array $order e.g. the list of function in a section of all classes
+     * @param array $compare e.g. the list of function in a section of a class
+     * @return bool false if the order does not match
+     */
+    function arrayCompareOrder(array $order, array $compare): bool
+    {
+        $result = true;
+        // reset the keys for both arrays to have increasing numbers as keys
+        $order = array_values($order);
+        $compare = array_values($compare);
+        // reset the position for the previous value
+        $pre = 0;
+        // check if order matches
+        foreach ($order as $value) {
+            $pos = array_search($value, $compare);
+            if ($pos !== false) {
+                if ($pos < $pre) {
+                    $result = false;
+                } else {
+                    $pre = $pos;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * return the first value of an array which is in a different order in the two given array
+     * @param array $order e.g. the list of function in a section of all classes
+     * @param array $compare e.g. the list of function in a section of a class
+     * @return string description of the first
+     */
+    function arrayOrderDiff(array $order, array $compare): string
+    {
+        $result = true;
+        $txt = '';
+        // reset the keys for both arrays to have increasing numbers as keys
+        $order = array_values($order);
+        $compare = array_values($compare);
+        // reset the position for the previous value
+        $pre = 0;
+        // check if order matches
+        foreach ($order as $value) {
+            $pos = array_search($value, $compare);
+            if ($pos !== false) {
+                if ($pos < $pre) {
+                    if ($txt != '') {
+                        $txt .= ', ';
+                    }
+                    $txt .= $value . ' should be after ' . $compare[$pre] ;
+                } else {
+                    $pre = $pos;
+                }
+            }
+        }
+
+        return $txt;
+    }
+
+    /**
+     * add string to array after a string or at the end
+     * @param array $lst e.g. the list of function in a section of all classes
+     * @param string|array $new e.g. the function name to add
+     * @param string $at e.g. the previous function name
+     * @param string $new_key e.g. the previous function name
+     * @return array the array with the new function added
+     */
+    function arrayAddAfter(array $lst, string|array $new, string $at, string $new_key = ''): array
+    {
+        $out = [];
+        $offset = 0;
+        $pos = 0;
+        $added = false;
+        foreach ($lst as $key => $val) {
+            if (is_numeric($key) and $offset != 0) {
+                $out[$key + $offset] = $val;
+            } else {
+                $out[$key] = $val;
+            }
+            if ($val == $at) {
+                if (is_numeric($key) and $key == $pos) {
+                    $offset = 1;
+                    $out[$key + $offset] = $new;
+                } else {
+                    if ($new_key == '') {
+                        $new_key_gen = 0;
+                        while (array_key_exists($new_key, $lst)) {
+                            $new_key_gen++;
+                        }
+                        $new_key = $new_key_gen;
+                    }
+                    $out[$new_key] = $new;
+                }
+                $added = true;
+            }
+            $pos++;
+        }
+        if (!$added) {
+            if ($new_key == '') {
+                $out[] = $new;
+            } else {
+                $out[$new_key] = $new;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * add string to array after a string or at the end
+     * @param array $lst e.g. the list of function in a section of all classes
+     * @param array $new e.g. the function name to add
+     * @param string $before e.g. the previous function name
+     * @return array the array with the new function added
+     */
+    function arrayAddArrayBefore(array $lst, array $new, string $before): array
+    {
+        $out = [];
+        $offset = 0;
+        $added = false;
+        $new_keys = array_keys($new);
+        foreach ($lst as $key => $val) {
+            if (is_array($val)) {
+                $test_val = $key;
+            } else {
+                $test_val = $val;
+            }
+            if ($test_val == $before) {
+                if (is_numeric($key)) {
+                    $offset = 1;
+                    foreach ($new as $to_add) {
+                        $out[] = $to_add;
+                        $offset++;
+                    }
+                } else {
+                    $pos = 0;
+                    foreach ($new as $add_key => $to_add) {
+                        $new_key = $new_keys[$pos];
+                        if (array_key_exists($new_key, $lst)) {
+                            $out_row = $lst[$new_key];
+                            if (is_string($to_add)) {
+                                $out_row[$add_key] = $to_add;
+                            } elseif (is_array($to_add)) {
+                                foreach ($to_add as $add_part_key => $add_part) {
+                                    // TODO Prio 2 prevent overwrites
+                                    $out_row[$add_part_key] = $add_part;
+                                }
+                            }
+                            $out[$new_key] = $out_row;
+                        } else {
+                            $out[$new_key] = $to_add;
+                        }
+                        $pos++;
+                    }
+                }
+                $added = true;
+            }
+
+            if (is_numeric($key) and $offset != 0) {
+                $out[] = $val;
+            } else {
+                $out[$key] = $val;
+            }
+        }
+        if (!$added) {
+            $out = array_merge($lst, $new);
+        }
+        return $out;
+    }
+
+    /**
      * if an array contains an array get the first two columns and create a key / value array
      * e.g. if the original array entry ['key','value','default'] the result is 'key' => 'value'
      *
@@ -1212,27 +1385,52 @@ class library
     {
         $result = [];
         $in_comment_part = false;
+        $in_doc_part = false;
         $section_name = '';
+        $section_found = false;
+        $description = '';
+        $description_found = false;
         foreach ($lines as $line) {
-            if (str_starts_with(trim($line), '/*') and !str_starts_with(trim($line), '/**')) {
-                $in_comment_part = true;
+            if (str_starts_with(trim($line), '/*')) {
+                if (str_starts_with(trim($line), '/**')) {
+                    $in_doc_part = true;
+                    $description_found = false;
+                } else {
+                    $in_comment_part = true;
+                    $section_found = false;
+                }
             }
             if (str_starts_with(trim($line), '*/')) {
-                $in_comment_part = false;
+                if ($in_comment_part) {
+                    $in_comment_part = false;
+                } elseif ($in_doc_part) {
+                    $in_doc_part = false;
+                }
             }
             if ($in_comment_part) {
                 if (str_starts_with(trim($line), '*')) {
-                    $section_name = trim($this->str_right_of($line, '* '));
-                    $in_comment_part = false;
+                    if (!$section_found) {
+                        $section_name = trim($this->str_right_of($line, '* '));
+                        $section_found = true;
+                    }
+                }
+            }
+            if ($in_doc_part) {
+                if (str_starts_with(trim($line), '*')) {
+                    if (!$description_found) {
+                        $description = trim($this->str_right_of($line, '* '));
+                        $description_found = true;
+                    }
                 }
             }
             if (str_starts_with(trim($line), 'function ')) {
                 $function_name = trim($this->str_between($line, 'function ', '('));
-                $use = [];
-                $use[] = $function_name;
-                $use[] = $section_name;
                 if ($function_name != '') {
-                    $result[] = $use;
+                    $fnc = [];
+                    $fnc['name'] = $function_name;
+                    $fnc['section'] = $section_name;
+                    $fnc['description'] = $description;
+                    $result[$function_name] = $fnc;
                 }
             }
         }
@@ -1311,10 +1509,11 @@ class library
      *
      * @param array $lines
      * @param string $section
+     * @param string $file_path
      * @return array with the class_name, parent_name (both names have additional "Shared" or "Ui"),
      *               path from the header and the description
      */
-    function php_code_parent(array $lines, string $section, $file_path): array
+    function php_code_parent(array $lines, string $section, string $file_path): array
     {
         $result = [];
         $header_line = '';
@@ -1351,7 +1550,7 @@ class library
                 // check
                 if (!str_contains($file_path, $path)) {
                     // TODO Prio 3 remove exception
-                    $file_path = str_replace('cfg','model', $file_path);
+                    $file_path = str_replace('cfg', 'model', $file_path);
                     if (!str_contains($file_path, $path)) {
                         log_err('class header path ' . $path . ' does not match ' . $file_path);
                     }
@@ -1362,6 +1561,32 @@ class library
             }
         }
         return $result;
+    }
+
+    function php_class_from_code(array $lines): string
+    {
+        $class = '';
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'class')) {
+                $class = trim($this->str_between($line, 'class', 'extends'));
+                $line = $this->str_left_of_or_all($line, "\n");
+                if ($class == '') {
+                    $class = trim($this->str_right_of($line, 'class'));
+                }
+            }
+        }
+        return $class;
+    }
+
+    function php_namespace_from_code(array $lines): string
+    {
+        $class = '';
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'namespace')) {
+                $class = trim($this->str_between($line, 'namespace', ';'));
+            }
+        }
+        return $class;
     }
 
     private function php_code_path_to_section(string $path): string
@@ -1476,29 +1701,50 @@ class library
      */
     function php_expected_function_section(string $fnc_name): string
     {
+        // assign the function to class sections
         $result = match ($fnc_name) {
-            '__construct', 'reset', 'row_mapper_sandbox' => 'construct and map',
+            '__construct', 'reset', 'row_mapper_sandbox',
+            'api_mapper', 'import_mapper', 'import_mapper_user'
+            => 'construct and map',
             'load_standard' => 'load',
-            'api_json_array', 'set_by_api_json' => 'api',
+            'type_code_id', 'type_name', 'type_name_or_null', 'type_id_by_code_id', 'predicate_name'
+            => 'preloaded',
+            'name_field', 'from_field', 'to_field', 'type_field', 'all_sandbox_fields'
+            => 'sql fields',
+            'api_json_array', 'set_by_api_json'
+            => 'api',
             'import_obj', 'export_json' => 'im- and export',
-            'db_fields_all', 'db_fields_changed' => 'sql write fields',
-            'dsp_id' => 'debug',
+            'fill', 'move_up', 'move_down', 'move', 'add_by_name'
+            => 'modify',
+            'diff_msg', 'needs_db_update', 'next_nbr', 'view_ids', 'cmp_ids', 'names'
+            => 'info',
+            'link', 'unlink'
+            => 'link',
+            'get_similar', 'add_insert'
+            => 'save',
+            'db_fields_all', 'db_fields_changed'
+            => 'sql write fields',
+            'dsp_id', 'assigned_msk_ids'
+            => 'debug',
             default => '',
         };
 
+        // assign default section based on the beginning of the function name
         if ($result == '') {
-            if (str_starts_with($fnc_name, 'set_')) {
+            if (str_starts_with($fnc_name, 'set')
+                or str_starts_with($fnc_name, 'get_')) {
                 $result = 'set and get';
-            } elseif (str_starts_with($fnc_name, 'load_by_')) {
-                $result = 'load';
-            } elseif (str_starts_with($fnc_name, 'load_sql')
-                and !(str_starts_with($fnc_name, 'load_sql_user_changes'))) {
+            } elseif (str_starts_with($fnc_name, 'load_sql')) {
                 $result = 'load sql';
+            } elseif (str_starts_with($fnc_name, 'load_')) {
+                $result = 'load';
+            } elseif (str_starts_with($fnc_name, 'reload_')) {
+                $result = 'retrieval';
             } elseif (str_starts_with($fnc_name, 'log_')) {
                 $result = 'log';
-            } elseif (str_starts_with($fnc_name, 'save_')) {
+            } elseif (str_starts_with($fnc_name, 'save')) {
                 $result = 'save';
-            } elseif (str_starts_with($fnc_name, 'del_')) {
+            } elseif (str_starts_with($fnc_name, 'del')) {
                 $result = 'del';
             }
         }

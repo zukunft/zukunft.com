@@ -971,7 +971,7 @@ class triple extends sandbox_link_named
      * overwrite the link type function
      * @return string|null the code id of the verb
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         return $this->verb_code_id();
     }
@@ -1194,7 +1194,7 @@ class triple extends sandbox_link_named
         $this->view->id = $id;
     }
 
-    function view(): ?view
+    function get_view(): ?view
     {
         return $this->view;
     }
@@ -1564,7 +1564,7 @@ class triple extends sandbox_link_named
 
             // automatically update the generic name
             if ($result) {
-                $this->load_objects();
+                $this->reload_objects();
                 $new_name = $this->name();
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
@@ -1692,7 +1692,7 @@ class triple extends sandbox_link_named
 
         if ($this->id() > 0) {
             // automatically update the generic name
-            $this->load_objects();
+            $this->reload_objects();
             $new_name = $this->name_generated();
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
@@ -1753,7 +1753,7 @@ class triple extends sandbox_link_named
      * load the triple without the linked objects, because in many cases the object are already loaded by the caller
      * similar to term->load, but with a different use of verbs
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         log_debug($this->dsp_id());
         $result = true;
@@ -2576,7 +2576,7 @@ class triple extends sandbox_link_named
                 if ($this->can_change() and $this->not_used()) {
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
-                    $this->load_objects();
+                    $this->reload_objects();
                     $this->save_id_fields($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     // if the target link has not yet been created
@@ -2703,7 +2703,7 @@ class triple extends sandbox_link_named
         if ($this->check_save($usr_msg)) {
 
             // load the objects if needed
-            $this->load_objects();
+            $this->reload_objects();
 
             // build the database object because the is anyway needed
             $db_con->set_usr($this->user()->id);
@@ -3255,7 +3255,7 @@ class triple extends sandbox_link_named
         $result = ''; // reset the html code var
 
         // get the link from the database
-        $this->load_objects();
+        $this->reload_objects();
 
         // prepare to show the triple
         $result .= $this->from()->name() . ' '; // e.g. Australia
@@ -3276,7 +3276,7 @@ class triple extends sandbox_link_named
         $result = ''; // reset the html code var
 
         // get the link from the database
-        $this->load_objects();
+        $this->reload_objects();
 
         // prepare to show the triple
         $result .= $this->to()->name() . ' ';   // e.g. Countries

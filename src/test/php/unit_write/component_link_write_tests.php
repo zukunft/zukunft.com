@@ -200,7 +200,7 @@ class component_link_write_tests
                 } else {
                     $target = components::TEST_ADD_2_NAME;
                 }
-                $result = $entry->component()->name();
+                $result = $entry->get_component()->name();
                 $t->assert('view component order for user 1', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
@@ -216,7 +216,7 @@ class component_link_write_tests
                 } else {
                     $target = components::TEST_ADD_2_NAME;
                 }
-                $result = $entry->component()->name();
+                $result = $entry->get_component()->name();
                 $t->assert('view component order for user 2', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
@@ -249,7 +249,7 @@ class component_link_write_tests
                 } else {
                     $target = components::TEST_ADD_2_NAME;
                 }
-                $result = $entry->component()->name();
+                $result = $entry->get_component()->name();
                 $t->assert('view component order for user 2', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }
@@ -265,7 +265,7 @@ class component_link_write_tests
                 } else {
                     $target = components::TEST_ADD_2_NAME;
                 }
-                $result = $entry->component()->name();
+                $result = $entry->get_component()->name();
                 $t->assert('view component order for user 1', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
                 $pos = $pos + 1;
             }

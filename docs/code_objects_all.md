@@ -292,6 +292,7 @@ the object structure is:
                 \-- change_log_namedUi - a list function to create the HTML code to display a list of user changes
             \-- refUi - the extension of the reference API objects to create ref base html code
             \-- sandbox_linkUi
+                \-- component_linkUi - create HTML code to display a n:m link between a view and a component
                 \-- formula_linkUi - create HTML code to display a formula link
                 \-- term_viewUi - create HTML code to display a n:m link between a term and a view
                 \-- view_relationUi - create HTML code to display a n:m link between two views
@@ -335,7 +336,6 @@ the object structure is:
 +-- view_stylesShared - db based ENUM of the view and component styles
 +-- view_typeShared - db based ENUM of the view types
 +-- url_varShared - all names used for the url and the form field names
-+-- component_linkUi - create HTML code to display a view component links
 \-- ui_baseUi
     \-- ui_im_exportUi - html user interface components for im- and export
     \-- ui_listUi - create the html for listed related to an object

@@ -239,7 +239,7 @@ class ref extends sandbox_link
             $this->set_url($db_row[ref_db::FLD_URL]);
             $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
-            if ($this->load_objects()) {
+            if ($this->reload_objects()) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
             }
@@ -423,7 +423,7 @@ class ref extends sandbox_link
         }
         if ($this->predicate_id > 0) {
             unset($vars[json_fields::PREDICATE]);
-            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
+            $vars[json_fields::TYPE_NAME] = $this->get_predicate_code_id();
         }
         if ($this->external_key() <> '') {
             $vars[json_fields::NAME] = $this->external_key();
@@ -583,7 +583,7 @@ class ref extends sandbox_link
     function type_name(): string
     {
         if ($this->predicate_id() >= 0) {
-            return $this->predicate_code_id();
+            return $this->get_predicate_code_id();
         } else {
             return '';
         }
@@ -730,7 +730,7 @@ class ref extends sandbox_link
     /**
      * @return string with the unique key of this reference
      */
-    function key(): string
+    function get_key(): string
     {
         return
             $this->escape_key_part($this->phrase_name()) .
@@ -767,7 +767,7 @@ class ref extends sandbox_link
      * get the code_id of the reference type
      * @return string the code_id of the reference type
      */
-    function predicate_code_id(): string
+    function get_predicate_code_id(): string
     {
         global $sys;
         return $sys->typ_lst->ref_typ->code_id($this->predicate_id);
@@ -926,7 +926,7 @@ class ref extends sandbox_link
      * TODO add the missing objects like the source
      * @return bool true if all the related objects has been loaded
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
 

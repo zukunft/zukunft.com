@@ -1138,7 +1138,7 @@ class sandbox extends db_object_seq_id_user
      * dummy function to get the missing objects from the database that is always overwritten by the child class
      * @returns bool  false if the loading has failed
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         log_err('The dummy parent method load_objects has been called for ' . $this::class . ', which should never happen');
         return true;
@@ -1987,20 +1987,20 @@ class sandbox extends db_object_seq_id_user
             }
             // make sure that the ui msg code id never differs between the standard row and the user row
             if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
-                if ($this->ui_msg_code_id() != $norm_obj->ui_msg_code_id()) {
-                    $this->set_ui_msg_code_id($norm_obj->ui_msg_code_id(), $this->user());
+                if ($this->get_ui_msg_code_id() != $norm_obj->get_ui_msg_code_id()) {
+                    $this->set_ui_msg_code_id($norm_obj->get_ui_msg_code_id(), $this->user());
                     log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
-                if ($this->ui_msg_code_id_vars() != $norm_obj->ui_msg_code_id_vars()) {
-                    $this->set_ui_msg_code_id_vars($norm_obj->ui_msg_code_id_vars(), $this->user());
+                if ($this->get_ui_msg_code_id_vars() != $norm_obj->get_ui_msg_code_id_vars()) {
+                    $this->set_ui_msg_code_id_vars($norm_obj->get_ui_msg_code_id_vars(), $this->user());
                     log_warning('ui variable message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
-                if ($this->ui_msg_code_id_exception() != $norm_obj->ui_msg_code_id_exception()) {
-                    $this->set_ui_msg_code_id_exception($norm_obj->ui_msg_code_id_exception(), $this->user());
+                if ($this->get_ui_msg_code_id_exception() != $norm_obj->get_ui_msg_code_id_exception()) {
+                    $this->set_ui_msg_code_id_exception($norm_obj->get_ui_msg_code_id_exception(), $this->user());
                     log_warning('ui exception message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
-                if ($this->ui_msg_value_exception() !== $norm_obj->ui_msg_value_exception()) {
-                    $this->set_ui_msg_value_exception($norm_obj->ui_msg_value_exception(), $this->user());
+                if ($this->get_ui_msg_value_exception() !== $norm_obj->get_ui_msg_value_exception()) {
+                    $this->set_ui_msg_value_exception($norm_obj->get_ui_msg_value_exception(), $this->user());
                     log_warning('ui exception value has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
@@ -2648,7 +2648,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->check_save($usr_msg)) {
             // load the objects if needed e.g. to log the names of the link
             if ($this->is_link_obj()) {
-                $this->load_objects();
+                $this->reload_objects();
 
                 // check if the required parameters are set
                 if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
@@ -2728,7 +2728,7 @@ class sandbox extends db_object_seq_id_user
                     } else {
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
-                            if (!$db_rec->load_objects()) {
+                            if (!$db_rec->reload_objects()) {
                                 $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [
                                     msg_id::VAR_CLASS_NAME => $class_name
                                 ]);
@@ -2933,7 +2933,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // reload the objects if needed
                 if ($this->is_link_obj()) {
-                    if (!$this->load_objects()) {
+                    if (!$this->reload_objects()) {
                         $msg .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                     }
                 }
@@ -2987,7 +2987,7 @@ class sandbox extends db_object_seq_id_user
                         if ($db_rec->load_by_id($this->id())) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->is_link_obj()) {
-                                if (!$db_rec->load_objects()) {
+                                if (!$db_rec->reload_objects()) {
                                     $msg .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
                                 }
                             }
@@ -4295,7 +4295,7 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
-    function ui_msg_code_id(): ?msg_id
+    function get_ui_msg_code_id(): ?msg_id
     {
         log_err('a frontend message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;
@@ -4310,7 +4310,7 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
-    function ui_msg_code_id_vars(): ?msg_id
+    function get_ui_msg_code_id_vars(): ?msg_id
     {
         log_err('a frontend after message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;
@@ -4325,7 +4325,7 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
-    function ui_msg_code_id_exception(): ?msg_id
+    function get_ui_msg_code_id_exception(): ?msg_id
     {
         log_err('a frontend exception message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;
@@ -4340,7 +4340,7 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
-    function ui_msg_value_exception(): ?float
+    function get_ui_msg_value_exception(): ?float
     {
         log_err('a frontend exception message value change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;

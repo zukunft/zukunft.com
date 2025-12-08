@@ -100,7 +100,7 @@ class formula_link_write_tests
 
         $frm_lnk2 = new formula_link($t->usr1);
         $frm_lnk2->load_by_id($frm_lnk->id(), formula_link::class);
-        $frm_lnk2->load_objects();
+        $frm_lnk2->reload_objects();
 
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->formula() != null) {

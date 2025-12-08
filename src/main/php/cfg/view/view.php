@@ -378,8 +378,8 @@ class view extends sandbox_code_id
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
-            if ($this->style_id() != null) {
-                $vars[json_fields::STYLE] = $this->style_id();
+            if ($this->get_style_id() != null) {
+                $vars[json_fields::STYLE] = $this->get_style_id();
             }
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
@@ -483,9 +483,9 @@ class view extends sandbox_code_id
             }
         }
 
-        if ($this->style_id() != null) {
-            if ($this->style_id() <> $sys->typ_lst->msk_sty->default_id()) {
-                $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->style_id());
+        if ($this->get_style_id() != null) {
+            if ($this->get_style_id() <> $sys->typ_lst->msk_sty->default_id()) {
+                $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->get_style_id());
             }
         }
 
@@ -571,7 +571,7 @@ class view extends sandbox_code_id
     /**
      * @return view_style|type_object|null the view style for this component or null if the parent style should be used
      */
-    function style(): view_style|type_object|null
+    function get_style(): view_style|type_object|null
     {
         return $this->style;
     }
@@ -579,7 +579,7 @@ class view extends sandbox_code_id
     /**
      * @return int|null the database id of the view style or null
      */
-    function style_id(): ?int
+    function get_style_id(): ?int
     {
         return $this->style?->id();
     }
@@ -893,14 +893,14 @@ class view extends sandbox_code_id
         $result = new user_message();
 
         // if no position is requested add the component at the end
-        if ($lnk->pos() == null) {
+        if ($lnk->get_pos() == null) {
             if ($pos != null) {
                 $lnk->set_pos($pos);
             } else {
                 $lnk->set_pos($this->component_links() + 1);
             }
         }
-        if ($lnk->pos_type() == null) {
+        if ($lnk->get_pos_type() == null) {
             $lnk->set_pos_type(position_types::BELOW);
         }
         if ($this->cmp_lnk_lst == null) {
@@ -1024,8 +1024,8 @@ class view extends sandbox_code_id
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->style_id() != null) {
-            $this->set_style_by_id($obj->style_id());
+        if ($obj->get_style_id() != null) {
+            $this->set_style_by_id($obj->get_style_id());
         }
         return $usr_msg;
     }
@@ -1075,8 +1075,8 @@ class view extends sandbox_code_id
     function needs_db_update(view|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->style() != null) {
-            if ($this->style_id() != $db_obj->style_id()) {
+        if ($this->get_style() != null) {
+            if ($this->get_style_id() != $db_obj->get_style_id()) {
                 $result = true;
             }
         }
@@ -1272,7 +1272,7 @@ class view extends sandbox_code_id
                 $sys->typ_lst->msk_typ
             );
         }
-        if ($sbx->style_id() !== $this->style_id()) {
+        if ($sbx->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,
@@ -1282,17 +1282,17 @@ class view extends sandbox_code_id
             }
             global $sys;
             // TODO move to id function of type list
-            if ($this->style_id() < 0) {
+            if ($this->get_style_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_MISSING, [
-                    msg_id::VAR_TYPE => $this->style_id(),
+                    msg_id::VAR_TYPE => $this->get_style_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
             $lst->add_type_field(
                 view_db::FLD_STYLE,
                 view_style::FLD_NAME,
-                $this->style_id(),
-                $sbx->style_id(),
+                $this->get_style_id(),
+                $sbx->get_style_id(),
                 $sys->typ_lst->msk_sty
             );
         }

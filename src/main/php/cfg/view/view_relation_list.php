@@ -219,7 +219,7 @@ class view_relation_list extends sandbox_link_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            $id = $lnk->view()->id();
+            $id = $lnk->get_view()->id();
             if ($id <> 0) {
                 if (!in_array($id, $result)) {
                     $result[] = $id;
@@ -236,8 +236,8 @@ class view_relation_list extends sandbox_link_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->component() != null) {
-                $name = $lnk->component()->name($ignore_excluded);
+            if ($lnk->get_component() != null) {
+                $name = $lnk->get_component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;
@@ -264,7 +264,7 @@ class view_relation_list extends sandbox_link_list
     {
         foreach ($this->lst() as $sbx) {
             // save upfront and missing components
-            $cmp = $sbx->component();
+            $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready()) {
                     $cmp->save($usr_msg);
@@ -297,7 +297,7 @@ class view_relation_list extends sandbox_link_list
                 if ($can_add) {
                     if ($lnk->from_id() == $lnk_to_add->from_id()
                         and $lnk->to_id() == $lnk_to_add->to_id()
-                        and $lnk->pos() == $lnk_to_add->pos()) {
+                        and $lnk->get_pos() == $lnk_to_add->get_pos()) {
                         $can_add = false;
                     }
                     if ($lnk->id() == $lnk_to_add->id()

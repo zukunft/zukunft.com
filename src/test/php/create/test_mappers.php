@@ -1084,7 +1084,7 @@ class test_mappers
     private function view_link_url(term_view $msk_lnk, string $type): array
     {
         $url_array = [];
-        $url_array[] = [url_var::VIEW, $msk_lnk->view()->id()];
+        $url_array[] = [url_var::VIEW, $msk_lnk->get_view()->id()];
         $url_array[] = [url_var::TERM, $msk_lnk->term()->id()];
         $url_array[] = [url_var::DESCRIPTION, $msk_lnk->description];
         $url_array[] = [url_var::TYPE, $msk_lnk->predicate_id()];
@@ -1107,11 +1107,11 @@ class test_mappers
     private function component_link_url(component_link $cmp_lnk, string $type): array
     {
         $url_array = [];
-        $url_array[] = [url_var::VIEW, $cmp_lnk->view()->id()];
-        $url_array[] = [url_var::COMPONENT, $cmp_lnk->component()->id()];
+        $url_array[] = [url_var::VIEW, $cmp_lnk->get_view()->id()];
+        $url_array[] = [url_var::COMPONENT, $cmp_lnk->get_component()->id()];
         $url_array[] = [url_var::POSITION, $cmp_lnk->order_nbr];
-        $url_array[] = [url_var::POSITION_TYPE, $cmp_lnk->pos_type_id()];
-        $url_array[] = [url_var::STYLE, $cmp_lnk->style_id()];
+        $url_array[] = [url_var::POSITION_TYPE, $cmp_lnk->get_pos_type_id()];
+        $url_array[] = [url_var::STYLE, $cmp_lnk->get_style_id()];
         $url_array[] = [url_var::TYPE, $cmp_lnk->predicate_id()];
         $url_array[] = [url_var::SHARE, $cmp_lnk->share_id()];
         $url_array[] = [url_var::PROTECTION, $cmp_lnk->protection_id()];

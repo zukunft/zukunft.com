@@ -1420,8 +1420,8 @@ class word_list extends sandbox_list_named
 
         foreach ($this->lst() as $wrd) {
             // $wrd_dsp = $wrd->dsp_obj();
-            // TODO review $view = $wrd_dsp->view();
-            $view = $wrd->view();
+            // TODO review $view = $wrd_dsp->get_view();
+            $view = $wrd->get_view();
             if (isset($view)) {
                 $is_in_list = false;
                 foreach ($result as $check_view) {

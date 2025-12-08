@@ -14,7 +14,7 @@ A proper issue ticket should be created for these TODOs notes:
          - a type assigns coded functionality to one object
          - a predicate assigns coded functionality to an object link between two objects
          - a specific predicate can be named ..._type e.g. view_relation_type is actually a predicate
-    TODO add a coding rule test that checka
+    TODO add a coding rule test that checks
          - there is at least one succes and on fail test for each function
          - classes are no longer than 1000 lines
          - functions are no longer than 20 lines
@@ -23,6 +23,9 @@ A proper issue ticket should be created for these TODOs notes:
          - the list of all vars names groupd by usage is updated
          - each class has the same sections order
          - the same function name is always in the same section and in the same order
+           group the functions at least by main backend function, other backend function, frontend function and other functions
+           and create an md function overview document 
+         - check that all function have at least one unit test e.g. for the library assume that the unit test is in test/unit/library_tests.php 
          - the var names are using the three char based names whereas functions that might take longer use the full name
     TODO create a assert_user_message function that checks if an unexpected user_message has been created 
     TODO the workflow should modify the url array and e.g. replace to_confirm with confirmed

@@ -435,7 +435,7 @@ class user_display_old extends user
                 $frm_usr->phrase()->set_id($sbx_row[phrase_db::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
-                $frm_usr->load_objects();
+                $frm_usr->reload_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -495,7 +495,7 @@ class user_display_old extends user
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
-                        $frm_lnk_other->load_objects();
+                        $frm_lnk_other->reload_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1100,7 +1100,7 @@ class user_display_old extends user
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
-                $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
+                $dsp_usr->get_component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);

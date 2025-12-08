@@ -383,7 +383,7 @@ class view_relation extends sandbox_link
      * overwrite the link type function
      * @return string|null the code id of the verb
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         global $sys;
         $id = $this->predicate_id;
@@ -472,7 +472,7 @@ class view_relation extends sandbox_link
             $vars[json_fields::PARENT] = $this->parent()?->name();
             $vars[json_fields::CHILD] = $this->child()?->name();
         }
-        $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
+        $vars[json_fields::TYPE_NAME] = $this->get_predicate_code_id();
 
         if ($this->start_pos >= 0) {
             $vars[json_fields::POSITION] = $this->start_pos;
@@ -577,7 +577,7 @@ class view_relation extends sandbox_link
      *      or if loaded from the db and is expected to have all vars in line with the db
      * @return bool true if all the related objects has been loaded
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
 

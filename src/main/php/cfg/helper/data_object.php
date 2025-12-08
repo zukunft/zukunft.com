@@ -1146,7 +1146,7 @@ class data_object
             foreach ($this->view_list()->lst() as $msk) {
                 if ($msk->has_components()) {
                     foreach ($msk->component_link_list()->lst() as $lnk) {
-                        $cmp = $lnk->component();
+                        $cmp = $lnk->get_component();
                         if ($cmp->id() == 0) {
                             if ($cmp->name() == '') {
                                 $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());

@@ -203,13 +203,13 @@ class horizontal_tests
                 $dto->add_phrase($filled_obj->phrase());
             } elseif ($class == term_view::class) {
                 $dto->add_term($filled_obj->term());
-                $dto->add_view($filled_obj->view());
+                $dto->add_view($filled_obj->get_view());
             } elseif ($class == view_relation::class) {
                 $dto->add_view($filled_obj->parent());
                 $dto->add_view($filled_obj->child());
             } elseif ($class == component_link::class) {
-                $dto->add_view($filled_obj->view());
-                $dto->add_component($filled_obj->component());
+                $dto->add_view($filled_obj->get_view());
+                $dto->add_component($filled_obj->get_component());
             }
             $ex_json = $filled_obj->export_json([], false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);

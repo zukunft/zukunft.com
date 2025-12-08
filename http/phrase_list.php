@@ -68,6 +68,7 @@ $result .= $usr->get();
 if ($usr->id() > 0) {
 
     $usr->load_usr_data();
+    $msg = '';
 
     // prepare the display
     // TODO use view_shared::PHRASE_LIST instead of WORD_ADD
@@ -137,14 +138,14 @@ if ($usr->id() > 0) {
             $trp = new triple($usr);
             $trp->load_by_link_id($phr_id, $vrb_id, $phr_to);
             if ($trp->id() > 0) {
-                $trp->load_objects();
+                $trp->reload_objects();
                 log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
                 $msg .= '"' . $trp->from_name . ' ' . $trp->verb_name() . ' ' . $trp->to_name . '" already exists. ';
             }
             $trp_rev = new triple($usr);
             $trp_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
             if ($trp_rev->id() > 0) {
-                $trp_rev->load_objects();
+                $trp_rev->reload_objects();
                 $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }

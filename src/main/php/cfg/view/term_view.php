@@ -341,11 +341,11 @@ class term_view extends sandbox_link
     {
         $vars = parent::api_json_array($typ_lst, $usr);
 
-        if ($this->view()?->id() != 0) {
+        if ($this->get_view()?->id() != 0) {
             if ($typ_lst->include_views()) {
-                $vars[json_fields::VIEW] = $this->view()->api_json_array($typ_lst, $usr);
+                $vars[json_fields::VIEW] = $this->get_view()->api_json_array($typ_lst, $usr);
             } else {
-                $vars[json_fields::VIEW_ID] = $this->view()->id();
+                $vars[json_fields::VIEW_ID] = $this->get_view()->id();
             }
         }
         if ($this->term()?->id() != 0) {
@@ -417,7 +417,7 @@ class term_view extends sandbox_link
      * interface function to get the view
      * @return view|sandbox_named|combine_named|null but actually the view object
      */
-    function view(): view|sandbox_named|combine_named|null
+    function get_view(): view|sandbox_named|combine_named|null
     {
         return $this->fob();
     }
@@ -435,7 +435,7 @@ class term_view extends sandbox_link
      * overwrite the link type function with the view link
      * @return string|null the code id of the verb
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         global $sys;
         $id = $this->predicate_id();
@@ -582,11 +582,11 @@ class term_view extends sandbox_link
      *      or if loaded from the db and is expected to have all vars in line with the db
      * @return bool true if all the related objects has been loaded
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
 
-        $msk = $this->view();
+        $msk = $this->get_view();
         if ($msk->id() == 0) {
             if ($msk->name() != '') {
                 $result = $msk->load_by_name($msk->name());
@@ -643,14 +643,14 @@ class term_view extends sandbox_link
             array(user_db::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {
-            $sc->add_where(view_db::FLD_ID, $this->view()->id());
+        } elseif ($this->get_view()->id() > 0 and $this->term()->id() != 0) {
+            $sc->add_where(view_db::FLD_ID, $this->get_view()->id());
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
-            if ($this->view()->id() > 0) {
+            if ($this->get_view()->id() > 0) {
                 log_err('Cannot load default view term link because term id for ' . $this->term()->dsp_id() . 'is missing');
             } else {
-                log_err('Cannot load default view term link because term id for ' . $this->view()->dsp_id() . 'is missing');
+                log_err('Cannot load default view term link because term id for ' . $this->get_view()->dsp_id() . 'is missing');
             }
         }
         $qp->sql = $sc->sql();
@@ -674,8 +674,8 @@ class term_view extends sandbox_link
     function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $vars = parent::export_json($exp_typ, $do_load);
-        if ($this->view()?->name() != null) {
-            $vars[json_fields::VIEW] = $this->view()->export_json($exp_typ, $do_load);
+        if ($this->get_view()?->name() != null) {
+            $vars[json_fields::VIEW] = $this->get_view()->export_json($exp_typ, $do_load);
         }
         if ($this->term()?->name() != null) {
             $vars[json_fields::TERM] = $this->term()->export_json($exp_typ, $do_load);

@@ -609,7 +609,7 @@ class formula_link extends sandbox_link
      * overwrite the link type function
      * @return string|null the code id of the verb
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         global $sys;
         $id = $this->predicate_id();
@@ -772,7 +772,7 @@ class formula_link extends sandbox_link
      * if the link object is loaded by an external query like in user_display to show the sandbox
      * @return bool true if the loading of the linked objects has been successful
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
         if ($this->formula_id() > 0) {
@@ -976,7 +976,7 @@ class formula_link extends sandbox_link
         }
 
         // load the objects if needed
-        $this->load_objects();
+        $this->reload_objects();
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id);
@@ -1006,7 +1006,7 @@ class formula_link extends sandbox_link
             // because it needs to be done for user and general formulas
             $db_rec = new formula_link($this->user());
             $db_rec->load_by_id($this->id());
-            $db_rec->load_objects();
+            $db_rec->reload_objects();
             $db_con->set_class(formula_link::class);
             // relevant is if there is a user config in the database
             // so use this information to prevent
@@ -1036,7 +1036,7 @@ class formula_link extends sandbox_link
             }
 
             // check if the id parameters are supposed to be changed
-            $this->load_objects();
+            $this->reload_objects();
             if ($usr_msg->is_ok()) {
                 $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
             }
@@ -1183,9 +1183,9 @@ class formula_link extends sandbox_link
     {
         $result = '';
 
-        $this->load_objects();
+        $this->reload_objects();
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
+            $result = $this->formula()->name_link($back) . ' to ' . $this->phrase()->display_linked();
         } else {
             $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
         }

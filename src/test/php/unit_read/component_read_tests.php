@@ -65,9 +65,9 @@ class component_read_tests
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';
-        $t->assert($test_name, $cmp_lnk->view()->id, $msk->id);
+        $t->assert($test_name, $cmp_lnk->get_view()->id, $msk->id);
         $test_name .= ' component id';
-        $t->assert($test_name, $cmp_lnk->component()->id, $cmp->id);
+        $t->assert($test_name, $cmp_lnk->get_component()->id, $cmp->id);
 
     }
 

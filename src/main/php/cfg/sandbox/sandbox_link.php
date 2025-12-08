@@ -338,7 +338,7 @@ class sandbox_link extends sandbox
      * to be overwritten by the child objects
      * @return string|null the name of connection type
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         return null;
     }
@@ -433,7 +433,7 @@ class sandbox_link extends sandbox
     /**
      * @return string a unique key of the link based on the names of the objects that are linked
      */
-    function key(): string
+    function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
         $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
@@ -795,7 +795,7 @@ class sandbox_link extends sandbox
     {
         $vars = parent::export_json($exp_typ, $do_load);
         if ($this->predicate_id != null) {
-            $vars[json_fields::PREDICATE] = $this->predicate_code_id();
+            $vars[json_fields::PREDICATE] = $this->get_predicate_code_id();
         }
         return $vars;
     }
@@ -1138,7 +1138,7 @@ class sandbox_link extends sandbox
 
         $from_can_be_missing = false;
         if ($this::class == triple::class) {
-            if (in_array($this->predicate_code_id(), verbs::WITHOUT_FROM)) {
+            if (in_array($this->get_predicate_code_id(), verbs::WITHOUT_FROM)) {
                 $from_can_be_missing = true;
             }
         }

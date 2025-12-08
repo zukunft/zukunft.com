@@ -97,14 +97,14 @@ if ($usr->id > 0) {
             $dsp_link = new view($usr);
             $result .= $dsp_link->load_by_id($dsp_link_id);
             $order_nbr = $cmp->next_nbr($dsp_link_id);
-            $upd_result = $cmp->link($dsp_link, $order_nbr);
+            $upd_result = $cmp->link($dsp_link, $order_nbr, $usr_msg);
         }
 
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
             $dsp_unlink = new view($usr);
             $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
-            $upd_result .= $cmp->unlink($dsp_unlink);
+            $upd_result .= $cmp->unlink($dsp_unlink, $usr_msg);
         }
 
         // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
@@ -125,10 +125,10 @@ if ($usr->id > 0) {
                 $cmp->type_id = $_GET['type'];
             } //
             if (isset($_GET[json_fields::PHRASE_ROW])) {
-                $cmp->load_row_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_row_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
             if (isset($_GET[json_fields::PHRASE_COL])) {
-                $cmp->load_col_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_col_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
 
             // save the changes

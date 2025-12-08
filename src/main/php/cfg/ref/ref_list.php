@@ -264,7 +264,7 @@ class ref_list extends type_list
     {
         $result = false;
         if ($to_add != null) {
-            if (!in_array($to_add->key(), array_keys($this->key_list()))) {
+            if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
                 // add only objects that have all mandatory values
                 $result = $to_add->can_be_ready()->is_ok();
 
@@ -282,7 +282,7 @@ class ref_list extends type_list
     function add_direct(ref|type_object|view|null $item): void
     {
         parent::add_direct($item);
-        $this->key_lst[] = $item->key();
+        $this->key_lst[] = $item->get_key();
     }
 
     function del(user_message $usr_msg): void
