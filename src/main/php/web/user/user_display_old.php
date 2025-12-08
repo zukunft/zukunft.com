@@ -40,6 +40,7 @@ include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -64,6 +65,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
@@ -105,11 +107,11 @@ class user_display_old extends user
 
         $result = '';
         $err_lst = new sys_log_list;
-        $err_lst->set_user($this);
-        $err_lst->page = $page;
-        $err_lst->size = $size;
-        $err_lst->dsp_type = $dsp_type;
-        $err_lst->back = $back;
+        //$err_lst->set_user($this);
+        //$err_lst->page = $page;
+        //$err_lst->size = $size;
+        //$err_lst->dsp_type = $dsp_type;
+        //$err_lst->back = $back;
         if ($err_lst->load()) {
             $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $result = $err_lst_dsp->get_html();

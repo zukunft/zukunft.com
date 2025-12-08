@@ -308,7 +308,7 @@ class job extends db_object_seq_id_user
         if ($this->type_id != 0) {
             $type = $sys->typ_lst->job_typ->get($this->type_id);
             if ($type != null) {
-                $result = $type->code_id();
+                $result = $type->get_code_id();
             }
         }
         return $result;
@@ -332,7 +332,7 @@ class job extends db_object_seq_id_user
         $sc->set_class(job::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
@@ -390,7 +390,7 @@ class job extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::USER_NAME] = $this->user()->name();
+        $vars[json_fields::USER_NAME] = $this->get_user()->name();
         // TODO use time zone?
         $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
@@ -452,9 +452,9 @@ class job extends db_object_seq_id_user
                     //$db_con = New mysql;
                     $db_type = $db_con->get_class();
                     $db_con->set_class(job::class);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->get_user()->id);
                     $job_id = $db_con->insert_old(array(user_db::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->user()->id, sql::NOW, $this->type_id(), $this->row_id));
+                        array($this->get_user()->id, sql::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -481,7 +481,7 @@ class job extends db_object_seq_id_user
 
         // load all depending formula results
         if (isset($this->obj)) {
-            log_debug('get list for user ' . $this->obj->user()->name());
+            log_debug('get list for user ' . $this->obj->get_user()->name());
             $res_lst = $this->obj->res_lst_depending();
             if ($res_lst != null) {
                 log_debug('got ' . $res_lst->dsp_id());
@@ -498,7 +498,7 @@ class job extends db_object_seq_id_user
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(job::class);
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
@@ -513,7 +513,7 @@ class job extends db_object_seq_id_user
         global $db_con;
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         $db_con->set_class(job::class);
         $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 

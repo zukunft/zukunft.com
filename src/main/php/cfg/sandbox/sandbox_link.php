@@ -817,7 +817,7 @@ class sandbox_link extends sandbox
         $lib = new library();
         $usr_msg = new user_message();
 
-        $log = new change_link($this->user());
+        $log = new change_link($this->get_user());
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
@@ -841,7 +841,7 @@ class sandbox_link extends sandbox
         $lib = new library();
         $usr_msg = new user_message();
 
-        $log = new change_link($this->user());
+        $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
@@ -860,7 +860,7 @@ class sandbox_link extends sandbox
      */
     function log_object(): change|change_link
     {
-        return new change($this->user());
+        return new change($this->get_user());
     }
 
 
@@ -878,7 +878,7 @@ class sandbox_link extends sandbox
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID),
-            array($this->fob()->id(), $this->tob()->id(), $this->user()->id()));
+            array($this->fob()->id(), $this->tob()->id(), $this->get_user()->id()));
     }
 
     /**
@@ -922,7 +922,7 @@ class sandbox_link extends sandbox
                     }
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->get_user()->id);
                     $this->id = $this->add_insert();
                 }
 
@@ -941,7 +941,7 @@ class sandbox_link extends sandbox
                         $db_rec->reset();
                         $db_rec->fob = $this->fob;
                         $db_rec->tob = $this->tob;
-                        $db_rec->set_user($this->user());
+                        $db_rec->set_user($this->get_user());
                         $std_rec = clone $db_rec;
                         // save the object fields
                         $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
@@ -1018,7 +1018,7 @@ class sandbox_link extends sandbox
             $log->row_id = $this->id();
             if ($log->add($usr_msg)) {
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id);
+                $db_con->set_usr($this->get_user()->id);
                 if (!$db_con->update_old($this->id(),
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
                     array($this->fob()->id(), $this->tob()->id()))) {
@@ -1077,7 +1077,7 @@ class sandbox_link extends sandbox
      */
     function get_similar(): sandbox
     {
-        $result = new sandbox($this->user());
+        $result = new sandbox($this->get_user());
 
         // check potential duplicate by name
         // check for linked objects
@@ -1096,7 +1096,7 @@ class sandbox_link extends sandbox
                 }
             }
             // check with the user link space
-            $db_chk->set_user($this->user());
+            $db_chk->set_user($this->get_user());
             if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
@@ -1618,7 +1618,7 @@ class sandbox_link extends sandbox
         // fields and values that the word has additional to the standard named user sandbox object
         $lnk_empty = $this->clone_reset();
         // for a new component link the owner should be set, so remove the user id to force writing the user
-        $lnk_empty->set_user($this->user()->clone_reset());
+        $lnk_empty->set_user($this->get_user()->clone_reset());
         // for linked user db rows, use the link fields of the standard row, because the link itself cannot be changed by the user
         if ($sc_par_lst_used->is_usr_tbl()) {
             $lnk_empty = $this->set_link_objects($lnk_empty);

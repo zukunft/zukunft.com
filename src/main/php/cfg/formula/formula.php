@@ -371,7 +371,7 @@ class formula extends sandbox_code_id
         }
 
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
-            $phr_lst = new phrase_list($this->user());
+            $phr_lst = new phrase_list($this->get_user());
             $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
@@ -497,7 +497,7 @@ class formula extends sandbox_code_id
     function set_view_id(int $id): void
     {
         if ($this->view == null) {
-            $this->view = new view($this->user());
+            $this->view = new view($this->get_user());
         }
         $this->view->id = $id;
     }
@@ -667,7 +667,7 @@ class formula extends sandbox_code_id
         }
         if ($do_load) {
             log_debug('->load_wrd load ' . $this->dsp_id());
-            $name_wrd = new word($this->user());
+            $name_wrd = new word($this->get_user());
             $name_wrd->load_by_name($this->name());
             if ($name_wrd->id() > 0) {
                 $this->name_wrd = $name_wrd;
@@ -841,7 +841,7 @@ class formula extends sandbox_code_id
      */
     function special_result(phrase_list $phr_lst, ?phrase $time_phr = null): value
     {
-        log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->user()->name . ")");
+        log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->get_user()->name . ")");
         $val = null;
 
         if ($this->type_id > 0) {
@@ -921,7 +921,7 @@ class formula extends sandbox_code_id
         foreach ($phr_lst->lst() as $phr) {
             // temp solution utils the real reason is found why the phrase list elements are missing the user settings
             if (!isset($phr->usr)) {
-                $phr->set_user($this->user());
+                $phr->set_user($this->get_user());
             }
             // get all special phrases
             $time_phr = $this->special_time_phr($phr);
@@ -948,14 +948,14 @@ class formula extends sandbox_code_id
         $phr_lst = null;
         $lib = new library();
 
-        if ($this->id() > 0 and $this->user() != null) {
-            log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
-            $frm_lnk_lst = new formula_link_list($this->user());
+        if ($this->id() > 0 and $this->get_user() != null) {
+            log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->get_user()->name . '"');
+            $frm_lnk_lst = new formula_link_list($this->get_user());
             $frm_lnk_lst->load_by_frm_id($this->id());
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
-                $phr_lst = new phrase_list($this->user());
+                $phr_lst = new phrase_list($this->get_user());
                 $phr_lst->load_names_by_ids($phr_ids);
                 log_debug("number of words " . $lib->dsp_count($phr_lst->lst()));
             }
@@ -988,10 +988,10 @@ class formula extends sandbox_code_id
      */
     function assign_phr_glst($sbx): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $lib = new library();
 
-        if ($this->id() > 0 and $this->user() != null) {
+        if ($this->id() > 0 and $this->get_user() != null) {
             $direct_phr_lst = $this->assign_phr_glst_direct($sbx);
             if ($direct_phr_lst != null) {
                 if (!$direct_phr_lst->is_empty()) {
@@ -1058,7 +1058,7 @@ class formula extends sandbox_code_id
         global $db_con;
 
         $db_con->set_class(result::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id());
         return $db_con->delete_old(formula_db::FLD_ID, $this->id());
     }
 
@@ -1070,7 +1070,7 @@ class formula extends sandbox_code_id
      */
     private function create_result(phrase_list $phr_lst): result
     {
-        $rst = new result($this->user());
+        $rst = new result($this->get_user());
         $rst->frm = $this;
         $rst->src_grp = $phr_lst->get_grp_id();
         $rst->ref_text = $this->ref_text_r;
@@ -1105,13 +1105,13 @@ class formula extends sandbox_code_id
         // check
         $pre_trm_lst = $pre_phr_lst?->term_list();
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression($this->user());
+            $exp = new expression($this->get_user());
             $exp->set_ref_text($this->ref_text, $pre_trm_lst);
             $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
         }
 
         // create the result list
-        $res_lst = new result_list($this->user());
+        $res_lst = new result_list($this->get_user());
 
         // create a master result object to only need to fill it with the numbers in the code below
         $res_init = $this->create_result($phr_lst); // maybe move the constructor of result_list?
@@ -1158,11 +1158,11 @@ class formula extends sandbox_code_id
                                 $res->val_missing = True;
                             } else {
                                 $fig = $fig_lst->lst()[0];
-                                $res->num_text = str_replace($fig->symbol(), $fig->number(), $res->num_text);
+                                $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
                                 if ($res->last_val_update < $fig->last_update()) {
                                     $res->last_val_update = $fig->last_update();
                                 }
-                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                             }
                         }
                     }
@@ -1192,22 +1192,22 @@ class formula extends sandbox_code_id
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $res_std = clone $res;
-                                                $res_std->num_text = str_replace($fig->symbol(), $fig->number(), $res_std->num_text);
+                                                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
                                                 if ($res_std->last_val_update < $fig->last_update()) {
                                                     $res_std->last_val_update = $fig->last_update();
                                                 }
-                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
                                                 // ... and split into a user specific part
                                                 $res->is_std = false;
                                             }
                                         }
 
-                                        $res->num_text = str_replace($fig->symbol(), $fig->number(), $res->num_text);
+                                        $res->num_text = str_replace($fig->get_symbol(), $fig->number(), $res->num_text);
                                         if ($res->last_val_update < $fig->last_update()) {
                                             $res->last_val_update = $fig->last_update();
                                         }
-                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                     } else {
                                         // if the result has been the standard result utils now
                                         if ($res_master->is_std()) {
@@ -1217,11 +1217,11 @@ class formula extends sandbox_code_id
                                                 // get the standard value
                                                 // $fig_std = ...;
                                                 $res_std = clone $res_master;
-                                                $res_std->num_text = str_replace($fig->symbol(), $fig->number(), $res_std->num_text);
+                                                $res_std->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_std->num_text);
                                                 if ($res_std->last_val_update < $fig->last_update()) {
                                                     $res_std->last_val_update = $fig->last_update();
                                                 }
-                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                                log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
                                                 // ... and split into a user specific part
                                                 $res_master->is_std = false;
@@ -1230,14 +1230,14 @@ class formula extends sandbox_code_id
 
                                         // for all following result reuse the first result and fill with the next number
                                         $res_new = clone $res_master;
-                                        $res_new->num_text = str_replace($fig->symbol(), $fig->number(), $res_new->num_text);
+                                        $res_new->num_text = str_replace($fig->get_symbol(), $fig->number(), $res_new->num_text);
                                         if ($res->last_val_update < $fig->last_update()) {
                                             $res->last_val_update = $fig->last_update();
                                         }
-                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                        log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                         $res_lst->add_obj($res_new);
                                     }
-                                    log_debug('figure "' . $fig->number() . '" for "' . $fig->symbol() . '" in "' . $res->num_text . '"');
+                                    log_debug('figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                     $fig_nbr++;
                                 }
                             }
@@ -1318,7 +1318,7 @@ class formula extends sandbox_code_id
 
     $calc_request = New job;
     $calc_request->frm     = $this;
-    $calc_request->usr     = $this->user();
+    $calc_request->usr     = $this->get_user();
     $calc_request->phr_lst = $phr_lst;
     $result[] = $calc_request;
     zu_debug('request "'.$frm->name().'" for "'.$phr_lst->name().'"');
@@ -1352,10 +1352,10 @@ class formula extends sandbox_code_id
             // check if an update of the result is needed
             /*
       $needs_update = true;
-      if ($this->has_verb ($this->ref_text, $this->user()->id)) {
+      if ($this->has_verb ($this->ref_text, $this->get_user()->id)) {
         $needs_update = true; // this case will be checked later
       } else {
-        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->user()->id());
+        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->get_user()->id());
       } */
 
             // reload the formula if needed, but this should be done by the calling function, so create an info message
@@ -1369,13 +1369,13 @@ class formula extends sandbox_code_id
             }
 
             // build the formula expression for calculating the result
-            $exp = new expression($this->user());
+            $exp = new expression($this->get_user());
             $exp->set_ref_text($this->ref_text);
 
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
             $has_result_phrases = false;
-            $res_lst = new result_list($this->user());
+            $res_lst = new result_list($this->get_user());
             if ($exp->is_valid()) {
                 $res_add_phr_lst = $exp->result_phrases();
                 if (isset($res_add_phr_lst)) {
@@ -1493,7 +1493,7 @@ class formula extends sandbox_code_id
      */
     function expression(?term_list $trm_lst = null): expression
     {
-        $exp = new expression($this->user());
+        $exp = new expression($this->get_user());
         $exp->set_ref_text($this->ref_text, $trm_lst);
         $exp->set_user_text($this->usr_text, $trm_lst);
         log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
@@ -1505,7 +1505,7 @@ class formula extends sandbox_code_id
      */
     function get_res_lst(): result_list
     {
-        $res_lst = new result_list($this->user());
+        $res_lst = new result_list($this->get_user());
         $res_lst->load_by_frm($this);
         return $res_lst;
     }
@@ -1520,7 +1520,7 @@ class formula extends sandbox_code_id
      */
     function term(): term
     {
-        $trm = new term($this->user());
+        $trm = new term($this->get_user());
         $trm->set_obj($this);
         return $trm;
     }
@@ -1547,7 +1547,7 @@ class formula extends sandbox_code_id
         global $db_con;
 
         // map the json to the object
-        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
+        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
 
         // assign the formula to the words and triple
         // TODO check if it is done via mapper and save_related
@@ -1568,7 +1568,7 @@ class formula extends sandbox_code_id
         global $db_con;
 
         $result = '';
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         if ($db_con->is_open()) {
             $phr->load_by_name($phr_name);
             $result .= $this->assign_phrase($phr);
@@ -1584,9 +1584,9 @@ class formula extends sandbox_code_id
     function link_phrase(phrase $phr): void
     {
         if ($this->lnk_lst == null) {
-            $this->lnk_lst = new formula_link_list($this->user());
+            $this->lnk_lst = new formula_link_list($this->get_user());
         }
-        $lnk = new formula_link($this->user());
+        $lnk = new formula_link($this->get_user());
         $lnk->set_formula($this);
         $lnk->set_phrase($phr);
         $this->lnk_lst->add_link_by_key($lnk);
@@ -1628,7 +1628,7 @@ class formula extends sandbox_code_id
     {
         $usr_msg = new user_message();
         if ($this->id() > 0 and $phr->id() <> 0) {
-            $frm_lnk = new formula_link($this->user());
+            $frm_lnk = new formula_link($this->get_user());
             $frm_lnk->load_by_link($this, $phr);
             if ($frm_lnk->id() == 0) {
                 $frm_lnk->set_formula($this);
@@ -1720,7 +1720,7 @@ class formula extends sandbox_code_id
      */
     function term_list(term_list $cache): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         $exp = $this->expression($cache);
         $elm_lst = $exp->element_list($cache);
         foreach ($elm_lst->lst() as $elm) {
@@ -1824,7 +1824,7 @@ class formula extends sandbox_code_id
         log_debug('got (' . $lib->dsp_array($elm_ids) . ') of type ' . $element_type . ' from text');
 
         // read the existing elements from the database
-        $frm_elm_lst = new element_list($this->user());
+        $frm_elm_lst = new element_list($this->get_user());
         $qp = $frm_elm_lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $this->id(), $elm_type_id);
         $db_lst = $db_con->get($qp);
 
@@ -1852,7 +1852,7 @@ class formula extends sandbox_code_id
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
-                $field_values[] = $this->user()->id();
+                $field_values[] = $this->get_user()->id();
             }
             $field_names[] = element::FLD_TYPE;
             $field_values[] = $elm_type_id;
@@ -1906,27 +1906,27 @@ class formula extends sandbox_code_id
      */
     function element_refresh(string $frm_text): bool
     {
-        log_debug('->element_refresh (f' . $this->id() . $frm_text . ',u' . $this->user()->id() . ')');
+        log_debug('->element_refresh (f' . $this->id() . $frm_text . ',u' . $this->get_user()->id() . ')');
 
         global $db_con;
         $result = true;
 
         // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id);
+        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->get_user()->id);
 
         // update triple links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->get_user()->id);
         }
 
         // update verb links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->get_user()->id);
         }
 
         // update formula links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->get_user()->id);
         }
 
         // refresh the links for the user specific formula
@@ -1936,19 +1936,19 @@ class formula extends sandbox_code_id
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->get_user()->id);
                 }
             }
         }
@@ -1969,9 +1969,9 @@ class formula extends sandbox_code_id
     function link_phr(phrase $phr): string
     {
         $usr_msg = new user_message();
-        if ($this->user() != null) {
+        if ($this->get_user() != null) {
             log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
-            $frm_lnk = new formula_link($this->user());
+            $frm_lnk = new formula_link($this->get_user());
             $frm_lnk->set_formula($this);
             $frm_lnk->set_phrase($phr);
             $frm_lnk->save($usr_msg);
@@ -1986,9 +1986,9 @@ class formula extends sandbox_code_id
     function unlink_phr($phr): string
     {
         $usr_msg = new user_message();
-        if (isset($phr) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->user()->dsp_id());
-            $frm_lnk = new formula_link($this->user());
+        if (isset($phr) and $this->get_user() != null) {
+            log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->get_user()->dsp_id());
+            $frm_lnk = new formula_link($this->get_user());
             $frm_lnk->load_by_link($this, $phr);
             $frm_lnk->del($usr_msg);
         } else {
@@ -2020,7 +2020,7 @@ class formula extends sandbox_code_id
     {
         $result = '';
         if ($this->usr_text != null) {
-            $exp = new expression($this->user());
+            $exp = new expression($this->get_user());
             $exp->set_user_text($this->usr_text, $trm_lst);
             $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
             $this->ref_text_dirty = false;
@@ -2038,7 +2038,7 @@ class formula extends sandbox_code_id
     function generate_usr_text(?term_list $trm_lst = null): string
     {
         $result = '';
-        $exp = new expression($this->user());
+        $exp = new expression($this->get_user());
         $exp->set_user_text($this->usr_text);
         $this->ref_text = $exp->ref_text($trm_lst);
         $this->ref_text_dirty = false;
@@ -2073,7 +2073,7 @@ class formula extends sandbox_code_id
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->get_user()->id();
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -2135,7 +2135,7 @@ class formula extends sandbox_code_id
         $qp = new sql_par($class);
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id());
         $db_con->set_fields(array_merge(array(user_db::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_par_type::INT, strval($this->id()));
         $qp->sql = $db_con->select_by_field(formula_db::FLD_ID);
@@ -2178,14 +2178,14 @@ class formula extends sandbox_code_id
 
         $result = false;
         $action = 'Deletion of user formula ';
-        $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
+        $msg_failed = $this->id() . ' failed for ' . $this->get_user()->name;
         $msg = '';
 
         $db_con->set_class(element::class);
         try {
             $msg = $db_con->delete_old(
                 array(formula_db::FLD_ID, user_db::FLD_ID),
-                array($this->id(), $this->user()->id()));
+                array($this->id(), $this->get_user()->id()));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
         }
@@ -2196,7 +2196,7 @@ class formula extends sandbox_code_id
             try {
                 $msg = $db_con->delete_old(
                     array(formula_db::FLD_ID, user_db::FLD_ID),
-                    array($this->id(), $this->user()->id()));
+                    array($this->id(), $this->get_user()->id()));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
                     $result = true;
@@ -2351,7 +2351,7 @@ class formula extends sandbox_code_id
                 $log->set_field(formula_db::FLD_NAME);
                 $usr_msg->add($this->save_field_user($db_con, $log));
                 // in case a word link exist, change also the name of the word
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->load_by_name($db_rec->name());
                 $wrd->set_name($this->name());
                 $wrd->save($usr_msg);
@@ -2497,7 +2497,7 @@ class formula extends sandbox_code_id
 
                         // ... and create a new display component link
                         $this->id = 0;
-                        $this->set_owner_id($this->user()->id);
+                        $this->set_owner_id($this->get_user()->id);
                         // TODO check the usr_msg values and if the id is needed
                         $this->add($usr_msg);
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
@@ -2545,7 +2545,7 @@ class formula extends sandbox_code_id
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
                 $this->id = $db_con->insert_old(
                     array(formula_db::FLD_NAME, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
-                    array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text));
+                    array($this->name(), $this->get_user()->id(), sql::NOW, $this->ref_text, $this->usr_text));
                 if ($this->id() > 0) {
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
@@ -2567,7 +2567,7 @@ class formula extends sandbox_code_id
             if ($this->wrd_add($usr_msg)) {
 
                 // create an empty db_frm element to force saving of all set fields
-                $db_rec = new formula($this->user());
+                $db_rec = new formula($this->get_user());
                 $db_rec->set_name($this->name());
                 $std_rec = clone $db_rec;
                 // save the formula fields
@@ -2610,7 +2610,7 @@ class formula extends sandbox_code_id
 
             // build the database object because the is anyway needed
             $db_con->set_class(formula::class);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {
@@ -2698,7 +2698,7 @@ class formula extends sandbox_code_id
                     log_debug('update ' . $this->id());
                     // read the database values to be able to check if something has been changed; done first,
                     // because it needs to be done for user and general formulas
-                    $db_rec = new formula($this->user());
+                    $db_rec = new formula($this->get_user());
                     $db_rec->load_by_id($this->id());
                     log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
 
@@ -2709,7 +2709,7 @@ class formula extends sandbox_code_id
                         $this->usr_cfg_id = $db_rec->usr_cfg_id;
                     }
 
-                    $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
+                    $std_rec = new formula($this->get_user()); // must also be set to allow to take the ownership
                     $std_rec->id = $this->id();
                     $std_rec->load_standard();
                     log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id . ') loaded');
@@ -2771,7 +2771,7 @@ class formula extends sandbox_code_id
         global $sys;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
+        $name_wrd = new word($this->get_user());
         $name_wrd->set_name($this->name());
         $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
         return $name_wrd;
@@ -2805,7 +2805,7 @@ class formula extends sandbox_code_id
     {
         log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
 
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         $wrd->load_by_name($old_name);
         if (!$wrd->is_loaded()) {
             log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
@@ -2829,7 +2829,7 @@ class formula extends sandbox_code_id
     {
         log_debug('formula wrd_del for ' . $this->dsp_id());
 
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         $wrd->load_by_name($this->name());
         if (!$wrd->is_loaded()) {
             log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
@@ -2854,7 +2854,7 @@ class formula extends sandbox_code_id
         log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
+        $name_wrd = new word($this->get_user());
         $name_wrd->name = $this->name();
         $name_wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->add($usr_msg);
@@ -2900,7 +2900,7 @@ class formula extends sandbox_code_id
     {
         global $db_con;
 
-        $frm_lnk_lst = new formula_link_list($this->user());
+        $frm_lnk_lst = new formula_link_list($this->get_user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
             $msg = $frm_lnk_lst->del_without_log();
             $usr_msg->add_message_text($msg);
@@ -2908,13 +2908,13 @@ class formula extends sandbox_code_id
 
         // and the corresponding formula elements
         if ($usr_msg->is_ok()) {
-            $elm_lst = new element_list($this->user());
+            $elm_lst = new element_list($this->get_user());
             $elm_lst->load_by_frm($this->id());
             // TODO add del function with test
             //$usr_msg->add($elm_lst->del_without_log());
 
             $db_con->set_class(element::class);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message_text($msg);
         }
@@ -2922,7 +2922,7 @@ class formula extends sandbox_code_id
         // and the corresponding results
         if ($usr_msg->is_ok()) {
             $db_con->set_class(result::class);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message_text($msg);
         }

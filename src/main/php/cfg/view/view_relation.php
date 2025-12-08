@@ -162,10 +162,10 @@ class view_relation extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, view_relation_db::FLD_ID);
         if ($result) {
-            $prt = new view($this->user());
+            $prt = new view($this->get_user());
             $prt->id = $db_row[view_relation_db::FLD_PARENT];
             $this->set_parent($prt);
-            $cld = new view($this->user());
+            $cld = new view($this->get_user());
             $cld->id = $db_row[view_relation_db::FLD_CHILD];
             $this->set_child($cld);
             $this->set_predicate_id($db_row[view_relation_type::FLD_ID]);
@@ -198,7 +198,7 @@ class view_relation extends sandbox_link
             if (is_string($in_ex_json[json_fields::PARENT])) {
                 $this->set_parent_by_name($in_ex_json[json_fields::PARENT]);
             } else {
-                $msk = new view($this->user());
+                $msk = new view($this->get_user());
                 $msk->import_mapper($in_ex_json[json_fields::PARENT], $usr_msg, $dto);
                 $this->set_parent($msk);
             }
@@ -207,7 +207,7 @@ class view_relation extends sandbox_link
             if (is_string($in_ex_json[json_fields::CHILD])) {
                 $this->set_child_by_name($in_ex_json[json_fields::CHILD]);
             } else {
-                $msk = new view($this->user());
+                $msk = new view($this->get_user());
                 $msk->import_mapper($in_ex_json[json_fields::CHILD], $usr_msg, $dto);
                 $this->set_child($msk);
             }
@@ -310,7 +310,7 @@ class view_relation extends sandbox_link
      */
     function set_parent_by_name(string $name, ?data_object $dto = null): void
     {
-        $msk = new view($this->user());
+        $msk = new view($this->get_user());
         $msk->set_name($name);
         $this->set_parent($msk);
     }
@@ -333,7 +333,7 @@ class view_relation extends sandbox_link
      */
     function set_child_by_name(string $name, ?data_object $dto = null): void
     {
-        $msk = new view($this->user());
+        $msk = new view($this->get_user());
         $msk->set_name($name);
         $this->set_child($msk);
     }
@@ -393,7 +393,7 @@ class view_relation extends sandbox_link
         } else {
             $typ = $sys->view_relation_types()->get($id);
             if ($typ != null) {
-                return $typ->code_id();
+                return $typ->get_code_id();
             } else {
                 $msg = 'view relation type with id ' . $id . ' is missing';
                 log_err($msg);
@@ -562,7 +562,7 @@ class view_relation extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(view_relation_db::FLD_NAMES);
         $sc->set_usr_fields(view_relation_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(view_relation_db::FLD_NAMES_NUM_USR);

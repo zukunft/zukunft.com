@@ -690,7 +690,7 @@ class test_db_load
     {
         $ref = $this->add_ref($wrd_name, $external_key, $type_name);
         $target = $external_key;
-        $this->env->assert('ref', $ref->external_key(), $target);
+        $this->env->assert('ref', $ref->get_external_key(), $target);
         return $ref;
     }
 
@@ -867,7 +867,7 @@ class test_db_load
     function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
-        $result = $val->value();
+        $result = $val->get_value();
         $this->env->assert(', value->load for ' . $val->name(), $result, $target);
         return $val;
     }

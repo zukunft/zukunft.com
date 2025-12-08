@@ -64,7 +64,7 @@ class xml extends user_service
         $result = '';
 
         // set the user sandbox that should be used for the data selection
-        $usr = $this->user();
+        $usr = $this->get_user();
         if ($dsp_usr != null) {
             $usr = $dsp_usr;
         }

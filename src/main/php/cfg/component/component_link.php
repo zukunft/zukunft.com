@@ -223,7 +223,7 @@ class component_link extends sandbox_link
     {
         parent::reset($keep_user);
 
-        $this->reset_objects($this->user());
+        $this->reset_objects($this->get_user());
 
         // set the default values
         $this->set_predicate(component_link_type::ALWAYS);
@@ -263,9 +263,9 @@ class component_link extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->set_view(new view($this->user()));
+            $this->set_view(new view($this->get_user()));
             $this->get_view()->id = $db_row[view_db::FLD_ID];
-            $this->set_component(new component($this->user()));
+            $this->set_component(new component($this->get_user()));
             $this->get_component()->id = $db_row[component::FLD_ID];
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
@@ -285,7 +285,7 @@ class component_link extends sandbox_link
         parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::COMPONENT_ID, $api_json)) {
-            $this->set_component(new component($this->user()));
+            $this->set_component(new component($this->get_user()));
             $this->get_component()->id = $api_json[json_fields::COMPONENT_ID];
         }
         if (array_key_exists(json_fields::POSITION, $api_json)) {
@@ -667,7 +667,7 @@ class component_link extends sandbox_link
      */
     function get_pos_type_code_id(): ?string
     {
-        return $this->pos_type->code_id();
+        return $this->pos_type->get_code_id();
     }
 
     /**
@@ -793,7 +793,7 @@ class component_link extends sandbox_link
         $id = $this->predicate_id();
         $typ = $sys->typ_lst->cmp_lnk_typ->get($id);
         if ($typ != null) {
-            return $typ->code_id();
+            return $typ->get_code_id();
         } else {
             $msg = 'component link type with id ' . $id . ' is missing';
             log_err($msg);
@@ -942,7 +942,7 @@ class component_link extends sandbox_link
             $qp->name .= 'std_link_ids';
         }
         $sc->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id()); is needed
+        //TODO check if $db_con->set_usr($this->get_user()->id()); is needed
         $sc->set_fields(array(user_db::FLD_ID));
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
@@ -1042,7 +1042,7 @@ class component_link extends sandbox_link
 
         $sc->set_class(self::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
         $sc->add_where(view_db::FLD_ID, $id, sql_par_type::INT_SUB);
         $qp->sql = $sc->sql(1, false);
@@ -1066,7 +1066,7 @@ class component_link extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -1103,7 +1103,7 @@ class component_link extends sandbox_link
         $result = true;
         if ($this->get_view() != null) {
             if ($this->get_view()->id() > 0 and $this->get_view()->name() == '') {
-                $msk = new view($this->user());
+                $msk = new view($this->get_user());
                 if ($msk->load_by_id($this->get_view()->id())) {
                     $this->set_view($msk);
                 } else {
@@ -1113,7 +1113,7 @@ class component_link extends sandbox_link
         }
         if ($this->get_component() != null) {
             if ($this->get_component()->id() > 0 and $this->get_component()->name() == '') {
-                $cmp = new component($this->user());
+                $cmp = new component($this->get_user());
                 if ($cmp->load_by_id($this->get_component()->id())) {
                     $this->set_component($cmp);
                 } else {
@@ -1209,12 +1209,12 @@ class component_link extends sandbox_link
         }
         */
         if ($this->pos_type != null
-            and $this->pos_type?->code_id() != position_types::DEFAULT) {
-            $vars[json_fields::POS_TYPE] = $this->pos_type->code_id();
+            and $this->pos_type?->get_code_id() != position_types::DEFAULT) {
+            $vars[json_fields::POS_TYPE] = $this->pos_type->get_code_id();
         }
         if ($this->style != null
-            and $this->style?->code_id() != view_styles::DEFAULT) {
-            $vars[json_fields::STYLE] = $this->style->code_id();
+            and $this->style?->get_code_id() != view_styles::DEFAULT) {
+            $vars[json_fields::STYLE] = $this->style->get_code_id();
         }
         if ($this->order_nbr >= 0) {
             $vars[json_fields::POSITION] = $this->order_nbr;
@@ -1288,8 +1288,8 @@ class component_link extends sandbox_link
                     $cmp_lst = $this->get_view()->components();
                     if (!$cmp_lst->is_empty()) {
                         foreach ($cmp_lst->lst() as $entry) {
-                            $cmp_lnk = new component_link($this->user());
-                            $msk = new view($this->user());
+                            $cmp_lnk = new component_link($this->get_user());
+                            $msk = new view($this->get_user());
                             $msk->load_by_id($this->get_view()->id());
                             $cmp_lnk->load_by_link($msk, $entry);
                             if ($cmp_lnk->order_nbr != $order_nbr) {
@@ -1308,8 +1308,8 @@ class component_link extends sandbox_link
                 if ($this->get_view()->cmp_lnk_lst != null) {
                     foreach ($this->get_view()->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
-                        //$cmp_lnk = new component_link($this->user());
-                        //$msk = new view($this->user());
+                        //$cmp_lnk = new component_link($this->get_user());
+                        //$msk = new view($this->get_user());
                         //$msk->load_by_id($this->get_view_id());
                         //$cmp_lnk->load_by_link($msk, $entry);
                         if ($prev_entry_down) {
@@ -1384,7 +1384,7 @@ class component_link extends sandbox_link
      */
     function get_similar(): component_link
     {
-        $result = new component_link($this->user());
+        $result = new component_link($this->get_user());
 
         $db_chk = clone $this;
         $db_chk->reset();
@@ -1449,7 +1449,7 @@ class component_link extends sandbox_link
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->get_view()->id(), $this->get_component()->id(), $this->user()->id(), $this->order_nbr));
+            array($this->get_view()->id(), $this->get_component()->id(), $this->get_user()->id(), $this->order_nbr));
     }
 
 

@@ -1703,7 +1703,7 @@ class library
     {
         // assign the function to class sections
         $result = match ($fnc_name) {
-            '__construct', 'reset', 'row_mapper_sandbox',
+            '__construct', 'reset', 'row_mapper_sandbox', 'row_mapper_verb',
             'api_mapper', 'import_mapper', 'import_mapper_user'
             => 'construct and map',
             'load_standard'
@@ -1731,15 +1731,17 @@ class library
             => 'link',
             'calc_usage', 'calc_view_id', 'view_sql'
             => 'ui support',
-            'has_cfg', 'not_used', 'not_changed', 'not_changed_sql'
+            'has_cfg', 'not_used', 'not_used_sql', 'can_change', 'not_changed', 'not_changed_sql'
             => 'sandbox',
+            'can_be_ready', 'db_ready'
+            => 'check',
             'get_similar', 'add_insert'
             => 'save',
             'get_ready', 'reserved_names', 'fixed_names'
             => 'save helper',
             'db_fields_all', 'db_fields_changed'
             => 'sql write fields',
-            'dsp_id', 'assigned_msk_ids', 'name_dsp'
+            'dsp_id', 'assigned_msk_ids', 'name', 'name_dsp'
             => 'debug',
             'db_check', 'db_move_time_phrase_to_group'
             => 'upgrade',

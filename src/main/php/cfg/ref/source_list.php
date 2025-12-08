@@ -74,7 +74,7 @@ class source_list extends sandbox_list_named
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new source($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new source($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -160,7 +160,7 @@ class source_list extends sandbox_list_named
 
         $src_lst = $db_con->get($qp);
         foreach ($src_lst as $db_row) {
-            $src = new source($this->user());
+            $src = new source($this->get_user());
             $src->row_mapper_sandbox($db_row);
             $result = $this->add($src);
         }
@@ -229,7 +229,7 @@ class source_list extends sandbox_list_named
             $imp,
             words::SOURCES,
             source::class,
-            new source_list($this->user()),
+            new source_list($this->get_user()),
             $usr_msg
         );
     }

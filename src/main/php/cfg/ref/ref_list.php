@@ -108,7 +108,7 @@ class ref_list extends type_list
     /**
      * @return user|null the person who wants to see the refs
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -320,7 +320,7 @@ class ref_list extends type_list
             // load the references that are already in the database
             $step_time = $this->count() / $load_per_sec;
             $imp->step_start(msg_id::LOAD, ref::class, $this->count(), $step_time);
-            $db_lst = new ref_list($this->user());
+            $db_lst = new ref_list($this->get_user());
             $db_lst->load_by_names($this->names());
             $imp->step_end($this->count(), $load_per_sec);
 

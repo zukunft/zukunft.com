@@ -105,7 +105,7 @@ class component_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new component($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new component($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -122,7 +122,7 @@ class component_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new component($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new component($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -276,7 +276,7 @@ class component_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(component::FLD_NAMES);
         $sc->set_usr_fields(component::FLD_NAMES_USR);
         $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
@@ -303,7 +303,7 @@ class component_list extends sandbox_list_named
     ): bool
     {
         foreach ($json_obj as $dsp_json) {
-            $cmp = new component($this->user());
+            $cmp = new component($this->get_user());
             if ($cmp->import_obj($dsp_json, $usr_msg, $dto)) {
                 $this->add($cmp);
             }
@@ -361,8 +361,8 @@ class component_list extends sandbox_list_named
             // until it is clear that a component is missing
             $frm_added = true;
             $level = 0;
-            $db_lst_all = new component_list($this->user());
-            $add_lst = new component_list($this->user());
+            $db_lst_all = new component_list($this->get_user());
+            $add_lst = new component_list($this->get_user());
             while ($frm_added and $level < $max_frm_levels) {
                 $frm_added = false;
                 $usr_msg->unset_added_depending();
@@ -375,7 +375,7 @@ class component_list extends sandbox_list_named
                 // load the components by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, component::class, $load_lst->count(), $step_time);
-                $db_lst = new component_list($this->user());
+                $db_lst = new component_list($this->get_user());
                 // force to load all names including the components excluded by the user to potential include the components due to the import
                 // TODO add load_all = true also to the other objects
                 $db_lst->load_by_names($load_lst->names(true), true);
@@ -412,7 +412,7 @@ class component_list extends sandbox_list_named
 
             // reload the id of the components added with the last run
             // TODO use the insert message instead to increase speed
-            $db_lst = new component_list($this->user());
+            $db_lst = new component_list($this->get_user());
             if (!$add_lst->is_empty()) {
                 $db_lst->load_by_names($add_lst->names(true), true);
             }
@@ -452,7 +452,7 @@ class component_list extends sandbox_list_named
      */
     function get_ready(user_message $usr_msg, string $file_name = ''): component_list
     {
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
             $cmp_msg = $cmp->db_ready();
             if ($cmp_msg->is_ok()) {

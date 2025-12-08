@@ -68,7 +68,7 @@ class formula_link_list extends sandbox_link_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new formula_link($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -90,7 +90,7 @@ class formula_link_list extends sandbox_link_list
 
         $sc->set_class(formula_link::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(array(formula_db::FLD_ID, phrase::FLD_ID));
         $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
@@ -187,7 +187,7 @@ class formula_link_list extends sandbox_link_list
             if ($result == '') {
                 if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
                     //$db_con = new mysql;
-                    $db_con->usr_id = $this->user()->id;
+                    $db_con->usr_id = $this->get_user()->id;
                     // delete first all user configuration that have also been excluded
                     $db_con->set_class(formula_link::class, true);
                     $result = $db_con->delete_old(array(formula_link::FLD_ID, sql_db::FLD_EXCLUDED), array($frm_lnk->id(), '1'));

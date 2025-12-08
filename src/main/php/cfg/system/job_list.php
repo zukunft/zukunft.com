@@ -207,7 +207,7 @@ class job_list extends base_list
 
         foreach ($this->lst() as $chk_job) {
             if ($chk_job->frm == $job->frm) {
-                if ($chk_job->usr == $job->user()) {
+                if ($chk_job->usr == $job->get_user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
                         $usr_msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
                     }

@@ -84,10 +84,10 @@ class figure_tests
         $t->assert('figure result number', $fig->number(), results::TV_INT);
 
         $fig = $t_fig->figure_value();
-        $t->assert('figure value symbol', $fig->symbol(), "");
+        $t->assert('figure value symbol', $fig->get_symbol(), "");
         $fig = $t_fig->figure_result();
         // TODO review
-        //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
+        //$t->assert('figure result symbol', $fig->get_symbol(), "{f1}");
 
 
         $t->subheader($ts . 'api');

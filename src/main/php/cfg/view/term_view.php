@@ -191,10 +191,10 @@ class term_view extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $msk = new view($this->user());
+            $msk = new view($this->get_user());
             $msk->id = $db_row[view_db::FLD_ID];
             $this->set_view($msk);
-            $trm = new term($this->user());
+            $trm = new term($this->get_user());
             $trm->set_id($db_row[term::FLD_ID]);
             $this->set_term($trm);
             $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
@@ -441,7 +441,7 @@ class term_view extends sandbox_link
         $id = $this->predicate_id();
         $typ = $sys->typ_lst->msk_lnk_typ->get($this->predicate_id());
         if ($typ != null) {
-            return $typ->code_id();
+            return $typ->get_code_id();
         } else {
             // TODO Prio 0 use msg_id
             $msg = 'term view link type with id ' . $id . ' is missing';
@@ -567,7 +567,7 @@ class term_view extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);

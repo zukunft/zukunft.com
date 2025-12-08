@@ -174,8 +174,8 @@ class component_exe extends component
             component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
             // select object fields
-            component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
-            component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->src_lst, $pattern),
@@ -186,8 +186,8 @@ class component_exe extends component
             component_type::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
             component_type::FORM_SELECT_FORMULAS => $form->form_formulas($dbo, $form_name, $cfg->formula_list()),
-            component_type::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
-            component_type::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_type::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
             component_type::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
@@ -337,7 +337,7 @@ class component_exe extends component
 
             // related
             component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
+            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->get_usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
             component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
@@ -362,7 +362,7 @@ class component_exe extends component
 
 
             // view only -
-            component_type::SHOW_NAME => $form->show_name($dbo, $this->code_id()),
+            component_type::SHOW_NAME => $form->show_name($dbo, $this->code_id),
             component_type::SHOW_DESCRIPTION => $form->show_description($dbo),
             component_type::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_type::WORD_RESULTS => $form->result($dbo),

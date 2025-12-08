@@ -803,7 +803,7 @@ class sandbox_list_named extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $obj) {
-            $result[$obj->id()] = $obj->code_id();
+            $result[$obj->id()] = $obj->get_code_id();
         }
         return $result;
     }

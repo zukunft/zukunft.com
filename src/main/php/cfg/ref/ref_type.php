@@ -88,8 +88,8 @@ class ref_type extends type_object
     {
         $vars = [];
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::CODE_ID] = $this->code_id();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::CODE_ID] = $this->get_code_id();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::URL] = $this->url;
         $vars[json_fields::ID] = $this->id();
         return $vars;

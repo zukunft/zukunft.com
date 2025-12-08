@@ -99,17 +99,19 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
+     * return the user from a function to enable function overwrite in combine objects like phrase and term
      * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
 
     /**
+     * return the user id from a function to enable function overwrite in combine objects like phrase and term
      * @return int the id of the user or 0 if the user is not set
      */
-    function user_id(): int
+    function get_user_id(): int
     {
         return $this->usr->id;
     }
@@ -127,11 +129,11 @@ class db_object_seq_id_user extends db_object_seq_id
     function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->user_id() != $obj->user_id()) {
+        if ($this->get_user_id() != $obj->get_user_id()) {
             $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
-                msg_id::VAR_USER => $obj->user()->dsp_id(),
-                msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_USER => $obj->get_user()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
@@ -164,8 +166,8 @@ class db_object_seq_id_user extends db_object_seq_id
     function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->user_id() != null) {
-            $this->set_user($obj->user());
+        if ($obj->get_user_id() != null) {
+            $this->set_user($obj->get_user());
         }
         return $usr_msg;
     }
@@ -183,8 +185,8 @@ class db_object_seq_id_user extends db_object_seq_id
         global $debug;
         $result = '';
         if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;

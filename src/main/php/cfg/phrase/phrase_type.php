@@ -79,7 +79,7 @@ class phrase_type extends type_object
         $this->name = $name;
     }
 
-    function code_id(): string
+    function get_code_id(): string
     {
         return $this->code_id;
     }

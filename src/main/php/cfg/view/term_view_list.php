@@ -53,7 +53,7 @@ class term_view_list extends sandbox_link_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new term_view($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new term_view($this->get_user()), $db_rows, $load_all);
     }
 
 }

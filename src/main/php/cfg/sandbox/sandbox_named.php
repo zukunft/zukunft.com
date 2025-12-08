@@ -252,7 +252,7 @@ class sandbox_named extends sandbox
             if ($dto != null) {
                 $cac_obj = $dto->get_object_by_name($this);
                 if ($cac_obj != null) {
-                    $this->fill($cac_obj, $this->user());
+                    $this->fill($cac_obj, $this->get_user());
                 }
             }
         }
@@ -286,10 +286,10 @@ class sandbox_named extends sandbox
         if ($typ_lst->test_mode()) {
             $vars[json_fields::DESCRIPTION] = $this->description;
         } else {
-            $vars[json_fields::DESCRIPTION] = $this->description();
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
-        if ($this->usage() != null) {
-            $vars[json_fields::USAGE] = $this->usage();
+        if ($this->get_usage() != null) {
+            $vars[json_fields::USAGE] = $this->get_usage();
         }
 
         return $vars;
@@ -314,8 +314,8 @@ class sandbox_named extends sandbox
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
         // the usage is only included in the export as an indication to validate the consistency
-        if ($this->usage() != null) {
-            $vars[json_fields::USAGE] = $this->usage();
+        if ($this->get_usage() != null) {
+            $vars[json_fields::USAGE] = $this->get_usage();
         }
         return $vars;
     }
@@ -411,7 +411,7 @@ class sandbox_named extends sandbox
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -430,7 +430,7 @@ class sandbox_named extends sandbox
     /**
      * @return int|null a higher number indicates a higher usage
      */
-    function usage(): ?int
+    function get_usage(): ?int
     {
         return $this->usage;
     }
@@ -470,11 +470,11 @@ class sandbox_named extends sandbox
         if ($obj->name() != null) {
             $this->set_name($obj->name());
         }
-        if ($obj->description() != null) {
-            $this->set_description($obj->description());
+        if ($obj->get_description() != null) {
+            $this->set_description($obj->get_description());
         }
-        if ($obj->usage() != null) {
-            $this->usage = $obj->usage();
+        if ($obj->get_usage() != null) {
+            $this->usage = $obj->get_usage();
         }
         return $usr_msg;
     }
@@ -491,7 +491,7 @@ class sandbox_named extends sandbox
      */
     function term(): term
     {
-        $trm = new term($this->user());
+        $trm = new term($this->get_user());
         $trm->set_id($this->id());
         $trm->set_obj($this);
         return $trm;
@@ -504,7 +504,7 @@ class sandbox_named extends sandbox
      */
     function get_term(): term
     {
-        $trm = new term($this->user());
+        $trm = new term($this->get_user());
         $trm->load_by_name($this->name());
         return $trm;
     }
@@ -608,7 +608,7 @@ class sandbox_named extends sandbox
         }
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
         } else {
@@ -770,12 +770,12 @@ class sandbox_named extends sandbox
         $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         // TODO add the table exceptions from sql_db
         $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
-        $log->set_user($this->user());
+        $log->set_user($this->get_user());
         $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
@@ -795,7 +795,7 @@ class sandbox_named extends sandbox
         $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::DELETE);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
@@ -861,9 +861,9 @@ class sandbox_named extends sandbox
                     $lib = new library();
                     $class_name = $lib->class_to_name($this::class);
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->get_user()->id());
                     $this->id = $db_con->insert_old(
-                        array($class_name . '_name', user_db::FLD_ID), array($this->name, $this->user()->id));
+                        array($class_name . '_name', user_db::FLD_ID), array($this->name, $this->get_user()->id));
                 }
 
                 // save the object fields if saving the key was successful
@@ -882,7 +882,7 @@ class sandbox_named extends sandbox
                             $db_rec = clone $this;
                             $db_rec->reset();
                             $db_rec->name = $this->name();
-                            $db_rec->set_user($this->user());
+                            $db_rec->set_user($this->get_user());
                             $std_rec = clone $db_rec;
                             // save the object fields
                             $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
@@ -1088,7 +1088,7 @@ class sandbox_named extends sandbox
                     $result = $usr_msg->get_message();
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->get_user()->id);
                     if (!$db_con->update_old($this->id(),
                         array($tbl_name . '_name'),
                         array($this->name))) {
@@ -1155,7 +1155,7 @@ class sandbox_named extends sandbox
      */
     function get_similar(): sandbox
     {
-        $result = new sandbox_named($this->user());
+        $result = new sandbox_named($this->get_user());
 
         // check potential duplicate by name
         // for words and formulas it needs to be checked if a term (word, verb or formula) with the same name already exist
@@ -1171,7 +1171,7 @@ class sandbox_named extends sandbox
                     log_err($this->dsp_id() . ' is supposed to be similar to ' . $result->dsp_id() . ', but it seems not');
                 }
             } else {
-                $similar_trp = new triple($this->user());
+                $similar_trp = new triple($this->get_user());
                 $similar_trp->load_by_name_generated($this->name());
                 if ($similar_trp->id() > 0) {
                     $similar_trp->reload_objects();
@@ -1183,7 +1183,7 @@ class sandbox_named extends sandbox
             // used for view, component, source, ...
             $db_chk = clone $this;
             $db_chk->reset();
-            $db_chk->set_user($this->user());
+            $db_chk->set_user($this->get_user());
             $db_chk->name = $this->name();
             // check with the standard namespace
             if ($db_chk->load_standard()) {
@@ -1193,7 +1193,7 @@ class sandbox_named extends sandbox
                 }
             }
             // check with the user namespace
-            $db_chk->set_user($this->user());
+            $db_chk->set_user($this->get_user());
             if ($this::class == change::class) {
                 // TODO check if it is working with build in tests
                 if ($db_chk->load_by_id($this->id())) {
@@ -1370,7 +1370,7 @@ class sandbox_named extends sandbox
             $lst->add_user($this, $sbx, $do_log, $table_id);
         }
         $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
-        if ($sbx->usage() !== $this->usage()) {
+        if ($sbx->get_usage() !== $this->get_usage()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1380,9 +1380,9 @@ class sandbox_named extends sandbox
             }
             $lst->add_field(
                 sql_db::FLD_USAGE,
-                $this->usage(),
+                $this->get_usage(),
                 sql_db::FLD_USAGE_SQL_TYP,
-                $sbx->usage()
+                $sbx->get_usage()
             );
         }
         return $lst;

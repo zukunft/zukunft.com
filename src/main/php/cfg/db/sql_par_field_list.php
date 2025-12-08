@@ -289,7 +289,7 @@ class sql_par_field_list
         );
         $this->add_field(
             user_db::FLD_ID,
-            $sbx->user_id(),
+            $sbx->get_user_id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
@@ -313,7 +313,7 @@ class sql_par_field_list
     {
         global $sys;
 
-        if ($sbx_db->user_id() <> $sbx_upd->user_id()) {
+        if ($sbx_db->get_user_id() <> $sbx_upd->get_user_id()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
@@ -321,14 +321,14 @@ class sql_par_field_list
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx_db->user_id() == 0) {
+            if ($sbx_db->get_user_id() == 0) {
                 $old_user_id = null;
             } else {
-                $old_user_id = $sbx_db->user_id();
+                $old_user_id = $sbx_db->get_user_id();
             }
             $this->add_field(
                 user_db::FLD_ID,
-                $sbx_upd->user_id(),
+                $sbx_upd->get_user_id(),
                 db_object_seq_id::FLD_ID_SQL_TYP,
                 $old_user_id
             );

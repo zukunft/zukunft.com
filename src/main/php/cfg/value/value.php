@@ -131,7 +131,7 @@ class value extends value_base
      * overwrite the sandbox_value value() function to return the numeric value
      * @return float|null the numeric value
      */
-    function value(): float|null
+    function get_value(): float|null
     {
         return $this->number;
     }
@@ -163,7 +163,7 @@ class value extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the numeric string itself
-        $vars[json_fields::NUMBER] = $this->value();
+        $vars[json_fields::NUMBER] = $this->get_value();
 
         return $vars;
     }
@@ -187,7 +187,7 @@ class value extends value_base
         $vars = parent::export_json($exp_typ, $do_load);
 
         // add the numeric value itself
-        $vars[json_fields::NUMBER] = $this->value();
+        $vars[json_fields::NUMBER] = $this->get_value();
 
         return $vars;
     }

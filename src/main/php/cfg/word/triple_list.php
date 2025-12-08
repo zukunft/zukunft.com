@@ -135,7 +135,7 @@ class triple_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new triple($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new triple($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -153,7 +153,7 @@ class triple_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new triple($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new triple($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -217,7 +217,7 @@ class triple_list extends sandbox_list_named
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $trp = new triple($this->user());
+                    $trp = new triple($this->get_user());
                     $trp->row_mapper_sandbox($db_row);
                     // the simple object row mapper allows mapping excluded objects to remove the exclusion
                     // but an object list should not have excluded objects
@@ -227,10 +227,10 @@ class triple_list extends sandbox_list_named
                         // fill verb
                         $trp->set_verb_id($db_row[verb_db::FLD_ID]);
                         // fill from
-                        $trp->set_fob(new phrase($this->user()));
+                        $trp->set_fob(new phrase($this->get_user()));
                         $trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
                         // fill to
-                        $trp->set_tob(new phrase($this->user()));
+                        $trp->set_tob(new phrase($this->get_user()));
                         $trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
                     } else {
                         log_info($trp->dsp_id() . ' is excluded');
@@ -420,7 +420,7 @@ class triple_list extends sandbox_list_named
             $qp->name .= $query_name;
         }
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
         $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
@@ -487,7 +487,7 @@ class triple_list extends sandbox_list_named
     ): bool
     {
         foreach ($json_obj as $value) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             if ($trp->import_obj($value, $usr_msg, $dto)) {
                 $this->add_by_name($trp);
             }
@@ -582,7 +582,7 @@ class triple_list extends sandbox_list_named
      */
     function phrase_list(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $lnk) {
             $phr_lst->add($lnk->phrase());
         }
@@ -597,7 +597,7 @@ class triple_list extends sandbox_list_named
      */
     function phrase_lst_of_names(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $lnk) {
             if ($lnk::class == phrase::class) {
                 log_err('unexpected phrase instead of triple in triple list');
@@ -616,7 +616,7 @@ class triple_list extends sandbox_list_named
      */
     function triples_to_add_to_db(): triple_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             if ($trp->no_id_but_name()) {
                 $trp_lst->add_by_name_direct($trp);
@@ -648,7 +648,7 @@ class triple_list extends sandbox_list_named
      */
     function phrase_parts(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $lnk) {
             $phr_lst->add($lnk->from());
             $phr_lst->add($lnk->to());
@@ -661,7 +661,7 @@ class triple_list extends sandbox_list_named
      */
     function missing_ids(): triple_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             if ($trp->id() == 0) {
                 $trp_lst->add_by_name_direct($trp);
@@ -704,8 +704,8 @@ class triple_list extends sandbox_list_named
             // until it is clear that a triple is missing
             $trp_added = true;
             $level = 0;
-            $db_lst_all = new triple_list($this->user());
-            $add_lst = new triple_list($this->user());
+            $db_lst_all = new triple_list($this->get_user());
+            $add_lst = new triple_list($this->get_user());
             while ($trp_added and $level < $max_trp_levels) {
                 $trp_added = false;
                 $usr_msg->unset_added_depending();
@@ -726,7 +726,7 @@ class triple_list extends sandbox_list_named
                 // load the triples by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, triple::class, $load_lst->count(), $step_time);
-                $db_lst = new triple_list($this->user());
+                $db_lst = new triple_list($this->get_user());
                 // force to load all names including the triples excluded by the user to potential include the triples due to the import
                 // TODO add load_all = true also to the other objects
                 $db_lst->load_by_names($load_lst->names(true), true);
@@ -768,7 +768,7 @@ class triple_list extends sandbox_list_named
 
             // reload the id of the triples added with the last run
             // TODO use the insert message instead to increase speed
-            $db_lst = new triple_list($this->user());
+            $db_lst = new triple_list($this->get_user());
             if (!$add_lst->is_empty()) {
                 $db_lst->load_by_names($add_lst->names(true), true);
             }
@@ -900,7 +900,7 @@ class triple_list extends sandbox_list_named
      */
     function get_ready(user_message $usr_msg = new user_message(), string $file_name = ''): triple_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
             $trp_msg = $trp->db_ready();
             if ($trp_msg->is_ok()) {

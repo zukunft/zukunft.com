@@ -172,7 +172,7 @@ class value_time extends value_base
      * overwrite the sandbox_value value() function to return the DateTime value
      * @return DateTime|null the DateTime value of this object
      */
-    function value(): DateTime|null
+    function get_value(): DateTime|null
     {
         return $this->time_val;
     }
@@ -204,7 +204,7 @@ class value_time extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the datetime value itself
-        $vars[json_fields::TIME_VALUE] = $this->value();
+        $vars[json_fields::TIME_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -228,7 +228,7 @@ class value_time extends value_base
         $vars = parent::export_json($exp_typ, $do_load);
 
         // add the datetime value itself
-        $vars[json_fields::TIME_VALUE] = $this->value();
+        $vars[json_fields::TIME_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -244,11 +244,11 @@ class value_time extends value_base
     function log_object(): change_value_time
     {
         if ($this->is_prime()) {
-            return new change_values_time_prime($this->user());
+            return new change_values_time_prime($this->get_user());
         } elseif ($this->is_big()) {
-            return new change_values_time_big($this->user());
+            return new change_values_time_big($this->get_user());
         } else {
-            return new change_values_time_norm($this->user());
+            return new change_values_time_norm($this->get_user());
         }
     }
 

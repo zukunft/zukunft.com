@@ -106,15 +106,15 @@ class combine_named extends combine_object
     /**
      * @return string|null the description of the word, triple, formula or verb
      */
-    function description(): ?string
+    function get_description(): ?string
     {
-        return $this->obj()?->description();
+        return $this->obj()?->get_description();
     }
 
     /**
      * @return string|null the plural of the word, triple, formula or verb
      */
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return $this->obj()->get_plural();
     }
@@ -180,7 +180,7 @@ class combine_named extends combine_object
         $vars = array();
         $vars[json_fields::ID] = $this->obj()?->id();
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id();
         return $vars;
     }

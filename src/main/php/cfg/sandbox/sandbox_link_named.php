@@ -223,7 +223,7 @@ class sandbox_link_named extends sandbox_link
         } else {
             $vars[json_fields::NAME] = $this->name();
         }
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id();
 
         return $vars;
@@ -324,7 +324,7 @@ class sandbox_link_named extends sandbox_link
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         if ($this->is_excluded()) {
             return null;

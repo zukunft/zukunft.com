@@ -76,7 +76,7 @@ class element_list extends sandbox_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new element($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new element($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -86,7 +86,7 @@ class element_list extends sandbox_list
 
     function term_list(): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($this->lst() as $elm) {
             $trm_lst->add($elm->term());
         }
@@ -130,7 +130,7 @@ class element_list extends sandbox_list
 
         $sc->set_class(element::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(element::FLD_NAMES);
         return $qp;
     }
@@ -146,7 +146,7 @@ class element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
-            $sc->add_where(user_db::FLD_ID, $this->user()->id);
+            $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -168,7 +168,7 @@ class element_list extends sandbox_list
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(element::FLD_TYPE, $elm_type_id);
-            $sc->add_where(user_db::FLD_ID, $this->user()->id);
+            $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -219,7 +219,7 @@ class element_list extends sandbox_list
     function del_sql_without_log(sql_creator $sc): sql_par
     {
         return $sc->del_sql_list_without_log(
-            element::class, (new element($this->user()))->id_field(), $this->ids());
+            element::class, (new element($this->get_user()))->id_field(), $this->ids());
     }
 
 }

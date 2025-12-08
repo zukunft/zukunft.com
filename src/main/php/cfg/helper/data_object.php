@@ -273,7 +273,7 @@ class data_object
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -325,7 +325,7 @@ class data_object
     {
         if ($this->trm_lst_dirty) {
             $trm_lst = $this->phrase_list()->term_list();
-            $trm_lst->merge_by_name($this->verb_list()->term_lst_of_names($this->user()));
+            $trm_lst->merge_by_name($this->verb_list()->term_lst_of_names($this->get_user()));
             $trm_lst->merge_by_name($this->formula_list()->term_lst_of_names());
             $this->trm_lst = $trm_lst;
             $this->trm_lst_dirty = false;

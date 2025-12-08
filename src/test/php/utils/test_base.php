@@ -1000,7 +1000,7 @@ class test_base
     ): bool
     {
         if ($usr == null) {
-            $usr = $usr_obj->user();
+            $usr = $usr_obj->get_user();
         }
         $usr_msg = new user_message($usr);
         $file_text = $this->file($json_file_name);
@@ -2917,7 +2917,7 @@ class test_base
         // detect the related objects
         $fob = clone $ori->fob();
         if ($fob::class == phrase::class or $fob::class == term::class) {
-            $add_from = new word($fob->user());
+            $add_from = new word($fob->get_user());
             $add_from->set_name($fob->name());
         } else {
             $add_from = $fob;
@@ -2928,7 +2928,7 @@ class test_base
         } else {
             $tob = clone $ori->tob();
             if ($tob::class == phrase::class or $tob::class == term::class) {
-                $add_to = new word($tob->user());
+                $add_to = new word($tob->get_user());
                 $add_to->set_name($tob->name());
             } else {
                 $add_to = $tob;
@@ -3351,7 +3351,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->user()->name() . ' ' . $action . ' "';
+        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
@@ -3368,13 +3368,13 @@ class test_base
         string $action
     ): bool
     {
-        $log = new change_link($lnk->user());
+        $log = new change_link($lnk->get_user());
         $lib = new library();
         $tbl_name = $lib->class_to_table($lnk::class);
         $log->set_table($tbl_name);
         $log->row_id = $lnk->id();
         $result = $log->dsp_last(true);
-        $target = $lnk->user()->name() . ' ' . $action . ' ';
+        $target = $lnk->get_user()->name() . ' ' . $action . ' ';
         $target .= $lnk->from_name() . ' to ';
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
@@ -3388,13 +3388,13 @@ class test_base
         string       $action
     ): bool
     {
-        $log = new change_link($lnk->user());
+        $log = new change_link($lnk->get_user());
         $lib = new library();
         $tbl_name = $lib->class_to_table($lnk::class);
         $log->set_table($tbl_name);
         $log->row_id = $lnk->id();
         $result = $log->dsp_last(true);
-        $target = $lnk->user()->name() . ' ' . $action . ' ';
+        $target = $lnk->get_user()->name() . ' ' . $action . ' ';
         $target .= $lnk->from_name() . ' to ';
         $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
@@ -3486,7 +3486,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
-        if ($this->assert($test_name, $sbx->description(), $description, $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert($test_name, $sbx->get_description(), $description, $this::TIMEOUT_LIMIT_DB)) {
             return true;
         } else {
             return false;
@@ -3592,7 +3592,7 @@ class test_base
     {
         $lib = new library();
         $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
-        $target = $sbx->user()->name() . ' ' . $action . ' "';
+        $target = $sbx->get_user()->name() . ' ' . $action . ' "';
         if ($action == msg_id::LOG_UPDATE->value) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {

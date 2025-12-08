@@ -618,11 +618,11 @@ class source extends sandbox_code_id
 
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
-        //$grp_lst = new group_list($this->user());
+        //$grp_lst = new group_list($this->get_user());
         //$grp_lst->load_by_phr($this->phrase());
 
         // collect all references where this source is used
-        $ref_lst = new ref_list($this->user());
+        $ref_lst = new ref_list($this->get_user());
         // TODO Prio 1 activate
         $ref_lst->load_sql_by_source($this);
 

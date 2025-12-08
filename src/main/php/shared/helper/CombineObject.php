@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -82,7 +83,7 @@ class CombineObject
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|word|word_ui|triple|triple_ui|null
+    function obj(): IdObject|TextIdObject|word|word_ui|triple|triple_ui|value_base|null
     {
         return $this->obj;
     }

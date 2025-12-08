@@ -678,8 +678,8 @@ class change_log extends db_object_seq_id_user
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
-        if ($this->user() != null) {
-            $vars[json_fields::USR] = $this->user()->api_json_array_core($typ_lst, $usr);
+        if ($this->get_user() != null) {
+            $vars[json_fields::USR] = $this->get_user()->api_json_array_core($typ_lst, $usr);
         }
         $vars[json_fields::ACTION_ID] = $this->action_id;
         $vars[json_fields::TABLE_ID] = $this->table_id;
@@ -1008,10 +1008,10 @@ class change_log extends db_object_seq_id_user
     {
         $fvt_lst = new sql_par_field_list();
         if ($sc_par_lst->has_requesting_user()) {
-            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id, db_object_seq_id::FLD_ID_SQL_TYP,
+            $fvt_lst->add_field(user_db::FLD_ID, $this->get_user()->id, db_object_seq_id::FLD_ID_SQL_TYP,
                 null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
         } else {
-            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id, db_object_seq_id::FLD_ID_SQL_TYP);
+            $fvt_lst->add_field(user_db::FLD_ID, $this->get_user()->id, db_object_seq_id::FLD_ID_SQL_TYP);
         }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
@@ -1046,7 +1046,7 @@ class change_log extends db_object_seq_id_user
     function db_values(): array
     {
         $sql_values = array();
-        $sql_values[] = $this->user()->id;
+        $sql_values[] = $this->get_user()->id;
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
@@ -1085,11 +1085,11 @@ class change_log extends db_object_seq_id_user
 
         if ($log_id <= 0) {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
+            if ($this->get_user() == null) {
                 log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
             }
             $result = False;
         } else {

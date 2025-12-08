@@ -268,7 +268,7 @@ class element_group extends base_list
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 

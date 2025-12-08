@@ -118,7 +118,7 @@ class horizontal_ui_tests
             }
             // fill the code id field that should not be set via url
             if (in_array($filled_obj::class, def::CODE_ID_CLASSES)) {
-                $refilled_obj->set_code_id($filled_obj->code_id(), $t->usr_system);
+                $refilled_obj->set_code_id($filled_obj->get_code_id(), $t->usr_system);
             }
             //
             $diff = $filled_obj->diff_msg($refilled_obj);

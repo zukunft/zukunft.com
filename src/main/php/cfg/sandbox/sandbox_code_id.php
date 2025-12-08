@@ -157,7 +157,7 @@ class sandbox_code_id extends sandbox_typed
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         parent::api_mapper($api_json, $usr_msg);
-        if ($this->code_id() == null) {
+        if ($this->get_code_id() == null) {
             if (array_key_exists(json_fields::CODE_ID, $api_json)) {
                 $this->set_code_id_db($api_json[json_fields::CODE_ID]);
             }
@@ -211,8 +211,8 @@ class sandbox_code_id extends sandbox_typed
         $vars = parent::api_json_array($typ_lst, $usr);
         // the code id is included in the api message towards the frontend
         // but not overwritten via api message
-        if ($this->code_id() != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->get_code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->get_code_id();
         }
         return $vars;
     }
@@ -232,8 +232,8 @@ class sandbox_code_id extends sandbox_typed
     {
         $vars = parent::export_json($exp_typ, $do_load);
         // include the code id in the api message so that the frontend can execute some behavior
-        if ($this->code_id() != '' and $this->code_id() != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->get_code_id() != '' and $this->get_code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->get_code_id();
         }
         return $vars;
     }
@@ -279,7 +279,7 @@ class sandbox_code_id extends sandbox_typed
     /**
      * @return string|null the unique key or null if the word is not used by the system
      */
-    function code_id(): ?string
+    function get_code_id(): ?string
     {
         return $this->code_id;
     }
@@ -343,8 +343,8 @@ class sandbox_code_id extends sandbox_typed
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->code_id() != null) {
-            $usr_msg->add($this->set_code_id($obj->code_id(), $usr_req));
+        if ($obj->get_code_id() != null) {
+            $usr_msg->add($this->set_code_id($obj->get_code_id(), $usr_req));
         }
         return $usr_msg;
     }
@@ -362,11 +362,11 @@ class sandbox_code_id extends sandbox_typed
     function diff_msg(sandbox|CombineObject|db_object_seq_id $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->code_id() != $obj->code_id()) {
+        if ($this->get_code_id() != $obj->get_code_id()) {
             $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_CODE_ID, [
-                msg_id::VAR_NAME => $obj->code_id(),
-                msg_id::VAR_NAME_CHK => $this->code_id(),
+                msg_id::VAR_NAME => $obj->get_code_id(),
+                msg_id::VAR_NAME_CHK => $this->get_code_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->name(),
             ]);
@@ -384,7 +384,7 @@ class sandbox_code_id extends sandbox_typed
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->code_id != null) {
-            if ($this->code_id() != $db_obj->code_id()) {
+            if ($this->get_code_id() != $db_obj->get_code_id()) {
                 $result = true;
             }
         }

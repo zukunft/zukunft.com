@@ -177,7 +177,7 @@ class sandbox_list extends base_list
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -214,7 +214,7 @@ class sandbox_list extends base_list
         //$sc->set_class($lib->class_to_name($sbx::class));
         $sc->set_class($sbx::class);
         $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(array($sbx->id_field()));
         $sc->set_usr_query();
         if ($pattern != '') {
@@ -276,7 +276,7 @@ class sandbox_list extends base_list
         $result = false;
 
         // check the all minimal input parameters are set
-        if ($this->user()->id <= 0) {
+        if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
@@ -307,7 +307,7 @@ class sandbox_list extends base_list
         global $db_con;
 
         // check the all minimal input parameters are set
-        if ($this->user()->id <= 0) {
+        if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_user_changes($db_con->sql_creator(), $sbx, $usr, $usr_msg, $limit, $offset);
@@ -326,7 +326,7 @@ class sandbox_list extends base_list
         int                                            $offset = 0
     ): sql_par
     {
-        $qp = new sql_db();
+        $qp = new sql_par();
         // TODO Prio 0 fill
         return $qp;
     }
@@ -361,7 +361,7 @@ class sandbox_list extends base_list
         }
 
         // check the all minimal input parameters are set
-        if ($this->user()->id <= 0) {
+        if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
@@ -450,18 +450,18 @@ class sandbox_list extends base_list
     ): user_message
     {
         $usr_msg = new user_message();
-        if ($obj_to_add->user() == null) {
-            $obj_to_add->set_user($this->user());
+        if ($obj_to_add->get_user() == null) {
+            $obj_to_add->set_user($this->get_user());
             $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
-        if ($obj_to_add->user() !== $this->user()) {
-            if (!$this->user()->is_admin() and !$this->user()->is_system()) {
+        if ($obj_to_add->get_user() !== $this->get_user()) {
+            if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
                 $usr_msg->add_id_with_vars(msg_id::LIST_USER_NO_MATCH,
                     [
                         msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                        msg_id::VAR_USER_NAME => $obj_to_add->user()->name(),
-                        msg_id::VAR_USER_LIST_NAME => $this->user()->name(),
+                        msg_id::VAR_USER_NAME => $obj_to_add->get_user()->name(),
+                        msg_id::VAR_USER_LIST_NAME => $this->get_user()->name(),
                     ]);
             }
         }
@@ -481,14 +481,14 @@ class sandbox_list extends base_list
     function same_user(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add): user_message
     {
         $usr_msg = new user_message();
-        if ($obj_to_add->user() !== $this->user()) {
-            if ($obj_to_add->user() == null) {
-                $obj_to_add->set_user($this->user());
+        if ($obj_to_add->get_user() !== $this->get_user()) {
+            if ($obj_to_add->get_user() == null) {
+                $obj_to_add->set_user($this->get_user());
             } else {
-                if (!$this->user()->is_admin() and !$this->user()->is_system()) {
+                if (!$this->get_user()->is_admin() and !$this->get_user()->is_system()) {
                     log_warning('Trying to add ' . $obj_to_add->dsp_id()
-                        . ' of user ' . $obj_to_add->user()->name()
-                        . ' to list of ' . $this->user()->name()
+                        . ' of user ' . $obj_to_add->get_user()->name()
+                        . ' to list of ' . $this->get_user()->name()
                     );
                 }
             }
@@ -572,8 +572,8 @@ class sandbox_list extends base_list
             $result .= ' ... total ' . $lib->dsp_count($this->lst());
         }
         if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;

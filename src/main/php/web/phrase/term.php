@@ -363,7 +363,7 @@ class term extends combine_named
             }
             $vars[json_fields::ID] = $this->obj_id();
             $vars[json_fields::NAME] = $this->name();
-            $vars[json_fields::DESCRIPTION] = $this->description();
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
             $vars[json_fields::TYPE] = $this->type_id();
             if ($this->is_formula()) {
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();

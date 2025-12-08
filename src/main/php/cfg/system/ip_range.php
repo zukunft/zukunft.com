@@ -215,7 +215,7 @@ class ip_range extends db_object_seq_id
     /**
      * @return user|null the person who uses the ip range and null if for all users
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -277,7 +277,7 @@ class ip_range extends db_object_seq_id
 
         if ($qp->name != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -477,7 +477,7 @@ class ip_range extends db_object_seq_id
         $usr_msg = new user_message();
         $tbl_name = $lib->class_to_name($this::class);
 
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
@@ -498,7 +498,7 @@ class ip_range extends db_object_seq_id
         $lib = new library();
         $tbl_name = $lib->class_to_name($this::class);
 
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
         $log->set_table($tbl_name);
 
@@ -536,7 +536,7 @@ class ip_range extends db_object_seq_id
         if ($log->id() > 0) {
             // insert the new ip range
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
 
             $this->id = $db_con->insert_old(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
@@ -575,7 +575,7 @@ class ip_range extends db_object_seq_id
         $db_chk->id = $this->id();
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
-        $db_chk->set_user($this->user());
+        $db_chk->set_user($this->get_user());
         $qp = $this->load_sql_by_vars($db_con);
         $db_chk->load($qp);
         if ($db_chk->id() > 0) {
@@ -600,7 +600,7 @@ class ip_range extends db_object_seq_id
         global $db_con;
 
         // build the database object because this is needed anyway
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_class($this::class);
 
         // check if the external reference is supposed to be added
@@ -626,7 +626,7 @@ class ip_range extends db_object_seq_id
             $db_rec = clone $this;
             $db_rec->reset();
             $db_rec->id = $this->id();
-            $db_rec->set_user($this->user());
+            $db_rec->set_user($this->get_user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
                 $usr_msg->add($this->save_fields($db_con, $db_rec));

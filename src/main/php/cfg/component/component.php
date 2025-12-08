@@ -473,7 +473,7 @@ class component extends sandbox_code_id
     private function formula_from_api_json(int|array $value): formula
     {
         $usr_msg = new user_message();
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if (is_array($value)) {
             $frm->api_mapper($value, $usr_msg);
         } elseif (is_int($value)) {
@@ -518,7 +518,7 @@ class component extends sandbox_code_id
             $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
         }
         if ($this->style != null) {
-            $vars[json_fields::STYLE] = $this->style->code_id();
+            $vars[json_fields::STYLE] = $this->style->get_code_id();
         }
 
         // add the phrases used
@@ -846,7 +846,7 @@ class component extends sandbox_code_id
         $frm = null;
         if ($id != null) {
             if ($id > 0) {
-                $frm = new formula($this->user());
+                $frm = new formula($this->get_user());
                 $frm->id = $id;
             } else {
                 $lib = new library();
@@ -1150,7 +1150,7 @@ class component extends sandbox_code_id
         $result = null;
         if ($id != null) {
             if ($id != 0) {
-                $phr = new phrase($this->user());
+                $phr = new phrase($this->get_user());
                 if ($phr->load_by_id($id) != 0) {
                     $result = $phr;
                 }
@@ -1164,7 +1164,7 @@ class component extends sandbox_code_id
     {
         $result = '';
         if ($this->word_id_col2 > 0) {
-            $wrd_col2 = new word($this->user());
+            $wrd_col2 = new word($this->get_user());
             $wrd_col2->load_by_id($this->word_id_col2);
             $this->col_sub_phrase = $wrd_col2->phrase();
             $result = $wrd_col2->name();
@@ -1177,7 +1177,7 @@ class component extends sandbox_code_id
     {
         $result = '';
         if ($this->get_formula_id() > 0) {
-            $frm = new formula($this->user());
+            $frm = new formula($this->get_user());
             $frm->load_by_id($this->get_formula_id());
             $this->frm = $frm;
             $result = $frm->name();
@@ -1282,7 +1282,7 @@ class component extends sandbox_code_id
         if ($view_id == '' or $view_id == Null or $view_id == 0) {
             log_err('Cannot get the next position, because the view_id is not set', 'component->next_nbr');
         } else {
-            $vcl = new component_link($this->user());
+            $vcl = new component_link($this->get_user());
             $result = $vcl->load_max_pos_by_view($view_id);
 
             // if nothing is found, assume one as the next free number
@@ -1305,8 +1305,8 @@ class component extends sandbox_code_id
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
-        $log = new change_link($this->user());
+        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->get_user()->id);
+        $log = new change_link($this->get_user());
         $log->set_action(change_actions::ADD);
         $log->set_class(component_link::class);
         $log->new_from = clone $this;
@@ -1321,8 +1321,8 @@ class component extends sandbox_code_id
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
-        $log = new change_link($this->user());
+        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->get_user()->id);
+        $log = new change_link($this->get_user());
         $log->set_action(change_actions::DELETE);
         $log->set_class(component_link::class);
         $log->old_from = clone $this;
@@ -1348,7 +1348,7 @@ class component extends sandbox_code_id
      */
     function link(view $msk, int $order_nbr, user_message $usr_msg): bool
     {
-        $cmp_lnk = new component_link($this->user());
+        $cmp_lnk = new component_link($this->get_user());
         $cmp_lnk->reset();
         $cmp_lnk->set_view($msk);
         $cmp_lnk->set_component($this);
@@ -1367,7 +1367,7 @@ class component extends sandbox_code_id
      */
     function unlink(view $msk, user_message $usr_msg): bool
     {
-        $dsp_lnk = new component_link($this->user());
+        $dsp_lnk = new component_link($this->get_user());
         $dsp_lnk->load_by_link($msk, $this);
         $dsp_lnk->reload_objects();
         return $dsp_lnk->del($usr_msg);
@@ -1625,7 +1625,7 @@ class component extends sandbox_code_id
     function del_links(user_message $usr_msg): bool
     {
         // collect all component links where this component is used
-        $lnk_lst = new component_link_list($this->user());
+        $lnk_lst = new component_link_list($this->get_user());
         $lnk_lst->load_by_component($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
@@ -1906,7 +1906,7 @@ class component extends sandbox_code_id
                     FROM component_types
                    WHERE component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
-          $db_con->usr_id = $this->user()->id;
+          $db_con->usr_id = $this->get_user()->id;
           $db_type = $db_con->get1($sql);
           $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
@@ -1924,8 +1924,8 @@ class component extends sandbox_code_id
     {
         $result = array();
 
-        if ($this->id() > 0 and $this->user() != null) {
-            $lst = new component_link_list($this->user());
+        if ($this->id() > 0 and $this->get_user() != null) {
+            $lst = new component_link_list($this->get_user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();
         } else {

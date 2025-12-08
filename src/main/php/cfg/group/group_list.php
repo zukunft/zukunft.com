@@ -82,7 +82,7 @@ class group_list extends sandbox_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new group($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new group($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -106,7 +106,7 @@ class group_list extends sandbox_list
         $db_rows = $db_con->get($qp);
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
-                $phr_grp = new group($this->user());
+                $phr_grp = new group($this->get_user());
                 $phr_grp->row_mapper($db_row);
                 $this->add_obj($phr_grp);
                 $result = true;
@@ -208,11 +208,11 @@ class group_list extends sandbox_list
         $tbl_ext = $this->table_extension($tbl_types);
         $sc->set_class($class, new sql_type_list(), $tbl_ext);
         // TODO add pattern filter for the prime group id
-        $grp = new group($this->user());
+        $grp = new group($this->get_user());
         $sc->set_id_field($grp->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(group::FLD_NAMES);
         return $qp;
     }
@@ -226,7 +226,7 @@ class group_list extends sandbox_list
      */
     protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $grp = new group($this->user());
+        $grp = new group($this->get_user());
         return $grp->load_sql($sc, $query_name, $class);
     }
 
@@ -267,7 +267,7 @@ class group_list extends sandbox_list
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $grp = new group($this->user());
+        $grp = new group($this->get_user());
         $qp = $grp->load_sql($sc, $query_name);
 
         // change query name from group to group_list
@@ -448,10 +448,10 @@ class group_list extends sandbox_list
             $sql_group = 'SELECT l1.group_id
                       FROM group_phrase_links l1
                  LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->user()->id . ',
+                                                            AND u1.user_id = ' . $this->get_user()->id . ',
                            group_phrase_links l2
                  LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->user()->id . '
+                                                            AND u2.user_id = ' . $this->get_user()->id . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.group_id = l2.group_id
@@ -500,7 +500,7 @@ class group_list extends sandbox_list
 
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         return $db_con->get_old($sql);
     }
 
@@ -523,7 +523,7 @@ class group_list extends sandbox_list
             log_err('Formula phrase is missing.', 'phr_grp_lst->add_grp_by_phr');
         }
 
-        log_debug($frm_linked->name() . ' related ' . $type . 's found for ' . $frm_used->name() . ' and user ' . $this->user()->name);
+        log_debug($frm_linked->name() . ' related ' . $type . 's found for ' . $frm_used->name() . ' and user ' . $this->get_user()->name);
         $added = 0;
         $changed = 0;
 
@@ -537,7 +537,7 @@ class group_list extends sandbox_list
                 log_debug('add id ' . $val_row[group::FLD_ID]);
                 // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
-                $val_grp = new group($this->user());
+                $val_grp = new group($this->get_user());
                 $val_grp->load_by_id($val_row[group::FLD_ID]);
                 $used_phr_lst = clone $val_grp->phrase_list();
                 log_debug('used_phr_lst ' . $used_phr_lst->dsp_id());
@@ -625,7 +625,7 @@ class group_list extends sandbox_list
     {
         log_debug();
         $lib = new library();
-        $result = new phrase_list($this->user());
+        $result = new phrase_list($this->get_user());
         $pos = 0;
         foreach ($this->lst() as $grp) {
             //$grp->load_by_obj_vars();

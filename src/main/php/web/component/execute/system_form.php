@@ -226,7 +226,7 @@ class system_form extends component
      */
     function show_description(db_object $dbo): string
     {
-        return $dbo->description();
+        return $dbo->get_description();
     }
 
     /**
@@ -370,7 +370,7 @@ class system_form extends component
         return $html->form_field(
             url_var::DESCRIPTION,
             msg_id::FORM_FIELD_DESCRIPTION,
-            $dbo->description(),
+            $dbo->get_description(),
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_12

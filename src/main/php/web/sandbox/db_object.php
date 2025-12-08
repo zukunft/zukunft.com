@@ -421,7 +421,7 @@ class db_object extends TextIdObject
         return $msg;
     }
 
-    function description(): string
+    function get_description(): string
     {
         $msg = 'ERROR: description not overwritten by ' . $this::class;
         log_err($msg);
@@ -474,7 +474,7 @@ class db_object extends TextIdObject
     /**
      * @return int|null how many times the object has been referenced or used
      */
-    function usage(): int|null
+    function get_usage(): int|null
     {
         $msg = 'ERROR: usage not overwritten by ' . $this::class;
         log_err($msg);

@@ -310,7 +310,7 @@ class view extends sandbox_code_id
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $value = $in_ex_json[json_fields::ASSIGNED];
             foreach ($value as $trm_name) {
-                $trm = new term($this->user());
+                $trm = new term($this->get_user());
                 $trm->load_by_name($trm_name);
                 if ($trm->id() == 0) {
                     log_warning('word "' . $trm_name .
@@ -413,7 +413,7 @@ class view extends sandbox_code_id
     ): bool
     {
         global $db_con;
-        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
+        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
 
         if ($db_con->is_open()) {
             if ($this->name == '') {
@@ -437,7 +437,7 @@ class view extends sandbox_code_id
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::ASSIGNED) {
                 foreach ($value as $trm_name) {
-                    $trm = new term($this->user());
+                    $trm = new term($this->get_user());
                     $trm->load_by_name($trm_name);
                     if ($trm->id() == 0) {
                         log_warning('word "' . $trm_name .
@@ -610,7 +610,7 @@ class view extends sandbox_code_id
     function components(): component_list
     {
         $ids = $this->cmp_lnk_lst->cmp_ids();
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         $cmp_lst->load_by_ids($ids);
         return $cmp_lst;
     }
@@ -799,7 +799,7 @@ class view extends sandbox_code_id
             $db_con_used = $db_con;
         }
 
-        $this->cmp_lnk_lst = new component_link_list($this->user());
+        $this->cmp_lnk_lst = new component_link_list($this->get_user());
         $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
         log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
@@ -822,11 +822,11 @@ class view extends sandbox_code_id
         } elseif ($this->name != '') {
             $qp->name .= sql_db::FLD_NAME;
         } else {
-            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id() . ")  must be set to load the components of a view.", "view->load_components_sql");
+            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->get_code_id() . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
         $db_con->set_class(component_link::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
@@ -904,7 +904,7 @@ class view extends sandbox_code_id
             $lnk->set_pos_type(position_types::BELOW);
         }
         if ($this->cmp_lnk_lst == null) {
-            $this->cmp_lnk_lst = new component_link_list($this->user());
+            $this->cmp_lnk_lst = new component_link_list($this->get_user());
         }
         $lnk->set_view($this);
         $this->cmp_lnk_lst->add_link_by_key($lnk);
@@ -924,9 +924,9 @@ class view extends sandbox_code_id
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new component($this->user());
+            $cmp = new component($this->get_user());
             $cmp->load_by_id($component_id);
-            $cmp_lnk = new component_link($this->user());
+            $cmp_lnk = new component_link($this->get_user());
             $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_up();
         }
@@ -943,9 +943,9 @@ class view extends sandbox_code_id
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new component($this->user());
+            $cmp = new component($this->get_user());
             $cmp->load_by_id($component_id);
-            $cmp_lnk = new component_link($this->user());
+            $cmp_lnk = new component_link($this->get_user());
             $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_down();
         }
@@ -965,7 +965,7 @@ class view extends sandbox_code_id
      */
     function add_term_db(term $trm, user_message $usr_msg): bool
     {
-        $lnk = new term_view($this->user());
+        $lnk = new term_view($this->get_user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
         return $lnk->save($usr_msg);
@@ -981,7 +981,7 @@ class view extends sandbox_code_id
     {
         $usr_msg = new user_message();
         if ($this->trm_msk_lst == null) {
-            $this->trm_msk_lst = new term_view_list($this->user());
+            $this->trm_msk_lst = new term_view_list($this->get_user());
         }
         $added = $this->trm_msk_lst->add(0, $this, $trm);
         if (!$added) {
@@ -1181,7 +1181,7 @@ class view extends sandbox_code_id
     function del_links(user_message $usr_msg): bool
     {
         // collect all component links where this view is used
-        $lnk_lst = new component_link_list($this->user());
+        $lnk_lst = new component_link_list($this->get_user());
         $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
@@ -1191,7 +1191,7 @@ class view extends sandbox_code_id
         }
 
         // collect all view relations where this view is used
-        $mrl_lst = new view_relation_list($this->user());
+        $mrl_lst = new view_relation_list($this->get_user());
         // TODO Prio 0 activate
         //$mrl_lst->load_by_view($this);
 

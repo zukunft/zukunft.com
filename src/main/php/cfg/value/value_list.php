@@ -145,15 +145,15 @@ class value_list extends sandbox_value_list
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
-                        $obj_to_add = new value($this->user());
+                        $obj_to_add = new value($this->get_user());
                     } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
-                        $obj_to_add = new value_text($this->user());
+                        $obj_to_add = new value_text($this->get_user());
                     } elseif (array_key_exists(value_time::FLD_VALUE, $db_row)) {
-                        $obj_to_add = new value_time($this->user());
+                        $obj_to_add = new value_time($this->get_user());
                     } elseif (array_key_exists(value_geo::FLD_VALUE, $db_row)) {
-                        $obj_to_add = new value_geo($this->user());
+                        $obj_to_add = new value_geo($this->get_user());
                     } else {
-                        $obj_to_add = new value($this->user());
+                        $obj_to_add = new value($this->get_user());
                         log_err('Value type of value db_row cannot be detected');
                     }
                     $obj_to_add->row_mapper_sandbox_multi($db_row, $ext);
@@ -189,7 +189,7 @@ class value_list extends sandbox_value_list
 
     function grp_ids(): group_list
     {
-        $grp_lst = new group_list($this->user());
+        $grp_lst = new group_list($this->get_user());
 
         foreach ($this->lst() as $val) {
             $grp_lst->add($val->grp());
@@ -338,7 +338,7 @@ class value_list extends sandbox_value_list
         }
 
         // check the all minimal input parameters are set
-        if ($this->user()->id <= 0) {
+        if ($this->get_user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
@@ -398,7 +398,7 @@ class value_list extends sandbox_value_list
         }
         $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($val_typ->sql_type());
-        $val = $sc_par_lst->value_object($this->user());
+        $val = $sc_par_lst->value_object($this->get_user());
         $val_typ_lst = new value_type_list([$val_typ]);
         $val_ext = $val_typ_lst->query_extension();
 
@@ -426,7 +426,7 @@ class value_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user_db::FLD_ID, $this->user()->id, sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->get_user()->id, sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -473,7 +473,7 @@ class value_list extends sandbox_value_list
         sql_type_list $sc_par_lst
     ): sql_par
     {
-        $val = $sc_par_lst->value_object($this->user());
+        $val = $sc_par_lst->value_object($this->get_user());
 
         $qp = new sql_par($val::class, new sql_type_list(), $sc_par_lst->ext_ex_user());
         $qp->name .= $query_name;
@@ -483,7 +483,7 @@ class value_list extends sandbox_value_list
         $sc->set_id_field($val->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(value_db::FLD_NAMES);
         //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
         //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
@@ -789,7 +789,7 @@ class value_list extends sandbox_value_list
         sql_type_list  $sc_typ_lst
     ): sql_par
     {
-        $val = $sc_typ_lst->value_object($this->user());
+        $val = $sc_typ_lst->value_object($this->get_user());
 
         $qp = $this->load_sql_init(
             $sc,
@@ -883,8 +883,8 @@ class value_list extends sandbox_value_list
 
         $lib = new library();
 
-        $val = new value($this->user());
-        $phr_lst = new phrase_list($this->user());
+        $val = new value($this->get_user());
+        $phr_lst = new phrase_list($this->get_user());
 
         if ($db_con->is_open()) {
             $do_save = true;
@@ -895,7 +895,7 @@ class value_list extends sandbox_value_list
         foreach ($json_obj as $key => $value) {
 
             if ($key == json_fields::CONTEXT) {
-                $phr_lst = new phrase_list($this->user());
+                $phr_lst = new phrase_list($this->get_user());
                 if ($phr_lst->import_lst($value, $usr_msg)) {
                     $val->set_grp($phr_lst->get_grp_id($do_save));
                 }
@@ -921,7 +921,7 @@ class value_list extends sandbox_value_list
             }
 
             if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
+                $src = new source($this->get_user());
                 $src->set_name($value);
                 if ($do_save) {
                     if ($usr_msg->is_ok()) {
@@ -974,7 +974,7 @@ class value_list extends sandbox_value_list
         global $db_con;
         $val_to_add = clone $val;
         $phr_lst_to_add = clone $phr_lst;
-        $val_phr = new phrase($this->user());
+        $val_phr = new phrase($this->get_user());
         if ($db_con->is_open()) {
             $val_phr->load_by_name($val_key);
             $phr_lst_to_add->add($val_phr);
@@ -1048,8 +1048,8 @@ class value_list extends sandbox_value_list
             }
 
             // add the source
-            if ($val0->source() != null) {
-                $vars[json_fields::SOURCE_NAME] = $val0->source()->name();
+            if ($val0->get_source() != null) {
+                $vars[json_fields::SOURCE_NAME] = $val0->get_source()->name();
             }
 
             if (count($this->lst()) > 0) {
@@ -1082,7 +1082,7 @@ class value_list extends sandbox_value_list
     function time_list(): phrase_list
     {
         log_debug();
-        $lst = new phrase_list($this->user());
+        $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $val) {
             $lst->merge($val->phrase_list()->time_list());
         }
@@ -1095,7 +1095,7 @@ class value_list extends sandbox_value_list
     function phr_lst(): phrase_list
     {
         log_debug('by ids (needs review)');
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $lib = new library();
 
         foreach ($this->lst() as $val) {
@@ -1280,7 +1280,7 @@ class value_list extends sandbox_value_list
      */
     function filter_by_phrase(phrase $phr): value_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($phr);
         return $this->filter_by_phrase_lst($phr_lst);
     }
@@ -1363,7 +1363,7 @@ class value_list extends sandbox_value_list
      */
     function diff(value_list $val_lst): value_list
     {
-        $result = new value_list($this->user());
+        $result = new value_list($this->get_user());
         foreach ($this->lst() as $val) {
             if ($val_lst->get_by_grp($val->grp()) == null) {
                 $result->add($val);
@@ -1384,7 +1384,7 @@ class value_list extends sandbox_value_list
     {
         log_debug();
         $lib = new library();
-        $grp_lst = new group_list($this->user());
+        $grp_lst = new group_list($this->get_user());
         foreach ($this->lst() as $val) {
             if (!isset($val->grp)) {
                 $val->load_grp_by_id();
@@ -1431,11 +1431,11 @@ class value_list extends sandbox_value_list
 
         // the id and the user must be set
         $db_con->set_class(value::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
-            $val = new value($this->user());
+            $val = new value($this->get_user());
             $val->load_by_id($db_val[value_db::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
@@ -1471,7 +1471,7 @@ class value_list extends sandbox_value_list
 
             // load the values already in the database
             $grp_lst = $this->grp_ids();
-            $db_lst = new value_list($this->user());
+            $db_lst = new value_list($this->get_user());
             foreach (value_types::cases() as $val_typ) {
                 $db_lst->load_by_ids($grp_lst->ids(), $val_typ);
             }
@@ -1481,7 +1481,7 @@ class value_list extends sandbox_value_list
             $i = 0;
             $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
-                if ($val->value() === null) {
+                if ($val->get_value() === null) {
                     $usr_msg->add_id_with_vars(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
                 } else {
                     if ($val->id() == 0) {

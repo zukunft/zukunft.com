@@ -180,7 +180,7 @@ class test_api extends test_base
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
-        $usr_msg = new user_message($usr_obj->user());
+        $usr_msg = new user_message($usr_obj->get_user());
 
         // is excluded api json empty?
         $test_name = $class_api . ' excluded json is empty';

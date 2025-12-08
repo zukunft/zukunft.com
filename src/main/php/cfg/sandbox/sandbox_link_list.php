@@ -145,9 +145,9 @@ class sandbox_link_list extends sandbox_list
     function add(int $id, view $msk, component|term $sbx, int $pos = 0): bool
     {
         if ($sbx::class == term::class) {
-            $new_lnk = new term_view($this->user());
+            $new_lnk = new term_view($this->get_user());
         } else {
-            $new_lnk = new component_link($this->user());
+            $new_lnk = new component_link($this->get_user());
         }
         $new_lnk->set($id, $msk, $sbx, $pos);
         return $this->add_link($new_lnk);

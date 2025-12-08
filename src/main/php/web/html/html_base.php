@@ -938,7 +938,7 @@ class html_base
 // ------------------------
 
 // simply to display headline text
-    function dsp_text_h1($title, $style = '')
+    function dsp_text_h1($title, $style = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
@@ -1439,7 +1439,7 @@ class html_base
         if ($style_id != null) {
             global $sys;
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            return $style->code_id();
+            return $style->get_code_id();
         } else {
             return '';
         }
@@ -1562,7 +1562,7 @@ class html_base
      * TODO create a db table, where the async process can drop the status
      * TODO add the refresh frequency setting to the general and user settings
      */
-    function ui_progress($id, $value, $max, $text)
+    function ui_progress($id, $value, $max, $text): string
     {
         echo $text;
     }

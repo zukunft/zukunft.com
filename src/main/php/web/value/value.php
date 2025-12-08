@@ -399,9 +399,9 @@ class value extends sandbox_value
     /**
      * @return string interface function to align the value with the other sandbox objects
      */
-    function description(): string
+    function get_description(): string
     {
-        return $this->grp->description();
+        return $this->grp->get_description();
     }
 
     /**

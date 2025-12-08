@@ -210,7 +210,7 @@ class group extends sandbox_multi
         $this->set_id(0);
         $this->name = null;
         $this->description = null;
-        $this->phr_lst = new phrase_list($this->user());
+        $this->phr_lst = new phrase_list($this->get_user());
         $this->is_saved = false;
     }
 
@@ -330,7 +330,7 @@ class group extends sandbox_multi
     {
         $grp_id = new group_id();
         $phr_ids = new phr_ids($grp_id->get_array($id));
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         if ($phr_lst->load_names_by_ids($phr_ids, $phr_lst_in)) {
             $this->set_phrase_list($phr_lst);
             return true;
@@ -763,7 +763,7 @@ class group extends sandbox_multi
      */
     function load_by_ids(phr_ids $ids): bool
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->load_names_by_ids($ids);
         return $this->load_by_phr_lst($phr_lst);
     }
@@ -950,7 +950,7 @@ class group extends sandbox_multi
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields($fld_lst);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->add_where($this->name_field(), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -976,7 +976,7 @@ class group extends sandbox_multi
         $qp = new sql_par($class);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $this->load_sql_select_qp($sc, $qp);
@@ -1020,7 +1020,7 @@ class group extends sandbox_multi
             return sql_db::FLD_NAME;
         } else {
             $msg = 'Either the database ID (' . $this->id() . ') or the ' .
-                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->get_user()->id() . ') must be set to load a ' .
                 self::class;
             log_err($msg, self::class . '->load');
             return $msg;
@@ -1057,7 +1057,7 @@ class group extends sandbox_multi
         $grp_id = new group_id();
         $ids = $grp_id->get_array($this->id());
         $phr_ids = (new phr_ids($ids));
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->load_names_by_ids($phr_ids);
         $this->set_phrase_list($phr_lst);
     }
@@ -1070,7 +1070,7 @@ class group extends sandbox_multi
         $grp_id = new group_id();
         $ids = $grp_id->get_array($this->id());
         $phr_ids = (new phr_ids($ids));
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->load_by_ids($phr_ids);
         $this->set_phrase_list($phr_lst);
     }
@@ -1110,7 +1110,7 @@ class group extends sandbox_multi
         // only save the group in the database if the name or description is given by the user
         if ($do_save and $db_entry_needed) {
             // check if there is already a db entry
-            $db_rec = new group($this->user());
+            $db_rec = new group($this->get_user());
             $db_rec->load_by_id($this->id());
             if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
                 // TODO call insert or update sql statement
@@ -1185,7 +1185,7 @@ class group extends sandbox_multi
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->get_user()->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
@@ -1308,14 +1308,14 @@ class group extends sandbox_multi
               GROUP BY l1.group_id;";
                 log_debug('group->get_by_wrd_lst sql ' . $sql);
                 //$db_con = New mysql;
-                $db_con->usr_id = $this->user()->id();
+                $db_con->usr_id = $this->get_user()->id();
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     $this->id = $db_grp[group::FLD_ID];
                     if ($this->id() > 0) {
                         log_debug('group->get_by_wrd_lst got id ' . $this->id());
                         $result = $this->load();
-                        log_debug('group->get_by_wrd_lst ' . $result . ' found <' . $this->id() . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
+                        log_debug('group->get_by_wrd_lst ' . $result . ' found <' . $this->id() . '> for ' . $wrd_lst->name() . ' and user ' . $this->get_user()->name);
                     } else {
                         log_warning('No group found for words ' . $wrd_lst->name() . '.', "group->get_by_wrd_lst");
                     }
@@ -1359,7 +1359,7 @@ class group extends sandbox_multi
             foreach ($prh_names as $prh_name) {
                 if (!in_array($prh_name, $this->phrase_list()->names())) {
                     // if only the name is know, add a simple word
-                    $wrd = new word($this->user());
+                    $wrd = new word($this->get_user());
                     $wrd->set($wrd_id, $prh_name);
                     $this->add_word($wrd);
                     $result = true;
@@ -1423,7 +1423,7 @@ class group extends sandbox_multi
      */
     function get_similar(): group
     {
-        $result = new group($this->user());
+        $result = new group($this->get_user());
 
         // check potential duplicate by name
         $db_chk = clone $this;
@@ -1436,7 +1436,7 @@ class group extends sandbox_multi
             }
         }
         // check with the user namespace
-        $db_chk->set_user($this->user());
+        $db_chk->set_user($this->get_user());
         if ($this->name() != '') {
             if ($db_chk->load_by_name($this->name())) {
                 if ($db_chk->id() > 0) {
@@ -1516,10 +1516,10 @@ class group extends sandbox_multi
      */
     function value(): value
     {
-        $val = new value($this->user());
+        $val = new value($this->get_user());
         $val->load_by_grp($this);
 
-        log_debug($val->grp()->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->grp()->dsp_id() . ' for "' . $this->get_user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -1529,7 +1529,7 @@ class group extends sandbox_multi
      */
     function time(): phrase
     {
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         $phr_lst = $this->phrase_list()->time_word_list();
         if (!$phr_lst->is_empty()) {
             // TODO use a new "most relevant" function
@@ -1547,11 +1547,11 @@ class group extends sandbox_multi
      */
     function result($time_wrd_id): result
     {
-        log_debug($this->id() . ",time" . $time_wrd_id . ",u" . $this->user()->name);
+        log_debug($this->id() . ",time" . $time_wrd_id . ",u" . $this->get_user()->name);
 
         global $db_con;
 
-        $res = new result($this->user());
+        $res = new result($this->get_user());
         $result = $res->load_by_grp($this);
 
         // if no user specific result is found, get the standard result
@@ -1571,7 +1571,7 @@ class group extends sandbox_multi
                 log_debug($res->dsp_id());
             }
         } else {
-            log_debug($res->dsp_id() . " for " . $this->user()->dsp_id());
+            log_debug($res->dsp_id() . " for " . $this->get_user()->dsp_id());
         }
 
         return $res;
@@ -1602,7 +1602,7 @@ class group extends sandbox_multi
         if ($this->description <> $group_name and $do_save) {
             if ($this->id() > 0) {
                 // update the generic name in the database
-                $db_con->usr_id = $this->user()->id();
+                $db_con->usr_id = $this->get_user()->id();
                 $db_con->set_class(group::class);
                 // TODO Prio 2 activate
                 /*
@@ -1632,7 +1632,7 @@ class group extends sandbox_multi
     private function selector()
     {
         $result = '';
-        log_debug('group->selector for ' . $this->id() . ' and user "' . $this->user()->name . '"');
+        log_debug('group->selector for ' . $this->id() . ' and user "' . $this->get_user()->name . '"');
 
         new function: load_main_type to load all word and phrase types with one query
 
@@ -1762,7 +1762,7 @@ class group extends sandbox_multi
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set([
             [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
-            [user_db::FLD_ID, $this->user()->id(), sql_par_type::INT],
+            [user_db::FLD_ID, $this->get_user()->id(), sql_par_type::INT],
             [self::FLD_NAME, $this->name, sql_par_type::TEXT],
             [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
         ]);
@@ -1881,7 +1881,7 @@ class group extends sandbox_multi
         $result = array();
 
         $db_con->set_class(sql_db::VT_PHRASE_GROUP_LINK);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->get_user()->id();
         $qp = new sql_par(self::class);
         $qp->name .= 'test_link_ids';
         $db_con->set_name($qp->name);
@@ -1929,8 +1929,8 @@ class group extends sandbox_multi
         }
         global $debug;
         if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
 

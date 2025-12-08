@@ -83,7 +83,7 @@ class component_link_list extends sandbox_link_list
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new component_link($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new component_link($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -149,7 +149,7 @@ class component_link_list extends sandbox_link_list
     function load_components(?sql_db $db_con_given = null): bool
     {
         $ids = $this->cmp_ids();
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         $result = $cmp_lst->load_by_ids($ids, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
@@ -179,7 +179,7 @@ class component_link_list extends sandbox_link_list
         if ($msk->id() > 0) {
             $sc->add_where(view_db::FLD_ID, $msk->id());
             $sc->set_order(component_link::FLD_ORDER_NBR);
-            $sc = (new component($this->user()))->set_join($sc);
+            $sc = (new component($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -199,7 +199,7 @@ class component_link_list extends sandbox_link_list
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
             $sc->add_where(component::FLD_ID, $cmp->id());
-            $sc = (new view($this->user()))->set_join($sc);
+            $sc = (new view($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -221,7 +221,7 @@ class component_link_list extends sandbox_link_list
 
         $sc->set_class(component_link::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(component_link::FLD_NAMES);
         $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         return $qp;

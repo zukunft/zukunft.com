@@ -123,9 +123,9 @@ class phrase extends combine_named
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id();
-        $vars[json_fields::PLURAL] = $this->plural();
+        $vars[json_fields::PLURAL] = $this->get_plural();
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
             $vars[json_fields::SHARE] = $this->obj()?->share_id();

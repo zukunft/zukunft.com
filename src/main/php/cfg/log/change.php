@@ -285,7 +285,7 @@ class change extends change_log
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
         if ($usr == null) {
-            $usr = $this->user();
+            $usr = $this->get_user();
         }
 
         $sc->add_where(user_db::FLD_ID, $usr->id);
@@ -306,7 +306,7 @@ class change extends change_log
         $qp->name .= 'user';
         $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -340,7 +340,7 @@ class change extends change_log
                    OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->user()->id . ' ';
+                AND s.user_id = ' . $this->get_user()->id . ' ';
         } elseif ($type == word::class) {
             //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD));
             //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR));
@@ -382,7 +382,7 @@ class change extends change_log
             ORDER BY s.change_time DESC
                LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->get_user()->id;
         }
         return $qp;
     }
@@ -440,7 +440,7 @@ class change extends change_log
      */
     function add_ref($row_id): bool
     {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->get_user()->dsp_id() . ")");
 
         global $db_con;
         $result = false;
@@ -453,18 +453,18 @@ class change extends change_log
         } else {
             $db_con->set_class(change::class);
         }
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id());
         if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
             // restore the type before saving the log
             $db_con->set_class($db_type);
             $result = True;
         } else {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
+            if ($this->get_user() == null) {
                 log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;
@@ -627,9 +627,9 @@ class change extends change_log
     {
         global $mtr;
         $result = date_format($this->time(), $this->date_time_format()) . ' ';
-        if ($this->user() != null) {
-            if ($this->user()->name() <> '') {
-                $result .= $this->user()->name() . ' ';
+        if ($this->get_user() != null) {
+            if ($this->get_user()->name() <> '') {
+                $result .= $this->get_user()->name() . ' ';
             }
         }
         if ($this->old_value <> '') {
