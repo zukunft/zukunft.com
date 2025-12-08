@@ -12,6 +12,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all variables of this list object
+    - save:              manage to update the database
 
 
     This file is part of zukunft.com - calc with words
@@ -326,6 +327,11 @@ class component_list extends sandbox_list_named
         return $cmp_lst;
     }
 
+
+    /*
+     * save
+     */
+
     /**
      * add or update all components to the database
      * starting with the $cache that contains the words, triples, verbs
@@ -431,9 +437,17 @@ class component_list extends sandbox_list_named
         return $usr_msg->is_ok();
     }
 
+
+    /*
+     * save helper
+     */
+
     /**
      * get a list of components that are ready to be added to the database
-     * TODO Prio 2 move to
+     * TODO Prio 2 move to parent?
+     *
+     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param string $file_name the name of the import file which has delevered the data
      * @return component_list list of the components that have an id or a name
      */
     function get_ready(user_message $usr_msg, string $file_name = ''): component_list

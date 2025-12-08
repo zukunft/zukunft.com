@@ -31,86 +31,19 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once paths::SERVICE . 'config.php';
-include_once paths::MODEL_SYSTEM . 'ip_range.php';
-include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-include_once paths::MODEL_SYSTEM . 'session.php';
-include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
-include_once paths::SHARED_CONST . 'refs.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once test_paths::CREATE . 'test_components.php';
-include_once test_paths::CREATE . 'test_figures.php';
-include_once test_paths::CREATE . 'test_formulas.php';
-include_once test_paths::CREATE . 'test_groups.php';
-include_once test_paths::CREATE . 'test_jobs.php';
-include_once test_paths::CREATE . 'test_languages.php';
-include_once test_paths::CREATE . 'test_log.php';
-include_once test_paths::CREATE . 'test_phrases.php';
-include_once test_paths::CREATE . 'test_refs.php';
-include_once test_paths::CREATE . 'test_results.php';
-include_once test_paths::CREATE . 'test_sources.php';
-include_once test_paths::CREATE . 'test_sys_log.php';
-include_once test_paths::CREATE . 'test_terms.php';
-include_once test_paths::CREATE . 'test_triples.php';
-include_once test_paths::CREATE . 'test_values.php';
-include_once test_paths::CREATE . 'test_verbs.php';
-include_once test_paths::CREATE . 'test_views.php';
-include_once test_paths::CREATE . 'test_words.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
-use Zukunft\ZukunftCom\main\php\service\config;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\session;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
-use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
-use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\const\refs;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\test\php\create\test_components;
-use Zukunft\ZukunftCom\test\php\create\test_figures;
-use Zukunft\ZukunftCom\test\php\create\test_formulas;
-use Zukunft\ZukunftCom\test\php\create\test_groups;
-use Zukunft\ZukunftCom\test\php\create\test_jobs;
-use Zukunft\ZukunftCom\test\php\create\test_languages;
-use Zukunft\ZukunftCom\test\php\create\test_log;
-use Zukunft\ZukunftCom\test\php\create\test_phrases;
-use Zukunft\ZukunftCom\test\php\create\test_refs;
-use Zukunft\ZukunftCom\test\php\create\test_results;
-use Zukunft\ZukunftCom\test\php\create\test_sources;
-use Zukunft\ZukunftCom\test\php\create\test_sys_log;
-use Zukunft\ZukunftCom\test\php\create\test_terms;
-use Zukunft\ZukunftCom\test\php\create\test_triples;
-use Zukunft\ZukunftCom\test\php\create\test_values;
-use Zukunft\ZukunftCom\test\php\create\test_verbs;
-use Zukunft\ZukunftCom\test\php\create\test_views;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
-use DateTime;
 
 class coding_rule_tests
 {
@@ -178,6 +111,7 @@ class coding_rule_tests
         // TODO Prio 0 the target class sections are
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', def::MAIN_CLASSES));
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], def::MAIN_CLASSES));
+        $fnc_lst = array_merge($fnc_lst, $this->php_functions(html_paths::WEB, 'frontend'));
         $fnc_tree = $this->functionTree($fnc_lst);
         return $this->php_function_list_to_md($fnc_tree);
     }
@@ -532,7 +466,7 @@ class coding_rule_tests
 
         $result[$obj_grp_txt] = $all_fnc_lst;
         if ($msg_lst != []) {
-            $result['errors'] = $msg_lst;
+            $result[$obj_grp_txt . ' errors'] = $msg_lst;
         }
 
         return $result;

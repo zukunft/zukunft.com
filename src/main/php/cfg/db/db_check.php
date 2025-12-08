@@ -6,7 +6,7 @@
     ---------------------
   
     The main sections of this object are
-    - main:          start the main process
+    - upgrade:        perform a version upgrade
 
     This file is part of zukunft.com - calc with words
 
@@ -79,12 +79,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class db_check
 {
 
-    const string TBL_WORD = 'word';
-    const string TBL_TRIPLE = 'triple';
-
-
     /*
-     * main
+     * upgrade
      */
 
     /**

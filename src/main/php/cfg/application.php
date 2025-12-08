@@ -74,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 
 class application
 {
+
     /**
      * open the database connection to answer an api request
      *

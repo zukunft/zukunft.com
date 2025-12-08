@@ -1722,10 +1722,14 @@ class library
             => 'link',
             'get_similar', 'add_insert'
             => 'save',
+            'get_ready'
+            => 'save helper',
             'db_fields_all', 'db_fields_changed'
             => 'sql write fields',
             'dsp_id', 'assigned_msk_ids'
             => 'debug',
+            'db_check', 'db_move_time_phrase_to_group'
+            => 'upgrade',
             default => '',
         };
 
@@ -1746,6 +1750,8 @@ class library
                 $result = 'save';
             } elseif (str_starts_with($fnc_name, 'del')) {
                 $result = 'del';
+            } elseif (str_starts_with($fnc_name, 'db_upgrade_')) {
+                $result = 'upgrade';
             }
         }
         return $result;
