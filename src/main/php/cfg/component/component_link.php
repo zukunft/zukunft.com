@@ -1144,17 +1144,17 @@ class component_link extends sandbox_link
         return component_link_type::FLD_ID;
     }
 
-    function all_sandbox_fields(): array
-    {
-        return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
     /**
      * @return string the field name of the name db field as a function for complex overwrites
      */
     function name_field(): string
     {
         return '';
+    }
+
+    function all_sandbox_fields(): array
+    {
+        return self::ALL_SANDBOX_FLD_NAMES;
     }
 
 

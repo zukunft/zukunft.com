@@ -677,7 +677,7 @@ class library
                     if ($txt != '') {
                         $txt .= ', ';
                     }
-                    $txt .= $value . ' should be after ' . $compare[$pre] ;
+                    $txt .= $value . ' should be before ' . $compare[$pre] ;
                 } else {
                     $pre = $pos;
                 }
