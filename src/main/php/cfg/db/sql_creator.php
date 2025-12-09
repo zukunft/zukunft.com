@@ -2060,7 +2060,7 @@ class sql_creator
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
                 $log->old_link_id = $dbo->predicate_id();
-                $log->old_text_link = $dbo->predicate_name();
+                $log->old_text_link = $dbo->get_predicate_name();
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -2075,7 +2075,7 @@ class sql_creator
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
                 $log->new_link_id = $sbx->predicate_id();
-                $log->new_text_link = $sbx->predicate_name();
+                $log->new_text_link = $sbx->get_predicate_name();
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2129,15 +2129,15 @@ class sql_creator
         $log->new_text_from = '';
         if ($sbx::class == triple::class) {
             // triples have a verb as type
-            $log->old_link_id = $sbx->verb_id();
+            $log->old_link_id = $sbx->get_verb_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->verb_name();
+            $log->old_text_link = $sbx->get_verb_name();
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
             // other links can have a type
             $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->predicate_name();
+            $log->old_text_link = $sbx->get_predicate_name();
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {

@@ -264,9 +264,9 @@ class triple extends sandbox_code_id
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::FROM] = $this->from()->id();
-        $vars[json_fields::VERB] = $this->verb()->id();
-        $vars[json_fields::TO] = $this->to()->id();
+        $vars[json_fields::FROM] = $this->get_from()->id();
+        $vars[json_fields::VERB] = $this->get_verb()->id();
+        $vars[json_fields::TO] = $this->get_to()->id();
         $vars[json_fields::WEIGHT] = $this->weight;
         $vars[json_fields::PLURAL] = $this->plural;
         // usage and impact are not included here because this system value is never updated by the frontend
@@ -342,17 +342,17 @@ class triple extends sandbox_code_id
         return $phr;
     }
 
-    function from(): ?phrase
+    function get_from(): ?phrase
     {
         return $this->from;
     }
 
-    function verb(): verb
+    function get_verb(): verb
     {
         return $this->verb;
     }
 
-    function to(): ?phrase
+    function get_to(): ?phrase
     {
         return $this->to;
     }
@@ -433,30 +433,30 @@ class triple extends sandbox_code_id
         $wrd_lst = new word_list();
 
         // add the "from" side
-        if ($this->from() != null) {
-            if ($this->from()->id() > 0) {
-                $wrd_lst->add($this->from()->obj()->word());
-            } elseif ($this->from()->id() < 0) {
-                $sub_wrd_lst = $this->from()->wrd_lst();
+        if ($this->get_from() != null) {
+            if ($this->get_from()->id() > 0) {
+                $wrd_lst->add($this->get_from()->obj()->word());
+            } elseif ($this->get_from()->id() < 0) {
+                $sub_wrd_lst = $this->get_from()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {
-                log_err('The from phrase ' . $this->from()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
+                log_err('The from phrase ' . $this->get_from()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
             }
         }
 
         // add the "to" side
-        if ($this->to() != null) {
-            if ($this->to()->id() > 0) {
-                $wrd_lst->add($this->to()->obj()->word());
-            } elseif ($this->to()->id() < 0) {
-                $sub_wrd_lst = $this->to()->wrd_lst();
+        if ($this->get_to() != null) {
+            if ($this->get_to()->id() > 0) {
+                $wrd_lst->add($this->get_to()->obj()->word());
+            } elseif ($this->get_to()->id() < 0) {
+                $sub_wrd_lst = $this->get_to()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
                 }
             } else {
-                log_err('The to phrase ' . $this->to()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
+                log_err('The to phrase ' . $this->get_to()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
             }
         }
 
@@ -547,7 +547,7 @@ class triple extends sandbox_code_id
     ): string
     {
         if ($this->verb != null) {
-            $id = $this->verb()->id();
+            $id = $this->get_verb()->id();
         } else {
             $id = 0;
         }

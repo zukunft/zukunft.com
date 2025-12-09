@@ -329,7 +329,7 @@ class sandbox_link extends sandbox
      * to be overwritten by the child objects
      * @return string|null the name of connection type
      */
-    function predicate_name(): ?string
+    function get_predicate_name(): ?string
     {
         return null;
     }
@@ -349,7 +349,7 @@ class sandbox_link extends sandbox
     function verb_empty(): bool
     {
         if ($this->predicate_id() == 0
-            and ($this->predicate_name() == null or $this->predicate_name() == '')) {
+            and ($this->get_predicate_name() == null or $this->get_predicate_name() == '')) {
             return true;
         } else {
             return false;
@@ -436,7 +436,7 @@ class sandbox_link extends sandbox
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name;
     }

@@ -387,7 +387,7 @@ class formula extends sandbox_code_id
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -423,7 +423,7 @@ class formula extends sandbox_code_id
                             msg_id::VAR_FORMULA => $this->name(),
                         ]);
                     } else {
-                        $this->link_phrase($phr);
+                        $this->link_phrase($phr, $usr_msg);
                     }
                 }
             }
@@ -654,6 +654,11 @@ class formula extends sandbox_code_id
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
 
+
+    /*
+     * related
+     */
+
     /**
      * load the corresponding name word for the formula name
      * @param bool $with_automatic_error_fixing to add any missing words automatically
@@ -754,7 +759,7 @@ class formula extends sandbox_code_id
 
 
     /*
-     * info
+     * check
      */
 
     /**
@@ -773,7 +778,13 @@ class formula extends sandbox_code_id
         return $usr_msg;
     }
 
+
+    /*
+     * info
+     */
+
     /**
+     * check if all mandatory formula vars are set
      * @return bool true if the formula object probably has already been added to the database
      *              false e.g. if some parameters are missing
      */
@@ -1568,82 +1579,6 @@ class formula extends sandbox_code_id
         return $usr_msg->is_ok();
     }
 
-    private function assign_name(string $phr_name): string
-    {
-        global $db_con;
-
-        $result = '';
-        $phr = new phrase($this->get_user());
-        if ($db_con->is_open()) {
-            $phr->load_by_name($phr_name);
-            $result .= $this->assign_phrase($phr);
-        }
-        return $result;
-    }
-
-    /**
-     * add a phrase link to this formula object without updating the database
-     * @param phrase $phr
-     * @return void
-     */
-    function link_phrase(phrase $phr): void
-    {
-        if ($this->lnk_lst == null) {
-            $this->lnk_lst = new formula_link_list($this->get_user());
-        }
-        $lnk = new formula_link($this->get_user());
-        $lnk->set_formula($this);
-        $lnk->set_phrase($phr);
-        $this->lnk_lst->add_link_by_key($lnk);
-    }
-
-    function save_links(user_message $usr_msg): void
-    {
-        if ($this->lnk_lst != null) {
-            foreach ($this->lnk_lst->lst() as $lnk) {
-                $lnk->save($usr_msg);
-            }
-        }
-    }
-
-    /**
-     * assign the formula to the words and triple
-     * TODO dismiss and use instead the link_phrase and save_links functions
-     * @param user_message $usr_msg to enrich with messages
-     * @return void
-     */
-    function assign_phrases(user_message $usr_msg = new user_message()): void
-    {
-        if ($usr_msg->is_ok()) {
-            $phr_lst = $this->phr_lst;
-            if ($phr_lst != null) {
-                if (!$phr_lst->is_empty()) {
-                    if ($phr_lst->save($usr_msg)) {
-                        foreach ($phr_lst as $phr) {
-                            $this->assign_phrase($phr);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // TODO Prio 0 add user_message as parameter
-    function assign_phrase(phrase $phr): string
-    {
-        $usr_msg = new user_message();
-        if ($this->id() > 0 and $phr->id() <> 0) {
-            $frm_lnk = new formula_link($this->get_user());
-            $frm_lnk->load_by_link($this, $phr);
-            if ($frm_lnk->id() == 0) {
-                $frm_lnk->set_formula($this);
-                $frm_lnk->set_phrase($phr);
-                $frm_lnk->save($usr_msg);
-            }
-        }
-        return $usr_msg->get_last_message();
-    }
-
     /**
      * create an array with the export json fields
      * @param export_type_list|array $exp_typ define the export format
@@ -1968,41 +1903,141 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * TODO Prio 0 add user_message as parameter
-     * link this formula to a word or triple
+     * add a phrase link to this formula object without updating the database
+     * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $usr_msg to collect the problems to be able to present solutions to the user
+     * @return bool true if the link has been added
      */
-    function link_phr(phrase $phr): string
+    function link_phrase(phrase $phr, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if ($this->get_user() != null) {
-            log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
-            $frm_lnk = new formula_link($this->get_user());
-            $frm_lnk->set_formula($this);
-            $frm_lnk->set_phrase($phr);
-            $frm_lnk->save($usr_msg);
+            $this->link_phrase_object($phr);
+        } else {
+            $usr_msg->add_message_text('user missing');
         }
-        return $usr_msg->get_last_message();
+        return $usr_msg->is_ok();
     }
 
     /**
-     * TODO Prio 0 add user_message as parameter
-     * unlink this formula from a word or triple
+     * add a phrase link to this formula object amd update the database
+     * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $usr_msg to collect the problems to be able to present solutions to the user
+     * @return bool true if the link has been added
      */
-    function unlink_phr($phr): string
+    function link_phrase_and_save(phrase $phr, user_message $usr_msg): bool
+    {
+        $frm_lnk = $this->link_phrase_object($phr);
+        $frm_lnk->save($usr_msg);
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * interface function to have a nicer name for link_phrase_and_save
+     * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $usr_msg to collect the problems to be able to present solutions to the user
+     * @return bool true if the link has been added
+     */
+    function assign_phrase(phrase $phr, user_message $usr_msg): bool
+    {
+        return $this->link_phrase_and_save($phr, $usr_msg);
+    }
+
+    /**
+     * create a phrase link to this formula object
+     * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @return formula_link with the vars set
+     */
+    private function link_phrase_object(phrase $phr): formula_link
+    {
+        if ($this->lnk_lst == null) {
+            $this->lnk_lst = new formula_link_list($this->get_user());
+        }
+        $frm_lnk = new formula_link($this->get_user());
+        $frm_lnk->set_formula($this);
+        $frm_lnk->set_phrase($phr);
+        $this->lnk_lst->add_link_by_key($frm_lnk);
+        return $frm_lnk;
+    }
+
+    /**
+     * link this formula to a phrase where only the name is given
+     * @param string $phr_name the name of the phrase
+     * @param user_message $usr_msg object to collect the user messages
+     * @return bool true if the phrase has been assigned
+     */
+
+    private function link_phrase_by_name(string $phr_name, user_message $usr_msg): bool
+    {
+        global $db_con;
+
+        $phr = new phrase($this->get_user());
+        if ($db_con->is_open()) {
+            if ($phr->load_by_name($phr_name)) {
+                $this->link_phrase_and_save($phr, $usr_msg);
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * unlink this formula from a word or triple
+     * @param phrase $phr with at least the id of a phrase that exists already in the database
+     * @param user_message $usr_msg to collect the problems to be able to present solutions to the user
+     * @return bool true if the link has been removed
+     */
+    function unlink_phrase(phrase $phr, user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
-        if (isset($phr) and $this->get_user() != null) {
+        if ($this->get_user() != null) {
             log_debug($this->dsp_id() . ' from ' . $phr->dsp_id() . ' for user ' . $this->get_user()->dsp_id());
             $frm_lnk = new formula_link($this->get_user());
-            $frm_lnk->load_by_link($this, $phr);
-            $frm_lnk->del($usr_msg);
+            if ($frm_lnk->load_by_link($this, $phr)) {
+                $frm_lnk->del($usr_msg);
+            } else {
+                $msg = 'formula ' . $this->name() . ' is not linked to ' . $phr->name() . ' so link cannot be deactivated';
+                $usr_msg->add_message_text($msg);
+            }
         } else {
-            $msg = "Cannot unlink formula, phrase is not set.";
-            $usr_msg->all_message_text($msg);
-            log_err($msg, "formula.php");
+            $msg = 'Cannot unlink formula, phrase is not set.';
+            $usr_msg->add_message_text($msg);
+            log_err($msg, 'unlink_phrase');
         }
-        return $usr_msg->get_message();
+        return $usr_msg->is_ok();
     }
+
+    function save_links(user_message $usr_msg): void
+    {
+        if ($this->lnk_lst != null) {
+            foreach ($this->lnk_lst->lst() as $lnk) {
+                $lnk->save($usr_msg);
+            }
+        }
+    }
+
+    /**
+     * assign the formula to the words and triple
+     *
+     * @param user_message $usr_msg to enrich with messages
+     * @return bool true if all phrases have been assigned
+     */
+    function assign_phrases(user_message $usr_msg = new user_message()): bool
+    {
+        $phr_lst = $this->phr_lst;
+        if ($phr_lst != null) {
+            if (!$phr_lst->is_empty()) {
+                if ($phr_lst->save($usr_msg)) {
+                    foreach ($phr_lst as $phr) {
+                        $this->link_phrase($phr, $usr_msg);
+                    }
+                    if ($usr_msg->is_ok()) {
+                        $this->save_links($usr_msg);
+                    }
+                }
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
 
 
     /*
@@ -2444,11 +2479,11 @@ class formula extends sandbox_code_id
      * @return bool true if everything has been fine
      */
     function save_id_if_updated(
-        sql_db $db_con,
-        sandbox $db_rec,
-        sandbox $std_rec,
+        sql_db       $db_con,
+        sandbox      $db_rec,
+        sandbox      $std_rec,
         user_message $usr_msg,
-        bool $use_func
+        bool         $use_func
     ): bool
     {
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());

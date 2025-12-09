@@ -142,6 +142,12 @@ class verb extends type_object
      * construct and map
      */
 
+    /**
+     * set the main mandatory vars of this verb object
+     * @param int $id the id can be null for new verbs
+     * @param string $name the name of the verb must be unique
+     * @param string|null $code_id the code id can be null for new verbs that does not yet have any fixed assigned code
+     */
     function __construct(int $id = 0, string $name = '', ?string $code_id = null)
     {
         parent::__construct($code_id);
@@ -156,6 +162,11 @@ class verb extends type_object
         }
     }
 
+    /**
+     * set the vars of this verb object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);

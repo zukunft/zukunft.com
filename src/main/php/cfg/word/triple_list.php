@@ -621,13 +621,13 @@ class triple_list extends sandbox_list_named
             if ($trp->no_id_but_name()) {
                 $trp_lst->add_by_name_direct($trp);
             }
-            $from = $trp->from();
+            $from = $trp->get_from();
             if ($from->is_triple()) {
                 if ($from->no_id_but_name()) {
                     $trp_lst->add_by_name_direct($from);
                 }
             }
-            $to = $trp->to();
+            $to = $trp->get_to();
             if ($to->is_triple()) {
                 if ($to->no_id_but_name()) {
                     $trp_lst->add_by_name_direct($to);
@@ -650,8 +650,8 @@ class triple_list extends sandbox_list_named
     {
         $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $lnk) {
-            $phr_lst->add($lnk->from());
-            $phr_lst->add($lnk->to());
+            $phr_lst->add($lnk->get_from());
+            $phr_lst->add($lnk->get_to());
         }
         return $phr_lst;
     }
@@ -819,9 +819,9 @@ class triple_list extends sandbox_list_named
         foreach ($this->lst() as $trp) {
             $this->fill_triple_by_name($db_lst, $trp, $usr_msg, $fill_all, $report_missing);
             if ($trp->needs_from()) {
-                $this->fill_triple_by_name($db_lst, $trp->from(), $usr_msg, $fill_all, $report_missing);
+                $this->fill_triple_by_name($db_lst, $trp->get_from(), $usr_msg, $fill_all, $report_missing);
             }
-            $this->fill_triple_by_name($db_lst, $trp->to(), $usr_msg, $fill_all, $report_missing);
+            $this->fill_triple_by_name($db_lst, $trp->get_to(), $usr_msg, $fill_all, $report_missing);
         }
         return $usr_msg;
     }
@@ -831,7 +831,7 @@ class triple_list extends sandbox_list_named
         foreach ($this->lst() as $trp) {
             if (!$trp->excluded) {
                 if ($trp->needs_from()) {
-                    $phr = $trp->from();
+                    $phr = $trp->get_from();
                     if (!$phr->is_valid()) {
                         $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                             msg_id::VAR_NAME => $phr->name(),
@@ -839,7 +839,7 @@ class triple_list extends sandbox_list_named
                         ]);
                     }
                 }
-                $phr = $trp->to();
+                $phr = $trp->get_to();
                 if (!$phr->is_valid()) {
                     $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                         msg_id::VAR_NAME => $phr->name(),
@@ -882,7 +882,7 @@ class triple_list extends sandbox_list_named
         $usr_msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
-                if ($phr->verb() == null) {
+                if ($phr->get_verb() == null) {
                     $phr->set_verb($sys->typ_lst->vrb->get_verb(verbs::NOT_SET));
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_SET, [
                         msg_id::VAR_ID => $phr->dsp_id(),

@@ -191,37 +191,37 @@ class triple_list extends ListBase
             if (!$lnk->has_verb()) {
                 log_warning('graph->display type is missing');
             } else {
-                if ($lnk->verb_id() <> $prev_verb_id) {
-                    log_debug('graph->display type "' . $lnk->verb()->name() . '"');
+                if ($lnk->get_verb_id() <> $prev_verb_id) {
+                    log_debug('graph->display type "' . $lnk->get_verb()->name() . '"');
 
                     // select the same side of the verb
                     if ($this->direction == foaf_direction::DOWN) {
-                        $directional_link_type_id = $lnk->verb()->id();
+                        $directional_link_type_id = $lnk->get_verb()->id();
                     } else {
-                        $directional_link_type_id = $lnk->verb()->id() * -1;
+                        $directional_link_type_id = $lnk->get_verb()->id() * -1;
                     }
 
                     // display the link type
-                    if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
+                    if ($lnk->get_verb()->id() == $next_lnk->get_verb()->id()) {
                         if ($this->wrd != null) {
                             $result .= $this->wrd->plural();
                         }
                         if ($this->direction == foaf_direction::DOWN) {
-                            $result .= " " . $lnk->verb()->rev_plural;
+                            $result .= " " . $lnk->get_verb()->rev_plural;
                         } else {
-                            $result .= " " . $lnk->verb()->plural();
+                            $result .= " " . $lnk->get_verb()->plural();
                         }
                     } else {
                         $result .= $this->wrd->name();
                         if ($this->direction == foaf_direction::DOWN) {
-                            $result .= " " . $lnk->verb()->reverse();
+                            $result .= " " . $lnk->get_verb()->reverse();
                         } else {
-                            $result .= " " . $lnk->verb()->name;
+                            $result .= " " . $lnk->get_verb()->name;
                         }
                     }
                 }
                 $result .= $html->dsp_tbl_start_half();
-                $prev_verb_id = $lnk->verb()->id();
+                $prev_verb_id = $lnk->get_verb()->id();
 
                 // display the word
                 if ($lnk->fob() == null) {
@@ -244,13 +244,13 @@ class triple_list extends ListBase
 
                 // use the last word as a sample for the new word type
                 $last_linked_word_id = 0;
-                if ($lnk->verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
-                    $last_linked_word_id = $lnk->to()->id();
+                if ($lnk->get_verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
+                    $last_linked_word_id = $lnk->get_to()->id();
                 }
 
                 // in case of the verb "following" continue the series after the last element
                 $start_id = 0;
-                if ($lnk->verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
+                if ($lnk->get_verb()->id() == $sys->typ_lst->vrb->id(verbs::FOLLOW)) {
                     $start_id = $last_linked_word_id;
                     // and link with the same direction (looks like not needed!)
                     /* if ($directional_link_type_id > 0) {
@@ -264,7 +264,7 @@ class triple_list extends ListBase
                     }
                 }
 
-                if ($lnk->verb()->id() <> $next_lnk->verb()->id()) {
+                if ($lnk->get_verb()->id() <> $next_lnk->get_verb()->id()) {
                     if ($lnk->fob() == null) {
                         log_warning('graph->display from is missing');
                     } else {

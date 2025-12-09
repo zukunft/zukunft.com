@@ -149,7 +149,10 @@ class source extends sandbox_code_id
      * construct and map
      */
 
-    // define the settings for this source object
+    /**
+     * set the user and fix the setting of this source object
+     * @param user $usr the user who requested to see the source
+     */
     function __construct(user $usr)
     {
         $this->reset();
@@ -158,6 +161,11 @@ class source extends sandbox_code_id
         $this->rename_can_switch = def::UI_CAN_CHANGE_SOURCE_NAME;
     }
 
+    /**
+     * set the vars of this source object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);

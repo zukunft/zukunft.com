@@ -351,9 +351,9 @@ class term extends combine_named
             } elseif ($this->is_triple()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
                 $trp = $this->obj();
-                $vars[json_fields::FROM] = $trp->from()->id();
-                $vars[json_fields::VERB] = $trp->verb()->id();
-                $vars[json_fields::TO] = $trp->to()->id();
+                $vars[json_fields::FROM] = $trp->get_from()->id();
+                $vars[json_fields::VERB] = $trp->get_verb()->id();
+                $vars[json_fields::TO] = $trp->get_to()->id();
             } elseif ($this->is_formula()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
             } elseif ($this->is_verb()) {

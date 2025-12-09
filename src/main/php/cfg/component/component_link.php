@@ -787,7 +787,7 @@ class component_link extends sandbox_link
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->get_pos());
     }
@@ -847,7 +847,7 @@ class component_link extends sandbox_link
     /**
      * @return string the name of the preloaded view component link type
      */
-    function predicate_name(): string
+    function get_predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->cmp_lnk_typ->name($this->predicate_id);
@@ -1521,7 +1521,7 @@ class component_link extends sandbox_link
             }
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->predicate_name(),
+                    msg_id::VAR_TYPE => $this->get_predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

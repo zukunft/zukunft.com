@@ -71,8 +71,8 @@ class triple_ui_tests
         $test_page .= $html->text_h2('select');
         $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
         $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
-        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_FROM,views::TRIPLE_EDIT, $trp->from()->id()) . '<br>';
-        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_TO, views::TRIPLE_EDIT, $trp->to()->id()) . '<br>';
+        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_FROM,views::TRIPLE_EDIT, $trp->get_from()->id()) . '<br>';
+        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_TO, views::TRIPLE_EDIT, $trp->get_to()->id()) . '<br>';
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));

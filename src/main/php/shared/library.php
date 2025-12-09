@@ -1712,7 +1712,7 @@ class library
             => 'preloaded',
             'value_list', 'link_types'
             => 'related',
-            'name_field', 'from_field', 'to_field', 'type_field', 'all_sandbox_fields'
+            'name_field', 'from_field', 'to_field', 'type_field', 'type_name_field', 'all_sandbox_fields'
             => 'sql fields',
             'api_json_array', 'set_by_api_json'
             => 'api',
@@ -1727,13 +1727,13 @@ class library
             'verb_list_up', 'verb_list_down', 'phrase_list_up', 'phrase_list_down',
             'parts', 'direct_parts', 'are_and_contains', 'next', 'prior'
             => 'foaf',
-            'link', 'unlink'
+            'link', 'unlink', 'assign_phrase', 'assign_phrases'
             => 'link',
             'calc_usage', 'calc_view_id', 'view_sql'
             => 'ui support',
             'has_cfg', 'not_used', 'not_used_sql', 'can_change', 'not_changed', 'not_changed_sql'
             => 'sandbox',
-            'can_be_ready', 'db_ready'
+            'can_be_ready', 'db_ready', 'check_order'
             => 'check',
             'get_similar', 'add_insert'
             => 'save',
@@ -1763,6 +1763,9 @@ class library
                 $result = 'info';
             } elseif (str_starts_with($fnc_name, 'log_')) {
                 $result = 'log';
+            } elseif (str_starts_with($fnc_name, 'link')
+                or str_starts_with($fnc_name, 'unlink')) {
+                $result = 'link';
             } elseif (str_starts_with($fnc_name, 'save')) {
                 $result = 'save';
             } elseif (str_starts_with($fnc_name, 'del')) {

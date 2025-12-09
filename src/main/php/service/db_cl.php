@@ -582,7 +582,7 @@ function get_type(string $type, string $code_id): type_object
             break;
         /* switched off, because it returns an extended object
         case db_cl::VERB:
-            $result = $db_code_link->verb($db_code_link->verb_id($code_id));
+            $result = $db_code_link->get_verb($db_code_link->verb_id($code_id));
             break;
         case db_cl::VIEW:
             $result = $db_code_link->view($db_code_link->view_type_id($code_id));

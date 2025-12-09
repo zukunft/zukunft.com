@@ -949,7 +949,7 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::NAME, $trp->name()];
         $url_array[] = [url_var::PHRASE_FROM, $trp->from_id()];
-        $url_array[] = [url_var::VERB, $trp->verb_id()];
+        $url_array[] = [url_var::VERB, $trp->get_verb_id()];
         $url_array[] = [url_var::PHRASE_TO, $trp->to_id()];
         $url_array[] = [url_var::NAME, $trp->name_given()];
         $url_array[] = [url_var::DESCRIPTION, $trp->get_description()];

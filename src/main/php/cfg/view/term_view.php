@@ -541,7 +541,7 @@ class term_view extends sandbox_link
     /**
      * @return string the name of the reference type e.g. wikidata
      */
-    function predicate_name(): string
+    function get_predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->msk_lnk_typ->name($this->predicate_id);
@@ -762,7 +762,7 @@ class term_view extends sandbox_link
             }
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->predicate_name(),
+                    msg_id::VAR_TYPE => $this->get_predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

@@ -102,7 +102,7 @@ class formula_write_tests
         $this->create_test_formulas($t);
         $frm = $t_db->add_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP, $usr_msg);
         $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
-        $frm->link_phr($phr);
+        $frm->link_phrase_and_save($phr, $usr_msg);
 
         // test loading of one formula
         $frm = new formula($t->usr1);
@@ -186,7 +186,7 @@ class formula_write_tests
         $wrd_share = $t_db->test_word(words::TEST_SHARE);
         $wrd_chf = $t_db->test_word(words::TEST_CHF);
 
-        $frm_pe->assign_phrase($wrd_share->phrase());
+        $frm_pe->assign_phrase($wrd_share->phrase(), $usr_msg);
 
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(words::TEST_SHARE, words::TEST_CHF));

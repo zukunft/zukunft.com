@@ -1104,7 +1104,7 @@ class phrase extends combine_named
         $phr_lst = $this_lst->is();
         // in case of a triple use at least the initial parent phrase,
         if ($this->is_triple()) {
-            $phr_lst->add($this->obj()->to());
+            $phr_lst->add($this->obj()->get_to());
         }
         //$phr_lst->add($this,);
         log_debug($this->dsp_id() . ' is a ' . $phr_lst->dsp_name());

@@ -632,7 +632,7 @@ class formula_link extends sandbox_link
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    function predicate_name(): string
+    function get_predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->frm_lnk_typ->name($this->predicate_id);

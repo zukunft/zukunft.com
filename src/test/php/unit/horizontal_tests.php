@@ -189,8 +189,8 @@ class horizontal_tests
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
             if ($class == triple::class) {
-                $dto->add_phrase($filled_obj->from());
-                $dto->add_phrase($filled_obj->to());
+                $dto->add_phrase($filled_obj->get_from());
+                $dto->add_phrase($filled_obj->get_to());
             } elseif ($class == ref::class) {
                 $dto->add_phrase($filled_obj->phrase());
                 $dto->add_source($filled_obj->get_source());

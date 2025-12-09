@@ -140,13 +140,13 @@ if ($usr->id() > 0) {
             if ($trp->id() > 0) {
                 $trp->reload_objects();
                 log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
-                $msg .= '"' . $trp->from_name . ' ' . $trp->verb_name() . ' ' . $trp->to_name . '" already exists. ';
+                $msg .= '"' . $trp->from_name . ' ' . $trp->get_verb_name() . ' ' . $trp->to_name . '" already exists. ';
             }
             $trp_rev = new triple($usr);
             $trp_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
             if ($trp_rev->id() > 0) {
                 $trp_rev->reload_objects();
-                $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
+                $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->get_verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -165,9 +165,9 @@ if ($usr->id() > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->from()->id = $wrd->id();
+                $lnk->get_from()->id = $wrd->id();
                 $lnk->set_verb_id($vrb_id);
-                $lnk->to()->id = $phr_to;
+                $lnk->get_to()->id = $phr_to;
                 $add_result .= $lnk->save($usr_msg);
             }
 

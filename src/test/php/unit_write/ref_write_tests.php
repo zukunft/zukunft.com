@@ -80,7 +80,7 @@ class ref_write_tests
             $result = $ref2->phrase()->name();
             $target = words::TEST_ADD;
             $t->assert('ref->load_object word', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
-            $result = $ref2->predicate_name();
+            $result = $ref2->get_predicate_name();
             $target = ref_type::WIKIDATA;
             $t->assert('ref->load_object type', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }

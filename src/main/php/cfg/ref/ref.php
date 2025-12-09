@@ -193,12 +193,21 @@ class ref extends sandbox_link
      * construct and map
      */
 
+    /**
+     * set the user and fix the setting of this reference object
+     * @param user $usr the user who requested to see the reference
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
         $this->reset();
     }
 
+    /**
+     * set the vars of this reference object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
@@ -211,7 +220,6 @@ class ref extends sandbox_link
 
     private function create_objects(user $usr): void
     {
-        global $sys;
         $this->set_phrase(new phrase($usr));
     }
 
@@ -757,7 +765,7 @@ class ref extends sandbox_link
      * overwrite the link type function
      * @return string|null the name of the verb
      */
-    function predicate_name(): ?string
+    function get_predicate_name(): ?string
     {
         global $sys;
         return $sys->typ_lst->ref_typ->name($this->predicate_id());
@@ -1613,7 +1621,7 @@ class ref extends sandbox_link
             }
         }
         if ($this->has_type()) {
-            $result .= ' to "' . $this->predicate_name() . '"';
+            $result .= ' to "' . $this->get_predicate_name() . '"';
         } else {
             if ($this->predicate_id != null) {
                 if ($this->predicate_id > 0) {
