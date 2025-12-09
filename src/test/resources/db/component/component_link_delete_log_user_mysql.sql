@@ -23,7 +23,7 @@ BEGIN
 END;
 
 SELECT component_link_delete_log_user
-       (1,
+       (3,
         3,
         16,
         'Start view',

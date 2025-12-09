@@ -29,25 +29,31 @@
   
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use shared\api;
-use html\sandbox\db_object as db_object_dsp;
-use html\html_base;
-use html\user\user_message;
-use shared\json_fields;
 
-class job extends db_object_dsp
+class job extends db_object
 {
 
     /*
@@ -70,11 +76,12 @@ class job extends db_object_dsp
     /**
      * set the vars of this batch job html object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
@@ -128,7 +135,7 @@ class job extends db_object_dsp
         } else {
             $this->set_priority(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_request_time(DateTime $iso_time_str): void
@@ -287,8 +294,8 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, api::URL_VAR_WORDS);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        $url = $html->url(rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
     /**
@@ -317,7 +324,7 @@ class job extends db_object_dsp
      */
     function tr(): string
     {
-        return (new html_base())->tr($this->td());
+        return new html_base()->tr($this->td());
     }
 
 

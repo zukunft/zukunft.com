@@ -47,7 +47,7 @@ SELECT component_link_insert_log_01558100000
     (1::bigint,
      1::smallint,
      1::bigint,
-     1::bigint,
+     3::bigint,
      1::smallint,
      16::smallint,
      'Start view'::text,

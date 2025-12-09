@@ -3,6 +3,7 @@ PREPARE view_list_by_component_id FROM
             u.view_id AS user_view_id,
             s.user_id,
             s.code_id,
+            s.`usage`,
             l.view_id,
             l.component_id,
             IF(u.view_name     IS NULL, s.view_name,     u.view_name)     AS view_name,

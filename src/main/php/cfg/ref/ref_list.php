@@ -30,33 +30,40 @@
   
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-include_once DB_PATH . 'sql_db.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-//include_once MODEL_IMPORT_PATH . 'import.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_CONST_PATH . 'refs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_db;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\import\import;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view;
-use shared\const\refs;
-use shared\const\triples;
-use shared\const\words;
+include_once paths::DB . 'sql_db.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+//include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_IMPORT . 'import.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::SHARED_CONST . 'refs.php';
+//include_once paths::SHARED_CONST . 'triples.php';
+//include_once paths::SHARED_CONST . 'words.php';
+//include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+
+// TODO Prio 2 check if not better based on the sandbox_link_list
 class ref_list extends type_list
 {
 
@@ -78,7 +85,7 @@ class ref_list extends type_list
      */
     function __construct(?user $usr = null)
     {
-        parent::__construct();
+        parent::__construct(true);
         $this->set_user($usr);
     }
 
@@ -101,7 +108,7 @@ class ref_list extends type_list
     /**
      * @return user|null the person who wants to see the refs
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -115,6 +122,21 @@ class ref_list extends type_list
             $this->key_lst_dirty = false;
         }
         return $this->key_lst;
+    }
+
+
+    /*
+     * api
+     */
+
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $ref) {
+            $ref_vars = $ref->api_json_array($typ_lst, $usr);
+            $vars[] = $ref_vars;
+        }
+        return $vars;
     }
 
 
@@ -180,6 +202,13 @@ class ref_list extends type_list
         return $qp;
     }
 
+    // TODO Prio 1 acivate
+    function load_sql_by_source(): sql_db
+    {
+        $qp = new sql_db();
+        return $qp;
+    }
+
     /**
      * adding the refs used for unit tests to the dummy list
      * TODO Prio 3: load from csv
@@ -188,9 +217,9 @@ class ref_list extends type_list
     {
         global $usr;
         $type = new ref($usr);
-        $type->set_id(1);
+        $type->id = 1;
         $type->set_name(refs::WIKIDATA_TYPE);
-        $type->code_id = refs::WIKIDATA_TYPE;
+        $type->set_code_id_db(refs::WIKIDATA_TYPE);
         $this->add($type);
     }
 
@@ -235,7 +264,7 @@ class ref_list extends type_list
     {
         $result = false;
         if ($to_add != null) {
-            if (!in_array($to_add->key(), array_keys($this->key_list()))) {
+            if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
                 // add only objects that have all mandatory values
                 $result = $to_add->can_be_ready()->is_ok();
 
@@ -253,7 +282,11 @@ class ref_list extends type_list
     function add_direct(ref|type_object|view|null $item): void
     {
         parent::add_direct($item);
-        $this->key_lst[] = $item->key();
+        $this->key_lst[] = $item->get_key();
+    }
+
+    function del(user_message $usr_msg): void
+    {
     }
 
 
@@ -264,22 +297,21 @@ class ref_list extends type_list
     /**
      * store all references from this list in the database using grouped calls of predefined sql functions
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param import $imp the import object with the estimate of the total save time
      * @param float $est_per_sec the expected number of sources that can be updated in the database per second
-     * @return user_message
+     * @return bool true if everything has been fine
      */
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::REFERENCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // TODO replace this slow solution
         foreach ($this->lst() as $ref) {
-            $usr_msg->add($ref->save());
+            $ref->save($usr_msg);
         }
         /*
         if ($this->is_empty()) {
@@ -288,7 +320,7 @@ class ref_list extends type_list
             // load the references that are already in the database
             $step_time = $this->count() / $load_per_sec;
             $imp->step_start(msg_id::LOAD, ref::class, $this->count(), $step_time);
-            $db_lst = new ref_list($this->user());
+            $db_lst = new ref_list($this->get_user());
             $db_lst->load_by_names($this->names());
             $imp->step_end($this->count(), $load_per_sec);
 
@@ -306,7 +338,7 @@ class ref_list extends type_list
         }
         */
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

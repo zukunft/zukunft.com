@@ -2,8 +2,8 @@
 
 /*
 
-    user_log_display.php - a combined object to display single value changes or changes of links by the user
-    --------------------
+    web/log/user_log_display.php - a combined object to display single value changes or changes of links by the user
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,46 +30,50 @@
 */
 
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component_exe.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\component\component_exe as component;
-use html\formula\formula;
-use html\rest_ctrl;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user;
-use html\value\value;
-use html\view\view;
-use html\word\word;
-use shared\enum\change_tables;
-use shared\enum\change_fields;
-use shared\enum\messages as msg_id;
-use shared\library;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+//include_once html_paths::HTML . 'button.php';
+//include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::COMPONENT . 'component_exe.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::SYSTEM . 'back_trace.php';
+//include_once html_paths::USER . 'user.php';
+//include_once html_paths::VALUE . 'value.php';
+//include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_log_display
 {
 
     public int $id;                // the database id of the word, phrase, value or formula object
     public ?object $obj = null;    // the calling object
-    public user $usr;              // the user of the person for whom the value is loaded, so to say the viewer
+    public ?user $usr = null;      // the user of the person for whom the value is loaded, so to say the viewer
     public string $type;           // either "word", "phrase", "value" or "formula" to select the object to display
     public int $page;              // the page to display
     public bool $condensed = True; // display the changes in a few columns with reduced details
@@ -78,7 +82,7 @@ class user_log_display
     public string $back = '';      //
 
     /**
-     * define the settings for this log object
+     * for a user log it is always needed to know who wants to seen the log
      */
     function __construct()
     {
@@ -86,12 +90,12 @@ class user_log_display
     }
 
     function dsp_hist(
-        string     $class,
-        int|string $id,
-        int        $size,
-        int        $page,
-        string     $call = '',
-        back_trace $back = null
+        string      $class,
+        int|string  $id,
+        int         $size,
+        int         $page,
+        string      $call = '',
+        ?back_trace $back = null
     ): string
     {
         $lst = new change_log_list();
@@ -107,8 +111,8 @@ class user_log_display
     {
         log_debug('user_log_display->dsp_hist ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call . ' original call from ' . $this->back);
 
+        global $sys;
         global $db_con;
-        global $cng_tbl_cac;
 
         $result = ''; // reset the html code var
 
@@ -132,26 +136,26 @@ class user_log_display
         $sql_user = 'c.user_id = u.user_id';
         // the class specific settings
         if ($this->type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id() . ' ';
+                AND c.user_id = ' . $this->usr->id . ' ';
         } elseif ($this->type == word::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
         } elseif ($this->type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($this->type == formula::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($this->type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($this->type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -182,7 +186,7 @@ class user_log_display
             ORDER BY c.change_time DESC
                LIMIT " . $this->size . ";";
             log_debug('user_log_display->dsp_hist ' . $sql);
-            $db_con->usr_id = $this->usr->id();
+            $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get_old($sql);
 
             // prepare to show where the user uses different word than a normal viewer
@@ -190,7 +194,7 @@ class user_log_display
             $result .= $html->dsp_tbl_start_hist();
             foreach ($db_lst as $db_row) {
                 // display the row only if the field is not an "admin only" field
-                //if ($db_row["code_id"] <> formula::FLD_REF_TEXT) {
+                //if ($db_row["code_id"] <> formula_db::FLD_REF_TEXT) {
                 $row_nbr++;
                 $result .= '<tr>';
                 if ($row_nbr == 1) {
@@ -212,7 +216,7 @@ class user_log_display
 
                 // pick the useful field name
                 $txt_fld = '';
-                if ($db_row[sql::FLD_CODE_ID] == "value") {
+                if ($db_row[sql_db::FLD_CODE_ID] == "value") {
                     $txt_fld .= $db_row['type'] . ' value';
                     /* because changing the words creates a new value there is no need to display the words here
                     if ($db_row['row_id'] > 0) {
@@ -291,7 +295,7 @@ class user_log_display
                 if ($this->type == 'word') {
                     if ($db_row['type'] == 'add') {
                         $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $this->back);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 } elseif ($this->type == 'value') {
                     if ($db_row['type'] == 'add') {
@@ -300,7 +304,7 @@ class user_log_display
                 } elseif ($this->type == 'formula') {
                     if ($db_row['type'] == 'update') {
                         $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 }
                 // display the undo button
@@ -330,7 +334,7 @@ class user_log_display
 
     function dsp_hist_links_sql(sql_db $db_con, bool $get_name = false): string
     {
-        global $cng_tbl_cac;
+        global $sys;
 
         $lib = new library();
         $class = $lib->class_to_name($this->type);
@@ -342,53 +346,53 @@ class user_log_display
         $sql_row = '';
         $sql_user = '';
         if ($class == 'user') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::USER) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::USER) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id() . ' ';
+                AND c.user_id = ' . $this->usr->id . ' ';
         } elseif ($class == 'word') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::TRIPLE) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::TRIPLE_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::TRIPLE) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::TRIPLE_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.old_to_id = ' . $this->id . ' OR
                        c.new_from_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'value') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE_LINK) . ") AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_LINK) . ") AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'formula') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_USR) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_LINK) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'view') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_USR) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'view_cmp') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT_USR) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_from AS old, 
                     c.new_text_from AS new';
             $sql_row = ' (c.old_to_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
@@ -436,7 +440,7 @@ class user_log_display
         $html = new html_base();
 
         $sql = $this->dsp_hist_links_sql($db_con);
-        $db_con->usr_id = $this->usr->id();
+        $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get_old($sql);
 
         // display the changes

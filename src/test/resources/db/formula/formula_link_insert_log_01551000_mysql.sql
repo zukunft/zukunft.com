@@ -41,13 +41,13 @@ PREPARE formula_link_insert_log_01551000_call FROM
 SELECT formula_link_insert_log_01551000
        (1,
         2,
-        1,
-        1,
+        104,
+        3,
         1,
         12,
         'scale minute to sec',
         'time period based',
-        'mathematics',
+        'minute',
         699,
         700,
         2);

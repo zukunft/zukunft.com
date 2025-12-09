@@ -30,12 +30,13 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\system\sys_log_list;
-use cfg\user\user;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_read_tests
 {
@@ -49,13 +50,15 @@ class sys_log_read_tests
         // init
         $t->name = 'error log read db->';
 
-        $t->header('Unit database tests of the error log classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read error log ';
+        $t->header($ts);
 
-        $t->subheader('Load error log tests');
+        $t->subheader($ts . 'load');
 
-        // use the system user for the database updates
+        // use the system test user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_TEST_ID);
+        $sys_usr->load_by_name(users::SYSTEM_TEST_NAME);
 
         // check if loading the system errors technically works
         $err_lst = new sys_log_list();
@@ -66,7 +69,7 @@ class sys_log_read_tests
         $result = $err_lst->load_all();
         $t->assert('system errors', $result, true);
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'api');
         $t->assert_api($err_lst, 'sys_log_list_setup', [api_type::HEADER], true);
 
     }

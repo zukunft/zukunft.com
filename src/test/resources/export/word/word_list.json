@@ -1,14 +1,17 @@
 [
   {
     "name": "time_word",
+    "type_code_id": "time",
     "type": "time"
   },
   {
     "name": "measure_word",
+    "type_code_id": "measure",
     "type": "measure"
   },
   {
     "name": "scale_word",
+    "type_code_id": "scaling",
     "type": "scaling"
   }
 ]

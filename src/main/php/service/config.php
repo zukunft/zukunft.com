@@ -41,65 +41,66 @@
 
 */
 
-namespace cfg;
+namespace Zukunft\ZukunftCom\main\php\service;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql.php';
-include_once MODEL_USER_PATH . 'user.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\db_object_seq_id;
-use cfg\sandbox\sandbox_named;
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql.php';
+//include_once paths::MODEL_USER . 'user.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 
 class config extends db_object_seq_id
 {
 
     // reserved word and triple names used for the system configuration
     // *_DSP is the name to be shown to the user if the context makes it unique
-    const YEARS_AUTO_CREATE = 'system config automatic created years';
-    const YEARS_AUTO_CREATE_DSP = 'years to create';
-    const DB_RETRY_MIN = 'system config database retry start delay in sec';
-    const DB_RETRY_MAX = 'system config database retry max delay in sec';
-    const AVG_CALC_TIME_SEC = 1000; // the default time in milliseconds for updating all results of on formula
+    const string YEARS_AUTO_CREATE = 'system config automatic created years';
+    const string YEARS_AUTO_CREATE_DSP = 'years to create';
+    const string DB_RETRY_MIN = 'system config database retry start delay in sec';
+    const string DB_RETRY_MAX = 'system config database retry max delay in sec';
+    const int AVG_CALC_TIME_SEC = 1000; // the default time in milliseconds for updating all results of on formula
 
     // program configuration names
-    const SITE_NAME = 'site_name';                           // the name of the pod
-    const VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
-    const LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
-    const AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
-    const TEST_YEARS = 'test_years';                         // the number of years around the current year created automatically
-    const MIN_PCT_OF_PHRASES_TO_PRESELECT = 0.3;             // if 30% or more of the phrases of a list are the same to probability is high that the next phrase is the same
+    const string SITE_NAME = 'site_name';                           // the name of the pod
+    const string VERSION_DB = 'version_database';                   // the version of the database at the moment to trigger an update script if needed
+    const string LAST_CONSISTENCY_CHECK = 'last_consistency_check'; // datetime of the last database consistency check
+    const string AVG_CALC_TIME = 'average_calculation_time';        // the average time to calculate and update all results of one formula in milliseconds
+    const string TEST_YEARS = 'test_years';                         // the number of years around the current year created automatically
+    const float MIN_PCT_OF_PHRASES_TO_PRESELECT = 0.3;             // if 30% or more of the phrases of a list are the same to probability is high that the next phrase is the same
 
     /*
      * database link
      */
 
     // comment used for the database creation
-    const TBL_COMMENT = 'for the core configuration of this pod e.g. the program version or pod url';
-    const FLD_NAME_COM = 'short name of the configuration entry to be shown to the admin';
-    const FLD_NAME = 'config_name';
-    const FLD_CODE_ID_COM = 'unique id text to select a configuration value from the code';
-    const FLD_VALUE_COM = 'the configuration value as a string';
-    const FLD_VALUE = 'value';
-    const FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string TBL_COMMENT = 'for the core configuration of this pod e.g. the program version or pod url';
+    const string FLD_NAME_COM = 'short name of the configuration entry to be shown to the admin';
+    const string FLD_NAME = 'config_name';
+    const string FLD_CODE_ID_COM = 'unique id text to select a configuration value from the code';
+    const string FLD_VALUE_COM = 'the configuration value as a string';
+    const string FLD_VALUE = 'value';
+    const string FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
-        [sql::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -149,7 +150,7 @@ class config extends db_object_seq_id
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
-        $db_con->set_fields(array(sql::FLD_CODE_ID, sql::FLD_VALUE, sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
@@ -197,8 +198,8 @@ class config extends db_object_seq_id
                 $db_value = $this->default_value($code_id);
             }
         } else {
-            $db_code_id = $db_row[sql::FLD_CODE_ID];
-            $db_value = $db_row[sql::FLD_VALUE];
+            $db_code_id = $db_row[sql_db::FLD_CODE_ID];
+            $db_value = $db_row[sql_db::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
                 if ($this->create($code_id, $db_con)) {
@@ -231,7 +232,7 @@ class config extends db_object_seq_id
             // automatically add the config entry
             $result = $this->add($code_id, $value, $description, $db_con);
         } else {
-            if ($value != $db_row[sql::FLD_VALUE] or $description != $db_row[sandbox_named::FLD_DESCRIPTION]) {
+            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
                 $result = $this->update($code_id, $value, $description, $db_con);
             }
         }
@@ -251,7 +252,7 @@ class config extends db_object_seq_id
 
         $cfg_value = $this->get_db($code_id, $db_con);
         if ($cfg_value != $target_value) {
-            $result = $this->set(config::SITE_NAME, POD_NAME, $db_con, $description);
+            $result = $this->set(config::SITE_NAME, def::POD_NAME, $db_con, $description);
         }
         return $result;
     }
@@ -272,9 +273,9 @@ class config extends db_object_seq_id
         $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
-                sql::FLD_CODE_ID,
-                sql::FLD_VALUE,
-                sandbox_named::FLD_DESCRIPTION),
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_VALUE,
+                sql_db::FLD_DESCRIPTION),
             array(
                 $code_id,
                 $db_value,
@@ -299,9 +300,9 @@ class config extends db_object_seq_id
         $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
-                sql::FLD_CODE_ID,
-                sql::FLD_VALUE,
-                sandbox_named::FLD_DESCRIPTION),
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_VALUE,
+                sql_db::FLD_DESCRIPTION),
             array(
                 $code_id,
                 $value,
@@ -326,12 +327,12 @@ class config extends db_object_seq_id
         $db_id = $db_con->update_old(
             $code_id,
             array(
-                sql::FLD_VALUE,
-                sandbox_named::FLD_DESCRIPTION),
+                sql_db::FLD_VALUE,
+                sql_db::FLD_DESCRIPTION),
             array(
                 $value,
                 $description),
-            sql::FLD_CODE_ID);
+            sql_db::FLD_CODE_ID);
         if ($db_id > 0) {
             $result = true;
         }
@@ -357,7 +358,7 @@ class config extends db_object_seq_id
 
         switch ($code_id) {
             case self::VERSION_DB:
-                $result = FIRST_VERSION;
+                $result = def::FIRST_VERSION;
                 break;
             case self::AVG_CALC_TIME:
                 $result = self::AVG_CALC_TIME_SEC;

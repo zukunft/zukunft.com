@@ -29,17 +29,17 @@
 
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class protection_type
 {
 
     // list of the protection types that have a coded functionality
-    const NO_PROTECT = "no_protection";
-    const USER = "user_protection";
-    const ADMIN = "admin_protection";
-    const ADMIN_ID = 3;
+    const string NO_PROTECT = "no_protection";
+    const string USER = "user_protection";
+    const string ADMIN = "admin_protection";
+    const int ADMIN_ID = 3;
     // TODO Prio 2 add a test case to force the usage of the parent protection type
-    const NO_CHANGE = "no_change";
+    const string NO_CHANGE = "no_change";
 
 }

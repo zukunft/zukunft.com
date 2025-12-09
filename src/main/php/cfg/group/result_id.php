@@ -68,16 +68,18 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-include_once MODEL_GROUP_PATH . 'id.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\formula\formula;
-use cfg\phrase\phrase_list;
-use shared\library;
+include_once paths::MODEL_GROUP . 'id.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class result_id extends id
 {
@@ -87,23 +89,23 @@ class result_id extends id
      */
 
     // the database table name extensions
-    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_MAIN = '_main'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
-    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const FORMULA_IDS = 1;
-    const PRIME_PHRASES = 4;
-    const PRIME_PHRASES_STD = 3;
-    const PRIME_SOURCE_PHRASES = 0;
-    const PRIME_RESULT_PHRASES = 0;
-    const MAIN_PHRASES_ALL = 8;
-    const MAIN_PHRASES = 6;
-    // TODO check for consistant usage
-    const MAIN_PHRASES_STD = 5;
-    const MAIN_SOURCE_PHRASES = 1;
-    const MAIN_RESULT_PHRASES = 1;
-    const STANDARD_PHRASES = 15;
-    const PHRASES = 15;
+    const string TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const string TBL_EXT_MAIN = '_main'; // the table name extension for up to four prime phrase ids
+    const string TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const string TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const int FORMULA_IDS = 1;
+    const int PRIME_PHRASES = 4;
+    const int PRIME_PHRASES_STD = 3;
+    const int PRIME_SOURCE_PHRASES = 0;
+    const int PRIME_RESULT_PHRASES = 0;
+    const int MAIN_PHRASES_ALL = 8;
+    const int MAIN_PHRASES = 6;
+    // TODO check for consistent usage
+    const int MAIN_PHRASES_STD = 5;
+    const int MAIN_SOURCE_PHRASES = 1;
+    const int MAIN_RESULT_PHRASES = 1;
+    const int STANDARD_PHRASES = 15;
+    const int PHRASES = 15;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the result

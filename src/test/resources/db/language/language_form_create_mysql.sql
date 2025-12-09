@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS language_forms
     language_form_name varchar(255) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
-    language_id        bigint       DEFAULT NULL
+    language_id        smallint     DEFAULT NULL,
+    PRIMARY KEY (language_form_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -20,4 +21,4 @@ CREATE TABLE IF NOT EXISTS language_forms
 -- AUTO_INCREMENT for table language_forms
 --
 ALTER TABLE language_forms
-    MODIFY language_form_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY language_form_id smallint NOT NULL AUTO_INCREMENT;

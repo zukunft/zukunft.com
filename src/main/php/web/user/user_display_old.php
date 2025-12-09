@@ -2,60 +2,81 @@
 
 /*
 
-  user.php - to display the user specific settings
-  --------
-  
-  This file is part of zukunft.com - calc with words
+    web/user/user_display_old.php - to display the user specific settings
+    -----------------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_VIEW_PATH . 'view.php';
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use html\html_base;
-use html\log\user_log_display;
-use html\system\sys_log_list as sys_log_list_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\user\user;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-class user_dsp_old extends user
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::VIEW . 'view.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+
+class user_display_old extends user
 {
 
     /*
@@ -88,13 +109,13 @@ class user_dsp_old extends user
 
         $result = '';
         $err_lst = new sys_log_list;
-        $err_lst->set_user($this);
-        $err_lst->page = $page;
-        $err_lst->size = $size;
-        $err_lst->dsp_type = $dsp_type;
-        $err_lst->back = $back;
+        //$err_lst->set_user($this);
+        //$err_lst->page = $page;
+        //$err_lst->size = $size;
+        //$err_lst->dsp_type = $dsp_type;
+        //$err_lst->back = $back;
         if ($err_lst->load()) {
-            $err_lst_dsp = new sys_log_list_dsp($err_lst->api_json());
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $result = $err_lst_dsp->get_html();
         }
 
@@ -136,7 +157,7 @@ class user_dsp_old extends user
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -200,14 +221,14 @@ class user_dsp_old extends user
 
                 // create the triple objects with the minimal parameter needed
                 // TODO maybe use row mapper
-                $trp_usr = new triple($this);
+                $trp_usr = new triple();
                 $id = $sbx_row['id'];
                 if ($id != 0) {
                     $trp_usr->load_by_id($id);
                 } else {
                     $from_id = $sbx_row[triple_db::FLD_FROM];
-                    $vrb_id = $sbx_row[verb::FLD_ID];
-                    $to_id = $sbx_row[triple::FLD_TO];
+                    $vrb_id = $sbx_row[verb_db::FLD_ID];
+                    $to_id = $sbx_row[triple_db::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
                 }
                 $trp_usr->set_name($sbx_row['usr_name']);
@@ -262,14 +283,14 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $wrd_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($wrd_lnk_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($wrd_lnk_other_row[user_db::FLD_ID]);
 
                         // to review: load all user triples with one query
                         $wrd_lnk_other = clone $trp_usr;
                         $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_by_id($trp_usr->id());
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[sandbox::FLD_EXCLUDED]);
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -279,7 +300,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
                     // display the triple changes by the user
                     $result .= '<tr>';
@@ -346,12 +367,12 @@ class user_dsp_old extends user
                 $result .= '<th>common formula</th>';
                 $result .= '</tr><tr>';
             }
-            $result .= '<td>' . $frm_row[formula::FLD_NAME] . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_NAME] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
-            $result .= '<td>' . $frm_row[formula::FLD_FORMULA_TEXT] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
+            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -414,11 +435,11 @@ class user_dsp_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
-                $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
+                $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
+                $frm_usr->phrase()->set_id($sbx_row[phrase_db::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
-                $frm_usr->load_objects();
+                $frm_usr->reload_objects();
 
                 // to review: try to avoid using load_test_user
                 $usr_std = new user;
@@ -471,14 +492,14 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $frm_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($frm_lnk_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($frm_lnk_other_row[user_db::FLD_ID]);
 
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sandbox::FLD_EXCLUDED]);
-                        $frm_lnk_other->load_objects();
+                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
+                        $frm_lnk_other->reload_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -488,7 +509,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
                     $result .= '<tr>';
@@ -604,7 +625,7 @@ class user_dsp_old extends user
                     // prepare the row values
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
-                        $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
+                        $phr_lst_dsp = new phrase_list($val_usr->grp->phrase_list()->api_json());
                         $sandbox_item_name = $phr_lst_dsp->name_linked();
                     }
 
@@ -640,14 +661,14 @@ class user_dsp_old extends user
                     $val_lst_other = $db_con->get_old($sql_other);
                     foreach ($val_lst_other as $val_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($val_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($val_other_row[user_db::FLD_ID]);
 
                         // to review: load all user values with one query
                         $val_other = clone $val_usr;
                         $val_other->set_user($usr_other);
                         $val_other->set_number($val_other_row['user_value']);
                         $val_other->set_source_id($val_other_row['source_id']);
-                        $val_other->set_excluded($val_other_row[sandbox::FLD_EXCLUDED]);
+                        $val_other->set_excluded($val_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -657,7 +678,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
                     $result .= '<tr>';
@@ -746,7 +767,7 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the view objects with the minimal parameter needed
-                $dsp_usr = new view_dsp($this);
+                $dsp_usr = new view_ui($this);
                 $dsp_usr->set_id($sbx_row['id']);
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->description = $sbx_row['usr_description'];
@@ -806,15 +827,15 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
-                        $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
-                        $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
-                        $dsp_other->set_type_id($dsp_other_row[view::FLD_TYPE]);
-                        $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
+                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
+                        $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
+                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -824,7 +845,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
                     $result .= '<tr>';
@@ -935,7 +956,7 @@ class user_dsp_old extends user
                     and $dsp_usr->description == $dsp_std->description
                     and $dsp_usr->type_id == $dsp_std->type_id
                     and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
-                    //$dsp_usr->del_usr_cfg();
+                    $dsp_usr->del_usr_cfg();
                 } else {
 
                     // format the user component
@@ -971,15 +992,15 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $cmp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($cmp_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($cmp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user components with one query
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
-                        $cmp_other->description = $cmp_other_row[sandbox_named::FLD_DESCRIPTION];
+                        $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['component_type_id'];
-                        $cmp_other->set_excluded($cmp_other_row[sandbox::FLD_EXCLUDED]);
+                        $cmp_other->set_excluded($cmp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -989,7 +1010,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
                     // display the component changes by the user
                     $result .= '<tr>';
@@ -1035,8 +1056,7 @@ class user_dsp_old extends user
 
         // get all values changed by the user to a non standard component_link
         $sql = '';
-        if (SQL_DB_TYPE == sql_db::POSTGRES) {
-        } else {
+        if (SQL_DB_TYPE != sql_db::POSTGRES) {
             if (SQL_DB_TYPE == sql_db::POSTGRES) {
                 $sql = "SELECT 
                     u.component_link_id AS id, 
@@ -1083,8 +1103,8 @@ class user_dsp_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->view()->set_id($sbx_row[view::FLD_ID]);
-                $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
+                $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
+                $dsp_usr->get_component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);
@@ -1141,14 +1161,14 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_lnk_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_lnk_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($dsp_lnk_other_row[user_db::FLD_ID]);
 
                         // to review: load all user component_links with one query
                         $dsp_lnk_other = clone $dsp_usr;
                         $dsp_lnk_other->set_user($usr_other);
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
                         $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1158,7 +1178,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
                     // display the component_link changes by the user
                     $result .= '<tr>';
@@ -1198,8 +1218,10 @@ class user_dsp_old extends user
         log_debug($this->id());
 
         global $db_con;
+        global $usr;
         $result = ''; // reset the html code var
         $html = new html_base();
+        $usr_msg = new user_message();
 
         // create the databased link
         $db_con->usr_id = $this->id();
@@ -1252,8 +1274,8 @@ class user_dsp_old extends user
                 $row_nbr++;
 
                 // create the source objects with the minimal parameter needed
-                $dsp_usr = new source($this);
-                $dsp_usr->set_id($sbx_row['id']);
+                $dsp_usr = new source($usr);
+                $dsp_usr->id = $sbx_row['id'];
                 $dsp_usr->set_name($sbx_row['usr_name']);
                 $dsp_usr->url = $sbx_row['usr_url'];
                 $dsp_usr->description = $sbx_row['usr_comment'];
@@ -1280,7 +1302,7 @@ class user_dsp_old extends user
                     and $dsp_usr->is_excluded() == $dsp_std->is_excluded()) {
                     // TODO: add user config also to source?
                     //$dsp_usr->del_usr_cfg();
-                    $dsp_usr->del();
+                    $dsp_usr->del($usr_msg);
                 } else {
 
                     // format the user source
@@ -1317,16 +1339,16 @@ class user_dsp_old extends user
                     $sbx_lst_other = $db_con->get_old($sql_other);
                     foreach ($sbx_lst_other as $dsp_other_row) {
                         $usr_other = new user;
-                        $usr_other->load_by_id($dsp_other_row[user::FLD_ID]);
+                        $usr_other->load_by_id($dsp_other_row[user_db::FLD_ID]);
 
                         // to review: load all user sources with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
-                        $dsp_other->url = $dsp_other_row['url'];
-                        $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
+                        $dsp_other->url = $dsp_other_row[source_db::FLD_URL];
+                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1336,7 +1358,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user
                     $result .= '<tr>';

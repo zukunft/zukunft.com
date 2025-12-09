@@ -4,18 +4,18 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     ports:
-      - "8081:80"
+      - "${APP_SERVICE_PORT:-8080}:80"
     volumes:
       - ./:/var/www/html
       - ./docker/apache-config.conf:/etc/apache2/sites-enabled/000-default.conf
     depends_on:
       - db
     environment:
-      - DB_HOST=${DB_HOST:-db}
-      - DB_PORT=${DB_PORT:-5432}
-      - DB_DATABASE=${DB_DATABASE:-zukunft}
-      - DB_USERNAME=${DB_USERNAME:-zukunft}
-      - DB_PASSWORD=${DB_PASSWORD:-zukunft}
+      - PGSQL_HOST=${PGSQL_HOST:-db}
+      - PGSQL_PORT=${PGSQL_PORT:-5432}
+      - PGSQL_DATABASE=${PGSQL_DATABASE:-zukunft}
+      - PGSQL_USERNAME=${PGSQL_USERNAME:-zukunft}
+      - PGSQL_PASSWORD=${PGSQL_PASSWORD:-zukunft}
     networks:
       - zukunft_network
 
@@ -23,9 +23,9 @@ services:
     image: postgres:14
     restart: always
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-zukunft}
-      POSTGRES_USER: ${DB_USERNAME:-zukunft}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-zukunft}
+      POSTGRES_DB: ${PGSQL_DATABASE:-zukunft}
+      POSTGRES_USER: ${PGSQL_USERNAME:-zukunft}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-zukunft}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -35,7 +35,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "${ADMINER_SERVICE_PORT:-8081}:80"
     environment:
       - ADMINER_DEFAULT_SERVER=db
     depends_on:

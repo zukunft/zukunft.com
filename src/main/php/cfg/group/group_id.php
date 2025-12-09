@@ -52,14 +52,16 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-include_once MODEL_GROUP_PATH . 'id.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_type;
-use cfg\phrase\phrase_list;
+include_once paths::MODEL_GROUP . 'id.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 
 class group_id extends id
 {
@@ -69,12 +71,12 @@ class group_id extends id
      */
 
     // the database table name extensions
-    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
-    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const PRIME_PHRASES_STD = 4;
-    const MAIN_PHRASES_STD = 7;
-    const STANDARD_PHRASES = 16;
+    const string TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const string TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const string TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const int PRIME_PHRASES_STD = 4;
+    const int MAIN_PHRASES_STD = 7;
+    const int STANDARD_PHRASES = 16;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value

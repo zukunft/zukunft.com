@@ -2,7 +2,7 @@
 
 /*
 
-    model/value/value_text.php - the main text value object using the prime, norm and big value keys
+    model/value/value_time.php - the main text value object using the prime, norm and big value keys
     --------------------------
 
 
@@ -40,35 +40,43 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_LOG_PATH . 'change_value_time.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\group\group;
-use cfg\log\change_value_time;
-use cfg\log\change_values_time_prime;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_big;
-use cfg\ref\source;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_LOG . 'change_value_time.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value_time;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use DateTime;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class value_time extends value_base
 {
@@ -78,41 +86,41 @@ class value_time extends value_base
      */
 
     // object specific database and JSON object field names
-    const FLD_VALUE = 'time_value';
-    const FLD_COM = 'the time given by the user';
-    const FLD_USER_COM = 'the user specific time change';
+    const string FLD_VALUE = 'time_value';
+    const string FLD_COM = 'the time given by the user';
+    const string FLD_USER_COM = 'the user specific time change';
 
     // database field with the sql type specification
-    const FLD_ALL_VALUE = array(
+    const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', self::FLD_COM],
     );
-    const FLD_ALL_VALUE_USER = array(
+    const array FLD_ALL_VALUE_USER = array(
         [self::FLD_VALUE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_USER_COM],
     );
 
-    const FLD_NAMES_STD = array(
+    const array FLD_NAMES_STD = array(
         self::FLD_VALUE,
-        source::FLD_ID,
+        source_db::FLD_ID,
     );
 
     // list of the user specific database field names for time values
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         self::FLD_VALUE,
     );
     // list of the user specific database field names for time values
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sandbox_multi::FLD_LAST_UPDATE,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sandbox_multi::FLD_LAST_UPDATE,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 
@@ -164,7 +172,7 @@ class value_time extends value_base
      * overwrite the sandbox_value value() function to return the DateTime value
      * @return DateTime|null the DateTime value of this object
      */
-    function value(): DateTime|null
+    function get_value(): DateTime|null
     {
         return $this->time_val;
     }
@@ -196,7 +204,7 @@ class value_time extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the datetime value itself
-        $vars[json_fields::TIME_VALUE] = $this->value();
+        $vars[json_fields::TIME_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -211,15 +219,16 @@ class value_time extends value_base
      * create an array with the export json fields
      * differs from the api array by NOT using the internal id
      * instead of the names for a complete independent recreation
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // add the datetime value itself
-        $vars[json_fields::TIME_VALUE] = $this->value();
+        $vars[json_fields::TIME_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -235,11 +244,11 @@ class value_time extends value_base
     function log_object(): change_value_time
     {
         if ($this->is_prime()) {
-            return new change_values_time_prime($this->user());
+            return new change_values_time_prime($this->get_user());
         } elseif ($this->is_big()) {
-            return new change_values_time_big($this->user());
+            return new change_values_time_big($this->get_user());
         } else {
-            return new change_values_time_norm($this->user());
+            return new change_values_time_norm($this->get_user());
         }
     }
 

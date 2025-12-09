@@ -30,14 +30,13 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\user\user;
-use cfg\user\user_list;
-use shared\library;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_list_tests
 {
@@ -93,13 +92,13 @@ class user_list_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), user::RIGHT_LEVEL_SYSTEM_TEST);
+        $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), users::RIGHT_LEVEL_SYSTEM_TEST);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), user::RIGHT_LEVEL_SYSTEM_TEST);
+            $qp = $usr_lst->load_sql_by_profile_and_higher($db_con->sql_creator(), users::RIGHT_LEVEL_SYSTEM_TEST);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

@@ -1,3 +1,6 @@
 component_link_type_id, type_name, description, code_id
 1, 'always', 'the component is always shown as it is', 'always'
 2, 'expression', 'the component is only shown if an expression is true', 'expression'
+3, 'add', 'adds this component in the child view that is not in the parent view', 'add'
+4, 'overwrite', 'overwrite this component in the child view with the component of the parent view', 'overwrite'
+5, 'remove', 'remove this component from the child view that is in the parent view', 'remove'

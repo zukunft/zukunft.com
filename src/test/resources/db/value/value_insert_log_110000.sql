@@ -22,7 +22,7 @@ PREPARE value_insert_log_110000_call
         ($1,$2, $3, $4, $5);
 
 SELECT value_insert_log_110000
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         1::smallint,
         3.1415926535898::numeric,

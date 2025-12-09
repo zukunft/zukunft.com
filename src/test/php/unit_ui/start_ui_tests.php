@@ -30,25 +30,29 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-include_once MODEL_CONST_PATH . 'files.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use cfg\const\files;
-use cfg\import\import;
-use controller\controller;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\list_sort;
-use html\phrase\phrase;
-use test\test_cleanup;
+include_once paths::MODEL_CONST . 'files.php';
+include_once html_paths::TYPES . 'type_lists.php';
+
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\list_sort;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class start_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html start page ';
@@ -63,16 +67,16 @@ class start_ui_tests
         $imp = new import();
         $dto = $imp->get_data_object($json_array, $t->usr1);
         */
-        $dto_dsp = new data_object_dsp();
+        $dto_dsp = new data_object();
         $dto_dsp->set_offline();
-        $dto_dsp->add_phrases($t->phrase_list_start_view_dsp());
+        $dto_dsp->add_phrases($t_phr->phrase_list_start_view_ui());
 
         $msk = new list_sort();
-        $phr = $t->global_problem()->phrase();
+        $phr = $t_trp->global_problem()->phrase();
         $phr_dsp = new phrase($phr->api_json());
         $test_page = $html->text_h2('start page display test');
         $test_page .= $msk->list_sort($phr_dsp, $dto_dsp);
-        $t->html_test($test_page, 'start page', 'start_page', $t);
+        $t->html_page_test($test_page, 'start page', 'start_page', $t);
     }
 
 }

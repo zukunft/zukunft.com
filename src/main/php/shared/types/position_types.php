@@ -29,16 +29,26 @@
   
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class position_types
 {
 
     // list of the view component position types that have a coded functionality
-    const BELOW = "below";
-    const SIDE = "side";
 
-    const DEFAULT = self::BELOW;
-    const DEFAULT_ID = 1;
+    // place the component in a new row
+    const string BELOW = "below";
+
+    // place the component right or left of the previous component depending on the language write order e.g for arabic it will be left
+    const string SIDE = "side";
+
+    // place the component below the previous component but within an explicitly defined row
+    const string COMBINE = "combine";
+
+    // place the component right or left the previous component but within an explicitly defined row
+    const string COLUMN = "column";
+
+    const string DEFAULT = self::BELOW;
+    const int DEFAULT_ID = 1;
 
 }

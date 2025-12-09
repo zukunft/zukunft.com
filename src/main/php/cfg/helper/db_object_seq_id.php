@@ -16,9 +16,9 @@
     - load:              database access object (DAO) functions
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this word object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - to overwrite:      functions that should always be overwritten by the child objects
     - debug:             internal support functions for debugging
 
@@ -47,38 +47,44 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type_list;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\user\user_message;
-use controller\api_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\types\api_type_list;
-use shared\json_fields;
+//include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object_seq_id extends db_object
 {
@@ -89,8 +95,7 @@ class db_object_seq_id extends db_object
 
     // database fields and comments
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
-
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
     /*
@@ -107,17 +112,34 @@ class db_object_seq_id extends db_object
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        $this->set_id(0);
+        $result = parent::row_mapper($db_row, $id_fld);
+        $this->id = 0;
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
+                // TODO check that $this->reset() is removed from all load function and only this reset is used
+                $this->reset();
                 if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
+                    $this->id = $db_row[$id_fld];
                     $result = true;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * fill the vars with this database id object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(array $api_json, user_message $usr_msg): bool
+    {
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->id = $api_json[json_fields::ID];
+        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -269,26 +291,14 @@ class db_object_seq_id extends db_object
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**
@@ -311,24 +321,73 @@ class db_object_seq_id extends db_object
      */
 
     /**
-     * general part to import a database object from a JSON array object
+     * the import_mapper fills the vars with this object based on the given im-/export json array
+     * the import_mapper never reads of writes to the database which is done by dto_save() or import_obj()
+     * instead the given data object cache is used and filled
+     * the data object cache is given as a parameter to be able to test different used cases
      *
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * this is the general part to import a database object from a JSON array object
+     * has been the setting of a dummy sequence id
+     * kept for future use
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_db_obj(db_object_seq_id $db_obj, object $test_obj = null): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
-        // add a dummy id for unit testing
-        if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
+        $usr_msg->start_time = microtime(true);
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * import a single json object
+     *
+     * @param array $in_ex_json an array with the data of the json object but without any database ids
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_obj(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        global $db_con;
+        global $usr; // must always be the user who has initiated the import
+
+        // map the json to the object
+        if (in_array($this::class, def::CODE_ID_CLASSES)) {
+            $this->import_mapper_user($in_ex_json, $usr, $usr_msg, $dto);
+        } else {
+            $this->import_mapper($in_ex_json, $usr_msg, $dto);;
         }
-        return $usr_msg;
+
+        // save the object and the related objects in the database
+        if ($db_con->is_open()) {
+            if ($usr_msg->is_ok()) {
+                $this->save($usr_msg);
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        return $usr_msg->is_ok();
     }
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -340,9 +399,11 @@ class db_object_seq_id extends db_object
     {
         $usr_msg = new user_message();
         if ($this->id() != $obj->id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -358,17 +419,19 @@ class db_object_seq_id extends db_object
      * fill this seq id object based on the given object
      * if the given id is zero the id is never overwritten
      * if the given id is not zero the id is set if not yet done
+     * similar to db_object_multi->fill
      *
-     * @param CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id $obj object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(CombineObject|db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = new user_message();
-        if ($sbx->id() != 0) {
+        if ($obj->id() != 0) {
             if ($this->id() == 0) {
-                $this->set_id($sbx->id());
-            } elseif ($sbx->id() != $this->id()) {
+                $this->id = $obj->id();
+            } elseif ($obj->id() != $this->id()) {
                 $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
@@ -377,7 +440,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -398,8 +461,29 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * to overwrite
+     * overwrite
      */
+
+    /**
+     * set the vars of this view object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_mapper_user(
+        array        $in_ex_json,
+        user         $usr_req,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        log_err('overwrite of import_mapper_user missing in ' . $this::class);
+        return $usr_msg->is_ok();
+    }
 
     /**
      * get the name of the database object (only used by named objects)
@@ -408,7 +492,21 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child object';
+        $msg = 'ERROR: name function not overwritten by child object ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * get the name of the database object which can be null if db object does not yet exist (only used by named objects)
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
+    {
+        $msg = 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -451,6 +549,46 @@ class db_object_seq_id extends db_object
         } else {
             return ' (' . $this->id_field() . ' no set)';
         }
+    }
+
+
+    /*
+     * overwrite
+     */
+
+    /**
+     * add or update an object to the database
+     * to be overwritten by the child object
+     *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
+     */
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    {
+        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'save in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * delete or exclude an object from or in the database
+     * to be overwritten by the child object
+     *
+     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
+     */
+
+    function del(user_message $usr_msg): bool
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'del in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg->is_ok();
     }
 
 }

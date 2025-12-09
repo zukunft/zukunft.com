@@ -30,12 +30,15 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_write_tests
 {
@@ -45,24 +48,30 @@ class ref_write_tests
 
         global $usr;
 
-        $t->header('reference db write tests');
+        // init
+        $t_ref = new test_refs($t);
+        $t_db = new test_db_load($t);
 
-        $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
-        $t->assert_write_link($t->ref_filled_add());
+        // start the test section (ts)
+        $ts = 'db write reference ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'for ' . ref::TEST_REF_NAME);
+        $t->assert_write_link($t_ref->ref_filled_add());
 
         // create the test ref
-        $wrd = $t->test_word(words::TEST_ADD);
-        $t->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
+        $wrd = $t_db->test_word(words::TEST_ADD);
+        $t_db->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
-        global $ref_typ_cac;
+        global $sys;
         $ref = new ref($usr);
         $ref->set_phrase($wrd->phrase());
-        $ref->set_predicate_id($ref_typ_cac->id(ref_type::WIKIDATA));
+        $ref->set_predicate_id($sys->typ_lst->ref_typ->id(ref_type::WIKIDATA));
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
-        $result = $ref->external_key;
+        $result = $ref->get_external_key();
         $target = ref::TEST_REF_NAME;
-        $t->display('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $t->assert('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
@@ -70,10 +79,10 @@ class ref_write_tests
             $ref2->load_by_id($ref->id());
             $result = $ref2->phrase()->name();
             $target = words::TEST_ADD;
-            $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
-            $result = $ref2->predicate_name();
+            $t->assert('ref->load_object word', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
+            $result = $ref2->get_predicate_name();
             $target = ref_type::WIKIDATA;
-            $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+            $t->assert('ref->load_object type', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
         // cleanup of ref specific tests

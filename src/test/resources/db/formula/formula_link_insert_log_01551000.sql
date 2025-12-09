@@ -46,13 +46,13 @@ SELECT formula_link_insert_log_01551000
 SELECT formula_link_insert_log_01551000
     (1::bigint,
      2::smallint,
-     1::bigint,
-     1::bigint,
+     104::bigint,
+     3::bigint,
      1::smallint,
      12::smallint,
      'scale minute to sec'::text,
      'time period based'::text,
-     'mathematics'::text,
+     'minute'::text,
      699::smallint,
      700::smallint,
      2::bigint);

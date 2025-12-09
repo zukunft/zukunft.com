@@ -30,51 +30,53 @@
 
 */
 
-namespace cfg\import;
+namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\export\export;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use shared\json_fields;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\library;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\types\verbs;
 
 class convert_wikipedia_table
 {
 
-    const KEY_TABLE_NAME = 'table_name';
+    const string KEY_TABLE_NAME = 'table_name';
 
-    const TABLE_START = '{| class=';
-    const TABLE_END = '|}';
-    const CLASS_NAME = '"wikitable';
+    const string TABLE_START = '{| class=';
+    const string TABLE_END = '|}';
+    const string CLASS_NAME = '"wikitable';
 
-    const ROW_END = "\n";
-    const ROW_MAKER = '|-';
-    const COL_MAKER_HEADER = '!';
-    const COL_MAKER = '|';
-    const COL_MAKER_INNER = '||';
-    const NUMBER_MAKER = "'''";
-    const LINK_MAKER = "{{";
-    const LINK_FLAGDECO = "flagdeco";
-    const LINK_MONO = "mono";
-    const LINK_SORT = "sort";
-    const LINK_STYLE = "style=";
-    const LINK_MAKER_END = "}}";
-    const LINK_LONG_MAKER = "[[";
-    const LINK_LONG_MAKER_END = "]]";
-    const ITEM_IGNORE_MAKER = "rowspan";
-    const SORT_MAKER = "sort";
+    const string ROW_END = "\n";
+    const string ROW_MAKER = '|-';
+    const string COL_MAKER_HEADER = '!';
+    const string COL_MAKER = '|';
+    const string COL_MAKER_INNER = '||';
+    const string NUMBER_MAKER = "'''";
+    const string LINK_MAKER = "{{";
+    const string LINK_FLAGDECO = "flagdeco";
+    const string LINK_MONO = "mono";
+    const string LINK_SORT = "sort";
+    const string LINK_STYLE = "style=";
+    const string LINK_MAKER_END = "}}";
+    const string LINK_LONG_MAKER = "[[";
+    const string LINK_LONG_MAKER_END = "]]";
+    const string ITEM_IGNORE_MAKER = "rowspan";
+    const string SORT_MAKER = "sort";
 
     /**
      * convert a wikipedia table to a zukunft.com json string
@@ -189,7 +191,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $vrb_cac;
+        global $sys;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
@@ -198,9 +200,9 @@ class convert_wikipedia_table
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
-            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type_shared::SYMBOL);
-            $rank_names = $phr_lst->get_names_by_type(phrase_type_shared::RANK);
-            $ignore_names = $phr_lst->get_names_by_type(phrase_type_shared::IGNORE);
+            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
+            $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
+            $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
         }
         $exclude_col_names = array_merge($rank_names, $ignore_names);
 
@@ -406,7 +408,7 @@ class convert_wikipedia_table
                             $word[$key] = $word_part_par;
                         }
                     } else {
-                        // TODO base this on the ontologie / context
+                        // TODO base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_part);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -414,7 +416,7 @@ class convert_wikipedia_table
             } else {
                 if ($word_entry != '') {
                     if (!in_array($word_entry, $words_in_list)) {
-                        // TODO base this on the ontologie / context
+                        // TODO base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_entry);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -440,7 +442,7 @@ class convert_wikipedia_table
             return false;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return true;
@@ -460,7 +462,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             if ($cell_text == '%') {
                 $word = [];
                 $word[json_fields::NAME] = '%';
@@ -481,7 +483,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return floatval($cell_text);
@@ -676,8 +678,8 @@ class convert_wikipedia_table
     private function header(user $usr, string $timestamp = ''): array
     {
         $header = [];
-        $header[json_fields::POD] = POD_NAME;
-        $header[json_fields::VERSION] = PRG_VERSION;
+        $header[json_fields::POD] = def::POD_NAME;
+        $header[json_fields::VERSION] = def::PRG_VERSION;
         if ($timestamp == '') {
             $header[json_fields::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
         } else {

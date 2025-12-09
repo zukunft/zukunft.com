@@ -30,17 +30,21 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once TEST_CONST_PATH . 'files.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-use cfg\user\user;
-use cfg\user\user_message;
+include_once paths::MODEL_USER . 'user_message.php';
+include_once test_paths::CONST . 'files.php';
+include_once paths::SHARED_CONST . 'users.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTimeInterface;
-use shared\library;
-use test\all_tests;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 global $db_con;
 
@@ -267,6 +271,36 @@ class lib_tests
         $result = $lib->ids_not_empty($test_array);
         $t->assert("ids_not_empty", $result, $target);
 
+        $t->assert_true("same function order but add to all list", $lib->arrayCompareOrder([1,2,3],[1,2]));
+        $t->assert_true("function missing at end but same order in all list", $lib->arrayCompareOrder([1,2],[1,2,3]));
+        $t->assert_true("function missing in the middle but same order in all list", $lib->arrayCompareOrder([1,3],[1,2,3]));
+        $t->assert_true("no function but same order in all list", $lib->arrayCompareOrder([],[1,2,3]));
+        $t->assert_true("last function differs the order is still fine", $lib->arrayCompareOrder([1,2,3,4,5],[1,2,3,4,6]));
+        $t->assert_true("same function order because all list is empty", $lib->arrayCompareOrder([1,2,3],[]));
+        $t->assert_false("function order differs from all function list", $lib->arrayCompareOrder([3,1],[1,2,3]));
+
+        $test_name = 'add string to array after a given string';
+        $lst = ['first', 'middle', 'last'];
+        $result = $lib->arrayAddAfter($lst, 'before middle', 'first');
+        $target = ['first', 'before middle', 'middle', 'last'];
+        $t->assert($test_name . ' before middle', $result, $target);
+        $result = $lib->arrayAddAfter($lst, 'after middle', 'middle');
+        $target = ['first', 'middle', 'after middle', 'last'];
+        $t->assert($test_name . ' after middle', $result, $target);
+        $result = $lib->arrayAddAfter($lst, 'at the end', 'not in list');
+        $target = ['first', 'middle', 'last', 'at the end'];
+        $t->assert($test_name . ' at the end', $result, $target);
+
+        $test_name = 'add array to array before a given array value';
+        $result = $lib->arrayAddArrayBefore($lst, ['after middle', 'before last'], 'last');
+        $target = ['first', 'middle', 'after middle', 'before last', 'last'];
+        $t->assert($test_name . ' before last', $result, $target);
+        $result = $lib->arrayAddArrayBefore($lst, ['after last', 'after after last'], 'no match');
+        $target = ['first', 'middle', 'last', 'after last', 'after after last'];
+        $t->assert($test_name . ' after last', $result, $target);
+        $result = $lib->arrayAddArrayBefore($lst, ['even before first', 'before first'], 'first');
+        $target = ['even before first', 'before first', 'first', 'middle', 'last'];
+        $t->assert($test_name . ' before first', $result, $target);
 
         $t->subheader($ts . 'display');
 
@@ -428,8 +462,8 @@ class lib_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'string that has caused an error in an earlier version';
-        $test_result = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
-        $test_target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
+        $test_result = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
+        $test_target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
         $t->assert($test_name, $result, $target);
@@ -445,7 +479,7 @@ class lib_tests
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '433//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
+        $target = '381//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'json in short json files';
@@ -627,7 +661,7 @@ class lib_tests
         $result = $lib->count_recursive($json_array, 20);
         $t->assert("count_recursive - count level 0", $result, 8);
 
-        $json_text = file_get_contents(test_files::IMPORT_PATH . 'wikipedia/democracy_index_table.json');
+        $json_text = file_get_contents(test_files::IMPORT_WIKI_DEMOCRACY);
         $json_array = json_decode($json_text, true);
         $result = $lib->count_recursive($json_array, 3);
         $t->assert("count_recursive - count level 0", $result, 177);
@@ -716,7 +750,8 @@ class lib_tests
         $usr_msg = new user_message();
         $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
 
-        $usr_msg = new user_message('first message text');
+        $usr_msg = new user_message();
+        $usr_msg->add_message_text('first message text');
         $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
         $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
 
@@ -724,6 +759,8 @@ class lib_tests
         $t->assert("after adding a message the first message stays the same", $usr_msg->get_message(), 'first message text');
         $t->assert("... and the second message can be shown", $usr_msg->get_message(2), 'second message text');
         $t->assert("... which is also the last message", $usr_msg->get_last_message(), 'second message text');
+        // TODO Prio 1 activate
+        //$t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), 'user message position 2 not found');
         $t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), '');
 
         $msg_2 = new user_message();

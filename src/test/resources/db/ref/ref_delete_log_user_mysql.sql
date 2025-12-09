@@ -22,12 +22,12 @@ BEGIN
 END;
 
 SELECT ref_delete_log_user (
-               1,
+               3,
                3,
                22,
                'global warming potential',
                null,
                'Q999999999',
-               -73,
+               -100,
                null,
                12);

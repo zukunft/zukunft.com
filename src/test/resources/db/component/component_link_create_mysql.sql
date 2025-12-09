@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS component_links
     view_style_id          smallint          DEFAULT NULL COMMENT 'the display style for this component link',
     excluded               smallint          DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id          smallint          DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id             smallint          DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id             smallint          DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (component_link_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -26,7 +27,7 @@ CREATE TABLE IF NOT EXISTS component_links
 -- AUTO_INCREMENT for table component_links
 --
 ALTER TABLE component_links
-    MODIFY component_link_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY component_link_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link components to views with an n:m relation
@@ -42,7 +43,8 @@ CREATE TABLE IF NOT EXISTS user_component_links
     view_style_id          smallint DEFAULT NULL COMMENT 'the display style for this component link',
     excluded               smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id          smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id             smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id             smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (component_link_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

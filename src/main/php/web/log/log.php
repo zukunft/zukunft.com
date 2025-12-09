@@ -29,23 +29,26 @@
   
 */
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'json_fields.php';
 
 
-use html\sandbox\db_object as db_object_dsp;
-use html\user\user_message;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class log extends db_object_dsp
+class log extends db_object_ui
 {
 
     /*
@@ -66,11 +69,12 @@ class log extends db_object_dsp
     /**
      * set the vars of this log html object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         // TODO use empty date instead?
         $sys_log_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME, $json_array)) {
@@ -105,7 +109,7 @@ class log extends db_object_dsp
         } else {
             $this->set_status(0);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     function set_time(DateTime $iso_time_str): void

@@ -30,13 +30,16 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-include_once WEB_VIEW_PATH . 'view_list.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
-use html\view\view_list as view_list_dsp;
-use test\test_cleanup;
+include_once html_paths::VIEW . 'view_list.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_list_ui_tests
 {
@@ -44,21 +47,24 @@ class view_list_ui_tests
     {
 
         $html = new html_base();
+        $t_msk = new test_views($t);
 
         // start the test section (ts)
         $ts = 'unit ui html view list ';
         $t->header($ts);
 
         // test the view list display functions
-        $lst = new view_list_dsp($t->view_list()->api_json());
+        $form = 'view_list_test';
+        $lst = new view_list($t_msk->view_list()->api_json());
         $test_page = $html->text_h2('view list display test');
         $test_page .= 'view list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'view list with link: ' . $lst->name_link() . '<br>';
 
-        $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('', 0, 'test_selector', 'No view selected') . '<br>';
+        $from_rows = '<br>' . $html->text_h2('Selector tests');
+        $from_rows .= $lst->selector($form, 0) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
-        $t->html_test($test_page, 'view_list', 'view_list', $t);
+        $t->html_page_test($test_page, 'view_list', 'view_list', $t);
     }
 
 }

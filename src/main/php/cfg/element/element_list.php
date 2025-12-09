@@ -35,25 +35,29 @@
 
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\formula\formula;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list;
-use cfg\system\sys_log_level;
-use cfg\user\user;
-use cfg\user\user_message;
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class element_list extends sandbox_list
 {
@@ -72,7 +76,7 @@ class element_list extends sandbox_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new element($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new element($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -82,7 +86,7 @@ class element_list extends sandbox_list
 
     function term_list(): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($this->lst() as $elm) {
             $trm_lst->add($elm->term());
         }
@@ -126,7 +130,7 @@ class element_list extends sandbox_list
 
         $sc->set_class(element::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(element::FLD_NAMES);
         return $qp;
     }
@@ -141,8 +145,8 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
-            $sc->add_where(user::FLD_ID, $this->user()->id());
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
+            $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -162,9 +166,9 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(element::FLD_TYPE, $elm_type_id);
-            $sc->add_where(user::FLD_ID, $this->user()->id());
+            $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -215,7 +219,7 @@ class element_list extends sandbox_list
     function del_sql_without_log(sql_creator $sc): sql_par
     {
         return $sc->del_sql_list_without_log(
-            element::class, (new element($this->user()))->id_field(), $this->ids());
+            element::class, (new element($this->get_user()))->id_field(), $this->ids());
     }
 
 }

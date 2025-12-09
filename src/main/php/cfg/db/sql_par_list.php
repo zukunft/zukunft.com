@@ -32,11 +32,13 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user_message;
+include_once paths::MODEL_USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class sql_par_list
 {
@@ -113,9 +115,8 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $ins_msg = $db_con->insert($qp, 'add ' . $class . ' from list');
-            $usr_msg->add($ins_msg);
-            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+            $db_con->insert($qp, 'add ' . $class . ' from list', $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
         }
         return $usr_msg;
     }
@@ -130,9 +131,25 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $ins_msg = $db_con->update($qp, 'update ' . $class . ' from list');
-            $usr_msg->add($ins_msg);
-            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+            $db_con->update($qp, 'update ' . $class . ' from list', $usr_msg);
+            $usr_msg->add_list_name_id($usr_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_delete(string $class = ''): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $usr_msg);
+            $usr_msg->add($del_msg);
+            $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }
         return $usr_msg;
     }

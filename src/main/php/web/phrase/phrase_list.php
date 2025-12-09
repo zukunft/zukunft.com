@@ -32,42 +32,51 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_list_named.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VERB_PATH . 'verb_list.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\rest_ctrl as api_dsp;
-use html\sandbox\sandbox_list_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\enum\foaf_direction;
-use shared\library;
+//include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'triple_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_list extends sandbox_list_named
 {
@@ -83,7 +92,7 @@ class phrase_list extends sandbox_list_named
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new phrase_dsp());
+        return parent::api_mapper_list($json_array, new phrase());
     }
 
 
@@ -93,21 +102,21 @@ class phrase_list extends sandbox_list_named
 
     /**
      * add the phrases related to the given phrase to the list
-     * @param phrase_dsp $phr
+     * @param phrase $phr
      * @param foaf_direction $direction
      * @param verb_list|null $link_types
      * @return bool
      */
-    function load_related(phrase_dsp $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
+    function load_related(phrase $phr, foaf_direction $direction, ?verb_list $link_types = null): bool
     {
         $result = false;
 
         // TODO move the
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
-        $data[api::URL_VAR_PHRASE] = $phr->id();
-        $data[api::URL_VAR_DIRECTION] = $direction->value;
-        $data[api::URL_VAR_LEVELS] = 1;
+        $data[url_var::PHRASE] = $phr->id();
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -126,15 +135,52 @@ class phrase_list extends sandbox_list_named
         $result = false;
 
         // TODO move the
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
-        $data[api::URL_VAR_FORMULAS] = $frm->id();
+        $data[url_var::FORMULAS] = $frm->id();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * if the phrase list is empty fill it with some general suggested phrases
+     * to offer to the user at least a basic selection even if the backend connection is temporary lost
+     * @return bool
+     */
+    function load_fallback(): bool
+    {
+        $result = false;
+        if ($this->is_empty()) {
+            // TODO Prio 3 replace with an frequently generated preloaded list
+            $this->set_lst($this->phrases_often_used()->lst());
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list with the most often used phrases as a frontend fallback list
+     */
+    private function phrases_often_used(): phrase_list
+    {
+        $lst = new phrase_list();
+        foreach (words::BASE_WORDS as $wrd_array) {
+            $wrd = new word();
+            $wrd->set_name($wrd_array[0]);
+            $wrd->set_id($wrd_array[1]);
+            $lst->add($wrd->phrase());
+        }
+        foreach (triples::BASE_TRIPLES as $trp_array) {
+            $trp = new triple();
+            $trp->set_name($trp_array[0]);
+            $trp->set_id($trp_array[1]);
+            $lst->add($trp->phrase());
+        }
+        return $lst;
     }
 
 
@@ -145,7 +191,7 @@ class phrase_list extends sandbox_list_named
     /**
      * get the phrase of the most relevant result
      * e.g. "happy time points" for "global problems"
-     * @return phrase the main phrase of the most relevant result
+     * @return phrase_list the main phrase of the most relevant result
      */
     function result_phrases_most_relevant(): phrase_list
     {
@@ -172,8 +218,8 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->from()->id() == $phr->id()) {
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_from()->id() == $phr->id()) {
                         $result->add($trp);
                     }
                 }
@@ -187,16 +233,38 @@ class phrase_list extends sandbox_list_named
      * selected by the given verb
      * @param phrase $phr the parent phrase
      * @param verb|null $vrb the verb to filter the child phrases
-     * @return phrase_list the filtered children
+     * @return phrase_list the filtered parents
      */
     function parents(phrase $phr, verb|null $vrb = null): phrase_list
     {
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->to()->id() == $phr->id()) {
-                        $result->add($trp->from());
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()->id() == $phr->id()) {
+                        $result->add($trp->get_from());
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all triples that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered parents
+     */
+    function parent_triples(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()->id() == $phr->id()) {
+                        $result->add($trp);
                     }
                 }
             }
@@ -268,20 +336,71 @@ class phrase_list extends sandbox_list_named
         return $wrd_lst;
     }
 
+    /**
+     * get the words from the phrase list
+     * @return word_list with the direct words of the phrase list
+     */
+    function word_list(): word_list
+    {
+        $wrd_lst = new word_list();
+
+        // fill up the word list
+        foreach ($this->lst() as $phr) {
+            $wrd = $phr->obj();
+            if ($wrd == null) {
+                log_err('Object of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($wrd->id() == 0) {
+                log_err('Id of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($wrd->name() == '') {
+                log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
+            } elseif ($wrd::class == word::class) {
+                $wrd_lst->add($wrd);
+            }
+        }
+
+        return $wrd_lst;
+    }
+
+    /**
+     * get the triples from the phrase list
+     * @return triple_list with the direct triples of the phrase list
+     */
+    function triple_list(): triple_list
+    {
+        $trp_lst = new triple_list();
+
+        // fill up the triple list
+        foreach ($this->lst() as $phr) {
+            $trp = $phr->obj();
+            if ($trp == null) {
+                log_err('Object of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($trp->id() == 0) {
+                log_err('Id of phrase ' . $phr->dsp_id() . ' missing');
+            } elseif ($trp->name() == '') {
+                log_warning('Name of phrase ' . $phr->dsp_id() . ' is empty');
+            } elseif ($trp::class == triple::class) {
+                $trp_lst->add($trp);
+            }
+        }
+
+        return $trp_lst;
+    }
+
 
     /*
      * display
      */
 
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_link(): string
+    function name_link_list(?phrase_list $phr_lst_header = null): string
     {
         $result = '';
-        $this->sort_by_name();
+        if ($phr_lst_header != null) {
+            if (!$phr_lst_header->is_empty()) {
+                $this->remove($phr_lst_header);
+            }
+        }
         foreach ($this->lst() as $phr) {
-            if ($result != '' and $phr->name_link() != '') {
+            if ($result <> '') {
                 $result .= ', ';
             }
             $result .= $phr->name_link();
@@ -323,6 +442,67 @@ class phrase_list extends sandbox_list_named
     {
         $lib = new library();
         return $lib->ids_to_url($this->id_lst(), "phrase");
+    }
+
+
+    /*
+     * filter
+     */
+
+    /**
+     * @return phrase_list list of the measure / unit phrases e.g. m/s
+     */
+    function measure_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_measure()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list without the measure / unit phrases e.g. speed of light
+     */
+    function ex_measure_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_measure()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of information only phrases
+     */
+    function info_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_info()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list list of phrases without the info phrases e.g. without 1967 (year of definition)
+     */
+    function ex_info_list(): phrase_list
+    {
+        $result = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (!$phr->is_info()) {
+                $result->add($phr);
+            }
+        }
+        return $result;
     }
 
 
@@ -396,11 +576,11 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @return phrase_dsp|null the dominate phrase of the list
+     * @return phrase|null the dominate phrase of the list
      * used to guess which related phrase a human user might use next
      * if no phrase is dominant, the phrase is selected by the parent phrase
      */
-    function mainly(): ?phrase_dsp
+    function mainly(): ?phrase
     {
         global $db_con;
         $phr = null;
@@ -423,7 +603,7 @@ class phrase_list extends sandbox_list_named
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add_phrase(phrase_dsp $phr): bool
+    function add_phrase(phrase $phr): bool
     {
         return parent::add_obj($phr)->is_ok();
     }
@@ -431,14 +611,14 @@ class phrase_list extends sandbox_list_named
     /**
      * remove all phrases of the given list from this list
      * @param phrase_list $del_lst of phrases that should be deleted
-     * @return phrase_list_dsp with the remaining phrases
+     * @return phrase_list with the remaining phrases
      */
-    function remove(phrase_list_dsp $del_lst): phrase_list_dsp
+    function remove(phrase_list $del_lst): phrase_list
     {
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst = array_intersect($this->lst, $new_lst->lst());
-            $remain_lst = new phrase_list_dsp();
+            $remain_lst = new phrase_list();
             foreach ($this->lst() as $phr) {
                 if (!in_array($phr->id(), $del_lst->id_lst())) {
                     $remain_lst->add_phrase($phr);
@@ -499,9 +679,9 @@ class phrase_list extends sandbox_list_named
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
      */
-    function btn_add_value($back)
+    function btn_add_value($back): string
     {
-        $result = \html\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\btn_add_value($this, Null, $back);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';
@@ -526,7 +706,7 @@ class phrase_list extends sandbox_list_named
      * e.g. used to display all phrases linked to a word
      * @returns string the html code to edit a linked word
      */
-    function dsp_graph(phrase_dsp $root_phr, string $back = ''): string
+    function dsp_graph(phrase $root_phr, string $back = ''): string
     {
         log_debug();
         $result = '';

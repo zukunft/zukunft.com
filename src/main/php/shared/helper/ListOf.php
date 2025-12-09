@@ -30,11 +30,11 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 
 class ListOf
 {
@@ -44,6 +44,8 @@ class ListOf
      */
 
     // the protected main var
+    // to avoid adding or removing of objects
+    // without updating the related index object
     private array $lst;
 
 
@@ -60,7 +62,7 @@ class ListOf
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_lst(array());
     }
@@ -72,12 +74,18 @@ class ListOf
 
     /**
      * TODO check if a more specific return object can be used
+     * get one object of the list by the key
      * @param string|int $key the key of the lst array
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
     function get(string|int $key): IdObject|TextIdObject|CombineObject|null
     {
-        return $this->lst[$key];
+        if (array_key_exists($key, $this->lst)) {
+            return $this->lst[$key];
+        } else {
+            log_err($key . ' missing in ' . $this::class);
+            return null;
+        }
     }
 
     /**

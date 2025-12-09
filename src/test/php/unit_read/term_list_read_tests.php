@@ -30,20 +30,22 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\phrase\term_list;
-use cfg\phrase\trm_ids;
-use shared\library;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'words.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_list_read_tests
 {
@@ -55,7 +57,9 @@ class term_list_read_tests
         $lib = new library();
         $t->name = 'term list read db->';
 
-        $t->header('term list database read unit tests');
+        // start the test section (ts)
+        $ts = 'db read term list ';
+        $t->header($ts);
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new term_list($t->usr1);
@@ -92,6 +96,7 @@ class term_list_read_tests
         // TODO add this to all db read tests for all API call functions
         $json_txt = $trm_lst->api_json();
         $result = json_decode($json_txt, true);
+        $result = $t->json_remove_fields_only_to_ui($result);
         $class_for_file = $t->class_without_namespace(term_list::class);
         $target = json_decode($t->api_json_expected($class_for_file . '_without_link'), true);
         $t->assert_json($test_name . $trm_lst->dsp_id(), $result, $target);

@@ -30,14 +30,17 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user_profile_list;
-use cfg\user\user;
-use shared\enum\user_profiles;
-use test\test_cleanup;
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_read_tests
 {
@@ -48,31 +51,33 @@ class user_read_tests
         global $db_con;
 
         // init
-        $t->header('Unit database tests of the user handling');
         $t->name = 'unit read db->';
 
+        // start the test section (ts)
+        $ts = 'db read user ';
+        $t->header($ts);
 
-        $t->subheader('User db read tests');
+        $t->subheader($ts . 'load');
 
-        $test_name = 'load user ' . user::SYSTEM_TEST_NAME . ' by name and id';
+        $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
-        $usr->load_by_name(user::SYSTEM_TEST_NAME);
+        $usr->load_by_name(users::SYSTEM_TEST_NAME);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
-        $t->assert($test_name, $usr_by_id->name, user::SYSTEM_TEST_NAME);
-        //$t->assert($test_name, $usr_by_id->email, user::SYSTEM_TEST_EMAIL);
+        $usr_by_id->load_by_id($usr->id, user::class);
+        $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
+        //$t->assert($test_name, $usr_by_id->email, users::SYSTEM_TEST_EMAIL);
 
-        $test_name = 'load user ' . user::SYSTEM_TEST_NAME . ' by email';
+        $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by email';
         $usr = new user();
-        $usr->load_by_email(user::SYSTEM_TEST_EMAIL);
+        $usr->load_by_email(users::SYSTEM_TEST_EMAIL);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
-        $t->assert($test_name, $usr_by_id->name, user::SYSTEM_TEST_NAME);
+        $usr_by_id->load_by_id($usr->id, user::class);
+        $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
         // TODO test type and view
 
 
-        $t->subheader('User profile tests');
+        $t->subheader($ts . 'profile');
 
         // load the user_profile types
         $lst = new user_profile_list();
@@ -80,9 +85,9 @@ class user_read_tests
         $t->assert('user profile load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $usr_pro_cac;
-        $result = $usr_pro_cac->id(user_profiles::NORMAL);
-        $t->assert('user profile check ' . user_profiles::NORMAL, $result, 1);
+        global $sys;
+        $result = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
+        $t->assert('user profile check ' . user_profiles::NORMAL, $result, user_profiles::NORMAL_ID);
     }
 
 }

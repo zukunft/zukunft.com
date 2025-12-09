@@ -23,7 +23,7 @@ BEGIN
 END;
 
 SELECT component_delete_log
-       (1,
+       (3,
         3,
         51,
         'Word',

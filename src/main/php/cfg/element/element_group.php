@@ -40,31 +40,33 @@
   
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-include_once MODEL_FORMULA_PATH . 'figure_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\formula\figure_list;
-use cfg\formula\formula;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\phrase\term_list;
-use cfg\system\base_list;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\word\word;
-use shared\library;
+include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class element_group extends base_list
 {
@@ -266,7 +268,7 @@ class element_group extends base_list
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 
@@ -336,7 +338,7 @@ class element_group extends base_list
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $frm_elm) {

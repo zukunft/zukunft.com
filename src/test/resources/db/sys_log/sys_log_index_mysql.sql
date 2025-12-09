@@ -5,7 +5,6 @@
 --
 
 ALTER TABLE sys_log
-    ADD PRIMARY KEY (sys_log_id),
     ADD KEY sys_log_sys_log_time_idx (sys_log_time),
     ADD KEY sys_log_sys_log_type_idx (sys_log_type_id),
     ADD KEY sys_log_sys_log_function_idx (sys_log_function_id),

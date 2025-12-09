@@ -1,35 +1,36 @@
 [
   {
     "name": "time word",
-    "protection": "",
-    "plural": "time words",
     "description": "a public time word like minute without protection",
+    "type_code_id": "time",
     "type": "time",
-    "view": "time view",
-    "refs": []
+    "plural": "time words",
+    "view": "time view"
   },
   {
-    "name": "measure word",
     "share": "personal",
     "protection": "user_protection",
-    "plural": "measure words",
+    "name": "measure word",
     "description": "a personal measure word that user without personal login cannot change",
+    "type_code_id": "measure",
     "type": "measure",
-    "view": "measure view",
-    "refs": []
+    "plural": "measure words",
+    "view": "measure view"
   },
   {
-    "name": "scale word",
     "share": "group",
     "protection": "no_change",
+    "name": "scale word",
     "description": "a scaling word for an organisation that cannot be changed at all",
+    "type_code_id": "scaling",
     "type": "scaling",
     "view": "scale word view"
   },
   {
-    "name": "private word",
     "share": "private",
     "protection": "admin_protection",
-    "description": "a word that can be viewed an changed only by an admin"
+    "name": "private word",
+    "description": "a word that can be viewed an changed only by an admin",
+    "type_code_id": "default"
   }
 ]

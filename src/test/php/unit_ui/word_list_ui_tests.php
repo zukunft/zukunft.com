@@ -30,27 +30,32 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-include_once WEB_WORD_PATH . 'word_list.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
-use html\word\word_list as word_list_dsp;
-use test\test_cleanup;
+include_once html_paths::WORD . 'word_list.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_wrd = new test_words($t);
 
         // start the test section (ts)
         $ts = 'unit ui html word list ';
         $t->header($ts);
 
         // create the word list test set
-        $lst = new word_list_dsp($t->word_list_short()->api_json());
-        $lst_long = new word_list_dsp($t->word_list_all_types()->api_json());
+        $lst = new word_list_ui($t_wrd->word_list_short()->api_json());
+        $lst_long = new word_list_ui($t_wrd->word_list_all_types()->api_json());
 
         // test the word list display functions
         $test_page = $html->text_h1('Word list display test');
@@ -62,10 +67,11 @@ class word_list_ui_tests
         $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->name_link() . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst_long->selector('', 0, 'test_selector', 'No word selected') . '<br>';
-        $test_page .= $lst_long->selector('', 3, '2_selected', 'Pi selected', '') . '<br>';
+        $from_rows = $lst_long->selector(views::WORD_LIST, 0, 'nothing_selected') . '<br>';
+        $from_rows .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
+        $test_page .= $html->form(views::WORD_LIST, $from_rows);
 
-        $t->html_test($test_page, '', 'word_list', $t);
+        $t->html_page_test($test_page, '', 'word_list', $t);
     }
 
 }

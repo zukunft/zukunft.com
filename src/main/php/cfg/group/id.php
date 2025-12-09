@@ -32,25 +32,25 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
-use cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 
 class id
 {
 
     // the max number of int
-    const PRIME_PHRASES_STD = 4;
+    const int PRIME_PHRASES_STD = 4;
 
-    const CHAR_FORMULA = '=';
-    const CHAR_TRIPLE = '-';
-    const CHAR_SOURCE_TRIPLE = '(';
-    const CHAR_RESULT_TRIPLE = ')';
-    const CHAR_WORD = '+';
-    const CHAR_SOURCE_WORD = '<';
-    const CHAR_RESULT_WORD = '>';
+    const string CHAR_FORMULA = '=';
+    const string CHAR_TRIPLE = '-';
+    const string CHAR_SOURCE_TRIPLE = '(';
+    const string CHAR_RESULT_TRIPLE = ')';
+    const string CHAR_WORD = '+';
+    const string CHAR_SOURCE_WORD = '<';
+    const string CHAR_RESULT_WORD = '>';
 
     /**
      * create a 64-bit integer id based on four 16-bit integer ids

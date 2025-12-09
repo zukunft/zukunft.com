@@ -64,8 +64,8 @@ SELECT formula_link_insert_log_01551111
 SELECT formula_link_insert_log_01551111
     (1::bigint,
      2::smallint,
-     1::bigint,
-     1::bigint,
+     104::bigint,
+     3::bigint,
      1::smallint,
      12::smallint,
      null::text,

@@ -43,7 +43,7 @@ SELECT component_link_insert_log_110100100_user
     ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20);
 
 SELECT component_link_insert_log_110100100_user
-    (1::bigint,
+    (3::bigint,
      1::smallint,
      16::smallint,
      'Start view'::text,

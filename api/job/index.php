@@ -29,54 +29,51 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_time.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use controller\controller;
-use cfg\user\user;
-use cfg\system\job;
-use shared\api;
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/job", "", false);
+$app = new application();
+$db_con = $app->start_api("job");
 
-// get the parameters
-$job_id = $_GET[api::URL_VAR_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $job_id = $_GET[url_var::ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($job_id > 0) {
-        $job = new job($usr);
-        $job->load_by_id($job_id);
-        $result = $job->api_json();
-    } else {
-        $msg = 'job id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
+
+        if ($job_id > 0) {
+            $job = new job($usr);
+            $job->load_by_id($job_id);
+            $result = $job->api_json();
+        } else {
+            $msg = 'job id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    $app->end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

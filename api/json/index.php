@@ -32,52 +32,51 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_WORD_PATH . 'word.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use controller\controller;
-use cfg\user\user;
-use cfg\word\word;
-use shared\api;
+include_once paths::MODEL_WORD . 'word.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/json", "", false);
+$app = new application();
+$db_con = $app->start_api("json", "", false);
 
-// get the parameters
-$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json string
+    // get the parameters
+    $wrd_id = $_GET[url_var::WORD] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $wrd_id = 1;
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    $msg = '';
+    $result = ''; // reset the json string
 
-    if ($wrd_id != 0) {
-        $wrd = new word($usr);
-        $wrd->load_by_id($wrd_id);
-        $result = json_encode($wrd->export_json());
-    } else {
-        $msg = 'word id missing';
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
+
+        if ($wrd_id != 0) {
+            $wrd = new word($usr);
+            $wrd->load_by_id($wrd_id);
+            $result = json_encode($wrd->export_json([]));
+        } else {
+            $msg = 'word id missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    $app->end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_export_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -30,30 +30,43 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use shared\types\protection_type;
+include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class protection extends type_list
 {
 
-    const NAME = 'protection';
+    const string NAME = url_var::PROTECTION;
 
     /**
+     * create the HTML code to select a protection type
+     * @param string $form the name of the html form
+     * @param int $selected the database id of the protection type used until now
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style e.g. to define the size of the select field
      * @returns string the html code to select a type from this list
      */
     function selector(
         string $form = '',
-        int $selected = 0, string
-        $name = self::NAME,
-        string $bs_class = '',
-        string $label = ''
+        int    $selected = 0,
+        string $name = self::NAME,
+        string $style = view_styles::COL_SM_4
     ): string
     {
-        global $html_protection_types;
-        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_PROTECTION_TYPE, $style);
     }
 
     /*

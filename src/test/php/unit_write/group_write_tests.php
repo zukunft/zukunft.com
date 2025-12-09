@@ -31,20 +31,25 @@
 */
 
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-include_once SHARED_CONST_PATH . 'triples.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_type;
-use cfg\group\group;
-use cfg\phrase\phrase_list;
-use cfg\word\word;
-use cfg\word\word_list;
-use shared\const\groups;
-use shared\const\triples;
-use shared\const\words;
-use test\all_tests;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'triples.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_write_tests
 {
@@ -55,6 +60,8 @@ class group_write_tests
         global $usr;
 
         // init
+        $t_db = new test_db_load($t);
+        $t_phr = new test_phrases($t);
         $grp_add_lst = [
             [groups::TN_ADD_PRIME_FUNC, true, words::TEST_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TEST_RENAMED_GROUP_PRIME_FUNC],
             [groups::TN_ADD_PRIME_SQL, false, words::TEST_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TEST_RENAMED_GROUP_PRIME_SQL],
@@ -64,32 +71,33 @@ class group_write_tests
             [groups::TN_ADD_BIG_SQL, false, words::TEST_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TEST_RENAMED_GROUP_BIG_SQL],
         ];
 
+        // start the test section (ts)
+        $ts = 'db write group ';
+        $t->header($ts);
 
-        $t->header('group db write tests');
-
-        $t->subheader('group add the system test words to avoid dependencies on group testing');
+        $t->subheader($ts . 'add the system test words to avoid dependencies on group testing');
         $wrd_add_lst = [];
         foreach ($grp_add_lst as $grp_add) {
-            $wrd_add_lst[] = $t->test_word($grp_add[2]);
+            $wrd_add_lst[] = $t_db->test_word($grp_add[2]);
         }
 
-        $t->subheader('group add');
+        $t->subheader($ts . 'add');
         $i = 0;
         foreach ($grp_add_lst as $grp_add) {
             $grp_name = $grp_add[0];
             $test_name = 'add prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
             if ($grp_add[3] == sql_type::PRIME) {
-                $phr_lst = $t->phrase_list_small();
+                $phr_lst = $t_phr->phrase_list_small();
             } elseif ($grp_add[3] == sql_type::MOST) {
-                $phr_lst = $t->phrase_list();
+                $phr_lst = $t_phr->phrase_list();
             } else {
-                $phr_lst = $t->phrase_list_17_plus();
+                $phr_lst = $t_phr->phrase_list_17_plus();
             }
             $this->group_add($wrd_add_lst[$i], $grp_name, $grp_add[1], $phr_lst, $test_name, $t);
             $i++;
         }
 
-        $t->subheader('group rename');
+        $t->subheader($ts . 'rename');
         $i = 0;
         foreach ($grp_add_lst as $grp_add) {
             $test_case = rand(1, 2);
@@ -99,7 +107,7 @@ class group_write_tests
             //$this->group_rename($grp_name, $new_name, $grp_add[1], $test_case, $test_name, $t);
         }
 
-        $t->subheader('group del');
+        $t->subheader($ts . 'del');
         foreach ($grp_add_lst as $grp_add) {
             $grp_name = $grp_add[0];
             $test_name = 'del prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
@@ -116,6 +124,8 @@ class group_write_tests
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
         // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group
+        // TODO Prio 0 review
+        $target = '';
         if (is_numeric($result)) {
             if ($result > 0) {
                 $target = $result;
@@ -125,7 +135,7 @@ class group_write_tests
                 $target = $result;
             }
         }
-        $t->display('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $target, $result);
+        $t->assert('phrase_group->load by ids excluding time for ' . implode(",", $wrd_lst->names()), $result, $target);
 
         // load based on id
         if ($phr_grp->is_id_set()) {
@@ -138,7 +148,7 @@ class group_write_tests
             );
         }
         $target = array(4 => words::CH);
-        $t->display('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
+        $t->assert('phrase_group->load for id ' . $phr_grp->id(), $result, $target);
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
@@ -148,12 +158,12 @@ class group_write_tests
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load by ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test names
         $result = implode(",", $zh_city_grp->names());
         $target = words::INHABITANTS . ',' . triples::CITY_ZH;
-        $t->display('phrase_group->names', $target, $result);
+        $t->assert('phrase_group->names', $result, $target);
 
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
@@ -163,7 +173,7 @@ class group_write_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
@@ -173,7 +183,7 @@ class group_write_tests
         $grp_check->set_id($grp->id());
         $result = $grp_check->load_link_ids_for_testing();
         $target = $grp->phrase_list()->id_lst();
-        $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test value
         // test value_scaled
@@ -197,12 +207,16 @@ class group_write_tests
      */
     function create_test_groups(all_tests $t): void
     {
-        $t->header('group check test group names');
+        $t_db = new test_db_load($t);
+
+        // start the test section (ts)
+        $ts = 'db create test groups ';
+        $t->header($ts);
 
         foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
-            $t->test_group($phr_names, $grp_name, $t->usr1);
+            $t_db->test_group($phr_names, $grp_name, $t->usr1);
         }
     }
 
@@ -226,13 +240,14 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if (!$grp->is_saved()) {
             $phr_lst->add($wrd->phrase());
             $grp->set_phrase_list($phr_lst);
             $grp->set_name($grp_name);
-            $grp->save($use_func);
+            $grp->save($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_name($grp_name);
             $t->assert_true($test_name, $grp->isset());
@@ -259,6 +274,7 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($old_name);
         if ($grp->is_saved()) {
@@ -269,7 +285,7 @@ class group_write_tests
                 $grp->set_user($t->usr1);
             }
             $grp->set_name($new_name);
-            $grp->save($use_func);
+            $grp->save($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $new_name);
@@ -292,11 +308,12 @@ class group_write_tests
         test_cleanup $t
     ): void
     {
+        $usr_msg = new user_message($t->usr1);
         $grp = new group($t->usr1);
         $grp->load_by_name($grp_name);
         if ($grp->is_saved()) {
             $id = $grp->id();
-            $grp->del($use_func);
+            $grp->del($usr_msg, $use_func);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $grp->name_generated());

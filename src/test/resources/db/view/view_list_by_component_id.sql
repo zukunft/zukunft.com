@@ -3,6 +3,7 @@ PREPARE view_list_by_component_id (bigint, bigint) AS
            u.view_id AS user_view_id,
            s.user_id,
            s.code_id,
+           s.usage,
            l.view_id,
            l.component_id,
            CASE WHEN (u.view_name   <> '' IS NOT TRUE) THEN s.view_name     ELSE u.view_name     END AS view_name,

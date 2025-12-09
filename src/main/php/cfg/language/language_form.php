@@ -29,17 +29,21 @@
 
 */
 
-namespace cfg\language;
+namespace Zukunft\ZukunftCom\main\php\cfg\language;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class language_form extends type_object
 {
@@ -49,18 +53,18 @@ class language_form extends type_object
      */
 
     // database and JSON object field names
-    const TBL_COMMENT = 'for language forms like plural';
-    const FLD_NAME_COM = 'type of adjustment of a term in a language e.g. plural';
-    const FLD_NAME = 'language_form_name';
+    const string TBL_COMMENT = 'for language forms like plural';
+    const string FLD_NAME_COM = 'type of adjustment of a term in a language e.g. plural';
+    const string FLD_NAME = 'language_form_name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
+    const array FLD_LST_ALL = array(
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [language::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, language::class, ''],
     );
 
     /*
@@ -68,8 +72,8 @@ class language_form extends type_object
      */
 
     // list of the language forms that have a coded functionality
-    const DEFAULT = "standard";
-    const PLURAL = "plural";
+    const string DEFAULT = "standard";
+    const string PLURAL = "plural";
 
 
     /*

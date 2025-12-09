@@ -8,7 +8,8 @@ PREPARE verb_all FROM
          name_reverse,
          name_plural_reverse,
          formula_name,
-         words
+         `usage`,
+         impact
     FROM verbs
 ORDER BY verb_id
    LIMIT ?

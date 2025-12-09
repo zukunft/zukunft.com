@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_error_log_status_list.php - list of the system log statuus
-    ---------------------------------------------
+    model/system/sys_log_status_list.php - list of the system log statuus
+    ------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,24 +29,26 @@
   
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once DB_PATH . 'sql_db.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\enum\sys_log_statuus;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 
 class sys_log_status_list extends type_list
 {
 
     /**
-     * adding the system log stati used for unit tests to the dummy list
+     * adding the system log statuus used for unit tests to the dummy list
      *  TODO Prio 3: load from csv
      */
     function load_dummy(): void

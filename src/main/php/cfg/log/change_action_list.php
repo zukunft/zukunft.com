@@ -30,21 +30,23 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\enum\change_actions;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 
 class change_action_list extends type_list
 {
 
     /**
-     * adding the system log stati used for unit tests to the dummy list
+     * adding the system log statuus used for unit tests to the dummy list
      *  TODO Prio 3: load from csv
      */
     function load_dummy(): void

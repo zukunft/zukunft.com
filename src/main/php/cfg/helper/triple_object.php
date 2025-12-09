@@ -30,11 +30,13 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\sandbox\sandbox_link_named;
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 
 class triple_object extends sandbox_link_named
 {

@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/view_style_list.php - to define the view or component style e.g. the number of columns to use
-    ------------------------------
+    model/component/view_style_list.php - to define the view or component style e.g. the number of columns to use
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,18 +29,20 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use shared\types\view_styles;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class view_style_list extends type_list
 {
@@ -63,7 +65,7 @@ class view_style_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_styles::COL_SM_4);
+        return parent::id(view_styles::COL_SM_8);
     }
 
 }

@@ -30,17 +30,20 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_SHEET_PATH . 'position_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHEET . 'position_list.php';
 
-use html\helper\data_object;
-use html\word\triple;
-use html\word\word;
-use html\component\sheet\position_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\sheet\position_list;
 
 class sheet
 {

@@ -26,22 +26,27 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use html\formula\formula_list as formula_list_dsp;
-use shared\const\formulas;
-use shared\const\words;
-use test\test_cleanup;
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_tests
 {
@@ -57,6 +62,7 @@ class formula_list_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
@@ -84,13 +90,13 @@ class formula_list_tests
         $this->assert_sql_by_formula_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr_lst($t, $db_con, $frm_lst);
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_sql_all($db_con, $frm);
 
 
         $t->subheader($ts . 'api');
 
-        $frm_lst = $t->formula_list();
+        $frm_lst = $t_frm->formula_list_short();
         $t->assert_api($frm_lst);
 
 
@@ -101,8 +107,8 @@ class formula_list_tests
 
         $t->subheader($ts . 'html frontend');
 
-        $trp_lst = $t->formula_list();
-        $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
+        $trp_lst = $t_frm->formula_list_short();
+        $t->assert_api_to_ui($trp_lst, new formula_list_ui());
 
     }
 
@@ -119,7 +125,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set_id(1);
+        $wrd->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -147,7 +153,7 @@ class formula_list_tests
     {
         // prepare
         $trp = new triple($t->usr1);
-        $trp->set_id(1);
+        $trp->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -175,7 +181,7 @@ class formula_list_tests
     {
         // prepare
         $vrb = new verb();
-        $vrb->set_id(1);
+        $vrb->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -203,7 +209,7 @@ class formula_list_tests
     {
         // prepare
         $frm = new formula($t->usr1);
-        $frm->set_id(1);
+        $frm->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -231,7 +237,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(1,words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID,words::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

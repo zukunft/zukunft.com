@@ -32,13 +32,13 @@ PREPARE value_prime_p1_update_log_0210000_call
         ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
 
 SELECT value_prime_p1_update_log_0210000
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         1::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
-        32812::bigint,
-        -44::smallint,
+        32819::bigint,
+        -51::smallint,
         0::smallint,
         0::smallint,
         0::smallint);

@@ -41,63 +41,63 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\word;
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
 
 class change extends change_log
 {
@@ -109,28 +109,28 @@ class change extends change_log
     // user log database and JSON object field names for named user sandbox objects
     // *_COM is the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_FIELD_ID = 'change_field_id';
-    const FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_OLD_VALUE = 'old_value';
-    const FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
-    const FLD_OLD_ID_COM = 'old value id';
-    const FLD_OLD_ID = 'old_id';
-    const FLD_OLD_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_OLD_ID_NORM_SQL_TYP = sql_field_type::REF_512;
-    const FLD_OLD_ID_BIG_SQL_TYP = sql_field_type::TEXT;
-    const FLD_NEW_VALUE = 'new_value';
-    const FLD_NEW_VALUE_SQL_TYP = sql_field_type::TEXT;
-    const FLD_NEW_ID_COM = 'new value id';
-    const FLD_NEW_ID = 'new_id';
-    const FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_OLD_EXT = '_old';
+    const string FLD_FIELD_ID = 'change_field_id';
+    const sql_field_type FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_OLD_VALUE = 'old_value';
+    const sql_field_type FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_OLD_ID_COM = 'old value id';
+    const string FLD_OLD_ID = 'old_id';
+    const sql_field_type FLD_OLD_ID_SQL_TYP = sql_field_type::INT;
+    const sql_field_type FLD_OLD_ID_NORM_SQL_TYP = sql_field_type::REF_512;
+    const sql_field_type FLD_OLD_ID_BIG_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_NEW_VALUE = 'new_value';
+    const sql_field_type FLD_NEW_VALUE_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_NEW_ID_COM = 'new value id';
+    const string FLD_NEW_ID = 'new_id';
+    const sql_field_type FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
+    const string FLD_OLD_EXT = '_old';
 
     // TODO move to config
-    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
+    const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
     // all database field names
-    const FLD_NAMES = array(
-        user::FLD_ID,
+    const array FLD_NAMES = array(
+        user_db::FLD_ID,
         self::FLD_TIME,
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
@@ -142,7 +142,7 @@ class change extends change_log
     );
 
     // field list to log the actual change of the named user sandbox object
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
@@ -179,7 +179,8 @@ class change extends change_log
     function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
         global $debug;
-        global $cng_fld_cac;
+        global $sys;
+
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -199,20 +200,20 @@ class change extends change_log
                 $this->new_id = $db_row[self::FLD_NEW_ID];
             }
 
-            $fld_tbl = $cng_fld_cac->get($this->field_id);
+            $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user::FLD_ID]);
-                $row_usr->name = $db_row[user::FLD_NAME];
+                $row_usr->id = $db_row[user_db::FLD_ID];
+                $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
@@ -265,7 +266,7 @@ class change extends change_log
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
@@ -284,10 +285,10 @@ class change extends change_log
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
         if ($usr == null) {
-            $usr = $this->user();
+            $usr = $this->get_user();
         }
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -305,7 +306,7 @@ class change extends change_log
         $qp->name .= 'user';
         $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -315,8 +316,8 @@ class change extends change_log
 
     function load_sql_old(string $type, int $limit = 0): sql_par
     {
+        global $sys;
         global $db_con;
-        global $cng_tbl_cac;
 
         $result = ''; // reset the html code var
 
@@ -335,27 +336,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->user()->id() . ' ';
+                AND s.user_id = ' . $this->get_user()->id . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD));
+            //$db_con->add_par(sql_par_type::INT, $sys->typ_lst->cng_tbl->id(change_tables::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $sys->typ_lst->cng_tbl->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -381,7 +382,7 @@ class change extends change_log
             ORDER BY s.change_time DESC
                LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->get_user()->id;
         }
         return $qp;
     }
@@ -414,6 +415,20 @@ class change extends change_log
 
 
     /*
+     * info
+     */
+
+    function use_type_id(): bool
+    {
+        if ($this->new_id != null or $this->old_id != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    /*
      * save
      */
 
@@ -425,7 +440,7 @@ class change extends change_log
      */
     function add_ref($row_id): bool
     {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->get_user()->dsp_id() . ")");
 
         global $db_con;
         $result = false;
@@ -438,18 +453,18 @@ class change extends change_log
         } else {
             $db_con->set_class(change::class);
         }
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id());
         if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
             // restore the type before saving the log
             $db_con->set_class($db_type);
             $result = True;
         } else {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
+            if ($this->get_user() == null) {
                 log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;
@@ -612,9 +627,9 @@ class change extends change_log
     {
         global $mtr;
         $result = date_format($this->time(), $this->date_time_format()) . ' ';
-        if ($this->user() != null) {
-            if ($this->user()->name() <> '') {
-                $result .= $this->user()->name() . ' ';
+        if ($this->get_user() != null) {
+            if ($this->get_user()->name() <> '') {
+                $result .= $this->get_user()->name() . ' ';
             }
         }
         if ($this->old_value <> '') {

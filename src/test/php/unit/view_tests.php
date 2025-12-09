@@ -30,16 +30,21 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\view\view;
-use html\view\view as view_dsp;
-use shared\library;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_tests
 {
@@ -47,9 +52,12 @@ class view_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
+        $t_msk = new test_views($t);
+        $t_trm = new test_terms($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -58,7 +66,7 @@ class view_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $msk = $t->view();
+        $msk = $t_msk->view();
         $t->assert_sql_table_create($msk);
         $t->assert_sql_index_create($msk);
         $t->assert_sql_foreign_key_create($msk);
@@ -68,11 +76,11 @@ class view_tests
         $t->assert_sql_by_id($sc, $msk);
         $t->assert_sql_by_name($sc, $msk);
         $t->assert_sql_by_code_id($sc, $msk);
-        $t->assert_sql_by_term($sc, $msk, $t->term());
+        $t->assert_sql_by_term($sc, $msk, $t_trm->term());
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
@@ -84,18 +92,18 @@ class view_tests
         $t->assert_sql_standard($sc, $msk);
 
         $t->subheader($ts . 'sql write insert');
-        $msk = $t->view_added();
+        $msk = $t_msk->view_added();
         $t->assert_sql_insert($sc, $msk);
         $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $msk = $t->view(); // a view with a code_id as it might be imported
+        $msk = $t_msk->view(); // a view with a code_id as it might be imported
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
-        $msk = $t->view_added();
+        $msk = $t_msk->view_added();
         $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
@@ -111,45 +119,51 @@ class view_tests
         $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'base object handling');
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
         $t->assert_reset($msk);
 
         $t->subheader($ts . 'api');
-        $msk = $t->view_filled();
+        $msk = $t_msk->view_filled();
+        // remove the code id for the api compare test because the code id should not be updated over the api
+        $msk->set_code_id_db(null);
         $t->assert_api_json($msk);
-        $msk = $t->view_protected();
+        $msk = $t_msk->view_protected();
         $t->assert_api($msk);
-        $t->assert_api_to_dsp($msk, new view_dsp());
+        $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'with components api');
-        $msk = $t->view_with_components();
-        $t->assert_api($msk, 'view_with_components');
-        $t->assert_api_to_dsp($msk, new view_dsp());
+        $msk = $t_msk->view_with_components();
+        $t->assert_api($msk, 'view_with_component_id');
+        $msk = $t_msk->view_with_components();
+        $t->assert_api($msk, 'view_with_components', [api_type::INCL_COMPONENTS]);
+        $msk = $t_msk->view_with_components();
+        $t->assert_api($msk, 'view_with_component_details', [api_type::INCL_COMPONENTS, api_type::LINK_DETAILS]);
+        $t->assert_api_to_ui($msk, new view_ui());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->view());
-        $t->assert_ex_and_import($t->view_filled());
+        $t->assert_ex_and_import($t_msk->view(), $usr_sys);
+        $t->assert_ex_and_import($t_msk->view_filled(), $usr_sys);
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 
 
         $test_name = 'view create from json string';
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
-        $msk_dsp = new view_dsp($json);
+        $msk_dsp = new view_ui($json);
         $dsp_text = $msk_dsp->name_tip();
         $target = '<span title="the default view for words" data-toggle="tooltip">Word</span>';
         $t->assert($test_name, $dsp_text, $target);
 
         // sql to load the view components
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
 
         $lib = new library();
         $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id.sql');
-        $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->assert('view->load_components_sql by view id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
         $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
@@ -158,7 +172,42 @@ class view_tests
         $db_con->db_type = sql_db::MYSQL;
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
-        $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
+        $t->assert('view->load_components_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+
+
+        /*
+         * view relation
+         */
+
+        // init
+        $t->name = 'view_relation->';
+        $t->resource_path = 'db/view_relation/';
+
+        // start the test section (ts)
+        $ts = 'unit view relation ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql setup');
+        $mrl = $t_msk->view_relation();
+        $t->assert_sql_table_create($mrl);
+        $t->assert_sql_index_create($mrl);
+        $t->assert_sql_foreign_key_create($mrl);
+
+        $t->subheader($ts . 'sql read');
+        $mrl = new view_relation($usr);
+        $t->assert_sql_by_id($sc, $mrl);
+
+        $t->subheader($ts . 'sql write insert');
+        $mrl = $t_msk->view_relation();
+        // TODO Prio 0 switch on the tests
+        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $mrl, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'sql write update');
+        $mrl = $t_msk->view_relation();
+        $mrl_moved = clone $mrl;
+        $mrl_moved->start_pos = $mrl->start_pos + 1;
+        //$t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
 
         /*
@@ -169,7 +218,7 @@ class view_tests
 
         /*
          * needs database connection
-        $msk = new view_dsp;
+        $msk = new view_ui;
         $msk->id = 1;
         $msk->code_id = null;
         $msk->name = view::TEST_NAME_ADD;
@@ -178,7 +227,7 @@ class view_tests
         $wrd->set_name(word::TEST_NAME);
         $result = $msk->display($wrd, 1);
         $target = '';
-        $t->display('view->display', $target, $result);
+        $t->assert('view->display', $result, $target);
         */
 
     }

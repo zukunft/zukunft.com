@@ -2,8 +2,8 @@
 
 /*
 
-    back_trace.php - list of links that the user has called in the past
-    --------------
+    web/system/back_trace.php - list of links that the user has called in the past
+    -------------------------
 
     used to implement CTRL-Z
 
@@ -34,7 +34,7 @@
   
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
 class back_trace
 {

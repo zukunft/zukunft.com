@@ -1,0 +1,14 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:05:16",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the users"
+  ],
+  "users": [
+    {
+      "name": "zukunft.com system write test user"
+    }
+  ]
+}
+

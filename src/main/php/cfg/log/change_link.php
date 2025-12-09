@@ -44,48 +44,54 @@
   
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\sandbox\sandbox_link;
-use cfg\ref\source;
-use cfg\helper\type_object;
-use cfg\user\user;
-use cfg\word\word;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Exception;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_link extends change_log
 {
@@ -95,27 +101,27 @@ class change_link extends change_log
      */
 
     // user log database and JSON object field names for link user sandbox objects
-    const TBL_COMMENT = 'to log the link changes done by the users';
-    const FLD_ID = 'change_link_id';
-    const FLD_TABLE_ID = 'change_table_id';
-    const FLD_OLD_FROM_TEXT = 'old_text_from';
-    const FLD_OLD_FROM_ID = 'old_from_id';
-    const FLD_OLD_LINK_TEXT = 'old_text_link';
-    const FLD_OLD_LINK_ID = 'old_link_id';
-    const FLD_OLD_TO_TEXT = 'old_text_to';
-    const FLD_OLD_TO_ID = 'old_to_id';
-    const FLD_NEW_FROM_TEXT = 'new_text_from';
-    const FLD_NEW_FROM_ID = 'new_from_id';
-    const FLD_NEW_LINK_TEXT = 'new_text_link';
-    const FLD_NEW_LINK_ID = 'new_link_id';
-    const FLD_NEW_TO_TEXT_COM = 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
-    const FLD_NEW_TO_TEXT = 'new_text_to';
-    const FLD_NEW_TO_ID_COM = 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
-    const FLD_NEW_TO_ID = 'new_to_id';
+    const string TBL_COMMENT = 'to log the link changes done by the users';
+    const string FLD_ID = 'change_link_id';
+    const string FLD_TABLE_ID = 'change_table_id';
+    const string FLD_OLD_FROM_TEXT = 'old_text_from';
+    const string FLD_OLD_FROM_ID = 'old_from_id';
+    const string FLD_OLD_LINK_TEXT = 'old_text_link';
+    const string FLD_OLD_LINK_ID = 'old_link_id';
+    const string FLD_OLD_TO_TEXT = 'old_text_to';
+    const string FLD_OLD_TO_ID = 'old_to_id';
+    const string FLD_NEW_FROM_TEXT = 'new_text_from';
+    const string FLD_NEW_FROM_ID = 'new_from_id';
+    const string FLD_NEW_LINK_TEXT = 'new_text_link';
+    const string FLD_NEW_LINK_ID = 'new_link_id';
+    const string FLD_NEW_TO_TEXT_COM = 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
+    const string FLD_NEW_TO_TEXT = 'new_text_to';
+    const string FLD_NEW_TO_ID_COM = 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
+    const string FLD_NEW_TO_ID = 'new_to_id';
 
     // all database field names
-    const FLD_NAMES = array(
-        user::FLD_ID,
+    const array FLD_NAMES = array(
+        user_db::FLD_ID,
         self::FLD_TABLE_ID,
         self::FLD_TIME,
         self::FLD_OLD_FROM_TEXT,
@@ -133,15 +139,15 @@ class change_link extends change_log
     );
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
-    const FLD_LST_KEY = array(
+    const array FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change of the value with a standard group id
-    const FLD_LST_CHANGE = array(
-        [self::FLD_TABLE_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_table::class, ''],
+    const array FLD_LST_CHANGE = array(
+        [self::FLD_TABLE_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_table::class, ''],
         [self::FLD_OLD_FROM_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_LINK_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_TO_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
@@ -211,8 +217,8 @@ class change_link extends change_log
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
             // TODO check if not the complete user should be loaded
             $usr = new user();
-            $usr->set_id($db_row[user::FLD_ID]);
-            $usr->name = $db_row[user::FLD_NAME];
+            $usr->id = $db_row[user_db::FLD_ID];
+            $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
         return $result;
@@ -234,11 +240,11 @@ class change_link extends change_log
         $sc->set_class(change_link::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($usr->id());
+        $sc->set_usr($usr->id);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -278,9 +284,9 @@ class change_link extends change_log
         }
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME), user::class);
+        $db_con->set_join_fields(array(user_db::FLD_NAME), user::class);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql::ORDER_DESC);
@@ -310,7 +316,7 @@ class change_link extends change_log
         if ($table_name == "") {
             log_err("missing table name", "user_log_link->set_table");
         }
-        if ($this->user()->id() <= 0) {
+        if ($this->get_user()->id <= 0) {
             log_err("missing user", "user_log_link->set_table");
         }
 
@@ -336,12 +342,12 @@ class change_link extends change_log
     // functions used utils each call is done with the object instead of the id
     private function set_usr(): void
     {
-        log_debug('user_log_link->set_usr for ' . $this->user()->dsp_id());
-        if ($this->user() != null) {
+        log_debug('user_log_link->set_usr for ' . $this->get_user()->dsp_id());
+        if ($this->get_user() != null) {
             $usr = new user;
-            $usr->load_by_id($this->user()->id());
+            $usr->load_by_id($this->get_user()->id);
             $this->set_user($usr);
-            log_debug('user_log_link->set_usr got ' . $this->user()->name);
+            log_debug('user_log_link->set_usr got ' . $this->get_user()->name);
         }
     }
 
@@ -351,7 +357,7 @@ class change_link extends change_log
         $result = '';
         if ($id > 0) {
             $this->set_usr();
-            $wrd = new word($this->user());
+            $wrd = new word($this->get_user());
             $wrd->load_by_id($id);
             $result = $wrd->name();
             log_debug('user_log_link->word_name got ' . $result);
@@ -370,10 +376,11 @@ class change_link extends change_log
     }
 
 
-    // this should be dismissed
+    // TODO Prio 0 this should be dismissed
     function add_link_ref(): bool
     {
-        return $this->add();
+        $usr_msg = new user_message();
+        return $this->add($usr_msg);
     }
 
     // log a user change of a link / verb
@@ -381,7 +388,8 @@ class change_link extends change_log
     function add_link(): bool
     {
         global $db_con;
-        log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action() . " " . $this->table() .
+        $lib = new library();
+        log_debug("user_log_link->add_link (u" . $this->get_user()->id . " " . $this->action() . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
 
@@ -391,8 +399,8 @@ class change_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = user::FLD_ID;
-        $sql_values[] = $this->user()->id();
+        $sql_fields[] = user_db::FLD_ID;
+        $sql_values[] = $this->get_user()->id;
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
         $sql_fields[] = change_table::FLD_ID;
@@ -418,7 +426,7 @@ class change_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id);
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -426,18 +434,18 @@ class change_link extends change_log
             $func_name = 'user_log_link->add_link';
             $msg_text = 'Insert to link log failed';
             $traceback = (new Exception)->getTraceAsString();
-            log_fatal($msg_text, $func_name, '', $traceback, $this->user());
+            log_fatal($msg_text, $func_name, '', $traceback, $this->get_user());
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->get_user());
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             $result = True;
         }
         // restore the type before saving the log
         $db_con->set_class($db_type);
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -461,8 +469,8 @@ class change_link extends change_log
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';
             }
-            if ($db_row[user::FLD_NAME] <> '') {
-                $result .= $db_row[user::FLD_NAME] . ' ';
+            if ($db_row[user_db::FLD_NAME] <> '') {
+                $result .= $db_row[user_db::FLD_NAME] . ' ';
             }
             if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
                 $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
@@ -477,13 +485,15 @@ class change_link extends change_log
 
     /**
      * similar to add_link, but additional fix the references as a text for fast displaying
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * $link_text is used for fixed links such as the source for values
      */
-    function add(): bool
+    function add(user_message $usr_msg): bool
     {
-        log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
+        log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->get_user()->dsp_id());
 
         global $db_con;
+        $lib = new library();
 
         // set the table specific references
         log_debug('set fields');
@@ -519,7 +529,7 @@ class change_link extends change_log
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
-                    $this->new_text_to = $this->new_to->external_key;
+                    $this->new_text_to = $this->new_to->get_external_key();
                     $this->new_from_id = $this->new_from->id();
                     $this->new_link_id = $this->new_link->id();
                     $this->new_to_id = $this->new_to->id();
@@ -531,7 +541,7 @@ class change_link extends change_log
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
-                    $this->old_text_to = $this->old_to->external_key;
+                    $this->old_text_to = $this->old_to->get_external_key();
                     $this->old_from_id = $this->old_from->id();
                     $this->old_link_id = $this->old_link->id();
                     $this->old_to_id = $this->old_to->id();
@@ -575,8 +585,8 @@ class change_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = user::FLD_ID;
-        $sql_values[] = $this->user()->id();
+        $sql_fields[] = user_db::FLD_ID;
+        $sql_values[] = $this->get_user()->id;
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
         $sql_fields[] = change_table::FLD_ID;
@@ -616,7 +626,7 @@ class change_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id);
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -624,18 +634,18 @@ class change_link extends change_log
             $func_name = 'user_log_link->add';
             $msg_text = 'Insert to change log failed';
             $traceback = (new Exception)->getTraceAsString();
-            log_fatal($msg_text, $func_name, '', $traceback, $this->user());
+            log_fatal($msg_text, $func_name, '', $traceback, $this->get_user());
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->get_user());
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             $result = True;
         }
         // restore the type before saving the log
         $db_con->set_class($db_type);
 
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -644,21 +654,21 @@ class change_link extends change_log
     // but the log entry has been created upfront to make sure that logging is complete
     function add_ref($row_id): bool
     {
-        log_debug($row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id());
+        log_debug($row_id . " to " . $this->id() . " for user " . $this->get_user()->dsp_id());
 
         global $db_con;
 
         $result = true;
         $db_type = $db_con->get_class();
         $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id());
         if (!$db_con->update_old($this->id(), 'row_id', $row_id)) {
             // write the error message in steps to get at least some message if the parameters causes an additional the error
             $func_name = 'user_log_link->add_ref';
             $msg_text = 'Insert to change ref log failed';
             $traceback = (new Exception)->getTraceAsString();
             $msg_description = $msg_text . ' with ' . $this->dsp_id();
-            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
+            log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->get_user());
             $result = False;
         }
         // restore the type before saving the log
@@ -677,8 +687,8 @@ class change_link extends change_log
     {
         $result = '';
 
-        if ($this->user() != null) {
-            $result .= 'user_log_link for user ' . $this->user()->dsp_id();
+        if ($this->get_user() != null) {
+            $result .= 'user_log_link for user ' . $this->get_user()->dsp_id();
         }
         $result .= ' action ' . $this->action() . ' (' . $this->action_id . ')';
         $result .= ' table ' . $this->table() . ' (' . $this->table_id . ')';
@@ -760,7 +770,7 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(user_db::FLD_ID, $this->get_user()->id, user_db::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 
@@ -851,7 +861,7 @@ class change_link extends change_log
     function db_fields(): array
     {
         $sql_fields = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 
@@ -905,7 +915,7 @@ class change_link extends change_log
     function db_values(): array
     {
         $sql_values = array();
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->get_user()->id;
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 

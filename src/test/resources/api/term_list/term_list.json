@@ -23,13 +23,13 @@
     "name": "scale minute to sec",
     "type_id": 1,
     "user_text": "\"second\" = \"minute\" * 60",
+    "ref_text": "{w24}={w104}*60",
     "class": "formula"
   },
   {
     "name": "not set",
     "code_id": "not_set",
     "description": "no verb \/ predicate selected",
-    "usage": 0,
     "id": 1,
     "class": "verb"
   }

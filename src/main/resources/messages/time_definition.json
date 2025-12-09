@@ -12,13 +12,49 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Year",
-      "plural": "Years",
+      "name": "day",
+      "plural": "days",
       "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "Day",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "week",
+      "plural": "weeks",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Week",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "month",
+      "plural": "months",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Month",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "year",
+      "plural": "years",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "year",
           "type": "wikipedia"
         }
       ]
@@ -159,6 +195,12 @@
       "name": "latest",
       "type": "latest",
       "protection": "admin_protection"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "percent"
     }
   ],
   "formulas": [
@@ -189,7 +231,7 @@
     {
       "name": "increase",
       "expression": "\"percent\" = ( \"this\" - \"prior\" ) / \"prior\"",
-      "assigned_word": "increase"
+      "assigned_word": "year"
     }
   ]
 }

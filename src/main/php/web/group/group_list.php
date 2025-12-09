@@ -30,31 +30,34 @@
 
 */
 
-namespace html\group;
+namespace Zukunft\ZukunftCom\main\php\web\group;
 
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\sandbox\sandbox_list;
-use html\user\user;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class group_list extends sandbox_list
 {
 
-    public array $lst;                  // the list of the phrase group objects
+    public array $lst = [];             // the list of the phrase group objects
     public user $usr;                   // the person for whom the word group list has been created
     public ?array $time_lst = null;     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids

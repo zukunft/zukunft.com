@@ -5,7 +5,6 @@
 --
 
 ALTER TABLE components
-    ADD PRIMARY KEY (component_id),
     ADD KEY components_user_idx (user_id),
     ADD KEY components_component_name_idx (component_name),
     ADD KEY components_component_type_idx (component_type_id),
@@ -23,7 +22,6 @@ ALTER TABLE components
 --
 
 ALTER TABLE user_components
-    ADD PRIMARY KEY (component_id,user_id),
     ADD KEY user_components_component_idx (component_id),
     ADD KEY user_components_user_idx (user_id),
     ADD KEY user_components_component_name_idx (component_name),

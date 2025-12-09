@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:06:27",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for adding a description to a word via data_object based import"
+  ],
+  "words": [
+    {
+      "name": "System Test Word",
+      "description": "test description added to the word via import"
+    }
+  ]
+}
+

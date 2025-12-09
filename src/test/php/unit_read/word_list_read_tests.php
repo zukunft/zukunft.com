@@ -30,16 +30,18 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\word\word;
-use cfg\word\word_list;
-use shared\const\formulas;
-use shared\const\words;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'words.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_read_tests
 {
@@ -58,7 +60,8 @@ class word_list_read_tests
         // init
         $t->name = 'word list read db';
 
-        $t->header('word list database read unit tests');
+        $ts = 'db read word list ';
+        $t->header($ts);
 
         // test loading word names
         $wrd_lst = new word_list($t->usr1);

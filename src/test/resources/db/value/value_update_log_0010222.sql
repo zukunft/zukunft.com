@@ -38,7 +38,7 @@ PREPARE value_update_log_0010222_call
         ($1,$2, $3, $4, $5, $6,$7,$8,$9,$10,$11,$12);
 
 SELECT value_update_log_0010222
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         5::smallint,
         1::smallint,

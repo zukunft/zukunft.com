@@ -23,13 +23,13 @@ BEGIN
 END;
 
 SELECT formula_link_delete_log_user (
-               1,
+               3,
                3,
                12,
                'scale minute to sec',
                'time period based',
-               'mathematics',
+               'minute',
                1,
                2,
-               1,
+               104,
                1);

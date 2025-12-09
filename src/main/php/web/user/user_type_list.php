@@ -32,20 +32,25 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
-use html\html_selector;
-use html\types\type_list;
-use shared\library;
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user_type_list extends type_list
 {
+
+    const string NAME = url_var::USER_TYPE;
 
     function list(string $class, string $title = ''): string
     {
@@ -57,9 +62,17 @@ class user_type_list extends type_list
     }
 
     /**
+     * create the HTML code to select a user type
+     * @param string $form the unique name of the html form
+     * @param int $selected the id of the preselected user type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(
+        string $form = '',
+        int $selected = 0,
+        string $name = self::NAME
+    ): string
     {
         $sel = new html_selector();
         $sel->name = $name;

@@ -34,54 +34,59 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\system\sys_log;
-use cfg\system\sys_log_list;
-use cfg\user\user;
-use cfg\view\view;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-use shared\enum\user_profiles;
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
-$db_con = prg_start("error_update");
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+
+$app = new frontend();
+$db_con = $app->start("error_update");
 $html = new html_base();
 
 global $sys_msk_cac;
-global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 
 // get the parameters
-$log_id = $_GET[api::URL_VAR_ID];
+$log_id = $_GET[url_var::ID];
 $status_id = $_GET['status'];
-$back = $_GET[api::URL_VAR_BACK] = '';
+$back = $_GET[url_var::BACK] = '';
 
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
 
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::ERR_UPD));
-    $msk_dsp = new view_dsp($msk->api_json());
-    $result .= $msk_dsp->dsp_navbar($back);
+    $msk->id = $sys_msk_cac->id(views::ERR_UPD);
+    $msk_dsp = new view_ui($msk->api_json());
+    $dto = new data_object();
+    $result .= $msk_dsp->dsp_navbar($dto, $back);
 
-    if ($usr->id() > 0 and $usr->is_admin()) {
+    if ($usr->id > 0 and $usr->is_admin()) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new sys_log;
             $err_entry->set_user($usr);
-            $err_entry->set_id($log_id);
+            $err_entry->id = $log_id;
             $err_entry->status_id = $status_id;
             $err_entry->save();
         }
@@ -98,7 +103,7 @@ if ($usr->id() > 0) {
             $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $errors_all = $err_lst_dsp->get_html();
         }
-        //$errors_all .= dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
+        //$errors_all .= dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
             $result .= $html->dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;
@@ -115,9 +120,9 @@ if ($usr->id() > 0) {
 }
 
 $result .= '<br><br>';
-$result .= \html\btn_back($back);
+$result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

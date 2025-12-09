@@ -30,19 +30,22 @@
 
 */
 
-include_once TEST_CONST_PATH . 'files.php';
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-use cfg\import\import_file;
-use test\test_cleanup;
-use const\files as test_files;
+include_once test_paths::CONST . 'files.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_import_test($file_list, test_cleanup $t): void
 {
     global $usr;
 
-    $t->header('Zukunft.com integration tests by importing the sample cases');
+    // start the test section (ts)
+    $ts = 'integration import ';
+    $t->header($ts);
 
-    $import_path = test_files::IMPORT_PATH;
+    $import_path = test_paths::IMPORT;
 
     foreach ($file_list as $json_test_filename) {
         $imf = new import_file();

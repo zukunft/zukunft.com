@@ -32,7 +32,7 @@
 
 */
 
-namespace cfg\export;
+namespace Zukunft\ZukunftCom\main\php\cfg\export;
 
 use stdClass;
 

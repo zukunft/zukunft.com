@@ -1,0 +1,41 @@
+{
+  "version": "0.0.3",
+  "time": "2021-09-12 10:41:00",
+  "user": "system",
+  "description": "test import file to test the prevention of access right gains",
+  "users": [
+    {
+      "name": "zukunft.com system import test allowed",
+      "description": "a normal user ",
+      "profile": "test"
+    },
+    {
+      "name": "zukunft.com system test partner",
+      "description": "an internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+      "code_id": "test_partner",
+      "profile": "test",
+      "email": "test.partner@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system test admin",
+      "description": "an internal zukunft.com test user to check the allow for admin users",
+      "code_id": "test_admin",
+      "profile": "admin",
+      "email": "test.admin@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system test no admin",
+      "description": "an internal zukunft.com test user to check the deny for normal users",
+      "code_id": "test_normal",
+      "profile": "email",
+      "email": "test.normal@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system user creator",
+      "description": "an internal zukunft.com user to automatically create normal users",
+      "code_id": "signup",
+      "profile": "signup",
+      "email": "signup@zukunft.com"
+    }
+  ]
+}

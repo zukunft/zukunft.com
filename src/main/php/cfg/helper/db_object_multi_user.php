@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_user.php - a base object for all user specific database objects
-    -------------------------------
+    model/helper/db_object_multi_user.php - a base object for all user specific database objects
+    -------------------------------------
 
     same as db_id_object_user but for database object that have custom prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
@@ -33,16 +33,20 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class db_object_multi_user extends db_object_multi
 {
@@ -86,7 +90,7 @@ class db_object_multi_user extends db_object_multi
     /**
      * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -94,14 +98,36 @@ class db_object_multi_user extends db_object_multi
     /**
      * @return int the id of the user or 0 if the user is not set
      */
-    function user_id(): int
+    function get_user_id(): int
     {
-        return $this->usr->id();
+        return $this->usr->id;
     }
 
 
     /*
-     * information
+     * modify
+     */
+
+    /**
+     * fill this db user object based on the given object
+     * if the given user id is not set (null) the user id is set
+     *
+     * @param db_object_multi_user|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_multi_user|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->get_user_id() != null) {
+            $this->set_user($obj->get_user());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * info
      */
 
     /**
@@ -112,10 +138,10 @@ class db_object_multi_user extends db_object_multi
     function diff_msg(db_object_multi_user|db_object_multi $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->user_id() != $obj->user_id()) {
+        if ($this->get_user_id() != $obj->get_user_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
-                msg_id::VAR_USER => $obj->user()->dsp_id(),
-                msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_USER => $obj->get_user()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -134,9 +160,9 @@ class db_object_multi_user extends db_object_multi
     {
         global $debug;
         $result = '';
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;

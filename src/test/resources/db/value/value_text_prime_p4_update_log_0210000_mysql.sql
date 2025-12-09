@@ -32,13 +32,13 @@ PREPARE value_text_prime_p4_update_log_0210000_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_text_prime_p4_update_log_0210000
-       (1,
+       (3,
         1,
         421,
         'old db text sample value',
         'zukunft.com',
-        93169617471111297,
-        331,
-        326,
-        313,
-        -129);
+        59673584134226012,
+        212,
+        207,
+        203,
+        -92);

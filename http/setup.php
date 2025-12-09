@@ -13,10 +13,11 @@ global $debug;
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\db\db_check;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 /*
 
@@ -31,7 +32,8 @@ The steps should be
 
 */
 
-$db_con = prg_start("setup", "center_form");
+$app = new frontend();
+$db_con = $app->start("setup", "center_form");
 
 // load the session user parameters
 $usr = new user;
@@ -53,4 +55,4 @@ if ($usr->id() > 0) {
 
         log_debug("setup ... done.");
     }}
-prg_end($db_con);
+$app->end($db_con);
