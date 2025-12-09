@@ -4,6 +4,7 @@ PREPARE source_list_by_name_like FROM
             s.user_id,
             s.source_name,
             s.code_id,
+            s.`usage`,
             IF(u.source_name    IS NULL, s.source_name,    u.source_name)    AS source_name,
             IF(u.`url`          IS NULL, s.`url`,          u.`url`)          AS `url`,
             IF(u.description    IS NULL, s.description,    u.description)    AS description,

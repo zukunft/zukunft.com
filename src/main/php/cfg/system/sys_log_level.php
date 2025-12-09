@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/system_utils.php - system ENUM definition for the log level
-    -----------------------------
+    model/system/sys_log_level.php - system ENUM definition for the log level
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,19 +29,21 @@
   
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
 
 use ReflectionException;
 
 class sys_log_level extends BasicEnum
 {
-    const UNDEFINED = 0;
-    const INFO = 1;
-    const WARNING = 2;
-    const ERROR = 3;
-    const FATAL = 4;
+    const int UNDEFINED = 0;
+    const int INFO = 1;
+    const int WARNING = 2;
+    const int ERROR = 3;
+    const int FATAL = 4;
 
     /**
      * @throws ReflectionException

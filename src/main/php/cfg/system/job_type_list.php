@@ -29,31 +29,31 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
 
-global $job_typ_cac;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class job_type_list extends type_list
 {
     // list of the predefined system batch jobs
-    const VALUE_UPDATE = "value_update";
-    const VALUE_ADD = "value_add";
-    const VALUE_DEL = "value_del";
-    const FORMULA_UPDATE = "formula_update";
-    const FORMULA_ADD = "formula_add";
-    const FORMULA_DEL = "formula_del";
-    const FORMULA_LINK = "formula_link";
-    const FORMULA_UNLINK = "formula_unlink";
-    const TRIPLE = "triple";
-    const WORD_UNLINK = "word_unlink";
-    const BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
+    const string VALUE_UPDATE = "value_update";
+    const string VALUE_ADD = "value_add";
+    const string VALUE_DEL = "value_del";
+    const string FORMULA_UPDATE = "formula_update";
+    const string FORMULA_ADD = "formula_add";
+    const string FORMULA_DEL = "formula_del";
+    const string FORMULA_LINK = "formula_link";
+    const string FORMULA_UNLINK = "formula_unlink";
+    const string TRIPLE = "triple";
+    const string WORD_UNLINK = "word_unlink";
+    const string BASE_IMPORT = "base_import"; // import the base configuration by a system user on initial setup
 
     /**
      * adding the job type used for unit tests to a dummy list

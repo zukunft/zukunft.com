@@ -29,52 +29,48 @@
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use controller\controller;
-use cfg\user\user;
-use cfg\formula\formula_list;
-use shared\api;
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/formulaList", "", false);
+$app = new application();
+$db_con = $app->start_api("formulaList");
 
-// get the parameters
-$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $frm_ids = $_GET[url_var::ID_LST] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($frm_ids != '') {
-        $lst = new formula_list($usr);
-        $lst->load_by_ids(explode(',',$frm_ids));
-        $result = $lst->api_json();
-    } else {
-        $msg = 'list of formula id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
+
+        if ($frm_ids != '') {
+            $lst = new formula_list($usr);
+            $lst->load_by_ids(explode(',', $frm_ids));
+            $result = $lst->api_json();
+        } else {
+            $msg = 'list of formula id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+    $app->end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

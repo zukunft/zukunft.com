@@ -22,7 +22,7 @@ SELECT component_link_insert_log_110100000_user
     ($1,$2,$3,$4,$5);
 
 SELECT component_link_insert_log_110100000_user
-    (1::bigint,
+    (3::bigint,
      1::smallint,
      48::smallint,
      1::bigint,

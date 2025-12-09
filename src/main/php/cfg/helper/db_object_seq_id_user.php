@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_id_object_user.php - a base object for all user specific database id objects
-    ----------------------------------
+    model/helper/db_object_seq_id_user.php - a base object for all user specific database id objects
+    --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
@@ -12,7 +12,7 @@
     - object vars:       the variables of this seq id object
     - construct and map: including the mapping of the db row to this seq id object
     - set and get:       to capsule the single variables from unexpected changes
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this seq id object with one function
 
 
@@ -40,18 +40,24 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object_seq_id_user extends db_object_seq_id
 {
@@ -93,24 +99,26 @@ class db_object_seq_id_user extends db_object_seq_id
     }
 
     /**
+     * return the user from a function to enable function overwrite in combine objects like phrase and term
      * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
 
     /**
+     * return the user id from a function to enable function overwrite in combine objects like phrase and term
      * @return int the id of the user or 0 if the user is not set
      */
-    function user_id(): int
+    function get_user_id(): int
     {
-        return $this->usr->id();
+        return $this->usr->id;
     }
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -121,14 +129,25 @@ class db_object_seq_id_user extends db_object_seq_id
     function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->user_id() != $obj->user_id()) {
+        if ($this->get_user_id() != $obj->get_user_id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
-                msg_id::VAR_USER => $obj->user()->dsp_id(),
-                msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_USER => $obj->get_user()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
         return $usr_msg;
+    }
+
+    function has_id(): bool
+    {
+        if ($this->id() !== null and $this->id() !== 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -140,14 +159,15 @@ class db_object_seq_id_user extends db_object_seq_id
      * fill this db user object based on the given object
      * if the given user id is not set (null) the user id is set
      *
-     * @param CombineObject|db_object_seq_id_user|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id_user|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->user_id() != null) {
-            $this->set_user($sbx->user());
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->get_user_id() != null) {
+            $this->set_user($obj->get_user());
         }
         return $usr_msg;
     }
@@ -164,9 +184,9 @@ class db_object_seq_id_user extends db_object_seq_id
     {
         global $debug;
         $result = '';
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;

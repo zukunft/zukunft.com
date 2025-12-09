@@ -12,7 +12,8 @@ PREPARE phrase_list_by_3ids_triple_part FROM
             IF(u.name_given     IS NULL, s.name_given,     u.name_given)     AS name_given,
             IF(u.name_generated IS NULL, s.name_generated, u.name_generated) AS name_generated,
             IF(u.description    IS NULL, s.description,    u.description)    AS description,
-            IF(u.`values`       IS NULL, s.`values`,       u.`values`)       AS `values`,
+            IF(u.`usage`        IS NULL, s.`usage`,        u.`usage`)        AS `usage`,
+            IF(u.impact         IS NULL, s.impact,         u.impact)         AS impact,
             IF(u.excluded       IS NULL, s.excluded,       u.excluded)       AS excluded,
             IF(u.share_type_id  IS NULL, s.share_type_id,  u.share_type_id)  AS share_type_id,
             IF(u.protect_id IS NULL, s.protect_id, u.protect_id) AS protect_id

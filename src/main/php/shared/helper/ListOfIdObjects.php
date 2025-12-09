@@ -5,6 +5,10 @@
     shared/helper/ListOfIdObjects.php - the list of objects that have a unique database id
     ---------------------------------
 
+    This is the parent list object for back and frontend.
+    Has an array with the id for faster return of single objects by the database id.
+    TODO Prio 3 check if valkey/redis db is faster
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,21 +34,26 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'ListOf.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\enum\value_types;
-use shared\library;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'ListOf.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class ListOfIdObjects extends ListOf
 {
@@ -122,7 +131,7 @@ class ListOfIdObjects extends ListOf
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
         if ($limit == null and !$this->lst_dirty) {
             $result = array_keys($this->id_pos_lst);
@@ -266,8 +275,8 @@ class ListOfIdObjects extends ListOf
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
 

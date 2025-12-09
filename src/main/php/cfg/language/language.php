@@ -29,25 +29,29 @@
 
 */
 
-namespace cfg\language;
+namespace Zukunft\ZukunftCom\main\php\cfg\language;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
-use cfg\user\user;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class language extends type_object
 {
@@ -57,18 +61,18 @@ class language extends type_object
      */
 
     // database and JSON object field names
-    const TBL_COMMENT = 'for table languages';
-    const FLD_ID = 'language_id';
-    const FLD_NAME = 'language_name';
-    const FLD_WIKI_CODE = 'wikimedia_code';
+    const string TBL_COMMENT = 'for table languages';
+    const string FLD_ID = 'language_id';
+    const string FLD_NAME = 'language_name';
+    const string FLD_WIKI_CODE = 'wikimedia_code';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
-    const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+    const array FLD_LST_ALL = array(
+        [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
     );
 
@@ -78,9 +82,9 @@ class language extends type_object
      */
 
     // list of the languages that have a coded functionality
-    const DEFAULT = "english";
-    const DEFAULT_ID = 1;
-    const TN_READ = "English";
+    const string DEFAULT = "english";
+    const int DEFAULT_ID = 1;
+    const string TN_READ = "English";
 
 
     /*

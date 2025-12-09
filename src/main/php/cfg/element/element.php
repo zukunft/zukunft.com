@@ -40,54 +40,60 @@
 
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\helper\db_object_seq_id_user;
-use cfg\helper\type_object;
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class element extends db_object_seq_id_user
 {
@@ -110,34 +116,34 @@ class element extends db_object_seq_id_user
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'cache for fast update of formula resolved text';
+    const string TBL_COMMENT = 'cache for fast update of formula resolved text';
 
     // database fields only used for formula elements
-    const FLD_ID = 'element_id';
-    const FLD_FORMULA_COM = 'each element can only be used for one formula';
-    const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQL_TYP = sql_field_type::INT;
-    const FLD_TYPE = 'element_type_id';
-    const FLD_REF_ID_COM = 'either a term, verb or formula id';
-    const FLD_REF_ID = 'ref_id';
-    const FLD_TEXT = 'resolved_text';
+    const string FLD_ID = 'element_id';
+    const string FLD_FORMULA_COM = 'each element can only be used for one formula';
+    const string FLD_ORDER = 'order_nbr';
+    const sql_field_type FLD_ORDER_SQL_TYP = sql_field_type::INT;
+    const string FLD_TYPE = 'element_type_id';
+    const string FLD_REF_ID_COM = 'either a term, verb or formula id';
+    const string FLD_REF_ID = 'ref_id';
+    const string FLD_TEXT = 'resolved_text';
     // TODO: is resolved text needed?
 
     // all database field names excluding the id, standard name and user specific fields
-    const FLD_NAMES = array(
-        formula::FLD_ID,
-        user::FLD_ID,
+    const array FLD_NAMES = array(
+        formula_db::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_ORDER,
         self::FLD_TYPE,
         self::FLD_REF_ID
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+    const array FLD_LST_ALL = array(
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
         [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
     );
@@ -178,7 +184,7 @@ class element extends db_object_seq_id_user
      */
     function row_mapper_sandbox(?array $db_row): bool
     {
-        $this->set_id(0);
+        $this->id = 0;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $par_typ = new parameter_type();
@@ -191,26 +197,25 @@ class element extends db_object_seq_id_user
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (!array_key_exists(json_fields::ID, $api_json)) {
             log_warning('Missing id in api_json');
         } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
             log_warning('Missing class in api_json');
         } else {
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd = new word($this->user());
-                $usr_msg->add($wrd->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                $wrd = new word($this->get_user());
+                if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp = new triple($this->user());
-                $usr_msg->add($trp->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                $trp = new triple($this->get_user());
+                if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
@@ -219,16 +224,15 @@ class element extends db_object_seq_id_user
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-                $frm = new formula($this->user());
-                $usr_msg->add($frm->api_mapper($api_json));
-                if ($usr_msg->is_ok()) {
+                $frm = new formula($this->get_user());
+                if ($frm->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $frm;
                 }
             } else {
                 $this->obj = null;
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -245,11 +249,8 @@ class element extends db_object_seq_id_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
+        $vars = [];
+        if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = $this->obj->api_json_array($typ_lst, $usr);
             if ($this->is_word()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
@@ -262,6 +263,9 @@ class element extends db_object_seq_id_user
             } else {
                 $vars[json_fields::OBJECT_CLASS] = '';
             }
+        } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         }
 
         return $vars;
@@ -336,31 +340,31 @@ class element extends db_object_seq_id_user
      */
     function load_obj_by_id(int $id): int
     {
-        if ($id != 0 and $this->user()->is_set()) {
+        if ($id != 0 and $this->get_user()->is_set()) {
             if ($this->type == word::class) {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->load_by_id($id);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type == triple::class) {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $trp->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type == verb::class) {
                 $vrb = new verb;
-                $vrb->set_user($this->user());
+                $vrb->set_user($this->get_user());
                 $vrb->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type == formula::class) {
-                $frm = new formula($this->user());
+                $frm = new formula($this->get_user());
                 $frm->load_by_id($id);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
                 $this->obj = $frm;
                 /*
                 // in case of a formula load also the corresponding word
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->load_by_name($frm->name);
                 $this->wrd_obj = $wrd;
                 */
@@ -480,7 +484,7 @@ class element extends db_object_seq_id_user
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
-        $elm_empty = new element($this->user()->clone_reset());
+        $elm_empty = new element($this->get_user()->clone_reset());
         $fvt_lst = $this->db_fields_changed($elm_empty);
 
         // create the sql and get the sql parameters used
@@ -535,7 +539,7 @@ class element extends db_object_seq_id_user
     {
         return [
             $this::FLD_ID,
-            user::FLD_ID,
+            user_db::FLD_ID,
             self::FLD_REF_ID
         ];
     }
@@ -549,7 +553,7 @@ class element extends db_object_seq_id_user
     function db_fields_changed(element $sbx): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        if ($sbx->trm_id() <> $this->trm_id()) {
+        if ($sbx->trm_id() !== $this->trm_id()) {
             $lst->add_field(
                 term::FLD_ID,
                 $this->trm_id(),

@@ -30,75 +30,60 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\group\group;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\value\value;
-use shared\helper\IdObject;
-use shared\library;
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+//include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object extends IdObject
 {
 
     // dummy const to be overwritten by the child objects
     // description of the table for the sql table creation
-    const TBL_COMMENT = '';
+    const string TBL_COMMENT = '';
     // list of the table fields for the standard read query
-    const FLD_NAMES = array();
+    const array FLD_NAMES = array();
 
     // field lists for the table creation overwritten by the child object or grand child for extra fields
-    const FLD_LST_ALL = array();
-    const FLD_LST_NAME = array();
-    const FLD_LST_EXTRA = array();
+    const array FLD_LST_ALL = array();
+    const array FLD_LST_NAME = array();
+    const array FLD_LST_EXTRA = array();
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array();
+    const array FLD_LST_MUST_BE_IN_STD = array();
     // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
     // fields that CAN be changed by the user with the parameters for the table creation
-    const FLD_LST_USER_CAN_CHANGE = array();
+    const array FLD_LST_USER_CAN_CHANGE = array();
     // fields that CANNOT be changed by the user with the parameters for the table creation
-    const FLD_LST_NON_CHANGEABLE = array();
-
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * dummy map function to be overwritten by the child object
-     *
-     * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
-     */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
-    {
-        return false;
-    }
+    const array FLD_LST_NON_CHANGEABLE = array();
 
 
     /*
@@ -332,7 +317,7 @@ class db_object extends IdObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

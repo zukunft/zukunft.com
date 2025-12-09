@@ -34,74 +34,93 @@
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
+// TODO Prio 2 remove this speed testing code
+$start_time = microtime(true);
+
 global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+global $sys;
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-use cfg\helper\config_numbers;
-use cfg\user\user_message;
-use controller\controller;
-use cfg\user\user;
-use shared\enum\messages as msg_id;
-use shared\api;
-use shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::SHARED_CONST . 'users.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/config", "", false);
+$app = new application();
+$db_con = $app->start_api_core("config");
 
-// get the parameter which config part is requested
-$part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
-$with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+if ($db_con->is_open()) {
 
-$usr_msg = new user_message();
-$result = ''; // reset the html code var
+    // get the parameter which config part is requested
+    $part = $_GET[url_var::CONFIG_PART] ?? '';
+    $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$usr_msg->add_message_text($usr->get());
-
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    $cfg_lst = new config_numbers($usr);
     $usr_msg = new user_message();
-    if ($part == api::CONFIG_ALL or $part == '') {
-        $usr_msg = $cfg_lst->load_cfg($usr);
-    } elseif ($part == api::CONFIG_FRONTEND) {
-        $usr_msg = $cfg_lst->load_frontend_cfg($usr);
-    } elseif ($part == api::CONFIG_USER) {
-        $usr_msg = $cfg_lst->load_usr_cfg($usr);
-    } else {
-        $usr_msg->add_id_with_vars(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
-    }
-    if (!$usr_msg->is_ok()) {
-        $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
-    } else {
-        if ($cfg_lst->is_empty()) {
-            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+    $result = ''; // reset the html code var
+
+    // load the session user parameters
+    $usr = new user;
+    $usr_msg->add_message_text($usr->get());
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
+        $cfg_lst = new config_numbers($usr);
+        $usr_msg = new user_message();
+        if ($part == api::CONFIG_ALL or $part == '') {
+            $usr_msg = $cfg_lst->load_cfg($usr);
+        } elseif ($part == api::CONFIG_FRONTEND) {
+            $usr_msg = $cfg_lst->load_frontend_cfg($usr);
+        } elseif ($part == api::CONFIG_USER) {
+            $usr_msg = $cfg_lst->load_usr_cfg($usr);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
+        }
+        if (!$usr_msg->is_ok()) {
+            $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        } else {
+            if ($cfg_lst->is_empty()) {
+                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            }
+        }
+        $sys->times->switch(system_time_type::MAP_JSON);
+        if ($with_phr == url_var::TRUE) {
+            $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
+        } else {
+            $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
         }
     }
-    if ($with_phr == api::URL_VAR_TRUE) {
-        $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
-    } else {
-        $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
+
+    $sys->times->switch(system_time_type::API_CTRL);
+    $ctrl = new controller();
+    $ctrl->get_json($result, $usr_msg->get_last_message());
+
+    if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
+        // TODO Prio 2 remove this speed testing code
+        $end_time = microtime(true);
+        $duration = $end_time - $start_time;
+        $report = $sys->times->report($duration);
+        echo $report;
     }
+
+    $app->end_api($db_con);
 }
-
-$ctrl = new controller();
-
-$ctrl->get_json($result, $usr_msg->get_last_message());
-
-prg_end_api($db_con);

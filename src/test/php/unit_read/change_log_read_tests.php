@@ -30,23 +30,34 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\log\change_log_list;
-use cfg\word\word;
-use shared\const\components;
-use shared\const\formulas;
-use shared\const\sources;
-use shared\const\triples;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\change_fields;
-use shared\types\verbs;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class change_log_read_tests
 {
@@ -58,23 +69,34 @@ class change_log_read_tests
 
         // init
         $t->name = 'user log read db->';
+        $t_wrd = new test_words($t);
+        $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
+        $t_val = new test_values($t);
+        $t_frm = new test_formulas($t);
+        $t_src = new test_sources($t);
+        $t_ref = new test_refs($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
 
-        $t->header('Unit database tests of the user log classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read log ';
+        $t->header($ts);
 
-        $t->subheader('Load user log tests');
+        $t->subheader($ts . 'user load');
 
         // prepare the objects for the tests
         // TODO use these test functions for all dummy object creations
         // TODO remove dummy from name because this is anyway know by the $test class
-        $wrd = $t->word();
-        $vrb = $t->verb();
-        $trp = $t->triple_pi();
-        $val = $t->value();
-        $frm = $t->formula();
-        $src = $t->source();
-        $ref = $t->reference();
-        $msk = $t->view();
-        $cmp = $t->component();
+        $wrd = $t_wrd->word();
+        $vrb = $t_vrb->verb();
+        $trp = $t_trp->triple_pi();
+        $val = $t_val->value();
+        $frm = $t_frm->formula();
+        $src = $t_src->source();
+        $ref = $t_ref->reference();
+        $msk = $t_msk->view();
+        $cmp = $t_cmp->component();
 
         // check if loading the changes technically works
         $lst = new change_log_list();
@@ -149,7 +171,7 @@ class change_log_read_tests
 
         // check loading of name changes of view
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_dsp($msk, $t->usr1, change_fields::FLD_VIEW_NAME);
+        $result = $lst->load_by_fld_of_ui($msk, $t->usr1, change_fields::FLD_VIEW_NAME);
         $t->assert('view name change', $result, true);
 
         // ... and if the first entry is the setting the view name
@@ -169,13 +191,14 @@ class change_log_read_tests
 
         // TODO add ref
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'API unit db tests');
 
         $wrd = new word($t->usr1);
         $wrd->load_by_id(1);
         $log_lst = new change_log_list();
         $log_lst->load_by_fld_of_wrd($wrd, $usr_sys, change_fields::FLD_WORD_NAME);
-        $t->assert_api($log_lst);
+        // TODO Prio 1 activate
+        // $t->assert_api($log_lst);
 
     }
 

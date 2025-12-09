@@ -30,13 +30,15 @@
   
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_TYPES_PATH . 'view_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 
 class view_link_type_list extends type_list
 {

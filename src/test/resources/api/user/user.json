@@ -1,6 +1,7 @@
 {
   "id": 3,
   "name": "zukunft.com system test",
-  "profile_id": 4,
+  "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+  "profile_id": 16,
   "email": "test@zukunft.com"
 }

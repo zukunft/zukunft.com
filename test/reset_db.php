@@ -32,62 +32,98 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
+
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+include_once test_paths::UTILS . 'test_base.php';
 
 // load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 
-use cfg\user\user;
-use test\all_tests;
-use test\format;
+include_once test_paths::CREATE . 'test_db_load.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("db reset", '', false);
+$app = new test_app();
+$db_con = $app->start("db reset", '', false, true);
 
-// load the session user parameters
-$start_usr = new user;
-$result = $start_usr->get();
+if ($db_con->is_open()) {
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($start_usr->id() > 0) {
-    if ($start_usr->is_admin()) {
+    // load the session user parameters
+    $start_usr = new user;
+    $result = $start_usr->get();
 
-        global $errors;
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($start_usr->id() > 0) {
+        if ($start_usr->is_admin()) {
 
-        // init tests
-        $errors = 0;
-        $t = new all_tests();
-        $t->header('drop and recreate zukunft.com database');
+            global $errors;
 
-        // run the unit tests and reset the database
-        $t->run_unit();
-        $t->run_db_recreate();
+            // init tests
+            $errors = 0;
+            $t = new all_tests();
+            $t->header('drop and recreate zukunft.com database');
 
-        // display the test results
-        if ($t->format == format::HTML) {
-            $t->dsp_result_html();
+            if (getenv(ENVIRONMENT) == ENV_DEV) {
+
+                // run the unit tests and reset the database
+                $t = new all_tests();
+                $t->run_unit();
+                $t->run_db_recreate();
+
+                // create the test dataset to check the basic write functions
+                // TODO Prio 3 make sure that all are created by import instead
+                $t_db = new test_db_load($t);
+                $t_db->create_unit_test_db_entries($t);
+
+                // recreate the type list api message based on the updated db
+                // because this json is used for the unit tests
+                // if the type_list created by this reset_db script differs
+                // from the type_list created by the test.php differs
+                // most likely new fields have not yet been added to the
+                // src/main/resources/db_code_links/change_fields.csv of the predefined fields
+                $t_db = new test_db_load($t);
+                $t_db->type_list_recreate($t, $t->usr1);
+
+                // check and update the fixed csv files
+                // e.g. to have an indication which words might be missing due to the code changes
+                // after a database reset and refill with the initial setup data
+                // the main database tables should always contain the same rows
+                // or there is a good reason due to some code changes
+                // these fixed csv files help to detect the impact of code changes
+                // e.g. if some words are missing due to different error handling
+                $t_db->csv_recreate();
+
+                // display the test results
+                if ($t->format == text_log_format::HTML) {
+                    $t->dsp_result_html();
+                } else {
+                    $t->dsp_result();
+                }
+            } elseif (getenv(ENVIRONMENT) == ENV_UA) {
+                echo 'planned is an automatic copy from the corresponding production database to this user acceptance test database, but it is not yet implemented' . "\n";
+            } else {
+                echo 'Only admin users are allowed to reset the database' . "\n";
+            }
+
         } else {
-            $t->dsp_result();
+            echo 'Only admin users are allowed to reset the database' . "\n";
         }
-
-    } else {
-        echo 'Only admin users are allowed to reset the database';
     }
-}
 
-// Closing connection
-prg_end($db_con, false);
+    // Closing connection
+    $app->end($db_con, false);
+}

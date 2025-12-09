@@ -30,12 +30,13 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\system\job_list;
-use cfg\system\job_type_list;
-use cfg\user\user;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_read_tests
 {
@@ -48,13 +49,15 @@ class job_read_tests
         // init
         $t->name = 'batch job read db->';
 
-        $t->header('Unit database tests of the batch job classes (src/main/php/model/log/* and src/main/php/model/user/log_*)');
+        // start the test section (ts)
+        $ts = 'db read job ';
+        $t->header($ts);
 
-        $t->subheader('Load batch job tests');
+        $t->subheader($ts . 'load batch');
 
         // use the system user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_ID);
+        $sys_usr->load_by_id(users::SYSTEM_ID);
 
         // check if loading of the first entry is the adding of the word name
         $job_lst = new job_list($sys_usr);
@@ -63,7 +66,7 @@ class job_read_tests
         $t->assert('first batch job change is adding', $first_job->type_id(), '11');
 
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'api');
 
         $t->assert_api($job_lst);
 

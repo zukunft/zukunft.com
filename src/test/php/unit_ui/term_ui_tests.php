@@ -30,26 +30,34 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\phrase\term as term_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_vrb = new test_verbs($t);
+        $t_trp = new test_triples($t);
+        $t_frm = new test_formulas($t);
 
         // start the test section (ts)
         $ts = 'unit ui html term ';
         $t->header($ts);
 
-        $wrd = new term_dsp($t->word()->term()->api_json());
-        $trp = new term_dsp($t->triple_pi()->term()->api_json());
-        $vrb = new term_dsp($t->verb()->term()->api_json());
-        $frm = new term_dsp($t->formula()->term()->api_json());
+        $wrd = new term($t_wrd->word()->term()->api_json());
+        $trp = new term($t_trp->triple_pi()->term()->api_json());
+        $vrb = new term($t_vrb->verb()->term()->api_json());
+        $frm = new term($t_frm->formula()->term()->api_json());
         $test_page = $html->text_h2('term display test');
         $test_page .= 'word term with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'word term with link: ' . $wrd->name_link() . '<br>';
@@ -59,7 +67,7 @@ class term_ui_tests
         $test_page .= 'verb term with link: ' . $vrb->name_link() . '<br>';
         $test_page .= 'formula term with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'formula term with link: ' . $frm->name_link() . '<br>';
-        $t->html_test($test_page, 'term', 'term', $t);
+        $t->html_page_test($test_page, 'term', 'term', $t);
     }
 
 }

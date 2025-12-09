@@ -30,12 +30,14 @@
 
 */
 
-use test\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_legacy_test(all_tests $t): void
 {
 
-    $t->header('Test calc functions');
+    // start the test section (ts)
+    $ts = 'legacy ';
+    $t->header($ts);
 
 
     /*
@@ -46,7 +48,7 @@ function run_legacy_test(all_tests $t): void
     $context_word_lst[] = $word_2016;
     $target = TV_NESN_SALES_2016;
     $result = zuc_get_formula($formula_part_text, $context_word_lst, $usr->id());
-    $t->display(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $target, $result);
+    $t->assert(", zuc_get_formula: the result for formula \"".$formula_part_text."\"", $result, $target);
 
     // test zuf_2num_value
     $formula_part_text = "{w6}{t12}";
@@ -55,7 +57,7 @@ function run_legacy_test(all_tests $t): void
     $context_word_lst[] = $word_2016;
     $target = 5;
     $result = zuf_2num_value($formula_part_text, $context_word_lst, $usr->id());
-    $t->display(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
+    $t->assert(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $result, $target);
 
     // test zuf_2num_value
     $formula_part_text = "{w6}{t12}{w83}";
@@ -64,7 +66,7 @@ function run_legacy_test(all_tests $t): void
     $context_word_lst[] = $word_2016;
     $target = 5;
     $result = zuf_2num_value($formula_part_text, $context_word_lst, $usr->id());
-    $t->display(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
+    $t->assert(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $result, $target);
 
     // test zuf_2num_value
     $formula_part_text = "{f19}";
@@ -73,7 +75,7 @@ function run_legacy_test(all_tests $t): void
     $context_word_lst[] = $word_2016;
     $target = TV_NESN_SALES_2016;
     $result = zuf_2num_value($formula_part_text, $context_word_lst, $usr->id());
-    $t->display(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
+    $t->assert(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $result, $target);
 
     // test zuf_2num_value
     $formula_part_text = "/{f19}";
@@ -82,7 +84,7 @@ function run_legacy_test(all_tests $t): void
     $context_word_lst[] = $word_2016;
     $target = TV_NESN_SALES_2016;
     $result = zuf_2num_value($formula_part_text, $context_word_lst, $usr->id());
-    $t->display(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $target, $result);
+    $t->assert(", zuf_2num_value: the result for formula \"".$formula_part_text."\", Nestlé 2016", $result, $target);
 
     // test if zuf_2num still does a simple calculation
     $frm_id = 0;
@@ -90,7 +92,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array();
     $target = 4;
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -98,7 +100,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array();
     $target = 3;
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -106,7 +108,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array();
     $target = 2;
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -114,7 +116,7 @@ function run_legacy_test(all_tests $t): void
     $target = 1;
     $word_array = array($word_nesn, $word_2016);
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -123,7 +125,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array($word_abb,$word_revenues);
     $debug = false;
     $result = zuf_2num($math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -132,7 +134,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array($word_abb,$word_revenues);
     $debug = false;
     $result = zuf_2num($math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -141,7 +143,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array($word_abb,$word_revenues);
     $debug = false;
     $result = zuf_2num($math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuf_2num: the result for formula \"".$math_text."\"", $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -149,7 +151,7 @@ function run_legacy_test(all_tests $t): void
     $word_array = array($word_abb,$word_revenues);
     $debug = false;
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
+    $t->assert(", zuf_2num: the result for formula with id ".$frm_id, $result, $target);
 
     // test zuf_2num
     $frm_id = 0;
@@ -157,22 +159,22 @@ function run_legacy_test(all_tests $t): void
     $word_array = array($word_abb,$word_revenues);
     $debug = false;
     $result = zuf_2num($frm_id, $math_text, $word_array, $usr->id());
-    $t->display(", zuf_2num: the result for formula with id ".$frm_id, $target, $result);
+    $t->assert(", zuf_2num: the result for formula with id ".$frm_id, $result, $target);
 
     // test zuc_has_operator
     $math_text = "3 - 1";
     $target = true;
     $result = zuc_has_operator($math_text);
-    $t->display(", zuc_has_operator: the result for formula \"".$math_text."\"", $target, $result);
+    $t->assert(", zuc_has_operator: the result for formula \"".$math_text."\"", $result, $target);
 
     */
 
 
-    $t->header('Old test functions');
+    // start the test section (ts)
+    $ts = 'legacy database ';
+    $t->header($ts);
 
     // load the database records used for testing
-    $t->header('check database records');
-
     function test_show_db_id($test_text, $result)
     {
         if ($result > 0) {

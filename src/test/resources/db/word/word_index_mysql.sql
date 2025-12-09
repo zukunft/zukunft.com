@@ -4,7 +4,6 @@
 -- indexes for table words
 --
 ALTER TABLE words
-    ADD PRIMARY KEY (word_id),
     ADD KEY words_user_idx (user_id),
     ADD KEY words_word_name_idx (word_name),
     ADD KEY words_plural_idx (plural),
@@ -15,7 +14,6 @@ ALTER TABLE words
 -- indexes for table user_words
 --
 ALTER TABLE user_words
-    ADD PRIMARY KEY (word_id, user_id, language_id),
     ADD KEY user_words_word_idx (word_id),
     ADD KEY user_words_user_idx (user_id),
     ADD KEY user_words_language_idx (language_id),

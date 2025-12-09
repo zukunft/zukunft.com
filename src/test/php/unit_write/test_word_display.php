@@ -34,27 +34,35 @@
 // start testing the system functionality 
 // --------------------------------------
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\word\word;
-use html\word\word as word_dsp;
-use html\verb\verb_list as verb_list_dsp;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\all_tests;
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_word_display_test(all_tests $t): void
 {
 
     global $usr;
 
+    // init
     $lib = new library();
+    $t_db = new test_db_load($t);
 
-    $t->header('Test the word display class (classes/word_display.php)');
+    // start the test section (ts)
+    // TODO Prio 1 to be move to the ui tests?
+    $ts = 'db write ui word ';
+    $t->header($ts);
 
     // check the upward graph display
     // test uses the old function zum_word_list to compare, so it is a kind of double coding
@@ -65,10 +73,10 @@ function run_word_display_test(all_tests $t): void
     $target = words::COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
-    $link_types_dsp = new verb_list_dsp($link_types->api_json());
-    $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
+    $link_types_dsp = new verb_list_ui($link_types->api_json());
+    $wrd_ZH_dsp = new word_ui($wrd_ZH->api_json());
     $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types_dsp, 0);
-    // TODO activate Prio 1
+    // TODO Prio 1 activate
     //$t->dsp_contains('word_dsp->dsp_graph ' . $direction->value . ' for ' . $wrd_ZH->name(), $target, $result);
 
     // ... and the other side
@@ -77,8 +85,8 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::DOWN;
     $target = 'ZU';
     $link_types = $wrd_ZH->link_types($direction);
-    $wrd_ZH_dsp = new word_dsp($wrd_ZH->api_json());
-    $link_types_dsp = new verb_list_dsp($link_types->api_json());
+    $wrd_ZH_dsp = new word_ui($wrd_ZH->api_json());
+    $link_types_dsp = new verb_list_ui($link_types->api_json());
     $result = $wrd_ZH_dsp->dsp_graph($direction, $link_types_dsp, 0);
     $t->assert_text_contains('word_dsp->dsp_graph check if acronym ZU is found for Zurich', $result, $target);
 
@@ -88,18 +96,18 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
     $wrd_2021->load_by_name(words::TEST_2021);
-    $lnk_20_to_21 = $t->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
+    $lnk_20_to_21 = $t_db->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
-    $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
-    $link_types_dsp = new verb_list_dsp($link_types->api_json());
+    $wrd_2020_dsp = new word_ui($wrd_2020->api_json());
+    $link_types_dsp = new verb_list_ui($link_types->api_json());
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
     $result = $lib->trim_html($result);
     $target = $lib->trim_html($target);
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has follower', $result, $target_part_is_followed);
     // TODO use complete link instead of id and name
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has 2020 id', $result, $wrd_2020->id());
     //$t->assert_text_contains($t->name . ' has 2020 name', $result, words::TN_2020);
     //$t->assert_text_contains($t->name . ' has 2021 id', $result, $wrd_2021->id());
@@ -108,16 +116,16 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $direction = foaf_direction::UP;
-    $wrd_2019 = $t->load_word(words::YEAR_2019);
-    $wrd_year = $t->load_word(words::YEAR_CAP);
-    $lnk_20_is_year = $t->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
-    $lnk_19_to_20 = $t->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
+    $wrd_2019 = $t_db->load_word(words::YEAR_2019);
+    $wrd_year = $t_db->load_word(words::YEAR_CAP);
+    $lnk_20_is_year = $t_db->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
+    $lnk_19_to_20 = $t_db->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction);
-    $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
-    $link_types_dsp = new verb_list_dsp($link_types->api_json());
+    $wrd_2020_dsp = new word_ui($wrd_2020->api_json());
+    $link_types_dsp = new verb_list_ui($link_types->api_json());
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types_dsp, 0);
     $result = $lib->trim_html($result);
-    // TODO activate
+    // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has year id', $result, $wrd_year->id());
     //$t->assert_text_contains($t->name . ' has year name', $result, words::TN_YEAR);
     //$t->assert_text_contains($t->name . ' has 2019 id', $result, $wrd_2019->id());
@@ -139,33 +147,33 @@ function run_word_display_test(all_tests $t): void
     $target = words::ZH;
     // TODO add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
-    //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+    //$t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    // the value table for Company
+    // the value table for company
     /*
-    $wrd_company = New word_dsp;
+    $wrd_company = New word_ui;
     $wrd_company->name = "TEST_WORD";
     $wrd_company->set_user($usr);
     $wrd_company->load();
-    $wrd_ratios = New word_dsp;
-    $wrd_ratios->name = "Company main ratio";
+    $wrd_ratios = New word_ui;
+    $wrd_ratios->name = "company main ratio";
     $wrd_ratios->set_user($usr);
     $wrd_ratios->load();
     $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());
     $target = substr($target,0,200);
     $result = $wrd_company->dsp_val_list ($wrd_ratios, $back);
     $result = substr($result,0,200);
-    $t->display('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $target, $result);
+    $t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_company->name, $result, $target);
     */
 
 
-    $t->header('Test the display selector class (web/html/selector.php)');
+    $t->subheader($ts . 'selector');
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
-    $phr_corp = $t->load_phrase(words::COMPANY);
-    $phr_ZH_INS = $t->load_phrase(triples::COMPANY_ZURICH);
+    $phr_corp = $t_db->load_phrase(words::COMPANY);
+    $phr_ZH_INS = $t_db->load_phrase(triples::COMPANY_ZURICH);
     /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';

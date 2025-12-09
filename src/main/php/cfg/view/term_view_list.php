@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/term_view_list.php - a list of assignments from terms to views
-    --------------------------------
+    model/view/term_view_list.php - a list of assignments from terms to views
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,12 +29,14 @@
   
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\sandbox\sandbox_link_list;
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
 
 class term_view_list extends sandbox_link_list
 {
@@ -51,7 +53,7 @@ class term_view_list extends sandbox_link_list
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new term_view($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new term_view($this->get_user()), $db_rows, $load_all);
     }
 
 }

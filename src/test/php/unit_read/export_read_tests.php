@@ -30,11 +30,15 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\export\xml;
-use im_export\json_io;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::EXPORT . 'xml.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\export\xml;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class export_read_tests
 {
@@ -44,21 +48,24 @@ class export_read_tests
         global $usr;
 
         // init
+        $t_phr = new test_phrases($t);
         $t->name = 'export->';
 
-        $t->header('Unit tests of export');
+        // start the test section (ts)
+        $ts = 'db read export ';
+        $t->header($ts);
 
-        $t->subheader('Test the xml export class (classes/xml.php)');
+        $t->subheader($ts . 'xml');
 
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t_phr->phrase_list();
         $xml_exp = new xml($t->usr1);
         $result = $xml_exp->export_by_phrase_list($phr_lst);
         $target = 'Mathematics';
         $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-        $t->header('Test the json export class (classes/json.php)');
+        $t->subheader($ts . 'json');
 
-        // TODO activate
+        // TODO Prio 2 activate
         //$json_export = new json_io($usr, $phr_lst);
         //$result = $json_export->export();
         //$target = 'Mathematics';

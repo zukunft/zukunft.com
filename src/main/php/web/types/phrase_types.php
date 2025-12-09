@@ -30,40 +30,42 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use shared\api;
-use shared\types\phrase_type;
-use shared\types\view_styles;
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_types extends type_list
 {
 
-    const NAME = 'phrase type';
+    const string NAME = url_var::PHRASE_TYPE;
 
     /**
      * create the HTML code to select a phrase type
      * @param string $form the name of the html form
      * @param int $selected the database id of the
-     * @param string $label the text show to the user
-     * @param string $bs_class e.g. to define the size of the select field
      * @param string $name the unique name inside the form for this selector
+     * @param string $style e.g. to define the size of the select field
      * @returns string the html code to select a type from this list
      */
     function selector(
         string $form,
         int    $selected = 1,
-        string $label = 'type:',
-        string $bs_class = view_styles::COL_SM_4,
-        string $name = api::URL_VAR_PHRASE_TYPE
+        string $name = self::NAME,
+        string $style = view_styles::COL_SM_4
     ): string
     {
-        global $html_phrase_types;
-        return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_PHRASE_TYPE, $style);
     }
 
 

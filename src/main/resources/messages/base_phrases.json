@@ -1,0 +1,199 @@
+{
+  "version": "0.0.3",
+  "time": "2025-08-07 12:38:00",
+  "user": "timon",
+  "selection": [
+    "the most often used phrase as an initial preload for the phrase selection if the backend connection is delayed"
+  ],
+  "words": [
+    {
+      "name": "child",
+      "refs": [
+        {
+          "name": "Child",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Bern"
+    },
+    {
+      "name": "Canton"
+    },
+    {
+      "name": "configuration"
+    },
+    {
+      "name": "City"
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "eye"
+    },
+    {
+      "name": "fact"
+    },
+    {
+      "name": "Geneva"
+    },
+    {
+      "name": "government"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "hand"
+    },
+    {
+      "name": "inhabitants"
+    },
+    {
+      "name": "launch"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "man"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "part"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "place"
+    },
+    {
+      "name": "pod"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "problem"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "url"
+    },
+    {
+      "name": "way"
+    },
+    {
+      "name": "week"
+    },
+    {
+      "name": "woman"
+    },
+    {
+      "name": "work"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "Zurich"
+    }
+  ],
+  "triples": [
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "system configuration",
+      "from": "system",
+      "verb": "and",
+      "to": "configuration"
+    },
+    {
+      "name": "Zurich (City)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "City",
+      "refs": [
+        {
+          "name": "Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Zurich (Canton)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "Canton",
+      "refs": [
+        {
+          "name": "Canton_of_Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11943",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Bern (City)",
+      "from": "Bern",
+      "verb": "is a",
+      "to": "City"
+    },
+    {
+      "name": "Geneva (City)",
+      "from": "Geneva",
+      "verb": "is a",
+      "to": "City"
+    }
+  ]
+}

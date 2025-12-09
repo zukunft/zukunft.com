@@ -22,7 +22,31 @@ zukunft.com:
       row limit:
         tooltip-comment: "initial number of page rows"
         default: 20
+      access:
+        log:
+          type:
+            sys-conf-value: "round robin"
+            tooltip-comment: "the type of the log size limitation: if round robin the storage size or time can be limited and older entries are simply deleted or in case of full a warning is created if the log reaches the limit"
+          limit:
+            storage size:
+              MB: 500
+              tooltip-comment: "if this storage size limit is reached a warning message to the admin user is created to remove the olf log"
+            time:
+              days: 100
+              tooltip-comment: "if the log type is round robin older log entries are automatically deleted"
+      cache:
+        config:
+          limit:
+            days: 150
+            tooltip-comment: "if the cache is older than e.g. 150 days it will be recreated prevent issues to to potential refresh bugs"
+          validate:
+            type: "names"
+            tooltip-comment: "if 'names' the phrase names are included in the cache for better readability. if 'full' all phrase parameters are included or 'none' if only the group id of the value is used"
       import:
+        limit:
+          tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
+          file size:
+            MB: 10
         time percent:
           tooltip-comment: "the expected execution time for the database import in percent of the total process"
           file read: 0.4
@@ -161,20 +185,52 @@ zukunft.com:
         table name:
           max phrase: 3
           tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+      triples:
+        max levels: 99
+        tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"
     user:
       tooltip-comment: "settings that each user can set individually"
       default:
         tooltip-comment: "the default settings for normal users"
         backend:
+          rank:
+            phrase: "usage"
+            tooltip-comment: "the rank is the default word or triple that is used to sort the related objects e.g. math const are ranked by the time of discovery"
+          impact:
+            phrase: "happy time points"
+            tooltip-comment: "the impact type is the default word or triple that is used to define what is most relevant"
+          risk:
+            phrase: "CHF"
+            tooltip-comment: "the currency used to estimate the risk in case of an 1% change of a related parameter e.g. for an call of put option the change in the currency if the underlying stock price changes by 1%; for the risk calculation the same measure is used e.g. to set the priority of the jobs whereas the impact is used for sorting"
           max change:
             daily:
               ip user: 1000
               tooltip-comment: "maximal number of changes that an user without login can do per day"
+        url:
+          tooltip-comment: "the setting for the url"
+          format:
+            sys-conf-value: "readable"
+            tooltip-comment: "either 'technical' for a shortest possible url which is not human readable or 'readable' for an url which is easier to understand for humans or 'moveable' for a pod independent url"
         frontend:
           tooltip-comment: "the setting for the user interface"
           language:
             sys-conf-value: en
             tooltip-comment: "the language of the user frontend"
+          lists:
+            tooltip-comment: "general parameters for lists e.g. the number of default entries"
+            limit:
+              min names:
+                sys-conf-value: 4
+                tooltip-comment: "number of object names that should at least be shown"
+              min numbers:
+                sys-conf-value: 20
+                tooltip-comment: "number of object ids that should at least be shown"
+              name list:
+                sys-conf-value: 10
+                tooltip-comment: "number of initial entries to show in a list names"
+              link list:
+                sys-conf-value: 8
+                tooltip-comment: "number of initial entries to show in a list of links"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20
@@ -259,6 +315,10 @@ zukunft.com:
         top level:
           pods: 16380
           tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      api:
+        message:
+          format: "json"
+          tooltip-comment: "json for human friendly api message, yaml for as short as possible messages without compression and compressed to activate additional the compression on yaml messages; to sync the api message format between front end backend an upfront handshake message should be used; fallback is json"
       launch: 2025-06-07
       point: 2025-06-07
       hardware:

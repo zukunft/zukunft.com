@@ -12,7 +12,8 @@ PREPARE formula_link_list_by_frm_id (bigint, bigint) AS
            CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id           ELSE u.protect_id           END AS protect_id,
            CASE WHEN (ul.phrase_name   <> '' IS NOT TRUE) THEN l.phrase_name          ELSE ul.phrase_name         END AS phrase_name1,
            CASE WHEN (ul.description   <> '' IS NOT TRUE) THEN l.description          ELSE ul.description         END AS description1,
-           CASE WHEN (ul.values              IS     NULL) THEN l.values               ELSE ul.values              END AS values1,
+           CASE WHEN (ul.usage               IS     NULL) THEN l.usage                ELSE ul.usage               END AS usage1,
+           CASE WHEN (ul.impact              IS     NULL) THEN l.impact               ELSE ul.impact              END AS impact1,
            CASE WHEN (ul.excluded            IS     NULL) THEN l.excluded             ELSE ul.excluded            END AS excluded1,
            CASE WHEN (ul.share_type_id       IS     NULL) THEN l.share_type_id        ELSE ul.share_type_id       END AS share_type_id1,
            CASE WHEN (ul.protect_id          IS     NULL) THEN l.protect_id           ELSE ul.protect_id          END AS protect_id1

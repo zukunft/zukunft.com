@@ -30,31 +30,33 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\group\group;
-use html\html_base;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_grp = new test_groups($t);
 
         // start the test section (ts)
         $ts = 'unit ui html phrase group ';
         $t->header($ts);
 
-        $grp = new group($t->group_zh()->api_json());
-        $grp_2019 = new group($t->group_zh_2020()->api_json([api_type::INCL_PHRASES]));
+        $grp = new group($t_grp->group_zh()->api_json());
+        $grp_2019 = new group($t_grp->group_zh_2020()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('Phrase group display test');
         $test_page .= 'named phrase group with tooltip: ' . $grp->name_tip() . '<br>';
         $test_page .= 'named phrase group with link: ' . $grp->name_link_list() . '<br>';
         $test_page .= 'phrase group with tooltip: ' . $grp_2019->name_tip() . '<br>';
         $test_page .= 'phrase group with link: ' . $grp_2019->name_link_list() . '<br>';
-        $t->html_test($test_page, 'phrase_group', 'phrase_group', $t);
+        $t->html_page_test($test_page, 'phrase_group', 'phrase_group', $t);
     }
 
 }

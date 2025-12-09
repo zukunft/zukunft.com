@@ -23,7 +23,7 @@ PREPARE formula_link_update_log_002000_user_call FROM
     'SELECT formula_link_update_log_002000_user (?,?,?,?,?,?)';
 
 SELECT formula_link_update_log_002000_user (
-               1,
+               3,
                2,
                700,
                2,

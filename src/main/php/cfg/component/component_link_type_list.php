@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_link_type_list.php - to define the behaviour if a component is linked to a view
-    ---------------------------------------
+    model/component/component_link_type_list.php - to define the behaviour if a component is linked to a view
+    --------------------------------------------
 
     TODO check if really needed
 
@@ -31,13 +31,14 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql_db.php';
 
-include_once DB_PATH . 'sql_db.php';
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 
 class component_link_type_list extends type_list
 {

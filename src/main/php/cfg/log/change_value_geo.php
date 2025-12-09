@@ -29,35 +29,38 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type_list;
-use cfg\helper\type_object;
-use cfg\user\user;
-use shared\enum\change_fields;
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 
 class change_value_geo extends change_value
 {
@@ -67,10 +70,10 @@ class change_value_geo extends change_value
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all geo value changes done by any user on all kind of values (table, prime, big and standard';
+    const string TBL_COMMENT = 'to log all geo value changes done by any user on all kind of values (table, prime, big and standard';
 
     // field list to log the actual change of the value with a standard group id
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, sql_field_type::POINT, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, sql_field_type::POINT, sql_field_default::NULL, '', '', ''],
@@ -101,7 +104,7 @@ class change_value_geo extends change_value
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 

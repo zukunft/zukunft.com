@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 09:27:48",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for adding a comment via data_object based import"
+  ],
+  "verbs": [
+    {
+      "name": "System Test Verb",
+      "description": "test description if it can be added to the verb via import"
+    }
+  ]
+}
+

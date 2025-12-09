@@ -30,19 +30,21 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once SHARED_CONST_PATH . 'triples.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'triples.php';
 
 // TODO combine with triple_unit_test
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\triples;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_old
 {
@@ -65,7 +67,7 @@ class triple_old
 
         // sql to load a triple by id
         $trp = new triple($usr);
-        $trp->set_id(1);
+        $trp->id = 1;
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 
@@ -78,17 +80,17 @@ class triple_old
         // sql to load a triple by link ids
         $trp = new triple($usr);
         $wrd_from = new word($usr);
-        $wrd_from->set_id(2);
+        $wrd_from->id = 2;
         $vrb = new verb();
-        $vrb->set_id(3);
+        $vrb->id = 3;
         $wrd_to = new word($usr);
-        $wrd_to->set_id(4);
+        $wrd_to->id = 4;
         $trp->set_from($wrd_from->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($wrd_to->phrase());
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
-        $trp->set_id(5);
+        $trp->id = 5;
         $t->assert_sql_not_changed($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 

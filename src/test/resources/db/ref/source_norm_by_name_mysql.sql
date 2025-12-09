@@ -2,6 +2,7 @@ PREPARE source_norm_by_name FROM
     'SELECT source_id,
             source_name,
             code_id,
+            `usage`,
             `url`,
             description,
             source_type_id,

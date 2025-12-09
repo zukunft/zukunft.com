@@ -2,8 +2,8 @@
 
 /*
 
-    web/formula/figure.php - to create the html code to display a value or result
-    ----------------------
+    web/figure/figure.php - to create the html code to display a value or result
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,33 +30,38 @@
 
 */
 
-namespace html\figure;
+namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once SHARED_PATH . 'api.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\group\group;
-use html\html_base;
-use html\phrase\phrase_list;
-use html\rest_ctrl as api_dsp;
-use html\result\result;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\user\user_message;
-use html\value\value;
-use shared\json_fields;
-use shared\library;
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-class figure extends combine_named_dsp
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+
+class figure extends combine_named
 {
 
     /*
@@ -66,19 +71,20 @@ class figure extends combine_named_dsp
     /**
      * set the vars of this figure html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_dsp = new result();
-                $res_dsp->api_mapper($json_array);
+                $res_dsp->api_mapper($json_array, $usr_msg);
                 $this->set_obj($res_dsp);
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
-                $val->api_mapper($json_array);
+                $val->api_mapper($json_array, $usr_msg);
                 $this->set_obj($val);
             } else {
                 $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
@@ -86,7 +92,7 @@ class figure extends combine_named_dsp
         } else {
             $usr_msg->add_err('Json class missing, but expected for a figure');
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -121,7 +127,7 @@ class figure extends combine_named_dsp
 
     function grp(): group
     {
-        return $this->obj()->grp();
+        return $this->obj()->grp;
     }
 
     function number(): float|null
@@ -149,7 +155,9 @@ class figure extends combine_named_dsp
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
-        $vars[json_fields::PHRASES] = $this->obj->grp()->api_array();
+        if ($this->obj->grp->name() != '') {
+            $vars[json_fields::PHRASES] = $this->obj->api_array();
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -189,7 +197,7 @@ class figure extends combine_named_dsp
      * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(phrase_list $phr_lst_header = null): string
+    function name_linked(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp()->name_link_list($phr_lst_header);
     }
@@ -212,9 +220,9 @@ class figure extends combine_named_dsp
         // TODO check if $result .= $this->obj->display_linked($back) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            $url = $html->url(api_dsp::VALUE_EDIT, $this->obj_id(), $back);
+            $url = $html->url(rest_ctrl::VALUE_EDIT, $this->obj_id(), $back);
         } else {
-            $url = $html->url(api_dsp::RESULT_EDIT, $this->obj_id(), $back);
+            $url = $html->url(rest_ctrl::RESULT_EDIT, $this->obj_id(), $back);
         }
         return $html->ref($url, $this->val_formatted());
     }

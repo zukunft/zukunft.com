@@ -15,6 +15,7 @@
       "name": "is a",
       "code_id": "is",
       "description": "the main child to parent relation e.g. Zurich is a Canton. The reverse is valid and usually plural is used e.g. Cantons are Zurich, Bern, ...",
+      "formula_name": "of all",
       "name_plural_reverse": "are",
       "name_plural": "are",
       "name_reverse": "are",
@@ -54,15 +55,16 @@
     },
     {
       "name": "has a",
-      "code_id": "",
+      "code_id": "has",
+      "description": "to assign potential properties e.g. a Country has a Human Development Index",
       "name_plural_reverse": "is used for",
       "name_plural": "has",
       "name_reverse": "is used for"
     },
     {
       "name": "is time jump for",
-      "code_id": "",
-      "description": "is the default time jump for",
+      "code_id": "time_jump",
+      "description": "the default time jump e.g year is the default time period for annual reports",
       "formula_name": "time jump",
       "name_plural_reverse": "have the default time jump",
       "name_plural": "are the time jump for",
@@ -70,12 +72,12 @@
     },
     {
       "name": "is term jump for",
-      "code_id": "",
-      "description": "is the default term jump for"
+      "code_id": "term_jump",
+      "description": "the default term jump e.g. state of aggregation is used for a physical substance"
     },
     {
       "name": "term type needed",
-      "code_id": "",
+      "code_id": "term_needed",
       "description": "the formula needs the linked term type"
     },
     {
@@ -89,7 +91,7 @@
     },
     {
       "name": "uses",
-      "code_id": "",
+      "code_id": "uses",
       "description": "real use e.g. wind energy is used by a wind turbine",
       "name_plural_reverse": "are used by",
       "name_plural": "uses",
@@ -97,7 +99,8 @@
     },
     {
       "name": "issue",
-      "code_id": "",
+      "code_id": "issue",
+      "description": "e.g. a company issues an annual report",
       "name_plural_reverse": "are issued by",
       "name_plural": "issues",
       "name_reverse": "is issued by"
@@ -106,13 +109,14 @@
       "name": "is measure type for",
       "code_id": "measure_type",
       "description": "is the default measure type for",
+      "formula_name": "measure type",
       "name_plural_reverse": "have the measure type",
       "name_plural": "are measure type for",
       "name_reverse": "has the measure type"
     },
     {
       "name": "is an acronym for",
-      "code_id": "",
+      "code_id": "acronym",
       "description": "is an acronym for",
       "name_plural_reverse": "are an acronyms of",
       "name_plural": "are an acronyms for",
@@ -129,7 +133,7 @@
     },
     {
       "name": "influences",
-      "code_id": "",
+      "code_id": "influence",
       "name_plural_reverse": "is influenced by",
       "name_plural": "influences",
       "name_reverse": "is influenced by"
@@ -244,6 +248,30 @@
       "name_plural_reverse": "distribute to",
       "name_plural": "on",
       "name_reverse": "distribute to"
+    },
+    {
+      "name": "in",
+      "code_id": "in",
+      "description": "to specify the measure unit",
+      "name_plural_reverse": "",
+      "name_plural": "in",
+      "name_reverse": ""
+    },
+    {
+      "name": "to",
+      "code_id": "to",
+      "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
+      "name_plural_reverse": "",
+      "name_plural": "to",
+      "name_reverse": ""
+    },
+    {
+      "name": "is ranked by",
+      "code_id": "rank",
+      "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
+      "name_plural_reverse": "are sort phrases for",
+      "name_plural": "are ranked by",
+      "name_reverse": "is sort phrases for"
     }
   ]
 }

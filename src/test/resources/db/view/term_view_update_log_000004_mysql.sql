@@ -24,7 +24,7 @@ PREPARE term_view_update_log_000004_call FROM
     'SELECT term_view_update_log_000004 (?,?,?,?,?,?,?,?)';
 
 SELECT term_view_update_log_000004
-    (1,
+    (3,
      2,
      726,
      'default',

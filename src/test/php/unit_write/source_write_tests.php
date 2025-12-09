@@ -30,13 +30,18 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-include_once SHARED_CONST_PATH . 'sources.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\ref\source;
-use shared\const\sources;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'sources.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_write_tests
 {
@@ -44,16 +49,21 @@ class source_write_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('source db write tests');
+        // init
+        $t_src = new test_sources($t);
 
-        $t->subheader('source prepared write');
+        // start the test section (ts)
+        $ts = 'db write source ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'prepared');
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_sql(), false);
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 
-        $t->subheader('source write sandbox tests for ' . sources::SYSTEM_TEST_ADD);
-        $t->assert_write_named($t->source_filled_add(), sources::SYSTEM_TEST_ADD);
+        $t->subheader($ts . 'for ' . sources::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t_src->source_filled_add(), sources::SYSTEM_TEST_ADD);
 
         /*
         TODO remove but check upfront the replacement
@@ -62,25 +72,26 @@ class source_write_tests
         // check if undo all specific changes removes the user source
         $src_usr2 = new source($t->usr2);
         $src_usr2->load_by_name(sources::TN_RENAMED, source::class);
-        $src_usr2->url = sources::TU_ADD;
+        $src_usr2->set_url(sources::TU_ADD);
         $src_usr2->description = sources::TD_ADD;
-        $result = $src_usr2->save()->get_last_message();
+        $src_usr2->save($usr_msg);
+        $result = $usr_msg->get_last_message();
         $target = '';
-        $t->display('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
         $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
-        $result = $src_usr2_reloaded->url;
+        $result = $src_usr2_reloaded->url();
         $target = sources::TU_ADD;
-        $t->display('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $t->assert('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $result, $target);
         $result = $src_usr2_reloaded->description;
         $target = sources::TD_ADD;
-        $t->display('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $t->assert('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $result, $target);
 
         // clean up by deleting all add test sources
-        $src_usr2_reloaded->del();
-        $src_renamed->del();
+        $src_usr2_reloaded->del($usr_msg);
+        $src_renamed->del($usr_msg);
 
         */
 
@@ -99,10 +110,13 @@ class source_write_tests
 
     function create_test_sources(test_cleanup $t): void
     {
+        $t_db = new test_db_load($t);
 
-        $t->header('Check if all base sources are exist');
+        // start the test section (ts)
+        $ts = 'db create test sources ';
+        $t->header($ts);
 
-        $t->test_source(sources::WIKIDATA);
+        $t_db->test_source(sources::WIKIDATA);
 
     }
 

@@ -33,23 +33,25 @@
 
 */
 
-namespace html\element;
+namespace Zukunft\ZukunftCom\main\php\web\element;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
-use html\sandbox\db_object;
-use html\formula\formula;
-use html\user\user_message;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class element extends db_object
 {
@@ -74,31 +76,32 @@ class element extends db_object
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word();
-                $wrd->api_mapper($json_array);
+                $wrd->api_mapper($json_array, $usr_msg);
                 $this->obj = $wrd;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple();
-                $trp->api_mapper($json_array);
+                $trp->api_mapper($json_array, $usr_msg);
                 $this->obj = $trp;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
                 $vrb = new verb();
-                $vrb->api_mapper($json_array);
+                $vrb->api_mapper($json_array, $usr_msg);
                 $this->obj = $vrb;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula();
-                $frm->api_mapper($json_array);
+                $frm->api_mapper($json_array, $usr_msg);
                 $this->obj = $frm;
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

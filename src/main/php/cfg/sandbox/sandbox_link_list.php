@@ -33,33 +33,39 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view;
-use cfg\view\term_view;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class sandbox_link_list extends sandbox_list
 {
@@ -139,9 +145,9 @@ class sandbox_link_list extends sandbox_list
     function add(int $id, view $msk, component|term $sbx, int $pos = 0): bool
     {
         if ($sbx::class == term::class) {
-            $new_lnk = new term_view($this->user());
+            $new_lnk = new term_view($this->get_user());
         } else {
-            $new_lnk = new component_link($this->user());
+            $new_lnk = new component_link($this->get_user());
         }
         $new_lnk->set($id, $msk, $sbx, $pos);
         return $this->add_link($new_lnk);
@@ -152,8 +158,8 @@ class sandbox_link_list extends sandbox_list
      * @return true if the link has been added
      */
     function add_link(
-        component_link|term_view $lnk_to_add,
-        bool                     $allow_duplicates = false
+        component_link|term_view|view_relation|formula_link $lnk_to_add,
+        bool                                  $allow_duplicates = false
     ): bool
     {
         $added = false;
@@ -168,13 +174,13 @@ class sandbox_link_list extends sandbox_list
      * add one link to the list of user sandbox objects,
      * but only if it is not yet part of the list
      * based on the names (not the db id) of the linked objects
-     * @param component_link|term_view $obj_to_add the backend object that should be added
+     * @param component_link|term_view|view_relation|formula_link $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
     function add_link_by_key(
-        component_link|term_view $obj_to_add,
-        bool                     $allow_duplicates = false
+        component_link|term_view|view_relation|formula_link $obj_to_add,
+        bool                                                $allow_duplicates = false
     ): user_message
     {
         $usr_msg = new user_message();
@@ -188,7 +194,7 @@ class sandbox_link_list extends sandbox_list
         $usr_msg->add($this->add_user_check($obj_to_add));
 
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
-        if (!in_array($obj_to_add->key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
+        if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
             // add only objects that have all mandatory values
             $result = $obj_to_add->can_be_ready()->is_ok();
 
@@ -207,13 +213,13 @@ class sandbox_link_list extends sandbox_list
      * add the object to the list without duplicate check
      * and add the id to the id hash
      *
-     * @param IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add
+     * @param IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add
      * @return void
      */
-    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add): void
+    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add): void
     {
         if (!$this->is_key_list_dirty()) {
-            $this->key_pos_lst[$obj_to_add->key()] = count($this->lst());
+            $this->key_pos_lst[$obj_to_add->get_key()] = count($this->lst());
         }
         parent::add_direct($obj_to_add);
     }

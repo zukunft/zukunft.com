@@ -23,7 +23,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT triple_delete_log
-       (1::bigint,
+       (3::bigint,
         3::smallint,
         18::smallint,
         'mathematical constant'::text,

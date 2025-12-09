@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:07:38",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message to remove the added test view via data_object based import"
+  ],
+  "views": [
+    {
+      "name": "System Test View",
+      "excluded": true
+    }
+  ]
+}
+

@@ -2,8 +2,8 @@
 
 /*
 
-    api/sandbox/user_sandbox_named_api.php - extends the frontend API superclass for named objects such as formulas
-    --------------------------------------
+    web/sandbox/sandbox_named.php - extends the frontend API superclass for named objects such as formulas
+    -----------------------------
 
     The main sections of this object are
     - object vars:       the variables of this word object
@@ -37,27 +37,34 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-//include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\group\group;
-use html\html_base;
-use shared\api;
-use html\rest_ctrl as api_dsp;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+//include_once html_paths::GROUP . 'group.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sandbox_named extends sandbox
 {
@@ -72,6 +79,9 @@ class sandbox_named extends sandbox
 
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
+
+    // the number of objects where word is used
+    private int $usage = 0;
 
 
     /*
@@ -96,13 +106,18 @@ class sandbox_named extends sandbox
     /**
      * @return string the display value of the tooltip where null is an empty string
      */
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
         } else {
             return $this->description;
         }
+    }
+
+    function get_usage(): int
+    {
+        return $this->usage;
     }
 
 
@@ -113,11 +128,12 @@ class sandbox_named extends sandbox
     /**
      * set the vars of this named sandbox object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::NAME, $json_array)) {
             $this->set_name($json_array[json_fields::NAME]);
         } else {
@@ -131,7 +147,16 @@ class sandbox_named extends sandbox
         } else {
             $this->set_description(null);
         }
-        return $usr_msg;
+        if (array_key_exists(json_fields::USAGE, $json_array)) {
+            if ($json_array[json_fields::USAGE] != null) {
+                $this->usage = $json_array[json_fields::USAGE];
+            } else {
+                $this->usage = 0;
+            }
+        } else {
+            $this->usage = 0;
+        }
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -143,7 +168,8 @@ class sandbox_named extends sandbox
         $vars = parent::api_array();
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
+        // the usage is not included here because it should always be updated in the backend
         return $vars;
     }
 
@@ -151,16 +177,26 @@ class sandbox_named extends sandbox
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function url_mapper(array $url_array): user_message
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
     {
-        $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_NAME, $url_array)) {
-            $this->set_name($url_array[api::URL_VAR_NAME]);
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        if (array_key_exists(url_var::NAME, $url_array)) {
+            $this->set_name($url_array[url_var::NAME]);
         } else {
             $this->set_name('');
-            log_err('Mandatory field name missing in form array ' . json_encode($url_array));
+            log_warning('Mandatory field name missing in form array ' . json_encode($url_array));
+        }
+        if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+            $this->set_description($url_array[url_var::DESCRIPTION]);
+        }
+        if (array_key_exists(url_var::USAGE, $url_array)) {
+            if ($url_array[url_var::USAGE] != null) {
+                $this->usage = $url_array[url_var::USAGE];
+            }
         }
         return $usr_msg;
     }
@@ -172,6 +208,7 @@ class sandbox_named extends sandbox
 
     /**
      * load the named user sandbox object e.g. word by name via api
+     * TODO Prio 1 add user_message as parameter
      * @param string $name
      * @return bool
      */
@@ -179,10 +216,11 @@ class sandbox_named extends sandbox
     {
         $result = false;
 
-        $api = new api_dsp();
+        $usr_msg = new user_message();
+        $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body);
+            $this->api_mapper($json_body, $usr_msg);
             if ($this->id() != 0) {
                 $result = true;
             }
@@ -202,7 +240,7 @@ class sandbox_named extends sandbox
     function name_tip(): string
     {
         $html = new html_base();
-        return $html->span($this->name(), '', $this->description());
+        return $html->span($this->name(), '', $this->get_description());
     }
 
     /**
@@ -215,7 +253,7 @@ class sandbox_named extends sandbox
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
 

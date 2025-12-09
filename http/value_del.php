@@ -33,26 +33,31 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user;
-use cfg\view\view;
-use html\button;
-use html\html_base;
-use html\rest_ctrl;
-use html\system\messages;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-use shared\enum\messages as msg_id;
+include_once paths::SHARED_CONST . 'views.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 // to create the code for the html frontend
 $html = new html_base();
 
 // open database
-$db_con = prg_start("value_del");
+$app = new frontend();
+$db_con = $app->start("value_del");
 
 global $mtr;
 
@@ -69,11 +74,11 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VALUE_DEL);
-    $back = $_GET[api::URL_VAR_BACK] = '';  // the page from which the value deletion has been called
+    $msk->load_by_code_id(views::VALUE_DEL);
+    $back = $_GET[url_var::BACK] = '';  // the page from which the value deletion has been called
 
     // get the parameters
-    $val_id = $_GET[api::URL_VAR_ID];
+    $val_id = $_GET[url_var::ID];
     $confirm = $_GET['confirm'];
 
     if ($val_id > 0) {
@@ -84,13 +89,14 @@ if ($usr->id() > 0) {
 
         if ($confirm == 1) {
             // actually delete the value (at least for this user)
-            $val->del();
+            $val->del($usr_msg);
 
             $result .= $html->dsp_go_back($back, $usr);
         } else {
             // display the view header
-            $msk_dsp = new view_dsp($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar($back);
+            $msk_dsp = new view_ui($msk->api_json());
+            $dto = new data_object();
+            $result .= $msk_dsp->dsp_navbar($dto, $back);
 
             $val->load_phrases();
             $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
@@ -104,4 +110,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

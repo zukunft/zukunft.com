@@ -37,69 +37,102 @@
 
 */
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
-include_once EXPORT_PATH . 'export.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\export\export;
-use cfg\formula\formula;
-use cfg\log\change_log_list;
-use cfg\system\job;
-use cfg\log\change_log;
-use cfg\phrase\phrase_list;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\system\sys_log;
-use cfg\phrase\term_list;
-use cfg\phrase\trm_ids;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\word\word;
-use controller\controller;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::LOG . 'change_log_list.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once test_paths::UTILS . 'test_base.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use DateTime;
 use Exception;
-use html\rest_ctrl;
-use html\log\change_log_list as change_log_list_dsp;
-use shared\api;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type;
-use shared\types\api_type_list;
-use unit\sys_log_tests;
 
-class test_api extends create_test_objects
+class test_api extends test_base
 {
     // path
-    const API_PATH = 'api';
-    const JSON_EXT = '.json';
+    const string API_PATH = 'api';
+    const string JSON_EXT = '.json';
+    // an api json message for an empty object
+    const string JSON_ID_ONLY = '{"id":0}';
+    // an export json message for an empty object
+    const string JSON_NAME_ONLY = '{"name":""}';
+    // an export json message for an empty array object e.g.
+    const string JSON_ARRAY_ONLY = '[]';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
      * @param object $usr_obj the user sandbox object that should be tested
+     * @param object $dsp_obj the display object used to create the api message to the backend
+     * @param array $api_types to check the different message type e.g.to test if excluded object can be reactivated
+     * @return bool true if the test has been successful
      */
-    function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
+    function assert_api_to_ui(object $usr_obj, object $dsp_obj, array $api_types = []): bool
     {
+        $lib = new library();
+        $usr_msg_ui = new user_message_ui();
         $class = $this->class_to_api($usr_obj::class);
-        $msg_to_frontend = $usr_obj->api_json([api_type::TEST_MODE]);
-        $dsp_obj->set_from_json($msg_to_frontend);
-        $array_to_backend = $dsp_obj->api_array();
+        $api_types[] = api_type::TEST_MODE;
+        $msg_to_frontend = $usr_obj->api_json($api_types);
+        $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
+        $array_to_backend = $dsp_obj->api_array($api_types);
         // remove the empty fields to compare the "api save" message with the "api show" message
         // the "api show" message ($msg_to_frontend) should not contain empty fields
         // because they are irrelevant for the user and this reduces traffic
         // the "api save" message ($array_to_backend) should contain empty fields
         // to allow the user to remove e.g. a description and less save traffic is expected
         // TODO add a test that e.g. the description can be removed via api
-        $array_to_backend = array_filter($array_to_backend, fn($value) => !is_null($value) && $value !== '');
+        $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
+        $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
+        // and also remove fields of linked objects because each object is updated by its own
+        // whereas the object to the frontend are sometimes combined to reduce traffic
+        // e.g. the components are included in the view
+        if ($usr_obj::class == component_link::class) {
+            $array_to_frontend = $this->json_remove_component_fields($array_to_frontend);
+        }
         return $this->assert_api_compare($class, $array_to_frontend, $array_to_backend);
     }
 
@@ -125,10 +158,9 @@ class test_api extends create_test_objects
     {
         // check and norm the parameters
         if (is_array($typ_lst)) {
-            $typ_lst[] = api_type::TEST_MODE;
-        } else {
-            $typ_lst->add(api_type::TEST_MODE);
+            $typ_lst = new api_type_list($typ_lst);
         }
+        $typ_lst->add(api_type::TEST_MODE);
         $class = $this->class_to_api($usr_obj::class);
 
         // create the json api message and revert it to an array for better compare
@@ -149,29 +181,49 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
+        $usr_msg = new user_message($usr_obj->get_user());
 
         // is excluded api json empty?
-        $test_name = $class_api . ' excluded returns id only api json';
+        $test_name = $class_api . ' excluded json is empty';
         $usr_obj->exclude();
         $json_excluded = $usr_obj->api_json();
-        $target = '"id":1,"excluded":true';
-        // TODO Prio 2 deprecate this exception
-        if ($class == element::class) {
-            $target = '"id":101,"excluded":true';
-        }
+        $json_excluded_full = $usr_obj->api_json([api_type::WITH_EXCLUDED]);
+        $target = test_api::JSON_ARRAY_ONLY;
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
+        // is excluded api json only the id if requested?
+        if ($result) {
+            $test_name = $class_api . ' excluded json can be only id';
+            $json_excluded_id = $usr_obj->api_json([api_type::WITH_EXCLUDED_ID]);
+            $target = '"id":1,"excluded":true';
+            // TODO Prio 2 deprecate this exception
+            if ($class == element::class) {
+                $target = '"id":104,"excluded":true';
+            }
+            $result = $this->assert_text_contains($test_name, $json_excluded_id, $target);
+        }
+        // is excluded api json filled if requested?
+        if ($result) {
+            $test_name = $class_api . ' excluded json can be complete';
+            $target = '"excluded":true,';
+            $result = $this->assert_text_contains($test_name, $json_excluded_full, $target);
+            $json_excluded_full = str_replace($target, '', $json_excluded_full);
+        }
         if ($result) {
             $test_name = $class_api . ' reset returns empty api json';
             $usr_obj->include();
             // check that the excluded object returns a json with just the id and the excluded flag
             $json_api = $usr_obj->api_json();
-            $clone_obj = clone $usr_obj;
+            if ($usr_obj::class == value::class) {
+                $clone_obj = $usr_obj->clone_all();
+            } else {
+                $clone_obj = clone $usr_obj;
+            }
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
-            $target = '{"id":0}';
+            $target = self::JSON_ID_ONLY;
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
-                $target = '{"id":101,"name":"minute","class":"word"}';
+                $target = '{"id":104,"name":"minute","class":"word"}';
             }
             $result = $this->assert($test_name, $json_empty, $target);
         }
@@ -179,9 +231,14 @@ class test_api extends create_test_objects
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->api_mapper(json_decode($json_api, true));
-            $json_compare = $clone_obj->api_json();
-            $result = $this->assert_json_string($test_name, $json_compare, $json_api);
+            $clone_obj->api_mapper(json_decode($json_api, true), $usr_msg);
+            $json_compare = json_encode($this->json_remove_fields_only_to_ui(json_decode($clone_obj->api_json(), true)));
+            $json_api_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($json_api, true)));
+            $result = $this->assert_json_string($test_name, $json_compare, $json_api_ex);
+        }
+        // does the remaining part of the full excluded api json match the normal api json
+        if ($result) {
+            $result = $this->assert_json_string($test_name, $json_excluded_full, $json_api);
         }
         return $result;
     }
@@ -194,17 +251,23 @@ class test_api extends create_test_objects
      * @param array $data the database id of the db row that should be used for testing
      * @return int the id of the added user sandbox object
      */
-    function assert_api_put(string $class, array $data = [], bool $ignore_id = false): int
+    function assert_api_put(
+        string       $class,
+        test_cleanup $t,
+        array        $data = [],
+        bool         $ignore_id = false
+    ): int
     {
+        $t_db = new test_db_load($t);
         // get default data
         if ($data == array()) {
-            $data = $this->source_put_json();
+            $data = $t_db->source_put_json();
         }
         // naming exception (to be removed?)
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
@@ -214,8 +277,8 @@ class test_api extends create_test_objects
             return 0;
         } else {
             $id = 0;
-            if (array_key_exists(api::URL_VAR_ID, $actual)) {
-                $id = intval($actual[api::URL_VAR_ID]);
+            if (array_key_exists(url_var::ID, $actual)) {
+                $id = intval($actual[url_var::ID]);
             } else {
                 log_err('PUT api call is expected to return the id of the added record, but it returns: ' . $actual_text);
             }
@@ -260,7 +323,7 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
@@ -270,112 +333,39 @@ class test_api extends create_test_objects
     }
 
     /**
-     * check if the API PUT call without the REST call adds the user sandbox object
-     * similar to assert_api_put but without the need for a local webserver
+     * check if the API PUT or POST call without the REST call adds or updates the user sandbox object
+     * similar to assert_api_put or assert_api_post but without the need for a local webserver
      *
-     * @param string $class the class name of the object to test
+     * @param sandbox $sbx the sandbox object that should be tested
+     * @param int $id the id of the object that should be updated
      * @param array $data the database id of the db row that should be used for testing
+     * @param user_message $usr_msg to collect the messages for the user
      * @return int the id of the created db row
      */
-    function assert_api_put_no_rest(string $class, array $data = []): int
+    function assert_api_no_rest(sandbox $sbx, int $id, array $data, user_message $usr_msg): int
     {
-        global $usr;
-
-        // naming exception (to be removed?)
-        $class = $this->class_to_api($class);
-        // get default data
-        if ($data == array()) {
-            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
+        // check input values
+        if ($data == []) {
+            log_err('Data for ' . $sbx::class . ' missing in assert_api_no_rest');
         }
         // use the controller to get the payload from the api message
         $ctrl = new controller();
         $request_body = $ctrl->check_api_msg($data);
+        // load the object before the update
+        if ($id != 0) {
+            $sbx->load_by_id($id);
+        }
         // apply the payload to the backend object (add switch)
-        $result = 0;
-        switch ($class) {
-            case word::class:
-                $wrd = new word($usr);
-                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $wrd->id();
-                }
-                break;
-            case source::class:
-                $src = new source($usr);
-                $result = $src->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $src->id();
-                }
-                break;
-            default:
-                log_err($class . ' not yet mapped in assert_api_put_no_rest');
+        $sbx->api_mapper($request_body, $usr_msg);
+        if ($usr_msg->is_ok()) {
+            $sbx->save($usr_msg);
         }
         // if no row id is returned report the problem
-        if ($result == null or $result <= 0) {
-            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
-            return 0;
+        if ($usr_msg->is_ok()) {
+            return $usr_msg->get_row_id();
         } else {
-            return $result;
-        }
-    }
-
-    /**
-     * check if the API POST call without the REST call updates the user sandbox object
-     * similar to assert_api_put but without the need for a local webserver
-     *
-     * @param string $class the class name of the object to test
-     * @param array $data the database id of the db row that should be used for testing
-     * @return int the id of the created db row
-     */
-    function assert_api_post_no_rest(string $class, int $id, array $data = []): int
-    {
-        global $usr;
-
-        // naming exception (to be removed?)
-        $class = $this->class_to_api($class);
-        // get default data
-        if ($data == array()) {
-            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
-        }
-        // use the controller to get the payload from the api message
-        $ctrl = new controller();
-        $request_body = $ctrl->check_api_msg($data);
-        // apply the payload to the backend object (add switch)
-        $result = 0;
-        switch ($class) {
-            case word::class:
-                $wrd = new word($usr);
-                $wrd->load_by_id($id);
-                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $wrd->id();
-                }
-                break;
-            case source::class:
-                $src = new source($usr);
-                $src->load_by_id($id);
-                $result = $src->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $src->id();
-                }
-                break;
-            default:
-                log_err($class . ' not yet mapped in assert_api_put_no_rest');
-        }
-        // if no row id is returned report the problem
-        if ($result == null or $result <= 0) {
-            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
+            $this->assert_fail('api write test without REST call of ' . $sbx::class . ' failed');
             return 0;
-        } else {
-            return $result;
         }
     }
 
@@ -384,8 +374,8 @@ class test_api extends create_test_objects
      * similar to assert_api_del but without the need for a local webserver
      *
      * @param string $class the class name of the object to test
-     * @param array $data the database id of the db row that should be used for testing
-     * @return int the id of the created db row
+     * @param int $id the id of the object that should be updated
+     * @return bool if the object has been deleted or excluded
      */
     function assert_api_del_no_rest(string $class, int $id): bool
     {
@@ -399,13 +389,13 @@ class test_api extends create_test_objects
         switch ($class) {
             case word::class:
                 $wrd = new word($usr);
-                $wrd->set_id($id);
-                $usr_msg = $wrd->del();
+                $wrd->id = $id;
+                $wrd->del($usr_msg);
                 break;
             case source::class:
                 $src = new source($usr);
-                $src->set_id($id);
-                $usr_msg = $src->del();
+                $src->id = $id;
+                $src->del($usr_msg);
                 break;
             default:
                 log_err($class . ' not yet mapped in assert_api_del_no_rest');
@@ -421,7 +411,7 @@ class test_api extends create_test_objects
 
     /**
      * check the api message without using the real curl api
-     * @param sql_db $db_con to retrive the configuration for the message header
+     * @param sql_db $db_con to retrieve the configuration for the message header
      * @param object $usr_obj the user sandbox object that should be tested
      * @param string $filename to overwrite the filename of the expected json message based on the usr_obj
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
@@ -457,18 +447,18 @@ class test_api extends create_test_objects
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         if ($levels > 0) {
-            $url .= '?' . api::URL_VAR_ID . '=' . $id;
-            $url .= '&' . api::URL_VAR_CHILDREN . '=' . $levels;
+            $url .= '?' . url_var::ID . '=' . $id;
+            $url .= '&' . url_var::LEVELS . '=' . $levels;
         }
         // Check if backend is reading the id
-        $data = array(api::URL_VAR_ID => $id);
+        $data = array(url_var::ID => $id);
         // TODO move this exception to the api_par_lst
         if ($class == value::class) {
-            $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
+            $data[url_var::WITH_PHRASES] = url_var::TRUE;
         }
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
@@ -484,7 +474,7 @@ class test_api extends create_test_objects
             $filename = 'value_non_std';
         }
         if ($levels > 0) {
-            $filename = $class_api . '_with_components';
+            $filename = $class_api . '_with_component_id';
         }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, '', false, $ignore_id);
     }
@@ -498,12 +488,12 @@ class test_api extends create_test_objects
      * @param string $field the URL field name of the unique text
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_by_text(string $class, string $name = '', string $field = api::URL_VAR_NAME): bool
+    function assert_api_get_by_text(string $class, string $name = '', string $field = url_var::NAME): bool
     {
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }
@@ -522,25 +512,28 @@ class test_api extends create_test_objects
     function assert_api_get_list(
         string       $class,
         array|string $ids = [1, 2],
-        string       $id_fld = 'ids',
+        string       $id_fld = url_var::ID_LST,
         string       $filename = '',
         bool         $contains = false): bool
     {
         $lib = new library();
+        $url_map = new url_mapper();
+        $usr_msg = new user_message_ui();
         $class = $lib->class_to_name($class);
-        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
             $data = array($id_fld => $ids);
         }
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         // TODO remove
         if ($class == $lib->class_to_name(phrase_list::class)) {
-            if ($filename == '' and $id_fld != 'ids') {
-                $filename = $class . '_without_link' . '_by_' . $id_fld;
+            if ($filename == '' and $id_fld != url_var::ID_LST) {
+                $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+                $filename = $class . '_without_link' . '_by_' . $file_by_name;
             } else {
                 $filename = $class . '_without_link';
             }
@@ -552,8 +545,9 @@ class test_api extends create_test_objects
             $filename = $class . '_without_link';
         }
 
-        if ($filename == '' and $id_fld != 'ids') {
-            $filename = $class . '_by_' . $id_fld;
+        if ($filename == '' and $id_fld != url_var::ID_LST) {
+            $file_by_name = $url_map->name_to_human($id_fld, $usr_msg);
+            $filename = $class . '_by_' . $file_by_name;
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
@@ -580,7 +574,7 @@ class test_api extends create_test_objects
         int        $page = 0
     ): bool
     {
-        $log_lst = new change_log_list_dsp();
+        $log_lst = new change_log_list_ui();
         $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
         $actual = json_decode($json, true);
 
@@ -598,7 +592,7 @@ class test_api extends create_test_objects
             $filename .= '_' . $fld;
         }
         if ($usr != null) {
-            $filename .= '_u' . $usr->id();
+            $filename .= '_u' . $usr->id;
         }
         if ($page != 0) {
             $filename .= '_p' . $page;
@@ -608,6 +602,102 @@ class test_api extends create_test_objects
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+    }
+
+    /**
+     * check if the REST POST call returns a JSON message with the id of the object just added
+     * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_post(
+        string       $class,
+        test_cleanup $t
+    ): bool
+    {
+        $lib = new library();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
+        $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
+
+        $dbo = $t_map->class_to_add_object($class);
+        $name = $dbo->name();
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        //$add_result = $dbo_ui->add_via_api();
+
+        // TODO Prio 1 remove reloading and use $add_result instead
+        $dbo->load_by_name($name);
+        return $this->assert_greater_zero($test_name, $dbo->id());
+
+        //return $this->assert_greater_zero($test_name, $add_result->get_row_id());
+    }
+
+    /**
+     * check if the REST POST call returns a JSON message with the id of the object just added
+     * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_post_direct(
+        string       $class,
+        user         $usr,
+        test_cleanup $t,
+        string       $msg = ''
+    ): bool
+    {
+        $lib = new library();
+        $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
+
+        $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
+
+        $dbo = $t_map->class_to_add_object($class);
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        // replacement for the api call
+        $name = $dbo->name();
+        $ctrl->post_json($dbo_ui->api_array(), $dbo, $usr, $msg);
+        $dbo->load_by_name($name);
+
+        return $this->assert_greater_zero($test_name, $dbo->id());
+    }
+
+    /**
+     * check if the REST DELETE call returns an empty JSON message if the excusion has been successful
+     * for testing the local deployments needs to be updated using an external script
+     * TODO Prio 1 add user_message as parameter
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_del_direct(
+        string       $class,
+        user         $usr,
+        test_cleanup $t,
+        string       $msg = ''
+    ): bool
+    {
+        $lib = new library();
+        $ctrl = new controller();
+        $t_map = new test_mappers($t);
+        $usr_msg_ui = new user_message_ui();
+
+        $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
+
+        $dbo = $t_map->class_to_add_object($class);
+        $dbo->load_by_name($dbo->name());
+        $dbo_ui = $t_map->class_to_ui_object($class);
+        $dbo_ui->set_from_json($dbo->api_json(), $usr_msg_ui);
+        $ctrl->delete($dbo_ui->id(), $dbo, $usr, $msg);
+
+        $dbo->load_by_name($dbo->name());
+        return $this->assert($test_name, $dbo->id(), 0);
     }
 
 
@@ -702,10 +792,10 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         if ($class == ref::class) {
-            $class = api::URL_REF;
+            $class = url_var::REF_API;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
-        return api::HOST_TESTING . api::URL_API_PATH . $url_class;
+        return api::HOST_TESTING . url_var::API_PATH . $url_class;
     }
 
     /**
@@ -713,12 +803,16 @@ class test_api extends create_test_objects
      * @param string $class the class name that should be used
      * @return string the api url
      */
-    private function class_to_put_msg(string $class): array
+    private function class_to_put_msg(
+        string       $class,
+        test_cleanup $t
+    ): array
     {
+        $t_db = new test_db_load($t);
         $put_msg = array();
         switch ($class) {
             case source::class:
-                $put_msg = $this->source_put_json();
+                $put_msg = $t_db->source_put_json();
                 break;
             default:
                 break;
@@ -816,7 +910,7 @@ class test_api extends create_test_objects
         // but for tests that add and remove data to table that have real data the id field should be ignored
         if ($ignore_id) {
             $json = $this->json_remove_volatile_unset_field($json, sql_db::FLD_ID);
-            $json = $this->json_remove_volatile_unset_field($json, api::URL_VAR_ID);
+            $json = $this->json_remove_volatile_unset_field($json, url_var::ID);
         }
 
         // replace any local test username with the standard test username
@@ -826,7 +920,7 @@ class test_api extends create_test_objects
                 or $actual_user == '127.0.0.1'
                 or 'zukunft.com system'
                 or 'localhost') {
-                $new_value = user::SYSTEM_TEST_NAME;
+                $new_value = users::SYSTEM_TEST_NAME;
                 $json = $this->json_remove_volatile_replace_field($json, json_fields::USER_NAME, $new_value);
             }
         }
@@ -835,7 +929,7 @@ class test_api extends create_test_objects
         if (array_key_exists(json_fields::USER_ID, $json)) {
             $user_id = $json[json_fields::USER_ID];
             if ($user_id >= 0) {
-                $user_id = user::SYSTEM_TEST_ID;
+                $user_id = users::SYSTEM_TEST_ID;
             }
             $json = $this->json_remove_volatile_replace_int_field($json, json_fields::USER_ID, $user_id);
         }

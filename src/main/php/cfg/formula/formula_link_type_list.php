@@ -29,13 +29,15 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 
 class formula_link_type_list extends type_list
 {

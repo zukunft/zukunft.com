@@ -30,20 +30,22 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_CONST_PATH . 'triples.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+include_once paths::SHARED_CONST . 'triples.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_read_tests
 {
@@ -54,7 +56,9 @@ class formula_list_read_tests
         // init
         $t->name = 'formula list read db->';
 
-        $t->header('formula list database read tests');
+        // start the test section (ts)
+        $ts = 'db read formula list ';
+        $t->header($ts);
 
         // test loading formula names
         $test_name = 'loading formula names with pattern return the expected formula';
@@ -92,7 +96,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the verb "time step"
         $test_name = 'formulas that use the verb "time step" are at least "prior"';
         $vrb_time_step = new verb();
-        $vrb_time_step->load_by_name(verbs::TIME_STEP);
+        $vrb_time_step->load_by_name(verbs::TIME_STEP_NAME_FORMULA);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_time_step);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::PRIOR]);

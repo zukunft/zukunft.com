@@ -35,11 +35,13 @@
 // TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
 // TODO mainly for data from the internet use prepared statements to prevent SQL injections
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use shared\library;
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
  * a query object to build and fill prepared queries

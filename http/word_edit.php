@@ -33,25 +33,31 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+include_once paths::SHARED_CONST . 'views.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 
 // open database
-$db_con = prg_start("word_edit");
+$app = new frontend();
+$db_con = $app->start("word_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -64,26 +70,26 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::WORD_EDIT);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+    $msk->load_by_code_id(views::WORD_EDIT);
+    $back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
-    $wrd->load_by_id($_GET[api::URL_VAR_ID]);
+    $wrd->load_by_id($_GET[url_var::ID]);
 
     if ($wrd->id() <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
 
         // get all parameters (but if not set, use the database value)
-        if (isset($_GET[api::URL_VAR_NAME])) {
-            $wrd->set_name($_GET[api::URL_VAR_NAME]);
+        if (isset($_GET[url_var::NAME])) {
+            $wrd->set_name($_GET[url_var::NAME]);
         } //
-        if (isset($_GET['plural'])) {
-            $wrd->plural = $_GET['plural'];
+        if (isset($_GET[url_var::PLURAL])) {
+            $wrd->plural = $_GET[url_var::PLURAL];
         } //
-        if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
-            $wrd->description = $_GET[api::URL_VAR_DESCRIPTION];
+        if (isset($_GET[url_var::DESCRIPTION])) {
+            $wrd->description = $_GET[url_var::DESCRIPTION];
         } //
         if (isset($_GET['type'])) {
             $wrd->type_id = $_GET['type'];
@@ -94,32 +100,23 @@ if ($usr->id() > 0) {
 
             // an empty word name should never be saved; instead the word should be deleted)
             if ($wrd->name() == '') {
-                $msg .= 'An empty name should never be saved. Please delete the word instead.';
+                $usr_msg->add_message_text('An empty name should never be saved. Please delete the word instead.');
             } else {
                 // save the changes
-                $upd_result = $wrd->save()->get_last_message();
-
-                // if update was fine ...
-                if (str_replace('1', '', $upd_result) == '') {
-                    // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
-                    // switched off because maybe staying on the edit page is the expected behaviour
-                    //$result .= dsp_go_back($back, $usr);
-                } else {
-                    // ... or in case of a problem prepare to show the message
-                    $msg .= $upd_result;
-                }
+                $wrd->save($usr_msg);
             }
         }
 
         // if nothing yet done display the edit view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar($back);
-            $result .= $html->dsp_err($msg);
+            $msk_dsp = new view_ui($msk->api_json());
+            $dto = new data_object();
+            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the word and its relations, so that the user can change it
-            $wrd_dsp = new word_dsp();
+            $wrd_dsp = new word_ui();
             $wrd_dsp->set_from_json($wrd->api_json());
             $result .= $wrd_dsp->dsp_edit($back);
         }
@@ -128,4 +125,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

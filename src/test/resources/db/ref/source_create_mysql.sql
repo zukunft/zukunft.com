@@ -12,9 +12,11 @@ CREATE TABLE IF NOT EXISTS sources (
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+    `usage`        bigint       DEFAULT NULL COMMENT 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (source_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS sources (
 -- AUTO_INCREMENT for table sources
 --
 ALTER TABLE sources
-    MODIFY source_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY source_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for the original sources for the numeric, time and geo values
@@ -38,9 +40,11 @@ CREATE TABLE IF NOT EXISTS user_sources (
     source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
+    `usage`        bigint       DEFAULT NULL COMMENT 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id     smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (source_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

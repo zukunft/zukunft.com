@@ -28,7 +28,7 @@ SELECT term_view_insert_log_1115_user
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT term_view_insert_log_1115_user
-    (1::bigint,
+    (3::bigint,
      1::smallint,
      727::smallint,
      'System Test description for a view term link'::text,

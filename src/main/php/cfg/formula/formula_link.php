@@ -41,55 +41,69 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\combine_named;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\library;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_link extends sandbox_link
 {
@@ -99,53 +113,53 @@ class formula_link extends sandbox_link
      */
 
     // object specific database and JSON object field names
-    const TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
+    const string TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
     // the database and JSON object field names used only for formula links
-    const FLD_ID = 'formula_link_id';
-    const FLD_TYPE = 'formula_link_type_id';
-    const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    const string FLD_ID = 'formula_link_id';
+    const string FLD_TYPE = 'formula_link_type_id';
+    const string FLD_ORDER = 'order_nbr';
+    const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
-        formula::FLD_ID,
+    const array FLD_NAMES = array(
+        formula_db::FLD_ID,
         phrase::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of the link database field names
-    const FLD_NAMES_LINK = array(
-        formula::FLD_ID,
+    const array FLD_NAMES_LINK = array(
+        formula_db::FLD_ID,
         phrase::FLD_ID
     );
-    // all database field names excluding the id
-    const FLD_NAMES_NUM_USR = array(
+    // all numeric database field names that the user can change
+    const array FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [formula_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
+    const array FLD_LST_NON_CHANGEABLE = array(
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
 
@@ -175,15 +189,15 @@ class formula_link extends sandbox_link
         $this->reset();
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
 
-        $this->reset_objects($this->user());
+        $this->reset_objects($this->get_user());
 
         $this->order_nbr = null;
-        global $frm_lnk_typ_cac;
-        $this->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::DEFAULT));
+        global $sys;
+        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT));
     }
 
     /**
@@ -214,12 +228,182 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            $this->formula()->set_id($db_row[formula::FLD_ID]);
+            $this->formula()->id = $db_row[formula_db::FLD_ID];
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->predicate_id = $db_row[formula_link_type::FLD_ID];
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
         }
         return $result;
+    }
+
+    /**
+     * map a formula link api json to this model formula link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(
+        array        $api_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        parent::api_mapper($api_json, $usr_msg);
+
+        if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
+            $this->set_formula_from_id($api_json[json_fields::FORMULA_ID], $usr_msg, $dto);
+        }
+        if (array_key_exists(json_fields::FORMULA, $api_json)) {
+            $this->set_formula_from_api_json($api_json[json_fields::FORMULA], $usr_msg);
+        }
+        if (array_key_exists(json_fields::PHRASE_ID, $api_json)) {
+            $this->set_phrase_from_id($api_json[json_fields::PHRASE_ID], $usr_msg, $dto);
+        }
+        if (array_key_exists(json_fields::PHRASE, $api_json)) {
+            $this->set_phrase_from_api_json($api_json[json_fields::PHRASE], $usr_msg);
+        }
+        if (array_key_exists(json_fields::PRIORITY, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::PRIORITY];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * set the vars of this formula link object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+
+        // import the formula
+        if (array_key_exists(json_fields::FORMULA, $in_ex_json)) {
+            $frm_json = $in_ex_json[json_fields::FORMULA];
+            if (is_array($frm_json)) {
+                if (count($frm_json) == 1 and array_key_exists(json_fields::NAME, $frm_json)) {
+                    $frm_json = $frm_json[json_fields::NAME];
+                }
+            }
+            if (is_string($frm_json)) {
+                $frm = $dto?->get_formula_by_name($frm_json);
+                if ($frm == null) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                        msg_id::VAR_FORMULA => $frm_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $frm = new formula($usr_msg->usr);
+                    $frm->set_name($frm_json);
+                }
+                $this->set_formula($frm);
+            } elseif (is_array($frm_json)) {
+                $frm = new formula($usr_msg->usr);
+                $frm->import_mapper($frm_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_formula($frm);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::FORMULA_CREATED, [
+                msg_id::VAR_FORMULA_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $frm = new formula($usr_msg->usr);
+            $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_formula($frm);
+        }
+
+        // import the phrase
+        if (array_key_exists(json_fields::PHRASE, $in_ex_json)) {
+            $phr_json = $in_ex_json[json_fields::PHRASE];
+            if (is_array($phr_json)) {
+                if (count($phr_json) == 1 and array_key_exists(json_fields::NAME, $phr_json)) {
+                    $phr_json = $phr_json[json_fields::NAME];
+                }
+            }
+            if (is_string($phr_json)) {
+                $phr = $dto?->get_phrase_by_name($phr_json);
+                if ($phr == null) {
+                    $usr_msg->add_id_with_vars(msg_id::PHRASE_MISSING_IMPORT, [
+                        msg_id::VAR_PHRASE => $phr_json,
+                        msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                    ]);
+                    $phr = new phrase($usr_msg->usr);
+                    $phr->set_name($phr_json);
+                }
+                $this->set_phrase($phr);
+            } elseif (is_array($phr_json)) {
+                $phr = new phrase($usr_msg->usr);
+                $phr->import_mapper($phr_json, $usr_msg, $dto);
+                if ($usr_msg->is_ok()) {
+                    $this->set_phrase($phr);
+                }
+            }
+        } else {
+            $usr_msg->add_info_with_vars(msg_id::PHRASE_CREATED, [
+                msg_id::VAR_PHRASE_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $phr = new phrase($usr_msg->usr);
+            //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
+            $this->set_phrase($phr);
+        }
+
+        if (array_key_exists(json_fields::PREDICATE, $in_ex_json)) {
+            global $sys;
+            $this->predicate_id = $sys->typ_lst->frm_lnk_typ->id($in_ex_json[json_fields::PREDICATE]);;
+        }
+
+        if (array_key_exists(json_fields::PRIORITY, $in_ex_json)) {
+            $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        if ($this->formula_id() != 0) {
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::FORMULA] = $this->formula()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::FORMULA_ID] = $this->formula_id();
+            }
+        }
+        if ($this->phrase_id() != 0) {
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::PHRASE] = $this->phrase()->api_json_array($typ_lst, $usr);
+            } else {
+                $vars[json_fields::PHRASE_ID] = $this->phrase_id();
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -239,9 +423,64 @@ class formula_link extends sandbox_link
      */
     function set(int $id, formula $frm, phrase $phr): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_formula($frm);
         $this->set_phrase($phr);
+    }
+
+    /**
+     * set the formula of this link based on the formula array
+     * @param int|array $api_msg_part either the id itself or an array with the id and the formula details
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return void true if setting the formula has been successful
+     */
+    private function set_formula_from_api_json(
+        int|array    $api_msg_part,
+        user_message $usr_msg
+    ): void
+    {
+        $frm = new formula($this->get_user());
+        if (is_array($api_msg_part)) {
+            $frm->api_mapper($api_msg_part, $usr_msg);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_formula($frm);
+        }
+    }
+
+    /**
+     * set the formula of this link based on the id
+     * and fill the formula based on the cache if possible
+     * @param int|array $api_msg_part the id itself or an array which leads to an user error message
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return void true if setting the formula has been successful
+     */
+    private function set_formula_from_id(
+        int|array    $api_msg_part,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): void
+    {
+        $frm = new formula($this->get_user());
+        if (is_int($api_msg_part)) {
+            if ($dto != null) {
+                $frm = $dto->get_formula_by_id($api_msg_part, $frm);
+            } else {
+                $frm->id = $api_msg_part;
+            }
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_formula($frm);
+        }
     }
 
     /**
@@ -252,6 +491,61 @@ class formula_link extends sandbox_link
     function set_formula(formula $frm): void
     {
         $this->set_fob($frm);
+    }
+
+    /**
+     * set the phrase of this link based on the phrase array
+     * @param int|array $api_msg_part either the id itself or an array with the id and the phrase details
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return void true if setting the phrase has been successful
+     */
+    private function set_phrase_from_api_json(
+        int|array    $api_msg_part,
+        user_message $usr_msg
+    ): void
+    {
+        $phr = new phrase($this->get_user());
+        if (is_array($api_msg_part)) {
+            $phr->api_mapper($api_msg_part, $usr_msg);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_phrase($phr);
+        }
+    }
+
+    /**
+     * set the phrase of this link based on the id
+     * and fill the phrase based on the cache if possible
+     * @param int|array $api_msg_part the id itself or an array which leads to an user error message
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param data_object|null $dto the data object that contains the already imported phrases
+     * @return void true if setting the phrase has been successful
+     */
+    private function set_phrase_from_id(
+        int|array    $api_msg_part,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): void
+    {
+        $phr = new phrase($this->get_user());
+        if (is_int($api_msg_part)) {
+            if ($dto != null) {
+                $phr = $dto->get_phrase_by_id($api_msg_part, $phr);
+            } else {
+                $phr->set_id($api_msg_part);
+            }
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+                msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
+            ]);
+        }
+        if ($usr_msg->is_ok()) {
+            $this->set_phrase($phr);
+        }
     }
 
     /**
@@ -295,7 +589,7 @@ class formula_link extends sandbox_link
     {
         $result = 0;
         if ($this->tob() != null) {
-            if ($this->tob()->id() > 0) {
+            if ($this->tob()->id() != 0) {
                 $result = $this->tob()->id();
             }
         }
@@ -311,6 +605,24 @@ class formula_link extends sandbox_link
         return $this->order_nbr;
     }
 
+    /**
+     * overwrite the link type function
+     * @return string|null the code id of the verb
+     */
+    function get_predicate_code_id(): ?string
+    {
+        global $sys;
+        $id = $this->predicate_id();
+        $typ = $sys->typ_lst->frm_lnk_typ->get($this->predicate_id());
+        if ($typ != null) {
+            return $typ->get_code_id();
+        } else {
+            $msg = 'formula link type with id ' . $id . ' is missing';
+            log_err($msg);
+            return $msg;
+        }
+    }
+
 
     /*
      * preloaded
@@ -320,10 +632,10 @@ class formula_link extends sandbox_link
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    function predicate_name(): string
+    function get_predicate_name(): string
     {
-        global $frm_lnk_typ_cac;
-        return $frm_lnk_typ_cac->name($this->predicate_id);
+        global $sys;
+        return $sys->typ_lst->frm_lnk_typ->name($this->predicate_id);
     }
 
 
@@ -361,7 +673,7 @@ class formula_link extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -390,18 +702,18 @@ class formula_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $sc->add_where(formula::FLD_ID, $this->formula_id());
+            $sc->add_where(formula_db::FLD_ID, $this->formula_id());
             $sc->add_where(phrase::FLD_ID, $this->phrase_id());
         } else {
             log_err('Cannot load default formula link because no unique field is set');
@@ -425,7 +737,7 @@ class formula_link extends sandbox_link
         $result = false;
 
         if ($this->is_unique()) {
-            $qp = $this->load_standard_sql($db_con->sql_creator());
+            $qp = $this->load_sql_standard($db_con->sql_creator());
 
             if ($qp->name <> '') {
                 $db_frm = $db_con->get1($qp);
@@ -445,8 +757,8 @@ class formula_link extends sandbox_link
      */
     function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        global $frm_lnk_typ_cac;
-        $id = parent::load_by_link_id($frm->id(), $frm_lnk_typ_cac->default_id(), $phr->id(), $class);
+        global $sys;
+        $id = parent::load_by_link_id($frm->id(), $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -460,11 +772,11 @@ class formula_link extends sandbox_link
      * if the link object is loaded by an external query like in user_display to show the sandbox
      * @return bool true if the loading of the linked objects has been successful
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
         if ($this->formula_id() > 0) {
-            $frm = new formula($this->user());
+            $frm = new formula($this->get_user());
             $frm->load_by_id($this->formula_id());
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
@@ -474,7 +786,7 @@ class formula_link extends sandbox_link
         }
         if ($result) {
             if ($this->phrase_id() <> 0) {
-                $phr = new phrase($this->user());
+                $phr = new phrase($this->get_user());
                 $phr->load_by_id($this->phrase_id());
                 if ($phr->id() != 0) {
                     $this->set_phrase($phr);
@@ -488,7 +800,7 @@ class formula_link extends sandbox_link
 
     function from_field(): string
     {
-        return formula::FLD_ID;
+        return formula_db::FLD_ID;
     }
 
     function to_field(): string
@@ -499,6 +811,48 @@ class formula_link extends sandbox_link
     function type_field(): string
     {
         return formula_link_type::FLD_ID;
+    }
+
+    /**
+     * @return string the field name of the name db field as a function for complex overwrites
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields of this component
+     * which does not include the internal database id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        $vars = parent::export_json($exp_typ, $do_load);
+        if ($this->formula()?->name() != null) {
+            $vars[json_fields::FORMULA] = $this->formula()->export_json($exp_typ, $do_load);
+        }
+        if ($this->phrase()?->name() != null) {
+            $vars[json_fields::PHRASE] = $this->phrase()->export_json($exp_typ, $do_load);
+        }
+
+        // do not include the default link type in the export
+        global $sys;
+        if ($this->predicate_id == $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+            unset($vars[json_fields::PREDICATE]);
+        }
+        if ($this->order_nbr != null) {
+            $vars[json_fields::PRIORITY] = $this->order_nbr;
+        }
+
+        return $vars;
     }
 
 
@@ -518,6 +872,28 @@ class formula_link extends sandbox_link
     }
 
     /**
+     * @return bool true if no other user has modified the formula link
+     */
+    function not_changed(): bool
+    {
+        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
+
+        global $db_con;
+        $lib = new library();
+        $result = true;
+        $qp = $this->not_changed_sql($db_con->sql_creator());
+        $db_con->usr_id = $this->get_user()->id;
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            if ($db_row[user_db::FLD_ID] > 0) {
+                $result = false;
+            }
+        }
+        log_debug('for ' . $this->dsp_id() . ' is ' . $lib->dsp_bool($result));
+        return $result;
+    }
+
+    /**
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if no one else has changed the formula link
      */
@@ -528,34 +904,13 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * @return bool true if no other user has modified the formula link
-     */
-    function not_changed(): bool
-    {
-        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
-
-        global $db_con;
-        $result = true;
-        $qp = $this->not_changed_sql($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id();
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
-            if ($db_row[user::FLD_ID] > 0) {
-                $result = false;
-            }
-        }
-        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
-        return $result;
-    }
-
-    /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
      * @return change the change log object with the presets for formula links
      */
     function log_upd_field(): change
     {
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_class(formula_link::class);
@@ -591,26 +946,26 @@ class formula_link extends sandbox_link
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
-            array($this->formula_id(), $this->phrase_id(), $this->user()->id(), $this->order_nbr));
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
+            array($this->formula_id(), $this->phrase_id(), $this->get_user()->id, $this->order_nbr));
     }
 
     /**
      * update a formula_link in the database or create a user formula_link
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message that should be shown to the user in case something went wrong
+     * @return bool true if everything has been fine
      */
-    function save(?bool $use_func = null): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
 
         global $db_con;
-        $usr_msg = new user_message();
 
         // check if the required parameters are set
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id() . ') for user ' . $this->user()->name);
+            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id() . ') for user ' . $this->get_user()->name);
         } elseif ($this->id() > 0) {
-            log_debug('id ' . $this->id() . ' for user ' . $this->user()->name);
+            log_debug('id ' . $this->id() . ' for user ' . $this->get_user()->name);
         } else {
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
         }
@@ -621,41 +976,47 @@ class formula_link extends sandbox_link
         }
 
         // load the objects if needed
-        $this->load_objects();
+        $this->reload_objects();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_class(formula_link::class);
 
         // check if a new value is supposed to be added
         if ($this->id() <= 0) {
             log_debug('check if a new formula_link for "' . $this->formula()->name() . '" and "' . $this->phrase()->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
-            $db_chk = new formula_link($this->user());
+            $db_chk = new formula_link($this->get_user());
             $db_chk->set_formula($this->formula());
             $db_chk->set_phrase($this->phrase());
             $db_chk->load_standard();
             if ($db_chk->id() > 0) {
-                $this->set_id($db_chk->id());
+                $this->id = $db_chk->id();
             }
         }
 
         if ($this->id() <= 0) {
             if ($this->db_ready()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $usr_msg->add_message_text($this->add($use_func)->get_last_message());
+                $this->add($usr_msg, $use_func);
             }
         } else {
             log_debug('update "' . $this->id() . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
-            $db_rec = new formula_link($this->user());
+            $db_rec = new formula_link($this->get_user());
             $db_rec->load_by_id($this->id());
-            $db_rec->load_objects();
+            $db_rec->reload_objects();
             $db_con->set_class(formula_link::class);
+            // relevant is if there is a user config in the database
+            // so use this information to prevent
+            // the need to forward the db_rec to all functions
+            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                $this->usr_cfg_id = $db_rec->usr_cfg_id;
+            }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
-            $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
-            $std_rec->set_id($this->id());
+            $std_rec = new formula_link($this->get_user()); // must also be set to allow to take the ownership
+            $std_rec->id = $this->id();
             $std_rec->load_standard();
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
 
@@ -675,16 +1036,16 @@ class formula_link extends sandbox_link
             }
 
             // check if the id parameters are supposed to be changed
-            $this->load_objects();
+            $this->reload_objects();
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
             }
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -692,10 +1053,11 @@ class formula_link extends sandbox_link
         }
 
         if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+            // TODO Prio 1 activate
+            //log_err($usr_msg->all_message_text());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -733,44 +1095,52 @@ class formula_link extends sandbox_link
      *
      * @param sandbox|formula_link $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|formula_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        sql_type_list        $sc_par_lst = new sql_type_list(),
+        user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
-                    $cng_fld_cac->id($table_id . formula_link_type::FLD_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . formula_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $frm_lnk_typ_cac;
+            global $sys;
+            if ($this->predicate_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->predicate_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $frm_lnk_typ_cac
+                $sys->typ_lst->frm_lnk_typ
             );
         }
-        if ($sbx->pos() <> $this->pos()) {
+        if ($sbx->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
-                    $cng_fld_cac->id($table_id . self::FLD_ORDER),
+                    $sys->typ_lst->cng_fld->id($table_id . self::FLD_ORDER),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -813,7 +1183,7 @@ class formula_link extends sandbox_link
     {
         $result = '';
 
-        $this->load_objects();
+        $this->reload_objects();
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
             $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
         } else {

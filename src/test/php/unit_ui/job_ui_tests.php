@@ -30,19 +30,23 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'job_list.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
-use html\system\job_list as job_list_dsp;
-use test\test_cleanup;
+include_once html_paths::SYSTEM . 'job_list.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\job_list;
+use Zukunft\ZukunftCom\test\php\create\test_jobs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_job = new test_jobs();
 
         // start the test section (ts)
         $ts = 'unit ui html batch job ';
@@ -50,11 +54,11 @@ class job_ui_tests
 
         // test the batch job html display functions
         $test_page = $html->text_h2('batch job display test');
-        $log_lst = new job_list_dsp($t->job_list()->api_json());
+        $log_lst = new job_list($t_job->job_list()->api_json());
         $test_page .= 'user view of a table with batch job entries<br>';
         $test_page .= $log_lst->display() . '<br>';
 
-        $t->html_test($test_page, 'job', 'job', $t);
+        $t->html_page_test($test_page, 'job', 'job', $t);
     }
 
 }

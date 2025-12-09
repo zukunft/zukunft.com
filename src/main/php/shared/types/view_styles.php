@@ -29,7 +29,7 @@
   
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class view_styles
 {
@@ -37,21 +37,26 @@ class view_styles
     // list of the view and component styles that have a coded functionality
     // where *_COM is the description for the tooltip
 
-    const COL_SM_2 = 'col-md-2';
+    const string DEFAULT = self::COL_SM_4;
+    const string DEFAULT_ROW = self::COL_SM_12;
+    const string COL_SM_2 = 'col-md-2';
     // just to display a fixed text
-    const COL_SM_4_COM = 'use 1/3 of the width';
-    const COL_SM_4 = 'col-md-4';
-    const COL_SM_5 = 'col-md-5';
-    const COL_SM_6 = 'col-md-6';
-    const COL_SM_7 = 'col-md-7';
-    const COL_SM_8 = 'col-md-8';
-    const COL_SM_10 = 'col-md-10';
-    const COL_SM_12 = 'col-md-12';
-    const BS_SM_2 = 'mr-sm-2';
+    const string COL_SM_4_COM = 'use 1/3 of the width (col-md-4)';
+    const string COL_SM_4 = 'col-md-4';
+    const string COL_SM_5 = 'col-md-5';
+    const string COL_SM_6_COM = 'use half of the width (col-md-6)';
+    const string COL_SM_6 = 'col-md-6';
+    const string COL_SM_7 = 'col-md-7';
+    const string COL_SM_8 = 'col-md-8';
+    const string COL_SM_10 = 'col-md-10';
+    const string COL_SM_12 = 'col-md-12';
+    const string COL_SM_1 = 'col-md-1';
+    const string COL_SM_3 = 'col-md-3';
+    const string BS_SM_2 = 'mr-sm-2';
 
 
     // list of the styles used for unit testing
-    const TEST_TYPES = array(
+    const array TEST_TYPES = array(
         [view_styles::COL_SM_4, 1],
         [view_styles::COL_SM_8, 2],
     );

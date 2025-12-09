@@ -30,17 +30,18 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\phrase\phrase_list;
-use cfg\system\job;
-use cfg\system\job_list;
-use cfg\system\job_type_list;
-use cfg\value\value;
-use shared\const\formulas;
-use shared\const\values;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_write_tests
 {
@@ -49,12 +50,16 @@ class job_write_tests
     {
 
         global $usr;
-        global $job_typ_cac;
 
-        $t->header('job database write tests');
+        // init
+        $t_db = new test_db_load($t);
+
+        // start the test section (ts)
+        $ts = 'db write job ';
+        $t->header($ts);
 
         // make sure that the test value is set independent of any previous database tests
-        $t->test_value(array(
+        $t_db->test_value(array(
             words::CH,
             words::INHABITANTS,
             words::MIO,
@@ -71,17 +76,17 @@ class job_write_tests
         $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
         $target = values::CH_INHABITANTS_2020_IN_MIO;
-        $t->display('job->value to link', $target, $result);
+        $t->assert('job->value to link', $result, $target);
 
         // test adding a batch job
         $job = new job($usr);
         $job->obj = $val;
-        $job->set_type(job_type_list::VALUE_UPDATE);
+        $job->set_type(job_type_list::VALUE_UPDATE, $usr);
         $result = $job->add();
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('job->add has number "' . $result . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('job->add has number "' . $result . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 
@@ -90,10 +95,15 @@ class job_write_tests
 
         global $usr;
 
-        $t->header('job list database write tests');
+        // init
+        $t_db = new test_db_load($t);
+
+        // start the test section (ts)
+        $ts = 'db write job list ';
+        $t->header($ts);
 
         // prepare test adding a batch job via a list
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
 
@@ -109,7 +119,7 @@ class job_write_tests
         if ($result->is_ok()) {
             $target = $result->get_last_message();
         }
-        $t->display('job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert('job->add has number "' . $result->get_last_message() . '"', $target, $result->get_last_message(), $t::TIMEOUT_LIMIT_DB_MULTI);
 
     }
 

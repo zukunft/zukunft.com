@@ -20,8 +20,10 @@ main() {
     # Set current directory
     CURRENT_DIR=$(pwd)
 
+    cd zukunft.com || exit
+
     displayIntro
-    parseArguments
+    parseArguments "$@"
     initEnvironment
     readVar
 
@@ -34,8 +36,9 @@ main() {
         installAndConfigurePostgresql
         installAndConfigureApache
         installAndConfigurePhp
-        downloadAndInstallExternalLibraries
-        downloadAndInstallZukunft
+        downloadZukunft
+        installZukunft
+        testZukunft
         #testInstallation
     else
         if [[ "$OS" == "docker" ]]; then
@@ -57,7 +60,6 @@ main() {
 # Check if the script is run as root or user with superuser privilege
 rootCheck() {
     ROOT_UID=0
-    SUCCESS=0
 
     if [ "$UID" -ne "$ROOT_UID" ]; then
         echo "Sorry must be in root to run this script"
@@ -66,14 +68,16 @@ rootCheck() {
 }
 
 displayIntro() {
-    clear >$(tty)
+    clear > "$(tty)"
 
     # Initial prompt
     echo -e "${GREEN}ZUKUNFT INSTALLER${NC}"
     printf "\n"
     echo "This script will install a debian based LAPP stack and a zukunft.com pod"
+    printf "\n"
+    echo "and it will recreated the zukunft database if it exists"
     printf "\n\n"
-    read -p "Press enter to continue or CTRL+C to exit"
+    read -rp "Press enter to continue or CTRL+C to exit and keep the database named zukunft"
 }
 
 # Parse arguments
@@ -162,7 +166,6 @@ checkDb() {
 
 # TODO add other linux distributions such as Fedora
 updateDebian() {
-    clear >$(tty)
     echo -e "\n${GREEN}Updating debian...${NC}"
 
     # Update Debian
@@ -173,44 +176,32 @@ updateDebian() {
 }
 
 installAndConfigurePostgresql() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing postgres ...${NC}"
 
     # Install postgres
     # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
-    systemctl enable postgresql
-    systemctl start postgresql
-
-    # Backup pg_hba.conf
-    PG_HBA=$(find /etc/postgresql/ -name pg_hba.conf | head -n 1)
-    cp "$PG_HBA" "$PG_HBA.bak"
-    chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.bak
-
     # Initialize database
     # TODO if no password is given just create on and write it to the .env secrets
     # TODO use the generated or give db password in the php code
-    runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';\""
-    runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
+    # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
+    # TODO secure the standard postgres user name after install
+    # create the user
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
+    # drop any old database with the same name
+    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE $PGSQL_DATABASE"
+    # create the database
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
+    # TODO if the database existed change the owner of the tables or drop all tables
 
     echo -e "Installed postgres: \n$(psql --version)"
 
-    systemctl stop postgresql
-    cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
-    systemctl start postgresql
-
-    # rm /var/lib/pgsql/data/pg_hba.conf
-    # mv $(pwd)/config/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
-    # chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
-    # chmod 600 /var/lib/pgsql/data/pg_hba.conf
-    # systemctl restart postgresql
     sleep 3
 }
 
 # TODO add a nginx based installation
 installAndConfigureApache() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing Apache...${NC}"
 
     # Install Apache
@@ -221,18 +212,15 @@ installAndConfigureApache() {
 }
 
 installAndConfigurePhp() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing PHP ...${NC}"
 
     # Install PHP
-    apt-get install -y php \
-    php-pgsql php-yaml php-curl \
-    php-spl php-xml php-json
-    # check which might be needed
-    # php-opcache php-gd php-mysqlnd \
-    # php-openssl php-soap php-zip php-simplexml \
-    # php-pcre php-dom php-intl php-json \
-    # php-pdo_pgsql
+    apt-get install -y php
+    apt-get install -y php-pgsql
+    apt-get install -y php-yaml
+    apt-get install -y php-curl
+    apt-get install -y php-xml
+    apt-get install -y php-json
 
     PHP_VERSION=$(php -r 'echo PHP_VERSION;' | cut -d. -f1,2)
     if [[ "$PHP_VERSION" != "8.2" ]]; then
@@ -243,60 +231,76 @@ installAndConfigurePhp() {
     sleep 3
 }
 
-downloadAndInstallExternalLibraries() {
-    clear >$(tty)
-    echo -e "\n${GREEN}Installing external libraries ...${NC}"
+downloadZukunft() {
+    echo -e "\n${GREEN}Download selected zukunft.com branch ...${NC}"
 
-    echo -e "\n${GREEN}Installing bootstrap ...${NC}"
-    git clone https://github.com/twbs/bootstrap.git
-    rsync -av --delete bootstrap/ "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
+    # switch later to something like git://git.zukunft.com/zukunft.git
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    # copy the .env file to the webserver
+    cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
 
-    echo -e "\n${GREEN}Installing fontawesome ...${NC}"
-    git clone https://github.com/gabrielelana/awesome-terminal-fonts
-    rsync -av --delete awesome-terminal-fonts/ "$WWW_ROOT/lib_external/fontawesome/"
+}
+
+installZukunft() {
+    echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
+
+    # force to reread to www root ?
+    systemctl restart apache2
+
+    # create the zukunft.com database tables
+    # TODO remove or deactivate the reset_db.php script in prod after successful install
+    php "$WWW_ROOT/test/reset_db.php"
+
+    # TODO check result and create warning if it does not end with
+    # TODO fix the errors on the first run that are caused e.g. by the missing db rows
+    #      0 test errors
+    #      0 internal errors
+
+    cd "$CURRENT_DIR" || exit
+
+    # TODO maybe remove to git clone in the local folder to avoid confusion
+    #      this maybe depending on the update and upgrade process
+    #      e.g. if this is done via git clone to the webserver folder
+    #      and how the .env file can be kept
+    rm -rf zukunft.com
+
     sleep 3
 }
 
-downloadAndInstallZukunft() {
-    clear >$(tty)
-    echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
+testZukunft() {
+    echo -e "\n${GREEN}Test zukunft.com ...${NC}"
 
-    # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
-    rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
+    # test the zukunft.com
+    php "$WWW_ROOT/test/test.php"
 
-    chown -R apache:apache $WWW_ROOT
-    cd $WWW_ROOT/admin/cli
+    # TODO remove the test again the zukunft.com by fixing the errors in the first run
+    php "$WWW_ROOT/test/test.php"
 
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
-    #      Process finished with exit code 0
-    runuser -u apache $(which php) reset_db.php --
 
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
 
-    chown -R root:root $WWW_ROOT
-    chmod -R 755 $WWW_ROOT
-
-    systemctl restart postgresql
-    systemctl restart httpd
-    cd $CURRENT_DIR
     sleep 3
 }
 
 installZukunftInDocker() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
-    rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
 
-    docker compose up -d
+    cd "$WWW_ROOT" || exit
 
-    docker compose exec app php /var/www/html/test/reset_db.php
+    echo -e "\n${GREEN}Building docker images ...${NC}"
+
+    docker compose up -d --build
+
+    echo -e "\n${GREEN}Resetting database ...${NC}"
+
+    docker compose exec app php test/reset_db.php
 
 }
 

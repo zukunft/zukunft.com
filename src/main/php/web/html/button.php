@@ -32,26 +32,31 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use shared\library;
-use html\phrase\phrase_list;
-use shared\enum\messages as msg_id;
+//include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class button
 {
 
-    const IMG_ADD_FA = "fa-plus-square";
-    const IMG_EDIT_FA = "fa-edit";
-    const IMG_DEL_FA = "fa-times-circle";
-    const IMG_UNDO = REL_IMAGE_PATH . 'button_undo.svg';
-    const IMG_FIND = REL_IMAGE_PATH . 'button_find.svg';
-    const IMG_UN_FILTER = REL_IMAGE_PATH . 'button_filter_off.svg';
-    const IMG_BACK = REL_IMAGE_PATH . 'button_back.svg';
+    const string IMG_ADD_FA = "fa-plus-square";
+    const string IMG_EDIT_FA = "fa-edit";
+    const string IMG_DEL_FA = "fa-times-circle";
+    const string IMG_UNDO = paths::REL_IMAGE . 'button_undo.svg';
+    const string IMG_FIND = paths::REL_IMAGE . 'button_find.svg';
+    const string IMG_UN_FILTER = paths::REL_IMAGE . 'button_filter_off.svg';
+    const string IMG_BACK = paths::REL_IMAGE . 'button_back.svg';
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over
@@ -242,7 +247,7 @@ class button
                 } else {
                     $this->title = "add new value";
                 }
-                // TODO activate
+                // TODO Prio 2 activate
                 //$url_phr = $phr_lst->id_url_long();
             }
         }
@@ -254,7 +259,7 @@ class button
         }
 
         $this->call = '/http/value_add.php?back=' . $back . $url_phr . $url_type;
-        $result = $this->add();
+        $result = $this->add(msg_id::ADD);
 
         log_debug($result);
         return $result;
@@ -300,10 +305,10 @@ class button
         $result .= '        <div class="modal-body">';
         $result .= $html->dsp_form_start($form_name);
         $result .= '            ' . $phr_time->name_dsp();
-        $result .= $html->input('phrases', implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
-        $result .= $html->input('back', $back, html_base::INPUT_HIDDEN);
-        $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
-        $result .= $html->input('value', '0', html_base::INPUT_TEXT);
+        $result .= $html->input(url_var::PHRASE_LIST, msg_id::FORM_FIELD_PHRASE_LIST, implode(",", $phr_lst->ids()), html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, msg_id::FORM_FIELD_BACK, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::STEP, msg_id::FORM_FIELD_STEP,'1', html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::VALUE, msg_id::FORM_FIELD_VALUE,  '0', html_base::INPUT_TEXT);
         $result .= '            ' . $common_lst_ex_main->name_dsp();
         $result .= '          </form>';
         $result .= '        </div>';
@@ -336,7 +341,7 @@ class button
             $this->title = "change this value";
         }
         $this->call = '/http/value_edit.php?id=' . $group_id . '&back=' . $back;
-        $result = $this->edit();
+        $result = $this->edit(msg_id::EDIT);
         log_debug($result);
         return $result;
     }
@@ -366,32 +371,32 @@ class button
 function btn_add(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->add('', $text);
+    return $b->add(msg_id::ADD, $text);
 }      // an add button to create a new entry
 function btn_edit(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->edit('', $text);
+    return $b->edit(msg_id::EDIT, $text);
 }     // an edit button to adjust an entry
 function btn_del(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->del('', $text);
+    return $b->del(msg_id::DEL, $text);
 }      // an delete button to remove an entry
 function btn_undo(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->undo('', $text);
+    return $b->undo(msg_id::UNDO, $text);
 }     // an undo button to undo a change (not only the last)
 function btn_find(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->find('', $text);
+    return $b->find(msg_id::FIND, $text);
 }     // a find button to search for a word
 function btn_unfilter(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->un_filter('', $text);
+    return $b->un_filter(msg_id::REMOVE_FILTER, $text);
 } // button to remove a filter
 function btn_yesno(string $text, string $url): string
 {

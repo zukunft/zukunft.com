@@ -19,7 +19,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT word_delete_log_user
-       (1::bigint,
+       (3::bigint,
         3::smallint,
         10::smallint,
         'mathematics'::text,

@@ -29,17 +29,19 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 
 class view_style extends type_object
 {
@@ -51,10 +53,10 @@ class view_style extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'the display style for a view or component e.g. number of columns to use';
-    const FLD_NAME = 'view_style_name';
+    const string TBL_COMMENT = 'the display style for a view or component e.g. number of columns to use';
+    const string FLD_NAME = 'view_style_name';
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
 

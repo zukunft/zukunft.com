@@ -26,7 +26,7 @@ PREPARE term_view_insert_log_1115_user_call FROM
     'SELECT term_view_insert_log_1115_user (?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT term_view_insert_log_1115_user (
-               1,
+               3,
                1,
                727,
                'System Test description for a view term link',

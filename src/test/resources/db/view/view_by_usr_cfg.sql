@@ -4,6 +4,7 @@ PREPARE view_by_usr_cfg (bigint, bigint) AS
            description,
            view_type_id,
            view_style_id,
+           usage,
            excluded,
            share_type_id,
            protect_id

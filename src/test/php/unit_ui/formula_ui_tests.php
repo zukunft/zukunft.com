@@ -30,23 +30,25 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\formula\formula as formula_dsp;
-use html\html_base;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_frm = new test_formulas($t);
 
         // start the test section (ts)
         $ts = 'unit ui html formula ';
         $t->header($ts);
 
-        $frm = new formula_dsp($t->formula()->api_json());
+        $frm = new formula($t_frm->formula()->api_json());
         $test_page = $html->text_h2('formula display test');
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';
@@ -54,13 +56,14 @@ class formula_ui_tests
         $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
-        $t->html_test($test_page, 'formula', 'formula', $t);
+        $t->html_page_test($test_page, 'formula', 'formula', $t);
 
         // TODO review
 
         /*
         global $usr;
-        $t->header('Test the formula frontend scripts (e.g. /formula_add.php)');
+        $ts = 'unit ui html formula user ';
+        $t->header($ts);
 
         // load the main test word
         $wrd_company = $t->test_word(words::TN_COMPANY);

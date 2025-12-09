@@ -2,8 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
-    ---------------------------
+    web/log/change_log_named.php - a list function to create the HTML code to display a list of user changes
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,34 +29,38 @@
 
 */
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_LOG_PATH . 'change_log.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\formula\formula;
-use html\helper\config;
-use html\rest_ctrl;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::LOG . 'change_log.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_log_named extends change_log
 {
@@ -81,11 +85,11 @@ class change_log_named extends change_log
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
             $this->old_value = $json_array[json_fields::OLD_VALUE];
         } else {
@@ -106,7 +110,7 @@ class change_log_named extends change_log
         } else {
             $this->new_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -201,19 +205,19 @@ class change_log_named extends change_log
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_DEL);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
         }
         // display the undo button
@@ -236,9 +240,8 @@ class change_log_named extends change_log
      */
     private function action_code_id(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get($this->action_id);
         return $action->code_id;
     }
 
@@ -247,9 +250,8 @@ class change_log_named extends change_log
      */
     private function action_name(): string
     {
-        global $cng_act_cac;
-
-        $action = $cng_act_cac->get_by_id($this->action_id);
+        global $sys;
+        $action = $sys->typ_lst->cng_act->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -258,9 +260,8 @@ class change_log_named extends change_log
      */
     private function field_code_id(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->code_id;
     }
 
@@ -269,9 +270,8 @@ class change_log_named extends change_log
      */
     private function field_description(): string
     {
-        global $cng_fld_cac;
-
-        $field = $cng_fld_cac->get($this->field_id);
+        global $sys;
+        $field = $sys->typ_lst->cng_fld->get($this->field_id);
         return $field->description;
     }
 
@@ -280,9 +280,8 @@ class change_log_named extends change_log
      */
     private function table_name(): string
     {
-        global $cng_tbl_cac;
-
-        $table = $cng_tbl_cac->get($this->table_id);
+        global $sys;
+        $table = $sys->typ_lst->cng_tbl->get($this->table_id);
         return $table->name;
     }
 

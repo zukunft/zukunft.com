@@ -38,7 +38,7 @@ PREPARE value_update_log_0010222_call FROM
        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_update_log_0010222
-       (1,
+       (3,
         1,
         5,
         1,

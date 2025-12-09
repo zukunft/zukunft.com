@@ -2,7 +2,7 @@
 
 /*
 
-    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
+    web/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
     ---------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,29 +29,38 @@
 
 */
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
-use html\rest_ctrl;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\system\back_trace;
-use html\user\user;
-use html\user\user_message;
-use shared\api;
-use shared\library;
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
 
-class change_log_list extends list_dsp
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+class change_log_list extends ListBase
 {
 
     /*
@@ -124,14 +133,77 @@ class change_log_list extends list_dsp
     {
         $lib = new library();
         $log_class = $lib->class_to_name(change_log_list::class);
-        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($log_class);
+        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $class = $lib->class_to_api_name($class);
         $data = [];
-        $data[api::URL_VAR_CLASS] = $class;
-        $data[api::URL_VAR_ID] = $id;
-        $data[api::URL_VAR_FIELD] = $fld;
-        $ctrl = new rest_ctrl();
+        $data[url_var::LOG_CLASS] = $class;
+        $data[url_var::ID] = $id;
+        $data[url_var::LOG_FIELD] = $fld;
+        $ctrl = new rest_call();
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+    }
+
+    /**
+     * if the change log list is empty fill it with the last changes
+     * to reduce the number of backend calls during user input
+     * @return bool
+     */
+    function load_fallback(): bool
+    {
+        $result = false;
+        if ($this->is_empty()) {
+            // TODO Prio 3 replace with an frequently generated preloaded list
+            $this->set_lst($this->last_changes()->lst());
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return change_log_list with the most often used phrases as a frontend fallback list
+     */
+    private function last_changes(): change_log_list
+    {
+        // TODO Prio 1 review
+        return new change_log_list();
+    }
+
+
+    /*
+     * filter
+     */
+
+    function filter(db_object $dbo): change_log_list
+    {
+        $lib = new library();
+        $result = new change_log_list();
+        $tbl_id_lst = $lib->ui_class_to_table_id_list($dbo::class);
+        foreach ($this->lst() as $chg) {
+            if (in_array($chg->table_id, $tbl_id_lst) ) {
+                if ($chg->row_id == $dbo->id()) {
+                    $result->add($chg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * list
+     */
+
+    /**
+     * show all changes of a named user sandbox object e.g. a word as table
+     * @param back_trace|null $back the back trace url for the undo functionality
+     * @return string the html code with all words of the list
+     */
+    function dsp(?back_trace $back = null, bool $condensed = false, bool $with_users = false): string
+    {
+        $html_text = '';
+        foreach ($this->lst() as $chg) {
+            $html_text .= $chg->dsp();
+        }
+        return $html_text;
     }
 
 
@@ -144,7 +216,7 @@ class change_log_list extends list_dsp
      * @param back_trace|null $back the back trace url for the undo functionality
      * @return string the html code with all words of the list
      */
-    function tbl(back_trace $back = null, bool $condensed = false, bool $with_users = false): string
+    function tbl(?back_trace $back = null, bool $condensed = false, bool $with_users = false): string
     {
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);

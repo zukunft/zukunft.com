@@ -40,7 +40,7 @@ PREPARE component_link_insert_log_110100100_user_call FROM
     'SELECT component_link_insert_log_110100100_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT component_link_insert_log_110100100_user
-       (1,
+       (3,
         1,
         16,
         'Start view',
