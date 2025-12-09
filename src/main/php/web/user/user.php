@@ -2,8 +2,8 @@
 
 /*
 
-    user_dsp.php - functions to create the HTML code to display the user setup and log information
-    ------------
+    web/user/user.php - functions to create the HTML code to display the user setup and log information
+    -----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,24 +29,49 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_PATH . 'json_fields.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+//include_once html_paths::PHRASE . 'term.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\html_base;
-use html\sandbox\db_object;
-use shared\const\views;
-use shared\enum\user_profiles;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class user extends db_object
 {
+
+    /*
+     * const
+     */
+
+    // TODO allow only admin users to add or change other users
+    // curl views
+    const string VIEW_ADD = views::USER_ADD;
+    const string VIEW_EDIT = views::USER_EDIT;
+    const string VIEW_DEL = views::USER_DEL;
+
+    // curl message id
+    const msg_id MSG_ADD = msg_id::USER_ADD;
+    const msg_id MSG_EDIT = msg_id::USER_EDIT;
+    const msg_id MSG_DEL = msg_id::USER_DEL;
+
 
     /*
      * object vars
@@ -54,12 +79,18 @@ class user extends db_object
 
     public ?string $name;
     public ?string $description;
+    // TODO Prio 0 deprecate
     public ?string $profile;
     // id of the user profile
     private int $profile_id;
     public ?string $email;
     public ?string $first_name;
     public ?string $last_name;
+    private ?string $password; // private to restrict the access to the unhashed password e.g. admin user can only overwrite it without seeing the old
+
+    // speed up cache
+    // the last term that the user has been looking at
+    public ?term $last_term = null;
 
 
     /*
@@ -81,36 +112,17 @@ class user extends db_object
         $this->email = null;
         $this->first_name = null;
         $this->last_name = null;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_profile_id(int $profile_id): void
-    {
-        $this->profile_id = $profile_id;
-    }
-
-    function profile_id(int $profile_id): int
-    {
-        return $this->profile_id;
-    }
-
-    function name(): string
-    {
-        return $this->name;
+        $this->last_term = null;
     }
 
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
         } else {
@@ -152,7 +164,46 @@ class user extends db_object
         } else {
             $this->last_name = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_profile_id(int $profile_id): void
+    {
+        $this->profile_id = $profile_id;
+    }
+
+    function profile_id(int $profile_id): int
+    {
+        return $this->profile_id;
+    }
+
+    function name(): string
+    {
+        return $this->name;
+    }
+
+    function description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
+    function last_term(): term|null
+    {
+        return $this->last_term;
+    }
+
+    // TODO restrict the access to the unhashed password
+    function password(): string
+    {
+        return $this->password;
     }
 
 
@@ -165,12 +216,12 @@ class user extends db_object
      */
     function is_admin(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -182,13 +233,13 @@ class user extends db_object
      */
     function is_system(): bool
     {
-        global $usr_pro_cac;
+        global $sys;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+            if ($this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::TEST)
+                or $this->profile_id == $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -218,11 +269,30 @@ class user extends db_object
      */
     function api_array(): array
     {
+        $vars = parent::api_array();
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->is_profile_valid()) {
+            $vars[json_fields::PROFILE_ID] = $this->profile_id;
+        }
+        $vars[json_fields::EMAIL] = $this->email;
+        $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::LAST_NAME] = $this->last_name;
+        // TODO Prio 1 check if password should be included and in which form
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
+
+    /*
+     * display
+     */
+
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::USER_ID): string
+    {
+        $html = new html_base();
+        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        return $html->ref($url, $this->name(), $this->description(), $style);
+    }
 
     /*
      * to review
@@ -236,15 +306,15 @@ class user extends db_object
         $html = new html_base();
         $result = ''; // reset the html code var
 
-        if ($this->id() > 0) {
+        if ($this->id > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
             $header = $html->text_h2('User "' . $this->name . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
+            $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
-            $detail_fields = $html->form_text("username", $this->name);
-            $detail_fields .= $html->form_text("email", $this->email);
-            $detail_fields .= $html->form_text("first name", $this->first_name);
-            $detail_fields .= $html->form_text("last name", $this->last_name);
+            $detail_fields = $html->form_text(url_var::USER, $this->name, msg_id::FORM_FIELD_USERNAME);
+            $detail_fields .= $html->form_text(url_var::EMAIL, $this->email, msg_id::FORM_FIELD_USER_EMAIL);
+            $detail_fields .= $html->form_text(url_var::USER_FIRST_NAME, $this->first_name, msg_id::FORM_FIELD_USER_FIRST_NAME);
+            $detail_fields .= $html->form_text(url_var::USER_LAST_NAME, $this->last_name, msg_id::FORM_FIELD_USER_LAST_NAME);
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
                 . $html->form(views::USER_EDIT, $hidden_fields . $detail_row)

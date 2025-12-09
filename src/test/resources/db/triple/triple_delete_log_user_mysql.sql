@@ -19,7 +19,7 @@ BEGIN
 END;
 
 SELECT triple_delete_log_user
-       (1,
+       (3,
         3,
         18,
         'mathematical constant',

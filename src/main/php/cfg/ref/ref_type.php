@@ -30,27 +30,29 @@
    
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
-use cfg\user\user;
-use shared\json_fields;
-use shared\types\api_type_list;
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class ref_type extends type_object
 {
     // list of the ref types that have a coded functionality
-    const WIKIDATA = "wikidata";
-    const WIKIPEDIA = "wikipedia";
+    const string WIKIDATA = "wikidata";
+    const string WIKIPEDIA = "wikipedia";
 
     // the url that can be used to receive data if the external key is added
     public ?string $url = null;
@@ -60,13 +62,13 @@ class ref_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to link code functionality to a list of references';
-    const FLD_ID = 'ref_type_id'; // name of the id field as const for other const
-    const FLD_URL_COM = 'the base url to create the urls for the assigned references';
-    const FLD_URL = 'base_url';
+    const string TBL_COMMENT = 'to link code functionality to a list of references';
+    const string FLD_ID = 'ref_type_id'; // name of the id field as const for other const
+    const string FLD_URL_COM = 'the base url to create the urls for the assigned references';
+    const string FLD_URL = 'base_url';
 
     // list of fields that are additional to the standard type fields used for the reference type
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
     );
 

@@ -4,6 +4,7 @@ PREPARE source_list_by_ids (bigint, bigint[]) AS
            s.user_id,
            s.source_name,
            s.code_id,
+           s.usage,
            CASE WHEN (u.source_name <> '' IS NOT TRUE) THEN s.source_name    ELSE u.source_name    END AS source_name,
            CASE WHEN (u.url         <> '' IS NOT TRUE) THEN s.url            ELSE u.url            END AS url,
            CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,

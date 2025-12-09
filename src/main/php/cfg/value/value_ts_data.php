@@ -30,24 +30,26 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-include_once MODEL_HELPER_PATH . 'db_object_no_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_type_list;
-use cfg\helper\db_object_no_id;
+include_once paths::MODEL_HELPER . 'db_object_no_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_no_id;
 use DateTime;
 
 class value_ts_data extends db_object_no_id
@@ -58,15 +60,15 @@ class value_ts_data extends db_object_no_id
      */
 
     // comment used for the database creation
-    const TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intra-day values';
-    const FLD_ID_COM = 'link to the value time series';
-    const FLD_TIME_COM = 'short name of the configuration entry to be shown to the admin';
-    const FLD_TIME = 'val_time';
-    const FLD_VALUE_COM = 'the configuration value as a string';
-    const FLD_VALUE = 'number';
+    const string TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intraday values';
+    const string FLD_ID_COM = 'link to the value time series';
+    const string FLD_TIME_COM = 'short name of the configuration entry to be shown to the admin';
+    const string FLD_TIME = 'val_time';
+    const string FLD_VALUE_COM = 'the configuration value as a string';
+    const string FLD_VALUE = 'number';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [value_time_series::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', self::FLD_TIME_COM],
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],

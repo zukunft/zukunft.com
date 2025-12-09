@@ -9,7 +9,7 @@
     ----
 
     test_exe_time    - show the execution time for the last test and create a warning if it took too long
-    test_dsp - simply to display the function test result
+    test_ui - simply to display the function test result
     test_show_db_id  - to get a database id because this may differ from instance to instance
 
     the extension of the test classes
@@ -49,256 +49,301 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once DB_PATH . 'sql_type.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once TEST_CONST_PATH . 'files.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_list;
-use cfg\config;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\element\element_list;
-use cfg\formula\fig_ids;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_list;
-use cfg\group\group;
-use cfg\helper\combine_named;
-use cfg\helper\combine_object;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change;
-use cfg\log\change_link;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\trm_ids;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_named;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\value\value_list;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\view\term_view;
-use cfg\word\triple;
-use cfg\word\triple_list;
-use cfg\word\word;
-use cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Exception;
-use html\component\component_exe as component_dsp;
-use html\formula\formula as formula_dsp;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\log\change_log_named as change_dsp;
-use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
-use html\rest_ctrl;
-use html\result\result as result_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\styles;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\enum\value_types;
-use shared\library;
-use shared\const\words;
-use shared\types\api_type;
-use shared\types\verbs;
-use const\files as test_files;
 
-// TODO activate
-//use html\group\group as group_dsp;
+include_once paths::SERVICE . 'config.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::REF . 'ref.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once test_paths::CONST . 'paths.php';
+include_once test_paths::CONST . 'files.php';
 
-// set all paths of the testing code
-const TEST_UNIT_PATH = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;               // for unit tests
-const TEST_UNIT_READ_PATH = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;     // for the unit tests with database read only
-const TEST_UNIT_DSP_PATH = TEST_UNIT_PATH . 'html' . DIRECTORY_SEPARATOR;           // for the unit tests that create HTML code
-const TEST_UNIT_HTML_PATH = TEST_PHP_PATH . 'unit_display' . DIRECTORY_SEPARATOR; // for the unit tests that create HTML code
-const TEST_UNIT_UI_PATH = TEST_PHP_PATH . 'unit_ui' . DIRECTORY_SEPARATOR;        // for the unit tests that create JSON messages for the frontend
-const TEST_UNIT_WRITE_PATH = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;  // for the unit tests that save to database (and cleanup the test data after completion)
-const TEST_UNIT_INT_PATH = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
-const TEST_DEV_PATH = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
+// TODO Prio 2 activate
+//use html\group\group as group_ui;
 
 
 // load the system config for testing
-include_once SERVICE_PATH . 'config.php';
+include_once paths::SERVICE . 'config.php';
 
 // load the other test utility modules (beside this base configuration module)
-include_once TEST_PHP_UTIL_PATH . 'create_test_objects.php';
-include_once TEST_PHP_UTIL_PATH . 'test_system.php';
-include_once TEST_PHP_UTIL_PATH . 'test_db_link.php';
-include_once TEST_PHP_UTIL_PATH . 'test_user.php';
-include_once TEST_PHP_UTIL_PATH . 'test_user_sandbox.php';
-include_once TEST_PHP_UTIL_PATH . 'test_api.php';
-include_once TEST_PHP_UTIL_PATH . 'test_cleanup.php';
+include_once test_paths::UTILS . 'test_system.php';
+include_once test_paths::UTILS . 'test_db_link.php';
+include_once test_paths::UTILS . 'test_user.php';
+include_once test_paths::UTILS . 'test_user_sandbox.php';
+include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 // load the unit testing modules
-include_once TEST_UNIT_PATH . 'all_unit_tests.php';
-include_once TEST_UNIT_PATH . 'lib_tests.php';
-include_once TEST_UNIT_PATH . 'math_tests.php';
-include_once TEST_UNIT_PATH . 'system_tests.php';
-include_once TEST_UNIT_PATH . 'pod_tests.php';
-include_once TEST_UNIT_PATH . 'user_tests.php';
-include_once TEST_UNIT_PATH . 'user_list_tests.php';
-include_once TEST_UNIT_PATH . 'sandbox_tests.php';
-include_once TEST_UNIT_PATH . 'type_tests.php';
-include_once TEST_UNIT_PATH . 'word_tests.php';
-include_once TEST_UNIT_PATH . 'word_list_tests.php';
-include_once TEST_UNIT_PATH . 'triple_tests.php';
-include_once TEST_UNIT_PATH . 'triple_list_tests.php';
-include_once TEST_UNIT_PATH . 'phrase_tests.php';
-include_once TEST_UNIT_PATH . 'phrase_list_tests.php';
-include_once TEST_UNIT_PATH . 'group_tests.php';
-include_once TEST_UNIT_PATH . 'group_list_tests.php';
-include_once TEST_UNIT_PATH . 'term_tests.php';
-include_once TEST_UNIT_PATH . 'term_list_tests.php';
-include_once TEST_UNIT_PATH . 'value_tests.php';
-include_once TEST_UNIT_PATH . 'value_list_tests.php';
-include_once TEST_UNIT_PATH . 'formula_tests.php';
-include_once TEST_UNIT_PATH . 'formula_list_tests.php';
-include_once TEST_UNIT_PATH . 'formula_link_tests.php';
-include_once TEST_UNIT_PATH . 'result_tests.php';
-include_once TEST_UNIT_PATH . 'result_list_tests.php';
-include_once TEST_UNIT_PATH . 'element_tests.php';
-include_once TEST_UNIT_PATH . 'element_list_tests.php';
-include_once TEST_UNIT_PATH . 'figure_tests.php';
-include_once TEST_UNIT_PATH . 'figure_list_tests.php';
-include_once TEST_UNIT_PATH . 'expression_tests.php';
-include_once TEST_UNIT_PATH . 'view_tests.php';
-include_once TEST_UNIT_PATH . 'term_view_tests.php';
-include_once TEST_UNIT_PATH . 'view_list_tests.php';
-include_once TEST_UNIT_PATH . 'component_tests.php';
-include_once TEST_UNIT_PATH . 'component_link_tests.php';
-include_once TEST_UNIT_PATH . 'component_list_tests.php';
-include_once TEST_UNIT_PATH . 'component_link_list_tests.php';
-include_once TEST_UNIT_PATH . 'verb_tests.php';
-include_once TEST_UNIT_PATH . 'source_tests.php';
-include_once TEST_UNIT_PATH . 'source_list_tests.php';
-include_once TEST_UNIT_PATH . 'ref_tests.php';
-include_once TEST_UNIT_PATH . 'language_tests.php';
-include_once TEST_UNIT_PATH . 'job_tests.php';
-include_once TEST_UNIT_PATH . 'change_log_tests.php';
-include_once TEST_UNIT_PATH . 'sys_log_tests.php';
-include_once TEST_UNIT_PATH . 'import_tests.php';
-include_once TEST_UNIT_PATH . 'db_setup_tests.php';
-include_once TEST_UNIT_PATH . 'api_tests.php';
+//include_once test_paths::UNIT . 'all_unit_tests.php';
+include_once test_paths::UNIT . 'lib_tests.php';
+include_once test_paths::UNIT . 'math_tests.php';
+include_once test_paths::UNIT . 'system_tests.php';
+include_once test_paths::UNIT . 'sql_tests.php';
+include_once test_paths::UNIT . 'pod_tests.php';
+include_once test_paths::UNIT . 'user_tests.php';
+include_once test_paths::UNIT . 'user_list_tests.php';
+include_once test_paths::UNIT . 'sandbox_tests.php';
+include_once test_paths::UNIT . 'type_tests.php';
+include_once test_paths::UNIT . 'horizontal_tests.php';
+include_once test_paths::UNIT . 'word_tests.php';
+include_once test_paths::UNIT . 'word_list_tests.php';
+include_once test_paths::UNIT . 'triple_tests.php';
+include_once test_paths::UNIT . 'triple_list_tests.php';
+include_once test_paths::UNIT . 'phrase_tests.php';
+include_once test_paths::UNIT . 'phrase_list_tests.php';
+include_once test_paths::UNIT . 'group_tests.php';
+include_once test_paths::UNIT . 'group_list_tests.php';
+include_once test_paths::UNIT . 'term_tests.php';
+include_once test_paths::UNIT . 'term_list_tests.php';
+include_once test_paths::UNIT . 'value_tests.php';
+include_once test_paths::UNIT . 'value_list_tests.php';
+include_once test_paths::UNIT . 'formula_tests.php';
+include_once test_paths::UNIT . 'formula_list_tests.php';
+include_once test_paths::UNIT . 'formula_link_tests.php';
+include_once test_paths::UNIT . 'result_tests.php';
+include_once test_paths::UNIT . 'result_list_tests.php';
+include_once test_paths::UNIT . 'element_tests.php';
+include_once test_paths::UNIT . 'element_list_tests.php';
+include_once test_paths::UNIT . 'figure_tests.php';
+include_once test_paths::UNIT . 'figure_list_tests.php';
+include_once test_paths::UNIT . 'expression_tests.php';
+include_once test_paths::UNIT . 'view_tests.php';
+include_once test_paths::UNIT . 'term_view_tests.php';
+include_once test_paths::UNIT . 'view_list_tests.php';
+include_once test_paths::UNIT . 'component_tests.php';
+include_once test_paths::UNIT . 'component_link_tests.php';
+include_once test_paths::UNIT . 'component_list_tests.php';
+include_once test_paths::UNIT . 'component_link_list_tests.php';
+include_once test_paths::UNIT . 'verb_tests.php';
+include_once test_paths::UNIT . 'source_tests.php';
+include_once test_paths::UNIT . 'source_list_tests.php';
+include_once test_paths::UNIT . 'ref_tests.php';
+include_once test_paths::UNIT . 'language_tests.php';
+include_once test_paths::UNIT . 'job_tests.php';
+include_once test_paths::UNIT . 'change_log_tests.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
+include_once test_paths::UNIT . 'import_tests.php';
+include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
-include_once TEST_UNIT_UI_PATH . 'all_ui_tests.php';
+//include_once test_paths::UNIT_UI . 'all_ui_tests.php';
+include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
+include_once test_paths::UNIT_UI . 'system_view_ui_tests.php';
+include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
+
+// load the unit testing modules for the api
+include_once test_paths::UNIT_API . 'api_tests.php';
 
 // load the unit testing modules with database read only
-include_once TEST_UNIT_READ_PATH . 'all_unit_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'system_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'sql_db_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'user_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'job_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'change_log_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'sys_log_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'word_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'word_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'triple_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'triple_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'verb_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'phrase_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'phrase_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'group_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'term_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'term_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'value_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'value_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'formula_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'formula_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'expression_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'element_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'view_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'view_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'component_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'component_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'source_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'ref_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'share_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'protection_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'language_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'export_read_tests.php';
+//include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
+include_once test_paths::UNIT_READ . 'system_read_tests.php';
+include_once test_paths::UNIT_READ . 'system_views_read_tests.php';
+include_once test_paths::UNIT_READ . 'sql_db_read_tests.php';
+include_once test_paths::UNIT_READ . 'user_read_tests.php';
+include_once test_paths::UNIT_READ . 'job_read_tests.php';
+include_once test_paths::UNIT_READ . 'change_log_read_tests.php';
+include_once test_paths::UNIT_READ . 'sys_log_read_tests.php';
+include_once test_paths::UNIT_READ . 'horizontal_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_ui_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'triple_read_tests.php';
+include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'verb_read_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_read_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'group_read_tests.php';
+include_once test_paths::UNIT_READ . 'term_read_tests.php';
+include_once test_paths::UNIT_READ . 'term_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'value_read_tests.php';
+include_once test_paths::UNIT_READ . 'value_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'formula_read_tests.php';
+include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'expression_read_tests.php';
+include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'view_read_tests.php';
+include_once test_paths::UNIT_READ . 'view_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'component_read_tests.php';
+include_once test_paths::UNIT_READ . 'component_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'source_read_tests.php';
+include_once test_paths::UNIT_READ . 'ref_read_tests.php';
+include_once test_paths::UNIT_READ . 'share_read_tests.php';
+include_once test_paths::UNIT_READ . 'protection_read_tests.php';
+include_once test_paths::UNIT_READ . 'language_read_tests.php';
+include_once test_paths::UNIT_READ . 'export_read_tests.php';
+include_once test_paths::UNIT_READ . 'type_lists_ui_tests.php';
 
 // load the testing functions that save data to the database
-include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'word_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'word_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'verb_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'triple_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'phrase_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'phrase_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'group_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'group_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'graph_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'term_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'value_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'source_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'ref_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'expression_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_link_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_trigger_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'result_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'element_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'element_group_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'job_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'view_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'view_link_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'component_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'component_link_write_tests.php';
+//include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'api_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'user_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'verb_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'triple_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'phrase_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'phrase_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'group_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'graph_tests.php';
+include_once test_paths::UNIT_WRITE . 'term_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'value_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'source_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'ref_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'expression_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_trigger_tests.php';
+include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
 
-include_once TEST_UNIT_WRITE_PATH . 'test_word_display.php';
-include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
+include_once test_paths::UNIT_WRITE . 'test_word_display.php';
+include_once test_paths::UNIT_WRITE . 'test_math.php';
 
 //
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
-include_once TEST_PHP_UTIL_PATH . 'format.php';
-include_once TEST_PHP_UTIL_PATH . 'level.php';
+//include_once test_paths::UTILS . 'all_tests.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 
 // load the integration test functions
-include_once TEST_UNIT_INT_PATH . 'test_import.php';
-include_once TEST_UNIT_INT_PATH . 'test_export.php';
+include_once test_paths::UNIT_INT . 'test_import.php';
+include_once test_paths::UNIT_INT . 'test_export.php';
 
 // load the test functions still in development
-include_once TEST_DEV_PATH . 'test_legacy.php';
+include_once test_paths::DEV . 'test_legacy.php';
 
 // TODO to be dismissed
-include_once WEB_USER_PATH . 'user_display_old.php';
+include_once html_paths::USER . 'user_display_old.php';
 
 
 /*
@@ -308,13 +353,13 @@ include_once WEB_USER_PATH . 'user_display_old.php';
 
 class test_base
 {
-    // the url which should be used for testing (maybe later https://test.zukunft.com/)
-    const URL = 'https://zukunft.com/';
+    // the url which should be used for testing (maybe later api::HOST_UAT)
+    const string URL = api::HOST_PROD;
 
-    const TEST_TYPE_CONTAINS = 'contains';
-    const TEST_TYPE_NOT = 'not';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
+    const string TEST_TYPE_CONTAINS = 'contains';
+    const string TEST_TYPE_NOT = 'not';
+    const string FILE_EXT = '.sql';
+    const string FILE_MYSQL = '_mysql';
 
 
     /*
@@ -322,7 +367,7 @@ class test_base
      */
 
     // add this to the object name to test if it can be renamed
-    const EXT_RENAME = ' renamed';
+    const string EXT_RENAME = ' renamed';
 
 
     /*
@@ -330,30 +375,36 @@ class test_base
      */
 
     // switch for the email testing
-    const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
+    const bool TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
     // max time expected for each function execution
-    const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
-    const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
-    const TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
-    const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
-    const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
-    const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
-    const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+    const float TIMEOUT_LIMIT = 0.03; // time limit for normal functions
+    const float TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
+    const float TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
+    const float TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
+    const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
+    const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+    const float TIMEOUT_TEST_INIT = 0.7;  // time limit to switch to a new test (maily to reset the timer)
+    // TODO Prio 1 reduce!
+    const float TIMEOUT_LOCALHOST = 1;  // max seconds that it should take to generate a view on localhost
 
-    const TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+    const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
-    public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_normal; // a user with the standard profile to test deny of admin functionality
+    public user $usr_signup; // the system user to add new users to the database
+    public user $usr_admin; // a user with the admin profile to test allow of admin functionality
+    public user $usr_system; // a user with the system profile to test allow of system functionality
+    public user $usr_dev; // a virtual development user that is allowed to set the code id
 
-    private float $start_time; // time when all tests have started
-    private float $exe_start_time; // time when the single test has started (end the end time of all tests)
+    private float $exe_start_time; // time when the test run has started (end the end time of all tests)
+    private float $section_start_time; // time when the test section has been started
 
     // the counter of the error for the summery
     private int $error_counter;
@@ -363,10 +414,13 @@ class test_base
     public string $name;
     public string $resource_path;
 
-    private int $seq_nbr;
+    // list with all prepared sql queries to check if the name is unique
+    public array $unique_sql_names;
 
-    public format $format = format::TEXT;
-    public level $level = level::TIMEOUT;
+    public int $seq_nbr;
+
+    public text_log_format $format = text_log_format::TEXT;
+    public text_log_level $level = text_log_level::TIMEOUT;
 
 
     function __construct()
@@ -374,13 +428,15 @@ class test_base
         global $cfg;
 
         // init the times to be able to detect potential timeouts
-        $this->start_time = microtime(true);
-        $this->exe_start_time = $this->start_time;
+        $this->exe_start_time = microtime(true);
+        $this->section_start_time = microtime(true);
 
         // reset the error counters
         $this->error_counter = 0;
         $this->timeout_counter = 0;
         $this->total_tests = 0;
+
+        $this->unique_sql_names = [];
 
         $this->seq_nbr = 0;
 
@@ -388,7 +444,7 @@ class test_base
         $this->resource_path = '';
 
         // load the test config
-        //$this->format = format::from($cfg->get_by([words::TEST, triples::OUTPUT_FORMAT]));
+        //$this->format = text_log_format::from($cfg->get_by([words::TEST, triples::OUTPUT_FORMAT]));
         //$this->level = level::from($cfg->get_by([words::TEST, words::LEVEL]));
     }
 
@@ -400,19 +456,37 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user();
-        $this->usr1->load_by_name(user::SYSTEM_TEST_NAME);
+        $this->usr1->load_by_name(users::SYSTEM_TEST_NAME);
 
         $this->usr2 = new user();
-        $this->usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
+        $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
 
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(user::SYSTEM_TEST_ADMIN_NAME);
+        $this->usr_admin->load_by_name(users::SYSTEM_TEST_ADMIN_NAME);
+
+        $this->usr_system = new user();
+        $this->usr_system->load_by_name(users::SYSTEM_NAME);
 
         $this->usr_normal = new user();
-        $this->usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
+        $this->usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
+
+        $this->usr_signup = new user();
+        $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
+
+        $t_usr = new test_users();
+        $this->usr_dev = $t_usr->user_dev();
 
     }
 
+
+    /*
+     * set and get
+     */
+
+    function start_time(): float
+    {
+        return $this->exe_start_time;
+    }
 
 
     /*
@@ -424,11 +498,82 @@ class test_base
      */
     function header(string $header_text): void
     {
-        if ($this->format == format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><br><h2>' . $this->time_stamp() . $header_text . '</h2><br>' . "\n";
+        global $sys;
+        global $log_txt;
+        $log_txt->header($header_text);
+
+        // reset the test timer to avoid timeouts due to a delay in previous tests
+        $new_start_time = microtime(true);
+        $since_start = $new_start_time - $this->section_start_time;
+        $exe_max_time = test_base::TIMEOUT_TEST_INIT;
+        if ($this->is_timeout($since_start, $exe_max_time)) {
+            $msg = $this->time_msg('in switch from previous test', $since_start, $exe_max_time);
+            $msg .= $this->duration_text($since_start);
+            $log_txt->echo_log($msg);
         }
+        $this->section_start_time = $new_start_time;
+    }
+
+    private function time_msg(
+        string $test_name,
+        float  $duration,
+        float  $exe_max_time
+    ): string
+    {
+        $msg = '';
+        if ($this->is_timeout($duration, $exe_max_time)) {
+            $msg .= $this->timeout_msg() . $test_name . ' ' . $this->timeout_explain($duration);
+            $this->timeout_counter++;
+        } else {
+            $msg .= $this->ok_msg($test_name);
+        }
+        return $msg;
+    }
+
+    private function timeout_msg(): string
+    {
+        $msg = '';
+        if ($this->format == text_log_format::TEXT) {
+            $msg .= 'timeout: ';
+        } else {
+            $msg .= '<p style="color:orange">timeout</p><p>';
+        }
+        return $msg;
+    }
+
+    private function timeout_explain(float $expected): string
+    {
+        global $sys;
+        return $sys->times->section_report($expected);
+    }
+
+    private function ok_msg(string $test_name): string
+    {
+        $msg = '';
+        if ($this->level == text_log_level::ALL) {
+            if ($this->format == text_log_format::TEXT) {
+                $msg .= 'ok ' . $test_name;
+            } else {
+                $msg .= '<p style="color:green">ok</p><p>' . $test_name;
+            }
+        }
+        return $msg;
+    }
+
+    private
+    function is_timeout(float $duration, float $exe_max_time): bool
+    {
+        if ($duration > $exe_max_time) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private
+    function duration_text(float $duration): string
+    {
+        return ', took ' . round($duration, 4) . ' seconds';
     }
 
     /**
@@ -436,17 +581,10 @@ class test_base
      */
     function subheader(string $header_text): void
     {
-        if ($this->format == format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><h3>' . $this->time_stamp() . $header_text . '</h3><br>' . "\n";
-        }
+        global $log_txt;
+        $log_txt->header($header_text);
     }
 
-    private function time_stamp(): string
-    {
-        return sprintf('%08.4f', microtime(true) - $this->start_time, 4) . ' ';
-    }
 
     /**
      * check if the test result is as expected and display the test result to an admin user
@@ -454,8 +592,8 @@ class test_base
      * TODO the first parameter should almost always be $ts . $test_name
      *
      * @param string $test_name (unique) description of the test
-     * @param string|array|null $result the actual result
-     * @param string|array|null $target the expected result
+     * @param string|bool|array|null $result the actual result
+     * @param string|bool|array|null $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
@@ -532,13 +670,14 @@ class test_base
      */
     function assert_true(
         string $msg,
-        bool   $result
+        bool   $result,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         if ($result === true) {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, 'true', 'false', '');
+            return $this->assert_dsp($msg, false, 'true', 'false', '', $exe_max_time);
         }
     }
 
@@ -579,7 +718,7 @@ class test_base
         if ($err_message == '') {
             return true;
         } else {
-            return $this->assert_dsp($msg . $err_message, false, $target_str, $result_str, $err_message);
+            return $this->assert_dsp($msg . ' ' . $err_message, false, $target_str, $result_str, $err_message);
         }
     }
 
@@ -606,7 +745,7 @@ class test_base
         if ($pos !== false) {
             $needle = $haystack;
         }
-        return $this->display(', ' . $msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needle, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -665,7 +804,7 @@ class test_base
         }
         // the array keys are not relevant if only a few elements should be checked
         $haystack = array_values(array_intersect($haystack, $needles));
-        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
     /**
@@ -693,7 +832,7 @@ class test_base
             $needles = $needle;
         }
         $haystack = array_diff($needles, $haystack);
-        return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
+        return $this->assert($msg, $haystack, $needles, $exe_max_time, $comment, $test_type);
     }
 
 
@@ -731,11 +870,11 @@ class test_base
     function assert_export_reload(string $test_name, object $usr_obj): bool
     {
         $lib = new library();
-        $original_json = $usr_obj->export_json();
-        $db_obj = clone $usr_obj;
+        $original_json = $usr_obj->export_json([]);
+        $db_obj = $usr_obj->clone_all();
         $db_obj->reset();
         $db_obj->load_by_id($usr_obj->id());
-        $recreated_json = $db_obj->export_json();
+        $recreated_json = $db_obj->export_json([]);
         $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
@@ -755,9 +894,9 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = api::HOST_TESTING . api::URL_API_PATH . 'json';
+        $url = api::HOST_TESTING . url_var::API_PATH . 'json';
         $data = array($fld => $id);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
@@ -774,7 +913,7 @@ class test_base
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
-     * @param data_object_dsp|null $cfg the context that should be used to create the view
+     * @param data_object_ui|null $cfg the context that should be used to create the view
      *                              which can be fixed test data for stable test results
      * @return bool true if the generated view matches the expected
      */
@@ -783,10 +922,12 @@ class test_base
         user             $usr,
         db_object_seq_id $dbo,
         int              $id = 0,
-        ?data_object_dsp $cfg = null
+        ?data_object_ui $cfg = null
     ): bool
     {
         $lib = new library();
+        $tl = new test_lib();
+        $usr_msg_ui = new user_message_ui();
 
         // create the filename of the expected result
         $folder = '';
@@ -794,21 +935,25 @@ class test_base
         $class = '';
         if ($dbo != null) {
             $class = $lib->class_to_name($dbo::class);
-            $folder = $class . '/';
+            $folder = $class . DIRECTORY_SEPARATOR;
             if ($id > 0) {
                 $dbo_name = '_' . $class;
                 $dbo_name .= '_' . $id;
             }
         }
-        $filename = 'views/' . $folder . $dsp_code_id . $dbo_name;
+        $file_path = test_paths::HTML . test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id);
-        $msk->load_components();
+        if ($msk->id() > 0) {
+            $msk->load_components();
+        } else {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
 
         // create the api message that send to the frontend
-        $api_msg = $msk->api_json();
+        $api_msg = $msk->api_json([api_type::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the database object json to the api message
             // to send only one message to the frontend
@@ -816,89 +961,86 @@ class test_base
         }
         $dbo_api_msg = $dbo->api_json();
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
-        $dbo_dsp = $this->frontend_obj_from_backend_object($dbo);
+        $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($id != 0) {
-            $dbo_dsp->set_from_json($dbo_api_msg);
+            $dbo_dsp->set_from_json($dbo_api_msg, $usr_msg_ui);
         }
 
         // create the view for the user
-        $dsp_html = new view_dsp;
-        $dsp_html->set_from_json($api_msg);
+        $dsp_html = new view_ui;
+        $dsp_html->set_from_json($api_msg, $usr_msg_ui);
+        if ($cfg == null) {
+            $ui = new frontend('');
+            $ui->load_cache();
+            $cfg = new data_object_ui();
+            $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+        }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 
         // check if the created view matches the expected view
-        return $this->assert_html(
+        return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
-            $actual, $filename);
-    }
-
-    /**
-     * the frontend object related to the given backend object
-     * @param db_object_seq_id|sandbox_value $dbo the given backend object
-     * @return false|db_object_dsp the corresponding frontend object
-     */
-    private function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
-    {
-        return match ($dbo::class) {
-            word::class => new word_dsp(),
-            verb::class => new verb_dsp(),
-            triple::class => new triple_dsp(),
-            source::class => new source_dsp(),
-            ref::class => new ref_dsp(),
-            value::class => new value_dsp(),
-            //group::class => new group_dsp(),
-            formula::class => new formula_dsp(),
-            result::class => new result_dsp(),
-            view::class => new view_dsp(),
-            component::class => new component_dsp(),
-            default => false,
-        };
+            $actual, $file_path);
     }
 
     /**
      * check if an object json sample export file can be recreated by
      * importing the object and recreating the json with the export function
+     * TODO Prio 1 add user_message parameter
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
+     * @param user|null $usr with the user who have requested the test
      * @return bool true if the json has no relevant differences
      */
-    function assert_json_file(object $usr_obj, string $json_file_name): bool
+    function assert_json_file(
+        object $usr_obj,
+        string $json_file_name,
+        ?user $usr = null
+    ): bool
     {
-        global $usr_pro_cac;
-        $lib = new library();
+        if ($usr == null) {
+            $usr = $usr_obj->user();
+        }
+        $usr_msg = new user_message($usr);
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        if ($usr_obj::class == user::class) {
-            $usr_obj->import_obj($json_in, $usr_pro_cac->id(user_profiles::ADMIN), $this);
+        // TODO move to a lib function that fills an usr_msg object
+        if ($json_in !== null) {
+            $dto = new data_object($usr_msg->usr);
+            $usr_obj->import_obj($json_in, $usr_msg, $dto);
+            //$this->set_id_for_unit_tests($usr_obj);
+            $json_ex = $usr_obj->export_json([], false);
+            // TODO remove, for faster debugging only
+            $json_in_txt = json_encode($json_in);
+            $json_ex_txt = json_encode($json_ex);
+            return $this->assert_json($this->name . 'import check name', $json_ex, $json_in);
         } else {
-            $usr_obj->import_obj($json_in, $this);
+            log_err('json decode of file ' . $json_file_name . ' failed');
+            return false;
         }
-        $this->set_id_for_unit_tests($usr_obj);
-        $json_ex = $usr_obj->export_json(false);
-        // TODO remove, for faster debugging only
-        $json_in_txt = json_encode($json_in);
-        $json_ex_txt = json_encode($json_ex);
-        return $this->assert_json($this->name . 'import check name', $json_in, $json_ex);
     }
 
     /**
      * check if an object can be recreated by exporting the object and
      * recreating the object based on the export json
      *
-     * @param object $usr_obj the object which json im- and export functions should be tested
+     * @param object $obj the object which json im- and export functions should be tested
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return bool true if the object has no relevant differences
      */
-    function assert_ex_and_import(object $usr_obj): bool
+    function assert_ex_and_import(object $obj, user $usr_req): bool
     {
-        $json_before = $usr_obj->api_json([api_type::TEST_MODE]);
-        $json_ex = $usr_obj->export_json(false);
-        $new_obj = clone $usr_obj;
+        $usr_msg = new user_message($usr_req);
+        $json_before = $obj->api_json([api_type::TEST_MODE]);
+        $json_ex = $obj->export_json([], false);
+        $new_obj = $obj->clone_all();
         $new_obj->reset();
-        $new_obj->import_obj($json_ex, $this);
-        $json_after = $usr_obj->api_json([api_type::TEST_MODE]);
+        $dto = new data_object($usr_req);
+        $new_obj->import_obj($json_ex, $usr_msg, $dto);
+        $json_after = $obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
-            'ex- and import test for ' . $usr_obj::class, $json_after, $json_before);
+            'ex- and import test for ' . $obj::class, $json_after, $json_before);
     }
 
     /**
@@ -922,7 +1064,11 @@ class test_base
         }
         $result_str = json_encode($result);
         $target_str = json_encode($target);
-        return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        if ($result_str == $target_str) {
+            return true;
+        } else {
+            return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        }
     }
 
     /**
@@ -939,20 +1085,93 @@ class test_base
     }
 
     /**
+     * remove the fields from a json array that are send to the frontend
+     * but are not send back to the backend
+     * because they should not be updated via api
+     * e.g. the usage which is calculated by a backend job
+     * @param array $json_to_ui the array with the unidirectional fields
+     * @return array the array without the unidirectional fields
+     */
+    function json_remove_fields_only_to_ui(array $json_to_ui): array
+    {
+        $json_to_db = $json_to_ui;
+        foreach ($json_to_db as $key => $value) {
+            if (is_array($value)) {
+                $json_to_db[$key] = $this->json_remove_fields_only_to_ui($value);
+            } else {
+                foreach (json_fields::UNIDIRECTIONAL as $uni_fld) {
+                    if (array_key_exists($uni_fld, $json_to_db)) {
+                        unset($json_to_db[$uni_fld]);
+                    }
+                }
+            }
+        }
+
+        return $json_to_db;
+    }
+
+    /**
+     * remove the fields from a json array that are send to the frontend
+     * but are not send back to the backend
+     * because they should not be updated via api
+     * e.g. the usage which is calculated by a backend job
+     * @param array $json_to_ui the array with the unidirectional fields
+     * @return array the array without the unidirectional fields
+     */
+    function json_remove_component_fields(array $json_to_ui): array
+    {
+        $json_to_db = $json_to_ui;
+        if (array_key_exists(json_fields::LINK_ID, $json_to_db)) {
+            if (array_key_exists(json_fields::ID, $json_to_db)) {
+                $json_to_db[json_fields::COMPONENT_ID] = $json_to_db[json_fields::ID];
+                $json_to_db[json_fields::ID] = $json_to_db[json_fields::LINK_ID];
+            }
+            unset($json_to_db[json_fields::LINK_ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $json_to_db)) {
+            unset($json_to_db[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $json_to_db)) {
+            unset($json_to_db[json_fields::DESCRIPTION]);
+        }
+        if (array_key_exists(json_fields::TYPE, $json_to_db)) {
+            unset($json_to_db[json_fields::TYPE]);
+        }
+
+        return $json_to_db;
+    }
+
+    /**
      * check if the created html matches a defined html file
      *
      * @param string $test_name the description of the test
      * @param string $body the body of a html page
-     * @param string $filename the filename of the expected html page
+     * @param string $file_path the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html(string $test_name, string $body, string $filename): bool
+    function assert_html_body(string $test_name, string $body, string $file_path): bool
     {
         $lib = new library();
 
         $actual = $this->html_page($body);
-        $expected = $this->file('web/html/' . $filename . '.html');
+        $expected = $this->file($file_path . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
+    }
+
+    /**
+     * check if the created html matches a defined html file
+     *
+     * @param string $test_name the description of the test
+     * @param string $html the html code of a html page
+     * @param string $file_path the filename of the expected html page
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html_page(string $test_name, string $html, string $file_path): bool
+    {
+        $lib = new library();
+
+        $expected = $this->file($file_path . test_files::HTML);
+        return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
     }
 
 
@@ -1177,13 +1396,21 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1194,23 +1421,36 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj must be the same object as the $usr_obj but with the values from the database before the update
      * @param array $sql_type_array the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_creator $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
+    function assert_sql_update(
+        sql_creator                                                     $sc,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id      $usr_obj,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
+        array                                                           $sql_type_array = []
+    ): bool
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1230,13 +1470,21 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1938,10 +2186,11 @@ class test_base
     function assert_qp(
         sql_par $qp,
         string  $dialect = '',
-        string  $test_name = ''
+        string  $test_name = '',
+        string  $file_name_ext = ''
     ): bool
     {
-        $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
+        $expected_sql = $this->assert_sql_expected($qp->name . $file_name_ext, $dialect);
         $result = $this->assert_sql(
             $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
             $qp->sql . $qp->call_sql . ' ' . $qp->call,
@@ -1950,7 +2199,7 @@ class test_base
 
         // check if the prepared sql name is unique always based on the  Postgres query parameter creation
         if ($dialect == sql_db::POSTGRES) {
-            $result = $this->assert_sql_name_unique($qp->name);
+            $result = $this->assert_sql_name_unique($qp->name . $file_name_ext);
         }
 
         return $result;
@@ -2017,12 +2266,10 @@ class test_base
      */
     function assert_sql_name_unique(string $sql_name): bool
     {
-        global $sql_names;
-
         $result = false;
-        if (!in_array($sql_name, $sql_names)) {
+        if (!in_array($sql_name, $this->unique_sql_names)) {
             $result = true;
-            $sql_names[] = $sql_name;
+            $this->unique_sql_names[] = $sql_name;
         }
         return $this->assert('is SQL name ' . $sql_name . ' unique', $result, true);
     }
@@ -2069,6 +2316,30 @@ class test_base
     /*
      * db load
      */
+
+    /**
+     * check the object loading by id and name
+     *
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param int|string $id the id of the object if not 1
+     * @return bool the load object to use it for more tests
+     */
+    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    {
+        // check the loading via id and check if the id has been mapped
+        $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
+        $usr_obj->reset();
+        $usr_obj->id = 0;
+        // TODO Prio 0 add test view relation
+        //      but first finish the dto based import
+        //      and before that use the global $cac as the main backend cache var
+        if ($usr_obj::class == view_relation::class) {
+            return true;
+        } else {
+            $usr_obj->load_by_id($id);
+            return $this->assert($test_name, $usr_obj->id(), $id);
+        }
+    }
 
     /**
      * check the object loading by id and name
@@ -2237,9 +2508,10 @@ class test_base
      */
     function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
+        $usr_msg = new user_message($this->usr1);
         // add the named object and remember the name
         $name = $sbx->name();
-        $sbx->save($use_func);
+        $sbx->save($usr_msg, $use_func);
         $sbx->reset();
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2259,7 +2531,7 @@ class test_base
         // update the name
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
-            $sbx->save($use_func);
+            $sbx->save($usr_msg, $use_func);
             $sbx->reset();
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2277,7 +2549,7 @@ class test_base
 
         if ($result) {
             // delete the name
-            $sbx->del($use_func);
+            $sbx->del($usr_msg, $use_func);
         }
 
         // check the log
@@ -2303,8 +2575,9 @@ class test_base
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
 
-        // check for leftovers
-        $this->write_named_cleanup($sbx, $name, true);
+        // check for leftovers but protect the object to add by using a clone
+        $del_sbx = clone $sbx;
+        $this->write_named_cleanup($del_sbx, $name, true);
 
         // remember mandatory fields
         if ($sbx::class == formula::class) {
@@ -2341,7 +2614,10 @@ class test_base
 
         // check if no relevant fields a lost during save and reload
         if ($result) {
-            $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
+            // remove the fields from the api json towards the frontend that are not expected to be send back to the backend
+            $api_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($api_json, true)));
+            $sbx_json_ex = json_encode($this->json_remove_fields_only_to_ui(json_decode($sbx->api_json(), true)));
+            $result = $this->assert('API json based compare', $sbx_json_ex, $api_json_ex);
         }
 
         // check if the system reports correctly, that no one has changed the named object
@@ -2427,8 +2703,8 @@ class test_base
             $result = $this->write_named_del($sbx, $this->usr2);
         }
         if ($result) {
-            // ... the description will be empty for user 2
-            $result = $this->write_named_check_description($sbx, $this->usr2, '');
+            // ... for user 2 the object is excluded
+            $result = $this->write_named_check_excluded($sbx, $this->usr2);
         }
         if ($result) {
             // ... but still exist for user 1
@@ -2468,7 +2744,7 @@ class test_base
          * owner change
          */
 
-        // restore mandetory fields
+        // restore mandatory fields
         if ($sbx::class == formula::class) {
             $sbx->usr_text = $usr_text;
             $sbx->ref_text = $ref_text;
@@ -2525,6 +2801,100 @@ class test_base
 
         return $result;
     }
+
+    /**
+     * test save to db of non sandbox objects
+     *
+     * @param user|ip_range|pod|job $obj a non sandbox object that has prepared write functions like the user
+     * @param string $key target name of the object
+     * @return bool
+     */
+    function assert_write(user|ip_range|pod|job $obj, string $key, string $key_name): bool
+    {
+
+        // check for leftovers
+        $del_obj = clone $obj;
+        $this->write_cleanup($del_obj, $key, $key_name);
+
+        /*
+         * are all fields saved?
+         */
+
+        // add the named object by the test user
+        //$id = $this->write_add($obj, $this->usr1);
+        $id = 0;
+
+        // remember the api json for later compare
+        $api_json = $obj->api_json();
+
+        // check the log
+        if ($id != 0) {
+            $result = $this->write_log($obj, $this->usr1, $obj->key_field(), $key, msg_id::LOG_ADD->value);
+        } else {
+            $result = false;
+        }
+
+        /*
+        // check reset
+        if ($result) {
+            $result = $this->assert_reset($obj);
+        }
+
+        // check if user 1 can load the added object
+        if ($result) {
+            $result = $this->assert_load($obj, $name, $id);
+        }
+
+        // check if no relevant fields a lost during save and reload
+        if ($result) {
+            $result = $this->assert('API json based compare', $obj->api_json(), $api_json);
+        }
+
+        // check if the system reports correctly, that no one has changed the named object
+        if ($result) {
+            $result = $this->write_named_changed_by_noone($obj);
+        }
+        */
+
+
+        /*
+         * rename?
+         */
+
+        /*
+        // check renaming the added object
+        $new_name = '';
+        if ($result) {
+            $new_name = $this->write_rename($obj, $id, $this->usr1);
+        }
+
+        // check the log
+        if ($id != 0) {
+            $result = $this->write_log($obj, $obj->key_field(), $new_name, msg_id::LOG_UPDATE->value, $name);
+        } else {
+            $result = false;
+        }
+        */
+
+
+        /*
+         * all delete
+         */
+
+        /*
+        if ($result) {
+            // if the owner also deletes it
+            $result = $this->write_del($obj, $this->usr1);
+        }
+         */
+
+
+        // fallback delete
+        $this->write_cleanup($obj, $obj->unique_value(), $obj->key_field());
+
+        return $result;
+    }
+
 
     /**
      * test the link user sandbox object by adding it
@@ -2724,6 +3094,28 @@ class test_base
      */
 
     /**
+     * remove all remaining test rows of a normal (not user sandbox) object
+     *
+     * @param user|db_id_object_non_sandbox $obj the named user sandbox object e.g. a user
+     * @param string $key the unique key of the object that should be removed
+     * @param string $key_name the name unique key of the object that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete cleanup of previous tests
+     * @return void
+     */
+    function write_cleanup(user|db_id_object_non_sandbox $obj, string $key, string $key_name, bool $check = false): void
+    {
+        $usr_msg = new user_message();
+        $obj->load_by_key($key, $key_name);
+        if ($check) {
+            if ($obj->id() != 0) {
+                log_warning('Unexpected cleanup of ' . $obj->dsp_id());
+            }
+        }
+        $obj->del($usr_msg, $this->usr_admin);
+    }
+
+    /**
      * remove all remaining test rows of a named user sandbox object
      *
      * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
@@ -2750,13 +3142,15 @@ class test_base
      *                    e.g. to detect incomplete cleanup of previous tests
      * @return void
      */
-    private function write_named_cleanup_one(
+    private
+    function write_named_cleanup_one(
         sandbox_named|sandbox_link_named|phrase $sbx,
         user                                    $usr,
         string                                  $name,
         bool                                    $check = false
     ): void
     {
+        $usr_msg = new user_message($usr);
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
         if ($check) {
@@ -2764,13 +3158,13 @@ class test_base
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
         }
-        $sbx->del();
+        $sbx->del($usr_msg);
     }
 
     /**
      * remove all remaining link test rows without test
      *
-     * @param sandbox_link $lnk the link objecz that should be deleted
+     * @param sandbox_link $lnk the link object that should be deleted
      * @param int $id the id of the link object
      * @param bool $check if true an error message is created if the object needs to be removed
      * *                    e.g. to detect incomplete cleanup of previous tests
@@ -2778,6 +3172,7 @@ class test_base
      */
     function write_link_cleanup(sandbox_link $lnk, int $id, bool $check = false): void
     {
+        $usr_msg = new user_message($this->usr1);
         $lnk->set_user($this->usr1);
         $lnk->load_by_id($id);
         if ($check) {
@@ -2785,7 +3180,7 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del();
+        $lnk->del($usr_msg);
         $lnk->set_user($this->usr2);
         $lnk->load_by_id($id);
         if ($check) {
@@ -2793,13 +3188,39 @@ class test_base
                 log_err('Unexpected cleanup of ' . $lnk->dsp_id());
             }
         }
-        $lnk->del();
+        $lnk->del($usr_msg);
+        if (!$usr_msg->is_ok()) {
+            log_err('link cleanup failed due to ' . $usr_msg->all_message_text());
+        }
     }
 
 
     /*
      * write test internal support
      */
+
+    /**
+     * add a non sandbox object to the database by the given user
+     *
+     * @param user|ip_range $obj the object were the write db action should be tested
+     * @param user $usr the user who has requested the change
+     * @return int the id of the added object
+     */
+    private
+    function write_add(user|ip_range $obj, user $usr): int
+    {
+        $lib = new library();
+        $usr_msg = new user_message($usr);
+        $class = $lib->class_to_name($obj::class);
+        $name = $obj->unique_value();
+        $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
+        // TODO maybe add if ($obj::class = user::class) {
+        if ($this->assert_true($test_name, $obj->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+            return $obj->id();
+        } else {
+            return 0;
+        }
+    }
 
     /**
      * add a named object to the database for the given user
@@ -2809,24 +3230,27 @@ class test_base
      * @param user $usr
      * @return int the id of the added object
      */
-    private function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
+    private
+    function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message($this->usr1);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
         $sbx->set_name($name);
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
         }
     }
 
-    private function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
+    private
+    function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -2839,17 +3263,18 @@ class test_base
         $sbx->set_tob($tob);
         $sbx->set_name($name);
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
         }
     }
 
-    private function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
+    private
+    function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
+        $usr_msg = new user_message($usr);
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
@@ -2865,12 +3290,44 @@ class test_base
             $sbx->set_tob($tob);
         }
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
             return 0;
         }
+    }
+
+    /**
+     * check if changing a normal object has been logged correctly
+     *
+     * @param user|db_id_object_non_sandbox $sbx
+     * @param string $fld
+     * @param string $name
+     * @param string $action
+     * @param string|null $old_name
+     * @return bool
+     */
+    private
+    function write_log(
+        user|db_id_object_non_sandbox $sbx,
+        user                          $usr_req,
+        string                        $fld,
+        string                        $name,
+        string                        $action,
+        ?string                       $old_name = ''
+    ): bool
+    {
+        $lib = new library();
+        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
+        $target = $usr_req->name() . ' ' . $action . ' "';
+        if ($action == msg_id::LOG_UPDATE->value) {
+            $target .= $old_name . '" to "' . $name . '"';
+        } else {
+            $target .= $name . '"';
+        }
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
+        return $this->assert($test_name, $result, $target);
     }
 
     /**
@@ -2883,7 +3340,8 @@ class test_base
      * @param string|null $old_name
      * @return bool
      */
-    private function write_named_log(
+    private
+    function write_named_log(
         sandbox_named|sandbox_link_named $sbx,
         string                           $fld,
         string                           $name,
@@ -2904,7 +3362,8 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_named_link_log(
+    private
+    function write_named_link_log(
         triple $lnk,
         string $action
     ): bool
@@ -2923,7 +3382,8 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_link_log(
+    private
+    function write_link_log(
         sandbox_link $lnk,
         string       $action
     ): bool
@@ -2950,8 +3410,10 @@ class test_base
      * @param user $usr
      * @return string
      */
-    private function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
+    private
+    function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
     {
+        $usr_msg = new user_message($usr);
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
         $name = $sbx->name();
@@ -2960,8 +3422,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
         $sbx->set_name($new_name);
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             $sbx->reset();
             $sbx->load_by_name($new_name);
             if ($sbx->id() == $id) {
@@ -2978,8 +3439,10 @@ class test_base
         }
     }
 
-    private function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    private
+    function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
     {
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -2987,16 +3450,17 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, msg_id::LOG_ADD);
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_named_log($sbx, sql_db::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
         }
     }
 
-    private function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
+    private
+    function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $sbx->set_user($usr);
         $sbx->load_by_id($id);
@@ -3005,16 +3469,16 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $sbx->description = $new_description;
-        $result = $sbx->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
-                sandbox_named::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
     }
 
-    private function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
+    private
+    function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -3029,8 +3493,26 @@ class test_base
         }
     }
 
-    private function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
+    private
+    function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is excluded for user ' . $usr->dsp_id();
+        if ($this->assert_true($test_name, $sbx->is_excluded(), $this::TIMEOUT_LIMIT_DB)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private
+    function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
+    {
+        $usr_msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3039,8 +3521,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' order number to ' . $new_order_nbr;
         $lnk->order_nbr = $new_order_nbr;
-        $result = $lnk->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 formula_link::FLD_ORDER, $new_order_nbr, msg_id::LOG_UPDATE->value, $old_order_nbr);
         } else {
@@ -3048,7 +3529,8 @@ class test_base
         }
     }
 
-    private function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
+    private
+    function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3063,8 +3545,10 @@ class test_base
         }
     }
 
-    private function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
+    private
+    function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
+        $usr_msg = new user_message($usr);
         $id = $lnk->id();
         $lnk->set_user($usr);
         $lnk->load_by_id($id);
@@ -3073,16 +3557,16 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $lnk->description = $new_description;
-        $result = $lnk->save()->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $lnk->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                sandbox_named::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
     }
 
-    private function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
+    private
+    function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3097,7 +3581,8 @@ class test_base
         }
     }
 
-    private function write_link_log_field(
+    private
+    function write_link_log_field(
         sandbox_link $sbx,
         string       $fld,
         string       $name,
@@ -3118,8 +3603,10 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    private
+    function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
+        $usr_msg = new user_message($usr);
         $id = $sbx->id();
         $name = $sbx->name();
         $sbx->set_user($usr);
@@ -3127,16 +3614,15 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'del ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
-        $msg = $sbx->del();
-        $result = $msg->get_last_message();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert_true($test_name, $sbx->del($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, $sbx->name_field(), $name, msg_id::LOG_DEL->value);
         } else {
             return false;
         }
     }
 
-    private function write_named_changed_by_noone(
+    private
+    function write_named_changed_by_noone(
         sandbox_named|sandbox_link_named $sbx
     ): bool
     {
@@ -3150,7 +3636,8 @@ class test_base
         }
     }
 
-    private function write_named_check_changed_by(
+    private
+    function write_named_check_changed_by(
         sandbox_named|sandbox_link_named $sbx,
         user                             $usr
     ): bool
@@ -3160,7 +3647,8 @@ class test_base
         return $this->assert_contains($test_name, $usr_lst->names(), $usr->name());
     }
 
-    private function write_named_ownership(
+    private
+    function write_named_ownership(
         sandbox_named|sandbox_link_named $sbx,
         user                             $admin,
         user                             $usr
@@ -3192,25 +3680,28 @@ class test_base
         sandbox_list_named               $lst
     ): bool
     {
-        // convert to a key value array
-        $in_lst = [];
-        foreach ($id_lst as $item) {
-            $in_lst[$item[0]] = $item[1];
-        }
-        natcasesort($in_lst);
-        $names = array_values($in_lst);
+        natcasesort($id_lst);
+        $names = array_values($id_lst);
 
         // load list by the names to get the ids
-        $lst->load_by_names($names);
+        if ($sbx::class == view::class) {
+            $lst->load_by_code_ids($names);
+        } else {
+            $lst->load_by_names($names);
+        }
 
         // check
-        $db_lst = $lst->name_id_list();
+        if ($sbx::class == view::class) {
+            $db_lst = $lst->code_id_list();
+        } else {
+            $db_lst = $lst->name_id_list();
+        }
         natcasesort($db_lst);
 
         $result = '';
-        if ($db_lst != $in_lst) {
+        if ($db_lst != $id_lst) {
             $lib = new library();
-            $result = $lib->diff_msg($in_lst, $db_lst);
+            $result = $lib->diff_msg($id_lst, $db_lst);
             if ($result != '') {
                 log_warning($test_name . 'diff is:' . $result);
             }
@@ -3234,6 +3725,30 @@ class test_base
         return $this->assert($test_name, $api_json, '{"id":0}');
     }
 
+    /**
+     * check if the filling up an almost empty object matches the filled object
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars
+     * @return bool true if the api message matches
+     */
+    function assert_fill(
+        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled
+    ): bool
+    {
+
+        // create a virtual one-time system user e.g. to set the code id
+        $usr_sys = $this->user_system();
+
+        $lib = new library();
+        $class = $lib->class_to_name($empty::class);
+        $test_name = $class . ' fill empty object and test via api json';
+        $original_json = $filled->api_json([api_type::TEST_MODE], $usr_sys);
+        $empty->fill($filled, $usr_sys);
+        $filled_json = $empty->api_json([api_type::TEST_MODE], $usr_sys);
+        return $this->assert_json_string($test_name, $filled_json, $original_json);
+    }
+
 
     /*
      * type id
@@ -3241,8 +3756,8 @@ class test_base
 
     function assert_verb_id(string $code_id, int $id, string $test_name): int
     {
-        global $vrb_cac;
-        $vrb_is_id = $vrb_cac->id($code_id);
+        global $sys;
+        $vrb_is_id = $sys->typ_lst->vrb->id($code_id);
         if ($this->assert($test_name, $vrb_is_id, $id)) {
             return $vrb_is_id;
         } else {
@@ -3256,18 +3771,25 @@ class test_base
      */
 
     /**
-     * test if a integer is greater zero
+     * test if an integer is greater zero e.g. a valid database id
      *
+     * @param string $name (unique) description of the test
      * @param int $received an integer value that is expected to be greater zero
+     * @param float $exe_max_time the expected max time to create the result
      * @return bool true if the value is actually greater zero
      */
-    function assert_greater_zero(string $name, int $received): bool
+    function assert_greater_zero(
+        string $name,
+        int    $received,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
     {
-        $expected = 0;
         if ($received > 0) {
             $expected = $received;
+        } else {
+            $expected = 1;
         }
-        return $this->assert($name, $received, $expected);
+        return $this->assert($name, $received, $expected, $exe_max_time);
     }
 
     /**
@@ -3283,110 +3805,7 @@ class test_base
     }
 
     /**
-     * display the result of one test e.g. if adding a value has been successful
-     * should be replaced with the assert function
-     *
-     * @param string $test_name the message show to the admin / developer to identify the test
-     * @param string|array|null $target the expected result
-     * @param string|array|null $result the actual result
-     * @param float $exe_max_time the expected time to create the result to identify unexpected slow functions
-     * @param string $comment optional and additional information to explain the test
-     * @param string $test_type 'contains' to check only that the expected target is part of the actual result
-     * @return bool true if the test result is fine
-     */
-    function display(
-        string            $test_name,
-        string|array|null $target,
-        string|array|null $result,
-        float             $exe_max_time = self::TIMEOUT_LIMIT,
-        string            $comment = '',
-        string            $test_type = ''): bool
-    {
-
-        // init the test result vars
-        $lib = new library();
-        $msg = '';
-
-        // precheck
-        if ($target === null) {
-            $msg = 'target should not be null';
-        }
-        if ($result === null) {
-            $msg = 'result should not be null';
-        }
-
-        if ($msg == '') {
-            // do the compare depending on the type
-            if (is_string($result)) {
-                $result = $this->test_remove_color($result);
-            }
-            if ($test_type == self::TEST_TYPE_CONTAINS) {
-                $msg = $lib->explain_missing($result, $target);
-            } else {
-                $msg = $lib->diff_msg($result, $target);
-            }
-
-            // explain the check
-            if ($msg != '') {
-                if (is_array($target)) {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " should contain \"" . $lib->dsp_array($target) . "\"";
-                    } else {
-                        $msg .= " should be \"" . $lib->dsp_array($target) . "\"";
-                    }
-                } else {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " should contain \"" . $target . "\"";
-                    } else {
-                        $msg .= " should be \"" . $target . "\"";
-                    }
-                }
-                if ($result == $target) {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= " and it contains ";
-                    } else {
-                        $msg .= " and it is ";
-                    }
-                } else {
-                    if ($test_type == self::TEST_TYPE_CONTAINS) {
-                        $msg .= ", but ";
-                    } else {
-                        $test_name .= ", but it is ";
-                    }
-                }
-                if (is_array($result)) {
-                    if ($result != null) {
-                        if (is_array($result[0])) {
-                            $msg .= "\"";
-                            foreach ($result[0] as $result_item) {
-                                if ($result_item <> $result[0]) {
-                                    $msg .= ",";
-                                }
-                                $msg .= implode(":", $lib->array_flat($result_item));
-                            }
-                            $msg .= "\"";
-                        } else {
-                            $msg .= "\"" . $lib->dsp_array($result) . "\"";
-                        }
-                    }
-                }
-                if ($comment <> '') {
-                    $msg .= ' (' . $comment . ')';
-                }
-            }
-        }
-
-        if ($msg == '') {
-            $test_result = true;
-        } else {
-            $test_result = false;
-        }
-
-        return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
-    }
-
-    /**
-     * create the html code to display a unit test result
+     * create the html code to show a unit test result to the user or developer
      *
      * @param string $test_name the message that describes the test for the developer
      * @param bool $test_result true if the test is fine
@@ -3403,29 +3822,18 @@ class test_base
         string            $diff_msg = '',
         float             $exe_max_time = self::TIMEOUT_LIMIT): bool
     {
+        global $log_txt;
+
         // calculate the execution time
         $new_start_time = microtime(true);
-        $since_start = $new_start_time - $this->exe_start_time;
+        $since_start = $new_start_time - $this->section_start_time;
 
         // display the result
         $final_msg = '';
         if ($test_result) {
             // check if executed in a reasonable time and if the result is fine
-            if ($since_start > $exe_max_time) {
-                if ($this->format == format::TEXT) {
-                    $final_msg .= 'timeout ' . $test_name;
-                } else {
-                    $final_msg .= '<p style="color:orange">timeout</p><p>' . $test_name;
-                }
-                $this->timeout_counter++;
-            } else {
-                if ($this->level == level::ALL) {
-                    if ($this->format == format::TEXT) {
-                        $final_msg .= 'ok ' . $test_name;
-                    } else {
-                        $final_msg .= '<p style="color:green">ok</p><p>' . $test_name;
-                    }
-                }
+            $final_msg .= $this->time_msg($test_name, $since_start, $exe_max_time);
+            if (!$this->is_timeout($since_start, $exe_max_time)) {
                 $test_result = true;
             }
         } else {
@@ -3437,7 +3845,7 @@ class test_base
                 $lib = new library();
                 $target = $lib->dsp_array($target);
             }
-            if ($this->format == format::TEXT) {
+            if ($this->format == text_log_format::TEXT) {
                 $final_msg .= 'ERROR ' . $test_name . ': ' . "\n";
             } else {
                 $final_msg .= '<p style="color:red">ERROR</p>' . "\n";
@@ -3454,21 +3862,13 @@ class test_base
 
         // show the execution time
         if ($final_msg != '') {
-            $final_msg = $this->time_stamp() . $final_msg;
-            $final_msg .= ', took ';
-            $final_msg .= round($since_start, 4) . ' seconds';
-
-            // --- and finally display the test result
-            if ($this->format == format::HTML) {
-                $final_msg .= '</p>';
-            }
-            echo $final_msg;
-            echo "\n";
+            $final_msg .= $this->duration_text($since_start);
+            $log_txt->echo_log($final_msg);
         }
         flush();
 
         $this->total_tests++;
-        $this->exe_start_time = $new_start_time;
+        $this->section_start_time = $new_start_time;
 
         return $test_result;
     }
@@ -3489,7 +3889,7 @@ class test_base
         } else {
             $result = $target;
         }
-        return $this->display($test_text, $target, $result, $exe_max_time, $comment, 'contains');
+        return $this->assert($test_text, $result, $target, $exe_max_time, $comment, 'contains');
     }
 
 
@@ -3548,7 +3948,7 @@ class test_base
             echo $this->error_counter . ' errors<br>';
         }
         echo "<br>";
-        $since_start = microtime(true) - $this->start_time;
+        $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
         echo '<br>';
         echo '<br>';
@@ -3559,13 +3959,13 @@ class test_base
      */
     function dsp_result(): void
     {
+        global $sys;
         global $errors;
-        global $sys_times;
 
         echo "\n";
-        $since_start = microtime(true) - $this->start_time;
+        $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
-        echo ' (' . $sys_times->report($since_start) . ')';
+        echo ' (' . $sys->times->report($since_start) . ')';
         echo "\n";
         echo $this->total_tests . ' test cases';
         echo "\n";
@@ -3574,12 +3974,14 @@ class test_base
         echo $this->error_counter . ' test errors';
         echo "\n";
         echo $errors . ' internal errors';
+        echo "\n";
     }
 
     /**
      * @return int the next sequence number to simulate database auto increase for unit testing
      */
-    protected function next_seq_nbr(): int
+    public
+    function next_seq_nbr(): int
     {
         $this->seq_nbr++;
         return $this->seq_nbr;
@@ -3590,12 +3992,13 @@ class test_base
      * @param object $usr_obj
      * @return void
      */
-    private function set_id_for_unit_tests(object $usr_obj): void
+    private
+    function set_id_for_unit_tests(object $usr_obj): void
     {
         // set the id for simple db objects without related objects
         if ($usr_obj::class == user::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == word::class
             or $usr_obj::class == triple::class
@@ -3605,7 +4008,7 @@ class test_base
             or $usr_obj::class == source::class
             or $usr_obj::class == ref::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == value::class
             or $usr_obj::class == result::class) {
@@ -3638,7 +4041,8 @@ class test_base
      * @param value_base|result $val the value or result object that
      * @return void nothing because the value object a modified
      */
-    private function set_val_id_for_unit_tests(value_base|result $val): void
+    private
+    function set_val_id_for_unit_tests(value_base|result $val): void
     {
         if (!$val->is_id_set()) {
             $val->set_id($this->next_seq_nbr());
@@ -3663,14 +4067,16 @@ class test_base
      * @param formula $frm the formula object that
      * @return void nothing because the formula object a modified
      */
-    private function set_frm_id_for_unit_tests(formula $frm): void
+    private
+    function set_frm_id_for_unit_tests(formula $frm): void
     {
         if ($frm->id() == 0) {
-            $frm->set_id($this->next_seq_nbr());
+            $frm->id = $this->next_seq_nbr();
         }
     }
 
-    private function html_page(string $body): string
+    private
+    function html_page(string $body): string
     {
         $html = new html_base();
         return $html->header_test('test') . $body . $html->footer();
@@ -3694,7 +4100,7 @@ class test_base
         }
         $log = new change($this->usr1);
         $log->load_by_user($this->usr1);
-        $log_dsp = new change_dsp($log->api_json());
+        $log_dsp = new change_log_ui($log->api_json());
         return $log_dsp->dsp(true);
     }
 
@@ -3702,7 +4108,7 @@ class test_base
      * short text description of the
      * last change of the given named sandbox object and further
      * selected by the field and value if given
-     * @param sandbox|sandbox_multi $sbx the sandbox object that should be used to filter the changes
+     * @param sandbox|sandbox_multi|db_id_object_non_sandbox $sbx the sandbox object that should be used to filter the changes
      * @param string $fld the name if the field that should be used to filter the changes
      * @param int|string|null $id the field value if the given field name
      * @param bool $ex_time true if the change time should not be included in the text
@@ -3710,11 +4116,11 @@ class test_base
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_field(
-        sandbox|sandbox_multi $sbx,
-        string                $fld = '',
-        int|string|null       $id = null,
-        bool                  $ex_time = false,
-        bool                  $usr_only = false
+        sandbox|sandbox_multi|db_id_object_non_sandbox $sbx,
+        string                                         $fld = '',
+        int|string|null                                $id = null,
+        bool                                           $ex_time = false,
+        bool                                           $usr_only = false
     ): string
     {
         // TODO maybe use log_object?
@@ -3724,7 +4130,7 @@ class test_base
             $log = $sbx->log_object();
         }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
-        $log_dsp = new change_dsp($log->api_json());
+        $log_dsp = new change_log_ui($log->api_json());
         return $log_dsp->dsp($ex_time);
     }
 
@@ -3734,13 +4140,14 @@ class test_base
      */
 
     /**
+     * TODO Prio 1 make sure that all paths used here are a const from one of the three paths.php
      * @param string $test_resource_path the path of the file staring from the test resource path
      * @return string the content of the test resource file
      */
     function file(string $test_resource_path): string
     {
         $result = '';
-        $filepath = test_files::RESOURCE_PATH . $test_resource_path;
+        $filepath = test_paths::RESOURCE . $test_resource_path;
         if ($this->has_file($test_resource_path)) {
             $result = file_get_contents($filepath);
             if ($result === false) {
@@ -3758,7 +4165,23 @@ class test_base
      */
     function has_file(string $test_resource_path): bool
     {
-        return file_exists(test_files::RESOURCE_PATH . $test_resource_path);
+        return file_exists(test_paths::RESOURCE . $test_resource_path);
+    }
+
+
+    /*
+     * overwrites
+     */
+
+    /**
+     * @return user a user used for unit testing with the system profile
+     */
+    function user_system(): user
+    {
+        $usr = new user();
+        $usr->set(users::SYSTEM_ID, users::SYSTEM_NAME, users::SYSTEM_EMAIL);
+        $usr->set_profile(user_profiles::SYSTEM);
+        return $usr;
     }
 
 }
@@ -3768,11 +4191,13 @@ class test_base
 // testing functions to create the main time value
 // -----------------------------------------------
 
+// TODO Prio 0 review
 function zu_test_time_setup(test_cleanup $t): string
 {
     global $db_con;
 
     $cfg = new config();
+    $t_db = new test_db_load($t);
     $result = '';
     $this_year = intval(date('Y'));
     $prev_year = '';
@@ -3784,11 +4209,11 @@ function zu_test_time_setup(test_cleanup $t): string
         $end_year = $this_year + $test_years;
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
-            $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
+            $t_db->test_word(strval($this_year), null, $t->usr_system);
+            $wrd_lnk = $t_db->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
-                $t->test_triple($prev_year, verbs::FOLLOW, $this_year);
+                $t_db->test_triple($prev_year, verbs::FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }

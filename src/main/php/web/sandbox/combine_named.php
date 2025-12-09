@@ -32,14 +32,20 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'combine_object.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\rest_ctrl as api_dsp;
-use shared\json_fields;
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SANDBOX . 'combine_object.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class combine_named extends combine_object
 {
@@ -56,7 +62,7 @@ class combine_named extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -110,10 +116,11 @@ class combine_named extends combine_object
      */
     function plural(): ?string
     {
-        return $this->obj()?->plural();
+        return $this->obj()->get_plural();
     }
 
     /**
+     * TODO review and use only frontend objects
      * @param int|null $type_id the type id of the word, triple, formula or verb
      * @return void
      */
@@ -140,17 +147,19 @@ class combine_named extends combine_object
 
     /**
      * load the phrase by name via api
+     * TODO Prio 1 add user_message as parameter
      * @param string $name
      * @return bool
      */
     function load_by_name(string $name): bool
     {
         $result = false;
+        $usr_msg = new user_message();
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->api_mapper($json_body);
+            $this->api_mapper($json_body, $usr_msg);
             if ($this->obj_id() != 0) {
                 $result = true;
             }

@@ -5,7 +5,7 @@
     web/figure/figure_list.php - the display extension of the api figure list object
     --------------------------
 
-    to creat the HTML code to display a list of figures
+    to create the HTML code to display a list of figures
 
 
     This file is part of zukunft.com - calc with words
@@ -32,23 +32,25 @@
 
 */
 
-namespace html\figure;
+namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\figure\figure as figure_dsp;
-use html\sandbox\list_dsp;
-use html\user\user_message;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
-class figure_list extends list_dsp
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+
+class figure_list extends ListBase
 {
 
     /*
@@ -62,7 +64,7 @@ class figure_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new figure_dsp());
+        return parent::api_mapper_list($json_array, new figure());
     }
 
 
@@ -72,10 +74,10 @@ class figure_list extends list_dsp
 
     /**
      * add a figure to the list
-     * @param figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
+     * @param figure|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
      * @returns bool true if the figure has been added
      */
-    function add(figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(figure|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
         if (!in_array($to_add->id(), $this->id_lst())) {
@@ -125,23 +127,6 @@ class figure_list extends list_dsp
             $names[] = $fig->display_linked();
         }
         return $names;
-    }
-
-    /**
-     * @returns figure_list the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): figure_list
-    {
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst() as $val) {
-            if ($val != null) {
-                $val_dsp = $val->dsp_obj();
-                $lst_dsp[] = $val_dsp;
-            }
-        }
-
-        return new figure_list($lst_dsp);
     }
 
 }

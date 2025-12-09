@@ -33,25 +33,29 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-use cfg\component\component;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("view_edit");
+$app = new frontend();
+$db_con = $app->start("view_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -65,12 +69,12 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VIEW_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $msk->load_by_code_id(views::VIEW_ADD);
+    $back = $_GET[url_var::BACK] = '';
 
     // create the view object that the user can change
     $msk_edit = new view($usr);
-    $result .= $msk_edit->load_by_id($_GET[api::URL_VAR_ID]);
+    $result .= $msk_edit->load_by_id($_GET[url_var::ID]);
 
     // get the view id to adjust
     if ($msk_edit->id() <= 0) {
@@ -122,12 +126,12 @@ if ($usr->id() > 0) {
                 $cmp = new component($usr);
                 $cmp_name = $_GET['entry_name'];
                 $cmp->set_name($cmp_name);
-                $add_result = $cmp->save()->get_last_message();
+                $add_result = $cmp->save($usr_msg);
                 if ($add_result == '') {
                     $cmp->load_by_name($cmp_name);
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
-                        $cmp->save()->get_last_message();
+                        $cmp->save($usr_msg);
                         $order_nbr = $cmp->next_nbr($msk_edit->id());
                         $cmp->link($msk_edit, $order_nbr);
                     }
@@ -136,23 +140,23 @@ if ($usr->id() > 0) {
         }
 
         // if the save button has been pressed (an empty view name should never be saved; instead the view should be deleted)
-        $dsp_name = $_GET[api::URL_VAR_NAME];
+        $dsp_name = $_GET[url_var::NAME];
         if ($dsp_name <> '') {
 
 
             // get other field parameters that should be saved
-            if (isset($_GET[api::URL_VAR_NAME])) {
-                $msk_edit->set_name($_GET[api::URL_VAR_NAME]);
+            if (isset($_GET[url_var::NAME])) {
+                $msk_edit->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[api::URL_VAR_COMMENT])) {
-                $msk_edit->description = $_GET[api::URL_VAR_COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $msk_edit->description = $_GET[url_var::DESCRIPTION];
             }
             if (isset($_GET['type'])) {
                 $msk_edit->type_id = $_GET['type'];
             } //
 
             // save the changes
-            $upd_result = $msk_edit->save()->get_last_message();
+            $upd_result = $msk_edit->save($usr_msg);
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {
@@ -167,9 +171,9 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($back);
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get parameters that change only dsp_edit
             // if the user has requested to add another display component to this view, $add_cmp is greater than 0
@@ -179,7 +183,7 @@ if ($usr->id() > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $msk_edit_dsp = new view_dsp($msk_edit->api_json());
+            $msk_edit_dsp = new view_ui($msk_edit->api_json());
             $result .= $msk_edit_dsp->dsp_edit($add_cmp, $wrd, $back);
         }
     }
@@ -187,4 +191,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

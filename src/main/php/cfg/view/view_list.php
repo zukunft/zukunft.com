@@ -30,39 +30,46 @@
 
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\combine_named;
-use cfg\helper\type_list;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
-global $sys_msk_cac;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class view_list extends sandbox_list_named
 {
@@ -139,7 +146,7 @@ class view_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            view::FLD_TYPE,
+            view_db::FLD_TYPE,
             implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -147,6 +154,23 @@ class view_list extends sandbox_list_named
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of views by the names
+     * TODO use name_field() function to avoid overwrites
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array       $names,
+        string      $fld = view_db::FLD_NAME
+    ): sql_par
+    {
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**
@@ -161,10 +185,10 @@ class view_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(view::FLD_NAMES);
-        $sc->set_usr_fields(view::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
+        $sc->set_usr($this->user()->id);
+        $sc->set_fields(view_db::FLD_NAMES);
+        $sc->set_usr_fields(view_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(view_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -181,8 +205,8 @@ class view_list extends sandbox_list_named
         $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
-            view::FLD_ID,
-            view::FLD_ID);
+            view_db::FLD_ID,
+            view_db::FLD_ID);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -226,34 +250,44 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->user());
-            $usr_msg->add($msk->import_obj($dsp_json, $test_obj));
-            $this->add($msk);
+            if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
+                $this->add($msk);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * save all views of this list
      * TODO create one SQL and commit statement for faster execution
      *
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param import|null $imp the import object with the estimate of the total save time
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        $result = new user_message();
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()), $usr_msg);
+        // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
-            $result->add($msk->save());
+            if ($msk->has_components()) {
+                $msk->save_component_links($usr_msg);
+            }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
 }

@@ -29,48 +29,54 @@
   
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use shared\enum\change_actions;
-use shared\json_fields;
-use shared\library;
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class sys_log extends db_object_seq_id
 {
@@ -82,34 +88,34 @@ class sys_log extends db_object_seq_id
     // database and export JSON object field names
     // and comments used for the database creation
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'for system error tracking and to measure execution times';
-    const FLD_ID = 'sys_log_id';
-    const FLD_TIME_COM = 'timestamp of the creation';
-    const FLD_TIME = 'sys_log_time';
-    const FLD_TYPE_COM = 'the level e.g. debug, info, warning, error or fatal';
-    const FLD_TYPE = 'sys_log_type_id';
-    const FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
-    const FLD_FUNCTION = 'sys_log_function_id';
-    const FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
-    const FLD_TEXT = 'sys_log_text';
-    const FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
-    const FLD_DESCRIPTION = 'sys_log_description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
-    const FLD_TRACE = 'sys_log_trace';
-    const FLD_USER_COM = 'the id of the user who has caused the log entry';
-    const FLD_SOLVER_COM = 'user id of the user that is trying to solve the problem';
-    const FLD_SOLVER = 'solver_id';
+    const string TBL_COMMENT = 'for system error tracking and to measure execution times';
+    const string FLD_ID = 'sys_log_id';
+    const string FLD_TIME_COM = 'timestamp of the creation';
+    const string FLD_TIME = 'sys_log_time';
+    const string FLD_TYPE_COM = 'the level e.g. debug, info, warning, error or fatal';
+    const string FLD_TYPE = 'sys_log_type_id';
+    const string FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
+    const string FLD_FUNCTION = 'sys_log_function_id';
+    const string FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
+    const string FLD_TEXT = 'sys_log_text';
+    const string FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
+    const string FLD_DESCRIPTION = 'sys_log_description';
+    const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
+    const string FLD_TRACE = 'sys_log_trace';
+    const string FLD_USER_COM = 'the id of the user who has caused the log entry';
+    const string FLD_SOLVER_COM = 'user id of the user that is trying to solve the problem';
+    const string FLD_SOLVER = 'solver_id';
 
     // join database and export JSON object field names
-    const FLD_TIME_JSON = 'time';
-    const FLD_TIMESTAMP_JSON = 'timestamp';
-    const FLD_SOLVER_NAME = 'solver_name';
+    const string FLD_TIME_JSON = 'time';
+    const string FLD_TIMESTAMP_JSON = 'timestamp';
+    const string FLD_SOLVER_NAME = 'solver_name';
 
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
-    const FLD_NAMES = array(
-        user::FLD_ID,
+    const array FLD_NAMES = array(
+        user_db::FLD_ID,
         self::FLD_SOLVER,
         self::FLD_TIME,
         self::FLD_TYPE,
@@ -121,16 +127,16 @@ class sys_log extends db_object_seq_id
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
         [self::FLD_FUNCTION, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
         [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
-        [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user::FLD_ID],
-        [sys_log_status::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user_db::FLD_ID],
+        [sys_log_status::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
     );
 
 
@@ -172,7 +178,7 @@ class sys_log extends db_object_seq_id
         $lib = new library();
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->usr_id = $db_row[user::FLD_ID];
+            $this->usr_id = $db_row[user_db::FLD_ID];
             $this->usr_name = $db_row[sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
             $this->solver_name = $db_row[self::FLD_SOLVER_NAME];
@@ -223,8 +229,8 @@ class sys_log extends db_object_seq_id
      */
     function status_name(): string
     {
-        global $sys_log_sta_cac;
-        return $sys_log_sta_cac->name($this->status_id);
+        global $sys;
+        return $sys->typ_lst->sys_log_sta->name($this->status_id);
     }
 
 
@@ -397,7 +403,8 @@ class sys_log extends db_object_seq_id
     {
         log_debug();
         $result = true;
-        if ($log->add()) {
+        $usr_msg = new user_message();
+        if ($log->add($usr_msg)) {
             $db_con->set_class(sys_log::class);
             $result = $db_con->update_old($this->id(), $log->field(), $log->new_id);
         }
@@ -413,12 +420,12 @@ class sys_log extends db_object_seq_id
     private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
-        global $sys_log_sta_cac;
+        global $sys;
 
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
-            $log->old_value = $sys_log_sta_cac->name($db_rec->status_id);
+            $log->old_value = $sys->typ_lst->sys_log_sta->name($db_rec->status_id);
             $log->old_id = $db_rec->status_id;
             $log->new_value = $this->status_name();
             $log->new_id = $this->status_id;
@@ -430,17 +437,18 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * @return string either an empty string if saving has been successful or a message to the user with the reason, why it has failed
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
      */
-    function save(): string
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug();
 
         global $db_con;
-        $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class(sys_log::class);
 
         if ($this->id() > 0) {
@@ -451,15 +459,15 @@ class sys_log extends db_object_seq_id
             }
 
             if (!$this->save_field_status($db_con, $db_rec)) {
-                $result .= 'saving the error log failed';
+                $usr_msg->add_message_text('saving the error log failed');
             }
         }
 
-        if ($result != '') {
-            log_err($result);
+        if (!$usr_msg->is_ok()) {
+            log_err($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg->is_ok();
     }
 
 

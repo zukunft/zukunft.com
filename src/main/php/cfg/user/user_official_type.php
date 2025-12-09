@@ -2,8 +2,8 @@
 
 /*
 
-    model/user/user_type.php - the superclass for word, formula and view types
-    ------------------------
+    model/user/user_official_type.php - the superclass for word, formula and view types
+    ---------------------------------
 
     types are used to assign coded functionality to a word, formula or view
     a user can create a new type to group words, formulas or views and request new functionality for the group
@@ -36,23 +36,25 @@
 
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class user_official_type extends type_object
 {
 
     // list of official user identification types
-    const PASSPORT_EU = "passport_eu"; //
+    const string PASSPORT_EU = "passport_eu"; //
 
     /*
      * database link
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for person identification types e.g. passports';
+    const string TBL_COMMENT = 'for person identification types e.g. passports';
 
 }

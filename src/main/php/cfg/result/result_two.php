@@ -30,9 +30,11 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
-include_once MODEL_RESULT_PATH . 'result.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::MODEL_RESULT . 'result.php';
 
 class result_two extends result
 {

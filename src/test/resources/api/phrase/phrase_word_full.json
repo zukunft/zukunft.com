@@ -4,7 +4,10 @@
   "protection": 2,
   "name": "mathematics",
   "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-  "type_id": 1,
+  "usage": 3,
+  "type_id": 7,
+  "code_id": "mathematics",
   "plural": "mathematics",
+  "impact": 3.4,
   "class": "word"
 }

@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/group.php - a combination of a word list and a triple_list
-    -----------------------------
+    model/group/group.php - a combination of a word list and a triple_list
+    ---------------------
 
     the prime group is designed to be useful for normal values e.g. the number of inhabitants in Zurich 2023
     the index group is designed to be useful for structured values e.g.
@@ -59,60 +59,66 @@
 
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'groups.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\word\word;
-use shared\const\groups;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class group extends sandbox_multi
 {
@@ -124,43 +130,40 @@ class group extends sandbox_multi
     // object specific database and JSON object field names
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
-    const FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
-    const FLD_ID = 'group_id';
-    const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-    const FLD_NAME = 'group_name';
-    const FLD_NAME_SQL_TYP = sql_field_type::TEXT;
-    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
+    const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
+    const string FLD_ID = 'group_id';
+    const string FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+    const string FLD_NAME = 'group_name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
-    const TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
-    const TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
-    const TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-    const TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
+    const string TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+    const string TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+    const string TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
+    const string TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+    const string TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
 
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
-    const FLD_KEY_PRIME = array(
+    const array FLD_KEY_PRIME = array(
         [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM],
     );
-    const FLD_KEY_PRIME_USER = array(
+    const array FLD_KEY_PRIME_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
     );
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
-        self::FLD_DESCRIPTION
+    const array FLD_NAMES = array(
+        sql_db::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
     // TODO check if this can be used somewhere else means if there are unwanted repeating
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],
         [sql_type::BIG]
@@ -202,7 +205,7 @@ class group extends sandbox_multi
         $this->add_phrase_names($prh_names);
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
         $this->name = null;
@@ -233,7 +236,7 @@ class group extends sandbox_multi
         }
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
         return $result;
@@ -243,27 +246,24 @@ class group extends sandbox_multi
      * map a group api json to this model group object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the group values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $msg = parent::api_mapper($api_json);
+        parent::api_mapper($api_json, $usr_msg);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->set_description($value);
-            }
-
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
-        return $msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -280,20 +280,20 @@ class group extends sandbox_multi
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::ID] = $this->id();
-            if ($this->name != null or !$typ_lst->include_phrases()) {
+            if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
             }
             if ($this->description() != null) {
                 $vars[json_fields::DESCRIPTION] = $this->description();
             }
-            if ($typ_lst->include_phrases()) {
+            if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
                 $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
             }
@@ -557,6 +557,11 @@ class group extends sandbox_multi
      */
     function name_field(): string
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'name_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return self::FLD_NAME;
     }
 
@@ -570,7 +575,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -918,7 +923,7 @@ class group extends sandbox_multi
     {
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
         return parent::load_standard_sql($sc, $fld_lst);
     }
@@ -938,14 +943,14 @@ class group extends sandbox_multi
 
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
 
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields($fld_lst);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->add_where($this->name_field(), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -971,7 +976,7 @@ class group extends sandbox_multi
         $qp = new sql_par($class);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $this->load_sql_select_qp($sc, $qp);
@@ -1008,14 +1013,17 @@ class group extends sandbox_multi
         if ($this->id() != 0) {
             return sql_db::FLD_ID;
         } elseif (!$this->phrase_list()->is_empty()) {
-            return 'phr_ids';
+            $msg = 'ERROR: phr_ids are empty in load_sql_name_ext';
+            log_err($msg);
+            return $msg;
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } else {
-            log_err('Either the database ID (' . $this->id() . ') or the ' .
+            $msg = 'Either the database ID (' . $this->id() . ') or the ' .
                 self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
-                self::class, self::class . '->load');
-            return '';
+                self::class;
+            log_err($msg, self::class . '->load');
+            return $msg;
         }
     }
 
@@ -1177,7 +1185,7 @@ class group extends sandbox_multi
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id() . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
@@ -1227,15 +1235,15 @@ class group extends sandbox_multi
      * check if the user has requested a group with a preserved name
      * and yes if return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
         global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
         $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
@@ -1251,7 +1259,7 @@ class group extends sandbox_multi
                 ]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1365,7 +1373,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1419,8 +1427,7 @@ class group extends sandbox_multi
 
         // check potential duplicate by name
         $db_chk = clone $this;
-        $db_chk->reset();
-        $db_chk->set_user($this->user());
+        $db_chk->reset(true);
         // check with the standard namespace
         if ($db_chk->load_standard_by_name($this->name())) {
             if ($db_chk->id() > 0) {
@@ -1448,26 +1455,24 @@ class group extends sandbox_multi
      * add a new group to the database
      *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @return user_message $usr_msg with status ok
+     *                               or if something went wrong
+     *                               the message that should be shown to the user
+     *                               including suggested solutions
+     * @return bool true if everything has been fine
      */
-    function add(bool $use_func = false): user_message
+    function add(user_message $usr_msg, bool $use_func = false): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1478,9 +1483,8 @@ class group extends sandbox_multi
                 // TODO check that always before a db action is called the db type is set correctly
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($ins_msg->is_ok()) {
-                    $this->id = $ins_msg->get_row_id();
+                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                     $this->set_saved();
                 }
 
@@ -1498,7 +1502,7 @@ class group extends sandbox_multi
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1600,9 +1604,9 @@ class group extends sandbox_multi
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(group::class);
-                // TODO activate Prio 2
+                // TODO Prio 2 activate
                 /*
-                if ($db_con->update_old($this->id(), self::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);
@@ -1634,7 +1638,7 @@ class group extends sandbox_multi
 
         Allow to remember the view order of words and phrases
 
-        the form should create an url with the ids in the view order
+        the form should create a url with the ids in the view order
         -> this is converted by this class to word ids, triple ids for selecting the group and saving the view order and the time for the value selection
 
         Create a new group if needed without asking the user
@@ -1660,11 +1664,8 @@ class group extends sandbox_multi
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->name = $api_json[json_fields::NAME];
         }
 
         if ($usr_msg->is_ok() and $do_save) {
@@ -1703,19 +1704,18 @@ class group extends sandbox_multi
      * the word and triple links related to this phrase group are also removed
      * TODO maybe move this to del_exe
      *
+     * @param user_message $usr_msg
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message
+     * @return bool
      */
-    function del(?bool $use_func = null): user_message
+    function del(user_message $usr_msg, ?bool $use_func = null): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($use_func) {
             $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
-            $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
-            $usr_msg->add($del_msg);
+            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         } else {
 
             // log the delete attempt first
@@ -1729,12 +1729,11 @@ class group extends sandbox_multi
             if ($log->id() > 0) {
                 $db_con->set_class(group::class);
                 $qp = $this->sql_delete($sc);
-                $msg = $db_con->delete($qp, 'del ' . $this->dsp_id());
-                $usr_msg->add($msg);
+                $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1763,9 +1762,9 @@ class group extends sandbox_multi
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set([
             [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
-            [user::FLD_ID, $this->user()->id(), sql_par_type::INT],
+            [user_db::FLD_ID, $this->user()->id(), sql_par_type::INT],
             [self::FLD_NAME, $this->name, sql_par_type::TEXT],
-            [self::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
+            [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
         ]);
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->values();
@@ -1793,7 +1792,7 @@ class group extends sandbox_multi
         if (count($fld_val_typ_lst) == 0) {
             $fld_val_typ_lst = [
                 [self::FLD_NAME, $this->name, self::FLD_NAME_SQL_TYP],
-                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQL_TYP]
+                [sql_db::FLD_DESCRIPTION, $this->description, sql_db::FLD_DESCRIPTION_SQL_TYP]
             ];
         }
         $fields = $sc->get_fields($fld_val_typ_lst);
@@ -1836,7 +1835,7 @@ class group extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
+        return array_merge([self::FLD_NAME, sql_db::FLD_DESCRIPTION]);
     }
 
     /**
@@ -1857,9 +1856,9 @@ class group extends sandbox_multi
         }
         if ($grp->description <> $this->description) {
             $lst[] = [
-                self::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                self::FLD_DESCRIPTION_SQL_TYP
+                sql_db::FLD_DESCRIPTION_SQL_TYP
             ];
         }
         return $lst;
@@ -1929,9 +1928,9 @@ class group extends sandbox_multi
             }
         }
         global $debug;
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
 

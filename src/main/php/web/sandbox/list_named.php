@@ -2,7 +2,7 @@
 
 /*
 
-    web/sandbox/list_value.php - add name function to the frontend list object
+    web/sandbox/list_named.php - add name function to the frontend list object
     --------------------------
 
 
@@ -30,14 +30,13 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\phrase\phrase_list as phrase_list_dsp;
+include_once html_paths::SANDBOX . 'ListBase.php';
 
-class list_named extends list_dsp
+class list_named extends ListBase
 {
 
     /*
@@ -76,16 +75,16 @@ class list_named extends list_dsp
      * @param ?int $limit the max number of ids to show
      * @return string a simple name of the list
      */
-    function name_tip(int $limit = null): string
+    function name_tip(?int $limit = null): string
     {
-        return '"' . implode('","', $this->names($limit)) . '"';
+        return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
 
     /**
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(?int $limit = null): array
     {
         $result = [];
         $pos = 0;

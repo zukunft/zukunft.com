@@ -30,15 +30,19 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\component_link_list;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use shared\library;
-use test\test_cleanup;
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_list_tests
 {
@@ -89,7 +93,8 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $msk = $t->view();
+        $t_msk = new test_views($t);
+        $msk = $t_msk->view();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -117,7 +122,8 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $cmp = $t->component();
+        $t_cmp = new test_components($t);
+        $cmp = $t_cmp->component();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

@@ -1,7 +1,7 @@
 -- --------------------------------------------------------
 
 --
--- table structure for a single time series value data entry and efficient saving of daily or intra-day values
+-- table structure for a single time series value data entry and efficient saving of daily or intraday values
 --
 
 CREATE TABLE IF NOT EXISTS value_ts_data
@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS value_ts_data
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
-    COMMENT 'for a single time series value data entry and efficient saving of daily or intra-day values';
+    COMMENT 'for a single time series value data entry and efficient saving of daily or intraday values';

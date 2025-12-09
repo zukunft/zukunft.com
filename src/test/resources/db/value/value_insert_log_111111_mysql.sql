@@ -42,7 +42,7 @@ PREPARE value_insert_log_111111_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_insert_log_111111
-       (1,
+       (3,
         1,
         1,
         3.1415926535898,

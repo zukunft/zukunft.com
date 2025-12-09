@@ -29,15 +29,17 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class sys_log_status extends type_object
 {
@@ -47,13 +49,13 @@ class sys_log_status extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the status of internal errors';
-    const FLD_ID = 'sys_log_status_id'; // name of the id field as const for other const
-    const FLD_ACTION_COM = 'description of the action to get to this status';
-    const FLD_ACTION = 'action';
+    const string TBL_COMMENT = 'to define the status of internal errors';
+    const string FLD_ID = 'sys_log_status_id'; // name of the id field as const for other const
+    const string FLD_ACTION_COM = 'description of the action to get to this status';
+    const string FLD_ACTION = 'action';
 
     // list of fields that are additional to the standard type fields used for the system log status
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [self::FLD_ACTION, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_ACTION_COM],
     );
 

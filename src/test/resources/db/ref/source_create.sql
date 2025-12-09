@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS sources
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
+    usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
     share_type_id  smallint     DEFAULT NULL,
     protect_id     smallint     DEFAULT NULL
@@ -26,6 +27,7 @@ COMMENT ON COLUMN sources.description    IS 'the user specific description of th
 COMMENT ON COLUMN sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN sources.url            IS 'the url of the source';
 COMMENT ON COLUMN sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN sources.excluded       IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN sources.protect_id     IS 'to protect against unwanted changes';
@@ -43,6 +45,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
+    usage          bigint       DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
     share_type_id  smallint     DEFAULT NULL,
     protect_id     smallint     DEFAULT NULL
@@ -56,6 +59,7 @@ COMMENT ON COLUMN user_sources.description    IS 'the user specific description 
 COMMENT ON COLUMN user_sources.source_type_id IS 'link to the source type';
 COMMENT ON COLUMN user_sources.url            IS 'the url of the source';
 COMMENT ON COLUMN user_sources.code_id        IS 'to select sources used by this program';
+COMMENT ON COLUMN user_sources.usage          IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_sources.excluded       IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN user_sources.share_type_id  IS 'to restrict the access';
 COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted changes';

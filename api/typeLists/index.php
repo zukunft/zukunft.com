@@ -29,46 +29,45 @@
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_HELPER_PATH . 'type_lists.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_lists;
-use controller\controller;
-use cfg\user\user;
-use shared\types\api_type;
+include_once paths::API_OBJECT . 'ui_config.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\api\ui_config;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 
 // open database
-$db_con = prg_start("api/typeLists", "", false);
+$app = new application();
+$db_con = $app->start_api("typeLists", "", false);
 
-// no parameters needed
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // no parameters needed
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, $usr);
-    $result = $sys_typ_lst->api_json([api_type::HEADER], $usr);
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
+        $ui_cfg = new ui_config();
+        $ui_cfg->reload($usr);
+        $result = $ui_cfg->api_json([api_type::HEADER, api_type::INCL_COMPONENTS], $usr);
+    }
+
+    $ctrl = new controller();
+
+    $ctrl->get_json($result, $msg);
+
+    $app->end_api($db_con);
 }
-
-$ctrl = new controller();
-
-$ctrl->get_json($result, $msg);
-
-prg_end_api($db_con);

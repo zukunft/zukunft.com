@@ -23,7 +23,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT component_delete_log
-       (1::bigint,
+       (3::bigint,
         3::smallint,
         51::smallint,
         'Word'::text,

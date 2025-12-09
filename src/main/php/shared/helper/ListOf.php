@@ -30,11 +30,11 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 
 class ListOf
 {
@@ -44,6 +44,8 @@ class ListOf
      */
 
     // the protected main var
+    // to avoid adding or removing of objects
+    // without updating the related index object
     private array $lst;
 
 
@@ -60,7 +62,7 @@ class ListOf
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_lst(array());
     }
@@ -72,12 +74,18 @@ class ListOf
 
     /**
      * TODO check if a more specific return object can be used
+     * get one object of the list by the key
      * @param string|int $key the key of the lst array
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
     function get(string|int $key): IdObject|TextIdObject|CombineObject|null
     {
-        return $this->lst[$key];
+        if (array_key_exists($key, $this->lst)) {
+            return $this->lst[$key];
+        } else {
+            log_err($key . ' missing in ' . $this::class);
+            return null;
+        }
     }
 
     /**
@@ -135,7 +143,8 @@ class ListOf
      */
 
     /**
-     * add an object to the list
+     * add an object to the list and by default avoid duplicates
+     * in most cases overwritten by the child objects that are e.g. unique by the database id
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
@@ -161,6 +170,14 @@ class ListOf
         return $usr_msg;
     }
 
+    /**
+     * add the object to the list without duplicate check
+     * but including the updating the hash tables that are not dirty
+     * is expected to be overwritten by all children that have a hash table
+     *
+     * @param IdObject|TextIdObject|CombineObject|value_types $obj_to_add
+     * @return void
+     */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
         $this->lst[] = $obj_to_add;
@@ -168,6 +185,8 @@ class ListOf
 
     /**
      * unset an object of the list
+     * TODO move to ListOfIdObjects ? And if not, explain in a comment why
+     *
      * @param int|string $key the unique id of the entry
      * @returns bool true if the object has been added
      */

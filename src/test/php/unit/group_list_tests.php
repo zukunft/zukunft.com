@@ -30,14 +30,17 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once MODEL_GROUP_PATH . 'group_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_creator;
-use cfg\group\group_list;
-use cfg\db\sql_db;
-use test\test_cleanup;
+include_once paths::MODEL_GROUP . 'group_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_list_tests
 {
@@ -48,6 +51,7 @@ class group_list_tests
 
         // init
         $sc = new sql_creator();
+        $t_wrd = new test_words($t);
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
 
@@ -62,7 +66,7 @@ class group_list_tests
         $test_name = 'load formulas by ids';
         $t->assert_sql_by_ids($test_name, $sc, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));
-        $t->assert_sql_by_phrase($sc, $grp_lst, $t->word()->phrase());
+        $t->assert_sql_by_phrase($sc, $grp_lst, $t_wrd->word()->phrase());
 
     }
 

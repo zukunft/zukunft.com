@@ -30,26 +30,26 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\component\component_list;
-use shared\library;
-use shared\const\components;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_list_read_tests
 {
 
     function run(test_cleanup $t): void
     {
-
         global $usr;
-        $lib = new library();
 
         // init
         $t->name = 'component list read db->';
 
-        $t->header('component list database read tests');
+        // start the test section (ts)
+        $ts = 'db read component list ';
+        $t->header($ts);
 
         // test loading component names
         $test_name = 'loading component names with pattern return the expected component';

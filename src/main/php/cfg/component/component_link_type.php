@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/component_link_type.php - db based ENUM of the component view link types
-    -----------------------------------
+    model/component/component_link_type.php - db based ENUM of the component view link types
+    ---------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,11 +29,13 @@
 
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class component_link_type extends type_object
 {
@@ -43,8 +45,9 @@ class component_link_type extends type_object
      */
 
     // list of the component link types that have a coded functionality
-    const ALWAYS = "always"; // the component is always shown as it is
-    const EXPRESSION = "expression"; // the component is only shown if an expression is true
+    const string ALWAYS = "always"; // the component is always shown as it is
+    const string EXPRESSION = "expression"; // the component is only shown if an expression is true
+    const string DEFAULT = self::ALWAYS;
 
 
     /*
@@ -52,7 +55,7 @@ class component_link_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to a component view link';
-    const FLD_ID = 'component_link_type_id'; // to use in const until final is allowed
+    const string TBL_COMMENT = 'to assign predefined behaviour to a component view link';
+    const string FLD_ID = 'component_link_type_id'; // to use in const until final is allowed
 
 }

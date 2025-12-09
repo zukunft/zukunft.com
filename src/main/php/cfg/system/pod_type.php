@@ -34,19 +34,21 @@
    
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class pod_type extends type_object
 {
 
     // list of the pod types
-    const MASTER = 'master'; // the main write pod for all phrases that are not assigned to any other pod
-    const PHRASE_MASTER = 'phrase_master'; // the main write pod for the phrases assigned thid pod
-    const READ_ONLY = "read_only"; // a read only pod for load balancing
+    const string MASTER = 'master'; // the main write pod for all phrases that are not assigned to any other pod
+    const string PHRASE_MASTER = 'phrase_master'; // the main write pod for the phrases assigned this pod
+    const string READ_ONLY = "read_only"; // a read only pod for load balancing
 
 
     /*
@@ -54,7 +56,7 @@ class pod_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for predefined code to a some pods';
-    const FLD_ID = 'pod_type_id';
+    const string TBL_COMMENT = 'for predefined code to a some pods';
+    const string FLD_ID = 'pod_type_id';
 
 }

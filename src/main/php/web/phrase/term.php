@@ -30,35 +30,35 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once SHARED_PATH . 'api.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-use html\formula\formula;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\formula\formula as formula_dsp;
-use html\user\user_message;
-use html\verb\verb as verb_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use shared\types\phrase_type;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class term extends combine_named_dsp
+class term extends combine_named
 {
 
     /*
@@ -68,39 +68,39 @@ class term extends combine_named_dsp
     /**
      * set the vars of this term html display object bases on the api message
      * @param array $json_array an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
         if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-            $wrd = new word_dsp();
-            $wrd->api_mapper($json_array);
+            $wrd = new word();
+            $wrd->api_mapper($json_array, $usr_msg);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-            $trp = new triple_dsp();
-            $trp->api_mapper($json_array);
+            $trp = new triple();
+            $trp->api_mapper($json_array, $usr_msg);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
-            $vrb = new verb_dsp();
-            $vrb->api_mapper($json_array);
+            $vrb = new verb();
+            $vrb->api_mapper($json_array, $usr_msg);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-            $frm = new formula_dsp();
-            $frm->api_mapper($json_array);
+            $frm = new formula();
+            $frm->api_mapper($json_array, $usr_msg);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
             $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
-    function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
+    function set_term_obj(word|triple|verb|formula|null $obj): void
     {
         $this->obj = $obj;
     }
@@ -216,12 +216,12 @@ class term extends combine_named_dsp
     private
     function load_word_by_id(int $id): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
         $wrd = new word();
         if ($wrd->load_by_id($id)) {
-            if ($wrd->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+            if ($wrd->type_id() == $sys->typ_lst->phr_typ->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -297,25 +297,25 @@ class term extends combine_named_dsp
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
+                }
+            } else {
+                if ($this->obj == null) {
+                    $this->obj = new word();
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj->id = $id;
         }
     }
 
@@ -363,11 +363,11 @@ class term extends combine_named_dsp
                 $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
             }
             // TODO add exclude field and move to a parent object?
-            if ($this->obj()?->share_id != null) {
-                $vars[json_fields::SHARE] = $this->obj()?->share_id;
+            if ($this->obj()?->share_id() != null) {
+                $vars[json_fields::SHARE] = $this->obj()?->share_id();
             }
-            if ($this->obj()?->protection_id != null) {
-                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+            if ($this->obj()?->protection_id() != null) {
+                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
             }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -383,7 +383,7 @@ class term extends combine_named_dsp
      */
     function is_word(): bool
     {
-        if ($this->obj()::class == word_dsp::class) {
+        if ($this->obj()::class == word::class) {
             return true;
         } else {
             return false;
@@ -395,7 +395,7 @@ class term extends combine_named_dsp
      */
     function is_triple(): bool
     {
-        if ($this->obj()::class == triple_dsp::class) {
+        if ($this->obj()::class == triple::class) {
             return true;
         } else {
             return false;
@@ -407,7 +407,7 @@ class term extends combine_named_dsp
      */
     function is_verb(): bool
     {
-        if ($this->obj()::class == verb_dsp::class) {
+        if ($this->obj()::class == verb::class) {
             return true;
         } else {
             return false;
@@ -419,11 +419,52 @@ class term extends combine_named_dsp
      */
     function is_formula(): bool
     {
-        if ($this->obj()::class == formula_dsp::class) {
+        if ($this->obj()::class == formula::class) {
             return true;
         } else {
             return false;
         }
+    }
+
+
+    /*
+     * conversion
+     */
+
+    function get_word(): word
+    {
+        $wrd = new word();
+        if (get_class($this->obj) == word::class) {
+            $wrd = $this->obj;
+        }
+        return $wrd;
+    }
+
+    function get_triple(): triple
+    {
+        $lnk = new triple();
+        if (get_class($this->obj) == triple::class) {
+            $lnk = $this->obj;
+        }
+        return $lnk;
+    }
+
+    function get_formula(): formula
+    {
+        $frm = new formula();
+        if (get_class($this->obj) == formula::class) {
+            $frm = $this->obj;
+        }
+        return $frm;
+    }
+
+    function get_verb(): verb
+    {
+        $vrb = new verb();
+        if (get_class($this->obj) == verb::class) {
+            $vrb = $this->obj;
+        }
+        return $vrb;
     }
 
 
@@ -486,7 +527,7 @@ class term extends combine_named_dsp
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
         $result .= '    </td>' . "\n";
 
         return $result;
@@ -500,13 +541,13 @@ class term extends combine_named_dsp
      * if one form contains more than one selector, $pos is used for identification
      *
      * @param term $type is a word to preselect the list to only those phrases matching this type
-     * @param string $form_name
+     * @param string $form
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(term $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';
@@ -514,12 +555,12 @@ class term extends combine_named_dsp
         $trm_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $field_name = "term" . $pos;
+            $name = url_var::TERM_POS . $pos;
         } else {
-            $field_name = "term";
+            $name = url_var::TERM;
         }
         $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
+        if ($form != "value_add" and $form != "value_edit") {
             if ($pos == 1) {
                 $label = "From:";
             } elseif ($pos == 2) {
@@ -528,10 +569,10 @@ class term extends combine_named_dsp
                 $label = "Word:";
             }
         }
-        // TODO activate Prio 3
+        // TODO Prio 3 activate
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($form_name, $this->id(), $field_name, $label, '');
+        return $trm_lst->selector($form, $this->id(), $name);
     }
 
 }

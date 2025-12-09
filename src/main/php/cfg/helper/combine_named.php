@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/combine_named.php - parent object for a phrase or term objects
-    -------------------------------
+    model/helper/combine_named.php - parent object for a phrase or term objects
+    ------------------------------
 
     phrase and term have the fields name, description and type in common
 
@@ -32,21 +32,29 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'library.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_HELPER_PATH . 'combine_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_type;
-use cfg\verb\verb;
-use shared\library;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::MODEL_HELPER . 'combine_object.php';
+//include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class combine_named extends combine_object
 {
@@ -56,7 +64,7 @@ class combine_named extends combine_object
      */
 
     // list of phrase types used for the database views
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::PRIME],
         [sql_type::MOST],
         [sql_type::PRIME, sql_type::USER],
@@ -65,7 +73,7 @@ class combine_named extends combine_object
     // list of original tables that should be connoted with union
     // with fields used in the view
     // overwritten by the child objects
-    const TBL_FLD_LST_VIEW = [];
+    const array TBL_FLD_LST_VIEW = [];
 
     /*
      * construct and map
@@ -73,17 +81,11 @@ class combine_named extends combine_object
 
     /**
      * set the object vars of a phrase or term to the neutral initial value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        $this->set_obj_id(0);
-        $this->set_name('');
-        $this->set_description(null);
-        $this->set_type_id(null);
-        $this->set_share(null);
-        $this->set_protection(null);
-        // TODO review
-        $this->set_plural(null);
+        $this->obj?->reset($keep_user);
     }
 
 
@@ -99,7 +101,7 @@ class combine_named extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -150,11 +152,12 @@ class combine_named extends combine_object
 
     /**
      * @param int|null $type_id the type id of the word, triple, formula or verb
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
     {
-        $this->obj()?->set_type_id($type_id);
+        return $this->obj()?->set_type_id($type_id, $usr_req);
     }
 
     /**
@@ -213,12 +216,20 @@ class combine_named extends combine_object
     }
 
     /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        return $this->obj()->is_exclusion_set();
+    }
+
+    /**
      * @param string|null $plural the code id of the target protection or null to remove the parent overwrite
      * @return void
      */
     function set_plural(?string $plural): void
     {
-        $this->obj()?->set_plural($plural);
+        $this->obj()->plural = $plural;
     }
 
 
@@ -283,7 +294,7 @@ class combine_named extends combine_object
                     $sql_fld .= $this->sql_when($sc, $fld_name, $tbl_chr);
                 } else {
                     if (count($fld) > 2) {
-                        if ($fld[2] == sql::FLD_CONST) {
+                        if ($fld[2] == sql_db::FLD_CONST) {
                             if ($fld_name == '') {
                                 $sql_fld .= "''";
                             } else {
@@ -306,7 +317,7 @@ class combine_named extends combine_object
                 }
                 if (count($fld) > 1) {
                     if (count($fld) > 2) {
-                        if ($fld[2] != sql::FLD_CONST) {
+                        if ($fld[2] != sql_db::FLD_CONST) {
                             $sql_fld .= ' ' . $fld[2] . ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
                         } else {
                             $sql_fld .= ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);

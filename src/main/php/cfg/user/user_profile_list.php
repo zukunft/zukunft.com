@@ -30,13 +30,15 @@
   
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use shared\enum\user_profiles;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
 class user_profile_list extends type_list
 {

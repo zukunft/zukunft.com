@@ -36,43 +36,47 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-include_once DB_PATH . 'sql_par_field.php';
-//include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\combine_named;
-use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
-use cfg\log\change;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_named;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\user\user;
+include_once paths::DB . 'sql_par_field.php';
+//include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_LOG . 'change.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sql_par_field_list
 {
     // assumed positions of the field name, value and type in the array used for set
-    private const FLD_POS = 0;
-    private const VAL_POS = 1;
-    private const TYP_POS = 2;
+    private const int FLD_POS = 0;
+    private const int VAL_POS = 1;
+    private const int TYP_POS = 2;
 
     public array $lst = [];  // a list of sql parameter fields
 
@@ -284,7 +288,7 @@ class sql_par_field_list
             db_object_seq_id::FLD_ID_SQL_TYP
         );
         $this->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $sbx->user_id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
@@ -307,13 +311,13 @@ class sql_par_field_list
         int                   $table_id
     ): void
     {
-        global $cng_fld_cac;
+        global $sys;
 
         if ($sbx_db->user_id() <> $sbx_upd->user_id()) {
             if ($do_log) {
                 $this->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                    $cng_fld_cac->id($table_id . user::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -323,7 +327,7 @@ class sql_par_field_list
                 $old_user_id = $sbx_db->user_id();
             }
             $this->add_field(
-                user::FLD_ID,
+                user_db::FLD_ID,
                 $sbx_upd->user_id(),
                 db_object_seq_id::FLD_ID_SQL_TYP,
                 $old_user_id
@@ -348,41 +352,36 @@ class sql_par_field_list
         int                                      $table_id
     ): void
     {
-        global $cng_fld_cac;
+        global $sys;
 
         // include the name field for the log also if the object is only excluded
-        if ($sbx_db->name() <> $sbx_upd->name()) {
+        if ($sbx_db->name_or_null() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
-                    $cng_fld_cac->id($table_id . $sbx_upd->name_field()),
+                    $sys->typ_lst->cng_fld->id($table_id . $sbx_upd->name_field()),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
-            }
-            if ($sbx_db->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx_db->name();
             }
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
                 sandbox_named::FLD_NAME_SQL_TYP,
-                $old_name
+                $sbx_db->name_or_null()
             );
         }
         if ($sbx_db->description <> $sbx_upd->description) {
             if ($do_log) {
                 $this->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $sbx_upd->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
             );
         }
@@ -433,13 +432,13 @@ class sql_par_field_list
 
     /**
      * @return bool true if the list contains only internal fields
-     *              e.g. the user id, last upadte and the action
+     *              e.g. the user id, last update and the action
      *              which means that there is no need for a database update
      */
     function is_empty_except_internal_fields(): bool
     {
         $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula::FLD_LAST_UPDATE]);
+            [sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE]);
         if (count($names) == 0) {
             return true;
         } else {
@@ -656,6 +655,15 @@ class sql_par_field_list
                 $this->lst[$key]->name = $sc->name_sql_esc($fld->name);
             }
         }
+    }
+
+    function sql_field_list(): sql_field_list
+    {
+        $lst = new sql_field_list();
+        foreach ($this->lst as $par_fld) {
+            $lst->add_par_field($par_fld);
+        }
+        return $lst;
     }
 
     /**

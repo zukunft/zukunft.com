@@ -33,25 +33,30 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-use cfg\ref\source;
-use cfg\user\user;
-use cfg\view\view;
-use html\ref\source as source_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
-$db_con = prg_start("source_edit");
+$app = new frontend();
+$db_con = $app->start("source_edit");
 
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -60,50 +65,47 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $html = new \html\html_base();
+    $html = new \Zukunft\ZukunftCom\main\php\web\html\html_base();
 
     $usr->load_usr_data();
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_EDIT));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
+    $msk->load_by_id($sys_msk_cac->id(views::SOURCE_EDIT));
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->load_by_id($_GET[api::URL_VAR_ID]);
+    $src->load_by_id($_GET[url_var::ID]);
 
     if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET[api::URL_VAR_NAME] <> '') {
+        if ($_GET[url_var::NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET[api::URL_VAR_NAME])) {
-                $src->set_name($_GET[api::URL_VAR_NAME]);
+            if (isset($_GET[url_var::NAME])) {
+                $src->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET['url'])) {
-                $src->url = $_GET['url'];
+            if (isset($_GET[url_var::URL])) {
+                $src->set_url($_GET[url_var::URL]);
             }
-            if (isset($_GET[api::URL_VAR_COMMENT])) {
-                $src->description = $_GET[api::URL_VAR_COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $src->description = $_GET[url_var::DESCRIPTION];
             }
 
             // save the changes
-            $upd_result = $src->save()->get_last_message();
+            $upd_result = $src->save($usr_msg);
 
             // if update was successful ...
-            if (str_replace('1', '', $upd_result) == '') {
+            if ($usr_msg->is_ok()) {
                 // remember the source for the next values to add
                 $usr->set_source($src->id());
 
                 // ... and display the calling view
                 $result .= $html->dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
             }
 
         }
@@ -111,17 +113,18 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar($back);
-            $result .= $html->dsp_err($msg);
+            $msk_dsp = new view_ui($msk->api_json());
+            $dto = new data_object();
+            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // show the source and its relations, so that the user can change it
-            $scr_dsp = new source_dsp($src->api_json());
-            $result .= $scr_dsp->dsp_edit($back);
+            $scr_dsp = new source_ui($src->api_json());
+            //$result .= $scr_dsp->dsp_edit($back);
         }
     }
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

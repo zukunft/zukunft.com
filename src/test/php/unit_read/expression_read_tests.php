@@ -30,9 +30,9 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use test\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class expression_read_tests
 {
@@ -45,7 +45,9 @@ class expression_read_tests
         // init
         $t->name = 'expression->';
 
-        $t->header('Test the term class (src/main/php/model/formula/expression.php)');
+        // start the test section (ts)
+        $ts = 'db read expression ';
+        $t->header($ts);
 
         /*
         $frm = new formula($usr);

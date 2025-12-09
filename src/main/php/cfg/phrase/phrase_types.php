@@ -2,7 +2,7 @@
 
 /*
 
-    model/word/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
+    model/phrase/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
     TODO rename to phrase type
@@ -32,24 +32,26 @@
   
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\types\phrase_type as phrase_type_shared;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 
 class phrase_types extends type_list
 {
 
     // the phrase types used for unit testing
     // TODO sync this list with the csv list and write a update process for the prod database
-    const TYPES = array(
+    const array TYPES = array(
         phrase_type_shared::NORMAL,
         phrase_type_shared::TIME,
         phrase_type_shared::MEASURE,

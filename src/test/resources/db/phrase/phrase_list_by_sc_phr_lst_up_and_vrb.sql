@@ -6,7 +6,8 @@ PREPARE phrase_list_by_sc_phr_lst_up_and_vrb (bigint, bigint[], bigint) AS
            l.verb_id,
            CASE WHEN (u.phrase_name    <> '' IS NOT TRUE) THEN s.phrase_name    ELSE u.phrase_name    END AS phrase_name,
            CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description    END AS description,
-           CASE WHEN (u.values               IS     NULL) THEN s.values         ELSE u.values         END AS values,
+           CASE WHEN (u.usage                IS     NULL) THEN s.usage          ELSE u.usage          END AS usage,
+           CASE WHEN (u.impact               IS     NULL) THEN s.impact         ELSE u.impact         END AS impact,
            CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded       END AS excluded,
            CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id  ELSE u.share_type_id  END AS share_type_id,
            CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id     ELSE u.protect_id     END AS protect_id
@@ -15,4 +16,4 @@ PREPARE phrase_list_by_sc_phr_lst_up_and_vrb (bigint, bigint[], bigint) AS
  LEFT JOIN triples l ON s.phrase_id = l.to_phrase_id
      WHERE l.from_phrase_id = ANY ($2)
        AND l.verb_id = $3
-  ORDER BY s.values DESC,phrase_name;
+  ORDER BY s.usage  DESC,phrase_name;

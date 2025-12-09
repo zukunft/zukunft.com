@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/library.php - some useful function e.g. for string handling
-    ------------------------
+    shared/library.php - some useful function e.g. for string handling
+    ------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,135 +30,150 @@
   
 */
 
-namespace shared;
+namespace Zukunft\ZukunftCom\main\php\shared;
 
-include_once SERVICE_PATH . 'config.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\view_style;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\ref\source_type;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\system\session;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_status_list;
-use cfg\system\sys_log_type;
-use cfg\system\system_time;
-use cfg\user\user_official_type;
-use cfg\value\value;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\verb\verb;
-use cfg\view\view_link_type;
-use cfg\word\triple;
-use cfg\word\word_db;
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\component\component_type;
-use cfg\component\position_type;
-use cfg\config;
-use cfg\db\sql_db;
-use cfg\db\sql_par_field_list;
-use cfg\element\element;
-use cfg\element\element_type;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_type;
-use cfg\system\ip_range;
-use cfg\system\job;
-use cfg\system\job_time;
-use cfg\system\job_type;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_values_big;
-use cfg\log\change_field;
-use cfg\log\change_link;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_table;
-use cfg\phrase\phrase_table_status;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\system\pod;
-use cfg\system\pod_status;
-use cfg\system\pod_type;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\sandbox\sandbox_named;
-use cfg\ref\source;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\value\value_base;
-use cfg\value\value_ts_data;
-use cfg\view\view;
-use cfg\view\term_view;
-use cfg\word\word;
-use html\verb\verb as verb_dsp;
+//include_once paths::SERVICE . 'config.php';
+//include_once paths::MODEL_CONST . 'def.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
 use DateTime;
 use Exception;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\protection_type;
-use shared\types\share_type;
-use shared\types\view_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class library
 {
 
-    const DIFF_NUM_PRECISION = 7;
+    const int DIFF_NUM_PRECISION = 7;
 
     // to separate two string for the human-readable format
-    const SEPARATOR = ',';
+    const string SEPARATOR = ',';
 
     /*
      * internal const
      */
 
-    const STR_TYPE_AUTO = -1; // try to detect the type
-    const STR_TYPE_CODE = 0; // the string should be checked byte by byte
-    const STR_TYPE_PROSA = 1; // words are the critical parts
-    const STR_TYPE_JSON = 2; // check for json elements
-    const STR_TYPE_HTML = 3;
+    const int STR_TYPE_AUTO = -1; // try to detect the type
+    const int STR_TYPE_CODE = 0; // the string should be checked byte by byte
+    const int STR_TYPE_PROSA = 1; // words are the critical parts
+    const int STR_TYPE_JSON = 2; // check for json elements
+    const int STR_TYPE_HTML = 3;
 
-    private const STR_DIFF_VAL = 'values';
-    private const STR_DIFF_TYP = 'type';
-    private const STR_DIFF_UNCHANGED = 0;
-    private const STR_DIFF_ADD = 1;
-    private const STR_DIFF_DEL = -1;
-    private const STR_DIFF_ADD_START = '//+';
-    private const STR_DIFF_ADD_END = '//';
-    private const STR_DIFF_DEL_START = '//-';
-    private const STR_DIFF_DEL_END = '//';
-    private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
-    private const STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
+    private const string STR_DIFF_VAL = 'values';
+    private const string STR_DIFF_TYP = 'type';
+    private const int STR_DIFF_UNCHANGED = 0;
+    private const int STR_DIFF_ADD = 1;
+    private const int STR_DIFF_DEL = -1;
+    private const string STR_DIFF_ADD_START = '//+';
+    private const string STR_DIFF_ADD_END = '//';
+    private const string STR_DIFF_DEL_START = '//-';
+    private const string STR_DIFF_DEL_END = '//';
+    private const int STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
+    private const int STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
 
     // the expected minimal length of 80% of the words
-    private const STR_WORD_MIN_LEN = 2;
+    private const int STR_WORD_MIN_LEN = 2;
     // the expected maximal length of 80% of the words
-    private const STR_WORD_MAX_LEN = 20;
-    private const STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
+    private const int STR_WORD_MAX_LEN = 20;
+    private const float STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
 
 
     /*
@@ -204,6 +219,19 @@ class library
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return string the text of a boolean var
+     */
+    function dsp_bool(bool $bool_var): string
+    {
+        if ($bool_var) {
+            $result = 'true';
+        } else {
+            $result = 'false';
+        }
+        return $result;
     }
 
     /**
@@ -309,6 +337,9 @@ class library
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        // to keep spaces before links
+        $result = preg_replace('/ <a /', '<as ', $result);
+
         // special case: replace system test winter time with daylight saving time
         $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
         $result = preg_replace('/ <td>/', '<td>', $result);
@@ -327,13 +358,18 @@ class library
         $result = preg_replace('/" </', '"<', $result);
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
-        return preg_replace('/> </', '><', $result);
+
+        // remove spaces not needed
+        $result = preg_replace('/> </', '><', $result);
+
+        // restore the spaces that are needed
+        return preg_replace('/<as /', ' <a ', $result);
     }
 
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
     {
         // avoid using escaped var makers (probably not 100% correct)
-        return str_replace($chr_to_esc,$esc_chr . $chr_to_esc, $txt_to_esc);
+        return str_replace($chr_to_esc, $esc_chr . $chr_to_esc, $txt_to_esc);
     }
 
     function unescape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -486,6 +522,68 @@ class library
         return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
     }
 
+    /**
+     * @param string $text
+     * @return string
+     */
+    function str_to_file(string $text): string
+    {
+        $text = str_replace('.', '', $text);
+        $text = str_replace('/', '', $text);
+        return substr($text, 0, 32);
+    }
+
+    /**
+     * translated a text with a list of variables to the user interface language
+     * and replace the variable names with the variable values
+     *
+     * @param array $msg_var_lst list with the variable names and the matching values
+     * @param object $mtr the translator object of the back or frontend
+     * @return string the translated text for all messages with vars
+     */
+    function msg_var_text(array $msg_var_lst, object $mtr): string
+    {
+        $part = '';
+        foreach ($msg_var_lst as $msg_var) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $msg_txt = $mtr->txt($msg_var[0]);
+            foreach ($msg_var[1] as $key => $var) {
+                $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
+            }
+            // replace the escaped var makers
+            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $part .= $msg_txt;
+        }
+        return $part;
+    }
+
+    /**
+     * replace one message var with the message value
+     *
+     * @param string $msg_txt the message text before the variable replacement
+     * @param string $key the variable name
+     * @param string $var the value to be used
+     * @return string the message text after the variable replacement
+     */
+    function msg_var_replace(string $msg_txt, string $key, string $var): string
+    {
+        // avoid using escaped var makers (probably not 100% correct)
+        $msg_txt = str_replace(
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
+        // replace the var
+        $msg_txt = str_replace(
+            msg_id::VAR_START . $key . msg_id::VAR_END,
+            $var, $msg_txt);
+        // undo escaped vars
+        return str_replace(
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
+    }
+
 
     /*
      * list functions (to be replaced by standard functions if possible)
@@ -509,6 +607,41 @@ class library
                 $keys = array_merge($keys, $this->array_keys_r($sub_array));
 
         return $keys;
+    }
+
+    function array_filter_r(array $array, callable $callback): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->array_filter_r($value, $callback);
+            } else {
+                if ($callback($value, $key)) {
+                    unset($array[$key]);
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    /**
+     * if an array contains an array get the first two columns and create a key / value array
+     * e.g. if the original array entry ['key','value','default'] the result is 'key' => 'value'
+     *
+     * @param array $array an array that has an array for each entry with at least two entries
+     * @return array an array with the first two columns of the array where the first is the key
+     */
+    function array_get_first_two_col(array $array): array
+    {
+        $return = [];
+        foreach ($array as $row) {
+            if (array_key_exists(0, $row) and array_key_exists(1, $row)) {
+                $return[$row[0]] = $row[1];
+            } else {
+                log_err(implode(',', $array) . ' must have at least two col');
+            }
+        }
+        return $return;
     }
 
     /**
@@ -903,6 +1036,58 @@ class library
         return substr($ret, 0, 0 - strlen($sep));
     }
 
+
+    /*
+     * env
+     */
+
+
+    function env_to_log(): string
+    {
+        $result = '';
+        foreach (ENV_VARS as $var) {
+            if (!in_array($var, ENV_SECRETS)) {
+                if ($result != '') {
+                    $result .= ', ';
+                }
+                $result .= $var . '=' . getenv($var);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * version
+     */
+
+    /**
+     * returns true if the version to check is older than this program version
+     * used e.g. for import to allow importing of files of an older version without warning
+     */
+    function prg_version_is_newer($prg_version_to_check, $this_version = def::PRG_VERSION): bool
+    {
+        $is_newer = false;
+
+        $this_prg_version_parts = explode(".", $this_version);
+        $to_check = explode(".", $prg_version_to_check);
+        $is_older = false;
+        foreach ($this_prg_version_parts as $key => $this_part) {
+            if (!$is_newer and !$is_older) {
+                if ($this_part < $to_check[$key]) {
+                    $is_newer = true;
+                } else {
+                    if ($this_part > $to_check[$key]) {
+                        $is_older = true;
+                    }
+                }
+            }
+        }
+
+        return $is_newer;
+    }
+
+
     /*
      * file
      */
@@ -963,6 +1148,55 @@ class library
                 $use[] = $path;
                 if ($class != '') {
                     $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
+    function class_csv_file_path(string $class): string
+    {
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+        $path = test_paths::UNIT_RES . $name . DIRECTORY_SEPARATOR;
+        $file = test_files::FIXED_DB_CSV;
+        return $path . $file;
+    }
+
+    function csv_form_db_lst(array $db_lst, string $class): array
+    {
+        $lib = new library();
+        $header = '';
+        $header_lst = [];
+        $csv = [];
+        foreach ($db_lst as $db_row) {
+            if ($header == '') {
+                foreach ($db_row as $col_key => $db_col) {
+                    if (!is_numeric($col_key)) {
+                        if (!$lib->is_volatile_db_field($class, $col_key)) {
+                            $header_lst[$col_key] = $col_key;
+                        }
+                    }
+                }
+                $header = implode(',', $header_lst);
+                $csv[] = $header . "\n";
+            }
+            $db_row = array_intersect_key($db_row, $header_lst);
+            $line = implode(',', $db_row);
+            // remove line feeds to make compare easier
+            $line = str_replace("\n", ' ', $line);
+            $csv[] = $line . "\n";
+        }
+        return $csv;
+    }
+
+    function is_volatile_db_field(string $class, string $fld): bool
+    {
+        $result = false;
+        foreach (def::VOLATILE_DB_FIELDS as $tbl_fld) {
+            if ($class == $tbl_fld[0]) {
+                if ($fld == $tbl_fld[1]) {
+                    $result = true;
                 }
             }
         }
@@ -1034,6 +1268,23 @@ class library
         return $result;
     }
 
+    private function php_code_get_section(string $class, array $lines): ?string
+    {
+        $result = null;
+        $use_lines = $this->php_code_use_sorted($lines);
+        foreach ($use_lines as $line) {
+            if ($result === null) {
+                $class_with_path = trim($this->str_between($line, 'use', ';'));
+                $line_class = $this->str_right_of_or_all($class_with_path, '\\');
+                if ($line_class == $class) {
+                    $path = $this->str_left_of_last($class_with_path, '\\' . $class);
+                    $result = $this->php_code_path_to_section($path);
+                }
+            }
+        }
+        return $result;
+    }
+
     function php_code_include(array $lines): array
     {
         $result = [];
@@ -1054,6 +1305,79 @@ class library
         return $result;
     }
 
+    /**
+     * extract the elements from a class that all zukunft.com classes should have
+     * this includes the name, parent, path and description
+     *
+     * @param array $lines
+     * @param string $section
+     * @return array with the class_name, parent_name (both names have additional "Shared" or "Ui"),
+     *               path from the header and the description
+     */
+    function php_code_parent(array $lines, string $section, $file_path): array
+    {
+        $result = [];
+        $header_line = '';
+        $path = '';
+        $description = '';
+        foreach ($lines as $line) {
+            if ($header_line == '') {
+                if (str_contains($line, '.php - ')) {
+                    $header_line = $this->str_left_of_or_all($line, "\n");
+                    $path = trim($this->str_left_of($header_line, '.php - '));
+                    $description = $this->str_right_of($header_line, '.php - ');
+                }
+            }
+            if (str_starts_with($line, 'class')) {
+                $class = trim($this->str_between($line, 'class', 'extends'));
+                $line = $this->str_left_of_or_all($line, "\n");
+                if ($class == '') {
+                    $class = trim($this->str_right_of($line, 'class'));
+                    $parent = '';
+                } else {
+                    $parent = trim($this->str_right_of($line, 'extends'));
+                    $parent_section = $this->php_code_get_section($parent, $lines);
+                    if ($parent_section !== null) {
+                        $parent = $parent . $parent_section;
+                    } else {
+                        if ($section != '') {
+                            $parent = $parent . $section;
+                        }
+                    }
+                }
+                if ($section != '') {
+                    $class = $class . $section;
+                }
+                // check
+                if (!str_contains($file_path, $path)) {
+                    // TODO Prio 3 remove exception
+                    $file_path = str_replace('cfg','model', $file_path);
+                    if (!str_contains($file_path, $path)) {
+                        log_err('class header path ' . $path . ' does not match ' . $file_path);
+                    }
+                }
+                if ($class != '') {
+                    $result[$class] = [$parent, $path, $description];
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function php_code_path_to_section(string $path): string
+    {
+        $section = '';
+        $shared_path = $this->str_right_of(paths::SHARED, paths::SRC);
+        $web_path = $this->str_right_of(paths::WEB, paths::SRC);
+        $path = str_replace('\\', '/', $path);
+        if (str_contains($path, $shared_path)) {
+            $section = paths::SHARED_SECTION;
+        } elseif (str_contains($path, $web_path)) {
+            $section = paths::WEB_SECTION;
+        }
+        return $section;
+    }
+
 
     /*
      * php code
@@ -1068,71 +1392,79 @@ class library
     function php_path_convert(string $use_path): string
     {
         return match ($use_path) {
-            'api\result' => 'API_RESULT_PATH',
-            'api\word' => 'API_WORD_PATH',
-            'api\phrase' => 'API_PHRASE_PATH',
-            'api\value' => 'API_VALUE_PATH',
-            'api\ref' => 'API_REF_PATH',
-            'api\user' => 'API_USER_PATH',
-            'api\sandbox' => 'API_SANDBOX_PATH',
-            'api\formula' => 'API_FORMULA_PATH',
-            'api\component' => 'API_COMPONENT_PATH',
-            'api\verb' => 'API_VERB_PATH',
-            'api\view' => 'API_VIEW_PATH',
-            'api\log' => 'API_LOG_PATH',
-            'controller', 'api' => 'API_OBJECT_PATH',
-            'controller\system', 'api\system' => 'API_SYSTEM_PATH',
-            'cfg' => 'SERVICE_PATH',
-            'cfg\db' => 'DB_PATH',
-            'cfg\log' => 'MODEL_LOG_PATH',
-            'cfg\const' => 'MODEL_CONST_PATH',
-            'cfg\system' => 'MODEL_SYSTEM_PATH',
-            'cfg\formula' => 'MODEL_FORMULA_PATH',
-            'cfg\element' => 'MODEL_ELEMENT_PATH',
-            'cfg\result' => 'MODEL_RESULT_PATH',
-            'cfg\phrase' => 'MODEL_PHRASE_PATH',
-            'cfg\sandbox' => 'MODEL_SANDBOX_PATH',
-            'cfg\helper' => 'MODEL_HELPER_PATH',
-            'cfg\group' => 'MODEL_GROUP_PATH',
-            'cfg\user' => 'MODEL_USER_PATH',
-            'cfg\word' => 'MODEL_WORD_PATH',
-            'cfg\ref' => 'MODEL_REF_PATH',
-            'cfg\view' => 'MODEL_VIEW_PATH',
-            'cfg\value' => 'MODEL_VALUE_PATH',
-            'cfg\import' => 'MODEL_IMPORT_PATH',
-            'cfg\language' => 'MODEL_LANGUAGE_PATH',
-            'cfg\verb' => 'MODEL_VERB_PATH',
-            'cfg\component' => 'MODEL_COMPONENT_PATH',
-            'cfg\component\sheet' => 'MODEL_SHEET_PATH',
-            'cfg\export' => 'EXPORT_PATH',
-            'const' => 'TEST_CONST_PATH',
-            'html' => 'WEB_HTML_PATH',
-            'html\log' => 'WEB_LOG_PATH',
-            'html\user' => 'WEB_USER_PATH',
-            'html\element' => 'WEB_ELEMENT_PATH',
-            'html\formula' => 'WEB_FORMULA_PATH',
-            'html\result' => 'WEB_RESULT_PATH',
-            'html\word' => 'WEB_WORD_PATH',
-            'html\figure' => 'WEB_FIGURE_PATH',
-            'html\group' => 'WEB_GROUP_PATH',
-            'html\phrase' => 'WEB_PHRASE_PATH',
-            'html\verb' => 'WEB_VERB_PATH',
-            'html\value' => 'WEB_VALUE_PATH',
-            'html\ref' => 'WEB_REF_PATH',
-            'html\system' => 'WEB_SYSTEM_PATH',
-            'html\types' => 'WEB_TYPES_PATH',
-            'html\helper' => 'WEB_HELPER_PATH',
-            'html\sandbox' => 'WEB_SANDBOX_PATH',
-            'html\view' => 'WEB_VIEW_PATH',
-            'html\component' => 'WEB_COMPONENT_PATH',
-            'html\component\sheet' => 'WEB_SHEET_PATH',
-            'html\component\form' => 'WEB_FORM_PATH',
-            'shared' => 'SHARED_PATH',
-            'shared\calc' => 'SHARED_CALC_PATH',
-            'shared\const' => 'SHARED_CONST_PATH',
-            'shared\enum' => 'SHARED_ENUM_PATH',
-            'shared\helper' => 'SHARED_HELPER_PATH',
-            'shared\types' => 'SHARED_TYPES_PATH',
+            'Zukunft\ZukunftCom\main\php\api\result' => 'paths::API_RESULT',
+            'Zukunft\ZukunftCom\main\php\api\word' => 'paths::API_WORD',
+            'Zukunft\ZukunftCom\main\php\api\phrase' => 'API_PHRASE_PATH',
+            'Zukunft\ZukunftCom\main\php\api\value' => 'API_VALUE_PATH',
+            'Zukunft\ZukunftCom\main\php\api\ref' => 'API_REF_PATH',
+            'Zukunft\ZukunftCom\main\php\api\user' => 'API_USER_PATH',
+            'Zukunft\ZukunftCom\main\php\api\sandbox' => 'API_SANDBOX_PATH',
+            'Zukunft\ZukunftCom\main\php\api\formula' => 'API_FORMULA_PATH',
+            'Zukunft\ZukunftCom\main\php\api\component' => 'API_COMPONENT_PATH',
+            'Zukunft\ZukunftCom\main\php\api\verb' => 'API_VERB_PATH',
+            'Zukunft\ZukunftCom\main\php\api\view' => 'API_VIEW_PATH',
+            'Zukunft\ZukunftCom\main\php\api\log' => 'API_LOG_PATH',
+            'Zukunft\ZukunftCom\main\php\controller', 'Zukunft\ZukunftCom\main\php\api' => 'paths::API_OBJECT',
+            'Zukunft\ZukunftCom\main\php\controller\system', 'Zukunft\ZukunftCom\main\php\api\system' => 'API_SYSTEM_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg' => 'paths::MODEL',
+            'Zukunft\ZukunftCom\main\php\cfg\db' => 'paths::DB',
+            'Zukunft\ZukunftCom\main\php\cfg\log' => 'paths::MODEL_LOG',
+            'Zukunft\ZukunftCom\main\php\cfg\const' => 'paths::MODEL_CONST',
+            'Zukunft\ZukunftCom\main\php\cfg\component' => 'paths::MODEL_COMPONENT',
+            'Zukunft\ZukunftCom\main\php\cfg\component\sheet' => 'MODEL_SHEET_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg\system' => 'paths::MODEL_SYSTEM',
+            'Zukunft\ZukunftCom\main\php\cfg\formula' => 'paths::MODEL_FORMULA',
+            'Zukunft\ZukunftCom\main\php\cfg\element' => 'paths::MODEL_ELEMENT',
+            'Zukunft\ZukunftCom\main\php\cfg\log_text' => 'paths::MODEL_LOG_TEXT',
+            'Zukunft\ZukunftCom\main\php\cfg\result' => 'paths::MODEL_RESULT',
+            'Zukunft\ZukunftCom\main\php\cfg\phrase' => 'paths::MODEL_PHRASE',
+            'Zukunft\ZukunftCom\main\php\cfg\sandbox' => 'paths::MODEL_SANDBOX',
+            'Zukunft\ZukunftCom\main\php\cfg\helper' => 'paths::MODEL_HELPER',
+            'Zukunft\ZukunftCom\main\php\cfg\group' => 'paths::MODEL_GROUP',
+            'Zukunft\ZukunftCom\main\php\cfg\user' => 'paths::MODEL_USER',
+            'Zukunft\ZukunftCom\main\php\cfg\word' => 'paths::MODEL_WORD',
+            'Zukunft\ZukunftCom\main\php\cfg\ref' => 'paths::MODEL_REF',
+            'Zukunft\ZukunftCom\main\php\cfg\view' => 'paths::MODEL_VIEW',
+            'Zukunft\ZukunftCom\main\php\cfg\value' => 'paths::MODEL_VALUE',
+            'Zukunft\ZukunftCom\main\php\cfg\import' => 'paths::MODEL_IMPORT',
+            'Zukunft\ZukunftCom\main\php\cfg\language' => 'paths::MODEL_LANGUAGE',
+            'Zukunft\ZukunftCom\main\php\cfg\verb' => 'paths::MODEL_VERB',
+            'Zukunft\ZukunftCom\main\php\cfg\export' => 'paths::EXPORT',
+            'Zukunft\ZukunftCom\main\php\web' => 'html_paths::WEB',
+            'Zukunft\ZukunftCom\main\php\web\html' => 'html_paths::HTML',
+            'Zukunft\ZukunftCom\main\php\web\log' => 'html_paths::LOG',
+            'Zukunft\ZukunftCom\main\php\web\const' => 'html_paths::CONST',
+            'Zukunft\ZukunftCom\main\php\web\user' => 'html_paths::USER',
+            'Zukunft\ZukunftCom\main\php\web\element' => 'html_paths::ELEMENT',
+            'Zukunft\ZukunftCom\main\php\web\formula' => 'html_paths::FORMULA',
+            'Zukunft\ZukunftCom\main\php\web\result' => 'html_paths::RESULT',
+            'Zukunft\ZukunftCom\main\php\web\word' => 'html_paths::WORD',
+            'Zukunft\ZukunftCom\main\php\web\figure' => 'html_paths::FIGURE',
+            'Zukunft\ZukunftCom\main\php\web\group' => 'html_paths::GROUP',
+            'Zukunft\ZukunftCom\main\php\web\phrase' => 'html_paths::PHRASE',
+            'Zukunft\ZukunftCom\main\php\web\verb' => 'html_paths::VERB',
+            'Zukunft\ZukunftCom\main\php\web\value' => 'html_paths::VALUE',
+            'Zukunft\ZukunftCom\main\php\web\ref' => 'html_paths::REF',
+            'Zukunft\ZukunftCom\main\php\web\system' => 'html_paths::SYSTEM',
+            'Zukunft\ZukunftCom\main\php\web\types' => 'html_paths::TYPES',
+            'Zukunft\ZukunftCom\main\php\web\helper' => 'html_paths::HELPER',
+            'Zukunft\ZukunftCom\main\php\web\sandbox' => 'html_paths::SANDBOX',
+            'Zukunft\ZukunftCom\main\php\web\view' => 'html_paths::VIEW',
+            'Zukunft\ZukunftCom\main\php\web\component' => 'html_paths::COMPONENT',
+            'Zukunft\ZukunftCom\main\php\web\component\execute' => 'html_paths::EXECUTE',
+            'Zukunft\ZukunftCom\main\php\web\component\sheet' => 'html_paths::SHEET',
+            'Zukunft\ZukunftCom\main\php\service' => 'paths::SERVICE',
+            'Zukunft\ZukunftCom\main\php\service\math' => 'paths::SERVICE_MATH',
+            'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
+            'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
+            'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
+            'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
+            'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
+            'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
+            'Zukunft\ZukunftCom\test\php\unit_write' => 'test_paths::UNIT_WRITE',
+            'Zukunft\ZukunftCom\test\php\unit' => 'test_paths::UNIT',
+            'Zukunft\ZukunftCom\test\php\utils' => 'test_paths::UTILS',
+            'Zukunft\ZukunftCom\test\php\const' => 'test_paths::CONST',
             default => 'missing path for ' . $use_path,
         };
     }
@@ -1302,10 +1634,10 @@ class library
                 if (array_key_exists(0, $a)) {
                     if (is_array($a[0])) {
                         if (array_key_exists(json_fields::OBJECT_CLASS, $a[0])) {
-                            usort($a, array('shared\library', 'sort_array_by_class'));
+                            usort($a, array('Zukunft\ZukunftCom\main\php\shared\library', 'sort_array_by_class'));
                         }
                         if (array_key_exists(json_fields::ID, $a[0])) {
-                            usort($a, array('shared\library', 'sort_array_by_id'));
+                            usort($a, array('Zukunft\ZukunftCom\main\php\shared\library', 'sort_array_by_id'));
                         }
                     }
                 }
@@ -2128,6 +2460,7 @@ class library
         $result = $this->str_right_of_or_all($class, '\\');
         // for some lists and exceptions
         switch ($class) {
+            case view_relation_types::class;
             case phrase_types::class;
                 $result = str_replace('_types', '_type', $result);
                 break;
@@ -2136,6 +2469,48 @@ class library
                 break;
         }
         return $result;
+    }
+
+    function class_to_resource_path(string $class): string
+    {
+        // TODO avoid and remove exception
+        if ($class == source::class) {
+            $class = ref::class;
+        } elseif ($class == formula_link::class) {
+            $class = formula::class;
+        } elseif ($class == term_view::class) {
+            $class = view::class;
+        } elseif ($class == component_link::class) {
+            $class = component::class;
+        }
+        $name = $this->class_to_name($class);
+        return 'db/' . $name . '/';
+    }
+
+    /**
+     * get the id field related to a class
+     * TODO avoid these exception
+     *
+     * @param string $class including the namespace
+     * @return string the name of the id field
+     */
+    function class_to_id_field(string $class): string
+    {
+        $id_fld = $this->class_to_name($class) . sql_db::FLD_EXT_ID;
+        // for some lists and exceptions
+        switch ($class) {
+            case user_profile::class;
+                $id_fld = user_profile::FLD_ID;
+                break;
+            case sys_log::class;
+                $id_fld = sys_log::FLD_ID;
+                break;
+            case result::class:
+            case value::class;
+                $id_fld = group::FLD_ID;
+                break;
+        }
+        return $id_fld;
     }
 
     /**
@@ -2180,7 +2555,7 @@ class library
     {
         $msg_id = msg_id::ADD;
         switch ($class) {
-            case verb_dsp::class;
+            case verb_ui::class;
                 $msg_id = msg_id::VERB_ADD;
                 break;
         }
@@ -2211,6 +2586,45 @@ class library
     }
 
     /**
+     * get the fixed api name of an object class
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class including the namespace
+     * @return bool true if the class is using the user sandbox
+     */
+    function class_is_sandbox(string $class): bool
+    {
+        $result = false;
+        if (in_array($class, def::SANDBOX_CLASSES)) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * get the filled test object related to the given class
+     * @param string $class the given main class name
+     * @return string witt the empty json for the class
+     */
+    function class_to_empty_json(string $class): string
+    {
+        switch ($class) {
+            case verb::class:
+            case triple::class:
+            case ref::class;
+            case formula_link::class;
+            case view_relation::class;
+            case term_view::class;
+            case component_link::class;
+                $json = test_api::JSON_ARRAY_ONLY;
+                break;
+            default:
+                $json = test_api::JSON_NAME_ONLY;
+        }
+        return $json;
+    }
+
+    /**
      * get the object class name from the fixed api name
      * to allow changing the internal object name without changing the api
      *
@@ -2222,8 +2636,8 @@ class library
         $result = 'api class name match missing';
         $i = 0;
         $found = false;
-        while ($i < count(API_CLASSES) and !$found) {
-            $class = API_CLASSES[$i];
+        while ($i < count(def::API_CLASSES) and !$found) {
+            $class = def::API_CLASSES[$i];
             $api_name = $this->class_to_api_name($class);
             if ($api_name == $class_name) {
                 $result = $class;
@@ -2236,6 +2650,7 @@ class library
 
     /**
      * remove the namespace from the class name and adds the name extension for the table
+     * TODO Prio 2 check if the code_id or the name is returned and clean this up
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -2270,6 +2685,25 @@ class library
         if ($result == 'value_geos') {
             $result = 'values_geo';
         }
+        return $result;
+    }
+
+    /**
+     * get a list of table ids that are relevant for the given frontend class name
+     * including table ids of used in previous versions of this program
+     * @return array with the table ids that are relevant for a ui class name
+     */
+    function ui_class_to_table_id_list(string $class): array
+    {
+        global $sys;
+
+        $result = [];
+
+        $result[] = $sys->typ_lst->cng_tbl->id($this->class_to_table($class));
+        // TODO Prio 2 add a test case for a table rename
+        //if ($class == word_dsp::class) {
+        //    $result[] = 5;
+        //}
         return $result;
     }
 
@@ -2365,6 +2799,7 @@ class library
             case $this->class_to_name(view_type::class):
             case $this->class_to_name(view_style::class):
             case $this->class_to_name(view_link_type::class):
+            case $this->class_to_name(view_relation_type::class):
                 $result = 'type';
                 break;
         }
@@ -2421,6 +2856,28 @@ class library
         return $result;
     }
 
+    function url_array(string $url): array
+    {
+        $url_part = parse_url($url);
+        parse_str($url_part["query"], $url_array);
+        return $url_array;
+    }
+
+    /**
+     * allow to add a thirs col with the default value to the url array
+     * @param string $url
+     * @return array
+     */
+    function url_array_with(string $url): array
+    {
+        $url_array = $this->url_array($url);
+        $array_with = [];
+        foreach ($url_array as $key => $val) {
+            $array_with[] = [$key, $val];
+        }
+        return $array_with;
+    }
+
     /*
      * shorten a list of fields for sql query naming
      */
@@ -2436,11 +2893,11 @@ class library
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
                 word_db::FLD_NAME => 'wrd',
-                sandbox_named::FLD_DESCRIPTION => 'des',
+                sql_db::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value_base::FLD_ID => 'grp',
-                user::FLD_ID => 'usr',
-                source::FLD_ID => 'src',
+                value_db::FLD_ID => 'grp',
+                user_db::FLD_ID => 'usr',
+                source_db::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
                 sandbox_multi::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1',

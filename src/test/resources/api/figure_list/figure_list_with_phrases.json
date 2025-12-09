@@ -1,9 +1,9 @@
 [
   {
-    "id": 32812,
+    "id": 32819,
     "phrases": [
       {
-        "id": 44,
+        "id": 51,
         "name": "Pi (math)",
         "description": "ratio of the circumference of a circle to its diameter",
         "type_id": 22,
@@ -13,8 +13,12 @@
           "protection": 3,
           "name": "Pi",
           "description": "ratio of the circumference of a circle to its diameter",
+          "usage": null,
           "type_id": 17,
-          "plural": null
+          "code_id": null,
+          "plural": null,
+          "impact": null,
+          "class": "word"
         },
         "verb_id": 2,
         "to_id": -1,
@@ -30,8 +34,12 @@
             "protection": 3,
             "name": "constant",
             "description": "fixed and well-defined number",
+            "usage": null,
             "type_id": 17,
-            "plural": null
+            "code_id": null,
+            "plural": null,
+            "impact": null,
+            "class": "word"
           },
           "verb_id": 3,
           "to_id": 1,
@@ -40,9 +48,16 @@
             "protection": 3,
             "name": "mathematics",
             "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+            "usage": null,
             "type_id": 1,
-            "plural": null
-          }
+            "code_id": null,
+            "plural": null,
+            "impact": null,
+            "class": "word"
+          },
+          "usage": null,
+          "impact": null,
+          "class": "triple"
         },
         "class": "triple"
       }

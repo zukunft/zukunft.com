@@ -19,7 +19,7 @@ BEGIN
 END;
 
 SELECT source_delete_log_excluded_user
-       (1,
+       (3,
         3,
         57,
         'The International System of Units',

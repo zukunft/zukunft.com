@@ -30,30 +30,34 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
 
         // start the test section (ts)
         $ts = 'unit ui html phrase ';
         $t->header($ts);
 
-        $wrd = new phrase_dsp($t->word()->phrase()->api_json());
-        $trp = new phrase_dsp($t->triple_pi()->phrase()->api_json());
+        $wrd = new phrase($t_wrd->word()->phrase()->api_json());
+        $trp = new phrase($t_trp->triple_pi()->phrase()->api_json());
         $test_page = $html->text_h2('Phrase display test');
         $test_page .= 'word phrase with tooltip: ' . $wrd->name_tip() . '<br>';
         $test_page .= 'word phrase with link: ' . $wrd->name_link() . '<br>';
         $test_page .= 'triple phrase with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'triple phrase with link: ' . $trp->name_link() . '<br>';
-        $t->html_test($test_page, 'phrase', 'phrase', $t);
+        $t->html_page_test($test_page, 'phrase', 'phrase', $t);
     }
 
 }

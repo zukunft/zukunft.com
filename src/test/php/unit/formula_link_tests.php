@@ -30,20 +30,24 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_list;
-use cfg\formula\formula_link_type;
-use shared\library;
-use test\test_base;
-use test\test_cleanup;
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_link_tests
 {
@@ -56,6 +60,7 @@ class formula_link_tests
         $lib = new library();
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
@@ -69,7 +74,7 @@ class formula_link_tests
         $frm_lnk_typ = new formula_link_type('');
         $t->assert_sql_table_create($frm_lnk_typ);
         $t->assert_sql_index_create($frm_lnk_typ);
-        $frm_lnk = $t->formula_link();
+        $frm_lnk = $t_frm->formula_link();
         $t->assert_sql_table_create($frm_lnk);
         $t->assert_sql_index_create($frm_lnk);
         $t->assert_sql_foreign_key_create($frm_lnk);
@@ -86,23 +91,23 @@ class formula_link_tests
 
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
-        $lnk->set_id(1);
+        $lnk->id = 1;
         $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($sc, $lnk);
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
+        $expected_sql = $t->file(test_paths::DB_FORMULA . 'formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $t->subheader($ts . 'formula link sql write');
-        $lnk = $t->formula_link();
+        $lnk = $t_frm->formula_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $lnk_filled = $t->formula_link_filled();
+        $lnk_filled = $t_frm->formula_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 1;
@@ -112,7 +117,7 @@ class formula_link_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'formula link base object handling');
-        $lnk = $t->formula_link();
+        $lnk = $t_frm->formula_link();
         $t->assert_reset($lnk);
 
         /*
@@ -120,11 +125,11 @@ class formula_link_tests
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
         $lnk = new formula($usr);
-        $lnk->import_obj($json_in, $t);
-        $json_ex = json_decode(json_encode($lnk->export_json(false)), true);
+        $lnk->import_obj($json_in, $usr_msg, $dto);
+        $json_ex = json_decode(json_encode($lnk->export_json($exp_typ, false)), true);
         $result = json_is_similar($json_in, $json_ex);
         $target = true;
-        $t->display('formula_link->import check name', $target, $result);
+        $t->assert('formula_link->import check name', $result, $target);
         */
 
         $t->name = 'formula_link_list->';

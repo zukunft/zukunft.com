@@ -2,6 +2,7 @@ PREPARE view_norm_by_id (bigint) AS
     SELECT view_id,
            view_name,
            code_id,
+           usage,
            description,
            view_type_id,
            view_style_id,

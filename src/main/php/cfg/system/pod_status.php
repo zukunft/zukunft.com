@@ -34,19 +34,21 @@
    
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class pod_status extends type_object
 {
 
     // list of the pod statuus
-    const ACTIVE = 'active';
-    const TO_DEPRECATE = 'to_deprecate'; // data should be moved out of this pod to other pods
-    const DEPRECATED = "deprecated"; // the pod is not active anymore
+    const string ACTIVE = 'active';
+    const string TO_DEPRECATE = 'to_deprecate'; // data should be moved out of this pod to other pods
+    const string DEPRECATED = "deprecated"; // the pod is not active anymore
 
 
     /*
@@ -54,7 +56,7 @@ class pod_status extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the actual status of a pod';
-    const FLD_ID = 'pod_status_id';
+    const string TBL_COMMENT = 'for the actual status of a pod';
+    const string FLD_ID = 'pod_status_id';
 
 }

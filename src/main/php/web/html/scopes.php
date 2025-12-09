@@ -30,13 +30,13 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
 class scopes
 {
 
     // scopes used
-    const COL = 'col';
-    const ROW = 'row';
+    const string COL = 'col';
+    const string ROW = 'row';
 
 }

@@ -30,7 +30,7 @@
 
 */
 
-namespace html\component\sheet;
+namespace Zukunft\ZukunftCom\main\php\web\component\sheet;
 
 class position_list
 {

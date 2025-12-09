@@ -30,31 +30,35 @@
 
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type_list;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list;
-use cfg\user\user_message;
-use shared\library;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class group_list extends sandbox_list
 {
@@ -208,7 +212,7 @@ class group_list extends sandbox_list
         $sc->set_id_field($grp->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(group::FLD_NAMES);
         return $qp;
     }
@@ -305,16 +309,15 @@ class group_list extends sandbox_list
 
     /**
      * delete all loaded phrase groups e.g. to delete al the phrase groups linked to a phrase
-     * @return user_message
+     * @param user_message $usr_msg
+     * @return bool true if all groups of the list have been deleted
      */
-    function del(): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($this->lst() as $phr_grp) {
-            $usr_msg->add($phr_grp->del());
+            $phr_grp->del($usr_msg);
         }
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 
@@ -380,14 +383,14 @@ class group_list extends sandbox_list
     add all phrase groups to the list that have a value with at least one word in each word list
 
     add all formula results to the list for ONE formula based on
-    - $frm_linked: the words and triples assigned to the formula e.g. "Year" for "increase"
+    - $frm_linked: the words and triples assigned to the formula e.g. "year" for "increase"
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
     the function is should be based on the group table which is supposed to be always up to date
     including the user specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group
-    e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
+    e.g. the formula is assigned to "company" ($frm_linked) and the "operating income" formula result should be calculated
          so "sales" and "Cost" are words of the formula
          if "sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -406,8 +409,8 @@ class group_list extends sandbox_list
     - if a formula is only uses normal words e.g. "Net profit"           only the group selection should be used and all times          should be included
     - if a formula is only uses both         e.g. "Net profit next year" only the group selection should be used and the time selection should be used
 
-    - if a formula is assigned to "Year" and "2018" all value and result that have "Year" OR "2018" should be updated
-    - if a formula is assigned to the triple "2018 (Year)" only the value and result for the "Year" "2018" should be updated
+    - if a formula is assigned to "year" and "2018" all value and result that have "year" OR "2018" should be updated
+    - if a formula is assigned to the triple "2018 (year)" only the value and result for the "year" "2018" should be updated
 
     - if a normal phrase is assigned but not used no value should be selected
     - if a   time word   is assigned but not used no value should be selected
@@ -445,10 +448,10 @@ class group_list extends sandbox_list
             $sql_group = 'SELECT l1.group_id
                       FROM group_phrase_links l1
                  LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->user()->id() . ',
+                                                            AND u1.user_id = ' . $this->user()->id . ',
                            group_phrase_links l2
                  LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->user()->id() . '
+                                                            AND u2.user_id = ' . $this->user()->id . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.group_id = l2.group_id
@@ -497,7 +500,7 @@ class group_list extends sandbox_list
 
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         return $db_con->get_old($sql);
     }
 
@@ -532,7 +535,7 @@ class group_list extends sandbox_list
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
                 log_debug('add id ' . $val_row[group::FLD_ID]);
-                // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
+                // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->user());
                 $val_grp->load_by_id($val_row[group::FLD_ID]);
@@ -555,7 +558,7 @@ class group_list extends sandbox_list
                     $changed++;
                 }
                 /* TODO deprecate now
-                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
+                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value_db::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
                     log_debug('added ' . $added . ' in ' . $lib->dsp_count($this->grp_time_ids));
@@ -608,7 +611,7 @@ class group_list extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -659,8 +662,8 @@ class group_list extends sandbox_list
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
         $result = '';
@@ -696,7 +699,7 @@ class group_list extends sandbox_list
     /**
      * create a useful (but not unique!) name of the phrase group list mainly used for debugging
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -715,7 +718,7 @@ class group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

@@ -30,14 +30,17 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\system\job_time;
-use cfg\user\user;
-use cfg\user\user_list;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_tests
 {
@@ -50,8 +53,10 @@ class user_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_usr = new test_users();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
+        $t->usr_admin = $t_usr->user_sys_admin();
 
 
         // start the test section (ts)
@@ -59,36 +64,49 @@ class user_tests
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
-        $test_usr = new user();
-        $t->assert_sql_table_create($test_usr);
-        $t->assert_sql_index_create($test_usr);
-        $t->assert_sql_foreign_key_create($test_usr);
+        $usr_test = new user();
+        $t->assert_sql_table_create($usr_test);
+        $t->assert_sql_index_create($usr_test);
+        $t->assert_sql_foreign_key_create($usr_test);
 
 
-        $t->subheader($ts . 'sql query');
+        $t->subheader($ts . 'sql read');
+        $usr_test = new user();
+        $t->assert_sql_by_id($sc, $usr_test);
+        $t->assert_sql_by_name($sc, $usr_test);
+        $this->assert_sql_by_email($t, $db_con, $usr_test);
+        $this->assert_sql_by_name_or_email($t, $db_con, $usr_test);
+        $this->assert_sql_by_ip($t, $db_con, $usr_test);
+        $this->assert_sql_by_profile($t, $db_con, $usr_test);
 
-        $test_usr = new user();
-        $t->assert_sql_by_id($sc, $test_usr);
-        $t->assert_sql_by_name($sc, $test_usr);
-        $this->assert_sql_by_email($t, $db_con, $test_usr);
-        $this->assert_sql_by_name_or_email($t, $db_con, $test_usr);
-        $this->assert_sql_by_ip($t, $db_con, $test_usr);
-        $this->assert_sql_by_profile($t, $db_con, $test_usr);
+        $t->subheader($ts . 'sql write insert');
+        $usr_ip = $t_usr->user_ip();
+        $t->assert_sql_insert($sc, $usr_ip, [sql_type::LOG]);
+        $usr_test = $t_usr->user_sys_test();
+        $t->assert_sql_insert($sc, $usr_test, [sql_type::LOG]);
 
-        $test_usr_list = new user_list($test_usr);
+        $t->subheader($ts . 'sql write update');
+        $usr_changed = $usr_test->cloned(users::SYSTEM_TEST_PARTNER_NAME);
+        $t->assert_sql_update($sc, $usr_changed, $usr_test, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $usr_changed, $usr_test);
+
+        $t->subheader($ts . 'sql write delete');
+        $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);
+
+        $test_usr_list = new user_list($usr_test);
         // TODO include all value tables
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
 
 
         $t->subheader($ts . 'api');
 
-        $test_usr = $t->user_sys_test();
-        $t->assert_api($test_usr);
+        $usr_test = $t_usr->user_sys_test();
+        $t->assert_api($usr_test);
 
 
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/user/user_import.json';
-        $t->assert_json_file(new user(), $json_file);
+        $t->assert_json_file(new user(), $json_file, $t->usr_admin);
 
     }
 

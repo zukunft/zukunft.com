@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/dbobjectnoid.php - a base object for database objects that does not have a single db key
-    -----------------------------
+    model/helper/db_object_no_id.php - a base object for database objects that does not have a single db key
+    --------------------------------
 
     used to create the database tables for the time_series_data, log amd formula elements
 
@@ -32,56 +32,58 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\group\group;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\value\value;
-use shared\library;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object_no_id
 {
 
     // dummy const to be overwritten by the child objects
     // description of the table for the sql table creation
-    const TBL_COMMENT = '';
+    const string TBL_COMMENT = '';
     // list of the table fields for the standard read query
-    const FLD_NAMES = array();
+    const array FLD_NAMES = array();
 
     // field lists for the table creation overwritten by the child object or grand child for extra fields
-    const FLD_LST_ALL = array();
-    const FLD_LST_NAME = array();
-    const FLD_LST_EXTRA = array();
+    const array FLD_LST_ALL = array();
+    const array FLD_LST_NAME = array();
+    const array FLD_LST_EXTRA = array();
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array();
+    const array FLD_LST_MUST_BE_IN_STD = array();
     // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
     // fields that CAN be changed by the user with the parameters for the table creation
-    const FLD_LST_USER_CAN_CHANGE = array();
+    const array FLD_LST_USER_CAN_CHANGE = array();
     // fields that CANNOT be changed by the user with the parameters for the table creation
-    const FLD_LST_NON_CHANGEABLE = array();
+    const array FLD_LST_NON_CHANGEABLE = array();
 
 
     /*
@@ -332,7 +334,7 @@ class db_object_no_id
 
 
     /*
-     * information
+     * info
      */
 
     /**

@@ -8,7 +8,8 @@ PREPARE verb_all (bigint, bigint) AS
            name_reverse,
            name_plural_reverse,
            formula_name,
-           words
+           usage,
+           impact
       FROM verbs
   ORDER BY verb_id
      LIMIT $1

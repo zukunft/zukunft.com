@@ -33,31 +33,33 @@
 
 */
 
-namespace html\formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-include_once WEB_ELEMENT_PATH . 'element.php';
-include_once WEB_ELEMENT_PATH . 'element_list.php';
-include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CALC_PATH . 'expression.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::ELEMENT . 'element.php';
+include_once html_paths::ELEMENT . 'element_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CALC . 'expression.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED . 'library.php';
 
-use html\element\element;
-use html\element\element_list;
-use html\phrase\term;
-use html\phrase\term_list;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use shared\calc\expression as shared_expression;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\element\element;
+use Zukunft\ZukunftCom\main\php\web\element\element_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class expression extends shared_expression
 {
@@ -79,7 +81,7 @@ class expression extends shared_expression
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
             $elm = $this->element_by_symbol($obj_sym, $trm_lst);
-            $elm_lst->add_obj($elm);
+            $elm_lst->add_obj($elm, true);
             $work = $lib->str_right_of($work, chars::TERM_END);
             $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         }
@@ -133,8 +135,8 @@ class expression extends shared_expression
     {
         $frm = new formula();
         $frm->load_by_name($name);
-        if ($frm->id() > 0) {
-            $db_sym = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
+        if ($frm->id > 0) {
+            $db_sym = chars::FORMULA_START . $frm->id . chars::FORMULA_END;
             log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -146,8 +148,8 @@ class expression extends shared_expression
     {
         $wrd = new word();
         $wrd->load_by_name($name);
-        if ($wrd->id() > 0) {
-            $db_sym = chars::WORD_START . $wrd->id() . chars::WORD_END;
+        if ($wrd->id > 0) {
+            $db_sym = chars::WORD_START . $wrd->id . chars::WORD_END;
             log_debug('found word "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -159,8 +161,8 @@ class expression extends shared_expression
     {
         $trp = new triple();
         $trp->load_by_name($name);
-        if ($trp->id() > 0) {
-            $db_sym = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
+        if ($trp->id > 0) {
+            $db_sym = chars::TRIPLE_START . $trp->id . chars::TRIPLE_END;
             log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -172,8 +174,8 @@ class expression extends shared_expression
     {
         $vrb = new verb;
         $vrb->load_by_name($name);
-        if ($vrb->id() > 0) {
-            $db_sym = chars::VERB_START . $vrb->id() . chars::VERB_END;
+        if ($vrb->id > 0) {
+            $db_sym = chars::VERB_START . $vrb->id . chars::VERB_END;
             log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -185,7 +187,7 @@ class expression extends shared_expression
     {
         $wrd = new word();
         $wrd->load_by_id($id);
-        if ($wrd->id() == 0) {
+        if ($wrd->id == 0) {
             $wrd = null;
         }
         return $wrd;
@@ -195,7 +197,7 @@ class expression extends shared_expression
     {
         $trp = new triple();
         $trp->load_by_id($id);
-        if ($trp->id() == 0) {
+        if ($trp->id == 0) {
             $trp = null;
         }
         return $trp;
@@ -205,7 +207,7 @@ class expression extends shared_expression
     {
         $frm = new formula();
         $frm->load_by_id($id);
-        if ($frm->id() == 0) {
+        if ($frm->id == 0) {
             $frm = null;
         }
         return $frm;
@@ -215,7 +217,7 @@ class expression extends shared_expression
     {
         $vrb = new verb();
         $vrb->load_by_id($id);
-        if ($vrb->id() == 0) {
+        if ($vrb->id == 0) {
             $vrb = null;
         }
         return $vrb;

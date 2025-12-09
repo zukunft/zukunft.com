@@ -30,20 +30,24 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
-use cfg\word\triple;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 
 class pod extends type_object
 {
@@ -53,19 +57,19 @@ class pod extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the technical details of the mash network pods';
-    const FLD_ID_COM = 'the unique id of the pods within this pod database';
-    const FLD_ID = 'pod_id';
-    const FLD_ID_SQL_TYP = sql_field_type::INT; // overwrite the type object setting because the number of pods may be bigger
-    const FLD_URL = 'pod_url';
-    const FLD_PARAM = 'param_triple_id';
+    const string TBL_COMMENT = 'for the technical details of the mash network pods';
+    const string FLD_ID_COM = 'the unique id of the pods within this pod database';
+    const string FLD_ID = 'pod_id';
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // overwrite the type object setting because the number of pods may be bigger
+    const string FLD_URL = 'pod_url';
+    const string FLD_PARAM = 'param_triple_id';
 
     // field lists for the table creation
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [pod_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_type::class, ''],
         [self::FLD_URL, sql_field_type::NAME, sql_field_default::NOT_NULL, '', '', ''],
         [pod_status::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_status::class, ''],
-        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple::FLD_ID],
+        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple_db::FLD_ID],
     );
 
 }

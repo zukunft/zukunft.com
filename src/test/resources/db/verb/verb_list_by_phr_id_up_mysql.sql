@@ -10,7 +10,8 @@ PREPARE verb_list_by_phr_id_up FROM
              l.name_reverse,
              l.name_plural_reverse,
              l.formula_name,
-             l.words,
+             l.`usage`,
+             l.impact,
              l.verb_name,
              IF(u.excluded IS NULL, s.excluded, u.excluded) AS excluded
         FROM triples s

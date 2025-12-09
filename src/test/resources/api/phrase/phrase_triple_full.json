@@ -4,5 +4,9 @@
   "name": "System Test Triple",
   "description": "A mathematical constant that never changes e.g. Pi",
   "type_id": 17,
-  "verb_id": 3
+  "from_id": 0,
+  "verb_id": 3,
+  "to_id": 0,
+  "usage": 12,
+  "impact": 23.4
 }

@@ -30,41 +30,45 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\group\group;
-use cfg\helper\type_object;
-use cfg\user\user;
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use DateTime;
-use shared\enum\change_fields;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class change_value extends change_log
 {
@@ -74,14 +78,14 @@ class change_value extends change_log
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
-    const FLD_FIELD_ID = 'change_field_id';
-    const FLD_GROUP_ID = 'group_id';
-    const FLD_ROW_ID = self::FLD_GROUP_ID;
+    const string TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
+    const string FLD_FIELD_ID = 'change_field_id';
+    const string FLD_GROUP_ID = 'group_id';
+    const string FLD_ROW_ID = self::FLD_GROUP_ID;
 
     // all database field names
-    const FLD_NAMES = array(
-        user::FLD_ID,
+    const array FLD_NAMES = array(
+        user_db::FLD_ID,
         self::FLD_TIME,
         self::FLD_ACTION,
         change::FLD_FIELD_ID,
@@ -91,7 +95,7 @@ class change_value extends change_log
     );
 
     // field list to log the actual change of the value with a standard group id
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
@@ -128,7 +132,7 @@ class change_value extends change_log
      */
     function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
-        global $cng_fld_cac;
+        global $sys;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -142,20 +146,20 @@ class change_value extends change_log
             $this->old_value = $db_row[change::FLD_OLD_VALUE];
             $this->new_value = $db_row[change::FLD_NEW_VALUE];
 
-            $fld_tbl = $cng_fld_cac->get($this->field_id);
+            $fld_tbl = $sys->typ_lst->cng_fld->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user::FLD_ID]);
-                $row_usr->name = $db_row[user::FLD_NAME];
+                $row_usr->id = $db_row[user_db::FLD_ID];
+                $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
         }
@@ -186,7 +190,7 @@ class change_value extends change_log
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 

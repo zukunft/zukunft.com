@@ -2,8 +2,8 @@
 
 /*
 
-    component_list_dsp.php - a list function to create the HTML code to display a view component list
-    ---------------------
+    web/component/component_list.php - a list function to create the HTML code to display a view component list
+    --------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,17 +29,18 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_COMPONENT_PATH . 'component_exe.php';
-include_once WEB_USER_PATH . 'user_message.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::USER . 'user_message.php';
 
-use html\sandbox\list_dsp;
-use html\component\component_exe as component;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
-class component_list extends list_dsp
+class component_list extends sandbox_list_named
 {
 
     /*
@@ -65,48 +66,6 @@ class component_list extends list_dsp
         $url = '';
         return true;
 
-    }
-
-
-
-    /*
-     * base
-     */
-
-    /**
-     * @return string with a list of the component names with html links
-     * ex. names_linked
-     */
-    function name_tip(): string
-    {
-        $components = array();
-        foreach ($this->lst() as $cmp) {
-            $components[] = $cmp->name_tip();
-        }
-        return implode(', ', $components);
-    }
-
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the component names with html links
-     * ex. names_linked
-     */
-    function name_link(string $back = ''): string
-    {
-        return implode(', ', $this->names_linked($back));
-    }
-
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @return array with a list of the component names with html links
-     */
-    private function names_linked(string $back = ''): array
-    {
-        $result = array();
-        foreach ($this->lst() as $cmp) {
-            $result[] = $cmp->name_link($back);
-        }
-        return $result;
     }
 
 }

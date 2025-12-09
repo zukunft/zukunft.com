@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_user.php - a base object for all user specific database objects
-    -------------------------------
+    model/helper/db_object_multi_user.php - a base object for all user specific database objects
+    -------------------------------------
 
     same as db_id_object_user but for database object that have custom prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
@@ -33,16 +33,20 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class db_object_multi_user extends db_object_multi
 {
@@ -96,12 +100,34 @@ class db_object_multi_user extends db_object_multi
      */
     function user_id(): int
     {
-        return $this->usr->id();
+        return $this->usr->id;
     }
 
 
     /*
-     * information
+     * modify
+     */
+
+    /**
+     * fill this db user object based on the given object
+     * if the given user id is not set (null) the user id is set
+     *
+     * @param db_object_multi_user|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_multi_user|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->user_id() != null) {
+            $this->set_user($obj->user());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * info
      */
 
     /**
@@ -134,9 +160,9 @@ class db_object_multi_user extends db_object_multi
     {
         global $debug;
         $result = '';
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;

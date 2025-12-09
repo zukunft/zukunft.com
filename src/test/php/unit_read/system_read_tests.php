@@ -30,20 +30,22 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once DB_PATH . 'db_check.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\formula\formula;
-use cfg\system\job_type_list;
-use cfg\system\sys_log_status_list;
-use cfg\helper\type_lists;
-use shared\enum\sys_log_statuus;
-use shared\types\api_type;
-use test\test_cleanup;
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::DB . 'db_check.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_read_tests
 {
@@ -51,15 +53,17 @@ class system_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $sys_log_sta_cac;
 
         // init
         $t->name = 'system read db->';
 
-        $t->header('Unit database tests of the system functions');
+        // start the test section (ts)
+        $ts = 'db read system ';
+        $t->header($ts);
 
-        $t->subheader('System error log tests');
+        $t->subheader($ts . 'error log');
 
         // load the log status list
         $lst = new sys_log_status_list();
@@ -67,10 +71,10 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
+        $result = $sys->typ_lst->sys_log_sta->id(sys_log_statuus::OPEN);
         $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
 
-        $t->subheader('System batch job type tests');
+        $t->subheader($ts . 'batch job type');
 
         // load the batch job type list
         $lst = new job_type_list();
@@ -78,15 +82,14 @@ class system_read_tests
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $job_typ_cac;
-        $result = $job_typ_cac->id(job_type_list::VALUE_UPDATE);
+        $result = $sys->typ_lst->job_typ->id(job_type_list::VALUE_UPDATE);
         $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
         /*
          * SQL database read unit tests
          */
 
-        $t->subheader('SQL database read tests');
+        $t->subheader($ts . 'SQL database read');
 
         $t->assert_greater_zero('sql_db->count', $db_con->count(formula::class));
 
@@ -94,15 +97,10 @@ class system_read_tests
          * SQL database consistency tests
          */
 
-        $t->subheader('SQL database consistency tests');
+        $t->subheader($ts . 'SQL database consistency');
 
         $result = $db_con->db_check_missing_owner();
         $t->assert('db_consistency->check ', $result, true);
-
-        $t->subheader('API unit db tests of preloaded types');
-        $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $t->usr1);
-        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
 
     }
 

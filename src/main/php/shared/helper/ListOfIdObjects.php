@@ -5,6 +5,10 @@
     shared/helper/ListOfIdObjects.php - the list of objects that have a unique database id
     ---------------------------------
 
+    This is the parent list object for back and frontend.
+    Has an array with the id for faster return of single objects by the database id.
+    TODO Prio 3 check if valkey/redis db is faster
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,16 +34,26 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'ListOf.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\library;
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'ListOf.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class ListOfIdObjects extends ListOf
 {
@@ -82,11 +96,19 @@ class ListOfIdObjects extends ListOf
     /**
      * to be called after the lists have been updated
      * but the index list have not yet been updated
-     * is overwritten by the child _sandbox_list_named
+     * is overwritten by the child sandbox_list_named, sandbox_link_list and sandbox_value_list
      */
     protected function set_lst_dirty(): void
     {
         $this->lst_dirty = true;
+    }
+
+    /**
+     * @return true if the at least one of the hash tables is not updated
+     */
+    protected function is_dirty(): bool
+    {
+        return $this->lst_dirty;
     }
 
     /**
@@ -104,19 +126,25 @@ class ListOfIdObjects extends ListOf
      */
 
     /**
+     * get the first ids from the list e.g. to show it to humans
+     *
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
-        $result = array();
-        $pos = 0;
-        foreach ($this->lst() as $sbx_obj) {
-            if ($pos <= $limit or $limit == null) {
-                // use only valid ids
-                if ($sbx_obj->id() <> 0) {
-                    $result[] = $sbx_obj->id();
-                    $pos++;
+        if ($limit == null and !$this->lst_dirty) {
+            $result = array_keys($this->id_pos_lst);
+        } else {
+            $result = array();
+            $pos = 0;
+            foreach ($this->lst() as $sbx_obj) {
+                if ($pos <= $limit or $limit == null) {
+                    // use only valid ids
+                    if ($sbx_obj->id() <> 0) {
+                        $result[] = $sbx_obj->id();
+                        $pos++;
+                    }
                 }
             }
         }
@@ -172,14 +200,28 @@ class ListOfIdObjects extends ListOf
             $this->add_direct($obj_to_add);
             $this->set_lst_dirty();
         } else {
-            if (!in_array($obj_to_add->id(), $this->ids())) {
+            if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                 $this->add_direct($obj_to_add);
-                $this->set_lst_dirty();
             } else {
                 $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * add the object to the list without duplicate check
+     * and add the id to the id hash
+     *
+     * @param IdObject|TextIdObject|CombineObject|value_types $obj_to_add
+     * @return void
+     */
+    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
+    {
+        if (!$this->is_dirty()) {
+            $this->id_pos_lst[$obj_to_add->id()] = count($this->lst());
+        }
+        parent::add_direct($obj_to_add);
     }
 
     /**
@@ -205,6 +247,19 @@ class ListOfIdObjects extends ListOf
         $this->lst_dirty = false;
     }
 
+    /**
+     * unset an object of the list
+     * and set the cache to dirty
+     *
+     * @param int|string $key the unique id of the entry
+     * @returns bool true if the object has been added
+     */
+    protected function unset(int|string $key): bool
+    {
+        $this->set_lst_dirty();
+        return parent::unset($key);
+    }
+
 
     /*
      * debug
@@ -220,8 +275,8 @@ class ListOfIdObjects extends ListOf
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
 

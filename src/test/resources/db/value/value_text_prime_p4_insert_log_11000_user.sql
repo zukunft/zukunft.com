@@ -27,13 +27,13 @@ PREPARE value_text_prime_p4_insert_log_11000_user_call
         ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
 
 SELECT value_text_prime_p4_insert_log_11000_user
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         421::smallint,
         'zukunft.com'::text,
-        93169617471111297::bigint,
-        331::smallint,
-        326::smallint,
-        313::smallint,
-        -129::smallint,
+        59673584134226012::bigint,
+        212::smallint,
+        207::smallint,
+        203::smallint,
+        -92::smallint,
         null::bigint);

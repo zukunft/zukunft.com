@@ -34,45 +34,54 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-use cfg\import\import_file;
-use cfg\user\user;
-use cfg\view\view;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+include_once paths::SHARED_CONST . 'views.php';
 
 if ($debug > 1) {
     echo 'lib loaded<br>';
 }
 
 // open database
-$db_con = prg_start("progress display");
+$app = new frontend();
+$db_con = $app->start("progress display");
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
 
     $html = new html_base();
 
     $usr->load_usr_data();
 
-    // prepare the display
-    $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::IMPORT);
-
     if ($usr->is_admin()) {
+
+        // prepare the display
+        $msk = new view($usr);
+        $msk->load_by_code_id(view_shared::IMPORT);
+
+        // load the cache
+        $dto = new data_object();
+        //$dto->usr = $usr;
 
         // load the testing functions
         include_once '../src/main/php/service/import/import_file.php';
@@ -85,8 +94,8 @@ if ($usr->id() > 0) {
         // ---------------------------------------
 
         $html = new html_base();
-        $msk_dsp = new view_dsp($msk->api_json());
-        $html->echo($msk_dsp->dsp_navbar($back));
+        $msk_dsp = new view_ui($msk->api_json());
+        $html->echo($msk_dsp->dsp_navbar($dto, $back));
 
         $html->echo("loading of base configuration started<br>");
 
@@ -100,4 +109,4 @@ if ($usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

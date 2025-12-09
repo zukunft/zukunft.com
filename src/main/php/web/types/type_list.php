@@ -33,33 +33,42 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-include_once SHARED_PATH . 'api.php';
-include_once WEB_TYPES_PATH . 'protection.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_TYPES_PATH . 'type_object.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\user\user_message;
-use html\html_selector;
-use html\types\type_object as type_object_dsp;
-use html\verb\verb;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\view_styles;
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::TYPES . 'ref_type.php';
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class type_list
 {
 
     // error return codes
-    const CODE_ID_NOT_FOUND = -1;
+    const int CODE_ID_NOT_FOUND = -1;
+    // extra entry used in a selection to separate the highlighted entries from the sorted entries
+    const string SELECT_SEPARATOR = ' --- ';
 
     // the protected main var without id list because this is only loaded once
     private array $lst = [];
@@ -74,6 +83,7 @@ class type_list
 
     /**
      * set the vars of these list display objects bases on the api json array
+     * TODO Prio 1 add user_message parameter
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -83,21 +93,32 @@ class type_list
         foreach ($json_array as $value) {
             if ($class == verb::class) {
                 $vrb = new verb();
-                $vrb->api_mapper($value);
+                $vrb->api_mapper($value, $usr_msg);
                 $this->add_obj($vrb);
+            } elseif ($class == ref_type::class) {
+                $ref_typ = new ref_type(
+                    $value[json_fields::ID],
+                    $value[json_fields::CODE_ID],
+                    $value[json_fields::NAME],
+                    $value[json_fields::DESCRIPTION]
+                );
+                if (key_exists(json_fields::URL, $value)) {
+                    $ref_typ->url = $value[json_fields::URL];
+                }
+                $this->add_obj($ref_typ);
             } else {
                 if (!array_key_exists(json_fields::CODE_ID, $value)) {
                     $usr_msg->add_err('code id is missing for ' . implode(',', $value));
                 }
                 if (array_key_exists(json_fields::DESCRIPTION, $value)) {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME],
                         $value[json_fields::DESCRIPTION]
                     );
                 } else {
-                    $typ = new type_object_dsp(
+                    $typ = new type_object(
                         $value[json_fields::ID],
                         $value[json_fields::CODE_ID],
                         $value[json_fields::NAME]
@@ -118,6 +139,36 @@ class type_list
         foreach ($this->lst as $typ) {
             $result[$typ->id()] = $typ->name();
         }
+        return $result;
+    }
+
+    /**
+     * @returns array with the names on the db keys
+     */
+    function lst_key_sort_by_name(array $highlighted = []): array
+    {
+        $result = $this->lst_key();
+        natsort($result);
+
+        if (!empty($highlighted)) {
+            $highlightSet = array_flip($highlighted);
+            $final = [];
+            $remaining = [];
+            $separator = [];
+            $separator[0] = self::SELECT_SEPARATOR;
+
+            foreach ($result as $key => $val) {
+                if (isset($highlightSet[$val])) {
+                    $final[$key] = $val;
+                } else {
+                    $remaining[$key] = $val;
+                }
+            }
+
+            // Combine, keeping original keys
+            return $final + $separator + $remaining;
+        }
+
         return $result;
     }
 
@@ -189,11 +240,29 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return verb|type_object|null the type object
+     * @return verb|ref_type|type_object|null the type object
      */
-    function get(int $id): verb|type_object|null
+    function get(int $id): verb|ref_type|type_object|null
     {
         $result = null;
+        if (count($this->hash) != count($this->lst)) {
+            $dub_key = [];
+            $all_key = [];
+            foreach ($this->lst as $typ) {
+                $key = $typ->code_id();
+                if (!in_array($key, $all_key)) {
+                    $all_key[] = $key;
+                } else {
+                    if ($key != '') {
+                        $dub_key[] = $key;
+                    }
+                }
+            }
+            if (count($dub_key) > 0) {
+                log_err('probably "' . implode(', ', $dub_key) . '" are duplicate code_id in ' . $this::class);
+            }
+            //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+        }
         if ($id > 0) {
             if (in_array($id, $this->hash)) {
                 $key = array_search($id, $this->hash);
@@ -261,30 +330,42 @@ class type_list
 
     /**
      * create the HTML code to select a type
-     * @param array $key_lst the key value list for the selector
-     * @param string $name the unique name inside the form for this selector
+     * TODO Prio 0 use this var order for all selectors
+     * TODO use the label_id for all function calls
      * @param string $form the unique name of the html form
-     * @param int $selected the id of the preselected phrase
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param string $label the text show to the user
+     * @param int|null $selected the id of the preselected phrase
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style the formatting code to adjust the formatting
+     * @param msg_id $label_id the text show to the user
      * @returns string the html code to select a type from this list
      */
     function type_selector(
-        array  $key_lst,
+        string $form,
+        ?int   $selected = null,
         string $name = '',
-        string $form = '',
-        int    $selected = 0,
-        string $col_class = view_styles::COL_SM_4,
-        string $label = 'type: '
+        msg_id $label_id = msg_id::FORM_FIELD_TYPE,
+        string $style = view_styles::COL_SM_4
     ): string
     {
         $sel = new html_selector();
+        if (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA_WITH_DEFAULT)) {
+            $std = $this->get_by_code_id(phrase_type::DEFAULT);
+            if ($std != null) {
+                $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+            } else {
+                $sel->lst = $this->lst_key_sort_by_name();
+            }
+        } elseif (in_array($label_id, msg_id::FORM_TYPE_SELECTOR_LABELS_SORT_BY_ALPHA)) {
+            $sel->lst = $this->lst_key_sort_by_name();
+        } else {
+            $sel->lst = $this->lst_key();
+        }
         $sel->name = $name;
         $sel->form = $form;
-        $sel->label = $label;
-        $sel->lst = $key_lst;
         $sel->selected = $selected;
-        $sel->bs_class = $col_class;
+        $sel->label_id = $label_id;
+        $sel->style = $style;
+        $sel->type = html_selector::TYPE_SELECT;
         return $sel->display();
     }
 

@@ -2,8 +2,8 @@
 
 /*
 
-    view_list_dsp.php - a list function to create the HTML code to display a view list
-    -----------------
+    web/view/view_list.php - a list function to create the HTML code to display a view list
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,36 +29,62 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_REF_PATH . 'source.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\ref\source;
-use html\rest_ctrl;
-use html\sandbox\list_dsp;
-use html\sandbox\sandbox;
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
-use html\word\word;
-use shared\api;
-use shared\const\views;
-use shared\types\view_styles;
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SYSTEM . 'language.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-class view_list extends list_dsp
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\ref\ref;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\system\language;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+class view_list extends ListBase
 {
 
     /*
@@ -72,13 +98,13 @@ class view_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new view_dsp());
+        return parent::api_mapper_list($json_array, new view());
     }
 
-    function get_by_code_id(string $code_id): view_dsp
+    function get_by_code_id(string $code_id): view|sandbox|IdObject|TextIdObject|CombineObject|null
     {
         // TODO use a hash list
-        $result = new view_dsp();
+        $result = new view();
         foreach ($this->lst() as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
@@ -96,8 +122,8 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_PATTERN => $pattern);
-        $rest = new rest_ctrl();
+        $data = array(url_var::PATTERN => $pattern);
+        $rest = new rest_call();
         $json_body = $rest->api_get(view_list::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -116,8 +142,8 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_CMP_ID => $id);
-        $rest = new rest_ctrl();
+        $data = array(url_var::COMPONENT => $id);
+        $rest = new rest_call();
         $json_body = $rest->api_get(view_base::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -185,8 +211,62 @@ class view_list extends list_dsp
             verb::class => views::VERB_ID,
             triple::class => views::TRIPLE_ID,
             source::class => views::SOURCE_ID,
+            ref::class => views::REF_ID,
+            language::class => views::LANGUAGE_ID,
+            value::class => views::VALUE_ID,
+            formula::class => views::FORMULA_ID,
+            result::class => views::RESULT_ID,
             default => views::START_ID
         };
+    }
+
+
+    /*
+     * filter
+     */
+
+    public function ex_system(): view_list
+    {
+        return $this->ex_type(view_type::SYSTEM_TYPES);
+    }
+
+    public function ex_non_phrase(): view_list
+    {
+        return $this->ex_type(view_type::NON_PHRASE_TYPES);
+    }
+
+    /**
+     * excludes the views of the given types from the list
+     * @param array $typ_lst list of view_types
+     * @return view_list this list excluding the views of the given types
+     */
+    private function ex_type(array $typ_lst): view_list
+    {
+        $views = new view_list();
+        foreach ($this->lst() as $msk) {
+            $code_id = $msk->type_code_id();
+            if (!in_array($code_id, $typ_lst)) {
+                $views->add($msk);
+            }
+        }
+        return $views;
+    }
+
+    /**
+     * get only the views of the given type from the list
+     * @param string $typ the view_type to select the views
+     * @return view_list with the views of the given type
+     */
+    function only_type(string $typ): view_list
+    {
+        $views = new view_list();
+        foreach ($this->lst() as $msk) {
+            $code_id = $msk->type_code_id();
+            if ($code_id == $typ) {
+                $views->add($msk);
+            }
+        }
+        return $views;
     }
 
 
@@ -195,28 +275,25 @@ class view_list extends list_dsp
      */
 
     /**
-     * HTML code of a view selector
-     * @param string $form the name of the html form
-     * @param int $selected the id of the preselected item
-     * @param string $name the unique name inside the form for this selector
-     * @param string $label the label name (TODO remove from the selector?
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param string $pattern the pattern to filter the views
-     * @return string with the HTML code to show the view selector
+     * add the view list default values to the selector function
+     *
+     * @param string $form the html form name which must be unique within the html page
+     * @param int|string|null $selected the unique database id of the object that has been selected
+     * @param string $name the name of this selector which must be unique within the form
+     * @param msg_id $label_id the text show to the user
+     * @param string $style the formatting code to adjust the formatting
+     * @returns string the html code to select a word from this list
      */
     function selector(
-        string    $form = '',
-        int       $selected = 0,
-        string    $name = 'view',
-        string    $label = 'view: ',
-        string    $col_class = view_styles::COL_SM_4,
-        string    $pattern = ''
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = url_var::VIEW,
+        msg_id          $label_id = msg_id::FORM_SELECT_VIEW,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
     ): string
     {
-        if ($pattern != '') {
-            $this->load_like($pattern);
-        }
-        return parent::selector($form, $selected, $name, $label, $col_class);
+        return parent::selector($form, $selected, $name, $label_id, $style, $type);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 /*
 
-    model/db/sql_where.php - structure for one where paramater for a sql statememnt
+    model/db/sql_where.php - structure for one where parameter for a sql statement
     --------------------
 
 
@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use DateTime;
 

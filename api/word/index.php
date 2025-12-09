@@ -29,62 +29,99 @@
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use controller\controller;
-use cfg\user\user;
-use cfg\word\word;
-use shared\api;
-use shared\types\api_type;
+include_once html_paths::HTML . 'rest_call.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/word", "", false);
+$app = new application();
+$db_con = $app->start_api("word", "", false);
 
-// get the parameters
-$wrd_id = $_GET[api::URL_VAR_ID] ?? 0;
-$wrd_name = $_GET[api::URL_VAR_NAME] ?? '';
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$msg = '';
-$usr = new user;
-$msg .= $usr->get();
+    // load the session user parameters
+    $msg = '';
+    $usr = new user;
+    $msg .= $usr->get();
 
-$ctrl = new controller();
-$result = ''; // reset the json message string
+    $ctrl = new controller();
+    $rest_ctrl = new rest_call();
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-
-    $wrd = new word($usr);
-    if ($wrd_id > 0) {
-        $wrd->load_by_id($wrd_id);
-        $result = $wrd->api_json([api_type::HEADER], $usr);
-    } elseif ($wrd_name != '') {
-        $wrd->load_by_name($wrd_name);
-        $result = $wrd->api_json([api_type::HEADER], $usr);
+    // TODO remove temp
+    if (in_array(rest_ctrl::REQUEST_METHOD, $_SERVER)) {
+        $method = $_SERVER[rest_ctrl::REQUEST_METHOD];
+        if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
+            $uri = $_SERVER[rest_ctrl::REQUEST_URI];
+        } else {
+            $uri = '';
+        }
+        $json_body = $rest_ctrl->request_json();
     } else {
-        $msg = 'word id or name is missing';
+        // for debugging only
+        $method = rest_ctrl::GET;
+        $json_body = [];
+        $uri = '/api/word';
+        //$method = rest_ctrl::POST;
+        //$json_body = json_decode('{"id":0,"share":3,"protection":2,"name":"System Test Word","description":"Mathematics is an area of knowledge that includes the topics of numbers and formulas","type_id":7,"code_id":"mathematics","plural":"mathematics"}', true);
+        //$uri = '/api/word/';
+        //$method = rest_ctrl::PUT;
+        //$json_body = json_decode('{"id":1295,"share":3,"protection":2,"name":"System Test Word","description":"Mathematics Updated Description"}', true);
+        //$uri = '/api/word/1298';
+        //$method = rest_ctrl::DELETE;
+        //$json_body = [];
+        //$uri = '/api/word/1298';
     }
 
-    // add, update or delete the word
-    $ctrl = new controller();
-    $ctrl->get_json($result, $msg);
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id > 0) {
 
-} else {
-    $ctrl->not_permitted($msg);
+        $wrd = new word($usr);
+
+        if ($method === rest_ctrl::GET) {
+            // get the parameters
+            $wrd_id = $_GET[url_var::ID] ?? 0;
+            $wrd_name = $_GET[url_var::NAME] ?? '';
+
+            if ($wrd_id > 0) {
+                $wrd->load_by_id($wrd_id);
+                $result = $wrd->api_json([api_type::HEADER], $usr);
+            } elseif ($wrd_name != '') {
+                $wrd->load_by_name($wrd_name);
+                $result = $wrd->api_json([api_type::HEADER], $usr);
+            } else {
+                $msg = 'word id or name is missing';
+            }
+
+            // return either the api json to fill the frontend object
+            // or the message why the api json could not be created
+            $ctrl->get_json($result, $msg);
+        } elseif ($method === rest_ctrl::POST) {
+            $ctrl->post_json($json_body, $wrd, $usr, $msg);
+        } elseif ($method === rest_ctrl::PUT) {
+            $ctrl->put_json(basename($uri), $json_body, $wrd, $usr, $msg);
+        } elseif ($method === rest_ctrl::DELETE) {
+            $ctrl->delete(basename($uri), $wrd, $usr, $msg);
+        }
+
+    } else {
+        $ctrl->not_permitted($msg);
+    }
+
+    $app->end_api($db_con);
 }
-
-prg_end_api($db_con);

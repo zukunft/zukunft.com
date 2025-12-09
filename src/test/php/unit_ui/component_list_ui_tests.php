@@ -30,13 +30,20 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-include_once WEB_COMPONENT_PATH . 'component_list.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\component\component_list as component_list_dsp;
-use html\html_base;
-use test\test_cleanup;
+include_once html_paths::COMPONENT . 'component_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_list_ui_tests
 {
@@ -44,21 +51,24 @@ class component_list_ui_tests
     {
 
         $html = new html_base();
+        $t_cmp = new test_components($t);
 
         // start the test section (ts)
         $ts = 'unit ui html component list ';
         $t->header($ts);
 
         // test the component list display functions
-        $lst = new component_list_dsp($t->component_list()->api_json());
+        $form = 'component_list_ui_test';
+        $lst = new component_list($t_cmp->component_list()->api_json());
         $test_page = $html->text_h2('component list display test');
         $test_page .= 'component list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'component list with link: ' . $lst->name_link() . '<br>';
 
-        $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('', 0, 'test_selector', 'No component selected') . '<br>';
+        $from_rows = '<br>' . $html->text_h2('Selector tests');
+        $from_rows .= $lst->selector($form, 0, url_var::COMPONENT, msg_id::FORM_SELECT_COMPONENT) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
-        $t->html_test($test_page, 'component_list', 'component_list', $t);
+        $t->html_page_test($test_page, 'component_list', 'component_list', $t);
     }
 
 }

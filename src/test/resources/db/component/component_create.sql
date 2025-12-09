@@ -7,23 +7,27 @@
 CREATE TABLE IF NOT EXISTS components
 (
     component_id                BIGSERIAL PRIMARY KEY,
-    user_id                     bigint       DEFAULT NULL,
-    component_name              varchar(255)     NOT NULL,
-    description                 text         DEFAULT NULL,
-    component_type_id           smallint     DEFAULT NULL,
-    view_style_id               smallint     DEFAULT NULL,
-    word_id_row                 bigint       DEFAULT NULL,
-    formula_id                  bigint       DEFAULT NULL,
-    word_id_col                 bigint       DEFAULT NULL,
-    word_id_col2                bigint       DEFAULT NULL,
-    linked_component_id         bigint       DEFAULT NULL,
-    component_link_type_id      smallint     DEFAULT NULL,
-    link_type_id                smallint     DEFAULT NULL,
-    code_id                     varchar(255) DEFAULT NULL,
-    ui_msg_code_id              varchar(255) DEFAULT NULL,
-    excluded                    smallint     DEFAULT NULL,
-    share_type_id               smallint     DEFAULT NULL,
-    protect_id                  smallint     DEFAULT NULL
+    user_id                     bigint           DEFAULT NULL,
+    component_name              varchar(255)         NOT NULL,
+    description                 text             DEFAULT NULL,
+    component_type_id           smallint         DEFAULT NULL,
+    view_style_id               smallint         DEFAULT NULL,
+    word_id_row                 bigint           DEFAULT NULL,
+    formula_id                  bigint           DEFAULT NULL,
+    word_id_col                 bigint           DEFAULT NULL,
+    word_id_col2                bigint           DEFAULT NULL,
+    linked_component_id         bigint           DEFAULT NULL,
+    component_link_type_id      smallint         DEFAULT NULL,
+    link_type_id                smallint         DEFAULT NULL,
+    usage                       bigint           DEFAULT NULL,
+    code_id                     varchar(255)     DEFAULT NULL,
+    ui_msg_code_id              varchar(255)     DEFAULT NULL,
+    ui_msg_code_id_vars         varchar(255)     DEFAULT NULL,
+    ui_msg_code_id_exception    varchar(255)     DEFAULT NULL,
+    ui_msg_value_exception      double precision DEFAULT NULL,
+    excluded                    smallint         DEFAULT NULL,
+    share_type_id               smallint         DEFAULT NULL,
+    protect_id                  smallint         DEFAULT NULL
 );
 
 COMMENT ON TABLE components IS 'for the single components of a view';
@@ -40,8 +44,12 @@ COMMENT ON COLUMN components.word_id_col2 IS 'e.g. "quarter" to show the quarter
 COMMENT ON COLUMN components.linked_component_id IS 'to link this component to another component';
 COMMENT ON COLUMN components.component_link_type_id IS 'to define how this entry links to the other entry';
 COMMENT ON COLUMN components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN components.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN components.code_id IS 'used for system components to select the component by the program code';
 COMMENT ON COLUMN components.ui_msg_code_id IS 'used for system components the id to select the language specific user interface message e.g. "add word"';
+COMMENT ON COLUMN components.ui_msg_code_id_vars IS 'used for system components the id to select the language specific user interface message where some variable placeholders are replaced with system values';
+COMMENT ON COLUMN components.ui_msg_code_id_exception IS 'used for system components the id to select the language specific user interface exception message e.g. if the system value is zero';
+COMMENT ON COLUMN components.ui_msg_value_exception IS 'used for system components the value to select the exception message e.g. 0 (zero)';
 COMMENT ON COLUMN components.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN components.protect_id IS 'to protect against unwanted changes';
@@ -65,6 +73,7 @@ CREATE TABLE IF NOT EXISTS user_components
     linked_component_id    bigint       DEFAULT NULL,
     component_link_type_id smallint     DEFAULT NULL,
     link_type_id           smallint     DEFAULT NULL,
+    usage                  bigint       DEFAULT NULL,
     excluded               smallint     DEFAULT NULL,
     share_type_id          smallint     DEFAULT NULL,
     protect_id             smallint     DEFAULT NULL
@@ -84,6 +93,7 @@ COMMENT ON COLUMN user_components.word_id_col2 IS 'e.g. "quarter" to show the qu
 COMMENT ON COLUMN user_components.linked_component_id IS 'to link this component to another component';
 COMMENT ON COLUMN user_components.component_link_type_id IS 'to define how this entry links to the other entry';
 COMMENT ON COLUMN user_components.link_type_id IS 'e.g. for type 4 to select possible terms';
+COMMENT ON COLUMN user_components.usage IS 'the number of linked objects (values,triples and formulas) to the object (e.g. word),which gives an indication of the importance and is used as fallback value for sorting';
 COMMENT ON COLUMN user_components.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_components.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted changes';

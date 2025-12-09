@@ -2,10 +2,10 @@
 
 /*
 
-    web/view/component.php - function to add, change or delete a view component
-    ----------------------
+    web/component/component.php - function to add, change or delete a view component
+    ---------------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a component
 
     The main sections of this object are
     - object vars:       the variables of this word object
@@ -35,67 +35,97 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_TYPES_PATH . 'view_style_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\html_selector;
-use html\log\user_log_display;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list;
-use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox_typed;
-use html\system\back_trace;
-use html\user\user_message;
-use html\view\view_list;
-use html\word\word;
-use shared\json_fields;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\types\component_type;
-use shared\types\position_types;
-use shared\types\view_styles;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-class component extends sandbox_typed
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
+class component extends sandbox_code_id
 {
+
+    /*
+     * const
+     */
+
+    // crud views
+    const string VIEW_ADD = views::COMPONENT_ADD;
+    const string VIEW_EDIT = views::COMPONENT_EDIT;
+    const string VIEW_DEL = views::COMPONENT_DEL;
+
+    // crud message id
+    const msg_id MSG_ADD = msg_id::COMPONENT_ADD;
+    const msg_id MSG_EDIT = msg_id::COMPONENT_EDIT;
+    const msg_id MSG_DEL = msg_id::COMPONENT_DEL;
+
 
     /*
      * object vars
      */
 
-    public ?string $code_id = null;         // the entry type code id
     public ?int $position = 0;              // for the frontend the position of the link is included in the component object
     public ?int $link_id = 0;               // ??
 
     // the code_id for the message that should be shown to the user and that should be translated to the frontend language
     public ?msg_id $ui_msg_code_id = null;
+    // TODO Prio 2 use a message id chain instead
+    public ?msg_id $ui_msg_code_id_vars = null;
+    public ?msg_id $ui_msg_code_id_exception = null;
+    public ?float $ui_msg_value_exception = null;
 
     // mainly for table components
-    public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
-    public ?phrase_dsp $phr_col = null;     // the phrase to select the main table columns
-    public ?phrase_dsp $wrd_col2 = null;    // the phrase to select the sub table columns
+    public ?phrase $phr_row = null;     // the main phrase to select the table rows
+    public ?phrase $phr_col = null;     // the phrase to select the main table columns
+    public ?phrase $wrd_col2 = null;    // the phrase to select the sub table columns
 
     // vars from the link
     // TODO move these vars to the frontend component link object
@@ -112,21 +142,41 @@ class component extends sandbox_typed
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[json_fields::CODE_ID];
-        } else {
-            $this->code_id = null;
+        parent::api_mapper($json_array, $usr_msg);
+
+        // TODO Prio 1 set link id
+        if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
+            $this->set_id($json_array[json_fields::COMPONENT_ID]);
         }
+
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
         } else {
             $this->ui_msg_code_id = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $json_array)) {
+            global $mtr;
+            $this->ui_msg_code_id_vars = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID_VARS]);
+        } else {
+            $this->ui_msg_code_id_vars = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $json_array)) {
+            global $mtr;
+            $this->ui_msg_code_id_exception = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID_EXCEPTION]);
+        } else {
+            $this->ui_msg_code_id_exception = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $json_array)) {
+            global $mtr;
+            $this->ui_msg_value_exception = $json_array[json_fields::UI_MSG_CODE_VAL_EXCEPTION];
+        } else {
+            $this->ui_msg_value_exception = null;
         }
         if (array_key_exists(json_fields::POSITION, $json_array)) {
             $this->position = $json_array[json_fields::POSITION];
@@ -148,21 +198,26 @@ class component extends sandbox_typed
         } else {
             $this->style_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 move $typ_lst array convert to one place
+     * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the json api message
      * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id;
+
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
+        $vars[json_fields::UI_MSG_CODE_ID_VARS] = $this->ui_msg_code_id_vars?->value;
+        $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception?->value;
+        $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
         if ($this->position != 0 or $this->link_id != 0) {
             $vars[json_fields::POSITION] = $this->position;
         }
@@ -202,17 +257,17 @@ class component extends sandbox_typed
 
     /**
      * create the HTML code to select a component type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function component_type_selector(string $form_name): string
+    function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_component_types;
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $html_component_types->default_id();
+            $used_type_id = $typ_lst->html_component_types->default_id();
         }
-        return $html_component_types->selector($form_name, $used_type_id);
+        return $typ_lst->html_component_types->selector($form, $used_type_id);
     }
 
 
@@ -220,47 +275,89 @@ class component extends sandbox_typed
      * info
      */
 
-    protected function type_code_id(): string
+    /**
+     * TODO Prio 1 apply this error handling to similar functions
+     * get the
+     * @param type_lists|null $typ_lst
+     * @return string
+     */
+    function type_code_id(?type_lists $typ_lst): string
     {
-        global $html_component_types;
+
         $type_code_id = '';
-        $err_msg = 'Component type code id for ' . $this->dsp_id()
-            . ' and type id ' . $this->type_id() . ' missing';
-        if ($this->type_id() == null) {
-            $this->log_err($err_msg);
+        if ($typ_lst?->html_component_types == null) {
+            $this->log_err('html_component_types are empty');
         } else {
-            $type_code_id = $html_component_types->code_id($this->type_id());
-            if ($type_code_id == '') {
+            if ($this->type_id() == null) {
+                $err_msg = 'Component type not set in ' . $this->dsp_id();
                 $this->log_err($err_msg);
+            } else {
+                $err_msg = 'Component type code id for ' . $this->dsp_id()
+                    . ' and type id ' . $this->type_id() . ' missing';
+                $type_code_id = $typ_lst->html_component_types->code_id($this->type_id());
+                if ($type_code_id == '') {
+                    $this->log_err($err_msg);
+                }
             }
         }
+
         return $type_code_id;
     }
 
-    function pos_type_code_id(): string
+    function pos_type_code_id(?type_lists $typ_lst): string
     {
-        global $html_position_types;
         $pos_type_code_id = '';
-        $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
-        if ($this->pos_type_id == null) {
-            $this->log_err($err_msg);
+        if ($typ_lst?->html_position_types == null) {
+            $this->log_err('html_position_types are empty');
         } else {
-            $pos_type_code_id = $html_position_types->code_id($this->pos_type_id);
-            if ($pos_type_code_id == '') {
+            $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
+            if ($this->pos_type_id == null) {
                 $this->log_err($err_msg);
+            } else {
+                $pos_type_code_id = $typ_lst->html_position_types->code_id($this->pos_type_id);
+                if ($pos_type_code_id == '') {
+                    $this->log_err($err_msg);
+                }
             }
         }
+
         return $pos_type_code_id;
     }
 
-    function style_text(): string
+    /**
+     * get the name of the style that is used for the user to select the style
+     * @param type_lists|null $typ_lst
+     * @return string
+     */
+    function style_text(?type_lists $typ_lst): string
     {
-        global $html_view_styles;
-        if ($this->style_id != null) {
-            return $html_view_styles->name($this->style_id);
+        $style_name = '';
+        if ($typ_lst->html_view_styles == null) {
+            $this->log_err('html_view_styles are empty');
         } else {
-            return '';
+            if ($this->style_id != null) {
+                $style_name = $typ_lst->html_view_styles->name($this->style_id);
+            }
         }
+        return $style_name;
+    }
+
+    /**
+     * get the code id that is used for the unique selection of the style and is also the actual html code to use
+     * @param type_lists|null $typ_lst
+     * @return string
+     */
+    function style_code_id(?type_lists $typ_lst): string
+    {
+        $style_name = '';
+        if ($typ_lst?->html_view_styles == null) {
+            $this->log_err('html_view_styles are empty');
+        } else {
+            if ($this->style_id != null) {
+                $style_name = $typ_lst->html_view_styles->code_id($this->style_id);
+            }
+        }
+        return $style_name;
     }
 
 
@@ -271,9 +368,9 @@ class component extends sandbox_typed
     /**
      * @return bool true if the component is a system form button
      */
-    function is_button(): bool
+    function is_button(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id(), component_type::BUTTON_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_type::BUTTON_TYPES)) {
             return true;
         } else {
             return false;
@@ -283,9 +380,34 @@ class component extends sandbox_typed
     /**
      * @return bool true if the component is a hidden system form element
      */
-    function is_hidden(): bool
+    function is_hidden(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id(), component_type::HIDDEN_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_type::HIDDEN_TYPES)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * TODO Prio 1 can be removed due to the explicit combine position type
+     * @return bool true if the component is a subheader to combine several lists
+     */
+    function is_list_group(?type_lists $typ_lst): bool
+    {
+        if (in_array($this->type_code_id($typ_lst), component_type::LIST_GROUP)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the component uses the style for the component not the row
+     */
+    function no_row_style(string $typ_code_id): bool
+    {
+        if (in_array($typ_code_id, component_type::LIST_HAS_STYLE)) {
             return true;
         } else {
             return false;
@@ -295,9 +417,11 @@ class component extends sandbox_typed
     /**
      * @return bool true if the component is a system form button or a hidden form element
      */
-    function is_button_or_hidden(): bool
+    function needs_row_components(?type_lists $typ_lst): bool
     {
-        if ($this->is_button() or $this->is_hidden()) {
+        if ($this->is_button($typ_lst)
+            or $this->is_hidden($typ_lst)
+            or $this->is_list_group($typ_lst)) {
             return true;
         } else {
             return false;
@@ -306,17 +430,52 @@ class component extends sandbox_typed
 
 
     /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a view type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the phrase type
+     */
+    function type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $typ_lst->html_component_types->default_id();
+        }
+        return $typ_lst->html_component_types->selector($form, $used_type_id);
+    }
+
+    /**
+     * create the HTML code to select a view style
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the phrase type
+     */
+    function style_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $typ_lst->html_view_styles->default_id();
+        }
+        return $typ_lst->html_view_styles->selector($form, $used_type_id);
+    }
+
+
+
+    /*
      * internal
      */
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @return string the html code to select the component type
      */
-    private function dsp_type_selector(string $form_name): string
+    private function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_component_types;
-        return $html_component_types->selector($form_name);
+        return $typ_lst->html_component_types->selector($form);
     }
 
 
@@ -358,8 +517,8 @@ class component extends sandbox_typed
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header
@@ -385,10 +544,11 @@ class component extends sandbox_typed
     /**
      * HTML code to edit all word fields
      * @param int $add_link the id of the view that should be linked to the word
-     * @param back_trace|null $back
      * @param word $wrd
+     * @param back_trace|null $back
+     * @return string
      */
-    function dsp_edit(int $add_link, word $wrd, back_trace $back = null): string
+    function dsp_edit(int $add_link, word $wrd, ?back_trace $back): string
     {
         $this->log_debug($this->dsp_id() . ' (called from ' . $back->url_encode() . ')');
         $result = '';
@@ -396,10 +556,10 @@ class component extends sandbox_typed
 
         // show the view component name
         if ($this->id() <= 0) {
-            $script = "component_add";
+            $form_name = views::COMPONENT_ADD;
             $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
         } else {
-            $script = "component_edit";
+            $form_name = views::COMPONENT_EDIT;
             $result .= $html->dsp_text_h2('Edit the view element "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>) ');
         }
         $result .= '<div class="row">';
@@ -409,7 +569,7 @@ class component extends sandbox_typed
             $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
-        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_form_start($form_name);
         if ($this->id() > 0) {
             $result .= $html->dsp_form_id($this->id());
         }
@@ -417,14 +577,20 @@ class component extends sandbox_typed
         $result .= $html->dsp_form_hidden("back", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($script); // allow to change the type
+        $result .= $html->form_field(
+            url_var::NAME,
+            msg_id::FORM_FIELD_NAME_COMPONENT,
+            $this->name,
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8);
+        // TODO Prio 0 check if the generated component edit mask has the type and all other elements used here and remove this function
+        //$result .= $this->dsp_type_selector($form_name); // allow to change the type
         $result .= '</div>';
-        $result .= '<div class="form-row">';
-        $result .= $this->dsp_word_row_selector($script, view_styles::COL_SM_6); // allow to change the word_row word
-        $result .= $this->dsp_word_col_selector($script, view_styles::COL_SM_6); // allow to change the word col word
-        $result .= '</div>';
-        $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
+        $result .= $html->form_field(
+            url_var::DESCRIPTION,
+            msg_id::FORM_FIELD_DESCRIPTION,
+            $this->description);
         if ($add_link <= 0) {
             if ($this->id() > 0) {
                 $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back->url_encode());
@@ -495,8 +661,8 @@ class component extends sandbox_typed
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("name" . $fld_ext, $this->name(), "Name");
-        $detail_fields .= $html->form_text("description" . $fld_ext, $this->description, "Description");
+        $detail_fields = $html->form_text(url_var::NAME . $fld_ext, $this->name(), msg_id::FORM_FIELD_NAME);
+        $detail_fields .= $html->form_text(url_var::DESCRIPTION . $fld_ext, $this->description, msg_id::FORM_FIELD_DESCRIPTION);
         $detail_fields .= $dsp_type;
         $detail_row = $html->fr($detail_fields) . '<br>';
         $result = $header
@@ -512,13 +678,14 @@ class component extends sandbox_typed
     /**
      * @returns string the html code to display this view component
      */
-    function html(?phrase_dsp $phr = null, ?db_object_dsp $dbo = null, ?data_object_dsp $cfg = null): string
+    function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
-        global $cmp_typ_cac;
-        return match ($cmp_typ_cac->code_id($this->type_id())) {
+        global $sys;
+        $base = new ui_base();
+        return match ($sys->typ_lst->cmp_typ->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
-            component_type::VALUES_RELATED => $this->table($dbo, $cfg),
+            component_type::VALUES_RELATED => $base->table($dbo, $cfg),
             default => 'ERROR: unknown type ',
         };
     }
@@ -532,83 +699,16 @@ class component extends sandbox_typed
     }
 
     /**
-     * TODO move code from component_dsp_old
-     * @return string the html code to show a list of values
-     */
-    function table(?db_object_dsp $dbo = null, ?data_object_dsp $cfg = null): string
-    {
-        return 'values related to ' . $this->name() . ' ';
-    }
-
-    /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function word_name(phrase_dsp $phr): string
+    function word_name(phrase $phr): string
     {
-        global $cmp_typ_cac;
-        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        global $sys;
+        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
-            return '';
+            return 'Missing component type';
         }
-    }
-
-    /**
-     * @param string $script the name of the html form
-     * @param string $col_class the formatting code to adjust the formatting
-     * @return string with the HTML code to show the component word_row selector
-     */
-    private function dsp_word_row_selector(string $script, string $col_class): string
-    {
-        $label = "Take rows from:";
-        if ($this->phr_row != null) {
-            //$phr_dsp = new word_dsp($this->phr_row->api_json());
-            $phr_dsp = $this->phr_row;
-            $label = "Rows taken from " . $phr_dsp->name_link() . ":";
-        }
-        return $this->phrase_selector_old('word_row', $script, $label, $col_class, $this->phr_row->id()) . ' ';
-    }
-
-    /**
-     * @param string $script the name of the html form
-     * @param string $col_class the formatting code to adjust the formatting
-     * @return string with the HTML code to show the component word_col selector
-     */
-    private function dsp_word_col_selector(string $script, string $col_class): string
-    {
-        global $usr;
-        $label = "Take columns from:";
-        if (isset($this->phr_col)) {
-            //$phr_dsp = new word_dsp($this->phr_col->api_json());
-            $phr_dsp = $this->phr_col;
-            $label = "Columns taken from " . $phr_dsp->name_link() . ":";
-        }
-        return $this->phrase_selector_old('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
-    }
-
-    /**
-     * HTML code of a phrase selector
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
-     * @return string with the HTML code to show the phrase selector
-     */
-    public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
-        ?phrase_dsp $phr = null): string
-    {
-        $phr_lst = new phrase_list();
-        $phr_lst->load_like($pattern);
-        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -622,6 +722,8 @@ class component extends sandbox_typed
         global $db_con;
         $html = new html_base();
         $result = '';
+
+        $form = 'component_view_links';
 
         if (html_base::UI_USE_BOOTSTRAP) {
             $result .= $html->dsp_tbl_start_hist();
@@ -647,11 +749,12 @@ class component extends sandbox_typed
         if ($add_link == 1) {
             // $sel->dummy_text = 'select a view where the view component should also be used';
             $msk_lst = new view_list();
-            $result .= $msk_lst->selector('component_edit', 0, 'link_view');
+            // TODO Prio 0 activate
+            //$result .= $msk_lst->selector($form, 0, url_var::COMPONENT_LINK_LONG);
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -664,7 +767,7 @@ class component extends sandbox_typed
 
     function btn_unlink(): string
     {
-        return '';
+        return 'Missing unlink';
     }
 
     /**
@@ -674,14 +777,14 @@ class component extends sandbox_typed
         int        $page,
         int        $size,
         string     $call,
-        back_trace $back = null
+        back_trace $back
     ): string
     {
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $result .= $log_dsp->dsp_hist(component::class, $this->id(), $size, $page);
+        $log_ui = new user_log_display($this->user());
+        $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");
         return $result;
@@ -693,14 +796,14 @@ class component extends sandbox_typed
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = component::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_links();
+        $log_ui = new user_log_display();
+        $log_ui->id = $this->id();
+        $log_ui->type = component::class;
+        $log_ui->page = $page;
+        $log_ui->size = $size;
+        $log_ui->call = $call;
+        $log_ui->back = $back;
+        $result .= $log_ui->dsp_hist_links();
 
         $this->log_debug("done");
         return $result;
@@ -714,6 +817,33 @@ class component extends sandbox_typed
     function log_debug(string $msg): void
     {
         echo '';
+    }
+
+    /**
+     * to select the word or triple
+     * @param phrase_list_ui $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
+     * @param string $name the unique name within the html form for this selector
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text show to the user
+     * @param string $style the style code e.g. to define the target width
+     * @return string the html code to select the phrase
+     */
+    function phrase_selector(
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::FORM_SELECT_PHRASE,
+        string      $style = view_styles::COL_SM_4
+    ): string
+    {
+        if ($phr_lst == null) {
+            $phr_lst = new phrase_list();
+        }
+        return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
 
 

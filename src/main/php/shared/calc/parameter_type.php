@@ -2,8 +2,8 @@
 
 /*
 
-    shared/formula/parameter_type.php - enum to link the class string to a db id for a formula element
-    ---------------------------------
+    shared/calc/parameter_type.php - enum to link the class string to a db id for a formula element
+    ------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,48 +30,51 @@
 
 */
 
-namespace shared\calc;
+namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
-include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use cfg\formula\formula;
-use cfg\system\BasicEnum;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::VERB . 'verb.php';
+//include_once html_paths::WORD . 'triple.php';
+//include_once html_paths::WORD . 'word.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\system\BasicEnum;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 class parameter_type extends BasicEnum
 {
     // the database id for a formula element (or parameter) type
-    const WORD_ID = 1;
-    const VERB_ID = 2;
-    const FORMULA_ID = 3;
-    const TRIPLE_ID = 4;
+    const int WORD_ID = 1;
+    const int VERB_ID = 2;
+    const int FORMULA_ID = 3;
+    const int TRIPLE_ID = 4;
 
     // the allowed objects types for a formula element
     // use the class name for the formula element object
-    const WORD_CLASS = word::class;        // a word is used for an AND selection of values
-    const TRIPLE_CLASS = triple::class;    // a triple is used for an AND selection of values
-    const VERB_CLASS = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
-    const FORMULA_CLASS = formula::class;  // a formula is used to include formula results of another formula
+    const string WORD_CLASS = word::class;        // a word is used for an AND selection of values
+    const string TRIPLE_CLASS = triple::class;    // a triple is used for an AND selection of values
+    const string VERB_CLASS = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
+    const string FORMULA_CLASS = formula::class;  // a formula is used to include formula results of another formula
 
     // for the frontend
-    const WORD_WEB_CLASS = word_dsp::class;        // a word is used for an AND selection of values
-    const TRIPLE_WEB_CLASS = triple_dsp::class;    // a triple is used for an AND selection of values
-    const VERB_WEB_CLASS = verb_dsp::class;        // a verb is used for dynamic usage of linked words for an AND selection
-    const FORMULA_WEB_CLASS = formula_dsp::class;  // a formula is used to include formula results of another formula
+    const string WORD_WEB_CLASS = word_ui::class;        // a word is used for an AND selection of values
+    const string TRIPLE_WEB_CLASS = triple_ui::class;    // a triple is used for an AND selection of values
+    const string VERB_WEB_CLASS = verb_ui::class;        // a verb is used for dynamic usage of linked words for an AND selection
+    const string FORMULA_WEB_CLASS = formula_ui::class;  // a formula is used to include formula results of another formula
 
     protected static function get_description($value): string
     {

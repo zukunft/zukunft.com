@@ -30,18 +30,20 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_type;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_read_tests
 {
@@ -52,11 +54,14 @@ class phrase_read_tests
         global $usr;
 
         // init
-        $t->header('phrase database read tests');
         $t->name = 'phrase read db->';
         $t->resource_path = 'db/phrase/';
 
-        $t->subheader('Phrase db read tests');
+        // start the test section (ts)
+        $ts = 'db read phrase ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'load');
 
         $test_name = 'load phrase ' . words::MATH . ' by word name and id';
         $phr = new phrase($t->usr1);
@@ -73,13 +78,13 @@ class phrase_read_tests
         $t->assert($test_name, $wrd_by_id->name(), triples::PI);
 
 
-        $t->subheader('Phrase type db read tests');
+        $t->subheader($ts . 'type');
 
         // test reading a phrase type via API that is not yet included in the preloaded phrase type
         // e.g. because it has been just added by the user to request e new phrase type
         $test_name = 'load phrase type ' . phrase_type_shared::NORMAL . ' by id';
-        global $phr_typ_cac;
-        $phr_typ_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        global $sys;
+        $phr_typ_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
         $t->assert($test_name, $phr_typ->code_id(), phrase_type_shared::NORMAL);

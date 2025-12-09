@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 enum change_fields: string
 {
@@ -39,29 +39,30 @@ enum change_fields: string
     // the field names are listed here again, so that the log can include all changes even if the field name has changed
     // *_NAME is the name as used in the program or as it has been used in a previous program version
     // *_NAME_DSP is the description that should be shown to the user
-    const FLD_TABLE = 'table_id';
+    const string FLD_TABLE = 'table_id';
     // TODO add the user_id to the field list because the owner can change and this should be included in the log
-    const FLD_WORD_NAME = 'word_name';
-    const FLD_WORD_NAME_DSP = 'name';
-    const FLD_WORD_VIEW = 'view_id';
-    const FLD_WORD_PLURAL = 'plural';
-    const FLD_PHRASE_TYPE = 'phrase_type_id';
-    const FLD_VERB_NAME = 'verb_name';
-    const FLD_TRIPLE_NAME = 'triple_name';
-    const FLD_GIVEN_NAME = 'name_given';
-    const FLD_TRIPLE_VIEW = 'view_id';
-    const FLD_NUMERIC_VALUE = 'numeric_value';
-    const FLD_VALUE_GROUP = 'group_id';
-    const FLD_FORMULA_NAME = 'formula_name';
-    const FLD_FORMULA_USR_TEXT = 'resolved_text';
-    const FLD_FORMULA_REF_TEXT = 'formula_text';
-    const FLD_FORMULA_TYPE = 'formula_type_id';
-    const FLD_ALL_NEEDED = 'all_values_needed';
-    const FLD_FORMULA_ALL = 'all_values_needed';
-    const FLD_SOURCE_NAME = 'source_name';
-    const FLD_SOURCE_URL = 'url';
-    const FLD_VIEW_NAME = 'view_name';
-    const FLD_COMPONENT_NAME = 'component_name';
-    const FLD_COMPONENT_TYPE = 'component_type_id';
+    const string FLD_WORD_NAME = 'word_name';
+    const string FLD_WORD_NAME_DSP = 'name';
+    const string FLD_WORD_VIEW = 'view_id';
+    const string FLD_WORD_PLURAL = 'plural';
+    const string FLD_PHRASE_TYPE = 'phrase_type_id';
+    const string FLD_VERB_NAME = 'verb_name';
+    const string FLD_TRIPLE_NAME = 'triple_name';
+    const string FLD_GIVEN_NAME = 'name_given';
+    const string FLD_TRIPLE_VIEW = 'view_id';
+    const string FLD_NUMERIC_VALUE = 'numeric_value';
+    const string FLD_VALUE_GROUP = 'group_id';
+    const string FLD_FORMULA_NAME = 'formula_name';
+    const string FLD_FORMULA_USR_TEXT = 'resolved_text';
+    const string FLD_FORMULA_REF_TEXT = 'formula_text';
+    const string FLD_FORMULA_TYPE = 'formula_type_id';
+    const string FLD_ALL_NEEDED = 'all_values_needed';
+    const string FLD_FORMULA_ALL = 'all_values_needed';
+    const string FLD_SOURCE_NAME = 'source_name';
+    const string FLD_SOURCE_URL = 'url';
+    const string FLD_REF_KEY = 'external_key';
+    const string FLD_VIEW_NAME = 'view_name';
+    const string FLD_COMPONENT_NAME = 'component_name';
+    const string FLD_COMPONENT_TYPE = 'component_type_id';
 
 }

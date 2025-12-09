@@ -30,22 +30,27 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'init.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
-$db_con = prg_start("view_select");
+$app = new frontend();
+$db_con = $app->start("select_view");
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -54,22 +59,22 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $html = new \html\html_base();
+    $html = new \Zukunft\ZukunftCom\main\php\web\html\html_base();
 
     $usr->load_usr_data();
 
     // in view edit views the view cannot be changed
     $msk = new view($usr);
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
-    $msk_dsp = new view_dsp($msk->api_json());
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
+    $msk_dsp = new view_ui($msk->api_json());
     $result .= $msk_dsp->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
 
     // get the view id used utils now and the word id
-    if (isset($_GET[api::URL_VAR_ID])) {
-        $view_id = $_GET[api::URL_VAR_ID];
+    if (isset($_GET[url_var::ID])) {
+        $view_id = $_GET[url_var::ID];
     }
     if (isset($_GET['word'])) {
         $word_id = $_GET['word'];
@@ -85,15 +90,15 @@ if ($usr->id() > 0) {
     }
 
     // allow to change to type
-    $msk = new view_dsp();
+    $msk = new view_ui();
     $msk->set_id($view_id);
     $result .= $msk->selector_page($word_id, $back);
 
     // show the changes
-    $wrd_html = new word_dsp($wrd->api_json());
+    $wrd_html = new word_ui($wrd->api_json());
     $result .= $wrd_html->log_view($back);
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

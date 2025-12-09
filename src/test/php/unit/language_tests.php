@@ -30,11 +30,11 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\language\language;
-use cfg\language\language_form;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_tests
 {
@@ -64,8 +64,8 @@ class language_tests
 
         $t->subheader($ts . 'api');
 
-        global $lan_cac;
-        $lan = $lan_cac->get_by_code_id(language::DEFAULT);
+        global $sys;
+        $lan = $sys->typ_lst->lan->get_by_code_id(language::DEFAULT);
         $t->assert_api($lan, 'language');
 
 
@@ -75,8 +75,8 @@ class language_tests
 
         $t->subheader($ts . 'api');
 
-        global $lan_for_cac;
-        $lan_typ = $lan_for_cac->get_by_code_id(language_form::PLURAL);
+        global $sys;
+        $lan_typ = $sys->typ_lst->lan_for->get_by_code_id(language_form::PLURAL);
         $t->assert_api($lan_typ, 'language_form');
 
     }

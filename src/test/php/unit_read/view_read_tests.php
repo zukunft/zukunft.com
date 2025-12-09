@@ -30,25 +30,28 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_TYPES_PATH . 'view_type.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\component\component;
-use cfg\component\component_type_list;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_link_type_list;
-use cfg\view\view_sys_list;
-use cfg\view\view_type_list;
-use shared\const\components;
-use shared\const\views;
-use shared\const\views as view_shared;
-use shared\types\component_type as comp_type_shared;
-use shared\types\view_type as view_type_shared;
-use test\test_cleanup;
+include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_CONST . 'views.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type as view_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_read_tests
 {
@@ -56,18 +59,17 @@ class view_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $msk_typ_cac;
-        global $msk_lnk_typ_cac;
         global $sys_msk_cac;
-        global $cmp_typ_cac;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'view read->';
         $t->resource_path = 'db/view/';
 
         // start the test section (ts)
-        $ts = 'read view ';
+        $ts = 'db read view ';
         $t->header($ts);
 
         $t->subheader($ts . 'load');
@@ -85,17 +87,17 @@ class view_read_tests
 
         $test_name = 'load view by phrase "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
-        // TODO activate
+        // TODO Prio 2 activate
         //$msk->load_by_phrase($t->phrase_pi());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
         $test_name = 'load view by term "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
-        // TODO activate
-        //$msk->load_by_term($t->formula()->term());
+        // TODO Prio 2 activate
+        //$msk->load_by_term($t_frm->formula()->term());
         //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
-        $t->subheader('View types tests');
+        $t->subheader($ts . 'types');
 
         // load the view types
         $lst = new view_type_list();
@@ -103,7 +105,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $msk_typ_cac->id(view_type_shared::DEFAULT);
+        $result = $sys->typ_lst->msk_typ->id(view_type_shared::DEFAULT);
         $t->assert('check type' . view_type_shared::DEFAULT, $result, 1);
 
         // load the view link types
@@ -112,18 +114,18 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $msk_lnk_typ_cac->id(view_link_type::DEFAULT);
+        $result = $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT);
         $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
 
 
-        $t->subheader('View API object creation tests');
+        $t->subheader($ts . 'api creation');
 
         $test_name = views::START_NAME;
-        $cmp = $t->load_word(views::START_NAME, $t->usr1);
+        $cmp = $t_db->load_word(views::START_NAME);
         $t->assert_export_reload($ts . $test_name, $cmp);
 
 
-        $t->subheader('System view tests');
+        $t->subheader($ts . 'system');
         $t->name = 'view list read db->';
 
         // load the views used by the system e.g. change word
@@ -138,17 +140,17 @@ class view_read_tests
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . view_shared::WORD, $result, $target);
+        $t->assert('check view with code id ' . view_shared::WORD, $result, $target);
 
         // check all system views
-        // TODO activate Prio 2
+        // TODO Prio 2 activate
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);
         //$t->assert_view(view_shared::DSP_COMPONENT_EDIT, $t->usr1);
         //$t->assert_view(view_shared::DSP_COMPONENT_DEL, $t->usr1);
 
 
 
-        $t->subheader('view component db read tests');
+        $t->subheader($ts . 'component');
 
         $test_name = 'load view component ' . components::WORD_NAME . ' by name and id';
         $cmp = new component($t->usr1);
@@ -159,7 +161,7 @@ class view_read_tests
         $t->assert($test_name, $cmp_by_id->description, components::WORD_COM);
 
 
-        $t->subheader('view component types tests');
+        $t->subheader($ts . 'component types');
         $t->name = 'view component read db->';
 
         // load the view component types
@@ -168,7 +170,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $cmp_typ_cac->id(comp_type_shared::TEXT);
+        $result = $sys->typ_lst->cmp_typ->id(comp_type_shared::TEXT);
         $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
     }
 

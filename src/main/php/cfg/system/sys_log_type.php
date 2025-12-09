@@ -31,11 +31,13 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_object;
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class sys_log_type extends type_object
 {
@@ -45,11 +47,11 @@ class sys_log_type extends type_object
      */
 
     // list of all possible log types
-    const UNDEFINED = 'undefined';
-    const INFO = 'info';
-    const WARNING = 'warning';
-    const ERROR = 'error';
-    const FATAL = 'fatal';
+    const string UNDEFINED = 'undefined';
+    const string INFO = 'info';
+    const string WARNING = 'warning';
+    const string ERROR = 'error';
+    const string FATAL = 'fatal';
 
 
     /*
@@ -57,6 +59,6 @@ class sys_log_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for system log types e.g. info, warning and error';
+    const string TBL_COMMENT = 'for system log types e.g. info, warning and error';
 
 }

@@ -29,25 +29,23 @@
   
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once 'const.php';
 
-if ($debug > 0) {
-    echo 'libs loaded<br>';
-}
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use html\html_base;
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::HTML . 'html_base.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 // open database 
-$db_con = prg_start("about", "center_form", false);
+$app = new frontend();
+$db_con = $app->start("about", "center_form", false);
 
 // display the view
 $html = new html_base();
 echo $html->about();
 
 // close the database  
-prg_end_api($db_con);
+$app->end($db_con);

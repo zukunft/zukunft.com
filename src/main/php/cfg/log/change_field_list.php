@@ -30,44 +30,46 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\enum\change_tables;
-use shared\enum\change_fields;
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 
 class change_field_list extends type_list
 {
 
-    const TI_WORD_NAME = 10;
+    const int TI_WORD_NAME = 10;
 
 
     /**
-     * adding the system log stati used for unit tests to the dummy list
+     * adding the system log statuus used for unit tests to the dummy list
      * the field name starts always with the table id to make the field name unique
      * the table id is remove as one of the last steps if the real table field name is requested
      */
     function load_dummy(): void
     {
-        global $cng_tbl_cac;
+        global $sys;
 
         parent::load_dummy();
 
         // read the corresponding names and description from the internal config csv files
         $this->read_from_config_csv($this);
         // TODO Prio 3 load from csv
-        $table_id = $cng_tbl_cac->id(change_tables::WORD);
+        $table_id = $sys->typ_lst->cng_tbl->id(change_tables::WORD);
         $table_field_name = $table_id . change_fields::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
@@ -83,8 +85,8 @@ class change_field_list extends type_list
      */
     function default_id(): int
     {
-        global $cng_tbl_cac;
-        $table_id = $cng_tbl_cac->id(change_tables::WORD);
+        global $sys;
+        $table_id = $sys->typ_lst->cng_tbl->id(change_tables::WORD);
         $table_field_name = $table_id . change_fields::FLD_WORD_NAME;
         return parent::id($table_field_name);
     }

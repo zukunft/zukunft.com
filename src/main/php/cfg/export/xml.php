@@ -35,16 +35,18 @@
   
 */
 
-namespace cfg\export;
+namespace Zukunft\ZukunftCom\main\php\cfg\export;
 
-include_once MODEL_SANDBOX_PATH . 'user_service.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once EXPORT_PATH . 'xml_serializer.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\phrase\phrase_list;
-use cfg\sandbox\user_service;
-use cfg\user\user;
+include_once paths::MODEL_SANDBOX . 'user_service.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::EXPORT . 'xml_serializer.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\user_service;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 class xml extends user_service
 {

@@ -29,7 +29,7 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use ReflectionClass;
 use ReflectionException;

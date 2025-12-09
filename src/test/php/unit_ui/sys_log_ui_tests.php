@@ -30,23 +30,26 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\user\user;
-use html\user\user as user_dsp;
-use html\html_base;
-use html\system\sys_log_list as sys_log_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\create\test_sys_log;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_ID);
-        $sys_usr_dsp = new user_dsp($sys_usr->api_json());
-
         $html = new html_base();
+        $t_sys = new test_sys_log();
+
+        $sys_usr = new user;
+        $sys_usr->load_by_id(users::SYSTEM_ID);
+        $sys_usr_dsp = new user_ui($sys_usr->api_json());
 
         // start the test section (ts)
         $ts = 'unit ui html system log ';
@@ -54,13 +57,13 @@ class sys_log_ui_tests
 
         // test the system log html display functions
         $test_page = $html->text_h2('system log display test');
-        $log_lst = new sys_log_list_dsp($t->sys_log_list()->api_json());
+        $log_lst = new sys_log_list_ui($t_sys->sys_log_list()->api_json());
         $test_page .= 'user view of a table with system log entries<br>';
         $test_page .= $log_lst->display() . '<br>';
         $test_page .= 'admin view of a table with system log entries<br>';
         $test_page .= $log_lst->display_admin($sys_usr_dsp) . '<br>';
 
-        $t->html_test($test_page, 'sys_log', 'sys_log', $t);
+        $t->html_page_test($test_page, 'sys_log', 'sys_log', $t);
     }
 
 }

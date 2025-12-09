@@ -30,23 +30,27 @@
 
 */
 
-use cfg\word\triple;
-use cfg\user\user;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'init.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 $result = ''; // reset the html code var
 
 // open database
-$db_con = prg_start("triple");
+$app = new frontend();
+$db_con = $app->start("triple");
 
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $back = $_GET[url_var::BACK] = '';
     $id = $_GET['triples'];
 
     // load the session user parameters
@@ -54,7 +58,7 @@ if (!$db_con->connected()) {
     $result .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         $usr->load_usr_data();
 
@@ -69,4 +73,4 @@ if (!$db_con->connected()) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

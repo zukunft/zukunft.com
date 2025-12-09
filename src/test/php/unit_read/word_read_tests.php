@@ -30,21 +30,27 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_types;
-use cfg\word\word;
-use cfg\word\word_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_read_tests
 {
@@ -52,15 +58,19 @@ class word_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
 
         // init
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
+        $t_db = new test_db_load($t);
         $t->name = 'word read->';
         $t->resource_path = 'db/word/';
 
         // start the test section (ts)
-        $ts = 'read word ';
+        $ts = 'db read word ';
         $t->header($ts);
 
         $t->subheader($ts . 'load');
@@ -72,7 +82,7 @@ class word_read_tests
         // TODO load plural, type and view
 
 
-        $t->subheader('word types tests');
+        $t->subheader($ts . 'types');
 
         $test_name = 'load the phrase types';
         $lst = new phrase_types();
@@ -80,30 +90,30 @@ class word_read_tests
         $t->assert_true($test_name, $result);
 
         $test_name = 'check that at least ' . phrase_type_shared::NORMAL . ' is loaded';
-        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert($test_name, $result, 1);
 
 
-        $t->subheader('word API object creation tests');
+        $t->subheader($ts . 'api creation');
 
         $test_name = words::MATH;
-        $wrd = $t->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH);
         $t->assert_export_reload($ts . $test_name, $wrd);
 
-        $t->subheader('Word frontend tests');
+        $t->subheader($ts . 'frontend');
 
         $test_name = 'get the most useful view for a word';
-        $wrd = $t->load_word(words::MATH, $t->usr1);
+        $wrd = $t_db->load_word(words::MATH);
         $dsp_id = $wrd->calc_view_id();
         $t->assert($test_name, $dsp_id, 0);
 
 
         // TODO move to the other word list tests
-        $t->header('word list database unit tests');
+        $t->subheader($ts . 'list');
         $t->name = 'word list read db->';
 
 
-        $t->subheader('Word list load and modification tests');
+        $t->subheader($ts . 'list modification');
 
         // create word objects for testing
         $wrd = new word ($t->usr1);
@@ -112,7 +122,7 @@ class word_read_tests
         $wrd_scale->load_by_name(words::MIO);
         $phr = new phrase ($t->usr1);
         $phr->load_by_name(words::PI_SYMBOL);
-        $phr_grp = $t->load_phrase_group(array(words::PI_SYMBOL));
+        $phr_grp = $t_db->load_phrase_group(array(words::PI_SYMBOL));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
@@ -143,7 +153,7 @@ class word_read_tests
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_type($phr_typ_cac->id(phrase_type_shared::PERCENT));
+        $wrd_lst->load_by_type($sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . words::PCT . '"');
 
         // load a word list by name pattern
@@ -165,12 +175,12 @@ class word_read_tests
         $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
 
-        $t->subheader('FOAF read tests');
+        $t->subheader($ts . 'FOAF read tests');
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $foaf_lst = $t->word_city()->are()->names();
-        $fixed_lst = $t->phrase_list_cities()->wrd_lst_all()->names();
+        $foaf_lst = $t_wrd->word_city()->are()->names();
+        $fixed_lst = $t_phr->phrase_list_cities()->wrd_lst_all()->names();
         $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
@@ -182,7 +192,7 @@ class word_read_tests
 
         $t->subheader($ts . 'export');
         $test_name = triples::PI_NAME;
-        $trp = $t->triple_pi();
+        $trp = $t_trp->triple_pi();
         $t->assert_export_reload($ts . $test_name, $trp);
     }
 

@@ -30,24 +30,27 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
         $html = new html_base();
+        $t_msk = new test_views($t);
 
         // start the test section (ts)
         $ts = 'unit ui html view ';
         $t->header($ts);
 
-        $msk = new view_dsp($t->view()->api_json());
+        $msk = new view($t_msk->view()->api_json());
         $test_page = $html->text_h2('view display test');
         $test_page .= 'with tooltip: ' . $msk->name_tip() . '<br>';
         $test_page .= 'with link: ' . $msk->name_link() . '<br>';
@@ -56,10 +59,10 @@ class view_ui_tests
         $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $msk->type_selector(views::VIEW_EDIT) . '<br>';
+        $from_rows = $msk->type_selector(views::VIEW_EDIT, $ui->dto->typ_lst_cache) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
         $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
-        $t->html_test($test_page, 'view', 'view', $t);
+        $t->html_page_test($test_page, 'view', 'view', $t);
     }
 
 }

@@ -22,7 +22,7 @@ PREPARE ref_update_log_0000000002000_call FROM
     'SELECT ref_update_log_0000000002000 (?,?,?,?,?,?)';
 
 SELECT ref_update_log_0000000002000 (
-               1,
+               3,
                2,
                65,
                'Q901028',

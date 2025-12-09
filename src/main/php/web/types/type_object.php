@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/type_object.php - the superclass for word, formula and view types
-    ----------------------------
+    web/types/type_object.php - the superclass for word, formula and view types
+    -------------------------
 
     a base type object that can be used to link program code to single objects
     e.g. if a value is classified by a phrase of type percent the value by default is formatted in percent
@@ -39,7 +39,18 @@
 
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+//include_once paths::SHARED_TYPES . 'phrase_type.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::WORD . 'word.php';
+
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 
 class type_object
 {
@@ -122,5 +133,21 @@ class type_object
         return $this->comment;
     }
 
+
+    /*
+     * fixed
+     */
+
+    /**
+     * @return phrase_list with the phrases that are fixed linked to this type
+     */
+    function type_phrases(): phrase_list
+    {
+        $phr_lst = new phrase_list();
+        if ($this->code_id == phrase_type::MATH_CONST) {
+            $phr_lst->add(new word()->math()->phrase());
+        }
+        return $phr_lst;
+    }
 
 }

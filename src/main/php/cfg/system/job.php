@@ -69,62 +69,78 @@ A user updates a formula
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id_user;
-use cfg\formula\formula;
-use cfg\helper\type_object;
-use cfg\ref\source;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\ref\ref;
-use cfg\user\user;
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_REF . 'ref_db.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use DateTimeInterface;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class job extends db_object_seq_id_user
 {
 
-    const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
-    const STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
-    const STATUS_WORKING = 'working'; // the calc engine is reporting the progress
-    const STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
-    const STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
-    const STATUS_DONE = 'done'; // the task has been completed successfully
-    const STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
+    const string STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
+    const string STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
+    const string STATUS_WORKING = 'working'; // the calc engine is reporting the progress
+    const string STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
+    const string STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
+    const string STATUS_DONE = 'done'; // the task has been completed successfully
+    const string STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
 
-    const PRIO_HIGHEST = 1;
-    const PRIO_LOWEST = 10;
+    const int PRIO_HIGHEST = 1;
+    const int PRIO_LOWEST = 10;
 
 
     /*
@@ -132,29 +148,29 @@ class job extends db_object_seq_id_user
      */
 
     // object specific database object field names and comments
-    const TBL_COMMENT = 'for each concrete job run';
-    const FLD_ID_COM = 'the unique internal id of the job';
-    const FLD_ID = 'job_id';
-    const FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
-    const FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
-    const FLD_TIME_REQUEST = 'request_time';
-    const FLD_TIME_START_COM = 'timestamp when the system has started the execution';
-    const FLD_TIME_START = 'start_time';
-    const FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
-    const FLD_TIME_END = 'end_time';
-    const FLD_TYPE_COM = 'the id of the job type that should be started';
-    const FLD_TYPE = 'job_type_id';
-    const FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
-    const FLD_PARAMETER = 'parameter';
-    const FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
-    const FLD_CHANGE_FIELD = 'change_field_id';
-    const FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
-    const FLD_ROW = 'row_id';
-    const FLD_SOURCE_COM = 'used for import to link the source';
-    const FLD_REF_COM = 'used for import to link the reference';
+    const string TBL_COMMENT = 'for each concrete job run';
+    const string FLD_ID_COM = 'the unique internal id of the job';
+    const string FLD_ID = 'job_id';
+    const string FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
+    const string FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
+    const string FLD_TIME_REQUEST = 'request_time';
+    const string FLD_TIME_START_COM = 'timestamp when the system has started the execution';
+    const string FLD_TIME_START = 'start_time';
+    const string FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
+    const string FLD_TIME_END = 'end_time';
+    const string FLD_TYPE_COM = 'the id of the job type that should be started';
+    const string FLD_TYPE = 'job_type_id';
+    const string FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
+    const string FLD_PARAMETER = 'parameter';
+    const string FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
+    const string FLD_CHANGE_FIELD = 'change_field_id';
+    const string FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
+    const string FLD_ROW = 'row_id';
+    const string FLD_SOURCE_COM = 'used for import to link the source';
+    const string FLD_REF_COM = 'used for import to link the reference';
 
     // all database field names excluding the id used to identify if there are some user specific changes
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_ID,
         self::FLD_TIME_REQUEST,
         self::FLD_TIME_START,
@@ -165,8 +181,8 @@ class job extends db_object_seq_id_user
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+    const array FLD_LST_ALL = array(
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
@@ -174,8 +190,8 @@ class job extends db_object_seq_id_user
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
         [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
     );
 
 
@@ -226,7 +242,7 @@ class job extends db_object_seq_id_user
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        global $job_typ_cac;
+        global $sys;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
@@ -245,9 +261,33 @@ class job extends db_object_seq_id_user
      * set and get
      */
 
-    function set_type_id(?int $type_id = null): void
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            // the type of a job can be set once if not defined already
+            if ($type_id === null) {
+                $this->type_id = $type_id;
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $usr_msg;
     }
 
     function type_id(): ?int
@@ -255,18 +295,18 @@ class job extends db_object_seq_id_user
         return $this->type_id;
     }
 
-    function set_type(string $code_id): void
+    function set_type(string $code_id, user $usr_req): void
     {
-        global $job_typ_cac;
-        $this->set_type_id($job_typ_cac->id($code_id));
+        global $sys;
+        $this->set_type_id($sys->typ_lst->job_typ->id($code_id), $usr_req);
     }
 
     function type_code_id(): string
     {
-        global $job_typ_cac;
+        global $sys;
         $result = '';
         if ($this->type_id != 0) {
-            $type = $job_typ_cac->get($this->type_id);
+            $type = $sys->typ_lst->job_typ->get($this->type_id);
             if ($type != null) {
                 $result = $type->code_id();
             }
@@ -292,7 +332,7 @@ class job extends db_object_seq_id_user
         $sc->set_class(job::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
@@ -379,6 +419,7 @@ class job extends db_object_seq_id_user
     {
 
         global $db_con;
+        global $usr;
 
         $result = 0;
         log_debug();
@@ -388,7 +429,7 @@ class job extends db_object_seq_id_user
             if ($code_id == '') {
                 log_debug('invalid batch job type');
             } else {
-                $this->set_type($code_id);
+                $this->set_type($code_id, $usr);
             }
         }
 
@@ -411,14 +452,14 @@ class job extends db_object_seq_id_user
                     //$db_con = New mysql;
                     $db_type = $db_con->get_class();
                     $db_con->set_class(job::class);
-                    $db_con->set_usr($this->user()->id());
-                    $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
+                    $db_con->set_usr($this->user()->id);
+                    $job_id = $db_con->insert_old(array(user_db::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
+                        array($this->user()->id, sql::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
                     if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->set_id($job_id);
+                        $this->id = $job_id;
                         $this->exe();
                         $result = $job_id;
                     }
@@ -457,7 +498,7 @@ class job extends db_object_seq_id_user
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(job::class);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
@@ -472,7 +513,7 @@ class job extends db_object_seq_id_user
         global $db_con;
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_con->set_class(job::class);
         $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 
@@ -485,9 +526,14 @@ class job extends db_object_seq_id_user
         $db_con->set_class($db_type);
     }
 
-    // remove the old requests from the database if they are closed since a while
-    private function del()
+    /**
+     * remove the old requests from the database if they are closed since a while
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @return bool true if everything has been fine
+     */
+    function del(user_message $usr_msg): bool
     {
+        return $usr_msg->is_ok();
     }
 
 

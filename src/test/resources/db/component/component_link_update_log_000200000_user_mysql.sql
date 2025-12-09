@@ -27,7 +27,7 @@ PREPARE component_link_update_log_000200000_user_call FROM
             (?,?,?,?,?,?)';
 
 SELECT component_link_update_log_000200000_user
-       (1,
+       (3,
         2,
         48,
         1,

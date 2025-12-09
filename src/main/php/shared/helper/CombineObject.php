@@ -30,7 +30,12 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
+
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 class CombineObject
 {
@@ -59,9 +64,10 @@ class CombineObject
 
     /**
      * reset the vars of this object
-     * used to search for the standard object, because the search is word, value, formula or ... specific
+     * used e.g. the cleanup the object before the import mapping
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
     }
@@ -71,12 +77,12 @@ class CombineObject
      * set and get
      */
 
-    function set_obj(IdObject|TextIdObject|null $obj): void
+    function set_obj(IdObject|TextIdObject|triple|null $obj): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|null
+    function obj(): IdObject|TextIdObject|word|word_ui|triple|triple_ui|null
     {
         return $this->obj;
     }
@@ -87,7 +93,7 @@ class CombineObject
      */
     function set_id(int $id): void
     {
-        $this->obj()->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/component_type_list.php - to link coded functionality to a view component
+    model/component/component_type_list.php - to link coded functionality to a view component
     ---------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,17 +29,19 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use shared\types\component_type as comp_type_shared;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class component_type_list extends type_list
 {

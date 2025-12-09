@@ -32,50 +32,54 @@
   
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\system\base_list;
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\sandbox\sandbox;
-use cfg\ref\source;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\word;
-use cfg\word\triple;
-use shared\enum\change_fields;
-use shared\library;
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_log_list extends base_list
 {
@@ -284,7 +288,7 @@ class change_log_list extends base_list
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_dsp(view $msk, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_ui(view $msk, user $usr, string $field_name = ''): bool
     {
         global $db_con;
         $qp = $this->load_sql_obj_fld(
@@ -331,7 +335,7 @@ class change_log_list extends base_list
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -352,7 +356,7 @@ class change_log_list extends base_list
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields(change::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 
@@ -401,7 +405,7 @@ class change_log_list extends base_list
             $result = $field_name . '_of_src';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == view::class) {
-            $result = $field_name . '_of_dsp';
+            $result = $field_name . '_of_msk';
             log_info('field name ' . $field_name . ' not expected for table ' . $class);
         } elseif ($class == component::class) {
             $result = $field_name . '_of_cmp';
@@ -431,16 +435,15 @@ class change_log_list extends base_list
         string|int  $id,
         user        $usr): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
+        global $sys;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $lib = new library();
         $table_name = $lib->class_to_table($class);
-        $table_id = $cng_tbl_cac->id($table_name);
+        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($field_name != '') {
             $table_field_name = $table_id . $field_name;
-            $table_field_id = $cng_fld_cac->id($table_field_name);
+            $table_field_id = $sys->typ_lst->cng_fld->id($table_field_name);
         } else {
             $table_field_id = $table_id;
         }
@@ -506,9 +509,6 @@ class change_log_list extends base_list
         string|int  $id,
         user        $usr): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, '');

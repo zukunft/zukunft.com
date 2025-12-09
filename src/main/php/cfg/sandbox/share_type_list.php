@@ -30,14 +30,16 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-use cfg\helper\type_list;
-use shared\types\share_type as share_type_shared;
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
 
 class share_type_list extends type_list
 {
