@@ -145,6 +145,7 @@ class element_group extends ListBase
         $result = '';
 
         $fig_lst = $this->figures();
+        $usr_msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -153,7 +154,7 @@ class element_group extends ListBase
             log_debug('display figure');
             $api_json = $fig->api_json([api_type::INCL_PHRASES]);
             $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json);
+            $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
         }
 
@@ -257,7 +258,7 @@ class element_group extends ListBase
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 
@@ -309,6 +310,7 @@ class element_group extends ListBase
         $result = '';
 
         $fig_lst = $this->figures();
+        $usr_msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -317,7 +319,7 @@ class element_group extends ListBase
             log_debug('display figure');
             $api_json = $fig->api_json([api_type::INCL_PHRASES]);
             $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json);
+            $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
         }
 

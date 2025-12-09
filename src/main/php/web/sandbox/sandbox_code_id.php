@@ -46,7 +46,7 @@ class sandbox_code_id extends sandbox_typed
 {
 
     // the code_id to use single objects with predefined functionality also in the frontend
-    private ?string $code_id = null;
+    public ?string $code_id = null;
 
 
     /*
@@ -63,9 +63,9 @@ class sandbox_code_id extends sandbox_typed
     {
         parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->set_code_id($json_array[json_fields::CODE_ID]);
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
-            $this->set_code_id(null);
+            $this->code_id = null;
         }
         return $usr_msg->is_ok();
     }
@@ -82,23 +82,8 @@ class sandbox_code_id extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        $vars[json_fields::CODE_ID] = $this->code_id;
         return $vars;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_code_id(?string $code_id): void
-    {
-        $this->code_id = $code_id;
-    }
-
-    function code_id(): ?string
-    {
-        return $this->code_id;
     }
 
 }

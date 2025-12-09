@@ -33,26 +33,32 @@
 namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -345,9 +351,9 @@ class term extends combine_named
             } elseif ($this->is_triple()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
                 $trp = $this->obj();
-                $vars[json_fields::FROM] = $trp->from()->id();
-                $vars[json_fields::VERB] = $trp->verb()->id();
-                $vars[json_fields::TO] = $trp->to()->id();
+                $vars[json_fields::FROM] = $trp->get_from()->id();
+                $vars[json_fields::VERB] = $trp->get_verb()->id();
+                $vars[json_fields::TO] = $trp->get_to()->id();
             } elseif ($this->is_formula()) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
             } elseif ($this->is_verb()) {
@@ -357,10 +363,10 @@ class term extends combine_named
             }
             $vars[json_fields::ID] = $this->obj_id();
             $vars[json_fields::NAME] = $this->name();
-            $vars[json_fields::DESCRIPTION] = $this->description();
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
             $vars[json_fields::TYPE] = $this->type_id();
             if ($this->is_formula()) {
-                $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
+                $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
             }
             // TODO add exclude field and move to a parent object?
             if ($this->obj()?->share_id() != null) {
@@ -526,8 +532,10 @@ class term extends combine_named
      */
     function dsp_unlink(int $link_id): string
     {
+        $btn = new button();
+        $del_call = "/http/link_del.php?id=" . $link_id . "&back=" . $this->id();
         $result = '    <td>' . "\n";
-        $result .= \Zukunft\ZukunftCom\main\php\web\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
+        $result .= $btn->del(msg_id::WORD_UNLINK, $del_call);
         $result .= '    </td>' . "\n";
 
         return $result;

@@ -115,7 +115,7 @@ class view_base extends sandbox_code_id
 
     function __construct(?string $api_json = null)
     {
-        $this->set_code_id(null);
+        $this->code_id = null;
         $this->cmp_lst = new component_list();
         $this->dbo = null;
         $this->style_id = null;
@@ -200,7 +200,7 @@ class view_base extends sandbox_code_id
         }
 
         $vars = parent::api_array();
-        $vars[json_fields::STYLE] = $this->style_id();
+        $vars[json_fields::STYLE] = $this->get_style_id();
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -210,7 +210,7 @@ class view_base extends sandbox_code_id
      * set and get
      */
 
-    function component_list(): component_list
+    function get_component_list(): component_list
     {
         return $this->cmp_lst;
     }
@@ -220,7 +220,7 @@ class view_base extends sandbox_code_id
         $this->style_id = $style_id;
     }
 
-    function style_id(): ?int
+    function get_style_id(): ?int
     {
         return $this->style_id;
     }
@@ -231,7 +231,7 @@ class view_base extends sandbox_code_id
         $msk_typ_lst = $ui_cac->typ_lst_cache->html_view_types;
         $id = $this->type_id();
         if ($id != null) {
-            return $msk_typ_lst->get($this->type_id())?->code_id();
+            return $msk_typ_lst->get($this->type_id())?->get_code_id();
         } else {
             return '';
         }
@@ -298,7 +298,7 @@ class view_base extends sandbox_code_id
 
     public function style_selector(string $form, ?type_lists $typ_lst): string
     {
-        $used_style_id = $this->style_id();
+        $used_style_id = $this->get_style_id();
         if ($used_style_id == null) {
             $used_style_id = $typ_lst->html_view_styles->default_id();
         }

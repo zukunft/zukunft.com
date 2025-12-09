@@ -5,6 +5,8 @@
     model/db/db_check.php - test if the database exists and start the creation or upgrade process
     ---------------------
   
+    The main sections of this object are
+    - upgrade:        perform a version upgrade
 
     This file is part of zukunft.com - calc with words
 
@@ -77,8 +79,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class db_check
 {
 
-    const string TBL_WORD = 'word';
-    const string TBL_TRIPLE = 'triple';
+    /*
+     * upgrade
+     */
 
     /**
      * read the version number from the database and compare it with the backend version

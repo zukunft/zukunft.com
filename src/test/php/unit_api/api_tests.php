@@ -40,6 +40,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit_api;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -82,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -244,17 +247,33 @@ class api_tests
 
     /**
      * test the database update function via simulated api calls of all standard user sandbox objects
+     * @param test_cleanup $t object with the main test functions
      * @return void
      */
     function test_api_write_no_rest_all(test_cleanup $t): void
     {
         $t_db = new test_db_load($t);
-        $this->test_api_write_no_rest(word::class, $t_db->word_put_json(), $t_db->word_post_json(), $t);
-        $this->test_api_write_no_rest(source::class, $t_db->source_put_json(), $t_db->source_post_json(), $t);
+        $t_map = new test_mappers($t);
+        foreach (def::MAIN_CLASSES as $class) {
+            $obj = $t_map->class_to_filled_object($class);
+            switch ($obj::class) {
+                case word::class;
+                    $this->test_api_write_no_rest($obj, $t_db->word_put_json(), $t_db->word_post_json(), $t);
+                    break;
+                case source::class;
+                    $this->test_api_write_no_rest($obj, $t_db->source_put_json(), $t_db->source_post_json(), $t);
+                    break;
+                default:
+                    // TODO Prio 1 add all missing objects
+                    log_info('api write test not yet defined for ' . $obj::class);
+            }
+
+        }
     }
 
     /**
      * test the database update function via real api calls for all user sandbox objects
+     * @param test_cleanup $t object with the main test functions
      * @return void
      */
     function test_api_write_all(test_cleanup $t): void
@@ -266,22 +285,24 @@ class api_tests
 
     /**
      * test the database update function via simulated api calls for one user sandbox object
-     * @param string $class the class name of the object to test
+     * @param sandbox $sbx the sandbox object that should be tested
      * @param array $add_data the json that should be used to create the user sandbox object
      * @param array $upd_data the json that should be used to update the user sandbox object
+     * @param test_cleanup $t object with the main test functions
      * @return void
      */
-    function test_api_write_no_rest(string $class, array $add_data, array $upd_data, test_cleanup $t): void
+    function test_api_write_no_rest(sandbox $sbx, array $add_data, array $upd_data, test_cleanup $t): void
     {
-        // create a new object via api call
-        $id = $t->assert_api_put_no_rest($class, $add_data);
+        $usr_msg = new user_message();
+        // create a new object via api call and remember the id
+        $id = $t->assert_api_no_rest($sbx, 0, $add_data, $usr_msg);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
-        $t->assert_api_get($class, $id, 0, $add_data, true);
+        $t->assert_api_get($sbx::class, $id, 0, $add_data, true);
         // update the previous created test object
-        $id = $t->assert_api_post_no_rest($class, $id, $upd_data);
+        $id = $t->assert_api_no_rest($sbx, $id, $upd_data, $usr_msg);
         // remove the previous created test object
-        $t->assert_api_del_no_rest($class, $id);
+        $t->assert_api_del_no_rest($sbx::class, $id);
         // check the previous created test object really has been removed
         //$t->assert_api_get($class, $id, $data, true);
     }
@@ -291,6 +312,7 @@ class api_tests
      * @param string $class the class name of the object to test
      * @param array $add_data the json that should be used to create the user sandbox object
      * @param array $upd_data the json that should be used to update the user sandbox object
+     * @param test_cleanup $t object with the main test functions
      * @return void
      */
     function test_api_write(

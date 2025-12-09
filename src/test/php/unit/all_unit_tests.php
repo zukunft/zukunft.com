@@ -47,6 +47,7 @@ include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
+include_once test_paths::UNIT . 'coding_rule_tests.php';
 include_once test_paths::UNIT . 'permission_tests.php';
 include_once test_paths::UNIT_API . 'api_tests.php';
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
@@ -106,6 +107,7 @@ class all_unit_tests extends test_cleanup
         new lib_tests()->run($all); // test functions not yet split into single unit tests
         new math_tests()->run($this);
         new system_tests()->run($this);
+        new coding_rule_tests()->run($this);
         new sql_tests()->run($this);
         new sys_log_tests()->run($this); // TODO add assert_api_to_ui
         new change_log_tests()->run($this); // TODO add assert_api_to_ui  // TODO for version 0.0.6 add import test

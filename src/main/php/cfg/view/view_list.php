@@ -91,7 +91,7 @@ class view_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -113,7 +113,7 @@ class view_list extends sandbox_list_named
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -185,7 +185,7 @@ class view_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(view_db::FLD_NAMES);
         $sc->set_usr_fields(view_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(view_db::FLD_NAMES_NUM_USR);
@@ -224,7 +224,7 @@ class view_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new view($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new view($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -261,7 +261,7 @@ class view_list extends sandbox_list_named
     ): bool
     {
         foreach ($json_obj as $dsp_json) {
-            $msk = new view($this->user());
+            $msk = new view($this->get_user());
             if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
                 $this->add($msk);
             }
@@ -280,7 +280,7 @@ class view_list extends sandbox_list_named
      */
     function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()), $usr_msg);
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $usr_msg);
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {

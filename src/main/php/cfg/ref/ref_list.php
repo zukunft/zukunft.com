@@ -108,7 +108,7 @@ class ref_list extends type_list
     /**
      * @return user|null the person who wants to see the refs
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -264,7 +264,7 @@ class ref_list extends type_list
     {
         $result = false;
         if ($to_add != null) {
-            if (!in_array($to_add->key(), array_keys($this->key_list()))) {
+            if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
                 // add only objects that have all mandatory values
                 $result = $to_add->can_be_ready()->is_ok();
 
@@ -282,7 +282,7 @@ class ref_list extends type_list
     function add_direct(ref|type_object|view|null $item): void
     {
         parent::add_direct($item);
-        $this->key_lst[] = $item->key();
+        $this->key_lst[] = $item->get_key();
     }
 
     function del(user_message $usr_msg): void
@@ -320,7 +320,7 @@ class ref_list extends type_list
             // load the references that are already in the database
             $step_time = $this->count() / $load_per_sec;
             $imp->step_start(msg_id::LOAD, ref::class, $this->count(), $step_time);
-            $db_lst = new ref_list($this->user());
+            $db_lst = new ref_list($this->get_user());
             $db_lst->load_by_names($this->names());
             $imp->step_end($this->count(), $load_per_sec);
 

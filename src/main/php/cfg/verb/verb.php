@@ -142,6 +142,12 @@ class verb extends type_object
      * construct and map
      */
 
+    /**
+     * set the main mandatory vars of this verb object
+     * @param int $id the id can be null for new verbs
+     * @param string $name the name of the verb must be unique
+     * @param string|null $code_id the code id can be null for new verbs that does not yet have any fixed assigned code
+     */
     function __construct(int $id = 0, string $name = '', ?string $code_id = null)
     {
         parent::__construct($code_id);
@@ -156,6 +162,11 @@ class verb extends type_object
         }
     }
 
+    /**
+     * set the vars of this verb object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
@@ -166,60 +177,6 @@ class verb extends type_object
         $this->frm_name = null;
         $this->usage = null;
         $this->impact = null;
-    }
-
-    /**
-     * set the class vars based on a database record
-     *
-     * @param array|null $db_row is an array with the database values
-     * @param string $id_fld the name of the id field
-     * @param string $name_fld the name of the name field
-     * @return bool true if the verb is loaded and valid
-     */
-    function row_mapper_verb(
-        ?array $db_row,
-        string $id_fld = verb_db::FLD_ID,
-        string $name_fld = verb_db::FLD_NAME): bool
-    {
-        $result = parent::row_mapper($db_row, $id_fld);
-        if ($result) {
-            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql_db::FLD_CODE_ID] != null) {
-                    $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
-                }
-            }
-            $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(verb_db::FLD_PLURAL, $db_row)) {
-                $this->set_plural($db_row[verb_db::FLD_PLURAL]);
-            }
-            if (array_key_exists(verb_db::FLD_REVERSE, $db_row)) {
-                $this->set_reverse($db_row[verb_db::FLD_REVERSE]);
-            }
-            if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
-                $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
-            }
-            if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
-                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
-            }
-            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
-            }
-            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
-                if ($db_row[sql_db::FLD_USAGE] == null) {
-                    $this->usage = null;
-                } else {
-                    $this->usage = $db_row[sql_db::FLD_USAGE];
-                }
-            }
-            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
-                if ($db_row[sql_db::FLD_IMPACT] == null) {
-                    $this->impact = null;
-                } else {
-                    $this->impact = $db_row[sql_db::FLD_IMPACT];
-                }
-            }
-        }
-        return $result;
     }
 
     /**
@@ -294,6 +251,60 @@ class verb extends type_object
         return $usr_msg->is_ok();
     }
 
+    /**
+     * set the class vars based on a database record
+     *
+     * @param array|null $db_row is an array with the database values
+     * @param string $id_fld the name of the id field
+     * @param string $name_fld the name of the name field
+     * @return bool true if the verb is loaded and valid
+     */
+    function row_mapper_verb(
+        ?array $db_row,
+        string $id_fld = verb_db::FLD_ID,
+        string $name_fld = verb_db::FLD_NAME): bool
+    {
+        $result = parent::row_mapper($db_row, $id_fld);
+        if ($result) {
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                if ($db_row[sql_db::FLD_CODE_ID] != null) {
+                    $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
+                }
+            }
+            $this->set_name($db_row[$name_fld]);
+            if (array_key_exists(verb_db::FLD_PLURAL, $db_row)) {
+                $this->set_plural($db_row[verb_db::FLD_PLURAL]);
+            }
+            if (array_key_exists(verb_db::FLD_REVERSE, $db_row)) {
+                $this->set_reverse($db_row[verb_db::FLD_REVERSE]);
+            }
+            if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
+                $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
+            }
+            if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
+                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
+            }
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            }
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                if ($db_row[sql_db::FLD_USAGE] == null) {
+                    $this->usage = null;
+                } else {
+                    $this->usage = $db_row[sql_db::FLD_USAGE];
+                }
+            }
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                if ($db_row[sql_db::FLD_IMPACT] == null) {
+                    $this->impact = null;
+                } else {
+                    $this->impact = $db_row[sql_db::FLD_IMPACT];
+                }
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * set and get
@@ -334,7 +345,7 @@ class verb extends type_object
         $this->plural = $plural;
     }
 
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return $this->plural;
     }
@@ -344,7 +355,7 @@ class verb extends type_object
         $this->reverse = $reverse;
     }
 
-    function reverse(): ?string
+    function get_reverse(): ?string
     {
         return $this->reverse;
     }
@@ -354,7 +365,7 @@ class verb extends type_object
         $this->rev_plural = $reverse_plural;
     }
 
-    function reverse_plural(): ?string
+    function get_reverse_plural(): ?string
     {
         return $this->rev_plural;
     }
@@ -364,7 +375,7 @@ class verb extends type_object
         $this->frm_name = $formula_name;
     }
 
-    function formula_name(): ?string
+    function get_formula_name(): ?string
     {
         return $this->frm_name;
     }
@@ -372,7 +383,7 @@ class verb extends type_object
     /**
      * @return string a unique name for the verb that is also used in the code
      */
-    function code_id(): string
+    function get_code_id(): string
     {
         if ($this->code_id == null) {
             return '';
@@ -384,7 +395,7 @@ class verb extends type_object
     /**
      * @return string the description of the verb
      */
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
@@ -396,7 +407,7 @@ class verb extends type_object
     /**
      * @return user|null the person who wants to see this verb
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -415,7 +426,7 @@ class verb extends type_object
     /**
      * @return int a higher number indicates a higher usage
      */
-    function usage(): ?int
+    function get_usage(): ?int
     {
         return $this->usage;
     }
@@ -436,7 +447,7 @@ class verb extends type_object
     /**
      * @return float a higher number indicates a higher impact
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
         return $this->impact;
     }
@@ -447,23 +458,51 @@ class verb extends type_object
      */
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a verb by the verb name
+     * @param string $name the name of the verb
+     * @return int the id of the verb found and zero if nothing is found
      */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    function load_by_name(string $name): int
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        global $db_con;
 
-        $sc->set_class(self::class);
-        $sc->set_name($qp->name);
-        $sc->set_fields(verb_db::FLD_NAMES);
-
-        return $qp;
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
     }
+
+    /**
+     * load a verb by the verb name
+     * @param string $code_id the code id of the verb
+     * @return int the id of the verb found and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a verb from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_verb($db_row);
+        return $this->id();
+    }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create an SQL statement to retrieve a verb by id from the database
@@ -516,45 +555,22 @@ class verb extends type_object
     }
 
     /**
-     * load a verb from the database
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load(sql_par $qp): int
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        global $db_con;
+        $qp = parent::load_sql($sc, $query_name, $class);
 
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_verb($db_row);
-        return $this->id();
-    }
+        $sc->set_class(self::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields(verb_db::FLD_NAMES);
 
-    /**
-     * load a verb by the verb name
-     * @param string $name the name of the verb
-     * @return int the id of the verb found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a verb by the verb name
-     * @param string $code_id the code id of the verb
-     * @return int the id of the verb found and zero if nothing is found
-     */
-    function load_by_code_id(string $code_id): int
-    {
-        global $db_con;
-
-        log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
-        return $this->load($qp);
+        return $qp;
     }
 
 
@@ -574,14 +590,14 @@ class verb extends type_object
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::CODE_ID] = $this->code_id();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::PLURAL] = $this->plural();
-        $vars[json_fields::REVERSE] = $this->reverse();
-        $vars[json_fields::REV_PLURAL] = $this->reverse_plural();
-        $vars[json_fields::FRM_NAME] = $this->formula_name();
-        $vars[json_fields::USAGE] = $this->usage();
-        $vars[json_fields::IMPACT] = $this->impact();
+        $vars[json_fields::CODE_ID] = $this->get_code_id();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
+        $vars[json_fields::PLURAL] = $this->get_plural();
+        $vars[json_fields::REVERSE] = $this->get_reverse();
+        $vars[json_fields::REV_PLURAL] = $this->get_reverse_plural();
+        $vars[json_fields::FRM_NAME] = $this->get_formula_name();
+        $vars[json_fields::USAGE] = $this->get_usage();
+        $vars[json_fields::IMPACT] = $this->get_impact();
         $vars[json_fields::ID] = $this->id();
 
         return $vars;
@@ -673,14 +689,14 @@ class verb extends type_object
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
-        if ($this->plural() <> '') {
-            $vars[json_fields::NAME_PLURAL] = $this->plural();
+        if ($this->get_plural() <> '') {
+            $vars[json_fields::NAME_PLURAL] = $this->get_plural();
         }
-        if ($this->reverse() <> '') {
-            $vars[json_fields::NAME_REVERSE] = $this->reverse();
+        if ($this->get_reverse() <> '') {
+            $vars[json_fields::NAME_REVERSE] = $this->get_reverse();
         }
-        if ($this->reverse_plural() <> '') {
-            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->reverse_plural();
+        if ($this->get_reverse_plural() <> '') {
+            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->get_reverse_plural();
         }
 
         // TODO add the protection type
@@ -719,19 +735,24 @@ class verb extends type_object
 
 
     /*
-     * convert functions
+     * related
      */
 
     /**
      * get the term corresponding to this verb name
      * so in this case, if a word or formula with the same name already exists, get it
      */
-    private function get_term(): term
+    private function reload_term(): term
     {
         $trm = new term($this->usr);
         $trm->load_by_name($this->name);
         return $trm;
     }
+
+
+    /*
+     * cast
+     */
 
     /**
      * @returns term the formula object cast into a term object
@@ -747,25 +768,8 @@ class verb extends type_object
 
 
     /*
-     * save
+     * sandbox
      */
-
-    // TODO to review: additional check the database foreign keys
-    function not_used_sql(sql_db $db_con): sql_par
-    {
-        $qp = new sql_par(verb::class);
-
-        $qp->name .= 'usage';
-        $db_con->set_class(word::class);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
-        $db_con->set_fields(verb_db::FLD_NAMES);
-        $db_con->set_where_std($this->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
 
     /**
      * @returns bool true if no one has used this verb
@@ -788,10 +792,27 @@ class verb extends type_object
         return $result;
     }
 
+    // TODO to review: additional check the database foreign keys
+    function not_used_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(verb::class);
+
+        $qp->name .= 'usage';
+        $db_con->set_class(word::class);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->get_user()->id);
+        $db_con->set_fields(verb_db::FLD_NAMES);
+        $db_con->set_where_std($this->id());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id . ')');
+        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->get_user()->id . ')');
 
         global $db_con;
         $result = true;
@@ -805,7 +826,7 @@ class verb extends type_object
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->get_user()->id();
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
@@ -830,6 +851,11 @@ class verb extends type_object
         return $can_change;
     }
 
+
+    /*
+     * log
+     */
+
     // set the log entry parameter for a new verb
     private function log_add(): change
     {
@@ -850,7 +876,7 @@ class verb extends type_object
     // set the main log entry parameters for updating one verb field
     private function log_upd(): change
     {
-        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
         $log = new change($this->usr);
         $log->set_action(change_actions::UPDATE);
         $log->set_table(change_tables::VERB);
@@ -861,7 +887,7 @@ class verb extends type_object
     // set the log entry parameter to delete a verb
     private function log_del(): change
     {
-        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
         $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
@@ -874,6 +900,11 @@ class verb extends type_object
 
         return $log;
     }
+
+
+    /*
+     * save
+     */
 
     // actually update a formula field in the main database record or the user sandbox
     private function save_field_do(sql_db $db_con, $log): user_message
@@ -942,11 +973,11 @@ class verb extends type_object
     private function save_field_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->plural() <> $this->plural()) {
+        if ($db_rec->get_plural() <> $this->get_plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->plural();
-            $log->new_value = $this->plural();
-            $log->std_value = $db_rec->plural();
+            $log->old_value = $db_rec->get_plural();
+            $log->new_value = $this->get_plural();
+            $log->std_value = $db_rec->get_plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -958,11 +989,11 @@ class verb extends type_object
     private function save_field_reverse(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->reverse() <> $this->reverse()) {
+        if ($db_rec->get_reverse() <> $this->get_reverse()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->reverse();
-            $log->new_value = $this->reverse();
-            $log->std_value = $db_rec->reverse();
+            $log->old_value = $db_rec->get_reverse();
+            $log->new_value = $this->get_reverse();
+            $log->std_value = $db_rec->get_reverse();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -974,11 +1005,11 @@ class verb extends type_object
     private function save_field_rev_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->reverse_plural() <> $this->reverse_plural()) {
+        if ($db_rec->get_reverse_plural() <> $this->get_reverse_plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->reverse_plural();
-            $log->new_value = $this->reverse_plural();
-            $log->std_value = $db_rec->reverse_plural();
+            $log->old_value = $db_rec->get_reverse_plural();
+            $log->new_value = $this->get_reverse_plural();
+            $log->std_value = $db_rec->get_reverse_plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -1006,11 +1037,11 @@ class verb extends type_object
     private function save_field_formula_name(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->formula_name() <> $this->formula_name()) {
+        if ($db_rec->get_formula_name() <> $this->get_formula_name()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->formula_name();
-            $log->new_value = $this->formula_name();
-            $log->std_value = $db_rec->formula_name();
+            $log->old_value = $db_rec->get_formula_name();
+            $log->new_value = $this->get_formula_name();
+            $log->std_value = $db_rec->get_formula_name();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_NAME_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -1075,7 +1106,7 @@ class verb extends type_object
 
                   // ... and create a new display component link
                   $this->set_id(0);
-                  $this->set_owner_id($this->user()->id());
+                  $this->set_owner_id($this->get_user()->id());
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
                 }
@@ -1178,7 +1209,7 @@ class verb extends type_object
         if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
             $this->set_user($usr_msg->usr);
-            $trm = $this->get_term();
+            $trm = $this->reload_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));
             } else {
@@ -1203,7 +1234,7 @@ class verb extends type_object
                 // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
                 if ($db_rec->name <> $this->name) {
                     // check if a verb, formula or verb with the same name is already in the database
-                    $trm = $this->get_term();
+                    $trm = $this->reload_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                         $usr_msg->add($trm->id_used_msg($this));
                     } else {
@@ -1236,6 +1267,11 @@ class verb extends type_object
         return $usr_msg->is_ok();
     }
 
+
+    /*
+     * del
+     */
+
     /**
      * exclude or delete a verb
      * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
@@ -1265,7 +1301,7 @@ class verb extends type_object
             if ($this->can_change()) {
                 $log = $this->log_del();
                 if ($log->id() > 0) {
-                    $db_con->usr_id = $this->user()->id();
+                    $db_con->usr_id = $this->get_user()->id();
                     $db_con->set_class(verb::class);
                     $usr_msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
                 }
@@ -1277,6 +1313,7 @@ class verb extends type_object
 
         return $usr_msg->is_ok();
     }
+
 
     /*
      * debug
@@ -1290,27 +1327,16 @@ class verb extends type_object
         global $debug;
         $result = parent::dsp_id();
         if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;
     }
 
-
-    /*
-     * display
-     */
-
     function name(): string
     {
         return $this->name;
-    }
-
-    // create the HTML code to display the formula name with the HTML link
-    function display(?string $back = ''): string
-    {
-        return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
 }

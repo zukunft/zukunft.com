@@ -218,8 +218,8 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->from()->id() == $phr->id()) {
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_from()->id() == $phr->id()) {
                         $result->add($trp);
                     }
                 }
@@ -240,9 +240,9 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->to()->id() == $phr->id()) {
-                        $result->add($trp->from());
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()->id() == $phr->id()) {
+                        $result->add($trp->get_from());
                     }
                 }
             }
@@ -262,8 +262,8 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
-                    if ($trp->to()->id() == $phr->id()) {
+                if ($trp->get_verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->get_to()->id() == $phr->id()) {
                         $result->add($trp);
                     }
                 }

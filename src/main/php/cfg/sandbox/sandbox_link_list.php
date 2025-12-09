@@ -145,9 +145,9 @@ class sandbox_link_list extends sandbox_list
     function add(int $id, view $msk, component|term $sbx, int $pos = 0): bool
     {
         if ($sbx::class == term::class) {
-            $new_lnk = new term_view($this->user());
+            $new_lnk = new term_view($this->get_user());
         } else {
-            $new_lnk = new component_link($this->user());
+            $new_lnk = new component_link($this->get_user());
         }
         $new_lnk->set($id, $msk, $sbx, $pos);
         return $this->add_link($new_lnk);
@@ -194,7 +194,7 @@ class sandbox_link_list extends sandbox_list
         $usr_msg->add($this->add_user_check($obj_to_add));
 
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
-        if (!in_array($obj_to_add->key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
+        if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
             // add only objects that have all mandatory values
             $result = $obj_to_add->can_be_ready()->is_ok();
 
@@ -219,7 +219,7 @@ class sandbox_link_list extends sandbox_list
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view|view_relation $obj_to_add): void
     {
         if (!$this->is_key_list_dirty()) {
-            $this->key_pos_lst[$obj_to_add->key()] = count($this->lst());
+            $this->key_pos_lst[$obj_to_add->get_key()] = count($this->lst());
         }
         parent::add_direct($obj_to_add);
     }

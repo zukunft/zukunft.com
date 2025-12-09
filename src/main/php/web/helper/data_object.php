@@ -405,7 +405,7 @@ class data_object
         $msk_lst = $this->msk_lst;
         foreach ($msk_lst->lst() as $msk) {
             if ($msk->id == 0) {
-                $code_id = $msk->code_id();
+                $code_id = $msk->code_id;
                 if ($code_id != null) {
                     $msk->id = $views->code_id_to_id($code_id);
                 }

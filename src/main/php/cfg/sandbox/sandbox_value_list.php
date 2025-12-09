@@ -121,7 +121,7 @@ class sandbox_value_list extends sandbox_list
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         foreach ($api_json as $json_val) {
-            $val = new value($this->user());
+            $val = new value($this->get_user());
             if ($val->api_mapper($json_val, $usr_msg)) {
                 $this->add($val);
             }
@@ -296,7 +296,7 @@ class sandbox_value_list extends sandbox_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user_db::FLD_ID, $this->user()->id, sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->get_user()->id, sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -453,7 +453,7 @@ class sandbox_value_list extends sandbox_list
 
         // differences between value and result list
         // set the default settings for values
-        $val = $sc_typ_lst->value_object($this->user());
+        $val = $sc_typ_lst->value_object($this->get_user());
         $list_class = value_list::class;
         $fld_lst = value_db::FLD_NAMES;
         $fld_lst_std = $val::FLD_NAMES_STD;
@@ -533,7 +533,7 @@ class sandbox_value_list extends sandbox_list
         }
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         if ($is_std) {
             // TODO replace next line with union select field name synchronisation
             $sc->set_fields_num_dummy($fld_lst_dummy);

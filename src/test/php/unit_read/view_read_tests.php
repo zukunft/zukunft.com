@@ -78,7 +78,7 @@ class view_read_tests
 
         $test_name = 'load the components of view ' . views::START_NAME . ' contains ' . components::WORD_NAME;
         $msk->load_components();
-        $t->assert_contains($test_name, $msk->component_link_list()->names(), components::WORD_NAME);
+        $t->assert_contains($test_name, $msk->cmp_lnk_lst->names(), components::WORD_NAME);
 
         $test_name = 'load view by code id "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);

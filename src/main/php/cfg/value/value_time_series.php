@@ -144,7 +144,7 @@ class value_time_series extends sandbox_value
     {
         parent::reset($keep_user);
 
-        $this->set_grp(new group($this->user()));
+        $this->set_grp(new group($this->get_user()));
         $this->source = null;
     }
 
@@ -172,7 +172,7 @@ class value_time_series extends sandbox_value
         if ($result) {
             $this->grp()->set_id($db_row[group::FLD_ID]);
             if ($db_row[source_db::FLD_ID] > 0) {
-                $this->source = new source($this->user());
+                $this->source = new source($this->get_user());
                 $this->source->id = $db_row[source_db::FLD_ID];
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
@@ -186,10 +186,10 @@ class value_time_series extends sandbox_value
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
+    function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
-        return parent::load_standard_sql($sc, $fld_lst);
+        return parent::load_sql_standard($sc, $fld_lst);
     }
 
     /**
@@ -207,7 +207,7 @@ class value_time_series extends sandbox_value
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
@@ -223,7 +223,7 @@ class value_time_series extends sandbox_value
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         return parent::load_standard($qp);
     }
 
@@ -253,7 +253,7 @@ class value_time_series extends sandbox_value
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
@@ -330,7 +330,7 @@ class value_time_series extends sandbox_value
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp()->id(), $this->user()->id(), sql::NOW));
+                array($this->grp()->id(), $this->get_user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {
@@ -347,7 +347,7 @@ class value_time_series extends sandbox_value
                 */
 
                 // create an empty db_rec element to force saving of all set fields
-                //$db_vts = new value_time_series($this->user());
+                //$db_vts = new value_time_series($this->get_user());
                 //$db_vts->id = $this->id();
                 // TODO add the data list saving
             }
@@ -391,12 +391,12 @@ class value_time_series extends sandbox_value
 
         // build the database object because the is anyway needed
         $db_con->set_class(value_time_series::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
 
         // check if a new time series is supposed to be added
         if ($this->id() <= 0) {
             // check if a time series for the phrase group is already in the database
-            $db_chk = new value_time_series($this->user());
+            $db_chk = new value_time_series($this->get_user());
             $db_chk->load_by_grp($this->grp());
             if ($db_chk->id() > 0) {
                 $this->id = $db_chk->id();
@@ -411,9 +411,9 @@ class value_time_series extends sandbox_value
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
-            $db_rec = new value_time_series($this->user());
+            $db_rec = new value_time_series($this->get_user());
             $db_rec->load_by_id($this->id());
-            $std_rec = new value_time_series($this->user()); // user must also be set to allow to take the ownership
+            $std_rec = new value_time_series($this->get_user()); // user must also be set to allow to take the ownership
             $std_rec->id = $this->id();
             $std_rec->load_standard();
 

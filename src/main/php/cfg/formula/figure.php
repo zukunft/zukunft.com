@@ -109,14 +109,14 @@ class figure extends combine_object
             if ($db_row[$id_fld] > 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
-                $val = new value($this->user());
+                $val = new value($this->get_user());
                 $val->row_mapper_sandbox_multi($db_row, $ext);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a formula result
-                $res = new result($this->user());
+                $res = new result($this->get_user());
                 $res->row_mapper($db_row);
                 $this->set_obj($res);
                 $result = true;
@@ -136,12 +136,12 @@ class figure extends combine_object
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         if ($api_json[json_fields::ID] > 0) {
-            $val = new value($this->user());
+            $val = new value($this->get_user());
             if ($val->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $val;
             }
         } else {
-            $res = new result($this->user());
+            $res = new result($this->get_user());
             $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
             if ($res->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $res;
@@ -203,9 +203,9 @@ class figure extends combine_object
     /**
      * @return user the person who wants to see a word, verb, triple, formula or view
      */
-    function user(): user
+    function get_user(): user
     {
-        return $this->obj()->user();
+        return $this->obj()->get_user();
     }
 
     /**
@@ -228,9 +228,9 @@ class figure extends combine_object
     /**
      * @return string the reference text either from the formula result or the db value from a user or source
      */
-    function symbol(): string
+    function get_symbol(): string
     {
-        return $this->obj()->symbol();
+        return $this->obj()->get_symbol();
     }
 
     /**
@@ -313,7 +313,7 @@ class figure extends combine_object
     {
 
         $result = ' ' . $this->number();
-        $result .= ' ' . $this->symbol();
+        $result .= ' ' . $this->get_symbol();
         if (isset($this->obj)) {
             $result .= $this->obj->name();
         }

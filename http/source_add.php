@@ -86,7 +86,7 @@ if ($usr->id() > 0) {
         $src->set_name($_GET[url_var::NAME]);
     }    // name of the new source to add
     if (isset($_GET[url_var::URL])) {
-        $src->set_url($_GET[url_var::URL]);
+        $src->url = $_GET[url_var::URL];
     }     // url of the new source to add
     if (isset($_GET[url_var::DESCRIPTION])) {
         $src->description = $_GET[url_var::DESCRIPTION];
@@ -95,6 +95,7 @@ if ($usr->id() > 0) {
     // if the user has pressed save at least once
     if ($_GET['confirm'] > 0) {
 
+        $msg = '';
         // check essential parameters
         if ($src->name() == "") {
             $msg .= 'Name missing; Please press back and enter a source name.';

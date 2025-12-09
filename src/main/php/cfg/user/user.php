@@ -494,8 +494,8 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        if ($this->description() != null) {
-            $vars[json_fields::DESCRIPTION] = $this->description();
+        if ($this->get_description() != null) {
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
         if ($this->profile_id > 0) {
             $vars[json_fields::PROFILE_ID] = $this->profile_id;
@@ -601,7 +601,7 @@ class user extends db_id_object_non_sandbox
         return $usr_msg;
     }
 
-    function code_id(): ?string
+    function get_code_id(): ?string
     {
         return $this->code_id;
     }
@@ -670,7 +670,7 @@ class user extends db_id_object_non_sandbox
      *
      * @return string|null the description from the user e.g. for system users
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -1544,8 +1544,8 @@ class user extends db_id_object_non_sandbox
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name;
-        if ($this->description() <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description();
+        if ($this->get_description() <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
         if ($this->email <> '') {
             $vars[json_fields::EMAIL] = $this->email;
@@ -1592,8 +1592,8 @@ class user extends db_id_object_non_sandbox
         if ($obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->description() != null) {
-            $this->set_description($obj->description());
+        if ($obj->get_description() != null) {
+            $this->set_description($obj->get_description());
         }
         if ($obj->code_id != null) {
             $this->code_id = $obj->code_id;
@@ -2675,7 +2675,7 @@ class user extends db_id_object_non_sandbox
         // the password is not part of the standard update process
 
         // the description is mainly used for system users
-        if ($db_usr->description() !== $this->description()) {
+        if ($db_usr->get_description() !== $this->get_description()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -2685,9 +2685,9 @@ class user extends db_id_object_non_sandbox
             }
             $lst->add_field(
                 sql_db::FLD_DESCRIPTION,
-                $this->description(),
+                $this->get_description(),
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $db_usr->description()
+                $db_usr->get_description()
             );
         }
 

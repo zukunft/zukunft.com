@@ -142,14 +142,17 @@ class source extends sandbox_code_id
 
     // database fields additional to the user sandbox fields
     // the internet link to the source
-    private ?string $url = null;
+    public ?string $url = null;
 
 
     /*
      * construct and map
      */
 
-    // define the settings for this source object
+    /**
+     * set the user and fix the setting of this source object
+     * @param user $usr the user who requested to see the source
+     */
     function __construct(user $usr)
     {
         $this->reset();
@@ -158,6 +161,11 @@ class source extends sandbox_code_id
         $this->rename_can_switch = def::UI_CAN_CHANGE_SOURCE_NAME;
     }
 
+    /**
+     * set the vars of this source object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
@@ -186,7 +194,7 @@ class source extends sandbox_code_id
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            $this->set_url($db_row[source_db::FLD_URL]);
+            $this->url = $db_row[source_db::FLD_URL];
         }
         return $result;
     }
@@ -203,7 +211,7 @@ class source extends sandbox_code_id
         parent::api_mapper($api_json, $usr_msg);
 
         if (array_key_exists(json_fields::URL, $api_json)) {
-            $this->set_url($api_json[json_fields::URL]);
+            $this->url = $api_json[json_fields::URL];
         }
 
         return $usr_msg->is_ok();
@@ -228,7 +236,7 @@ class source extends sandbox_code_id
         parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
-            $this->set_url($in_ex_json[json_fields::URL]);
+            $this->url = $in_ex_json[json_fields::URL];
         }
 
         return $usr_msg->is_ok();
@@ -251,43 +259,12 @@ class source extends sandbox_code_id
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::URL] = $this->url();
+            $vars[json_fields::URL] = $this->url;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
         }
         return $vars;
-    }
-
-    /**
-     * set the source object vars based on an api json array
-     * similar to import_obj but using the database id instead of the names and code id
-     * @param array $api_json the api array
-     * @return user_message false if a value could not be set
-     */
-    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
-    {
-        log_debug();
-        $usr_msg = new user_message();
-
-        if (array_key_exists(json_fields::NAME, $api_json)) {
-            $this->name = $api_json[json_fields::NAME];
-        }
-        if (array_key_exists(json_fields::URL, $api_json)) {
-            $this->set_url($api_json[json_fields::URL]);
-        }
-        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
-            $this->description = $api_json[json_fields::DESCRIPTION];
-        }
-        if (array_key_exists(json_fields::TYPE, $api_json)) {
-            $this->type_id = $api_json[json_fields::TYPE];
-        }
-
-        if ($usr_msg->is_ok() and $do_save) {
-            $this->save($usr_msg);
-        }
-
-        return $usr_msg;
     }
 
 
@@ -305,8 +282,8 @@ class source extends sandbox_code_id
     {
         $vars = parent::export_json($exp_typ, $do_load);
 
-        if ($this->url() <> '') {
-            $vars[json_fields::URL] = $this->url();
+        if ($this->url <> '') {
+            $vars[json_fields::URL] = $this->url;
         }
 
         return $vars;
@@ -334,16 +311,6 @@ class source extends sandbox_code_id
             return parent::set_type_by_name(
                 $code_id_or_name, $sys->typ_lst->src_typ, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
         }
-    }
-
-    function set_url(?string $url): void
-    {
-        $this->url = $url;
-    }
-
-    function url(): ?string
-    {
-        return $this->url;
     }
 
 
@@ -387,7 +354,7 @@ class source extends sandbox_code_id
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {
@@ -396,13 +363,18 @@ class source extends sandbox_code_id
         return $result;
     }
 
+
+    /*
+     * load sql
+     */
+
     /**
      * create the SQL to load the default source always by the id
      *
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -412,7 +384,7 @@ class source extends sandbox_code_id
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
 
     /**
@@ -433,6 +405,22 @@ class source extends sandbox_code_id
         );
     }
 
+    /**
+     * create an SQL statement to retrieve the user changes of the current source
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        return parent::load_sql_user_changes($sc, $sc_par_lst);
+    }
+
 
     /*
      * info
@@ -448,8 +436,8 @@ class source extends sandbox_code_id
     function needs_db_update(source|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->url() != null) {
-            if ($this->url() != $db_obj->url()) {
+        if ($this->url != null) {
+            if ($this->url != $db_obj->url) {
                 $result = true;
             }
         }
@@ -488,16 +476,6 @@ class source extends sandbox_code_id
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if the source has been changed
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc->set_class(source::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * @return bool true if no other user has modified the source
      */
     function not_changed(): bool
@@ -523,19 +501,13 @@ class source extends sandbox_code_id
     }
 
     /**
-     * create an SQL statement to retrieve the user changes of the current source
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if the source has been changed
      */
-    function load_sql_user_changes(
-        sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
-        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
-        return parent::load_sql_user_changes($sc, $sc_par_lst);
+        $sc->set_class(source::class);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
 
@@ -553,11 +525,11 @@ class source extends sandbox_code_id
     private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
     {
         $usr_msg = new user_message;
-        if ($db_rec->url() <> $this->url()) {
+        if ($db_rec->url <> $this->url) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->url();
-            $log->new_value = $this->url();
-            $log->std_value = $std_rec->url();
+            $log->old_value = $db_rec->url;
+            $log->new_value = $this->url;
+            $log->std_value = $std_rec->url;
             $log->row_id = $this->id();
             $log->set_field(source_db::FLD_URL);
             $usr_msg->add($this->save_field_user($db_con, $log));
@@ -618,11 +590,11 @@ class source extends sandbox_code_id
 
         // collect all phrase groups where this word is used
         // TODO Prio 2 activate
-        //$grp_lst = new group_list($this->user());
+        //$grp_lst = new group_list($this->get_user());
         //$grp_lst->load_by_phr($this->phrase());
 
         // collect all references where this source is used
-        $ref_lst = new ref_list($this->user());
+        $ref_lst = new ref_list($this->get_user());
         // TODO Prio 1 activate
         $ref_lst->load_sql_by_source($this);
 
@@ -696,7 +668,7 @@ class source extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->url() !== $this->url()) {
+        if ($sbx->url !== $this->url) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
@@ -706,9 +678,9 @@ class source extends sandbox_code_id
             }
             $lst->add_field(
                 source_db::FLD_URL,
-                $this->url(),
+                $this->url,
                 source_db::FLD_URL_SQL_TYP,
-                $sbx->url()
+                $sbx->url
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

@@ -369,7 +369,7 @@ class ui_list extends ui_base
         $style_txt = '';
         if ($style_id != null) {
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->code_id();
+            $style_txt = $style->get_code_id();
         }
         return $val_lst->list($phr_lst, '', $style_txt);
     }
@@ -393,7 +393,7 @@ class ui_list extends ui_base
         $style_txt = '';
         if ($style_id != null) {
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->code_id();
+            $style_txt = $style->get_code_id();
         }
         return $val_lst->list_unit();
     }
@@ -419,7 +419,7 @@ class ui_list extends ui_base
         $style_txt = '';
         if ($style_id != null) {
             $style = $sys->typ_lst->msk_sty->get($style_id);
-            $style_txt = $style->code_id();
+            $style_txt = $style->get_code_id();
         }
         return $res_lst->list($phr_lst, '', $style_txt);
     }

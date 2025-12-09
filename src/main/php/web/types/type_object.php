@@ -123,7 +123,7 @@ class type_object
         return $this->name;
     }
 
-    function code_id(): string
+    function get_code_id(): string
     {
         return $this->code_id;
     }

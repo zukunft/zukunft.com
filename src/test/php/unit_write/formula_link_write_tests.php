@@ -78,10 +78,9 @@ class formula_link_write_tests
 
         $t_db->test_formula_link(formulas::SYSTEM_TEST_ADD, words::TEST_ADD);
 
-        // link the test formula to another word
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
-        $result = $frm->link_phr($wrd->phrase());
-        $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB_MULTI);
+        $result = $frm->link_phrase_and_save($wrd->phrase(), $usr_msg);
+        $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
         $phr = new phrase($t->usr1);
@@ -100,7 +99,7 @@ class formula_link_write_tests
 
         $frm_lnk2 = new formula_link($t->usr1);
         $frm_lnk2->load_by_id($frm_lnk->id(), formula_link::class);
-        $frm_lnk2->load_objects();
+        $frm_lnk2->reload_objects();
 
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
         if ($frm_lnk2->formula() != null) {
@@ -144,14 +143,14 @@ class formula_link_write_tests
 
         // ... check if the value update has been triggered
 
+        $test_name = 'if second user removes the new link to ' . $phr->name()
+            . ' from the formula ' . $frm->name() . '" by user "' . $t->usr2->name . '"';
         // if second user removes the new link
         $frm = new formula($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $phr = new phrase($t->usr2);
         $phr->load_by_name(words::TEST_ADD);
-        $result = $frm->unlink_phr($phr);
-        $target = '';
-        $t->assert('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->unlink_phrase($phr, $usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
@@ -186,10 +185,9 @@ class formula_link_write_tests
 
         // ... check if the values for the first user are still the same
 
-        // if the first user also removes the link, both records should be deleted
-        $result = $frm->unlink_phr($phr);
-        $target = '';
-        $t->assert('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $test_name = 'if the first user also removes the link to ' . $phr->name()
+            . ', both links of formula ' . $frm->name() . ' should be deleted';
+        $t->assert_true($test_name, $frm->unlink_phrase($phr, $usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check the correct logging
         $log = new change_link($t->usr1);
@@ -264,7 +262,7 @@ class formula_link_write_tests
         // prepare
         $frm = $t_db->add_formula(formulas::INCREASE, formulas::INCREASE_EXP, $usr_msg);
         $phr = $t_db->add_word(words::YEAR_CAP)->phrase();
-        $frm->link_phr($phr);
+        $frm->link_phrase_and_save($phr, $usr_msg);
         $t_db->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
 
         // test

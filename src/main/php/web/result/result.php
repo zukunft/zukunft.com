@@ -154,9 +154,9 @@ class result extends sandbox_value
     /**
      * @return string interface function to align the value with the other sandbox objects
      */
-    function description(): string
+    function get_description(): string
     {
-        return $this->grp->description();
+        return $this->grp->get_description();
     }
 
     /**
@@ -279,7 +279,7 @@ class result extends sandbox_value
         // display the leading word
         // $lead_wrd =
         // $lead_wrd->id()  = $lead_phr_id;
-        // $lead_wrd->usr = $this->user();
+        // $lead_wrd->usr = $this->get_user();
         // $lead_wrd->load();
         //$result .= $lead_phr_id->name();
 

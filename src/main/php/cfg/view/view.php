@@ -310,7 +310,7 @@ class view extends sandbox_code_id
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $value = $in_ex_json[json_fields::ASSIGNED];
             foreach ($value as $trm_name) {
-                $trm = new term($this->user());
+                $trm = new term($this->get_user());
                 $trm->load_by_name($trm_name);
                 if ($trm->id() == 0) {
                     log_warning('word "' . $trm_name .
@@ -378,8 +378,8 @@ class view extends sandbox_code_id
         $vars = [];
         if (!$this->is_excluded() or $typ_lst->test_mode() or $typ_lst->with_excluded()) {
             $vars = parent::api_json_array($typ_lst, $usr);
-            if ($this->style_id() != null) {
-                $vars[json_fields::STYLE] = $this->style_id();
+            if ($this->get_style_id() != null) {
+                $vars[json_fields::STYLE] = $this->get_style_id();
             }
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
@@ -413,7 +413,7 @@ class view extends sandbox_code_id
     ): bool
     {
         global $db_con;
-        $this->import_mapper_user($in_ex_json, $this->user(), $usr_msg, $dto);
+        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
 
         if ($db_con->is_open()) {
             if ($this->name == '') {
@@ -437,7 +437,7 @@ class view extends sandbox_code_id
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::ASSIGNED) {
                 foreach ($value as $trm_name) {
-                    $trm = new term($this->user());
+                    $trm = new term($this->get_user());
                     $trm->load_by_name($trm_name);
                     if ($trm->id() == 0) {
                         log_warning('word "' . $trm_name .
@@ -483,9 +483,9 @@ class view extends sandbox_code_id
             }
         }
 
-        if ($this->style_id() != null) {
-            if ($this->style_id() <> $sys->typ_lst->msk_sty->default_id()) {
-                $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->style_id());
+        if ($this->get_style_id() != null) {
+            if ($this->get_style_id() <> $sys->typ_lst->msk_sty->default_id()) {
+                $vars[json_fields::STYLE] = $sys->typ_lst->msk_sty->code_id($this->get_style_id());
             }
         }
 
@@ -571,7 +571,7 @@ class view extends sandbox_code_id
     /**
      * @return view_style|type_object|null the view style for this component or null if the parent style should be used
      */
-    function style(): view_style|type_object|null
+    function get_style(): view_style|type_object|null
     {
         return $this->style;
     }
@@ -579,29 +579,9 @@ class view extends sandbox_code_id
     /**
      * @return int|null the database id of the view style or null
      */
-    function style_id(): ?int
+    function get_style_id(): ?int
     {
         return $this->style?->id();
-    }
-
-    /**
-     * @return string the description of the view
-     */
-    function comment(): string
-    {
-        if ($this->description == null) {
-            return '';
-        } else {
-            return $this->description;
-        }
-    }
-
-    /**
-     * @return component_link_list|null the list of the component links of this view
-     */
-    function component_link_list(): component_link_list|null
-    {
-        return $this->cmp_lnk_lst;
     }
 
     /**
@@ -610,7 +590,7 @@ class view extends sandbox_code_id
     function components(): component_list
     {
         $ids = $this->cmp_lnk_lst->cmp_ids();
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         $cmp_lst->load_by_ids($ids);
         return $cmp_lst;
     }
@@ -620,7 +600,7 @@ class view extends sandbox_code_id
      */
     function component_links(): int
     {
-        $lst = $this->component_link_list();
+        $lst = $this->cmp_lnk_lst;
         if ($lst == null) {
             return 0;
         } else {
@@ -707,7 +687,7 @@ class view extends sandbox_code_id
     {
 
         global $db_con;
-        $qp = $this->load_standard_sql($db_con->sql_creator());
+        $qp = $this->load_sql_standard($db_con->sql_creator());
         $result = parent::load_standard($qp);
 
         if ($result) {
@@ -715,6 +695,11 @@ class view extends sandbox_code_id
         }
         return $result;
     }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
@@ -766,7 +751,7 @@ class view extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -776,7 +761,7 @@ class view extends sandbox_code_id
             array(user_db::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc);
+        return parent::load_sql_standard($sc);
     }
 
 
@@ -799,7 +784,7 @@ class view extends sandbox_code_id
             $db_con_used = $db_con;
         }
 
-        $this->cmp_lnk_lst = new component_link_list($this->user());
+        $this->cmp_lnk_lst = new component_link_list($this->get_user());
         $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
         log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
 
@@ -822,11 +807,11 @@ class view extends sandbox_code_id
         } elseif ($this->name != '') {
             $qp->name .= sql_db::FLD_NAME;
         } else {
-            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id() . ")  must be set to load the components of a view.", "view->load_components_sql");
+            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->get_code_id() . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
         $db_con->set_class(component_link::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
@@ -893,18 +878,18 @@ class view extends sandbox_code_id
         $result = new user_message();
 
         // if no position is requested add the component at the end
-        if ($lnk->pos() == null) {
+        if ($lnk->get_pos() == null) {
             if ($pos != null) {
                 $lnk->set_pos($pos);
             } else {
                 $lnk->set_pos($this->component_links() + 1);
             }
         }
-        if ($lnk->pos_type() == null) {
+        if ($lnk->get_pos_type() == null) {
             $lnk->set_pos_type(position_types::BELOW);
         }
         if ($this->cmp_lnk_lst == null) {
-            $this->cmp_lnk_lst = new component_link_list($this->user());
+            $this->cmp_lnk_lst = new component_link_list($this->get_user());
         }
         $lnk->set_view($this);
         $this->cmp_lnk_lst->add_link_by_key($lnk);
@@ -924,9 +909,9 @@ class view extends sandbox_code_id
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_up");
         } else {
-            $cmp = new component($this->user());
+            $cmp = new component($this->get_user());
             $cmp->load_by_id($component_id);
-            $cmp_lnk = new component_link($this->user());
+            $cmp_lnk = new component_link($this->get_user());
             $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_up();
         }
@@ -943,9 +928,9 @@ class view extends sandbox_code_id
         if ($component_id <= 0) {
             log_err("The view component id must be given to move it.", "view->entry_down");
         } else {
-            $cmp = new component($this->user());
+            $cmp = new component($this->get_user());
             $cmp->load_by_id($component_id);
-            $cmp_lnk = new component_link($this->user());
+            $cmp_lnk = new component_link($this->get_user());
             $cmp_lnk->load_by_link($this, $cmp);
             $result .= $cmp_lnk->move_down();
         }
@@ -965,7 +950,7 @@ class view extends sandbox_code_id
      */
     function add_term_db(term $trm, user_message $usr_msg): bool
     {
-        $lnk = new term_view($this->user());
+        $lnk = new term_view($this->get_user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
         return $lnk->save($usr_msg);
@@ -981,7 +966,7 @@ class view extends sandbox_code_id
     {
         $usr_msg = new user_message();
         if ($this->trm_msk_lst == null) {
-            $this->trm_msk_lst = new term_view_list($this->user());
+            $this->trm_msk_lst = new term_view_list($this->get_user());
         }
         $added = $this->trm_msk_lst->add(0, $this, $trm);
         if (!$added) {
@@ -1024,8 +1009,8 @@ class view extends sandbox_code_id
     function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->style_id() != null) {
-            $this->set_style_by_id($obj->style_id());
+        if ($obj->get_style_id() != null) {
+            $this->set_style_by_id($obj->get_style_id());
         }
         return $usr_msg;
     }
@@ -1075,8 +1060,8 @@ class view extends sandbox_code_id
     function needs_db_update(view|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->style() != null) {
-            if ($this->style_id() != $db_obj->style_id()) {
+        if ($this->get_style() != null) {
+            if ($this->get_style_id() != $db_obj->get_style_id()) {
                 $result = true;
             }
         }
@@ -1113,7 +1098,7 @@ class view extends sandbox_code_id
      */
     function save_component_links(user_message $usr_msg): bool
     {
-        return $this->component_link_list()->save($usr_msg);
+        return $this->cmp_lnk_lst->save($usr_msg);
     }
 
     /**
@@ -1181,7 +1166,7 @@ class view extends sandbox_code_id
     function del_links(user_message $usr_msg): bool
     {
         // collect all component links where this view is used
-        $lnk_lst = new component_link_list($this->user());
+        $lnk_lst = new component_link_list($this->get_user());
         $lnk_lst->load_by_view($this);
 
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
@@ -1191,7 +1176,7 @@ class view extends sandbox_code_id
         }
 
         // collect all view relations where this view is used
-        $mrl_lst = new view_relation_list($this->user());
+        $mrl_lst = new view_relation_list($this->get_user());
         // TODO Prio 0 activate
         //$mrl_lst->load_by_view($this);
 
@@ -1272,7 +1257,7 @@ class view extends sandbox_code_id
                 $sys->typ_lst->msk_typ
             );
         }
-        if ($sbx->style_id() !== $this->style_id()) {
+        if ($sbx->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,
@@ -1282,17 +1267,17 @@ class view extends sandbox_code_id
             }
             global $sys;
             // TODO move to id function of type list
-            if ($this->style_id() < 0) {
+            if ($this->get_style_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_MISSING, [
-                    msg_id::VAR_TYPE => $this->style_id(),
+                    msg_id::VAR_TYPE => $this->get_style_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
             $lst->add_type_field(
                 view_db::FLD_STYLE,
                 view_style::FLD_NAME,
-                $this->style_id(),
-                $sbx->style_id(),
+                $this->get_style_id(),
+                $sbx->get_style_id(),
                 $sys->typ_lst->msk_sty
             );
         }

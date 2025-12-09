@@ -328,13 +328,13 @@ class term extends combine_named
     function set_obj_from_class(string $class): void
     {
         if ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->user());
+            $this->obj = new formula($this->get_user());
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
         }
     }
 
@@ -350,15 +350,15 @@ class term extends combine_named
     {
         if ($id > 0) {
             if ($id % 2 == 0) {
-                $this->obj = new formula($this->user());
+                $this->obj = new formula($this->get_user());
             } else {
-                $this->obj = new word($this->user());
+                $this->obj = new word($this->get_user());
             }
         } else {
             if ($id % 2 == 0) {
                 $this->obj = new verb();
             } else {
-                $this->obj = new triple($this->user());
+                $this->obj = new triple($this->get_user());
             }
         }
         $this->set_id($id);
@@ -394,15 +394,15 @@ class term extends combine_named
         if ($id != null) {
             if ($class == word::class) {
                 if ($this->obj == null) {
-                    $this->obj = new word($this->user());
+                    $this->obj = new word($this->get_user());
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
-                    $this->obj = new triple($this->user());
+                    $this->obj = new triple($this->get_user());
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
-                    $this->obj = new formula($this->user());
+                    $this->obj = new formula($this->get_user());
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
@@ -422,11 +422,11 @@ class term extends combine_named
     private function set_obj_by_class(string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->user());
+            $this->obj = new formula($this->get_user());
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {
@@ -469,9 +469,9 @@ class term extends combine_named
     /**
      * @return int the id of the user or 0 if the user is not set
      */
-    function user_id(): int
+    function get_user_id(): int
     {
-        return $this->obj()->user_id();
+        return $this->obj()->get_user_id();
     }
 
     /**
@@ -484,7 +484,7 @@ class term extends combine_named
 
     function code_id(): ?int
     {
-        return $this->obj()->code_id();
+        return $this->obj()->get_code_id();
     }
 
     function share_id(): ?int
@@ -583,11 +583,11 @@ class term extends combine_named
      * @return user|null the person who wants to see a term (word, verb, triple or formula)
      *                   in case of a verb it can be null
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         $result = new user();
         if ($this->obj() != null) {
-            $result = $this->obj()->user();
+            $result = $this->obj()->get_user();
         }
         return $result;
     }
@@ -601,14 +601,14 @@ class term extends combine_named
         return $result;
     }
 
-    function usage(): ?int
+    function get_usage(): ?int
     {
-        return $this->obj()->usage();
+        return $this->obj()->get_usage();
     }
 
-    function impact(): ?float
+    function get_impact(): ?float
     {
-        return $this->obj()->impact();
+        return $this->obj()->get_impact();
     }
 
 
@@ -622,7 +622,7 @@ class term extends combine_named
     public
     function phrase(): phrase
     {
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         if ($this->is_word()) {
             $phr->set_id_from_obj($this->id_obj(), word::class);
             $phr->obj = $this->obj;
@@ -783,7 +783,7 @@ class term extends combine_named
         global $sys;
 
         $result = false;
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if ($wrd->load_by_id($id)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
             if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
@@ -805,7 +805,7 @@ class term extends combine_named
     {
         $result = false;
         if ($including_triples) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             if ($trp->load_by_id($id)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
@@ -822,7 +822,7 @@ class term extends combine_named
     private function load_formula_by_id(int $id): bool
     {
         $result = false;
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if ($frm->load_by_id($id)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
@@ -839,7 +839,7 @@ class term extends combine_named
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
-        $vrb->set_user($this->user());
+        $vrb->set_user($this->get_user());
         if ($vrb->load_by_id($id)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
@@ -883,7 +883,7 @@ class term extends combine_named
         global $sys;
 
         $result = false;
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if ($wrd->load_by_name($name)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
             if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
@@ -905,7 +905,7 @@ class term extends combine_named
     {
         $result = false;
         if ($including_triples) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             if ($trp->load_by_name($name)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
@@ -923,7 +923,7 @@ class term extends combine_named
     function load_formula_by_name(string $name): bool
     {
         $result = false;
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if ($frm->load_by_name($name)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
@@ -941,7 +941,7 @@ class term extends combine_named
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
-        $vrb->set_user($this->user());
+        $vrb->set_user($this->get_user());
         if ($vrb->load_by_name($name)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
@@ -1027,7 +1027,7 @@ class term extends combine_named
 
     function get_word(): word
     {
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if (get_class($this->obj) == word::class) {
             $wrd = $this->obj;
         }
@@ -1036,7 +1036,7 @@ class term extends combine_named
 
     function get_triple(): triple
     {
-        $lnk = new triple($this->user());
+        $lnk = new triple($this->get_user());
         if (get_class($this->obj) == triple::class) {
             $lnk = $this->obj;
         }
@@ -1045,7 +1045,7 @@ class term extends combine_named
 
     function get_formula(): formula
     {
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if (get_class($this->obj) == formula::class) {
             $frm = $this->obj;
         }
@@ -1210,7 +1210,7 @@ class term extends combine_named
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
             $class =  $in_ex_json[json_fields::OBJECT_CLASS];
             if ($class == json_fields::CLASS_WORD)  {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
             } elseif ($class == json_fields::CLASS_VERB)  {
@@ -1218,11 +1218,11 @@ class term extends combine_named
                 $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($vrb);
             } elseif ($class == json_fields::CLASS_TRIPLE)  {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);
             } elseif ($class == json_fields::CLASS_FORMULA)  {
-                $frm = new formula($this->user());
+                $frm = new formula($this->get_user());
                 $frm->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($frm);
             } else {

@@ -112,7 +112,7 @@ if ($usr->id() > 0) {
         if ($link_phr_id != 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($link_phr_id);
-            $upd_result = $frm->link_phr($phr);
+            $upd_result = $frm->link_phrase_and_save($phr, $usr_msg);
         }
 
         // to unlink a word from the formula
@@ -120,7 +120,7 @@ if ($usr->id() > 0) {
         if ($unlink_phr_id > 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($unlink_phr_id);
-            $upd_result = $frm->unlink_phr($phr);
+            $upd_result = $frm->unlink_phrase($phr, $usr_msg);
         }
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)

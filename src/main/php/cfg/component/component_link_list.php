@@ -83,7 +83,7 @@ class component_link_list extends sandbox_link_list
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new component_link($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new component_link($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -149,11 +149,11 @@ class component_link_list extends sandbox_link_list
     function load_components(?sql_db $db_con_given = null): bool
     {
         $ids = $this->cmp_ids();
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         $result = $cmp_lst->load_by_ids($ids, $db_con_given);
         if ($result) {
             foreach ($this->lst() as $lnk) {
-                $cmp = $cmp_lst->get_by_id($lnk->component()->id());
+                $cmp = $cmp_lst->get_by_id($lnk->get_component()->id());
                 if ($cmp != null) {
                     $lnk->set_component($cmp);
                 }
@@ -168,25 +168,6 @@ class component_link_list extends sandbox_link_list
      */
 
     /**
-     * set the common part of the SQL query component links
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $sc->set_class(component_link::class);
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
-        $sc->set_fields(component_link::FLD_NAMES);
-        $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
-        return $qp;
-    }
-
-    /**
      * set the SQL query parameters to load all components linked to a view
      * @param sql_creator $sc with the target db_type set
      * @param view $msk the id of the view to which the components should be loaded
@@ -198,7 +179,7 @@ class component_link_list extends sandbox_link_list
         if ($msk->id() > 0) {
             $sc->add_where(view_db::FLD_ID, $msk->id());
             $sc->set_order(component_link::FLD_ORDER_NBR);
-            $sc = (new component($this->user()))->set_join($sc);
+            $sc = (new component($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -218,12 +199,31 @@ class component_link_list extends sandbox_link_list
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
             $sc->add_where(component::FLD_ID, $cmp->id());
-            $sc = (new view($this->user()))->set_join($sc);
+            $sc = (new view($this->get_user()))->set_join($sc);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
         }
         $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * set the common part of the SQL query component links
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_class(component_link::class);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->get_user()->id);
+        $sc->set_fields(component_link::FLD_NAMES);
+        $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -266,6 +266,11 @@ class component_link_list extends sandbox_link_list
         return $added;
     }
 
+
+    /*
+     * del
+     */
+
     /**
      * delete all loaded view component links e.g. to delete all the links assigned to a view
      * @param user_message $usr_msg the message for the user why deleting this component links has failed and a suggested solution
@@ -293,7 +298,7 @@ class component_link_list extends sandbox_link_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            $id = $lnk->view()->id();
+            $id = $lnk->get_view()->id();
             if ($id <> 0) {
                 if (!in_array($id, $result)) {
                     $result[] = $id;
@@ -310,7 +315,7 @@ class component_link_list extends sandbox_link_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            $id = $lnk->component()->id();
+            $id = $lnk->get_component()->id();
             if ($id <> 0) {
                 if (!in_array($id, $result)) {
                     $result[] = $id;
@@ -327,8 +332,8 @@ class component_link_list extends sandbox_link_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->component() != null) {
-                $name = $lnk->component()->name($ignore_excluded);
+            if ($lnk->get_component() != null) {
+                $name = $lnk->get_component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;
@@ -355,7 +360,7 @@ class component_link_list extends sandbox_link_list
     {
         foreach ($this->lst() as $sbx) {
             // save upfront and missing components
-            $cmp = $sbx->component();
+            $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
                 if ($cmp->db_ready()) {
                     $cmp->save($usr_msg);
@@ -388,7 +393,7 @@ class component_link_list extends sandbox_link_list
                 if ($can_add) {
                     if ($lnk->from_id() == $lnk_to_add->from_id()
                         and $lnk->to_id() == $lnk_to_add->to_id()
-                        and $lnk->pos() == $lnk_to_add->pos()) {
+                        and $lnk->get_pos() == $lnk_to_add->get_pos()) {
                         $can_add = false;
                     }
                     if ($lnk->id() == $lnk_to_add->id()

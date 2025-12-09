@@ -147,7 +147,7 @@ class combine_named extends combine_object
      */
     function description(): ?string
     {
-        return $this->obj()?->description();
+        return $this->obj()?->get_description();
     }
 
     /**

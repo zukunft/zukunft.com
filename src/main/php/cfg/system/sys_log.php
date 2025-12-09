@@ -213,7 +213,7 @@ class sys_log extends db_object_seq_id
     /**
      * @return user|null the person who wants to see the error log
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -348,7 +348,7 @@ class sys_log extends db_object_seq_id
         log_debug();
         $lib = new library();
         $tbl_name = $lib->class_to_name(sys_log::class);
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
         $log->set_table($tbl_name);
 
@@ -448,12 +448,12 @@ class sys_log extends db_object_seq_id
         global $db_con;
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_class(sys_log::class);
 
         if ($this->id() > 0) {
             $db_rec = new sys_log;
-            $db_rec->set_user($this->user());
+            $db_rec->set_user($this->get_user());
             if ($db_rec->load_by_id($this->id())) {
                 log_debug("database entry loaded");
             }

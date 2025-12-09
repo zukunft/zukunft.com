@@ -174,7 +174,7 @@ class value_geo extends value_base
      * overwrite the sandbox_value value() function to return the geolocation value
      * @return string|null the geolocation string
      */
-    function value(): string|null
+    function get_value(): string|null
     {
         return $this->geo_val;
     }
@@ -206,7 +206,7 @@ class value_geo extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the geolocation string itself
-        $vars[json_fields::GEO_VALUE] = $this->value();
+        $vars[json_fields::GEO_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -230,7 +230,7 @@ class value_geo extends value_base
         $vars = parent::export_json($exp_typ, $do_load);
 
         // add the geolocation value itself
-        $vars[json_fields::GEO_VALUE] = $this->value();
+        $vars[json_fields::GEO_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -246,11 +246,11 @@ class value_geo extends value_base
     function log_object(): change_value_geo
     {
         if ($this->is_prime()) {
-            return new change_values_geo_prime($this->user());
+            return new change_values_geo_prime($this->get_user());
         } elseif ($this->is_big()) {
-            return new change_values_geo_big($this->user());
+            return new change_values_geo_big($this->get_user());
         } else {
-            return new change_values_geo_norm($this->user());
+            return new change_values_geo_norm($this->get_user());
         }
     }
 

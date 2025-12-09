@@ -271,6 +271,36 @@ class lib_tests
         $result = $lib->ids_not_empty($test_array);
         $t->assert("ids_not_empty", $result, $target);
 
+        $t->assert_true("same function order but add to all list", $lib->arrayCompareOrder([1,2,3],[1,2]));
+        $t->assert_true("function missing at end but same order in all list", $lib->arrayCompareOrder([1,2],[1,2,3]));
+        $t->assert_true("function missing in the middle but same order in all list", $lib->arrayCompareOrder([1,3],[1,2,3]));
+        $t->assert_true("no function but same order in all list", $lib->arrayCompareOrder([],[1,2,3]));
+        $t->assert_true("last function differs the order is still fine", $lib->arrayCompareOrder([1,2,3,4,5],[1,2,3,4,6]));
+        $t->assert_true("same function order because all list is empty", $lib->arrayCompareOrder([1,2,3],[]));
+        $t->assert_false("function order differs from all function list", $lib->arrayCompareOrder([3,1],[1,2,3]));
+
+        $test_name = 'add string to array after a given string';
+        $lst = ['first', 'middle', 'last'];
+        $result = $lib->arrayAddAfter($lst, 'before middle', 'first');
+        $target = ['first', 'before middle', 'middle', 'last'];
+        $t->assert($test_name . ' before middle', $result, $target);
+        $result = $lib->arrayAddAfter($lst, 'after middle', 'middle');
+        $target = ['first', 'middle', 'after middle', 'last'];
+        $t->assert($test_name . ' after middle', $result, $target);
+        $result = $lib->arrayAddAfter($lst, 'at the end', 'not in list');
+        $target = ['first', 'middle', 'last', 'at the end'];
+        $t->assert($test_name . ' at the end', $result, $target);
+
+        $test_name = 'add array to array before a given array value';
+        $result = $lib->arrayAddArrayBefore($lst, ['after middle', 'before last'], 'last');
+        $target = ['first', 'middle', 'after middle', 'before last', 'last'];
+        $t->assert($test_name . ' before last', $result, $target);
+        $result = $lib->arrayAddArrayBefore($lst, ['after last', 'after after last'], 'no match');
+        $target = ['first', 'middle', 'last', 'after last', 'after after last'];
+        $t->assert($test_name . ' after last', $result, $target);
+        $result = $lib->arrayAddArrayBefore($lst, ['even before first', 'before first'], 'first');
+        $target = ['even before first', 'before first', 'first', 'middle', 'last'];
+        $t->assert($test_name . ' before first', $result, $target);
 
         $t->subheader($ts . 'display');
 

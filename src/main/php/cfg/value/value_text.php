@@ -169,7 +169,7 @@ class value_text extends value_base
      * overwrite the sandbox_value value() function to return the text string
      * @return string|null the text string
      */
-    function value(): string|null
+    function get_value(): string|null
     {
         return $this->txt_val;
     }
@@ -201,7 +201,7 @@ class value_text extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the text string itself
-        $vars[json_fields::TEXT_VALUE] = $this->value();
+        $vars[json_fields::TEXT_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -225,7 +225,7 @@ class value_text extends value_base
         $vars = parent::export_json($exp_typ, $do_load);
 
         // add the text string itself
-        $vars[json_fields::TEXT_VALUE] = $this->value();
+        $vars[json_fields::TEXT_VALUE] = $this->get_value();
 
         return $vars;
     }
@@ -241,11 +241,11 @@ class value_text extends value_base
     function log_object(): change_value_text
     {
         if ($this->is_prime()) {
-            return new change_values_text_prime($this->user());
+            return new change_values_text_prime($this->get_user());
         } elseif ($this->is_big()) {
-            return new change_values_text_big($this->user());
+            return new change_values_text_big($this->get_user());
         } else {
-            return new change_values_text_norm($this->user());
+            return new change_values_text_norm($this->get_user());
         }
     }
 

@@ -87,7 +87,7 @@ class phrase_read_tests
         $phr_typ_id = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
-        $t->assert($test_name, $phr_typ->code_id(), phrase_type_shared::NORMAL);
+        $t->assert($test_name, $phr_typ->get_code_id(), phrase_type_shared::NORMAL);
 
     }
 

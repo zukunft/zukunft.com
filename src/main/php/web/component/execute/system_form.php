@@ -226,7 +226,7 @@ class system_form extends component
      */
     function show_description(db_object $dbo): string
     {
-        return $dbo->description();
+        return $dbo->get_description();
     }
 
     /**
@@ -370,7 +370,7 @@ class system_form extends component
         return $html->form_field(
             url_var::DESCRIPTION,
             msg_id::FORM_FIELD_DESCRIPTION,
-            $dbo->description(),
+            $dbo->get_description(),
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_12
@@ -754,15 +754,15 @@ class system_form extends component
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
-            $id = $dbo->to()?->id();
+            $id = $dbo->get_to()?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -818,15 +818,15 @@ class system_form extends component
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
-            $id = $dbo->to()?->id();
+            $id = $dbo->get_to()?->id();
             $name = url_var::PHRASE_TO;
             $label_id = msg_id::FORM_SELECT_PHRASE_TO;
         } elseif ($code_id == components::FORM_PHRASE_REF_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
         } elseif ($code_id == components::FORM_PHRASE_ROW) {
             // TODO Prio 1 activate
             // $id = $dbo->phr_row?->id();
@@ -882,7 +882,7 @@ class system_form extends component
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } else {
@@ -928,7 +928,7 @@ class system_form extends component
         $name = url_var::PHRASE;
         $label_id = msg_id::FORM_SELECT_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
-            $id = $dbo->from()?->id();
+            $id = $dbo->get_from()?->id();
             $name = url_var::PHRASE_FROM;
             $label_id = msg_id::FORM_SELECT_PHRASE_FROM;
         } else {

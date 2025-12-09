@@ -79,7 +79,7 @@ class user_service
     /**
      * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }

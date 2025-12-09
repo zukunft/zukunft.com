@@ -299,7 +299,7 @@ class formula_tests
         // TODO Prio 2 add calculation test
         $test_name = 'formula city population reference text';
         $frm = $t_frm->formula_city_population();
-        $result = $frm->ref_text();
+        $result = $frm->get_ref_text();
         $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
         $t->assert($test_name, $result, $target);
 

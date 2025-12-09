@@ -121,11 +121,11 @@ class formula_list extends sandbox_list_named
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $frm_id = $db_row[formula_db::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
-                        $frm = new formula($this->user());
+                        $frm = new formula($this->get_user());
                         $frm->row_mapper_sandbox($db_row);
                         // TODO check if this is really needed
                         if ($frm->name() <> '') {
-                            $name_wrd = new word($this->user());
+                            $name_wrd = new word($this->get_user());
                             $name_wrd->load_by_name($frm->name());
                             $frm->name_wrd = $name_wrd;
                         }
@@ -136,12 +136,12 @@ class formula_list extends sandbox_list_named
             }
         }
         /*
-        $result = parent::rows_mapper_obj(new formula_link($this->user()), $db_rows, $load_all);
+        $result = parent::rows_mapper_obj(new formula_link($this->get_user()), $db_rows, $load_all);
         // TODO check if this is really needed
         if ($db_rows != null) {
             foreach ($this->lst() as $frm) {
                 if ($frm->name() <> '') {
-                    $name_wrd = new word($this->user());
+                    $name_wrd = new word($this->get_user());
                     $name_wrd->load_by_name($frm->name());
                     $frm->name_wrd = $name_wrd;
                 }
@@ -168,7 +168,7 @@ class formula_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
@@ -391,7 +391,7 @@ class formula_list extends sandbox_list_named
         $class = $lib->class_to_name(self::class);
         $db_con->set_class(formula::class);
         $qp = new sql_par($class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
@@ -417,7 +417,7 @@ class formula_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new formula($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new formula($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -549,7 +549,7 @@ class formula_list extends sandbox_list_named
     ): bool
     {
         foreach ($json_obj as $value) {
-            $frm = new formula($this->user());
+            $frm = new formula($this->get_user());
             if ($frm->import_obj($value, $usr_msg, $dto)) {
                 $this->add($frm);
             }
@@ -604,7 +604,7 @@ class formula_list extends sandbox_list_named
      */
     private function filter(string $type): formula_list
     {
-        $result = new formula_list($this->user());
+        $result = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
             if ($frm->is_type($type)) {
                 $result->add($frm);
@@ -658,7 +658,7 @@ class formula_list extends sandbox_list_named
      */
     function term_lst_of_names(): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($this->lst() as $frm) {
             if ($frm::class != formula::class) {
                 log_err('unexpected class ' . $frm::class . ' in formula list');
@@ -687,7 +687,7 @@ class formula_list extends sandbox_list_named
                 $frm->set_ref_text();
             }
             // TODO Prio 2 review
-            $cache = new term_list($this->user());
+            $cache = new term_list($this->get_user());
             $imp = new import();
             $msg = $this->save_with_cache_slow($imp, $cache)->get_last_message();
             if ($msg != '') {
@@ -775,8 +775,8 @@ class formula_list extends sandbox_list_named
             // until it is clear that a formula is missing
             $frm_added = true;
             $level = 0;
-            $db_lst_all = new formula_list($this->user());
-            $add_lst = new formula_list($this->user());
+            $db_lst_all = new formula_list($this->get_user());
+            $add_lst = new formula_list($this->get_user());
             while ($frm_added and $level < $max_frm_levels) {
                 $frm_added = false;
                 $usr_msg->unset_added_depending();
@@ -806,7 +806,7 @@ class formula_list extends sandbox_list_named
                 // load the formulas by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, formula::class, $load_lst->count(), $step_time);
-                $db_lst = new formula_list($this->user());
+                $db_lst = new formula_list($this->get_user());
                 // force to load all names including the formulas excluded by the user to potential include the formulas due to the import
                 // TODO add load_all = true also to the other objects
                 $db_lst->load_by_names($load_lst->names(true), true);
@@ -855,7 +855,7 @@ class formula_list extends sandbox_list_named
 
             // reload the id of the formulas added with the last run
             // TODO use the insert message instead to increase speed
-            $db_lst = new formula_list($this->user());
+            $db_lst = new formula_list($this->get_user());
             if (!$add_lst->is_empty()) {
                 $db_lst->load_by_names($add_lst->names(true), true);
             }
@@ -895,7 +895,7 @@ class formula_list extends sandbox_list_named
 
     private function save_formulas_words(import $imp, user_message $usr_msg): void
     {
-        $wrd_lst = new word_list($this->user());
+        $wrd_lst = new word_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $wrd = $frm->formula_word();
             $wrd_lst->add_by_name($wrd);
@@ -932,7 +932,7 @@ class formula_list extends sandbox_list_named
      */
     function term_list(): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $trm_lst->add($frm->term());
         }
@@ -944,7 +944,7 @@ class formula_list extends sandbox_list_named
      */
     function missing_ids(): formula_list
     {
-        $frm_lst = new formula_list($this->user());
+        $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
             if ($frm->id() == 0) {
                 $frm_lst->add_by_name_direct($frm);
@@ -977,7 +977,7 @@ class formula_list extends sandbox_list_named
      */
     function get_ready(user_message $usr_msg, string $file_name = ''): formula_list
     {
-        $frm_lst = new formula_list($this->user());
+        $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $frm_msg = $frm->db_ready();
             if ($frm_msg->is_ok()) {

@@ -270,7 +270,7 @@ class word extends sandbox_code_id
         return $this->parent;
     }
 
-    function impact(): float
+    function get_impact(): float
     {
         return $this->impact;
     }
@@ -678,7 +678,7 @@ class word extends sandbox_code_id
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
             $detail_fields .= $html->form_text(url_var::PLURAL, $this->get_plural(), msg_id::FORM_FIELD_PLURAL);
-            $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->description(), msg_id::FORM_FIELD_DESCRIPTION);
+            $detail_fields .= $html->form_text(url_var::DESCRIPTION, $this->get_description(), msg_id::FORM_FIELD_DESCRIPTION);
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header

@@ -291,7 +291,7 @@ class sandbox_value extends sandbox_multi
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
-        $this->set_grp(new group($this->user()));
+        $this->set_grp(new group($this->get_user()));
         $this->set_value(null);
         $this->set_last_update(null);
     }
@@ -409,7 +409,7 @@ class sandbox_value extends sandbox_multi
      * interface function to get the numeric, time, text or geolocation value
      * @return float|DateTime|string|null the geolocation string
      */
-    function value(): float|DateTime|string|null
+    function get_value(): float|DateTime|string|null
     {
         log_err('value() function of sandbox_value object is expected to be overwritten');
         return null;
@@ -449,14 +449,14 @@ class sandbox_value extends sandbox_multi
      */
     function number(): float|string|null
     {
-        return $this->value();
+        return $this->get_value();
     }
 
     /**
      * to be overwritten by the child object
      * @return source|null the source of the value
      */
-    function source(): source|null
+    function get_source(): source|null
     {
         return null;
     }
@@ -979,7 +979,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, $sc_par_lst->remove(sql_type::USER), '', $this->table_extension());
         $qp->name .= sql::NAME_EXT_USER_CONFIG;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields($this->all_sandbox_fields());
 
         // get and set the prime db key list for this sandbox object
@@ -1010,7 +1010,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, new sql_type_list($sc_par_lst), $ext);
         $sc->set_class($this::class, new sql_type_list($sc_par_lst));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         // overwrite the standard id field because e.g. prime values have a combined id field
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user_db::FLD_ID));
@@ -1035,7 +1035,7 @@ class sandbox_value extends sandbox_multi
 
         $user_id = 0;
         $db_con->set_class($this::class);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
@@ -1084,7 +1084,7 @@ class sandbox_value extends sandbox_multi
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(
+    function load_sql_standard(
         sql_creator $sc,
         array       $fld_lst = []
     ): sql_par
@@ -1123,7 +1123,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user_db::FLD_ID));
 
@@ -1186,10 +1186,10 @@ class sandbox_value extends sandbox_multi
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
-        if ($this->value() != $obj->value()) {
+        if ($this->get_value() != $obj->get_value()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE, [
-                msg_id::VAR_VALUE => $obj->value(),
-                msg_id::VAR_VALUE_CHK => $this->value(),
+                msg_id::VAR_VALUE => $obj->get_value(),
+                msg_id::VAR_VALUE_CHK => $this->get_value(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
@@ -1289,7 +1289,7 @@ class sandbox_value extends sandbox_multi
             if ($sc_par_lst->is_insert() or $sc_par_lst->is_usr_tbl()) {
                 $lst->add_field(
                     user_db::FLD_ID,
-                    $this->user()->id,
+                    $this->get_user()->id,
                     user_db::FLD_ID_SQL_TYP
                 );
             }
@@ -1300,7 +1300,7 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_geo::class)) {
                 $lst->add_field(
                     source_db::FLD_ID,
-                    $this->source()?->id(),
+                    $this->get_source()?->id(),
                     db_object_seq_id::FLD_ID_SQL_TYP
                 );
             }
@@ -1468,14 +1468,14 @@ class sandbox_value extends sandbox_multi
      */
     function load_by_names(array $names, ?phrase_list $phr_lst = null): int
     {
-        $load_lst = new phrase_list($this->user());
+        $load_lst = new phrase_list($this->get_user());
         if ($phr_lst == null) {
             $load_lst->load_by_names($names);
         } else {
             foreach ($names as $name) {
                 $phr = $phr_lst->get_by_name($name);
                 if ($phr == null) {
-                    $phr = new phrase($this->user());
+                    $phr = new phrase($this->get_user());
                     $phr->load_by_name($name);
                 }
                 $load_lst->add($phr);
@@ -1588,7 +1588,7 @@ class sandbox_value extends sandbox_multi
         $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
-        $log->new_value = $this->value();
+        $log->new_value = $this->get_value();
 
         $log->row_id = 0;
         $log->add($usr_msg);
@@ -1602,7 +1602,7 @@ class sandbox_value extends sandbox_multi
      */
     function log_add_value(): change
     {
-        return new change($this->user());
+        return new change($this->get_user());
     }
 
     /**
@@ -1615,12 +1615,12 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
         $usr_msg = new user_message();
 
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::DELETE);
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-        $log->old_value = $this->value();
+        $log->old_value = $this->get_value();
         $log->new_value = null;
 
         $log->row_id = $this->id();
@@ -1731,7 +1731,7 @@ class sandbox_value extends sandbox_multi
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
                         $db_con->set_class($this::class, true, $ext);
-                        $db_con->set_usr($this->user()->id);
+                        $db_con->set_usr($this->get_user()->id);
                         $fvt_lst = new sql_par_field_list();
                         $fvt_lst->add_field($log->field(), null, sql_par_type::CONST);
                         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
@@ -1743,7 +1743,7 @@ class sandbox_value extends sandbox_multi
                     $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                     log_debug($msg);
                     $db_con->set_class($this::class, false, $ext);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->get_user()->id);
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
@@ -1758,7 +1758,7 @@ class sandbox_value extends sandbox_multi
                 }
                 if ($result == '') {
                     $db_con->set_class($this::class, true, $ext);
-                    $db_con->set_usr($this->user()->id);
+                    $db_con->set_usr($this->get_user()->id);
                     $sql_fld_typ = $sc->get_sql_par_type($new_value);
                     $fvt_lst = new sql_par_field_list();
                     if ($new_value == $std_value) {
@@ -1880,7 +1880,7 @@ class sandbox_value extends sandbox_multi
             if (!is_array($id_lst)) {
                 $id_lst = [$id_lst];
             }
-            $id_lst[] = $this->user()->id;
+            $id_lst[] = $this->get_user()->id;
         }
         // finally actually create the sql
         $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
@@ -1980,11 +1980,11 @@ class sandbox_value extends sandbox_multi
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
-            $fvt_lst_log->add_field(user_db::FLD_ID, $this->user_id(), sql_par_type::INT);
+            $fvt_lst_log->add_field(user_db::FLD_ID, $this->get_user_id(), sql_par_type::INT);
         }
 
         // create the log entry for the value
-        $qp_log = $sc->sql_func_log_value($this, $this->user(), $fvt_lst_log, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
 
         // list of parameters actually used in order of the function usage
@@ -2152,7 +2152,7 @@ class sandbox_value extends sandbox_multi
         }
         // TODO check that all numeric fields are checked with !== to force writing the value zero
         if ($this->is_numeric()) {
-            if ($sbx->value() !== $this->value()) {
+            if ($sbx->get_value() !== $this->get_value()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
@@ -2163,20 +2163,20 @@ class sandbox_value extends sandbox_multi
                 if ($is_update) {
                     $lst->add_field(
                         self::FLD_VALUE,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::NUMERIC_FLOAT,
-                        $sbx->value()
+                        $sbx->get_value()
                     );
                 } else {
                     $lst->add_field(
                         self::FLD_VALUE,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::NUMERIC_FLOAT
                     );
                 }
             }
         } elseif ($this->is_time_value()) {
-            if ($sbx->value() !== $this->value()) {
+            if ($sbx->get_value() !== $this->get_value()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TIME,
@@ -2187,20 +2187,20 @@ class sandbox_value extends sandbox_multi
                 if ($is_update) {
                     $lst->add_field(
                         value_db::FLD_VALUE_TIME,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::TIME,
                         $sbx->number()
                     );
                 } else {
                     $lst->add_field(
                         value_db::FLD_VALUE_TIME,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::TIME
                     );
                 }
             }
         } elseif ($this->is_text_value()) {
-            if ($sbx->value() !== $this->value()) {
+            if ($sbx->get_value() !== $this->get_value()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TEXT,
@@ -2211,20 +2211,20 @@ class sandbox_value extends sandbox_multi
                 if ($is_update) {
                     $lst->add_field(
                         value_db::FLD_VALUE_TEXT,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::TEXT,
-                        $sbx->value()
+                        $sbx->get_value()
                     );
                 } else {
                     $lst->add_field(
                         value_db::FLD_VALUE_TEXT,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::TEXT
                     );
                 }
             }
         } elseif ($this->is_geo_value()) {
-            if ($sbx->value() !== $this->value()) {
+            if ($sbx->get_value() !== $this->get_value()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_GEO,
@@ -2235,14 +2235,14 @@ class sandbox_value extends sandbox_multi
                 if ($is_update) {
                     $lst->add_field(
                         value_db::FLD_VALUE_GEO,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::NUMERIC_FLOAT,
-                        $sbx->value()
+                        $sbx->get_value()
                     );
                 } else {
                     $lst->add_field(
                         value_db::FLD_VALUE_GEO,
-                        $this->value(),
+                        $this->get_value(),
                         sql_field_type::NUMERIC_FLOAT
                     );
                 }

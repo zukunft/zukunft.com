@@ -106,6 +106,7 @@ if ($usr->id() > 0) {
     // if the user has requested to add a new formula
     if ($_GET['confirm'] > 0) {
         log_debug();
+        $msg = '';
 
         // check parameters
         if (!isset($wrd)) {
@@ -144,7 +145,7 @@ if ($usr->id() > 0) {
                 // link the formula to at least one word
                 if ($wrd->id() > 0) {
                     $phr = $wrd->phrase();
-                    $add_result .= $frm->link_phr($phr);
+                    $add_result .= $frm->link_phrase_and_save($phr, $usr_msg);
 
                     // if linking was successful ...
                     if (str_replace('1', '', $add_result) == '') {

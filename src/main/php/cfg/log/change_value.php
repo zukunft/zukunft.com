@@ -358,7 +358,7 @@ class change_value extends change_log
         if ($this->group_id == null) {
             return '';
         } else {
-            $grp = new group($this->user(), $this->group_id);
+            $grp = new group($this->get_user(), $this->group_id);
             return $grp->dsp_id_medium();
         }
     }

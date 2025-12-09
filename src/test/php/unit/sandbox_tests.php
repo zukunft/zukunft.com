@@ -134,10 +134,10 @@ class sandbox_tests
         $trp->set_from($wrd->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($to->phrase());
-        $key_vrb = $trp->key();
+        $key_vrb = $trp->get_key();
         $wrd->set_name($t_wrd->word()->name());
         $to->set_name($vrb->name() . sandbox_link::KEY_SEP . $to->name());
-        $key_to = $trp->key();
+        $key_to = $trp->get_key();
         $t->assert_not($test_name, $key_vrb, $key_to);
         // TODO Prio 2 activate this test based on changing the verb
         //      which implies that the changing of the verb name is updating the cache

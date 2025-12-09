@@ -84,7 +84,7 @@ class figure_list extends sandbox_list
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         foreach ($api_json as $json_phr) {
-            $fig = new figure($this->user());
+            $fig = new figure($this->get_user());
             if ($fig->api_mapper($json_phr, $usr_msg)) {
                 $this->add($fig);
             }
@@ -129,10 +129,10 @@ class figure_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
-                        $val = new value($this->user());
+                        $val = new value($this->get_user());
                         $fig = new figure($val);
                     } else {
-                        $res = new result($this->user());
+                        $res = new result($this->get_user());
                         $fig = new figure($res);
                     }
                     $fig->row_mapper($db_row, $qp->ext);
@@ -183,7 +183,7 @@ class figure_list extends sandbox_list
         $sc->set_class(figure::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(figure::FLD_NAMES);
         //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
         //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);

@@ -84,7 +84,7 @@ class view_sys_list extends type_list
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -128,7 +128,7 @@ class view_sys_list extends type_list
         $dsp_lst = new view_list($this->usr);
         $qp = $dsp_lst->load_sql($sc, 'sys_views');
         $sc->set_name($qp->name);
-        $msk = new view($this->user());
+        $msk = new view($this->get_user());
         $sc->set_id_field($msk->id_field());
         $sc->add_where(sql_db::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
         $sc->set_order(view_db::FLD_ID);

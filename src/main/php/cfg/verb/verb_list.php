@@ -110,7 +110,7 @@ class verb_list extends type_list
     /**
      * @return user|null the person who wants to see the verbs
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -146,7 +146,7 @@ class verb_list extends type_list
         if ($qp->name != '') {
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->get_user()->id);
             $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
@@ -177,11 +177,11 @@ class verb_list extends type_list
 
         $result = false;
         // check the all minimal input parameters
-        if ($this->user() == null) {
+        if ($this->get_user() == null) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
             /*
             } elseif (!isset($this->wrd) OR $this->direction->value == '')  {
-              zu_err("The word id, the direction and the user (".$this->user()->name.") must be set to load a list of verbs.", "verb_list->load");
+              zu_err("The word id, the direction and the user (".$this->get_user()->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
             $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction);
@@ -493,7 +493,7 @@ class verb_list extends type_list
                                    FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         $sys->times->switch(system_time_type::DB_WRITE);
         $result = $db_con->exe_try('Calculation of the verb usage', $sql);
         $sys->times->switch();
@@ -608,11 +608,11 @@ class verb_list extends type_list
                     $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
-                    $select_row[] = $vrb->usage();
+                    $select_row[] = $vrb->get_usage();
                     $combined_list[$id] = $select_row;
 
                     $select_row = array();
-                    $select_name = $vrb->reverse();
+                    $select_name = $vrb->get_reverse();
                     /* like above ...
                     if ($vrb->name() != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->name() . ')';
@@ -622,7 +622,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->usage(); // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->get_usage(); // TODO separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }

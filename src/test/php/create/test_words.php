@@ -201,6 +201,32 @@ class test_words
     }
 
     /**
+     * @return word to test the api insert call
+     */
+    function word_add_via_api(): word
+    {
+        global $sys;
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::TEST_ADD_API);
+        $wrd->description = words::TEST_ADD_API_COM;
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type::NORMAL);
+        return $wrd;
+    }
+
+    /**
+     * @return word to test the api update call
+     */
+    function word_update_via_api(): word
+    {
+        global $sys;
+        $wrd = new word($this->env->usr1);
+        $wrd->set_name(words::TEST_UPD_API);
+        $wrd->description = words::TEST_UPD_API_COM;
+        $wrd->type_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
+        return $wrd;
+    }
+
+    /**
      * @return word_ui the word "mathematics" for frontend unit testing
      */
     function word_dsp(): word_ui

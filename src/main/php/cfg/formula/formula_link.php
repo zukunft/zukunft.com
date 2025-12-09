@@ -193,7 +193,7 @@ class formula_link extends sandbox_link
     {
         parent::reset($keep_user);
 
-        $this->reset_objects($this->user());
+        $this->reset_objects($this->get_user());
 
         $this->order_nbr = null;
         global $sys;
@@ -439,7 +439,7 @@ class formula_link extends sandbox_link
         user_message $usr_msg
     ): void
     {
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if (is_array($api_msg_part)) {
             $frm->api_mapper($api_msg_part, $usr_msg);
         } else {
@@ -466,7 +466,7 @@ class formula_link extends sandbox_link
         ?data_object $dto = null
     ): void
     {
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if (is_int($api_msg_part)) {
             if ($dto != null) {
                 $frm = $dto->get_formula_by_id($api_msg_part, $frm);
@@ -504,7 +504,7 @@ class formula_link extends sandbox_link
         user_message $usr_msg
     ): void
     {
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         if (is_array($api_msg_part)) {
             $phr->api_mapper($api_msg_part, $usr_msg);
         } else {
@@ -531,7 +531,7 @@ class formula_link extends sandbox_link
         ?data_object $dto = null
     ): void
     {
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         if (is_int($api_msg_part)) {
             if ($dto != null) {
                 $phr = $dto->get_phrase_by_id($api_msg_part, $phr);
@@ -609,13 +609,13 @@ class formula_link extends sandbox_link
      * overwrite the link type function
      * @return string|null the code id of the verb
      */
-    function predicate_code_id(): ?string
+    function get_predicate_code_id(): ?string
     {
         global $sys;
         $id = $this->predicate_id();
         $typ = $sys->typ_lst->frm_lnk_typ->get($this->predicate_id());
         if ($typ != null) {
-            return $typ->code_id();
+            return $typ->get_code_id();
         } else {
             $msg = 'formula link type with id ' . $id . ' is missing';
             log_err($msg);
@@ -632,7 +632,7 @@ class formula_link extends sandbox_link
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    function predicate_name(): string
+    function get_predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->frm_lnk_typ->name($this->predicate_id);
@@ -673,7 +673,7 @@ class formula_link extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -702,13 +702,13 @@ class formula_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql_creator $sc): sql_par
+    function load_sql_standard(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(self::FLD_NAMES);
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
@@ -737,7 +737,7 @@ class formula_link extends sandbox_link
         $result = false;
 
         if ($this->is_unique()) {
-            $qp = $this->load_standard_sql($db_con->sql_creator());
+            $qp = $this->load_sql_standard($db_con->sql_creator());
 
             if ($qp->name <> '') {
                 $db_frm = $db_con->get1($qp);
@@ -772,11 +772,11 @@ class formula_link extends sandbox_link
      * if the link object is loaded by an external query like in user_display to show the sandbox
      * @return bool true if the loading of the linked objects has been successful
      */
-    function load_objects(): bool
+    function reload_objects(): bool
     {
         $result = true;
         if ($this->formula_id() > 0) {
-            $frm = new formula($this->user());
+            $frm = new formula($this->get_user());
             $frm->load_by_id($this->formula_id());
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
@@ -786,7 +786,7 @@ class formula_link extends sandbox_link
         }
         if ($result) {
             if ($this->phrase_id() <> 0) {
-                $phr = new phrase($this->user());
+                $phr = new phrase($this->get_user());
                 $phr->load_by_id($this->phrase_id());
                 if ($phr->id() != 0) {
                     $this->set_phrase($phr);
@@ -872,16 +872,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 to check if no one else has changed the formula link
-     */
-    function not_changed_sql(sql_creator $sc): sql_par
-    {
-        $sc->set_class(formula_link::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
-    }
-
-    /**
      * @return bool true if no other user has modified the formula link
      */
     function not_changed(): bool
@@ -892,7 +882,7 @@ class formula_link extends sandbox_link
         $lib = new library();
         $result = true;
         $qp = $this->not_changed_sql($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             if ($db_row[user_db::FLD_ID] > 0) {
@@ -904,13 +894,23 @@ class formula_link extends sandbox_link
     }
 
     /**
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 to check if no one else has changed the formula link
+     */
+    function not_changed_sql(sql_creator $sc): sql_par
+    {
+        $sc->set_class(formula_link::class);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
+    }
+
+    /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
      * @return change the change log object with the presets for formula links
      */
     function log_upd_field(): change
     {
-        $log = new change($this->user());
+        $log = new change($this->get_user());
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_class(formula_link::class);
@@ -947,7 +947,7 @@ class formula_link extends sandbox_link
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->formula_id(), $this->phrase_id(), $this->user()->id, $this->order_nbr));
+            array($this->formula_id(), $this->phrase_id(), $this->get_user()->id, $this->order_nbr));
     }
 
     /**
@@ -963,9 +963,9 @@ class formula_link extends sandbox_link
 
         // check if the required parameters are set
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id() . ') for user ' . $this->user()->name);
+            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id() . ') for user ' . $this->get_user()->name);
         } elseif ($this->id() > 0) {
-            log_debug('id ' . $this->id() . ' for user ' . $this->user()->name);
+            log_debug('id ' . $this->id() . ' for user ' . $this->get_user()->name);
         } else {
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
         }
@@ -976,17 +976,17 @@ class formula_link extends sandbox_link
         }
 
         // load the objects if needed
-        $this->load_objects();
+        $this->reload_objects();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->get_user()->id);
         $db_con->set_class(formula_link::class);
 
         // check if a new value is supposed to be added
         if ($this->id() <= 0) {
             log_debug('check if a new formula_link for "' . $this->formula()->name() . '" and "' . $this->phrase()->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
-            $db_chk = new formula_link($this->user());
+            $db_chk = new formula_link($this->get_user());
             $db_chk->set_formula($this->formula());
             $db_chk->set_phrase($this->phrase());
             $db_chk->load_standard();
@@ -1004,9 +1004,9 @@ class formula_link extends sandbox_link
             log_debug('update "' . $this->id() . '"');
             // read the database values to be able to check if something has been changed; done first,
             // because it needs to be done for user and general formulas
-            $db_rec = new formula_link($this->user());
+            $db_rec = new formula_link($this->get_user());
             $db_rec->load_by_id($this->id());
-            $db_rec->load_objects();
+            $db_rec->reload_objects();
             $db_con->set_class(formula_link::class);
             // relevant is if there is a user config in the database
             // so use this information to prevent
@@ -1015,7 +1015,7 @@ class formula_link extends sandbox_link
                 $this->usr_cfg_id = $db_rec->usr_cfg_id;
             }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
-            $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
+            $std_rec = new formula_link($this->get_user()); // must also be set to allow to take the ownership
             $std_rec->id = $this->id();
             $std_rec->load_standard();
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
@@ -1036,7 +1036,7 @@ class formula_link extends sandbox_link
             }
 
             // check if the id parameters are supposed to be changed
-            $this->load_objects();
+            $this->reload_objects();
             if ($usr_msg->is_ok()) {
                 $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
             }
@@ -1183,7 +1183,7 @@ class formula_link extends sandbox_link
     {
         $result = '';
 
-        $this->load_objects();
+        $this->reload_objects();
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
             $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
         } else {

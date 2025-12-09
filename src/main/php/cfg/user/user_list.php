@@ -134,7 +134,7 @@ class user_list
         $sc->set_class(user::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
@@ -354,7 +354,7 @@ class user_list
     /**
      * @return user the person who wants to see the user list
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }

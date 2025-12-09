@@ -300,12 +300,12 @@ class type_object extends db_object_seq_id
         return $this->name;
     }
 
-    function code_id(): string
+    function get_code_id(): string
     {
         return $this->code_id;
     }
 
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -518,7 +518,7 @@ class type_object extends db_object_seq_id
     function dsp_id(): string
     {
 
-        return $this->name . '/' . $this->code_id() . parent::dsp_id();
+        return $this->name . '/' . $this->get_code_id() . parent::dsp_id();
     }
 
 }

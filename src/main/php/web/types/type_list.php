@@ -215,7 +215,7 @@ class type_list
         return $result;
     }
 
-    function code_id(int $id): string
+    function get_code_id(int $id): string
     {
         $result = '';
         $type = $this->get($id);
@@ -249,7 +249,7 @@ class type_list
             $dub_key = [];
             $all_key = [];
             foreach ($this->lst as $typ) {
-                $key = $typ->code_id();
+                $key = $typ->get_code_id();
                 if (!in_array($key, $all_key)) {
                     $all_key[] = $key;
                 } else {

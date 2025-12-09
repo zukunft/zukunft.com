@@ -105,7 +105,7 @@ class combine_object extends CombineObject
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|word|triple|null
+    function obj(): IdObject|TextIdObject|word|triple|value_base|null
     {
         return $this->obj;
     }

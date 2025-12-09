@@ -294,7 +294,7 @@ class component extends sandbox_code_id
             } else {
                 $err_msg = 'Component type code id for ' . $this->dsp_id()
                     . ' and type id ' . $this->type_id() . ' missing';
-                $type_code_id = $typ_lst->html_component_types->code_id($this->type_id());
+                $type_code_id = $typ_lst->html_component_types->get_code_id($this->type_id());
                 if ($type_code_id == '') {
                     $this->log_err($err_msg);
                 }
@@ -314,7 +314,7 @@ class component extends sandbox_code_id
             if ($this->pos_type_id == null) {
                 $this->log_err($err_msg);
             } else {
-                $pos_type_code_id = $typ_lst->html_position_types->code_id($this->pos_type_id);
+                $pos_type_code_id = $typ_lst->html_position_types->get_code_id($this->pos_type_id);
                 if ($pos_type_code_id == '') {
                     $this->log_err($err_msg);
                 }
@@ -354,7 +354,7 @@ class component extends sandbox_code_id
             $this->log_err('html_view_styles are empty');
         } else {
             if ($this->style_id != null) {
-                $style_name = $typ_lst->html_view_styles->code_id($this->style_id);
+                $style_name = $typ_lst->html_view_styles->get_code_id($this->style_id);
             }
         }
         return $style_name;
@@ -783,7 +783,7 @@ class component extends sandbox_code_id
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
-        $log_ui = new user_log_display($this->user());
+        $log_ui = new user_log_display();
         $result .= $log_ui->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");

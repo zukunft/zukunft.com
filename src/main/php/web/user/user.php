@@ -187,7 +187,7 @@ class user extends db_object
         return $this->name;
     }
 
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
@@ -291,7 +291,7 @@ class user extends db_object
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
     /*

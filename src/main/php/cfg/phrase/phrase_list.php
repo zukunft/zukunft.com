@@ -148,7 +148,7 @@ class phrase_list extends sandbox_list_named
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new phrase($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new phrase($this->get_user()), $db_rows, $load_all);
     }
 
     /**
@@ -160,7 +160,7 @@ class phrase_list extends sandbox_list_named
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
         foreach ($api_json as $json_phr) {
-            $phr = new phrase($this->user());
+            $phr = new phrase($this->get_user());
             if ($phr->api_mapper($json_phr, $usr_msg)) {
                 $this->add($phr);
             }
@@ -186,7 +186,7 @@ class phrase_list extends sandbox_list_named
         if ($dto != null) {
             $phr_lst = $dto->phrase_list();
         } else {
-            $phr_lst = new phrase_list($this->user());
+            $phr_lst = new phrase_list($this->get_user());
         }
 
         foreach ($json_obj as $phr_name) {
@@ -198,7 +198,7 @@ class phrase_list extends sandbox_list_named
                     if ($phr == null) {
                         // TODO Prio 3 check if in some cases a warning message might be useful
                         // $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
-                        $phr = new phrase($this->user());
+                        $phr = new phrase($this->get_user());
                         $phr->set_name($phr_name);
                         $phr_lst->add_by_name($phr);
                         $this->add_by_name($phr);
@@ -352,7 +352,7 @@ class phrase_list extends sandbox_list_named
         $qp->name .= $query_name;
 
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id);
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(phrase::FLD_NAMES);
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
@@ -455,7 +455,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new phrase($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new phrase($this->get_user()), $pattern, $limit, $offset);
     }
 
 
@@ -468,7 +468,7 @@ class phrase_list extends sandbox_list_named
      */
     function term_list(): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($this->lst() as $phr) {
             $trm_lst->add($phr->term());
         }
@@ -535,7 +535,7 @@ class phrase_list extends sandbox_list_named
 
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
-                $phr = new phrase($this->user());
+                $phr = new phrase($this->get_user());
                 if ($usr_msg->is_ok()) {
                     if ($db_con->is_open()) {
                         // TODO prevent that this happens at all
@@ -553,7 +553,7 @@ class phrase_list extends sandbox_list_named
                                 // for new phrase use the word object
                                 // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
                                 //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
-                                $wrd = new word($this->user());
+                                $wrd = new word($this->get_user());
                                 $wrd->load_by_name($phr_name);
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
@@ -600,7 +600,7 @@ class phrase_list extends sandbox_list_named
             $phr = null;
             $phr = $dto?->get_phrase_by_name($word_name);
             if ($phr == null and $word_name != '') {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->set_name($word_name);
                 $phr = $wrd->phrase();
             }
@@ -760,8 +760,8 @@ class phrase_list extends sandbox_list_named
         // set the list if phrases used to get the related phrases
         $accumulated_list = clone $this;
 
-        $additional_added_triples = new phrase_list($this->user());
-        $additional_added_phrases = new phrase_list($this->user());
+        $additional_added_triples = new phrase_list($this->get_user());
+        $additional_added_phrases = new phrase_list($this->get_user());
 
         do {
             $loops = $loops + 1;
@@ -830,13 +830,13 @@ class phrase_list extends sandbox_list_named
 
         global $db_con;
         $lib = new library();
-        $additional_added = new phrase_list($this->user()); // list of the added phrases with this call
+        $additional_added = new phrase_list($this->get_user()); // list of the added phrases with this call
 
         $qp = $this->load_sql_linked_phrases($db_con->sql_creator(), $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
-            $db_con->usr_id = $this->user()->id;
+            $db_con->usr_id = $this->get_user()->id;
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
@@ -844,7 +844,7 @@ class phrase_list extends sandbox_list_named
                     if (is_null($db_phr[sql_db::FLD_EXCLUDED]) or $db_phr[sql_db::FLD_EXCLUDED] == 0) {
                         // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
-                            $new_phrase = new phrase($this->user());
+                            $new_phrase = new phrase($this->get_user());
                             $new_phrase->row_mapper_sandbox($db_phr);
                             $additional_added->add($new_phrase);
                             log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb_db::FLD_ID] . ')');
@@ -867,7 +867,7 @@ class phrase_list extends sandbox_list_named
      */
     function load_linking_triples(?verb $vrb, foaf_direction $direction): phrase_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         $trp_lst->load_by_phr_lst($this, $vrb, $direction);
         return $trp_lst->phrase_list();
     }
@@ -962,7 +962,7 @@ class phrase_list extends sandbox_list_named
     private function foaf(foaf_direction $direction, ?verb $vrb = null, int $max_level = 0): phrase_list
     {
         $level = 0;
-        $added_phr_lst = new phrase_list($this->user()); // list of the added phrases
+        $added_phr_lst = new phrase_list($this->get_user()); // list of the added phrases
         $added_phr_lst = $this->foaf_level(
             $level, $added_phr_lst, $vrb, $direction, $max_level
         );
@@ -1065,7 +1065,7 @@ class phrase_list extends sandbox_list_named
      */
     function missing_ids(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->id() == 0) {
                 $phr_lst->add_by_name($phr);
@@ -1399,7 +1399,7 @@ class phrase_list extends sandbox_list_named
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
         if ($phr_id_to_add <> 0) {
             if (!in_array($phr_id_to_add, $this->id_lst())) {
-                $phr_to_add = new phrase($this->user());
+                $phr_to_add = new phrase($this->get_user());
                 $phr_to_add->set_id($phr_id_to_add);
 
                 $this->add($phr_to_add);
@@ -1413,10 +1413,10 @@ class phrase_list extends sandbox_list_named
     function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
-        if (is_null($this->user()->id)) {
+        if (is_null($this->get_user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
-            $phr_to_add = new phrase($this->user());
+            $phr_to_add = new phrase($this->get_user());
             $phr_to_add->load_by_name($phr_name_to_add);
 
             if ($phr_to_add->id() <> 0) {
@@ -1518,7 +1518,7 @@ class phrase_list extends sandbox_list_named
 
         if (empty($id_lst->lst)) {
             // return an empty list
-            $result = new phrase_list($this->user());
+            $result = new phrase_list($this->get_user());
         } else {
             $result = clone $this;
             $phr_lst = array();
@@ -1562,7 +1562,7 @@ class phrase_list extends sandbox_list_named
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
 
-        $result = clone new phrase_list($this->user());
+        $result = clone new phrase_list($this->get_user());
         if (!$this->is_empty()) {
             $lst_ids = $del_lst->id_lst();
             foreach ($this->lst() as $phr) {
@@ -1659,7 +1659,7 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             // temp workaround utils the reason is found, why the user is sometimes not set
             if (!isset($phr->usr)) {
-                $phr->set_user($this->user());
+                $phr->set_user($this->get_user());
             }
             $phr_lst_is = $phr->is();
             if (isset($phr_lst_is)) {
@@ -1745,7 +1745,7 @@ class phrase_list extends sandbox_list_named
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             // temp solution for testing
-            $phr->set_user($this->user());
+            $phr->set_user($this->get_user());
             log_debug('check ' . $phr->dsp_id());
             if ($result == false) {
                 if ($phr->is_percent()) {
@@ -1788,13 +1788,13 @@ class phrase_list extends sandbox_list_named
     {
         $wrd_lst = $this->wrd_lst_all();
         $result = $wrd_lst->time_lst();
-        $result->set_user($this->user());
+        $result->set_user($this->get_user());
         return $result;
     }
 
     function time_list(): phrase_list
     {
-        $lst = new phrase_list($this->user());
+        $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_time()) {
                 $lst->add($phr);
@@ -1809,7 +1809,7 @@ class phrase_list extends sandbox_list_named
      */
     function get_by_type(string $phr_typ): phrase_list
     {
-        $lst = new phrase_list($this->user());
+        $lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_type($phr_typ)) {
                 $lst->add_by_name($phr);
@@ -1842,7 +1842,7 @@ class phrase_list extends sandbox_list_named
         log_debug('phrase_list->time_useful times ' . implode(",", $time_wrds->ids()));
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
-                $time_wrd = new word($this->user());
+                $time_wrd = new word($this->get_user());
                 $time_wrd->load_by_id($time_id);
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
@@ -1899,7 +1899,7 @@ class phrase_list extends sandbox_list_named
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
         $lib = new library();
 
-        $result = new phrase_list($this->user());
+        $result = new phrase_list($this->get_user());
         $measure_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
@@ -1930,7 +1930,7 @@ class phrase_list extends sandbox_list_named
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
-        $result = new phrase_list($this->user());
+        $result = new phrase_list($this->get_user());
         $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
         $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
@@ -1984,7 +1984,7 @@ class phrase_list extends sandbox_list_named
      */
     function name_sort(): array
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
 
         $name_lst = array();
@@ -2053,8 +2053,8 @@ class phrase_list extends sandbox_list_named
      */
     function max_time(): phrase
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
-        $max_phr = new phrase($this->user());
+        log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
+        $max_phr = new phrase($this->get_user());
         if (!$this->is_empty()) {
             foreach ($this->lst() as $phr) {
                 // to be replaced by "is following"
@@ -2077,7 +2077,7 @@ class phrase_list extends sandbox_list_named
             // TODO Prio 0 switch back to error
             log_warning('Cannot create phrase group for an empty list.', 'phrase_list->get_grp');
         } else {
-            $grp = new group($this->user());
+            $grp = new group($this->get_user());
             $grp_id = new group_id();
             $grp->set_id($grp_id->get_id($this));
             $grp->set_phrase_list(clone $this);
@@ -2136,7 +2136,7 @@ class phrase_list extends sandbox_list_named
      */
     function val_lst(): value_list
     {
-        $val_lst = new value_list($this->user());
+        $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr_lst($this, true);
 
         return $val_lst;
@@ -2147,7 +2147,7 @@ class phrase_list extends sandbox_list_named
      */
     function frm_lst(): formula_list
     {
-        $frm_lst = new formula_list($this->user());
+        $frm_lst = new formula_list($this->get_user());
         $frm_lst->load_by_phr_lst($this);
 
         return $frm_lst;
@@ -2169,7 +2169,7 @@ class phrase_list extends sandbox_list_named
      */
     function value(): value
     {
-        $val = new value($this->user());
+        $val = new value($this->get_user());
         $val->load_by_grp($this->get_grp_id());
 
         return $val;
@@ -2339,7 +2339,7 @@ class phrase_list extends sandbox_list_named
      */
     function get_by_ids(phr_ids $ids): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($ids as $id) {
             $phr = $phr_lst->get_by_id($id);
             $phr_lst->add($phr);
@@ -2369,11 +2369,11 @@ class phrase_list extends sandbox_list_named
     {
         $this->reset();
 
-        $wrd_lst = new word_list($this->user());
+        $wrd_lst = new word_list($this->get_user());
         $wrd_lst->load_linked_words($vrb, $direction);
         $wrd_added = $this->add_wrd_lst($wrd_lst);
 
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         $trp_lst->load_by_phr($phr, $vrb, $direction);
         $trp_added = $this->add_trp_lst($trp_lst);
 
@@ -2399,7 +2399,7 @@ class phrase_list extends sandbox_list_named
         ?verb          $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH): phrase_list
     {
-        $result = new phrase_list($this->user());
+        $result = new phrase_list($this->get_user());
         /*
          * if ($pos > 0) {
             $field_name = "phrase" . $pos;
@@ -2425,7 +2425,7 @@ class phrase_list extends sandbox_list_named
                             " . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . "
                        FROM " . $sql_from . "
                   LEFT JOIN user_words u ON u.word_id = w.word_id
-                                        AND u.user_id = " . $this->user()->id() . "
+                                        AND u.user_id = " . $this->get_user()->id() . "
                       WHERE w.phrase_type_id = " . cl(db_cl::WORD_TYPE, phrase_type_list::DBL_TIME) . "
                         " . $sql_where_and . "
                    GROUP BY name) AS s
@@ -2497,10 +2497,10 @@ class phrase_list extends sandbox_list_named
     {
         log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
 
-        $wrd_lst = new word_list($this->user());
+        $wrd_lst = new word_list($this->get_user());
 
         // check the basic settings
-        if ($this->user() == null) {
+        if ($this->get_user() == null) {
             log_err('User for phrase list ' . $this->dsp_id() . ' missing', 'phrase_list->wrd_lst_all');
         }
 
@@ -2546,7 +2546,7 @@ class phrase_list extends sandbox_list_named
      */
     function words(): word_list
     {
-        $wrd_lst = new word_list($this->user());
+        $wrd_lst = new word_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_word()) {
                 $wrd = $phr->obj();
@@ -2566,7 +2566,7 @@ class phrase_list extends sandbox_list_named
      */
     function triples(): triple_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
                 $trp = $phr->obj();
@@ -2586,7 +2586,7 @@ class phrase_list extends sandbox_list_named
      */
     function triples_by_name(): triple_list
     {
-        $trp_lst = new triple_list($this->user());
+        $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
                 $trp_lst->add_by_name($phr->obj());

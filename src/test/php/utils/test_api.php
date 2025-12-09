@@ -40,6 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
@@ -180,7 +181,7 @@ class test_api extends test_base
     {
         $class = $usr_obj::class;
         $class_api = $this->class_to_api($class);
-        $usr_msg = new user_message($usr_obj->user());
+        $usr_msg = new user_message($usr_obj->get_user());
 
         // is excluded api json empty?
         $test_name = $class_api . ' excluded json is empty';
@@ -332,112 +333,39 @@ class test_api extends test_base
     }
 
     /**
-     * check if the API PUT call without the REST call adds the user sandbox object
-     * similar to assert_api_put but without the need for a local webserver
+     * check if the API PUT or POST call without the REST call adds or updates the user sandbox object
+     * similar to assert_api_put or assert_api_post but without the need for a local webserver
      *
-     * @param string $class the class name of the object to test
+     * @param sandbox $sbx the sandbox object that should be tested
+     * @param int $id the id of the object that should be updated
      * @param array $data the database id of the db row that should be used for testing
+     * @param user_message $usr_msg to collect the messages for the user
      * @return int the id of the created db row
      */
-    function assert_api_put_no_rest(string $class, array $data = []): int
+    function assert_api_no_rest(sandbox $sbx, int $id, array $data, user_message $usr_msg): int
     {
-        global $usr;
-
-        // naming exception (to be removed?)
-        $class = $this->class_to_api($class);
-        // get default data
-        if ($data == array()) {
-            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
+        // check input values
+        if ($data == []) {
+            log_err('Data for ' . $sbx::class . ' missing in assert_api_no_rest');
         }
         // use the controller to get the payload from the api message
         $ctrl = new controller();
         $request_body = $ctrl->check_api_msg($data);
+        // load the object before the update
+        if ($id != 0) {
+            $sbx->load_by_id($id);
+        }
         // apply the payload to the backend object (add switch)
-        $result = 0;
-        switch ($class) {
-            case word::class:
-                $wrd = new word($usr);
-                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $wrd->id();
-                }
-                break;
-            case source::class:
-                $src = new source($usr);
-                $result = $src->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $src->id();
-                }
-                break;
-            default:
-                log_err($class . ' not yet mapped in assert_api_put_no_rest');
+        $sbx->api_mapper($request_body, $usr_msg);
+        if ($usr_msg->is_ok()) {
+            $sbx->save($usr_msg);
         }
         // if no row id is returned report the problem
-        if ($result == null or $result <= 0) {
-            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
-            return 0;
+        if ($usr_msg->is_ok()) {
+            return $usr_msg->get_row_id();
         } else {
-            return $result;
-        }
-    }
-
-    /**
-     * check if the API POST call without the REST call updates the user sandbox object
-     * similar to assert_api_put but without the need for a local webserver
-     *
-     * @param string $class the class name of the object to test
-     * @param array $data the database id of the db row that should be used for testing
-     * @return int the id of the created db row
-     */
-    function assert_api_post_no_rest(string $class, int $id, array $data = []): int
-    {
-        global $usr;
-
-        // naming exception (to be removed?)
-        $class = $this->class_to_api($class);
-        // get default data
-        if ($data == array()) {
-            log_err('Data for ' . $class . ' missing in assert_api_put_no_rest');
-        }
-        // use the controller to get the payload from the api message
-        $ctrl = new controller();
-        $request_body = $ctrl->check_api_msg($data);
-        // apply the payload to the backend object (add switch)
-        $result = 0;
-        switch ($class) {
-            case word::class:
-                $wrd = new word($usr);
-                $wrd->load_by_id($id);
-                $result = $wrd->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $wrd->id();
-                }
-                break;
-            case source::class:
-                $src = new source($usr);
-                $src->load_by_id($id);
-                $result = $src->save_from_api_msg($request_body)->get_last_message();
-                // if no message should be shown to the user the adding is expected to be fine
-                // so get the row id to be able to remove the test row later
-                if ($result == '') {
-                    $result = $src->id();
-                }
-                break;
-            default:
-                log_err($class . ' not yet mapped in assert_api_put_no_rest');
-        }
-        // if no row id is returned report the problem
-        if ($result == null or $result <= 0) {
-            $this->assert_fail('api write test without REST call of ' . $class . ' failed');
+            $this->assert_fail('api write test without REST call of ' . $sbx::class . ' failed');
             return 0;
-        } else {
-            return $result;
         }
     }
 
@@ -446,8 +374,8 @@ class test_api extends test_base
      * similar to assert_api_del but without the need for a local webserver
      *
      * @param string $class the class name of the object to test
-     * @param array $data the database id of the db row that should be used for testing
-     * @return int the id of the created db row
+     * @param int $id the id of the object that should be updated
+     * @return bool if the object has been deleted or excluded
      */
     function assert_api_del_no_rest(string $class, int $id): bool
     {

@@ -80,7 +80,7 @@ class term_list extends sandbox_list_named
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new term($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new term($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -110,17 +110,17 @@ class term_list extends sandbox_list_named
                     }
                 }
                 if ($obj::class == verb::class) {
-                    if ($obj->plural() != '') {
-                        $result[$obj->plural()] = $key;
+                    if ($obj->get_plural() != '') {
+                        $result[$obj->get_plural()] = $key;
                     }
-                    if ($obj->reverse() != '') {
-                        $result[$obj->reverse()] = $key;
+                    if ($obj->get_reverse() != '') {
+                        $result[$obj->get_reverse()] = $key;
                     }
-                    if ($obj->reverse_plural() != '') {
-                        $result[$obj->reverse_plural()] = $key;
+                    if ($obj->get_reverse_plural() != '') {
+                        $result[$obj->get_reverse_plural()] = $key;
                     }
-                    if ($obj->formula_name() != '') {
-                        $result[$obj->formula_name()] = $key;
+                    if ($obj->get_formula_name() != '') {
+                        $result[$obj->get_formula_name()] = $key;
                     }
                 }
             }
@@ -214,7 +214,7 @@ class term_list extends sandbox_list_named
 
         $trm_lst = $db_con->get($qp);
         foreach ($trm_lst as $db_row) {
-            $trm = new term($this->user());
+            $trm = new term($this->get_user());
             $trm->row_mapper_sandbox($db_row);
             if ($trm->id() != 0) {
                 $this->add($trm);
@@ -234,7 +234,7 @@ class term_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new term($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -313,7 +313,7 @@ class term_list extends sandbox_list_named
      */
     function term_by_obj_id(int $id, string $class): ?term
     {
-        $trm = new term($this->user());
+        $trm = new term($this->get_user());
         $trm->set_obj_from_class($class);
         $trm->set_obj_id($id);
         $trm_id = $trm->id();
@@ -330,7 +330,7 @@ class term_list extends sandbox_list_named
      */
     function get_by_ids(trm_ids $ids): term_list
     {
-        $trm_lst = new term_list($this->user());
+        $trm_lst = new term_list($this->get_user());
         foreach ($ids->lst as $id) {
             $trm = $trm_lst->get_by_id($id);
             $trm_lst->add($trm);
@@ -347,7 +347,7 @@ class term_list extends sandbox_list_named
     function word_by_id(int $id): ?word
     {
         $wrd = null;
-        $trm = new term(new word($this->user()));
+        $trm = new term(new word($this->get_user()));
         $trm->set_id_from_obj($id, word::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -368,7 +368,7 @@ class term_list extends sandbox_list_named
     function triple_by_id(int $id): ?triple
     {
         $trp = null;
-        $trm = new term(new triple($this->user()));
+        $trm = new term(new triple($this->get_user()));
         $trm->set_id_from_obj($id, triple::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -389,7 +389,7 @@ class term_list extends sandbox_list_named
     function formula_by_id(int $id): ?formula
     {
         $frm = null;
-        $trm = new term(new formula($this->user()));
+        $trm = new term(new formula($this->get_user()));
         $trm->set_id_from_obj($id, formula::class);
         $trm_id = $trm->id();
         if ($trm_id != 0) {
@@ -433,7 +433,7 @@ class term_list extends sandbox_list_named
      */
     function phrase_list(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $trm) {
             if ($trm->is_word() or $trm->is_triple()) {
                 $phr_lst->add($trm->phrase());
@@ -460,7 +460,7 @@ class term_list extends sandbox_list_named
             } else {
                 // next line would work if array_intersect could handle objects
                 // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-                $found_lst = new term_list($this->user());
+                $found_lst = new term_list($this->get_user());
                 foreach ($new_lst->lst() as $trm) {
                     if (in_array($trm->id(), $this->id_lst())) {
                         $found_lst->add($trm);
@@ -482,7 +482,7 @@ class term_list extends sandbox_list_named
         if (!$del_lst->is_empty()) {
             // next line would work if array_intersect could handle objects
             // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-            $remain_lst = new term_list($this->user());
+            $remain_lst = new term_list($this->get_user());
             foreach ($this->lst() as $trm) {
                 if (!in_array($trm->id(), $del_lst->id_lst())) {
                     $remain_lst->add($trm);

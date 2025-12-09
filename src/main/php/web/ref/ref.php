@@ -344,7 +344,7 @@ class ref extends sandbox
     /**
      * @return string the display value of the tooltip where null is an empty string
      */
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
@@ -370,7 +370,7 @@ class ref extends sandbox
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -399,7 +399,7 @@ class ref extends sandbox
                 $url,
                 $this->external_key(),
                 $this->type_name(),
-                $this->description()
+                $this->get_description()
             );
         } else {
             return 'ERROR: url is null';

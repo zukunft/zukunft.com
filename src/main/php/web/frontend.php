@@ -207,11 +207,6 @@ class frontend
         $this->dto = new data_object();
     }
 
-    function reset_cache(): void
-    {
-        $this->dtc = null;
-    }
-
 
     /*
      * set and get

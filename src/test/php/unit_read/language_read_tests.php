@@ -71,7 +71,7 @@ class language_read_tests
         $lan_typ_id = $sys->typ_lst->lan_for->id(language_form::PLURAL);
         $lan_typ = new language_form(language_form::PLURAL);
         $lan_typ->load_by_id($lan_typ_id);
-        $t->assert($test_name, $lan_typ->code_id(), language_form::PLURAL);
+        $t->assert($test_name, $lan_typ->get_code_id(), language_form::PLURAL);
 
     }
 

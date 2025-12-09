@@ -116,8 +116,8 @@ class view_exe extends view_base
         $this->log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
 
         // check and correct the parameters
-        if ($this->code_id() != '') {
-            $form_name = $this->code_id();
+        if ($this->code_id != '') {
+            $form_name = $this->code_id;
         } else {
             $form_name = $this->name();
         }

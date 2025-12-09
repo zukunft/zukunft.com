@@ -159,7 +159,7 @@ class verb extends sandbox_named
         $this->code_id = $code_id;
     }
 
-    function code_id(): ?string
+    function get_code_id(): ?string
     {
         return $this->code_id;
     }
@@ -258,7 +258,7 @@ class verb extends sandbox_named
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        $vars[json_fields::CODE_ID] = $this->get_code_id();
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
         $vars[json_fields::REV_PLURAL] = $this->rev_plural;

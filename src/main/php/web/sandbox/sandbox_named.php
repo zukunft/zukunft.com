@@ -106,7 +106,7 @@ class sandbox_named extends sandbox
     /**
      * @return string the display value of the tooltip where null is an empty string
      */
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
@@ -115,7 +115,7 @@ class sandbox_named extends sandbox
         }
     }
 
-    function usage(): int
+    function get_usage(): int
     {
         return $this->usage;
     }
@@ -168,7 +168,7 @@ class sandbox_named extends sandbox
         $vars = parent::api_array();
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         // the usage is not included here because it should always be updated in the backend
         return $vars;
     }
@@ -240,7 +240,7 @@ class sandbox_named extends sandbox
     function name_tip(): string
     {
         $html = new html_base();
-        return $html->span($this->name(), '', $this->description());
+        return $html->span($this->name(), '', $this->get_description());
     }
 
     /**
@@ -253,7 +253,7 @@ class sandbox_named extends sandbox
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        return $html->ref($url, $this->name(), $this->get_description(), $style);
     }
 
 

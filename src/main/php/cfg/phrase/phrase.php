@@ -90,6 +90,7 @@ include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
 include_once paths::MODEL_WORD . 'word_list.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
@@ -235,7 +237,7 @@ class phrase extends combine_named
     {
         if ($obj == null) {
             // create a dummy word object to remember the user
-            parent::__construct(new word($this->user()));
+            parent::__construct(new word($this->get_user()));
         } else {
             if ($obj::class == user::class) {
                 // create a dummy word object to remember the user
@@ -280,7 +282,7 @@ class phrase extends combine_named
 
             if ($db_row[$id_fld] > 0) {
                 // map a word
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->id = $db_row[$id_fld];
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
@@ -303,7 +305,7 @@ class phrase extends combine_named
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 // map a triple
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $trp->id = $db_row[$id_fld] * -1;
                 $name = $db_row[phrase::FLD_NAME . $fld_ext];
                 if ($name != null) {
@@ -349,12 +351,12 @@ class phrase extends combine_named
             log_warning('Missing id in api_json');
         } else {
             if ($api_json[json_fields::ID] > 0) {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } else {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
                 if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
@@ -369,7 +371,7 @@ class phrase extends combine_named
      * set and get
      */
 
-    function obj(): word|triple|IdObject|TextIdObject|null
+    function obj(): IdObject|TextIdObject|word|triple|value_base|null
     {
         return $this->obj;
     }
@@ -390,11 +392,11 @@ class phrase extends combine_named
     function set_obj_from_id(int $id): void
     {
         if ($id > 0) {
-            $wrd = new word($this->user());
+            $wrd = new word($this->get_user());
             $wrd->id = $id;
             $this->obj = $wrd;
         } elseif ($id < 0) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             $trp->id = $id * -1;
             $this->obj = $trp;
         } else {
@@ -413,10 +415,10 @@ class phrase extends combine_named
     function set_id_from_obj(int $id, string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
             $this->set_obj_id($id);
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
             $this->set_obj_id($id);
         }
         $this->obj()->id = $id;
@@ -430,9 +432,9 @@ class phrase extends combine_named
     private function set_obj_from_class(string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
         } else {
             log_err('Unexpected class ' . $class . ' when creating phrase ' . $this->dsp_id());
         }
@@ -467,9 +469,9 @@ class phrase extends combine_named
     /**
      * @return int the id of the user or 0 if the user is not set
      */
-    function user_id(): int
+    function get_user_id(): int
     {
-        return $this->obj()->user_id();
+        return $this->obj()->get_user_id();
     }
 
     /**
@@ -482,7 +484,7 @@ class phrase extends combine_named
 
     function code_id(): ?int
     {
-        return $this->obj()->code_id();
+        return $this->obj()->get_code_id();
     }
 
     function share_id(): ?int
@@ -560,25 +562,25 @@ class phrase extends combine_named
     /**
      * @return user the person who wants to see the phrase
      */
-    function user(): user
+    function get_user(): user
     {
-        return $this->obj()->user();
+        return $this->obj()->get_user();
     }
 
     /**
      * @return int|null a higher number indicates a higher usage
      */
-    function usage(): ?int
+    function get_usage(): ?int
     {
-        return $this->obj()->usage();
+        return $this->obj()->get_usage();
     }
 
     /**
      * @return float|null a higher number indicates a higher impact
      */
-    function impact(): ?float
+    function get_impact(): ?float
     {
-        return $this->obj()->impact();
+        return $this->obj()->get_impact();
     }
 
     /**
@@ -695,7 +697,7 @@ class phrase extends combine_named
 
     function term(): term
     {
-        $trm = new term($this->user());
+        $trm = new term($this->get_user());
         if ($this->obj != null) {
             $trm->obj = $this->obj;
             $trm->set_id_from_obj($this->id_obj(), $this->obj::class);
@@ -728,11 +730,11 @@ class phrase extends combine_named
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
             $class =  $in_ex_json[json_fields::OBJECT_CLASS];
             if ($class == json_fields::CLASS_WORD)  {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
             } elseif ($class == json_fields::CLASS_TRIPLE)  {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);
             } else {
@@ -875,13 +877,13 @@ class phrase extends combine_named
     {
         $result = 0;
         if ($this->is_triple()) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             $result = $trp->load_by_id($this->obj_id());
             $this->obj = $trp;
             // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
-            $wrd = new word($this->user());
+            $wrd = new word($this->get_user());
             $result = $wrd->load_by_id($this->obj_id());
             $this->obj = $wrd;
             $this->set_name($wrd->name());
@@ -914,7 +916,7 @@ class phrase extends combine_named
         }
         if ($this->id() < 0) {
             $lnk = $this->obj();
-            $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
+            $lnk->reload_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->fob();
         } elseif ($this->id() > 0) {
             $result = $this->obj;
@@ -931,7 +933,7 @@ class phrase extends combine_named
      */
     function wrd_lst(): word_list
     {
-        $wrd_lst = new word_list($this->user());
+        $wrd_lst = new word_list($this->get_user());
         if ($this->is_triple()) {
             $trp = $this->obj();
             $sub_wrd_lst = $trp->wrd_lst();
@@ -988,7 +990,7 @@ class phrase extends combine_named
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if ($db_row !== false) {
             if ($db_row[formula_db::FLD_ID] > 0) {
                 $frm->load_by_id($db_row[formula_db::FLD_ID]);
@@ -1008,8 +1010,8 @@ class phrase extends combine_named
     function val_lst(): value_list
     {
         $lib = new library();
-        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
-        $val_lst = new value_list($this->user());
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->get_user()->name . '"');
+        $val_lst = new value_list($this->get_user());
         $val_lst->load_by_phr($this);
         log_debug('got ' . $lib->dsp_count($val_lst->lst()));
         return $val_lst;
@@ -1028,7 +1030,7 @@ class phrase extends combine_named
         $lib = new library();
 
         log_debug('for ' . $this->dsp_id());
-        $vrb_lst = new verb_list($this->user());
+        $vrb_lst = new verb_list($this->get_user());
         $vrb_lst->load_by_linked_phrases($db_con, $this, $direction);
         log_debug('got ' . $lib->dsp_count($vrb_lst->lst()));
         return $vrb_lst;
@@ -1039,7 +1041,7 @@ class phrase extends combine_named
      */
     function all_parents(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($this);
         return $phr_lst->foaf_parents();
     }
@@ -1050,7 +1052,7 @@ class phrase extends combine_named
     function all_children(): phrase_list
     {
         log_debug($this->dsp_id());
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($this);
         return $phr_lst->foaf_children();
     }
@@ -1060,14 +1062,14 @@ class phrase extends combine_named
      */
     function all_related(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($this);
         return $phr_lst->foaf_related();
     }
 
     function groups(): group_list
     {
-        $lst = new group_list($this->user());
+        $lst = new group_list($this->get_user());
         $lst->load_by_phr($this);
         return $lst;
     }
@@ -1078,7 +1080,7 @@ class phrase extends combine_named
      */
     function lst(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         $phr_lst->add($this);
         return $phr_lst;
     }
@@ -1102,7 +1104,7 @@ class phrase extends combine_named
         $phr_lst = $this_lst->is();
         // in case of a triple use at least the initial parent phrase,
         if ($this->is_triple()) {
-            $phr_lst->add($this->obj()->to());
+            $phr_lst->add($this->obj()->get_to());
         }
         //$phr_lst->add($this,);
         log_debug($this->dsp_id() . ' is a ' . $phr_lst->dsp_name());
@@ -1292,13 +1294,13 @@ class phrase extends combine_named
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id . ' ';
+                                         AND u.user_id = ' . $this->get_user()->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . ' ';
+                                                AND u.user_id = ' . $this->get_user()->id . ' ';
 
         if (isset($type)) {
             if ($type->id > 0) {
@@ -1312,7 +1314,7 @@ class phrase extends combine_named
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id() . '
+                                                                AND u.user_id = ' . $this->get_user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
                                            AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
@@ -1324,7 +1326,7 @@ class phrase extends combine_named
                                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                                           FROM triples l
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                                AND u.user_id = ' . $this->user()->id() . '
+                                                                AND u.user_id = ' . $this->get_user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
                                            AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
@@ -1338,7 +1340,7 @@ class phrase extends combine_named
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id . '
+                                         AND u.user_id = ' . $this->get_user()->id . '
                        WHERE w.word_id NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.word_id = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -1351,14 +1353,14 @@ class phrase extends combine_named
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id . '
+                                                AND u.user_id = ' . $this->get_user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . $sys->typ_lst->vrb->id(verbs::IS) . '
                            AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
                 $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
-                                                                             AND ut.user_id = '.$this->user()->id.'';
+                                                                             AND ut.user_id = '.$this->get_user()->id.'';
                 $sql_type_where_words   = 'WHERE w.word_id = t.from_phrase_id
                                              AND t.verb_id = '.cl(SQL_LINK_TYPE_IS).'
                                              AND t.to_phrase_id = '.$type->id.' ';
@@ -1370,7 +1372,7 @@ class phrase extends combine_named
                                       IF(u.excluded IS NULL, COALESCE(w.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM words w
                             LEFT JOIN user_words u ON u.word_id = w.word_id
-                                                  AND u.user_id = '.$this->user()->id.'
+                                                  AND u.user_id = '.$this->get_user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_words.'
                               GROUP BY name';
@@ -1379,7 +1381,7 @@ class phrase extends combine_named
                                       IF(u.excluded IS NULL, COALESCE(l.excluded, 0), COALESCE(u.excluded, 0)) AS excluded
                                   FROM triples l
                             LEFT JOIN user_triples u ON u.triple_id = l.triple_id
-                                                        AND u.user_id = '.$this->user()->id.'
+                                                        AND u.user_id = '.$this->get_user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_triples.'
                               'GROUP BY name';
@@ -1472,12 +1474,12 @@ class phrase extends combine_named
         global $db_con;
         global $sys;
 
-        $result = new phrase($this->user());
+        $result = new phrase($this->get_user());
 
         $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id;
+        $db_con->usr_id = $this->get_user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1501,12 +1503,12 @@ class phrase extends combine_named
         global $db_con;
         global $sys;
 
-        $result = new word($this->user());
+        $result = new word($this->get_user());
 
         $link_id = $sys->typ_lst->vrb->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->get_user()->id();
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1538,19 +1540,19 @@ class phrase extends combine_named
         */
 
         // try if the word exists
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         $wrd->load_by_name($this->name());
         if ($wrd->id() > 0) {
             $this->set_obj_id($wrd->id());
         } else {
             // try if the triple exists
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             $trp->load_by_name($this->name());
             if ($trp->id() > 0) {
                 $this->set_obj_id($trp->id());
             } else {
                 // create a word if neither the word nor the triple exists
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->set_name($this->name());
                 $wrd->type_id = $sys->typ_lst->phr_typ->default_id();
                 $wrd->save($usr_msg);
@@ -1599,7 +1601,7 @@ class phrase extends combine_named
         $this->load_by_name($name);
         if ($this->id() == 0) {
             // add a simple word if it does not yet exist
-            $wrd = new word($this->user());
+            $wrd = new word($this->get_user());
             $wrd->set_name($name);
             $wrd->save($usr_msg);
         }
@@ -1650,13 +1652,13 @@ class phrase extends combine_named
      */
     function phrases(foaf_direction $direction, ?verb_list $link_types = null): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         if ($link_types == null) {
             $link_types = $this->vrb_lst($direction);
         }
         if ($link_types != null) {
             foreach ($link_types->lst() as $vrb) {
-                $add_lst = new phrase_list($this->user());
+                $add_lst = new phrase_list($this->get_user());
                 $add_lst->load_by_phr($this, $vrb, $direction);
                 $phr_lst->merge($add_lst);
             }

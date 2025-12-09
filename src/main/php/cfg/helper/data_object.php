@@ -273,7 +273,7 @@ class data_object
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -325,7 +325,7 @@ class data_object
     {
         if ($this->trm_lst_dirty) {
             $trm_lst = $this->phrase_list()->term_list();
-            $trm_lst->merge_by_name($this->verb_list()->term_lst_of_names($this->user()));
+            $trm_lst->merge_by_name($this->verb_list()->term_lst_of_names($this->get_user()));
             $trm_lst->merge_by_name($this->formula_list()->term_lst_of_names());
             $this->trm_lst = $trm_lst;
             $this->trm_lst_dirty = false;
@@ -642,7 +642,7 @@ class data_object
         $this->wrd_lst->add_by_name($wrd);
 
         // add word references
-        foreach ($wrd->ref_array() as $ref) {
+        foreach ($wrd->ref_lst as $ref) {
             $this->add_reference($ref);
         }
     }
@@ -1145,8 +1145,8 @@ class data_object
             $cmp_lst = $this->component_list();
             foreach ($this->view_list()->lst() as $msk) {
                 if ($msk->has_components()) {
-                    foreach ($msk->component_link_list()->lst() as $lnk) {
-                        $cmp = $lnk->component();
+                    foreach ($msk->cmp_lnk_lst->lst() as $lnk) {
+                        $cmp = $lnk->get_component();
                         if ($cmp->id() == 0) {
                             if ($cmp->name() == '') {
                                 $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());

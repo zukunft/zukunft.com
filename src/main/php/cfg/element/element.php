@@ -209,12 +209,12 @@ class element extends db_object_seq_id_user
             log_warning('Missing class in api_json');
         } else {
             if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 if ($wrd->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $wrd;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 if ($trp->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $trp;
                 }
@@ -224,7 +224,7 @@ class element extends db_object_seq_id_user
                     $this->obj = $vrb;
                 }
             } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-                $frm = new formula($this->user());
+                $frm = new formula($this->get_user());
                 if ($frm->api_mapper($api_json, $usr_msg)) {
                     $this->obj = $frm;
                 }
@@ -340,31 +340,31 @@ class element extends db_object_seq_id_user
      */
     function load_obj_by_id(int $id): int
     {
-        if ($id != 0 and $this->user()->is_set()) {
+        if ($id != 0 and $this->get_user()->is_set()) {
             if ($this->type == word::class) {
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->load_by_id($id);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type == triple::class) {
-                $trp = new triple($this->user());
+                $trp = new triple($this->get_user());
                 $trp->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type == verb::class) {
                 $vrb = new verb;
-                $vrb->set_user($this->user());
+                $vrb->set_user($this->get_user());
                 $vrb->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type == formula::class) {
-                $frm = new formula($this->user());
+                $frm = new formula($this->get_user());
                 $frm->load_by_id($id);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
                 $this->obj = $frm;
                 /*
                 // in case of a formula load also the corresponding word
-                $wrd = new word($this->user());
+                $wrd = new word($this->get_user());
                 $wrd->load_by_name($frm->name);
                 $this->wrd_obj = $wrd;
                 */
@@ -484,7 +484,7 @@ class element extends db_object_seq_id_user
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
-        $elm_empty = new element($this->user()->clone_reset());
+        $elm_empty = new element($this->get_user()->clone_reset());
         $fvt_lst = $this->db_fields_changed($elm_empty);
 
         // create the sql and get the sql parameters used

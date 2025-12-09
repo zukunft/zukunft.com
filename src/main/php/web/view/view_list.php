@@ -106,7 +106,7 @@ class view_list extends ListBase
         // TODO use a hash list
         $result = new view();
         foreach ($this->lst() as $dsp) {
-            if ($dsp->code_id() == $code_id) {
+            if ($dsp->code_id == $code_id) {
                 $result = $dsp;
             }
         }

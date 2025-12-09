@@ -116,16 +116,16 @@ class phrase extends combine_named
             $trp = $this->obj();
             if ($trp != null) {
                 $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
-                $vars[json_fields::FROM] = $trp->from()->id();
-                $vars[json_fields::VERB] = $trp->verb()->id();
-                $vars[json_fields::TO] = $trp->to()->id();
+                $vars[json_fields::FROM] = $trp->get_from()->id();
+                $vars[json_fields::VERB] = $trp->get_verb()->id();
+                $vars[json_fields::TO] = $trp->get_to()->id();
             }
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id();
-        $vars[json_fields::PLURAL] = $this->plural();
+        $vars[json_fields::PLURAL] = $this->get_plural();
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
             $vars[json_fields::SHARE] = $this->obj()?->share_id();
@@ -185,28 +185,28 @@ class phrase extends combine_named
         return $this->obj()?->id();
     }
 
-    function verb(): ?verb
+    function get_verb(): ?verb
     {
         if ($this->is_triple()) {
-            return $this->obj()->verb();
+            return $this->obj()->get_verb();
         } else {
             return null;
         }
     }
 
-    function from(): ?phrase
+    function get_from(): ?phrase
     {
         if ($this->is_triple()) {
-            return $this->obj()->from();
+            return $this->obj()->get_from();
         } else {
             return null;
         }
     }
 
-    function to(): ?phrase
+    function get_to(): ?phrase
     {
         if ($this->is_triple()) {
-            return $this->obj()->to();
+            return $this->obj()->get_to();
         } else {
             return null;
         }

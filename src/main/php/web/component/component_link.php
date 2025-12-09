@@ -159,7 +159,7 @@ class component_link extends sandbox_link
             unset($cmp_json[json_fields::LINK_ID]);
             if (array_key_exists(json_fields::ID, $json_array)) {
                 $this->set_component_id($json_array[json_fields::ID]);
-                $this->component()->api_mapper($cmp_json, $usr_msg);
+                $this->get_component()->api_mapper($cmp_json, $usr_msg);
             }
         } else {
             // the full object detail version
@@ -197,8 +197,8 @@ class component_link extends sandbox_link
     {
         $vars = parent::api_array();
 
-        $vars[json_fields::VIEW_ID] = $this->view()?->id();
-        $vars[json_fields::COMPONENT_ID] = $this->component()?->id();
+        $vars[json_fields::VIEW_ID] = $this->get_view()?->id();
+        $vars[json_fields::COMPONENT_ID] = $this->get_component()?->id();
         $vars[json_fields::POSITION] = $this->order_nbr;
         $vars[json_fields::POS_TYPE] = $this->pos_type_id;
         $vars[json_fields::STYLE] = $this->style_id;
@@ -251,10 +251,10 @@ class component_link extends sandbox_link
     {
         $result = '';
 
-        if ($this->view() != null and $this->component() != null) {
-            if ($this->view()->name() <> '' and $this->component()->name() <> '') {
-                $result .= '"' . $this->component()->name() . '" extends "'; // e.g. company details
-                $result .= $this->view()->name() . '"';     // e.g. cash flow statement
+        if ($this->get_view() != null and $this->get_component() != null) {
+            if ($this->get_view()->name() <> '' and $this->get_component()->name() <> '') {
+                $result .= '"' . $this->get_component()->name() . '" extends "'; // e.g. company details
+                $result .= $this->get_view()->name() . '"';     // e.g. cash flow statement
             }
         } else {
             $result .= 'view link objects not set';
@@ -270,8 +270,8 @@ class component_link extends sandbox_link
         $result = '';
 
         //$this->load_objects();
-        if ($this->view() != null and $this->component() != null) {
-            $result = $this->view()->name_link(NULL, $back) . ' to ' . $this->component()->name_link(NULL, $back);
+        if ($this->get_view() != null and $this->get_component() != null) {
+            $result = $this->get_view()->name_link(NULL, $back) . ' to ' . $this->get_component()->name_link(NULL, $back);
         } else {
             $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
         }
@@ -284,7 +284,7 @@ class component_link extends sandbox_link
      * interface
      */
 
-    function view(): ?view
+    function get_view(): ?view
     {
         return $this->fob;
     }
@@ -294,7 +294,7 @@ class component_link extends sandbox_link
      * the term function is used to cast a word, triple, verb or formula to a term
      * @return component|null
      */
-    function component(): ?component
+    function get_component(): ?component
     {
         return $this->tob;
     }
