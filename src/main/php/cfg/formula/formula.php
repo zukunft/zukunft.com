@@ -610,6 +610,11 @@ class formula extends sandbox_code_id
         return $result;
     }
 
+
+    /*
+     * load sql
+     */
+
     /**
      * create the SQL to load the default formula always by the id
      *

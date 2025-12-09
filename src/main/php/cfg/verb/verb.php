@@ -494,25 +494,6 @@ class verb extends type_object
      */
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
-    {
-        $qp = parent::load_sql($sc, $query_name, $class);
-
-        $sc->set_class(self::class);
-        $sc->set_name($qp->name);
-        $sc->set_fields(verb_db::FLD_NAMES);
-
-        return $qp;
-    }
-
-    /**
      * create an SQL statement to retrieve a verb by id from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -558,6 +539,25 @@ class verb extends type_object
         $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql($sc, $query_name, $class);
+
+        $sc->set_class(self::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields(verb_db::FLD_NAMES);
 
         return $qp;
     }

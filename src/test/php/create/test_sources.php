@@ -81,7 +81,7 @@ class test_sources
         $src->set(sources::SIB_ID, sources::SIB);
         $src->set_type(source_types::PDF, $this->env->usr1);
         $src->description = sources::SIB_COM;
-        $src->set_url(sources::SIB_URL);
+        $src->url = sources::SIB_URL;
         return $src;
     }
 

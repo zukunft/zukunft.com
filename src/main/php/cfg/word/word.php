@@ -1479,39 +1479,6 @@ class word extends sandbox_code_id
      */
 
     /**
-     * set the word object vars based on an api json array
-     * similar to import_obj but using the database id instead of the names
-     * the other side of the api_obj function
-     *
-     * @param array $api_json the api array
-     * @return user_message false if a value could not be set
-     */
-    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
-    {
-        log_debug();
-        $usr_msg = new user_message();
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == json_fields::TYPE) {
-                $this->type_id = $value;
-            }
-        }
-
-        if ($usr_msg->is_ok() and $do_save) {
-            $this->save($usr_msg);
-        }
-
-        return $usr_msg;
-    }
-
-    /**
      * remember the word view, which means to save the view id for this word
      * each user can define set the view individually, so this is user specific
      */

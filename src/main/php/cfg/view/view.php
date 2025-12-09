@@ -585,26 +585,6 @@ class view extends sandbox_code_id
     }
 
     /**
-     * @return string the description of the view
-     */
-    function comment(): string
-    {
-        if ($this->description == null) {
-            return '';
-        } else {
-            return $this->description;
-        }
-    }
-
-    /**
-     * @return component_link_list|null the list of the component links of this view
-     */
-    function component_link_list(): component_link_list|null
-    {
-        return $this->cmp_lnk_lst;
-    }
-
-    /**
      * @return component_list the list of the linked components of this view
      */
     function components(): component_list
@@ -620,7 +600,7 @@ class view extends sandbox_code_id
      */
     function component_links(): int
     {
-        $lst = $this->component_link_list();
+        $lst = $this->cmp_lnk_lst;
         if ($lst == null) {
             return 0;
         } else {
@@ -715,6 +695,11 @@ class view extends sandbox_code_id
         }
         return $result;
     }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
@@ -1113,7 +1098,7 @@ class view extends sandbox_code_id
      */
     function save_component_links(user_message $usr_msg): bool
     {
-        return $this->component_link_list()->save($usr_msg);
+        return $this->cmp_lnk_lst->save($usr_msg);
     }
 
     /**

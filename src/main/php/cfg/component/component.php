@@ -1010,6 +1010,11 @@ class component extends sandbox_code_id
         return $result;
     }
 
+
+    /*
+     * load sql
+     */
+
     /**
      * create the SQL to load the default view always by the id
      *
@@ -1028,10 +1033,6 @@ class component extends sandbox_code_id
 
         return parent::load_sql_standard($sc);
     }
-
-    /*
-     * load sql
-     */
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
@@ -1083,7 +1084,7 @@ class component extends sandbox_code_id
 
 
     /*
-     * retrieval
+     * related
      */
 
     /**

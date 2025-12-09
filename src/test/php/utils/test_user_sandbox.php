@@ -97,7 +97,7 @@ function run_sandbox_test(all_tests $t): void
     // update the source url by name (_sandbox->save case 2)
     $src = new source($t->usr1);
     $src->set_name(sources::IPCC_AR6_SYNTHESIS);
-    $src->set_url(sources::IPCC_AR6_SYNTHESIS_URL);
+    $src->url = sources::IPCC_AR6_SYNTHESIS_URL;
     $src->save($usr_msg);
     $result = $usr_msg->get_last_message();
     $target = '';
@@ -112,7 +112,7 @@ function run_sandbox_test(all_tests $t): void
     // check if the source url has been updates (check _sandbox->save case 2)
     $src = new source($t->usr1);
     if ($src->load_by_id($src_id)) {
-        $result = $src->url();
+        $result = $src->url;
     }
     $target = sources::IPCC_AR6_SYNTHESIS_URL;
     $t->assert('_sandbox->save check if the source url has been updates', $result, $target);

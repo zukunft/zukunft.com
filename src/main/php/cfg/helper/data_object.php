@@ -1145,7 +1145,7 @@ class data_object
             $cmp_lst = $this->component_list();
             foreach ($this->view_list()->lst() as $msk) {
                 if ($msk->has_components()) {
-                    foreach ($msk->component_link_list()->lst() as $lnk) {
+                    foreach ($msk->cmp_lnk_lst->lst() as $lnk) {
                         $cmp = $lnk->get_component();
                         if ($cmp->id() == 0) {
                             if ($cmp->name() == '') {

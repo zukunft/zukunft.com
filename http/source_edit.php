@@ -90,7 +90,7 @@ if ($usr->id() > 0) {
                 $src->set_name($_GET[url_var::NAME]);
             }
             if (isset($_GET[url_var::URL])) {
-                $src->set_url($_GET[url_var::URL]);
+                $src->url = $_GET[url_var::URL];
             }
             if (isset($_GET[url_var::DESCRIPTION])) {
                 $src->description = $_GET[url_var::DESCRIPTION];

@@ -205,6 +205,10 @@ class component_link extends sandbox_link
      * construct and map
      */
 
+    /**
+     * set the user and fix the setting of this component link object
+     * @param user $usr the user who requested to see the view with the linked components
+     */
     function __construct(user $usr)
     {
         parent::__construct($usr);
@@ -219,6 +223,11 @@ class component_link extends sandbox_link
         $this->reset_objects($usr);
     }
 
+    /**
+     * set the vars of this component link object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
@@ -922,6 +931,37 @@ class component_link extends sandbox_link
     }
 
     /**
+     * load the component_link by the link id
+     *
+     * @param int $view_id the id of the view
+     * @return int the max order number of components related to the given view
+     */
+    function load_max_pos_by_view(int $view_id): int
+    {
+        global $db_con;
+        $qp = $this->load_sql_max_pos($db_con->sql_creator(), $view_id);
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            if (array_key_exists(sql::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
+                if ($db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR] != null) {
+                    return $db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR];
+                } else {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+
+    /*
+     * load sql
+     */
+
+    /**
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -963,35 +1003,42 @@ class component_link extends sandbox_link
     }
 
     /**
-     * load the component_link by the link id
+     * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
      *
-     * @param int $view_id the id of the view
-     * @return int the max order number of components related to the given view
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_max_pos_by_view(int $view_id): int
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        global $db_con;
-        $qp = $this->load_sql_max_pos($db_con->sql_creator(), $view_id);
-        $db_row = $db_con->get1($qp);
-        if ($db_row != null) {
-            if (array_key_exists(sql::MAX_PREFIX . self::FLD_ORDER_NBR, $db_row)) {
-                if ($db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR] != null) {
-                    return $db_row[sql::MAX_PREFIX . self::FLD_ORDER_NBR];
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        } else {
-            return 0;
-        }
+        $qp = new sql_par($class);
+        $qp->name .= $query_name;
+
+        $sc->set_class($class);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->get_user()->id);
+        $sc->set_fields(self::FLD_NAMES_LINK);
+        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+
+        return $qp;
     }
 
-
-    /*
-     * load sql
+    /**
+     * create an SQL statement to retrieve the user changes of the current view component link
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
+    function load_sql_user_changes(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        return parent::load_sql_user_changes($sc, $sc_par_lst);
+    }
 
     /**
      * create an SQL statement to load the component_link by the link id
@@ -1051,47 +1098,9 @@ class component_link extends sandbox_link
         return $qp;
     }
 
-    /**
-     * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
-    {
-        $qp = new sql_par($class);
-        $qp->name .= $query_name;
-
-        $sc->set_class($class);
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(self::FLD_NAMES_LINK);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve the user changes of the current view component link
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(
-        sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
-        return parent::load_sql_user_changes($sc, $sc_par_lst);
-    }
-
 
     /*
-     * retrieval
+     * related
      */
 
     /**

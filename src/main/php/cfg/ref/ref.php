@@ -181,7 +181,7 @@ class ref extends sandbox_link
     private ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
-    private ?string $url;
+    public ?string $url;
     private ?string $code_id = null;
     public ?string $description = null;
 

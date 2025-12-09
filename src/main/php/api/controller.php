@@ -44,10 +44,9 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -289,6 +288,7 @@ class controller
 
         // method switch
         log_debug($method);
+        $usr_msg = new user_message();
         switch ($method) {
             case rest_ctrl::PUT:
                 // get json object body to put
@@ -296,23 +296,20 @@ class controller
                 $request_json = json_decode($request_text, true);
                 $request_body = $this->check_api_msg($request_json);
 
-                // call to backend
-                $result = $this->put($request_body, $obj::class);
-
-                // return the result
-                if (is_numeric($result)) {
+                // call to backend and return the result
+                if ($this->put($request_body, $obj, $usr_msg)) {
 
                     // set response code - 200 OK
                     http_response_code(200);
                     echo json_encode(
-                        array(url_var::ID => $result)
+                        array(url_var::ID => $usr_msg->get_row_id())
                     );
                 } else {
 
                     // set response code - 400 Bad Request
                     http_response_code(400);
                     echo json_encode(
-                        array(json_fields::MSG => $result)
+                        array(json_fields::MSG => $usr_msg->get_row_id())
                     );
                 }
                 break;
@@ -367,7 +364,6 @@ class controller
             case rest_ctrl::DELETE:
                 // return the api json or the error message
                 if ($msg == '') {
-                    $usr_msg = new user_message();
 
                     if ($id > 0) {
                         $obj->del($usr_msg);
@@ -438,27 +434,14 @@ class controller
         }
     }
 
-    function put(array $request, string $class): string
+    function put(array $request, db_object_seq_id|sandbox|null $obj, user_message $usr_msg): bool
     {
         global $usr;
-        $result = '';
-        switch ($class) {
-            case word::class:
-                $wrd = new word($usr);
-                $result = $wrd->save_from_api_msg($request)->get_last_message();
-                if ($result == '') {
-                    $result = $wrd->id();
-                }
-                break;
-            case source::class:
-                $src = new source($usr);
-                $result = $src->save_from_api_msg($request)->get_last_message();
-                if ($result == '') {
-                    $result = $src->id();
-                }
-                break;
+        $obj->api_mapper($request, $usr_msg);
+        if ($usr_msg->is_ok()) {
+            $obj->save($usr_msg);
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     function post(array $request): string
