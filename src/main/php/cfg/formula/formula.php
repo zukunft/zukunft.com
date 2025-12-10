@@ -342,44 +342,8 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * import a formula and its links from an import JSON object
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
-     * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return bool true if everything was fine
-     */
-    function import_mapper_user(
-        array        $in_ex_json,
-        user         $usr_req,
-        user_message $usr_msg,
-        ?data_object $dto = null
-    ): bool
-    {
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
-
-        if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
-            if ($in_ex_json[json_fields::USR_TEXT] <> '') {
-                $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
-            }
-        }
-        // TODO Prio 2 decide if either it should be named expression or user text or if expression is used for im and export and user text for api
-        if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
-            if ($in_ex_json[json_fields::EXPRESSION] <> '') {
-                $this->set_user_text($in_ex_json[json_fields::EXPRESSION]);
-            }
-        }
-
-        if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
-            $phr_lst = new phrase_list($this->get_user());
-            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
-        }
-
-        return $usr_msg->is_ok();
-    }
-
-    /**
      * set the vars of this formula object based on the given json without writing to the database
+     * and its link phrases based on an import JSON object
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $usr_msg to enrich with warnings, problems and solutions
@@ -403,10 +367,24 @@ class formula extends sandbox_code_id
         } else {
             $this->type_id = $sys->typ_lst->frm_typ->default_id();
         }
+
+        if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
+            if ($in_ex_json[json_fields::USR_TEXT] <> '') {
+                $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
+            }
+        }
+        // TODO Prio 2 decide if either it should be named expression or user text or if expression is used for im and export and user text for api
         if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
             if ($in_ex_json[json_fields::EXPRESSION] <> '') {
                 $this->usr_text = $in_ex_json[json_fields::EXPRESSION];
             }
+        }
+
+        // TODO Prio 2 allow only one way to assign phrases on import
+        // assign the phrases to the formula
+        if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->get_user());
+            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
         }
 
         // assign the phrases to the formula
@@ -1558,7 +1536,7 @@ class formula extends sandbox_code_id
         global $db_con;
 
         // map the json to the object
-        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // assign the formula to the words and triple
         // TODO check if it is done via mapper and save_related

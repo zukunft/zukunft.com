@@ -395,26 +395,24 @@ class user extends db_id_object_non_sandbox
      * set the vars of this user object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
         // map the fields that are common for import and api json messages
-        $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
+        $this->json_mapper($in_ex_json, $usr_msg->usr, $usr_msg);
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code od
-            if ($usr_req->is_admin() or $usr_req->is_system()) {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+            if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
             }
         }
 
@@ -1476,7 +1474,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        $this->import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this user object
         $this->reset();

@@ -321,14 +321,12 @@ class word extends sandbox_code_id
      * set the vars of this word object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -340,7 +338,7 @@ class word extends sandbox_code_id
         $this->reset(true);
 
         // set the object vars based on the json
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $sys->typ_lst->phr_typ->id($in_ex_json[json_fields::TYPE_NAME]);

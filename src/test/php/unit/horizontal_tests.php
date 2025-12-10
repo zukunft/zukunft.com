@@ -222,11 +222,9 @@ class horizontal_tests
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
-                $sys_usr = $t->user_system();
-                $filled_obj->import_mapper_user($ex_json, $sys_usr, $usr_msg, $dto);
-            } else {
-                $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
+                $usr_msg->usr = $t->user_system();
             }
+            $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);

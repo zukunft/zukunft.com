@@ -156,14 +156,12 @@ class sandbox_typed extends sandbox_named
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add the type to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add the type to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -171,9 +169,9 @@ class sandbox_typed extends sandbox_named
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $usr_req);
+            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $usr_msg->usr);
         } elseif (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req);
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr);
         }
 
         return $usr_msg->is_ok();

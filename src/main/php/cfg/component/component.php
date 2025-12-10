@@ -373,19 +373,17 @@ class component extends sandbox_code_id
     /**
      * import a view component from a JSON object
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
             global $mtr;
@@ -414,7 +412,7 @@ class component extends sandbox_code_id
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $type_name = $in_ex_json[json_fields::TYPE_NAME];
             if ($type_name != '') {
-                $this->set_type_id($this->type_id_by_code_id($type_name), $usr_req);
+                $this->set_type_id($this->type_id_by_code_id($type_name), $usr_msg->usr);
             }
         }
 

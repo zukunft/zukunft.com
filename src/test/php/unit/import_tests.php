@@ -78,37 +78,37 @@ class import_tests
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->word_list()->count(), 4);
 
         $test_name = 'JSON import verbs count';
         $json_str = file_get_contents(test_files::IMPORT_VERBS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->verb_list()->count(), 1);
 
         $test_name = 'JSON import triple count';
         $json_str = file_get_contents(test_files::IMPORT_TRIPLES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->triple_list()->count(), 6);
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->source_list()->count(), 3);
 
         $test_name = 'JSON import value count';
         $json_str = file_get_contents(test_files::IMPORT_VALUES . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->value_list()->count(), 4);
 
         $test_name = 'JSON import formula count';
         $json_str = file_get_contents(test_files::IMPORT_FORMULAS . test_files::JSON);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array);
+        $dto = $imp->get_data_object($json_array, $usr_msg);
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
         $test_name = 'JSON import warning creation';
