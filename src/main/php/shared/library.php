@@ -1708,6 +1708,12 @@ class library
             => 'none',
             'to_num', 'export_json'
             => 'db_read',
+            'import_mapper', 'import_mapper_user'
+            => 'horizontal_tests',
+            'row_mapper_sandbox'
+            => 'horizontal_read_tests',
+            'api_mapper'
+            => 'horizontal_ui_tests',
             'calc', 'import_obj',
             => 'db_write',
             default => 'unit'

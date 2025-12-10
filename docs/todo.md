@@ -8,6 +8,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO review and create missinf formula unit, read and write tests
+    TODO check the formula test coverage via script
+    TODO split the formula backend class into formula_base, formula_calc and the interface formula class
     TODO group the function by suggested test category which is unit, db read or db write
          and check automatically that each case is at least covered by a test
          start with the formula unit tests

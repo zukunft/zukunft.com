@@ -244,6 +244,17 @@ class def
         component_link::class,
     ];
 
+    // list of classes that have a unique name
+    const array NAME_CLASSES = [
+        word::class,
+        verb::class,
+        triple::class,
+        source::class,
+        formula::class,
+        view::class,
+        component::class,
+    ];
+
     // classes that have a frontend and backend object but are not user specific
     const array SYSTEM_UI_CLASSES = [
         language::class,

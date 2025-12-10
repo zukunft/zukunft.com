@@ -2,8 +2,10 @@
 
 /*
 
-  test/unit/formula.php - unit testing of the formula functions
-  ---------------------
+    test/unit/formula.php - unit testing of the formula functions
+    ---------------------
+
+    TODO move the sql tests to a separate class
   
 
     This file is part of zukunft.com - calc with words
