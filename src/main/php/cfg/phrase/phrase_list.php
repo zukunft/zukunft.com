@@ -633,31 +633,29 @@ class phrase_list extends sandbox_list_named
     /**
      * fill this list with the phrases of the given json without writing to the database
      * @param array $json_array
-     * @return user_message
+     * @param user_message $usr_msg to collect the message and including the requesting user
+     * @return bool true if the import context has been mapped
      */
-    function import_context(array $json_array): user_message
+    function import_context(array $json_array, user_message $usr_msg): bool
     {
-        global $usr;
-
-        $usr_msg = new user_message();
         foreach ($json_array as $key => $json_obj) {
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
-                    $wrd = new word($usr);
-                    if ($wrd->import_mapper_user($word, $usr, $usr_msg)) {
+                    $wrd = new word($usr_msg->usr);
+                    if ($wrd->import_mapper($word, $usr_msg)) {
                         $this->add_by_name($wrd->phrase());
                     }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
-                    $trp = new triple($usr);
+                    $trp = new triple($usr_msg->usr);
                     if ($trp->import_mapper($triple, $usr_msg)) {
                         $this->add_by_name($trp->phrase());
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

@@ -1708,7 +1708,7 @@ class library
             => 'none',
             'to_num', 'export_json'
             => 'db_read',
-            'import_mapper', 'import_mapper_user'
+            'import_mapper'
             => 'horizontal_tests',
             'row_mapper_sandbox'
             => 'horizontal_read_tests',
@@ -1742,7 +1742,7 @@ class library
         // assign the function to class sections
         $result = match ($fnc_name) {
             '__construct', 'reset', 'row_mapper_sandbox', 'row_mapper_verb',
-            'api_mapper', 'import_mapper', 'import_mapper_user'
+            'api_mapper', 'import_mapper'
             => 'construct and map',
             'load_standard'
             => 'load',

@@ -260,14 +260,12 @@ class view extends sandbox_code_id
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -279,7 +277,7 @@ class view extends sandbox_code_id
 
         // reset the all parameters for the view object but keep the user
         $this->reset(true);
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
@@ -287,7 +285,7 @@ class view extends sandbox_code_id
             $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req));
+            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr));
         }
 
         // TODO get component from the dto object
@@ -413,7 +411,7 @@ class view extends sandbox_code_id
     ): bool
     {
         global $db_con;
-        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         if ($db_con->is_open()) {
             if ($this->name == '') {

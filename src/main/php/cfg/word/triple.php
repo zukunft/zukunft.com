@@ -384,14 +384,12 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req if it is a system user the import can also set the code_id
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the inclded user is a system user the import can also set the code_id
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -499,7 +497,7 @@ class triple extends sandbox_link_named
             $this->weight = $in_ex_json[json_fields::WEIGHT];
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
         }
 
 
@@ -692,7 +690,7 @@ class triple extends sandbox_link_named
     {
         global $db_con;
 
-        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // add related parameters to the triple object
         if ($usr_msg->is_ok()) {

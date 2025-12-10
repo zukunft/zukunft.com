@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
@@ -45,6 +46,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -191,7 +193,8 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $sys;
+        $usr_msg = new user_message();
+        $usr_msg->usr = $usr;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
@@ -199,7 +202,7 @@ class convert_wikipedia_table
         $ignore_names = []; // list of phrase names that indicate a columns should not be included in the result
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
-            $phr_lst->import_context(json_decode($context, true));
+            $phr_lst->import_context(json_decode($context, true), $usr_msg);
             $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
             $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
             $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
