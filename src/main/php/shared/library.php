@@ -1695,6 +1695,38 @@ class library
     }
 
     /**
+     * returns the main test category for a function
+     * e.g.
+     *
+     * @param string $fnc_name the name of the function
+     * @return string name of the expected test category
+     */
+    function php_function_to_test_category(string $fnc_name): string
+    {
+        $tst_cat = match ($fnc_name) {
+            '__construct'
+            => 'none',
+            'to_num', 'export_json'
+            => 'db_read',
+            'calc', 'import_obj',
+            => 'db_write',
+            default => 'unit'
+        };
+        if ($tst_cat == '') {
+            if (str_starts_with($fnc_name, 'load_sql_')) {
+                $tst_cat = 'unit';
+            } elseif (str_starts_with($fnc_name, 'load_')
+                or str_starts_with($fnc_name, 'reload_')) {
+                $tst_cat = 'db_read';
+            } elseif (str_starts_with($fnc_name, 'save')
+                or str_starts_with($fnc_name, 'assign_')) {
+                $tst_cat = 'db_write';
+            }
+        }
+        return $tst_cat;
+    }
+
+    /**
      * get the expected class section name for a function
      * @param string $fnc_name the name of the function
      * @return string name of the expected class section

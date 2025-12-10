@@ -634,11 +634,6 @@ class formula extends sandbox_code_id
         return parent::load_sql_standard($sc);
     }
 
-
-    /*
-     * load sql
-     */
-
     /**
      * create the common part of an SQL statement to retrieve
      * the parameters of a formula from the database

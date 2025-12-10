@@ -8,6 +8,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO group the function by suggested test category which is unit, db read or db write
+         and check automatically that each case is at least covered by a test
+         start with the formula unit tests
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
     TODO type versus predicate:
