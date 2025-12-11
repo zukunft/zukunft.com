@@ -3746,6 +3746,22 @@ class test_base
     }
 
     /**
+     * check if calling the reset function clear all relevant vars of the object
+     * @param sandbox_named|sandbox_link|sandbox_value $sbx the object filled with all vars
+     * @param string $msg the expected error message if the object is not yet ready to be added to the database
+     * @return bool true if the reset object creates an empty api message
+     */
+    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value $sbx, string $msg = ''): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' reset creates empty api json';
+        $sbx->reset();
+        $api_json = $sbx->api_json([api_type::TEST_MODE]);
+        return $this->assert($test_name, $api_json, '{"id":0}');
+    }
+
+    /**
      * check if the filling up an almost empty object matches the filled object
      * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
      * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars

@@ -423,7 +423,7 @@ class triple extends sandbox_link_named
                             // create a phrase without saving to the database
                             $phr = new phrase($this->get_user());
                             $phr->set_name($value, word::class);
-                            if ($phr->db_ready()) {
+                            if ($phr->db_ready($usr_msg)) {
                                 $this->set_from($phr);
                             } else {
                                 $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
@@ -451,7 +451,7 @@ class triple extends sandbox_link_named
                         // create a phrase without saving to the database
                         $phr = new phrase($this->get_user());
                         $phr->set_name($value, word::class);
-                        if ($phr->db_ready()) {
+                        if ($phr->db_ready($usr_msg)) {
                             $this->set_to($phr);
                         } else {
                             $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
@@ -2048,26 +2048,26 @@ class triple extends sandbox_link_named
     /**
      * check if the triple might be added to the database
      * if all related objects have been added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @return bool false if a mandatory var of the triple is not yet set that will not be added if the linked phrased are saved
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::can_be_ready();
+        parent::can_be_ready($usr_msg);
         $usr_msg->add($this->check());
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * check if the triple can be added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the triple can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
         $usr_msg->add($this->check());
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

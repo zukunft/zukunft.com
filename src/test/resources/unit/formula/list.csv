@@ -22,7 +22,7 @@ formula_id,user_id,formula_name,formula_text,resolved_text,description,formula_t
 21,1,increase,{w159}=({f18}-{f20})/{f20},"percent" = ( "this" - "prior" ) / "prior",calculate the increase in percent e.g. yearly,1,,,,,,,
 22,1,scale trillion to one,{w4}={w255}*1000000000000,"one" = "trillion" * 1000000000000,,1,,,,,,,
 23,1,global happy time points,{w254}={w254},{w159}*{w193},{w14},{w253},"htp" = "htp","percent" * "global","human","population",,1,,,,,,,
-24,1,PE Ratio,={t128}/{w283},= "Share Price" / "Earnings",,1,,,,,,,
+24,1,PE Ratio,={t129}/{w283},= "Share Price" / "Earnings",,1,,,,,,,
 25,1,scale pence to Pound,{w268}={w271}*100,"Pound sterling" = "pence" * 100,,1,,,,,,,
 26,1,city population,{w286}=&sum;({w196}{v2}{w187}),"total" = &sum; ( "inhabitants" "of all" "City" ),,1,,,,,,,
 27,1,countryside population,,"total" = "total" "inhabitants" - "city population",,1,,,,,,,

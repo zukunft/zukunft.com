@@ -42,6 +42,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_api;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -158,7 +159,8 @@ class api_tests
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
         $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
-        $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_SYMBOL_ID, -1, -2]);
+        // TODO Prio 1 review and add triple links to phrases
+        $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID, triples::MATH_CONST_ID * -1, triples::PI_ID * -1]);
         // TODO Prio 0 activate
         // $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);

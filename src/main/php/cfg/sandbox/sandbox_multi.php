@@ -2072,19 +2072,17 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * check if the sandbox can be added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. the user
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. the user
+     * @return  bool true if the value or result can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->get_user() == null) {
             $this->set_user($this->get_user());
             $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

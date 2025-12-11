@@ -979,11 +979,9 @@ class formula_list extends sandbox_list_named
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            $frm_msg = $frm->db_ready();
-            if ($frm_msg->is_ok()) {
+            if ($frm->db_ready($usr_msg)) {
                 $frm_lst->add_by_name($frm);
             } else {
-                $usr_msg->add($frm_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),

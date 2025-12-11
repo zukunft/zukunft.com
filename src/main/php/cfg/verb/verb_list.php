@@ -683,7 +683,13 @@ class verb_list extends type_list
             $usr_msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
-                $vrb->save($usr_msg);
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $vrb_usr_msg = $usr_msg->clone_reset();
+                // actual save the reference to the database
+                $vrb->save($vrb_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($vrb_usr_msg);
             }
         }
 

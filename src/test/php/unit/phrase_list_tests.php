@@ -139,7 +139,7 @@ class phrase_list_tests
         $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t_phr->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
-        $t->assert($test_name, $wrd_lst->count(), 4);
+        $t->assert($test_name, $wrd_lst->count(), 3);
 
         // TODO add assume time sql statement test
 
@@ -156,7 +156,7 @@ class phrase_list_tests
 
         $t->subheader($ts . 'api');
 
-        $phr_lst = $t_phr->phrase_list();
+        $phr_lst = $t_phr->phrase_list_api();
         $t->assert_api($phr_lst);
 
 

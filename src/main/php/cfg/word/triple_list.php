@@ -902,11 +902,9 @@ class triple_list extends sandbox_list_named
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
-            $trp_msg = $trp->db_ready();
-            if ($trp_msg->is_ok()) {
+            if ($trp->db_ready($usr_msg)) {
                 $trp_lst->add_by_name($trp);
             } else {
-                $usr_msg->add($trp_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_TRIPLE_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_TRIPLE_NAME => $trp->dsp_id(),

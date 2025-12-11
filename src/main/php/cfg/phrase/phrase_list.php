@@ -2223,11 +2223,23 @@ class phrase_list extends sandbox_list_named
 
         // add the missing phrase
         foreach ($add_lst->lst() as $phr) {
-            $phr->save($usr_msg);
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $phr_usr_msg = $usr_msg->clone_reset();
+            // actual save the phrase to the database
+            $phr->save($phr_usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($phr_usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $phr_usr_msg = $usr_msg->clone_reset();
+            // actual save the phrase to the database
             $phr->save($usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($phr_usr_msg);
         }
 
         return $usr_msg->is_ok();

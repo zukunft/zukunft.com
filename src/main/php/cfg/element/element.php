@@ -454,11 +454,14 @@ class element extends db_object_seq_id_user
     }
 
     /**
-     * @return user_message empty if all vars of the underlying object are set and the phrase can be stored in the database
+     * checks if the element object can be added to the database
+     *
+     * @param user_message $usr_msg the explanation for the user why the element cannot yet be added to the database
+     * @return true if all mandatory vars of the element are set and the element can be stored in the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return $this->obj->db_ready();
+        return $this->obj->db_ready($usr_msg);
     }
 
 

@@ -1158,19 +1158,26 @@ class term extends combine_named
     }
 
     /**
-     * @return user_message ok message if this word or triple might be read to be added to the database
+     * check if the word, verb, triple or formula can be added to the database if all related terms are added
+     * the differentiation to the db_ready is relevant to save a list of triples to the database
+     * where some triples are part of other triples that have to be added with another save list attempt
+     * @param user_message $usr_msg fill up with the message if this term might be read to be added to the database
+     * @return bool true if another save list attempt is expected to add more word, verb, triple or formula to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->can_be_ready();
+        return $this->obj()->can_be_ready($usr_msg);
     }
 
     /**
-     * @return user_message ok message if this word or triple can be added to the database
+     * checks if the word, verb, triple or formula object can be added to the database
+     *
+     * @param user_message $usr_msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
+     * @return true if all mandatory vars of the underlying object are set and the term can be stored in the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->db_ready();
+        return $this->obj()->db_ready($usr_msg);
     }
 
     /**

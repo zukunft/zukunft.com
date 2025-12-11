@@ -715,20 +715,22 @@ class verb extends type_object
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg to fill with the suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the verb can be added to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->db_ready();
+        return $this->db_ready($usr_msg);
     }
 
     /**
-     * @return user_message empty if all vars of the phrase are set and the phrase can be stored in the database
+     * check if the named sandbox object can be added to the database
+     * @param user_message $usr_msg empty if all vars of the verb are set and the verb can be stored in the database
+     * @return bool true if the verb can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 

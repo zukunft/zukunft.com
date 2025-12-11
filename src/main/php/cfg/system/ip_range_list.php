@@ -171,7 +171,12 @@ class ip_range_list extends base_list
 
             // TODO replace this slow temp solution with the proper block saving like indicated in the comment below
             foreach ($this->lst() as $ip) {
-                $ip->save($usr_msg);
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $ip_usr_msg = $usr_msg->clone_reset();
+                $ip->save($ip_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($ip_usr_msg);
             }
 
             /*

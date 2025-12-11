@@ -102,6 +102,21 @@ class test_triples
     }
 
     /**
+     * TODO PRIO 1
+     * @return triple as it is returned at the moment via phrase list api, means without links
+     */
+    function triple_api(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::MATH_CONST_ID, triples::MATH_CONST);
+        $trp->description = triples::MATH_CONST_COM;
+        $trp->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        global $sys;
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        return $trp;
+    }
+
+    /**
      * @return triple with all fields set and a reserved test name for testing the db write function
      */
     function triple_filled(): triple
@@ -193,6 +208,19 @@ class test_triples
         $trp->set_from($t_wrd->word_pi()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
+        $trp->set_type(phrase_type::TRIPLE_HIDDEN, $this->env->usr1);
+        return $trp;
+    }
+
+    /**
+     * TODO PRIO 1
+     * @return triple pi as it is returned at the moment via phrase list api, means without links
+     */
+    function triple_pi_api(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::PI_ID, triples::PI_NAME);
+        $trp->description = triples::PI_COM;
         $trp->set_type(phrase_type::TRIPLE_HIDDEN, $this->env->usr1);
         return $trp;
     }
@@ -644,7 +672,7 @@ class test_triples
     function triple_list_one(): triple_list
     {
         $lst = new triple_list($this->env->usr1);
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         return $lst;
     }
 
@@ -655,7 +683,7 @@ class test_triples
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled());
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         $lst->add($this->triple_gwp());
         return $lst;
     }

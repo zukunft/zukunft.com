@@ -454,6 +454,8 @@ class sandbox_list_named extends sandbox_list
      */
     function add_by_name(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
     {
+        // TODO Prio 1 add $usr_msg to the parameters
+        $usr_msg = new user_message();
         $result = false;
         if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
@@ -461,9 +463,7 @@ class sandbox_list_named extends sandbox_list
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     // add only objects that have all mandatory values
-                    $result = $obj_to_add->can_be_ready()->is_ok();
-
-                    if ($result) {
+                    if ($obj_to_add->can_be_ready($usr_msg)) {
                         $this->add_direct($obj_to_add);
                         $this->set_lst_dirty();
                     }
@@ -735,10 +735,11 @@ class sandbox_list_named extends sandbox_list
         bool                                                         $allow_duplicates = false
     ): user_message
     {
+        // TODO Prio 1 add $usr_msg as parameter
         $usr_msg = new user_message();
 
         // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
+        $obj_to_add->db_ready($usr_msg);
 
         // add only object with the same user
         $usr_msg->add($this->same_user($obj_to_add));
@@ -1202,10 +1203,13 @@ class sandbox_list_named extends sandbox_list
      */
     function sql_insert_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
     {
+        // TODO Prio 1 add $usr_msg as parameter
+        $usr_msg = new user_message();
+
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready()) {
+            if ($sbx->db_ready($usr_msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 if ($use_func) {
@@ -1234,6 +1238,9 @@ class sandbox_list_named extends sandbox_list
         bool               $use_func = true
     ): sql_par_list
     {
+        // TODO Prio 1 add $usr_msg as parameter
+        $usr_msg = new user_message();
+
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             $db_row = $db_lst->get_by_name($sbx->name());
@@ -1242,7 +1249,7 @@ class sandbox_list_named extends sandbox_list
                 // do not overwrite db values not set by the import
                 $sbx->fill($db_row, $usr_req);
 
-                if (!$sbx->db_ready()) {
+                if (!$sbx->db_ready($usr_msg)) {
                     log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
                 } else {
                     if (!$sbx->needs_db_update($db_row)) {

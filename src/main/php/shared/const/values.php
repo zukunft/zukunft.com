@@ -47,7 +47,7 @@ class values
     CONST float PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST float PI = 3.1415926535898; // pi
     CONST float PI_SHORT = 3.1415927; // pi
-    const int PI_ID = 32819;
+    const int PI_ID = 32770;
     const int PI_SYMBOL_ID = 32770;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number

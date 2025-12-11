@@ -602,19 +602,19 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg to add the suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
 
         if ($this->needs_triple_from()) {
             if ($this->fob == null) {
                 $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                $usr_msg->add($this->fob->can_be_ready());
+                $this->fob->can_be_ready($usr_msg);
             }
         }
         if ($this->needs_to()) {
@@ -624,11 +624,11 @@ class sandbox_link extends sandbox
             } else {
                 // a reference have only an external key but not a target object
                 if ($this::class != ref::class) {
-                    $usr_msg->add($this->tob->can_be_ready());
+                    $this->tob->can_be_ready($usr_msg);
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     private function needs_triple_from(): bool
@@ -654,11 +654,12 @@ class sandbox_link extends sandbox
      * returns ok message if this link e.g. triple can be added to the database
      * if e.g. the database id of the from or the to object is missing
      *         first the linked object needs to be added to the database
-     * @return user_message the explanation why the link cannot yet be added to the database
+     * @param user_message $usr_msg is enriched with the explanation why the link cannot yet be added to the database
+     * @return bool false if something is missing
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
 
         if ($this->needs_triple_from()) {
             if ($this->fob == null) {
@@ -682,7 +683,7 @@ class sandbox_link extends sandbox
 
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

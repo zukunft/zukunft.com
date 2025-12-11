@@ -153,7 +153,7 @@ class group_tests
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
             '..../Y-.....0-...../-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t_phr->phrase_list()),
-            '.....0-...../-...../+.....0+.....3+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_17_plus()),

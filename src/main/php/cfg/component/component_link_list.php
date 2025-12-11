@@ -351,6 +351,7 @@ class component_link_list extends sandbox_link_list
 
     /**
      * simple but slow function to add of update all list items in the database
+     * TODO Prio 0 apply the user_message reset to all lists
      * TODO faster mass db update
      *
      * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
@@ -359,15 +360,22 @@ class component_link_list extends sandbox_link_list
     function save(user_message $usr_msg): bool
     {
         foreach ($this->lst() as $sbx) {
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $lnk_usr_msg = $usr_msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
-                if ($cmp->db_ready()) {
+                if ($cmp->db_ready($lnk_usr_msg)) {
                     $cmp->save($usr_msg);
                 }
             }
             // save the link of the view to the component
-            $sbx->save($usr_msg);
+            if ($sbx->db_ready($lnk_usr_msg)) {
+                $sbx->save($lnk_usr_msg);
+            }
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($lnk_usr_msg);
         }
         return $usr_msg->is_ok();
     }

@@ -16,9 +16,9 @@
     "class": "word"
   },
   {
-    "id": 5,
-    "name": "\u03c0",
-    "description": "Symbol for the ratio of the circumference of a circle to its diameter",
+    "id": 17,
+    "name": "Pi",
+    "description": "ratio of the circumference of a circle to its diameter",
     "type_id": 17,
     "protection": 3,
     "class": "word"
@@ -33,7 +33,8 @@
   },
   {
     "id": 2,
-    "name": "\u03c0 (unit symbol)",
+    "name": "Pi (math)",
+    "description": "ratio of the circumference of a circle to its diameter",
     "type_id": 22,
     "class": "triple"
   }

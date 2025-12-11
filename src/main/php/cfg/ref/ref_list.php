@@ -262,13 +262,13 @@ class ref_list extends type_list
      */
     function add_by_name_type_and_key(ref|null $to_add): bool
     {
+        // TODO Prio 1 add $usr_msg to the parameters
+        $usr_msg = new user_message();
         $result = false;
         if ($to_add != null) {
             if (!in_array($to_add->get_key(), array_keys($this->key_list()))) {
                 // add only objects that have all mandatory values
-                $result = $to_add->can_be_ready()->is_ok();
-
-                if ($result) {
+                if ($to_add->can_be_ready($usr_msg)) {
                     $this->add_direct($to_add);
                 }
             }
@@ -311,7 +311,13 @@ class ref_list extends type_list
 
         // TODO replace this slow solution
         foreach ($this->lst() as $ref) {
-            $ref->save($usr_msg);
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $ref_usr_msg = $usr_msg->clone_reset();
+            // actual save the reference to the database
+            $ref->save($ref_usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($ref_usr_msg);
         }
         /*
         if ($this->is_empty()) {

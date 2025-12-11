@@ -675,28 +675,28 @@ class sandbox_named extends sandbox
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the named object can be added to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->db_ready();
+        return $this->db_ready($usr_msg);
     }
 
     /**
      * check if the named sandbox object can be added to the database
-     * @return user_message including suggested solutions
-     *                      e.g. if the id and the name are something
+     * @param user_message $usr_msg including suggested solutions e.g. if the id and the name are something
+     * @return bool true if the named object can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
         if ($this->id() == 0) {
             if ($this->name() == '') {
                 $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

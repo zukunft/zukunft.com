@@ -127,6 +127,17 @@ class user_message
         $this->typ_lst = [];
     }
 
+    /**
+     * create user message list without errors but with the original user
+     * @return user_message empty but with the same user
+     */
+    function clone_reset(): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr;
+        return $usr_msg;
+    }
+
 
     /*
      * set and get

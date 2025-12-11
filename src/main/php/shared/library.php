@@ -1706,9 +1706,11 @@ class library
         $tst_cat = match ($fnc_name) {
             '__construct'
             => 'none',
+            'name_field', 'all_sandbox_fields'
+            => 'sql_creator',
             'to_num', 'export_json'
             => 'db_read',
-            'import_mapper'
+            'import_mapper', 'api_json_array', 'fill'
             => 'horizontal_tests',
             'row_mapper_sandbox'
             => 'horizontal_read_tests',
@@ -1719,7 +1721,10 @@ class library
             default => 'unit'
         };
         if ($tst_cat == '') {
-            if (str_starts_with($fnc_name, 'load_sql_')) {
+            if (str_starts_with($fnc_name, 'set')
+                or str_starts_with($fnc_name, 'get_')) {
+                $tst_cat = 'dismiss or unit';
+            } elseif (str_starts_with($fnc_name, 'load_sql_')) {
                 $tst_cat = 'unit';
             } elseif (str_starts_with($fnc_name, 'load_')
                 or str_starts_with($fnc_name, 'reload_')) {

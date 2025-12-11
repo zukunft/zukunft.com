@@ -738,17 +738,18 @@ class formula extends sandbox_code_id
     /**
      * returns ok message if this formula can be added to the database
      * e.g. a formula without expression should not be added to the database
-     * @return user_message the explanation why the link cannot yet be added to the database
+     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @return true if the formula can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
 
         if ($this->ref_text == null and $this->usr_text == null) {
             $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING,
                 [msg_id::VAR_FORMULA => $this->dsp_id()]);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 

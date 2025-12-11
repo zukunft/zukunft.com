@@ -284,7 +284,13 @@ class view_list extends sandbox_list_named
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
-                $msk->save_component_links($usr_msg);
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $cmp_lnk_usr_msg = $usr_msg->clone_reset();
+                // actual save the component link to the database
+                $msk->save_component_links($cmp_lnk_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($cmp_lnk_usr_msg);
             }
         }
         return $usr_msg->is_ok();

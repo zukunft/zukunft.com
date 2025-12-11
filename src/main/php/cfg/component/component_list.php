@@ -454,11 +454,9 @@ class component_list extends sandbox_list_named
     {
         $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
-            $cmp_msg = $cmp->db_ready();
-            if ($cmp_msg->is_ok()) {
+            if ($cmp->db_ready($usr_msg)) {
                 $cmp_lst->add_by_name($cmp);
             } else {
-                $usr_msg->add($cmp_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $cmp->dsp_id(),

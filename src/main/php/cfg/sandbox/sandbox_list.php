@@ -408,10 +408,11 @@ class sandbox_list extends base_list
         bool                                                         $allow_duplicates = false
     ): user_message
     {
+        // TODO Prio 1 add $usr_msg as parameter
         $usr_msg = new user_message();
 
         // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
+        $obj_to_add->db_ready($usr_msg);
 
         // add a missing user to the object
         // or check if the object user matches the list user
