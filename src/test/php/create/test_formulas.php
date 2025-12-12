@@ -45,6 +45,7 @@ include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -158,6 +160,17 @@ class test_formulas
         $frm->include();
         $frm->id = 0;
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
+        return $frm;
+    }
+
+    /**
+     * @return formula with all fields set and a reserved test name for testing the db write function
+     */
+    function formula_filled_not_db_ready(): formula
+    {
+        $frm = $this->formula_filled();
+        $frm->usr_text = '';
+        $frm->ref_text = '';
         return $frm;
     }
 

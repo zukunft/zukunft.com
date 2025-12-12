@@ -1776,7 +1776,7 @@ class library
             => 'ui support',
             'has_cfg', 'not_used', 'not_used_sql', 'can_change', 'not_changed', 'not_changed_sql'
             => 'sandbox',
-            'can_be_ready', 'db_ready', 'check_order'
+            'can_be_ready', 'db_ready', 'check_order', 'is_valid'
             => 'check',
             'get_similar', 'add_insert'
             => 'save',

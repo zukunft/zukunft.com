@@ -137,7 +137,10 @@ class formula_tests
         $t->subheader($ts . 'base object handling');
         $frm = $t_frm->formula_filled();
         $t->assert_reset($frm);
+        $frm = $t_frm->formula_filled();
         $t->assert_db_ready($frm);
+        $frm = $t_frm->formula_filled_not_db_ready();
+        $t->assert_not_db_ready($frm);
 
         $t->subheader($ts . 'api');
         $frm = $t_frm->formula_filled();

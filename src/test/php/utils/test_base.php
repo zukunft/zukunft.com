@@ -3746,19 +3746,33 @@ class test_base
     }
 
     /**
-     * check if calling the reset function clear all relevant vars of the object
-     * @param sandbox_named|sandbox_link|sandbox_value $sbx the object filled with all vars
-     * @param string $msg the expected error message if the object is not yet ready to be added to the database
-     * @return bool true if the reset object creates an empty api message
+     * check if all mandatory vars of the given object are set so that it can be saved in the database
+     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with all vars
+     * @return bool true if the test was successful
      */
-    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value $sbx, string $msg = ''): bool
+    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
     {
+        $usr_msg = new user_message();
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
-        $test_name = $class . ' reset creates empty api json';
-        $sbx->reset();
-        $api_json = $sbx->api_json([api_type::TEST_MODE]);
-        return $this->assert($test_name, $api_json, '{"id":0}');
+        $test_name = $class . ' is db_ready';
+        return $this->assert_true($test_name, $sbx->db_ready($usr_msg));
+    }
+
+    /**
+     * check if an error message is added to the user_message if a mandatory vars of the given object is missing
+     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with some vars
+     * @return bool true if the test was successful
+     */
+    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    {
+        $usr_msg = new user_message();
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is not db_ready';
+        $this->assert_false($test_name, $sbx->db_ready($usr_msg));
+        $test_name = $class . ' message is is not db_ready';
+        return $this->assert_not($test_name, $usr_msg->all_message_text(), '');
     }
 
     /**

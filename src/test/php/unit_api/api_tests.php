@@ -161,8 +161,7 @@ class api_tests
         $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
         // TODO Prio 1 review and add triple links to phrases
         $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_ID, triples::MATH_CONST_ID * -1, triples::PI_ID * -1]);
-        // TODO Prio 0 activate
-        // $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
+        $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);

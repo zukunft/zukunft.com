@@ -1566,6 +1566,26 @@ class user extends db_id_object_non_sandbox
 
 
     /*
+     * check
+     */
+
+    /**
+     * returns ok message if this formula can be added to the database
+     * e.g. a formula without expression should not be added to the database
+     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @return true if the formula can be added to the database
+     */
+    function db_ready(user_message $usr_msg): bool
+    {
+        if (($this->ip_addr == null or $this->ip_addr == '')) {
+            $usr_msg->add_id_with_vars(msg_id::USER_IP_ADDR_MISSING,
+                [msg_id::VAR_USER_NAME => $this->dsp_id()]);
+        }
+        return $usr_msg->is_ok();
+    }
+
+
+    /*
      * modify
      */
 

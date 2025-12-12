@@ -1,10 +1,15 @@
 [
   {
     "id": 1,
+    "protection": 3,
     "name": "mathematics",
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
     "type_id": 1,
-    "protection": 3,
     "class": "word"
+  },
+  {
+    "id": 1182,
+    "name": "mathematics (System Test Word Parent)",
+    "class": "triple"
   }
 ]

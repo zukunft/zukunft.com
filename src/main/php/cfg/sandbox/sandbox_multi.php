@@ -2077,8 +2077,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_ready(user_message $usr_msg): bool
     {
+        if ($this->id == null) {
+            $usr_msg->add_id_with_vars(msg_id::VALUE_ID_MISSING,
+                [msg_id::VAR_VALUE => $this->dsp_id()]);
+        }
         if ($this->get_user() == null) {
-            $this->set_user($this->get_user());
             $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }

@@ -421,6 +421,8 @@ enum messages: string
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
+    case VALUE_ID_MISSING = 'to add a value to the database at least one word must specify the value "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END;
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';
@@ -550,6 +552,9 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not found any more after expected to be added to the database';
 
+    case USER_IP_ADDR_MISSING = 'ip addr for user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" is missing';
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
         . '" is missing in the import message '

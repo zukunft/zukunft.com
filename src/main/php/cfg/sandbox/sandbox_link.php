@@ -609,7 +609,7 @@ class sandbox_link extends sandbox
     {
         parent::db_ready($usr_msg);
 
-        if ($this->needs_triple_from()) {
+        if ($this->needs_from()) {
             if ($this->fob == null) {
                 $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
@@ -629,15 +629,6 @@ class sandbox_link extends sandbox
             }
         }
         return $usr_msg->is_ok();
-    }
-
-    private function needs_triple_from(): bool
-    {
-        if ($this::class == triple::class) {
-            return $this->needs_from();
-        } else {
-            return false;
-        }
     }
 
     function needs_from(): bool
@@ -661,7 +652,7 @@ class sandbox_link extends sandbox
     {
         parent::db_ready($usr_msg);
 
-        if ($this->needs_triple_from()) {
+        if ($this->needs_from()) {
             if ($this->fob == null) {
                 $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
@@ -673,14 +664,16 @@ class sandbox_link extends sandbox
                 }
             }
         }
-        if ($this->tob == null) {
-            $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            if (!$this->tob->is_valid()) {
-                $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+        if ($this->needs_to()) {
+            if ($this->tob == null) {
+                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
+            } else {
+                if (!$this->tob->is_valid()) {
+                    $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+                        [msg_id::VAR_NAME => $this->dsp_id()]);
 
+                }
             }
         }
         return $usr_msg->is_ok();

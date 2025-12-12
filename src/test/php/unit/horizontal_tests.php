@@ -117,6 +117,14 @@ class horizontal_tests
             $t->assert_json_string($test_name, $api_json, test_api::JSON_ID_ONLY);
         }
 
+        $t->subheader($ts . 'db ready');
+        foreach (def::MAIN_CLASSES as $class) {
+            $filled_obj = $t_map->class_to_filled_object($class);
+            $t->assert_db_ready($filled_obj);
+            $filled_obj->reset();
+            $t->assert_not_db_ready($filled_obj);
+        }
+
         $t->subheader($ts . 'sql');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'sql creation for ' . $lib->class_to_name($class);
@@ -129,7 +137,7 @@ class horizontal_tests
             if (!in_array($class, def::NO_FOREIGN_DB_KEY_CLASSES)) {
                 $t->assert_sql_foreign_key_create($obj);
             }
-            // TODO maybe move here from the single class tests
+            // TODO Prio 1 move here from the single class tests
             //$t->assert_sql_insert($sc, $obj, [sql_type::LOG]);
             //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
             //$t->assert_sql_delete($sc, $obj, [sql_type::LOG]);

@@ -745,20 +745,20 @@ class formula extends sandbox_code_id
     {
         parent::db_ready($usr_msg);
 
-        if ($this->ref_text == null and $this->usr_text == null) {
+        if (($this->ref_text == null or $this->ref_text == '')
+            and ($this->usr_text == null or $this->usr_text == '')) {
             $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING,
                 [msg_id::VAR_FORMULA => $this->dsp_id()]);
         }
         return $usr_msg->is_ok();
     }
 
-
-    /*
-     * info
-     */
-
     /**
      * check if all mandatory formula vars are set
+     * the difference between db_ready and is_valid is for named objects that
+     * for db_ready either the id or the name must be set
+     * for is_valid both the id and the name must be set
+     *
      * @return bool true if the formula object probably has already been added to the database
      *              false e.g. if some parameters are missing
      */
@@ -770,6 +770,11 @@ class formula extends sandbox_code_id
         }
         return $result;
     }
+
+
+    /*
+     * info
+     */
 
     /**
      * return the true if the formula has a special type and the result is a kind of hardcoded
@@ -932,6 +937,13 @@ class formula extends sandbox_code_id
 
     /**
      * lists of all words directly assigned to a formula and where the formula should be used
+     * TODO rename to
+     * - linked_phrases:               for the phrases directly linked       to the formula based on the user settings
+     * - linked_phrases_standard:      for the phrases directly linked       to the formula based on the standard settings for new user
+     * - linked_phrases_all_user:      for the phrases directly linked       to the formula for any user
+     * - linked_foaf_phrases:          for the linked phrases including foaf to the formula based on the user settings
+     * - linked_foaf_phrases_standard: for the linked phrases including foaf to the formula based on the standard settings for new user
+     * - linked_foaf_phrases_all_user: for the linked phrases including foaf to the formula for any user
      */
     function assign_phr_glst_direct($sbx): ?phrase_list
     {
@@ -958,6 +970,7 @@ class formula extends sandbox_code_id
 
     /**
      * the complete list of a phrases assigned to a formula
+     * TODO rename to linked_foaf_phrases_standard
      */
     function assign_phr_lst_direct(): ?phrase_list
     {
@@ -1118,6 +1131,7 @@ class formula extends sandbox_code_id
         $all_elm_grp_filled = true;
 
         // loop over the element groups and replace the symbol with a number
+        // TODO move to an element_exe class
         foreach ($elm_grp_lst->lst() as $elm_grp) {
 
             // get the figures based on the context e.g. the formula element "Share Price" for the context "ABB" can be 23.11
@@ -1256,6 +1270,7 @@ class formula extends sandbox_code_id
         }
 
         // calculate the final numeric results
+        // TODO move to a result_list_exe class
         $lib = new library();
         if ($res_lst->lst() != null) {
             foreach ($res_lst->lst() as $res) {

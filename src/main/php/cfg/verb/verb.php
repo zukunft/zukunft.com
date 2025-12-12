@@ -730,6 +730,11 @@ class verb extends type_object
      */
     function db_ready(user_message $usr_msg): bool
     {
+        if ($this->id() == 0) {
+            if ($this->name() == '') {
+                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+            }
+        }
         return $usr_msg->is_ok();
     }
 
