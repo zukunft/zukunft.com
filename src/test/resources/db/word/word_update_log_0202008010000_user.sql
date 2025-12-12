@@ -46,7 +46,7 @@ SELECT word_update_log_0202008010000_user
          'System Test Word Renamed'::text,
          1::bigint,
          12::smallint,
-         'default'::text,
+         'standard'::text,
          1::smallint,
          'time'::text,
          2::smallint,

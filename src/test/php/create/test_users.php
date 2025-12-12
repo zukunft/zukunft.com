@@ -66,6 +66,8 @@ class test_users
         $usr = new user();
         $usr->set_name(users::TEST_USER_NAME);
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->email = users::TEST_USER_MAIL;
+        $usr->set_description(users::TEST_USER_COM);
         $usr->excluded = true;
         return $usr;
     }

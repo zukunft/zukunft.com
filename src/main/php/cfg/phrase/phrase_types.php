@@ -52,33 +52,33 @@ class phrase_types extends type_list
     // the phrase types used for unit testing
     // TODO sync this list with the csv list and write a update process for the prod database
     const array TYPES = array(
-        phrase_type_shared::NORMAL,
-        phrase_type_shared::TIME,
-        phrase_type_shared::MEASURE,
-        phrase_type_shared::TIME_JUMP,
-        phrase_type_shared::CALC,
-        phrase_type_shared::PERCENT,
-        phrase_type_shared::SCALING,
-        phrase_type_shared::SCALING_HIDDEN,
-        phrase_type_shared::LAYER,
-        phrase_type_shared::FORMULA_LINK,
-        phrase_type_shared::OTHER,
-        phrase_type_shared::THIS,
-        phrase_type_shared::NEXT,
-        phrase_type_shared::PRIOR,
-        phrase_type_shared::SCALING_PCT,
-        phrase_type_shared::SCALED_MEASURE,
-        phrase_type_shared::MATH_CONST,
-        phrase_type_shared::MEASURE_DIVISOR,
-        phrase_type_shared::LATEST,
-        phrase_type_shared::KEY,
-        phrase_type_shared::INFO,
-        phrase_type_shared::TRIPLE_HIDDEN,
-        phrase_type_shared::SYSTEM_HIDDEN,
-        phrase_type_shared::GROUP,
-        phrase_type_shared::SYMBOL,
-        phrase_type_shared::RANK,
-        phrase_type_shared::IGNORE
+        phrase_type_shared::NORMAL_NAME => phrase_type_shared::NORMAL,
+        phrase_type_shared::TIME_NAME => phrase_type_shared::TIME,
+        phrase_type_shared::MEASURE_NAME => phrase_type_shared::MEASURE,
+        phrase_type_shared::TIME_JUMP_NAME => phrase_type_shared::TIME_JUMP,
+        phrase_type_shared::CALC_NAME => phrase_type_shared::CALC,
+        phrase_type_shared::PERCENT_NAME => phrase_type_shared::PERCENT,
+        phrase_type_shared::SCALING_NAME => phrase_type_shared::SCALING,
+        phrase_type_shared::SCALING_HIDDEN_NAME => phrase_type_shared::SCALING_HIDDEN,
+        phrase_type_shared::LAYER_NAME => phrase_type_shared::LAYER,
+        phrase_type_shared::FORMULA_LINK_NAME => phrase_type_shared::FORMULA_LINK,
+        phrase_type_shared::OTHER_NAME => phrase_type_shared::OTHER,
+        phrase_type_shared::THIS_NAME => phrase_type_shared::THIS,
+        phrase_type_shared::NEXT_NAME => phrase_type_shared::NEXT,
+        phrase_type_shared::PRIOR_NAME => phrase_type_shared::PRIOR,
+        phrase_type_shared::SCALING_PCT_NAME => phrase_type_shared::SCALING_PCT,
+        phrase_type_shared::SCALED_MEASURE_NAME => phrase_type_shared::SCALED_MEASURE,
+        phrase_type_shared::MATH_CONST_NAME => phrase_type_shared::MATH_CONST,
+        phrase_type_shared::MEASURE_DIVISOR_NAME => phrase_type_shared::MEASURE_DIVISOR,
+        phrase_type_shared::LATEST_NAME => phrase_type_shared::LATEST,
+        phrase_type_shared::KEY_NAME => phrase_type_shared::KEY,
+        phrase_type_shared::INFO_NAME => phrase_type_shared::INFO,
+        phrase_type_shared::TRIPLE_HIDDEN_NAME => phrase_type_shared::TRIPLE_HIDDEN,
+        phrase_type_shared::SYSTEM_HIDDEN_NAME => phrase_type_shared::SYSTEM_HIDDEN,
+        phrase_type_shared::GROUP_NAME => phrase_type_shared::GROUP,
+        phrase_type_shared::SYMBOL_NAME => phrase_type_shared::SYMBOL,
+        phrase_type_shared::RANK_NAME => phrase_type_shared::RANK,
+        phrase_type_shared::IGNORE_NAME => phrase_type_shared::IGNORE,
     );
 
     /*
@@ -100,8 +100,8 @@ class phrase_types extends type_list
     function load_dummy(): void
     {
         $i = 1;
-        foreach (self::TYPES as $type_name) {
-            $type = new type_object($type_name, $type_name, '', $i);
+        foreach (self::TYPES as $type_name => $type_code_id) {
+            $type = new type_object($type_code_id, $type_name, '', $i);
             $this->add($type);
             $i++;
         }

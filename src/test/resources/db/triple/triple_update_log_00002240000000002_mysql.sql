@@ -51,7 +51,7 @@ SELECT triple_update_log_00002240000000002
         'A mathematical constant that never changes e.g. Pi',
         null,
         69,
-        'constant',
+        'math constant',
         17,
         null,
         null,

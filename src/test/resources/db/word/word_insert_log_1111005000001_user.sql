@@ -44,7 +44,7 @@ SELECT word_insert_log_1111005000001_user
          11::smallint,
          'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
          12::smallint,
-         'default'::text,
+         'standard'::text,
          1::smallint,
          87::smallint,
          3::smallint);

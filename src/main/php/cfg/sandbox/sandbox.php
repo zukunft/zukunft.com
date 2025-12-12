@@ -4097,26 +4097,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * the common part of the sql_insert and sql_update functions
-     * TODO include the sql statements to log the changes
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $ext the query name extension to differ the queries based on the fields changed
-     * @return sql_par prepared sql parameter object with the name set
-     */
-    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): sql_par
-    {
-        $qp = new sql_par($this::class, $sc_par_lst, $ext);
-
-        // update the sql creator settings
-        $sc->set_class($this::class, $sc_par_lst);
-        $sc->set_name($qp->name);
-
-        return $qp;
-    }
-
-    /**
      * dummy function which is overwritten by the sandbox link class
      * @return sql_par_field_list with the text values of the linked items for the log
      */

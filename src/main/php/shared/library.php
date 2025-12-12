@@ -1755,7 +1755,7 @@ class library
             => 'preloaded',
             'value_list', 'link_types'
             => 'related',
-            'name_field', 'from_field', 'to_field', 'type_field', 'type_name_field', 'all_sandbox_fields'
+            'name_field', 'from_field', 'to_field', 'type_field', 'type_name_field', 'all_sandbox_fields', 'all_fields'
             => 'sql fields',
             'api_json_array', 'set_by_api_json'
             => 'api',
@@ -1782,6 +1782,8 @@ class library
             => 'save',
             'get_ready', 'reserved_names', 'fixed_names'
             => 'save helper',
+            'sql_insert', 'sql_insert_key_field'
+            => 'sql write',
             'db_fields_all', 'db_fields_changed'
             => 'sql write fields',
             'dsp_id', 'assigned_msk_ids', 'name', 'name_dsp'

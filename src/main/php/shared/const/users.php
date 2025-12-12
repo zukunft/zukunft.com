@@ -107,6 +107,7 @@ class users
     // a test user for db write tests
     const string TEST_USER_NAME = 'zukunft.com system write test user';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
+    const string TEST_USER_MAIL = 'test@zukunft.com';
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
 

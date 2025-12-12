@@ -43,7 +43,7 @@ SELECT word_update_log_0202008010000_user
         'System Test Word Renamed',
         1,
         12,
-        'default',
+        'standard',
         1,
         'time',
         2,

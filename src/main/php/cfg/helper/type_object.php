@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
@@ -57,6 +58,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
 //include_once paths::MODEL_LANGUAGE . 'language_form.php';
+//include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_table_field.php';
@@ -75,11 +77,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
@@ -115,6 +119,12 @@ class type_object extends db_object_seq_id
     const string FLD_ACTION = 'change_action_name';
     const string FLD_TABLE = 'change_table_name';
     const string FLD_FIELD = 'change_table_field_name';
+
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const array FLD_NAMES = array(
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_DESCRIPTION
+    );
 
     // field lists for the table creation
     const array FLD_LST_NAME = array(
@@ -228,7 +238,7 @@ class type_object extends db_object_seq_id
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -505,6 +515,122 @@ class type_object extends db_object_seq_id
     {
         $vars = parent::api_json_array($typ_lst, $usr);
         return array_merge($vars, get_object_vars($this));
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return [
+            $this->id_field_typ($this::class),
+            $this->name_field(),
+            sql_db::FLD_CODE_ID,
+            sql_db::FLD_DESCRIPTION
+        ];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param type_object $typ the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        type_object   $typ,
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst->add_field(
+            $this->id_field_typ($this::class),
+            $typ->id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        if ($typ->name <> $this->name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                    $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $used_old_name = $typ->name;
+            if ($used_old_name == '') {
+                $used_old_name = null;
+            }
+            $lst->add_field(
+                $this->name_field(),
+                $this->name,
+                sandbox_named::FLD_NAME_SQL_TYP,
+                $used_old_name
+            );
+        }
+        if ($typ->code_id !== $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $typ->code_id
+            );
+        }
+        if ($typ->description <> $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_DESCRIPTION,
+                $this->description,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $typ->description
+            );
+        }
+        return $lst;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return type_object::FLD_NAME;
+    }
+
+    function all_fields(): array
+    {
+        return type_object::FLD_NAMES;
     }
 
 

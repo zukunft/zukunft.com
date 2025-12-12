@@ -7,7 +7,7 @@
   {
     "name": "measure_word",
     "type_code_id": "measure",
-    "type": "measure"
+    "type": "measure type"
   },
   {
     "name": "scale_word",

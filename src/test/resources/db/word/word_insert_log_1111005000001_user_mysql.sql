@@ -41,7 +41,7 @@ SELECT word_insert_log_1111005000001_user
          11,
          'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
          12,
-         'default',
+         'standard',
          1,
          87,
          3);
