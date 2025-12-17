@@ -160,6 +160,14 @@ class test_results
         return $res;
     }
 
+    function result_incomplete(): result
+    {
+        $t_grp = new test_groups($this->env);
+        $res = $this->result();
+        $res->set_grp($t_grp->group_incomplete());
+        return $res;
+    }
+
     function result_big(): result
     {
         $t_grp = new test_groups($this->env);

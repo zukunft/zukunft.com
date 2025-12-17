@@ -4,6 +4,8 @@
 
     test/php/unit_write/word_tests.php - write test words to the database and check the results
     ----------------------------------
+
+    just the special test cases not covered by the horizontal write tests
   
 
     This file is part of zukunft.com - calc with words
@@ -59,6 +61,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -80,6 +84,8 @@ class word_write_tests
         // start the test section (ts)
         $ts = 'db write word ';
         $t->header($ts);
+        // TODO Prio 1 add this cleanup before the test to all write tests
+        $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepared');
         $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
@@ -312,7 +318,7 @@ class word_write_tests
         $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
         $t->assert('word->save reject for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
-        // check that the word name cannot be used for a verb, triple or formula anymore
+        // check that the word name cannot be used for a verb, triple or formula any more
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(words::TEST_ADD);
@@ -324,8 +330,9 @@ class word_write_tests
         $t->assert('verb cannot have an already used word name', $result, $target);
 
         // ... triple
-        $trp = new triple($t->usr1);
-        $trp->load_by_name(triples::PI_NAME);
+        $t_trp = new test_triples($t);
+        $trp = $t_trp->triple();
+        $trp->id = 0;
         $trp->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $trp->save($usr_msg);
@@ -334,9 +341,10 @@ class word_write_tests
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
 
-        // ... or formula anymore
-        $frm = new formula($t->usr1);
-        $frm->load_by_name(formulas::SCALE_TO_SEC);
+        // ... or formula any more
+        $t_frm = new test_formulas($t);
+        $frm = $t_frm->formula();
+        $frm->id = 0;
         $frm->set_name(words::TEST_ADD);
         $usr_msg = new user_message($t->usr1);
         $frm->save($usr_msg);
@@ -523,14 +531,8 @@ class word_write_tests
         $t->assert('word->main_wrd_from_txt', $result, $target);
         */
 
-
-        $t->subheader($ts . 'cleanup');
-
         // cleanup - fallback delete
-        $wrd = new word($t->usr1);
-        foreach (words::TEST_WORDS as $wrd_name) {
-            $t->write_named_cleanup($wrd, $wrd_name);
-        }
+        $t_wrd->cleanup($ts);
 
     }
 

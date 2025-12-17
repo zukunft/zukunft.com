@@ -79,6 +79,27 @@ class test_triples
 
 
     /*
+     * cleanup
+     */
+
+    /**
+     * delete any remaining test triples for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        $this->env->subheader($ts . 'cleanup');
+        $trp = new triple($this->env->usr1);
+        foreach (triples::TEST_TRIPLES as $trp_name) {
+            $this->env->write_named_cleanup($trp, $trp_name);
+        }
+
+        // also clean up the words used for the triples
+        $t_wrd = new test_words($this->env);
+        $t_wrd->cleanup($ts);
+    }
+
+
+    /*
      * unit
      */
 
@@ -98,6 +119,17 @@ class test_triples
         $trp->set_type(phrase_type::MATH_CONST, $this->env->usr1);
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        return $trp;
+    }
+
+    /**
+     * @return triple object where the most specific mandatory var is not set which is in case of a word the id and the name of the to phrase
+     */
+    function triple_incomplete(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $trp = $this->triple();
+        $trp->set_to($t_wrd->word_incomplete()->phrase());
         return $trp;
     }
 

@@ -835,7 +835,7 @@ class sandbox_named extends sandbox
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 $msg = 'add and log ' . $this->dsp_id();
                 if ($db_con->insert($qp, $msg, $usr_msg)) {
@@ -852,7 +852,7 @@ class sandbox_named extends sandbox
                 // TODO check that always before a db action is called the db type is set correctly
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc);
+                    $qp = $this->sql_insert($sc, $usr_msg);
                     $msg = 'add ' . $this->dsp_id();
                     if ($db_con->insert($qp, $msg, $usr_msg)) {
                         $this->id = $usr_msg->get_row_id();
@@ -1062,7 +1062,12 @@ class sandbox_named extends sandbox
      * @return bool true if the id fields have been saved
      * @throws Exception
      */
-    function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, user_message $usr_msg): bool
+    function save_id_fields(
+        sql_db $db_con,
+        sandbox $db_rec,
+        sandbox $std_rec,
+        user_message $usr_msg
+    ): bool
     {
         $result = '';
         log_debug($this->dsp_id());
@@ -1083,7 +1088,7 @@ class sandbox_named extends sandbox
                 // TODO Prio 2 activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
                 if ($this->sql_write_prepared()) {
-                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list());
+                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, $usr_msg, new sql_type_list());
                     $db_con->update($qp, $this::class . ' update name', $usr_msg);
                     $result = $usr_msg->get_message();
                 } else {
@@ -1232,18 +1237,21 @@ class sandbox_named extends sandbox
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_switch(
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
-        array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
+        array              $fld_lst_all,
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
@@ -1251,7 +1259,7 @@ class sandbox_named extends sandbox
         if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $usr_msg, $sc_par_lst);
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
@@ -1269,6 +1277,7 @@ class sandbox_named extends sandbox
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
@@ -1277,7 +1286,8 @@ class sandbox_named extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1286,31 +1296,33 @@ class sandbox_named extends sandbox
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
 
         // create the sql to insert the row
-        $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        if ($sc->db_type == sql_db::MYSQL) {
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        if ($usr_msg->is_ok()) {
+            $fvt_insert_list = new sql_par_field_list();
+            $fvt_insert_list->add($fvt_insert);
+            $sc_insert = clone $sc;
+            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+            $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+            if ($sc->db_type == sql_db::MYSQL) {
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+            }
+            $qp_insert->sql = $sc_insert->create_sql_insert(
+                $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+            $qp_insert->par = [$fvt_insert->value];
+
+            // add the insert row to the function body
+            $sql .= ' ' . $qp_insert->sql . '; ';
+
+            // get the new row id for MySQL db
+            if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+                $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+            }
+
+            $qp->sql = $sql;
+            $qp->par_fld = $fvt_insert;
         }
-        $qp_insert->sql = $sc_insert->create_sql_insert(
-            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
-
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_insert->sql . '; ';
-
-        // get the new row id for MySQL db
-        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
-        }
-
-        $qp->sql = $sql;
-        $qp->par_fld = $fvt_insert;
 
         return $qp;
     }
@@ -1344,14 +1356,14 @@ class sandbox_named extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox_named|sandbox $sbx the same named sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_named|sandbox $sbx,
-        sql_type_list         $sc_par_lst = new sql_type_list(),
-        user_message          $usr_msg = new user_message()
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

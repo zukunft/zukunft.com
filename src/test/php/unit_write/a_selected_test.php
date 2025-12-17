@@ -43,6 +43,7 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -144,8 +146,8 @@ class a_selected_test extends test_cleanup
             /*
              * unit testing - with system users
              */
-            $t_db = new test_db_load($this);
-            $t_db->type_list_recreate($this, $this->usr1);
+            //$t_db = new test_db_load($this);
+            //$t_db->type_list_recreate($this, $this->usr1);
 
 
             $ui = new frontend('api based ui tests');
@@ -218,6 +220,7 @@ class a_selected_test extends test_cleanup
             //new word_read_tests()->run($this);
             //new triple_read_tests()->run($this);
             //new source_read_tests()->run($this);
+            new value_read_tests()->run($this);
             //new formula_read_tests()->run($this);
             //new view_read_tests()->run($this);
             //new component_read_tests()->run($this);
@@ -245,12 +248,12 @@ class a_selected_test extends test_cleanup
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
+            new formula_write_tests()->run($this);
             //new formula_link_write_tests()->run($this);
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
-            new view_write_tests()->run($this);
+            //new view_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);

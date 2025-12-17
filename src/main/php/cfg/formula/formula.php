@@ -496,28 +496,38 @@ class formula extends sandbox_code_id
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string $usr_txt the formula expression in the human-readable format
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return void
+     * @return bool true if also the reference text has been updated
      */
-    function set_user_text(string $usr_txt, ?term_list $trm_lst = null): void
+    function set_user_text(
+        string       $usr_txt,
+        ?term_list   $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): bool
     {
         $this->usr_text = $usr_txt;
         $this->usr_text_dirty = false;
         $this->ref_text_dirty = true;
-        $this->generate_ref_text($trm_lst);
+        return $this->generate_ref_text($trm_lst, $usr_msg);
     }
 
-    function get_usr_text(): string
+    function get_usr_text(
+        ?term_list   $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): string
     {
         if ($this->usr_text_dirty) {
-            $this->generate_usr_text();
+            $this->generate_usr_text($trm_lst, $usr_msg);
         }
         return $this->usr_text;
     }
 
-    function get_ref_text(): ?string
+    function get_ref_text(
+        ?term_list   $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): ?string
     {
         if ($this->ref_text_dirty) {
-            $this->generate_ref_text();
+            $this->generate_ref_text($trm_lst, $usr_msg);
         }
         return $this->ref_text;
     }
@@ -745,10 +755,19 @@ class formula extends sandbox_code_id
     {
         parent::db_ready($usr_msg);
 
-        if (($this->ref_text == null or $this->ref_text == '')
-            and ($this->usr_text == null or $this->usr_text == '')) {
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING,
-                [msg_id::VAR_FORMULA => $this->dsp_id()]);
+        if ($this->ref_text == null or $this->ref_text == '') {
+            if ($this->usr_text == null or $this->usr_text == '') {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING, [
+                    msg_id::VAR_FORMULA => $this->dsp_id()
+                ]);
+                // TODO Prio 2 check if it can be activate ()
+                /*
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_REF_EXPRESSION_MISSING, [
+                    msg_id::VAR_FORMULA => $this->dsp_id()
+                ]);
+                */
+            }
         }
         return $usr_msg->is_ok();
     }
@@ -1998,7 +2017,9 @@ class formula extends sandbox_code_id
     {
         if ($this->lnk_lst != null) {
             foreach ($this->lnk_lst->lst() as $lnk) {
-                $lnk->save($usr_msg);
+                if ($lnk->db_ready($usr_msg)) {
+                    $lnk->save($usr_msg);
+                }
             }
         }
     }
@@ -2040,22 +2061,24 @@ class formula extends sandbox_code_id
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param user_message $usr_msg to enrich with problems and suggested solution
-     * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
+     * @return bool true if the update of the reference text was successful and otherwise the error message is added to the user_message object
      */
     function generate_ref_text(
         ?term_list   $trm_lst = null,
         user_message $usr_msg = new user_message()
-    ): string
+    ): bool
     {
-        $result = '';
         if ($this->usr_text != null) {
-            $exp = new expression($this->get_user());
-            $exp->set_user_text($this->usr_text, $trm_lst);
-            $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
-            $this->ref_text_dirty = false;
-            $result .= $exp->err_text;
+            if ($this->ref_text == '' or !$this->ref_text_dirty) {
+                $exp = new expression($this->get_user());
+                $exp->set_user_text($this->usr_text, $trm_lst);
+                $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
+                if ($usr_msg->is_ok()) {
+                    $this->ref_text_dirty = false;
+                }
+            }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2071,7 +2094,6 @@ class formula extends sandbox_code_id
         $exp->set_user_text($this->usr_text);
         $this->ref_text = $exp->ref_text($trm_lst);
         $this->ref_text_dirty = false;
-        $result .= $exp->err_text;
         return $result;
     }
 
@@ -2558,7 +2580,7 @@ class formula extends sandbox_code_id
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
                     $this->id = $usr_msg->get_row_id();
@@ -2617,7 +2639,7 @@ class formula extends sandbox_code_id
      * add or update a formula in the database or create a user formula
      * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param bool $use_func if true, a predefined function is used that also creates the log entries
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
@@ -2668,7 +2690,7 @@ class formula extends sandbox_code_id
         // create an object to check possible duplicates
         $similar = null;
 
-        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        // if a new object is supposed to be added, check upfront for a similar object to prevent adding duplicates
         if ($this->id() == 0) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
@@ -2683,9 +2705,9 @@ class formula extends sandbox_code_id
                         msg_id::VAR_VAL_ID => $similar->dsp_id()
                     ]);
                 } else {
-                    // if similar is found set the id to trigger the updating instead of adding
+                    // if similar is found, set the id to trigger the updating instead of adding
                     $similar->load_by_id($similar->id()); // e.g. to get the type_id
-                    // prevent that the id of a formula is used for the word with the type formula link
+                    // to prevent that the id of a formula is used for the word with the type formula link
                     if (get_class($this) == get_class($similar)) {
                         $this->id = $similar->id();
                     } else {
@@ -2705,18 +2727,18 @@ class formula extends sandbox_code_id
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $usr_msg->add_message_text($this->generate_ref_text());
+                $this->generate_ref_text(null, $usr_msg);
                 if ($usr_msg->is_ok()) {
 
                     log_debug('add');
                     $this->add($usr_msg, $use_func);
                 }
             } else {
-                // if the similar object is not the same as $this object, suggest renaming $this object
+                // if the similar object is different from $this object, suggest renaming $this object
                 if ($similar != null) {
                     log_debug('got similar and suggest renaming or merge');
-                    // e.g. if a source already exists update the source
-                    // but if a word with the same name of a formula already exists suggest a new formula name
+                    // e.g. if a source already exists, update the source
+                    // but if a word with the same name of a formula already exists, suggest a new formula name
                     if (!$this->is_same($similar)) {
                         $usr_msg->add($similar->id_used_msg($this));
                     }
@@ -2731,7 +2753,7 @@ class formula extends sandbox_code_id
                     $db_rec->load_by_id($this->id());
                     log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
 
-                    // relevant is if there is a user config in the database
+                    // relevant is if there is a user config in the database,
                     // so use this information to prevent
                     // the need to forward the db_rec to all functions
                     if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
@@ -2749,7 +2771,7 @@ class formula extends sandbox_code_id
                     }
 
                     // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                    $usr_msg->add_message_text($this->generate_ref_text());
+                    $this->generate_ref_text(null, $usr_msg);
                     if ($usr_msg->is_ok()) {
 
                         // check if the id parameters are supposed to be changed
@@ -2999,14 +3021,14 @@ class formula extends sandbox_code_id
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox|formula $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|formula $sbx,
-        sql_type_list   $sc_par_lst = new sql_type_list(),
-        user_message    $usr_msg = new user_message()
+        user_message    $usr_msg,
+        sql_type_list   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -3015,7 +3037,7 @@ class formula extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -3030,6 +3052,12 @@ class formula extends sandbox_code_id
                 formula_db::FLD_TYPE_SQL_TYP,
                 $sbx->type_id()
             );
+        }
+        // TODO Prio 2 check why reserving the formula name without expression is a useful feature
+        if ($this->ref_text == null and !$sc_par_lst->is_delete()) {
+            $usr_msg->add_id_with_vars(msg_id::MANDATORY_FIELD_NAME_MISSING, [
+                msg_id::VAR_NAME => $this->dsp_id()
+            ]);
         }
         if ($sbx->ref_text !== $this->ref_text) {
             if ($do_log) {

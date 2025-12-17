@@ -565,6 +565,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
@@ -573,7 +574,8 @@ class sandbox_link_named extends sandbox_link
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -583,10 +585,10 @@ class sandbox_link_named extends sandbox_link
         // list of parameters actually used in order of the function usage
         $sql = '';
 
-        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
 
         // create the sql to insert the row
-        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add($fvt_insert);
         $sc_insert = clone $sc;
@@ -642,21 +644,21 @@ class sandbox_link_named extends sandbox_link
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox|sandbox_link_named $sbx the same named sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox|sandbox_link_named $sbx,
-        sql_type_list              $sc_par_lst = new sql_type_list(),
-        user_message               $usr_msg = new user_message()
+        user_message               $usr_msg,
+        sql_type_list              $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
         $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
         return $lst;

@@ -37,5 +37,5 @@ SELECT component_insert_log_11110050000000000000_user (
                52,
                'simply show the word or triple name',
                53,
-               'phrase_name',
+               'word name',
                8);

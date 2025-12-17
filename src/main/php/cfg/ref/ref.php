@@ -1277,7 +1277,7 @@ class ref extends sandbox_link
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
                     $this->id = $usr_msg->get_row_id();
@@ -1456,14 +1456,14 @@ class ref extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|ref $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|ref   $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1473,7 +1473,7 @@ class ref extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included

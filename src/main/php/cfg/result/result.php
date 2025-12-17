@@ -1462,7 +1462,7 @@ class result extends sandbox_value
                     log_debug($msg);
                     $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_update($sc, $res_db);
+                    $qp = $this->sql_update($sc, $res_db, $usr_msg);
                     if ($db_con->update($qp, $msg, $usr_msg)) {
                         $usr_msg->set_db_row_id($row_id);
                     }
@@ -1476,7 +1476,7 @@ class result extends sandbox_value
                 $msg = 'insert result ' . $this->number() . ' for ' . $this->dsp_id();
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc);
+                $qp = $this->sql_insert($sc, $usr_msg);
                 if ($db_con->insert($qp, $msg, $usr_msg)) {
                     $usr_msg->set_db_row_id($row_id);
                 }
@@ -1516,17 +1516,17 @@ class result extends sandbox_value
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value|result $sbx the same value sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|result $sbx,
-        sql_type_list                      $sc_par_lst = new sql_type_list(),
-        user_message                       $usr_msg = new user_message()
+        user_message                       $usr_msg,
+        sql_type_list                      $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(
@@ -1552,6 +1552,16 @@ class result extends sandbox_value
             }
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * sql helper
+     */
+
+    public function sql_field_type(): sql_field_type
+    {
+        return sql_field_type::NUMERIC_FLOAT;
     }
 
 }

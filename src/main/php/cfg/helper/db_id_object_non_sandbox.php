@@ -231,9 +231,10 @@ class db_id_object_non_sandbox extends db_object_seq_id
         global $db_con;
 
         $usr_msg = new user_message();
+        $usr_msg->usr = $usr_req;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_req, new sql_type_list([sql_type::LOG]));
+        $qp = $this->sql_delete($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
         $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
@@ -250,12 +251,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr_req the user who has requested the deletion
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
         user          $usr_req,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {

@@ -169,6 +169,20 @@ class group_id extends id
     }
 
     /**
+     * test if the group id can be used to save a value or result in the database
+     * @param int|string $grp_id the group id that should be tested
+     * @return bool true if the group id can be used to save a value or result in the database
+     */
+    function is_valid(int|string $grp_id): bool
+    {
+        if ($this->count($grp_id) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * get the table name extension for value, result and group tables
      * depending on the number of phrases a different table for value and results is used
      * for faster searching

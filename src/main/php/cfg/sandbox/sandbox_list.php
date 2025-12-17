@@ -326,7 +326,7 @@ class sandbox_list extends base_list
         int                                            $offset = 0
     ): sql_par
     {
-        $qp = new sql_par();
+        $qp = new sql_par($this::class);
         // TODO Prio 0 fill
         return $qp;
     }

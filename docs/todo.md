@@ -9,6 +9,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO target approche to finish frontend: small commits and final solution
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO review and create missinf formula unit, read and write tests
+    TODO m2 should be the formula meter * meter in unit.jsom import message
     TODO check the formula test coverage via script
     TODO split the formula backend class into formula_base, formula_calc and the interface formula class
     TODO group the function by suggested test category which is unit, db read or db write
@@ -190,6 +191,8 @@ A proper issue ticket should be created for these TODOs notes:
 
 
     TODO add a frontend cache that includes the most often used terms, values and views 
+    TODO add validation select statement to all sql functions that checks if tha db status is still matching the generated function 
+         or if due to db update another function mus be used 
     TODO create pure tuple export and import according the the W3C definition
     TODO in the config api return the user cache frontend json 1-to-1 if the trigger date is valid 
     TODO add parent to source and ref

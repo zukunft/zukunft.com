@@ -14,6 +14,7 @@
     - load:              database access object (DAO) functions
     - save:              manage to update the database
     - sql write fields:  field list for writing to the database
+    - message:           add message function that might be overwritten by a child object for a more precise message
     - debug:             internal support functions for debugging
 
 
@@ -1094,14 +1095,14 @@ class formula_link extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|formula_link $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|formula_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list(),
-        user_message         $usr_msg = new user_message()
+        user_message         $usr_msg,
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1111,7 +1112,7 @@ class formula_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -1152,6 +1153,27 @@ class formula_link extends sandbox_link
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * message
+     */
+
+    function message_from_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_FORMULA_IN_LINK_INVALID, [
+            msg_id::VAR_FORMULA_NAME => $this->formula()->dsp_id(),
+            msg_id::VAR_NAME => $this->phrase()->dsp_id(),
+        ]);
+    }
+
+    function message_to_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_PHRASE_IN_LINK_INVALID, [
+            msg_id::VAR_PHRASE_NAME => $this->phrase()->dsp_id(),
+            msg_id::VAR_NAME => $this->formula()->dsp_id(),
+        ]);
     }
 
 

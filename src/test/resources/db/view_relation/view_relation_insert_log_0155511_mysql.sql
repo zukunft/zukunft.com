@@ -27,7 +27,7 @@ BEGIN
          SELECT         _user_id,_change_action_id,_field_id_user_id,  _user_id,@new_view_relation_id ;
 
     INSERT INTO changes (user_id, change_action_id,  change_field_id, new_value,               row_id)
-         SELECT         _user_id,_change_action_id,_field_id_start_pos,  _start_pos,@new_view_relation_id ;
+         SELECT         _user_id,_change_action_id,_field_id_start_pos,  _start_pos,@new_view_relation_idd ;
 
     UPDATE view_relations
        SET user_id = _user_id,
@@ -40,15 +40,15 @@ PREPARE view_relation_insert_log_0155510_call FROM
     'SELECT view_relation_insert_log_0155510 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT view_relation_insert_log_0155510 (
-               3,
-               1,
-               5,
-               3,
-               1,
-               108,
-               'word_edit',
-               'standard',
-               'word_usage',
-               815,
-               817,
-               15);
+       3,
+       1,
+       999,
+       3,
+       1,
+       89,
+       'word_edit',
+       'default',
+       'word_log',
+       725,
+       1,
+       15);

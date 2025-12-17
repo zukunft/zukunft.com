@@ -82,6 +82,23 @@ class test_words
 
 
     /*
+     * cleanup
+     */
+
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        $this->env->subheader($ts . 'cleanup');
+        $wrd = new word($this->env->usr1);
+        foreach (words::TEST_WORDS as $wrd_name) {
+            $this->env->write_named_cleanup($wrd, $wrd_name);
+        }
+    }
+
+
+    /*
      * unit
      */
 
@@ -96,6 +113,17 @@ class test_words
         $wrd->set_type(phrase_type::NORMAL, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        return $wrd;
+    }
+
+    /**
+     * @return word object where the most specific mandatory var is not set which is in case of a word the id and the name
+     */
+    function word_incomplete(): word
+    {
+        $wrd = $this->word();
+        $wrd->id = 0;
+        $wrd->set_name(null);
         return $wrd;
     }
 

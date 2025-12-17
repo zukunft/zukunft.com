@@ -45,7 +45,6 @@ include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
-include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
@@ -67,7 +66,6 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -98,6 +96,27 @@ class test_formulas
 
 
     /*
+     * cleanup
+     */
+
+    /**
+     * delete any remaining test formulas for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        $this->env->subheader($ts . 'cleanup');
+        $frm = new formula($this->env->usr1);
+        foreach (formulas::TEST_FORMULAS as $frm_name) {
+            $this->env->write_named_cleanup($frm, $frm_name);
+        }
+
+        // also clean up the triples, verbs and words used for the triples
+        $t_trp = new test_triples($this->env);
+        $t_trp->cleanup($ts);
+    }
+
+
+    /*
      * unit
      */
 
@@ -121,6 +140,19 @@ class test_formulas
     {
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_MIO_EXP);
+        $frm->ref_text = null;
+        return $frm;
+    }
+
+    /**
+     * @return formula where the mandatory expression is missing
+     */
+    function formula_incomplete(): formula
+    {
+        $frm = $this->formula();
+        $t_trm = new test_terms($this->env);
+        $frm->set_user_text('', $t_trm->term_list_time());
+        $frm->ref_text = null;
         return $frm;
     }
 
@@ -257,6 +289,14 @@ class test_formulas
         $lnk->set(1, $this->formula(), $t_wrd->word_minute()->phrase());
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
+        return $lnk;
+    }
+
+    function formula_link_incomplete(): formula_link
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = $this->formula_link();
+        $lnk->set_phrase($t_wrd->word_incomplete()->phrase());
         return $lnk;
     }
 

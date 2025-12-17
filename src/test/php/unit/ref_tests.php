@@ -88,7 +88,6 @@ class ref_tests
         $t->subheader($ts . 'sql write insert');
         $ref = $t_ref->reference();
         $t->assert_sql_insert($sc, $ref);
-        $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
         $ref_usr = $t_ref->reference_user();
         $t->assert_sql_insert($sc, $ref_usr, [sql_type::USER]);
         $t->assert_sql_insert($sc, $ref_usr, [sql_type::LOG, sql_type::USER]);
@@ -96,6 +95,8 @@ class ref_tests
         $t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG]);
         $ref_filled_usr = $t_ref->ref_filled_user();
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
+        $ref = $t_ref->reference_incomplete();
+        $t->assert_sql_insert_fail($sc, $ref, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
         $ref = $t_ref->reference_change();

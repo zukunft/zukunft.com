@@ -2644,7 +2644,7 @@ class triple extends sandbox_link_named
             // TODO review: do not set the generated name if it matches the name
             $this->set_names();
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 $msg = 'add and log ' . $this->dsp_id();
                 if ($db_con->insert($qp, $msg, $usr_msg)) {
@@ -2659,7 +2659,7 @@ class triple extends sandbox_link_named
                 // insert the new triple
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc);
+                    $qp = $this->sql_insert($sc, $usr_msg);
                     $msg = 'add ' . $this->dsp_id();
                     if ($db_con->insert($qp, $msg, $usr_msg)) {
                         $this->id = $usr_msg->get_row_id();
@@ -2926,14 +2926,14 @@ class triple extends sandbox_link_named
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|triple $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|triple $sbx,
-        sql_type_list  $sc_par_lst = new sql_type_list(),
-        user_message   $usr_msg = new user_message()
+        user_message   $usr_msg,
+        sql_type_list  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2945,10 +2945,10 @@ class triple extends sandbox_link_named
         $table_id = $sc->table_id($this::class);
 
         // should be corresponding with the list of triple object vars
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         // for triple the type is the phrase type
-        // the type is object specific that why it is not part of sandbox_link_types
+        // the type is object-specific that why it is not part of sandbox_link_types
         if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

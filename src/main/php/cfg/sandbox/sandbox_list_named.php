@@ -1135,9 +1135,12 @@ class sandbox_list_named extends sandbox_list
             if ($use_func) {
                 $sc_par_lst->add(sql_type::LOG);
             }
-            $qp = $sbx->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $sbx->name();
-            $sql_list->add($qp);
+            $usr_msg = new user_message();
+            $qp = $sbx->sql_insert($sc, $usr_msg, $sc_par_lst);
+            if ($usr_msg->is_ok()) {
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            }
         }
         return $sql_list;
     }
@@ -1158,9 +1161,12 @@ class sandbox_list_named extends sandbox_list
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add_by_name($qp);
+                $usr_msg = new user_message();
+                $qp = $sbx->sql_update($sc, $db_row, $usr_msg, $sc_par_lst);
+                if ($usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add_by_name($qp);
+                }
             }
         }
         return $sql_list;
@@ -1177,14 +1183,17 @@ class sandbox_list_named extends sandbox_list
             $db_row = $db_lst->get_by_name($sbx->name());
             // another validation check as a second line of defence
             if ($db_row != null) {
-                // check always user sandbox and normal name, because reading from database for check would take longer
+                // check always user sandbox and normal name, because reading from the database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_delete($sc, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add_by_name($qp);
+                $usr_msg = new user_message();
+                $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
+                if ($usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add_by_name($qp);
+                }
             }
         }
         return $sql_list;
@@ -1215,9 +1224,16 @@ class sandbox_list_named extends sandbox_list
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_insert($sc, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add($qp);
+                $ins_usr_msg = new user_message();
+                $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
+                if ($ins_usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add($qp);
+                } else {
+                    // TODO Prio 0 create error because this case should neven happen
+                    $usr_msg->add($ins_usr_msg);
+                    //log_err('Internal import error: ' . $usr_msg->all_message_text());
+                }
             }
         }
         return $sql_list;
@@ -1260,9 +1276,15 @@ class sandbox_list_named extends sandbox_list
                         if ($use_func) {
                             $sc_par_lst->add(sql_type::LOG);
                         }
-                        $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                        $qp->obj_name = $sbx->name();
-                        $sql_list->add($qp);
+                        $upd_usr_msg = new user_message();
+                        $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
+                        if ($upd_usr_msg->is_ok()) {
+                            $qp->obj_name = $sbx->name();
+                            $sql_list->add($qp);
+                        } else {
+                            $usr_msg->add($upd_usr_msg);
+                            log_err('Internal import error: ' . $usr_msg->all_message_text());
+                        }
                     }
                 }
             }
@@ -1277,6 +1299,7 @@ class sandbox_list_named extends sandbox_list
      */
     function sql_delete_call_with_par(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
     {
+        $usr_msg = new user_message();
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             $db_row = $db_lst->get_by_name($sbx->name(true));
@@ -1287,7 +1310,7 @@ class sandbox_list_named extends sandbox_list
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_delete($sc, $sc_par_lst);
+                $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
                 $qp->obj_name = $sbx->name(true);
                 $sql_list->add($qp);
             }

@@ -414,14 +414,14 @@ class sandbox_code_id extends sandbox_typed
      * add the code id field to the list of changed fields if the code_id has been changed
      *
      * @param sandbox_code_id|sandbox $sbx the same named sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_code_id|sandbox $sbx,
-        sql_type_list           $sc_par_lst = new sql_type_list(),
-        user_message            $usr_msg = new user_message()
+        user_message            $usr_msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -430,7 +430,7 @@ class sandbox_code_id extends sandbox_typed
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if ($sbx->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(

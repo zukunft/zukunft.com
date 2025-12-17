@@ -109,16 +109,16 @@ class formula_tests
         $t->assert_sql_standard($sc, $frm);
 
         $t->subheader($ts . 'sql write insert');
-        $frm = $t_frm->formula_name_only();
-        $t->assert_sql_insert($sc, $frm);
-        $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
-        $t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
         $frm = $t_frm->formula();
         $t->assert_sql_insert($sc, $frm);
-        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
+        $frm = $t_frm->formula_name_only();
+        $t->assert_sql_insert($sc, $frm);
         $frm = $t_frm->formula_filled();
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $frm = $t_frm->formula_incomplete();
+        $t->assert_sql_insert_fail($sc, $frm, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
         $frm = $t_frm->formula_name_only();

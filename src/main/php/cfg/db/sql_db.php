@@ -4405,11 +4405,11 @@ class sql_db
      * @return true if the database has been updated
      */
     function insert(
-        sql_par $qp,
-        string $description,
+        sql_par      $qp,
+        string       $description,
         user_message $usr_msg,
-        bool $usr_tbl = false,
-        bool $is_val = false
+        bool         $usr_tbl = false,
+        bool         $is_val = false
     ): bool
     {
         global $sys;

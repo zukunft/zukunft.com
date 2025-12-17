@@ -706,9 +706,17 @@ class triple_list extends sandbox_list_named
             $level = 0;
             $db_lst_all = new triple_list($this->get_user());
             $add_lst = new triple_list($this->get_user());
+
+            // create a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+            $lst_usr_msg = new user_message();
+
             while ($trp_added and $level < $max_trp_levels) {
+
+                // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+                $lst_usr_msg = new user_message();
+
                 $trp_added = false;
-                $usr_msg->unset_added_depending();
+                $lst_usr_msg->unset_added_depending();
 
                 // collect all triples with names that does not yet have a database id and needs to be added
                 $chk_lst = $this->triples_to_add_to_db();
@@ -753,9 +761,9 @@ class triple_list extends sandbox_list_named
                 if (!$add_lst->is_empty()) {
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
-                    $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
+                    $lst_usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
                     if ($add_lst->count() > 0) {
-                        $usr_msg->set_added_depending();
+                        $lst_usr_msg->set_added_depending();
                         $trp_added = true;
                     }
                     $imp->step_end($add_lst->count(), $save_per_sec);
@@ -765,6 +773,9 @@ class triple_list extends sandbox_list_named
 
                 $level++;
             }
+
+            // add the user_messages to the last try
+            $usr_msg->add($lst_usr_msg);
 
             // reload the id of the triples added with the last run
             // TODO use the insert message instead to increase speed

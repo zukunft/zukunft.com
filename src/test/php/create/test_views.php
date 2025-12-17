@@ -89,6 +89,14 @@ class test_views
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
+        return $msk;
+    }
+
+    function view_code_id(): view
+    {
+        $msk = new view($this->env->usr1);
+        $msk->set(views::START_ID, views::START_NAME);
+        $msk->description = views::START_COM;
         $msk->set_code_id_db(views::START_CODE);
         return $msk;
     }
@@ -211,6 +219,16 @@ class test_views
     {
         $msk = new view($this->env->usr1);
         $msk->set(views::START_ID, views::START_NAME);
+        $msk->description = views::START_COM;
+        return $msk;
+    }
+
+    /**
+     * @return view where a mandatory var is missing which is in this case the name and the id
+     */
+    function view_incomplete(): view
+    {
+        $msk = new view($this->env->usr1);
         $msk->description = views::START_COM;
         return $msk;
     }

@@ -456,16 +456,23 @@ class group extends sandbox_multi
     /**
      * @return sql_par_field_list with the id field or fields of this group
      */
-    function id_fvt(): sql_par_field_list
+    function id_fvt(user_message $usr_msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         if ($this->is_prime()) {
             $grp_id = new group_id();
             $pos = 1;
-            foreach ($grp_id->get_array($this->id()) as $id) {
-                $name = phrase::FLD_ID . '_' . $pos;
-                $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
-                $pos++;
+            // TODO Prio 2 set the id in the group id once to reduce the number of array creation calls
+            if ($grp_id->is_valid($this->id())) {
+                foreach ($grp_id->get_array($this->id()) as $id) {
+                    $name = phrase::FLD_ID . '_' . $pos;
+                    $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
+                    $pos++;
+                }
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+                    msg_id::VAR_VALUE => $this->dsp_id()
+                ]);
             }
         } else {
             if ($this->is_big()) {
@@ -477,15 +484,22 @@ class group extends sandbox_multi
         return $fvt_lst;
     }
 
-    function id_fvt_main(): sql_par_field_list
+    function id_fvt_main(user_message $usr_msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $grp_id = new group_id();
         $pos = 1;
-        foreach ($grp_id->get_array($this->id()) as $id) {
-            $name = phrase::FLD_ID . '_' . $pos;
-            $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
-            $pos++;
+        // TODO Prio 2 set the id in the group id once to reduce the number of array creation calls
+        if ($grp_id->is_valid($this->id())) {
+            foreach ($grp_id->get_array($this->id()) as $id) {
+                $name = phrase::FLD_ID . '_' . $pos;
+                $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
+                $pos++;
+            }
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+                msg_id::VAR_VALUE => $this->dsp_id()
+            ]);
         }
         return $fvt_lst;
     }
@@ -1469,7 +1483,7 @@ class group extends sandbox_multi
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
                 $this->id = $usr_msg->get_row_id();
             }
@@ -1482,7 +1496,7 @@ class group extends sandbox_multi
                 // insert the new object and save the object key
                 // TODO check that always before a db action is called the db type is set correctly
                 $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc);
+                $qp = $this->sql_insert($sc, $usr_msg);
                 if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
                     $this->id = $usr_msg->get_row_id();
                     $this->set_saved();
@@ -1714,7 +1728,7 @@ class group extends sandbox_multi
         $sc = $db_con->sql_creator();
 
         if ($use_func) {
-            $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         } else {
 
@@ -1728,7 +1742,7 @@ class group extends sandbox_multi
             }
             if ($log->id() > 0) {
                 $db_con->set_class(group::class);
-                $qp = $this->sql_delete($sc);
+                $qp = $this->sql_delete($sc, $usr_msg);
                 $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
             }
         }
@@ -1745,10 +1759,15 @@ class group extends sandbox_multi
      * create the sql statement to add a new group name to the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
+    function sql_insert(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1777,10 +1796,16 @@ class group extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $db_grp
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql_creator $sc, group $db_grp, sql_type_list $sc_par_lst): sql_par
+    function sql_update(
+        sql_creator   $sc,
+        group         $db_grp,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst
+    ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;

@@ -392,6 +392,9 @@ class user_message
      * the message id is translated to the user interface language at the latest possible moment
      * the vars are expected to be in the target language already
      *
+     * the function just adds the message and sets the status to fail
+     * without writing to the log
+     *
      * @param msg_id|null $msg_id the message text to add
      * @return void is never expected to fail
      */

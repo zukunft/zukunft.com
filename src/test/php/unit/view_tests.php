@@ -95,12 +95,13 @@ class view_tests
         $msk = $t_msk->view_added();
         $t->assert_sql_insert($sc, $msk);
         $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $msk = $t_msk->view(); // a view with a code_id as it might be imported
+        $msk = $t_msk->view_code_id(); // a view with a code_id as it might be imported
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         $msk = $t_msk->view_filled();
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $msk = $t_msk->view_incomplete();
+        $t->assert_sql_insert_fail($sc, $msk, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
         $msk = $t_msk->view_added();

@@ -138,4 +138,10 @@ class users
     const int RIGHT_LEVEL_SYSTEM_TEST = 90;
     const int RIGHT_LEVEL_SYSTEM = 99;
 
+    // list of user that is used for system testing that should be removed are the system test has been completed
+    // and where no real user is allowed to use the username
+    const array TEST_USERS = array(
+        self::TEST_USER_NAME
+    );
+
 }

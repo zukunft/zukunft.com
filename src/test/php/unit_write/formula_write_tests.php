@@ -2,9 +2,11 @@
 
 /*
 
-    test/php/unit_write/formula_tests.php - write test FORMULAS to the database and check the results
-    -------------------------------------
-  
+    test/php/unit_write/formula_write_tests.php - write test FORMULAS to the database and check the results
+    -------------------------------------------
+
+    just the special test cases not covered by the horizontal write tests
+
 
     This file is part of zukunft.com - calc with words
 
@@ -80,6 +82,7 @@ class formula_write_tests
         // start the test section (ts)
         $ts = 'db write formula ';
         $t->header($ts);
+        $t_frm->cleanup($ts);
 
         $t->subheader($ts . 'formula prepared write');
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
@@ -543,10 +546,7 @@ class formula_write_tests
         // TODO check if the word assignment can be done for each user
 
         // cleanup - fallback delete
-        $frm = new formula($t->usr1);
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
-            $t->write_named_cleanup($frm, $frm_name);
-        }
+        $t_frm->cleanup($ts);
 
     }
 

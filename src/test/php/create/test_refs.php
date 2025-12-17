@@ -92,6 +92,16 @@ class test_refs
     }
 
     /**
+     * @return ref object where the most specific mandatory var is not set which is in case of a reference the id and the name
+     */
+    function reference_incomplete(): ref
+    {
+        $ref = $this->reference();
+        $ref->set_predicate_id(-1);
+        return $ref;
+    }
+
+    /**
      * @return ref with the most often used fields set for unit testing
      */
     function reference1(): ref

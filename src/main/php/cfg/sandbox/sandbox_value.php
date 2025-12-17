@@ -263,7 +263,7 @@ class sandbox_value extends sandbox_multi
 
     // database fields only used for the value object
     // phrases (word or triple) group object for this value
-    private group $grp;
+    public group $grp;
 
     // the time of the database last update of any field
     // that may influence the calculated results
@@ -1789,11 +1789,13 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to add a new value or result to the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1805,7 +1807,7 @@ class sandbox_value extends sandbox_multi
         $db_row = $this->cloned(null);
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_row, $all_fields, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
     /**
@@ -1814,12 +1816,14 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_row the sandbox object with the database values before the update
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox_value $db_row,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1829,7 +1833,7 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used->add(sql_type::UPDATE);
         // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
-        return $this->sql_write($sc, $db_row, $all_fields, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
     /**
@@ -1894,11 +1898,13 @@ class sandbox_value extends sandbox_multi
      * TODO check if user specific overwrites can be deleted
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2111,14 +2117,14 @@ class sandbox_value extends sandbox_multi
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
-        sql_type_list               $sc_par_lst = new sql_type_list(),
-        user_message                $usr_msg = new user_message()
+        user_message                $usr_msg,
+        sql_type_list               $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2140,9 +2146,9 @@ class sandbox_value extends sandbox_multi
 
         if ($is_insert) {
             if ($this::class == result::class and $this->is_main()) {
-                $lst = $this->grp()->id_fvt_main();
+                $lst = $this->grp()->id_fvt_main($usr_msg);
             } else {
-                $lst = $this->grp()->id_fvt();
+                $lst = $this->grp()->id_fvt($usr_msg);
             }
         }
         if (!$sc_par_lst->is_standard()) {

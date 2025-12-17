@@ -105,10 +105,12 @@ class formula_link_tests
         $lnk = $t_frm->formula_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $lnk_filled = $t_frm->formula_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
+        $lnk = $t_frm->formula_link_incomplete();
+        $t->assert_sql_insert_fail($sc, $lnk, [sql_type::LOG]);
+        $lnk = $t_frm->formula_link();
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 1;
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);

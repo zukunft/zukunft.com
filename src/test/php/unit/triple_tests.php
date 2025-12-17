@@ -63,7 +63,6 @@ class triple_tests
         $trp = $t_trp->triple();
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $trp_excl = $t_trp->triple();
         $trp_excl->set_excluded(true);
@@ -71,8 +70,11 @@ class triple_tests
         $trp_excl->description = '';
         $trp_excl->set_type('');
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
+        $trp = $t_trp->triple_incomplete();
+        $t->assert_sql_insert_fail($sc, $trp, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
+        $trp = $t_trp->triple();
         $trp_renamed = $trp->cloned_named(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);

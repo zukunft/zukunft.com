@@ -193,6 +193,13 @@ class verb extends type_object
         $this->impact = null;
     }
 
+    function clone_reset(): verb
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset();
+        return $obj_cpy;
+    }
+
     /**
      * map a verb api json to this model verb object
      * @param array $api_json the api array with the word values that should be mapped
@@ -1343,11 +1350,13 @@ class verb extends type_object
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -1360,12 +1369,13 @@ class verb extends type_object
         // get the fields and values that are filled and should be written to the db
         $vrb_empty = new verb();
         $vrb_empty->usr = $this->usr;
-        $fvt_lst = $this->db_fields_changed($vrb_empty, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($vrb_empty, $usr_msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user
         $fld_lst_all = $this->db_fields_all();
+        // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
         // log functions must always use named parameters
@@ -1391,7 +1401,7 @@ class verb extends type_object
         $sc_par_lst_log->add(sql_type::INSERT_PART);
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
-        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
         $par_lst_out->add($qp_id->par_fld);
         $sql .= $qp_id->sql;
         // get the data fields and move the unique db key field to the first entry
@@ -1407,7 +1417,7 @@ class verb extends type_object
         );
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -1417,7 +1427,7 @@ class verb extends type_object
         unset($fld_lst_chg[$key_fld_pos]);
         $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
-            $update_fvt_lst->add($fvt_lst->get($fld));
+            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
         }
         $sc_update = clone $sc;
         $sc_par_lst_upd = $sc_par_lst_used;
@@ -1460,6 +1470,7 @@ class verb extends type_object
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
@@ -1468,6 +1479,7 @@ class verb extends type_object
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
+        user_message       $usr_msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -1477,7 +1489,7 @@ class verb extends type_object
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
@@ -1538,14 +1550,14 @@ class verb extends type_object
      * get a list of database field names, values and types that have been updated
      *
      * @param verb|type_object $typ the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         verb|type_object $typ,
-        sql_type_list    $sc_par_lst = new sql_type_list(),
-        user_message     $usr_msg = new user_message()
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1554,7 +1566,7 @@ class verb extends type_object
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($typ, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($typ, $usr_msg, $sc_par_lst);
         // TODO move to language forms
         if ($typ->plural !== $this->plural) {
             if ($do_log) {

@@ -13,6 +13,7 @@
     - fields:            the field names of this object as overwrite functions
     - load:              database access object (DAO) functions
     - sql write fields:  field list for writing to the database
+    - message:           add message function that might be overwritten by a child object for a more precise message
 
 
     This file is part of zukunft.com - calc with words
@@ -718,14 +719,14 @@ class term_view extends sandbox_link
      * add the type field to the list of changed database fields with name, value and type
      *
      * @param sandbox|term_view $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|term_view $sbx,
-        sql_type_list     $sc_par_lst = new sql_type_list(),
-        user_message      $usr_msg = new user_message()
+        user_message      $usr_msg,
+        sql_type_list     $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -734,7 +735,7 @@ class term_view extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         if ($sbx->description !== $this->description) {
             if ($do_log) {
@@ -774,6 +775,27 @@ class term_view extends sandbox_link
                 $sys->typ_lst->phr_typ);
         }
         return $lst;
+    }
+
+
+    /*
+     * message
+     */
+
+    function message_from_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+            msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
+    }
+
+    function message_to_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
+            msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
     }
 
 }

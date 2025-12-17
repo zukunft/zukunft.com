@@ -46,7 +46,7 @@ SELECT component_update_log_00220040000000000000_user
         'simply show the word or triple name',
         null,
         53,
-        'phrase_name',
+        'word name',
         8,
         null,
         null);

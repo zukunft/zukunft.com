@@ -4,7 +4,9 @@
 
     test/php/unit_write/user_write_tests.php - test adding, updating and deleting users in the database
     ----------------------------------------
-  
+
+    just the special test cases not covered by the horizontal write tests
+
 
     This file is part of zukunft.com - calc with words
 
@@ -63,6 +65,7 @@ class user_write_tests
         // start the test section (ts)
         $ts = 'db write user ';
         $t->header($ts);
+        $t_usr->cleanup($ts);
 
         $t->subheader($ts . 'add');
         $usr = $t_usr->user_ip();
@@ -159,13 +162,10 @@ class user_write_tests
         $t->assert('word->parents for "' . words::MATH . '" excluding the start word', $result, $target, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
 
-        // cleanup - fallback delete
-        $wrd = new word($t->usr1);
-        foreach (words::TEST_WORDS as $wrd_name) {
-            $t->write_named_cleanup($wrd, $wrd_name);
-        }
-
         */
+
+        // cleanup - fallback delete
+        $t_usr->cleanup($ts);
 
     }
 

@@ -2044,7 +2044,7 @@
     {
       "name": "per km",
       "verb": "per",
-      "to": "day",
+      "to": "km",
       "type": "measure_divisor",
       "protection": "admin_protection"
     },

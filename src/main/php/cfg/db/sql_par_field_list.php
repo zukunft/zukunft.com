@@ -53,6 +53,8 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
@@ -67,9 +69,11 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use DateTimeInterface;
-use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sql_par_field_list
 {
@@ -548,15 +552,23 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
+     * @param user_message $usr_msg collect the messages for the user
      * @param bool $can_be_missing if true no error log message is created if the field does not exists
      * @return sql_par_field|null the name, value and type selected by the name
      */
-    function get(string $name, bool $can_be_missing = false): ?sql_par_field
+    function get(
+        string       $name,
+        user_message $usr_msg,
+        bool         $can_be_missing = false
+    ): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
             if (!$can_be_missing) {
-                log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+                $usr_msg->add_id_with_vars(msg_id::MANDATORY_FIELD_MISSING, [
+                    msg_id::VAR_NAME => $name,
+                    msg_id::VAR_NAME_LIST => implode(',', $this->names())
+                ]);
             }
             return null;
         } else {

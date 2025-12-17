@@ -50,13 +50,8 @@ class component_type_list extends type_list
      * adding the view component types used for unit tests to the dummy list
      */
     function load_dummy(): void {
-        parent::load_dummy();
-        foreach (comp_type_shared::TEST_TYPES as $cmp_typ) {
-            $code_id = $cmp_typ[0];
-            $id = $cmp_typ[1];
-            $type = new type_object($code_id, $code_id, '', $id);
-            $this->add($type);
-        }
+        // TODO Prio 0 check if and why any other load_dummy function uses something else
+        parent::load_from_csv_resource();
     }
 
     /**

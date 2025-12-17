@@ -94,6 +94,14 @@ class test_values
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
+    function value_incomplete(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $val = $this->value();
+        $val->set_grp($t_grp->group_incomplete());
+        return $val;
+    }
+
     function value_pi(): value
     {
         $t_grp = new test_groups($this->env);

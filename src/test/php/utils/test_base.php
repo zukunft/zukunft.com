@@ -51,6 +51,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -461,8 +462,9 @@ class test_base
         $this->usr2 = new user();
         $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
 
+        // TODO Prio 2 use SYSTEM_TEST_ADMIN_NAME
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(users::SYSTEM_TEST_ADMIN_NAME);
+        $this->usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
 
         $this->usr_system = new user();
         $this->usr_system->load_by_name(users::SYSTEM_NAME);
@@ -1359,24 +1361,30 @@ class test_base
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_save_fields(sql_creator $sc, object $usr_obj, object $norm_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_save_fields(
+        sql_creator $sc,
+        object      $usr_obj,
+        object      $norm_obj,
+        array       $sc_par_lst_in = []
+    ): bool
     {
+        $usr_msg = new user_message();
         // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         $sc_par_lst->add(sql_type::INSERT);
         $sc_par_lst->add(sql_type::NO_ID_RETURN);
         $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $sc_par_lst);
+        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1393,13 +1401,16 @@ class test_base
      */
     function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $usr_msg = new user_message();
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
-        } else {
+            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+        } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
             $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1407,13 +1418,40 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
-            } else {
+                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+            } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
                 $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
+    }
+
+    /**
+     * check the SQL statement creation to add a database row
+     * returns the expected error message
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_insert_fail(
+        sql_creator $sc,
+        object      $usr_obj,
+        array       $sc_par_lst_in = []
+    ): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        $test_name = 'if a mandatory parameter in a ' . $class . ' object is not set an error message should be returned';
+        $usr_msg = new user_message();
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
+        return $this->assert_false($test_name, $usr_msg->is_ok());
     }
 
     /**
@@ -1433,13 +1471,14 @@ class test_base
         array                                                           $sql_type_array = []
     ): bool
     {
+        $usr_msg = new user_message();
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
         } else {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1447,9 +1486,9 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
             } else {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+                $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1467,13 +1506,14 @@ class test_base
      */
     function assert_sql_delete(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $usr_msg = new user_message();
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
         } else {
-            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1481,9 +1521,9 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
             } else {
-                $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+                $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -2532,6 +2572,8 @@ class test_base
         // add the named object and remember the name
         $name = $sbx->name();
         $sbx->save($usr_msg, $use_func);
+        // reset the user_message because we don't care if the object already existed before saving it,
+        $usr_msg = new user_message($this->usr1);
         $sbx->reset();
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -3179,6 +3221,32 @@ class test_base
             }
         }
         $sbx->del($usr_msg);
+    }
+
+    /**
+     * remove remaining test users
+     *
+     * @param string $name the name of the test user that should be removed
+     * @param user $usr the user used to remove the users
+     * @param bool $check if true, an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    public
+    function write_named_cleanup_user(
+        string $name,
+        user   $usr,
+        bool   $check = false
+    ): void
+    {
+        $usr_msg = new user_message($usr);
+        $usr->load_by_name($name);
+        if ($check) {
+            if ($usr->id() != 0) {
+                log_warning('Unexpected cleanup of ' . $usr->dsp_id());
+            }
+        }
+        $usr->del($usr_msg);
     }
 
     /**

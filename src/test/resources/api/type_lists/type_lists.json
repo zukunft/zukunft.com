@@ -821,6 +821,12 @@
         "code_id": "user_view_relations",
         "description": "",
         "id": 110
+      },
+      {
+        "name": "results",
+        "code_id": "results",
+        "description": "",
+        "id": 111
       }
     ],
     "change_field_list": [
@@ -5815,6 +5821,12 @@
         "code_id": "110protect_id",
         "description": "",
         "id": 832
+      },
+      {
+        "name": "111numeric_value",
+        "code_id": "111numeric_value",
+        "description": "",
+        "id": 833
       }
     ],
     "job_types": [

@@ -99,13 +99,16 @@ class component_link_tests
         $lnk = $t_cmp->component_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $lnk = $t_cmp->component_link();
         $lnk->exclude();
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $lnk_filled = $t_cmp->component_link_filled();
         $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
+        $lnk = $t_cmp->component_link_incomplete();
+        $t->assert_sql_insert_fail($sc, $lnk, [sql_type::LOG]);
+        $lnk = $t_cmp->component_link();
+        $lnk->exclude();
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 2;
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);

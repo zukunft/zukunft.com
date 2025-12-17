@@ -73,4 +73,12 @@ class test_links
         return $lnk;
     }
 
+    function term_view_incomplete(): term_view
+    {
+        $t_wrd = new test_words($this->env);
+        $lnk = $this->term_view();
+        $lnk->set_term($t_wrd->word_incomplete()->term());
+        return $lnk;
+    }
+
 }

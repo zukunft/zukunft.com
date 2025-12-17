@@ -133,15 +133,18 @@ class horizontal_tests
             $test_name = 'sql creation for ' . $lib->class_to_name($class);
             $t->resource_path = $lib->class_to_resource_path($class);
             $obj = $t_map->class_to_base_object($class);
-            $obj_changed = clone $obj;
-            $obj_changed->reset();
+            $obj_changed = $obj->clone_reset();
             $t->assert_sql_table_create($obj);
             $t->assert_sql_index_create($obj);
             if (!in_array($class, def::NO_FOREIGN_DB_KEY_CLASSES)) {
                 $t->assert_sql_foreign_key_create($obj);
             }
             // TODO Prio 1 move here from the single class tests
-            //$t->assert_sql_insert($sc, $obj, [sql_type::LOG]);
+            $sql_typ_lst = [];
+            if (!in_array($class,def::MAIN_CLASSES_NO_CHANGE_LOG)) {
+                $sql_typ_lst[] = sql_type::LOG;
+            }
+            $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
             //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
             //$t->assert_sql_delete($sc, $obj, [sql_type::LOG]);
 
