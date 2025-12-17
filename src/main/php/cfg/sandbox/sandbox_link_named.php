@@ -567,7 +567,7 @@ class sandbox_link_named extends sandbox_link
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,

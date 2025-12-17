@@ -3180,13 +3180,13 @@ class test_base
     /**
      * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
-     *                    e.g. to detect incomplete cleanup of previous tests
+     *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
-    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase $sbx, string $name, bool $check = false): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase|verb $sbx, string $name, bool $check = false): void
     {
         $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
         $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
@@ -3197,30 +3197,30 @@ class test_base
     /**
      * remove remaining test rows for one name and one user
      *
-     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
-     *                    e.g. to detect incomplete cleanup of previous tests
+     *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
     private
     function write_named_cleanup_one(
-        sandbox_named|sandbox_link_named|phrase $sbx,
-        user                                    $usr,
-        string                                  $name,
-        bool                                    $check = false
+        sandbox_named|sandbox_link_named|phrase|verb $sbx,
+        user                                         $usr,
+        string                                       $name,
+        bool                                         $check = false
     ): void
     {
         $usr_msg = new user_message($usr);
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
-        if ($check) {
-            if ($sbx->id() != 0) {
+        if ($sbx->id() != 0) {
+            if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
+            $sbx->del($usr_msg);
         }
-        $sbx->del($usr_msg);
     }
 
     /**

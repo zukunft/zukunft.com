@@ -247,7 +247,7 @@ class sandbox_list_named extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -271,7 +271,7 @@ class sandbox_list_named extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param array $code_id_lst a list of strings with the names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id_list(
         sql_creator $sc,
@@ -296,7 +296,7 @@ class sandbox_list_named extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {

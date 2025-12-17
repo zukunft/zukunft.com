@@ -493,7 +493,7 @@ class result extends sandbox_value
      * create the SQL to load the single default result always by the id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
@@ -511,7 +511,7 @@ class result extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -538,7 +538,7 @@ class result extends sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -550,7 +550,7 @@ class result extends sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql_by_grp_prepare(sql_creator $sc, group $grp): sql_par
     {
@@ -565,7 +565,7 @@ class result extends sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -584,7 +584,7 @@ class result extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group $grp the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_grp(sql_creator $sc, formula $frm, group $grp): sql_par
     {
@@ -603,7 +603,7 @@ class result extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group_list $lst the group used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, group_list $lst): sql_par
     {
@@ -793,7 +793,7 @@ class result extends sandbox_value
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param string $sql_where the ready to use SQL where statement
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_where(sql_db $db_con, sql_par $qp, string $sql_where = ''): sql_par
     {

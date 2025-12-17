@@ -138,7 +138,7 @@ class db_object_multi extends db_object_key
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(
         sql_creator $sc,

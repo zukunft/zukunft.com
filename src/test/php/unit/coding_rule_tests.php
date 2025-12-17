@@ -109,8 +109,9 @@ class coding_rule_tests
     {
         $fnc_lst = [];
         // TODO Prio 0 the target class sections are
-        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', def::MAIN_CLASSES));
-        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], def::MAIN_CLASSES));
+        $main_classes = array_merge(def::MAIN_CLASSES, def::MAIN_SUB_CLASSES);
+        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', $main_classes));
+        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], $main_classes));
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(html_paths::WEB, 'frontend'));
         $fnc_tree = $this->functionTree($fnc_lst);
         return $this->php_function_list_to_md($fnc_tree);

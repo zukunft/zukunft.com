@@ -788,7 +788,7 @@ class component_link extends sandbox_link
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->get_pos());
     }
@@ -848,7 +848,7 @@ class component_link extends sandbox_link
     /**
      * @return string the name of the preloaded view component link type
      */
-    function get_predicate_name(): string
+    function predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->cmp_lnk_typ->name($this->predicate_id);
@@ -966,7 +966,7 @@ class component_link extends sandbox_link
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1009,7 +1009,7 @@ class component_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -1030,7 +1030,7 @@ class component_link extends sandbox_link
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -1048,7 +1048,7 @@ class component_link extends sandbox_link
      * @param int $dsp_id the view id
      * @param int $type_id the link type id
      * @param int $cmp_id the component id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
     {
@@ -1062,7 +1062,7 @@ class component_link extends sandbox_link
      * @param int $msk_id the id of the view
      * @param int $cmp_id the id of the lin type
      * @param int $pos the position of the component
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link_and_pos(sql_creator $sc, int $msk_id, int $cmp_id, int $pos): sql_par
     {
@@ -1081,7 +1081,7 @@ class component_link extends sandbox_link
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_max_pos(sql_creator $sc, int $id): sql_par
     {
@@ -1522,7 +1522,7 @@ class component_link extends sandbox_link
             }
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->get_predicate_name(),
+                    msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

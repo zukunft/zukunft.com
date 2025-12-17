@@ -2064,7 +2064,7 @@ class sql_creator
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
                 $log->old_link_id = $dbo->predicate_id();
-                $log->old_text_link = $dbo->get_predicate_name();
+                $log->old_text_link = $dbo->predicate_name();
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -2079,7 +2079,7 @@ class sql_creator
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
                 $log->new_link_id = $sbx->predicate_id();
-                $log->new_text_link = $sbx->get_predicate_name();
+                $log->new_text_link = $sbx->predicate_name();
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2141,7 +2141,7 @@ class sql_creator
             // other links can have a type
             $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->get_predicate_name();
+            $log->old_text_link = $sbx->predicate_name();
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {
@@ -4762,7 +4762,7 @@ class sql_creator
 
     /**
      * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
@@ -5378,7 +5378,7 @@ class sql_creator
      * @param int|string $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string|array $id_field the field name or field list of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
@@ -5464,7 +5464,7 @@ class sql_creator
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string $id_field the field name of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par

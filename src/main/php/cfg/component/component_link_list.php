@@ -171,7 +171,7 @@ class component_link_list extends sandbox_link_list
      * set the SQL query parameters to load all components linked to a view
      * @param sql_creator $sc with the target db_type set
      * @param view $msk the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
@@ -192,7 +192,7 @@ class component_link_list extends sandbox_link_list
      * set the SQL query parameters to load all views linked to a component
      * @param sql_creator $sc with the target db_type set
      * @param component $cmp the id of the component to which the views should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
     {
@@ -212,7 +212,7 @@ class component_link_list extends sandbox_link_list
      * set the common part of the SQL query component links
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {

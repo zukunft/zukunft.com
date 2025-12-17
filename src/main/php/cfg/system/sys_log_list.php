@@ -108,7 +108,7 @@ class sys_log_list extends base_list
     /**
      * create the SQL statement to load a list of system log entries
      * @param sql_db $db_con the database link as parameter to be able to simulate the different SQL database in the unit tests
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_db $db_con): sql_par
     {

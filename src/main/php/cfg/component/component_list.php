@@ -174,7 +174,7 @@ class component_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -204,7 +204,7 @@ class component_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -222,7 +222,7 @@ class component_list extends sandbox_list_named
      * @param array $ids component ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -245,7 +245,7 @@ class component_list extends sandbox_list_named
      * set the SQL query parameters to load a list of components by the view id
      * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param int $id the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
     {
@@ -268,7 +268,7 @@ class component_list extends sandbox_list_named
      * set the common SQL query parameters to load a list of components
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {

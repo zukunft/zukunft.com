@@ -124,7 +124,7 @@ class user_list
      * set the SQL query parameters to load a list of figure objects
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -146,7 +146,7 @@ class user_list
      * @param array $ids list of user ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -168,7 +168,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id all users with this code id should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
@@ -187,7 +187,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $profile_id list of user that have at least this profile level
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
     {
@@ -256,7 +256,7 @@ class user_list
      * create an SQL statement to retrieve users that have changed something
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_count_changes(sql_creator $sc): sql_par
     {

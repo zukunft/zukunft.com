@@ -62,21 +62,8 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class test_triples
+class test_triples extends test_objects
 {
-
-    /*
-     * init
-     */
-
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env)
-    {
-        $this->env = $env;
-    }
-
 
     /*
      * cleanup
@@ -87,11 +74,7 @@ class test_triples
      */
     function cleanup(string $ts): void
     {
-        $this->env->subheader($ts . 'cleanup');
-        $trp = new triple($this->env->usr1);
-        foreach (triples::TEST_TRIPLES as $trp_name) {
-            $this->env->write_named_cleanup($trp, $trp_name);
-        }
+        parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
 
         // also clean up the words used for the triples
         $t_wrd = new test_words($this->env);

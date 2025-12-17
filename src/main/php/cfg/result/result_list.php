@@ -241,7 +241,7 @@ class result_list extends sandbox_value_list
      * @param bool $or if true all results are returned that are linked to any phrase of the list
      * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator $sc,
@@ -288,7 +288,7 @@ class result_list extends sandbox_value_list
      * @param bool $or true if all results related to any phrase of the list should be loaded
      * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_src(
         sql_creator $sc,
@@ -381,7 +381,7 @@ class result_list extends sandbox_value_list
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
      * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
     {
@@ -408,7 +408,7 @@ class result_list extends sandbox_value_list
      * @param array $ids result ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -436,7 +436,7 @@ class result_list extends sandbox_value_list
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
      * @param sql_type $tbl_typ the table extension to force the sub table selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
@@ -459,7 +459,7 @@ class result_list extends sandbox_value_list
      *
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -488,7 +488,7 @@ class result_list extends sandbox_value_list
      *
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_src_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -509,7 +509,7 @@ class result_list extends sandbox_value_list
      * create the SQL statement to load the results created by the given formula
      *
      * @param string $query_name symbol by what the results are selected e.g. frm
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
 
     private function load_sql_init_query_par(string $query_name): sql_par
@@ -541,7 +541,7 @@ class result_list extends sandbox_value_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {

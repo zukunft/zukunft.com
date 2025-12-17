@@ -948,7 +948,7 @@ class triple extends sandbox_link_named
      * overwrite the link type function
      * @return string|null the name of the verb
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         return $this->get_verb_name();
     }
@@ -1603,7 +1603,7 @@ class triple extends sandbox_link_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -1621,7 +1621,7 @@ class triple extends sandbox_link_named
      * @param sql_creator $sc with the target db_type set
      * @param string $name the generated name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
     {
@@ -1641,7 +1641,7 @@ class triple extends sandbox_link_named
      * @param int $predicate_id the type id of the link
      * @param int|string $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
@@ -1659,7 +1659,7 @@ class triple extends sandbox_link_named
      * create the SQL to load the default triple always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1734,7 +1734,7 @@ class triple extends sandbox_link_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -1755,7 +1755,7 @@ class triple extends sandbox_link_named
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -2230,7 +2230,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the triple has been changed
      */
     function not_changed_sql(sql_creator $sc): sql_par

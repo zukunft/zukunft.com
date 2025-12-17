@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_write_tests
@@ -52,12 +53,14 @@ class verb_write_tests
         global $sys;
 
         // init
+        $t_vrb = new test_verbs($t);
         $t_db = new test_db_load($t);
         $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write verb ';
         $t->header($ts);
+        $t_vrb->cleanup($ts);
 
         $test_name = 'check the loading of the "' . verbs::IS . ')" verb';
         $vrb = new verb;
@@ -95,6 +98,9 @@ class verb_write_tests
         $wrd_ZH = $t_db->load_word(words::ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::IS_NAME]);
+
+        $t_vrb->cleanup($ts);
+
     }
 
 }

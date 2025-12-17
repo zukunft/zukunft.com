@@ -5468,7 +5468,7 @@ class sql_db
      *
      * @param string $type_name
      * @param string $column_name the name of the column where the prefix should be removed
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function remove_prefix_sql(string $type_name, string $column_name): sql_par
     {

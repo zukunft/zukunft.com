@@ -813,7 +813,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -830,7 +830,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -848,7 +848,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private
     function load_sql(sql_creator $sc, string $query_name): sql_par

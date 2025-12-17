@@ -231,7 +231,7 @@ class change_link extends change_log
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_user(sql_creator $sc, user $usr): sql_par
     {
@@ -725,7 +725,7 @@ class change_link extends change_log
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_link(
         sql_creator   $sc,

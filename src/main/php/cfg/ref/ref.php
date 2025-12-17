@@ -765,7 +765,7 @@ class ref extends sandbox_link
      * overwrite the link type function
      * @return string|null the name of the verb
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         global $sys;
         return $sys->typ_lst->ref_typ->name($this->predicate_id());
@@ -847,7 +847,7 @@ class ref extends sandbox_link
      * create the SQL to load the default ref always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -885,7 +885,7 @@ class ref extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -898,7 +898,7 @@ class ref extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
     {
@@ -1621,7 +1621,7 @@ class ref extends sandbox_link
             }
         }
         if ($this->has_type()) {
-            $result .= ' to "' . $this->get_predicate_name() . '"';
+            $result .= ' to "' . $this->predicate_name() . '"';
         } else {
             if ($this->predicate_id != null) {
                 if ($this->predicate_id > 0) {

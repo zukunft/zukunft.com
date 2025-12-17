@@ -122,7 +122,7 @@ class group_list extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr(
         sql_creator $sc,
@@ -170,7 +170,7 @@ class group_list extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
      * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_single(sql_creator $sc, phrase $phr, array $sc_par_lst): sql_par
     {
@@ -190,7 +190,7 @@ class group_list extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param string $class the value or result class name
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_init(
         sql_creator $sc,
@@ -222,7 +222,7 @@ class group_list extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -236,7 +236,7 @@ class group_list extends sandbox_list
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_names_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
@@ -263,7 +263,7 @@ class group_list extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -289,7 +289,7 @@ class group_list extends sandbox_list
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,

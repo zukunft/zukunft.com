@@ -229,7 +229,7 @@ class sandbox_value_list extends sandbox_list
      * @param bool $or true if all values related to any phrase of the list should be loaded
      * @param int $limit the number of values that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst_multi(
         sql_creator $sc,
@@ -335,7 +335,7 @@ class sandbox_value_list extends sandbox_list
      * @param array $grp_pos_lst list of array keys of the query parameter for the phrase id as group id
      * @param int $usr_pos the array key of the query parameter for the user id
      * @param int $frm_pos the array key of the query parameter for the user id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst_single(
         sql_creator $sc,
@@ -433,7 +433,7 @@ class sandbox_value_list extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param string $class the value or result class name
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_init(
         sql_creator    $sc,

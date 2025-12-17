@@ -284,7 +284,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern phrase names that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern): sql_par
     {
@@ -302,7 +302,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names phrase names that should be loaded
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -320,7 +320,7 @@ class phrase_list extends sandbox_list_named
      * @param phr_ids $ids phrase ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -343,7 +343,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -368,7 +368,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
     {
@@ -385,7 +385,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
@@ -2459,7 +2459,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param foaf_direction $direction to define the link direction
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_linked_phrases(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {

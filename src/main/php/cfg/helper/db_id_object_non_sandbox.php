@@ -253,7 +253,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param user $usr_req the user who has requested the deletion
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,

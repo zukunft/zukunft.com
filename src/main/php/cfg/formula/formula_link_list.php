@@ -81,7 +81,7 @@ class formula_link_list extends sandbox_link_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -120,7 +120,7 @@ class formula_link_list extends sandbox_link_list
      * set the SQL query parameters to load a list of formula links by the formula id
      * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which links should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
     {

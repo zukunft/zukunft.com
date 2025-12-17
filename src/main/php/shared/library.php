@@ -1809,6 +1809,8 @@ class library
                 $result = 'info';
             } elseif (str_starts_with($fnc_name, 'log_')) {
                 $result = 'log';
+            } elseif (str_starts_with($fnc_name, 'message_')) {
+                $result = 'message';
             } elseif (str_starts_with($fnc_name, 'link')
                 or str_starts_with($fnc_name, 'unlink')) {
                 $result = 'link';

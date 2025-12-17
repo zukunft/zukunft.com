@@ -731,7 +731,7 @@ class change_log extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
      * @param int|null $row_id the database id of the database row of the changes that the user wants to see
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
@@ -888,7 +888,7 @@ class change_log extends db_object_seq_id_user
      * @param string $add_fld name of the database key field
      * @param string $row_fld name of the database id field
      * @param string $par_name name of the database name parameter field
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,

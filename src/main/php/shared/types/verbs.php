@@ -183,7 +183,7 @@ class verbs
         self::PART_NAME,
         self::TEST_ADD_NAME,
     );
-    const array TEST_WORDS = array(
+    const array TEST_VERBS = array(
         self::TEST_ADD_NAME
     );
 

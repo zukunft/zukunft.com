@@ -518,7 +518,7 @@ class view_relation extends sandbox_link
     /**
      * @return string|null the name of the relation type e.g. add components
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         global $sys;
         return $sys->view_relation_name($this->relation_type_id());
@@ -553,7 +553,7 @@ class view_relation extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -615,7 +615,7 @@ class view_relation extends sandbox_link
      * TODO move to the highest object level
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -710,7 +710,7 @@ class view_relation extends sandbox_link
             global $sys;
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->get_predicate_name(),
+                    msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }

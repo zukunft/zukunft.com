@@ -229,7 +229,7 @@ class word_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -255,7 +255,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -280,7 +280,7 @@ class word_list extends sandbox_list_named
      * @param array $wrd_ids a list of int values with the word ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -305,7 +305,7 @@ class word_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -320,7 +320,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words by the type
      * @param sql_creator $sc with the target db_type set
      * @param int $type_id the id of the word type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
     {
@@ -339,7 +339,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words by a word pattern
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the words
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
@@ -361,7 +361,7 @@ class word_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to select only words linked with this verb
      * @param foaf_direction $direction to define the link direction
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
@@ -406,7 +406,7 @@ class word_list extends sandbox_list_named
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user $usr the user for whom the changes should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
     {

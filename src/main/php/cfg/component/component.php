@@ -1017,7 +1017,7 @@ class component extends sandbox_code_id
      * create the SQL to load the default view always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1038,7 +1038,7 @@ class component extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -1050,7 +1050,7 @@ class component extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,

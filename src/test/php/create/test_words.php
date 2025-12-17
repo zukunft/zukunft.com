@@ -62,24 +62,10 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class test_words
+class test_words extends test_objects
 {
-
-    /*
-     * init
-     */
-
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env)
-    {
-        $this->env = $env;
-    }
-
 
     /*
      * cleanup
@@ -90,11 +76,7 @@ class test_words
      */
     function cleanup(string $ts): void
     {
-        $this->env->subheader($ts . 'cleanup');
-        $wrd = new word($this->env->usr1);
-        foreach (words::TEST_WORDS as $wrd_name) {
-            $this->env->write_named_cleanup($wrd, $wrd_name);
-        }
+        parent::cleanup_objects($ts, words::TEST_WORDS, new word($this->env->usr1));
     }
 
 

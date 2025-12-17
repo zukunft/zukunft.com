@@ -931,7 +931,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the value
      * @param ?sql_type $typ if known the value data type to preselect the table
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(
         sql_creator $sc,
@@ -948,7 +948,7 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the id of the phrase group
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -961,7 +961,7 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -996,7 +996,7 @@ class sandbox_value extends sandbox_multi
      * TODO overwrites the sandbox function
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_changer(sql_creator $sc): sql_par
     {
@@ -1051,7 +1051,7 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql_by_grp_id(sql_creator $sc, string $query_name): sql_par
     {
@@ -1082,7 +1082,7 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(
         sql_creator $sc,
@@ -1677,7 +1677,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_obj the value object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update_value(sql_creator $sc, sandbox_value $db_obj, sql_type_list $sc_par_lst): sql_par
     {
@@ -1791,7 +1791,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -1818,7 +1818,7 @@ class sandbox_value extends sandbox_multi
      * @param sandbox_value $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
@@ -1843,7 +1843,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update_fields(
         sql_creator        $sc,
@@ -1900,7 +1900,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,

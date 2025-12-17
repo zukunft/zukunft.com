@@ -320,7 +320,7 @@ class element extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -386,7 +386,7 @@ class element extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -475,7 +475,7 @@ class element extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -508,7 +508,7 @@ class element extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param element $db_row the word with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
     {

@@ -78,7 +78,7 @@ class ip_range_list extends base_list
      * create an SQL statement to retrieve the all active ip ranges from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {

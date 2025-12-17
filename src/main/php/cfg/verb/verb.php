@@ -529,7 +529,7 @@ class verb extends type_object
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
@@ -543,7 +543,7 @@ class verb extends type_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
@@ -561,7 +561,7 @@ class verb extends type_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
@@ -579,7 +579,7 @@ class verb extends type_object
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -1352,7 +1352,7 @@ class verb extends type_object
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -1472,7 +1472,7 @@ class verb extends type_object
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,

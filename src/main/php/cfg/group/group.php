@@ -839,7 +839,7 @@ class group extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(
         sql_creator $sc,
@@ -901,7 +901,7 @@ class group extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase group
      * @param array $sc_par_arr the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name_single(sql_creator $sc, string $name, array $sc_par_arr): sql_par
     {
@@ -931,7 +931,7 @@ class group extends sandbox_multi
      * create the SQL to load the default group always by the id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
@@ -945,7 +945,7 @@ class group extends sandbox_multi
     /**
      * create the SQL to load the single default value always by the id
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
     {
@@ -1761,7 +1761,7 @@ class group extends sandbox_multi
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -1798,7 +1798,7 @@ class group extends sandbox_multi
      * @param group $db_grp
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,

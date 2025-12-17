@@ -252,7 +252,7 @@ class change extends change_log
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -278,7 +278,7 @@ class change extends change_log
      *
      * @param sql_creator $sc with the target db_type set
      * @param user|null $usr the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_user(sql_creator $sc, ?user $usr = null): sql_par
     {
@@ -298,7 +298,7 @@ class change extends change_log
      * create the SQL statement to retrieve the parameters of the change log by name
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_user_sql(sql_db $db_con): sql_par
     {

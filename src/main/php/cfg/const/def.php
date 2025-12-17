@@ -43,6 +43,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_FORMULA . 'formula_map.php';
 //include_once paths::MODEL_FORMULA . 'formula_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
@@ -123,6 +124,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
@@ -272,6 +274,11 @@ class def
         term_view::class,
         component::class,
         component_link::class,
+    ];
+
+    // classes that are directly linked to the main classes and that should be included in the same code function docs part
+    const array MAIN_SUB_CLASSES = [
+        formula_map::class,
     ];
 
     // list of classes that have a unique name

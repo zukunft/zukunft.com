@@ -296,7 +296,7 @@ class db_object_seq_id extends db_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {

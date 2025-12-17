@@ -53,6 +53,7 @@ include_once paths::SHARED_TYPES . 'share_type.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_objects.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -79,21 +80,8 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
 
-class test_formulas
+class test_formulas extends test_objects
 {
-
-    /*
-     * init
-     */
-
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env)
-    {
-        $this->env = $env;
-    }
-
 
     /*
      * cleanup
@@ -104,11 +92,7 @@ class test_formulas
      */
     function cleanup(string $ts): void
     {
-        $this->env->subheader($ts . 'cleanup');
-        $frm = new formula($this->env->usr1);
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
-            $this->env->write_named_cleanup($frm, $frm_name);
-        }
+        parent::cleanup_objects($ts, formulas::TEST_FORMULAS, new formula($this->env->usr1));
 
         // also clean up the triples, verbs and words used for the triples
         $t_trp = new test_triples($this->env);

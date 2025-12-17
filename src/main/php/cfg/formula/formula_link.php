@@ -633,7 +633,7 @@ class formula_link extends sandbox_link
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    function get_predicate_name(): string
+    function predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->frm_lnk_typ->name($this->predicate_id);
@@ -665,7 +665,7 @@ class formula_link extends sandbox_link
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -701,7 +701,7 @@ class formula_link extends sandbox_link
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -895,7 +895,7 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if no one else has changed the formula link
      */
     function not_changed_sql(sql_creator $sc): sql_par
@@ -1054,8 +1054,9 @@ class formula_link extends sandbox_link
         }
 
         if (!$usr_msg->is_ok()) {
-            // TODO Prio 1 activate
+            // TODO Prio 1 activate error
             //log_err($usr_msg->all_message_text());
+            log_warning($usr_msg->all_message_text());
         }
 
         return $usr_msg->is_ok();

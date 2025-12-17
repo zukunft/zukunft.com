@@ -666,7 +666,7 @@ class word extends sandbox_code_id
      * create the SQL to load the default word always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -687,7 +687,7 @@ class word extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -699,7 +699,7 @@ class word extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the formula
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
@@ -719,7 +719,7 @@ class word extends sandbox_code_id
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -1271,7 +1271,7 @@ class word extends sandbox_code_id
      * TODO review, because is it needed? get the view used by most users for this word
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function view_sql(sql_db $db_con): sql_par
     {
@@ -1425,7 +1425,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the word has been changed
      */
     function not_changed_sql(sql_creator $sc): sql_par

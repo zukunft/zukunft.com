@@ -331,7 +331,7 @@ class sandbox_link extends sandbox
      * to be overwritten by the child objects
      * @return string|null the name of connection type
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         return null;
     }
@@ -351,7 +351,7 @@ class sandbox_link extends sandbox
     function verb_empty(): bool
     {
         if ($this->predicate_id() == 0
-            and ($this->get_predicate_name() == null or $this->get_predicate_name() == '')) {
+            and ($this->predicate_name() == null or $this->predicate_name() == '')) {
             return true;
         } else {
             return false;
@@ -438,7 +438,7 @@ class sandbox_link extends sandbox
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name;
     }
@@ -559,7 +559,7 @@ class sandbox_link extends sandbox
      * @param int $predicate_id the predicate object id
      * @param int|string $to the object (grammar) object id or the unique external key
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
@@ -1121,7 +1121,7 @@ class sandbox_link extends sandbox
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,
@@ -1623,7 +1623,7 @@ class sandbox_link extends sandbox
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -1658,7 +1658,7 @@ class sandbox_link extends sandbox
      * @param sandbox $db_row the word with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,

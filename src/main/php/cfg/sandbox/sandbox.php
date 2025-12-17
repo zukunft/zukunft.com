@@ -1033,7 +1033,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * create the SQL to load the single default value always by the id
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1055,7 +1055,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_usr_num(sql_creator $sc, sandbox $sbx, string $query_name): sql_par
     {
@@ -1081,7 +1081,7 @@ class sandbox extends db_object_seq_id_user
      * @param array $fields list of the fields from the child object
      * @param array $usr_fields list of the user specified fields from the child object
      * @param array $usr_num_fields list of the fields from the child object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_fields(
         sql_creator $sc,
@@ -1334,7 +1334,7 @@ class sandbox extends db_object_seq_id_user
      * create an SQL statement to get all the users that have changed this value
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_changer(sql_creator $sc): sql_par
     {
@@ -1388,7 +1388,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
@@ -1611,7 +1611,7 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -3196,7 +3196,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -3227,7 +3227,7 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
@@ -3258,7 +3258,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
@@ -3631,7 +3631,7 @@ class sandbox extends db_object_seq_id_user
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_switch(
         sql_creator        $sc,
@@ -3679,7 +3679,7 @@ class sandbox extends db_object_seq_id_user
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_with_log(
         sql_creator        $sc,
@@ -3890,7 +3890,7 @@ class sandbox extends db_object_seq_id_user
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,
@@ -3919,7 +3919,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_update_switch(
         sql_creator        $sc,

@@ -310,7 +310,7 @@ class sys_log extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {

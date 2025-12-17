@@ -256,7 +256,7 @@ class triple_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the triples
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -281,7 +281,7 @@ class triple_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -296,7 +296,7 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples by the ids
      * @param sql_creator $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -322,7 +322,7 @@ class triple_list extends sandbox_list_named
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr(
         sql_creator    $sc,
@@ -369,7 +369,7 @@ class triple_list extends sandbox_list_named
      * @param phrase_list $phr_lst a list of phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator    $sc,
@@ -410,7 +410,7 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {

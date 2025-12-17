@@ -672,7 +672,7 @@ class sandbox_multi extends db_object_multi_user
      * create the SQL to load the single default value always by the id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields for the value, result or group
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(
         sql_creator $sc,
@@ -710,7 +710,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par $qp the query parameters fully set without the sql, par and ext
      * @param sql_creator $sc the sql creator with all parameters set
      * @param string $ext the table extension
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql_set_where(sql_par $qp, sql_creator $sc, string $ext): sql_par
     {
@@ -730,7 +730,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_par $qp the query parameters fully set without the sql, par and ext
      * @param sql_creator $sc the sql creator with all parameters set
      * @param bool $all true if all id fields should be used independent from the number of ids
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql_where_id(sql_par $qp, sql_creator $sc, bool $all = false): sql_par
     {
@@ -756,7 +756,7 @@ class sandbox_multi extends db_object_multi_user
      * create the SQL to load the single default value always by something else than the main id
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp the query parameters with the class and name already set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard_by(sql_creator $sc, sql_par $qp): sql_par
     {
@@ -786,7 +786,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fields list of the fields from the child object
      * @param array $usr_fields list of the user specified fields from the child object
      * @param array $usr_num_fields list of the fields from the child object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_fields(
         sql_creator $sc,
@@ -811,7 +811,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_multi $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_usr_num(sql_creator $sc, sandbox_multi $sbx, string $query_name): sql_par
     {
@@ -836,7 +836,7 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_obj_vars(sql_creator $sc, string $class): sql_par
     {
@@ -1405,7 +1405,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
@@ -2172,7 +2172,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update_multi(
         sql_creator   $sc,
@@ -2209,7 +2209,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
@@ -3465,7 +3465,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par|null the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write(
         sql_creator        $sc,
@@ -3536,7 +3536,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write_with_log(
         sql_creator        $sc,
@@ -3782,7 +3782,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_switch(
         sql_creator        $sc,
@@ -3821,7 +3821,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_update_switch(
         sql_creator        $sc,
@@ -3866,7 +3866,7 @@ class sandbox_multi extends db_object_multi_user
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     private function sql_insert_with_log(
         sql_creator        $sc,
@@ -4168,7 +4168,7 @@ class sandbox_multi extends db_object_multi_user
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,

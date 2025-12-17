@@ -121,7 +121,7 @@ class element_list extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -139,7 +139,7 @@ class element_list extends sandbox_list
      * set the SQL query parameters to load a list of formula elements by the formula id
      * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
     {
@@ -160,7 +160,7 @@ class element_list extends sandbox_list
      * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
      * @param int $elm_type_id the id of the formula element type used to filter the elements
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_and_type_id(sql_creator $sc, int $frm_id, int $elm_type_id): sql_par
     {

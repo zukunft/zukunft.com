@@ -579,7 +579,7 @@ class sandbox_named extends sandbox
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -594,7 +594,7 @@ class sandbox_named extends sandbox
     /**
      * create the SQL to load the single default value always by the id or name
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1239,7 +1239,7 @@ class sandbox_named extends sandbox
      * @param array $fld_lst_all list of field names of the given object
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_switch(
         sql_creator        $sc,
@@ -1279,7 +1279,7 @@ class sandbox_named extends sandbox
      * @param string $id_fld_new
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,

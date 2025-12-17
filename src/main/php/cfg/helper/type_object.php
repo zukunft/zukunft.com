@@ -409,7 +409,7 @@ class type_object extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
     {
@@ -427,7 +427,7 @@ class type_object extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
     {
@@ -440,7 +440,7 @@ class type_object extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the source
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
@@ -459,7 +459,7 @@ class type_object extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {

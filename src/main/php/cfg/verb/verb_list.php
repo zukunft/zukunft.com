@@ -126,7 +126,7 @@ class verb_list extends type_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
      * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction): sql_par
     {

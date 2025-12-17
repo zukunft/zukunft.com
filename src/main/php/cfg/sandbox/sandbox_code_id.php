@@ -311,7 +311,7 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
