@@ -115,7 +115,7 @@ class formula_write_tests
         $t->assert('load for "' . $frm->name() . '"', $result, $target);
 
         // test the formula type
-        $result = $lib->dsp_bool($frm->is_special());
+        $result = $lib->dsp_bool($frm->is_predefined());
         $target = $lib->dsp_bool(false);
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
@@ -125,7 +125,7 @@ class formula_write_tests
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {
                 $elm_frm = $frm_lst->lst()[0];
-                $result = $lib->dsp_bool($elm_frm->is_special());
+                $result = $lib->dsp_bool($elm_frm->is_predefined());
                 $target = $lib->dsp_bool(true);
                 $t->assert('formula->is_special for "' . $elm_frm->name() . '"', $result, $target);
 
@@ -135,7 +135,7 @@ class formula_write_tests
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
-                $val = $elm_frm->special_result($phr_lst, $time_phr);
+                $val = $elm_frm->calc_predefined($phr_lst, $time_phr);
                 $result = $val->number();
                 $target = words::YEAR_2019;
                 // TODO: get the best matching number

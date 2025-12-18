@@ -79,6 +79,7 @@ class phrase_types extends type_list
         phrase_type_shared::SYMBOL_NAME => phrase_type_shared::SYMBOL,
         phrase_type_shared::RANK_NAME => phrase_type_shared::RANK,
         phrase_type_shared::IGNORE_NAME => phrase_type_shared::IGNORE,
+        phrase_type_shared::TIME_NUMBER_NAME => phrase_type_shared::TIME_NUMBER,
     );
 
     /*
@@ -95,7 +96,7 @@ class phrase_types extends type_list
 
     /**
      * adding the word types used for unit tests to the dummy list
-     *  TODO Prio 3: load from csv
+     * TODO Prio 3: load from csv but make sure that for all csv entry an code const exists
      */
     function load_dummy(): void
     {

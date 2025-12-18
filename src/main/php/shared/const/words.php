@@ -237,6 +237,26 @@ class words
     const string YEAR_2020 = '2020';
     const int YEAR_2020_ID = 140;
     const string YEAR_2020_COM = 'the year 2020';
+    const string YEAR_2021 = '2021';
+    const int YEAR_2021_ID = 924;
+    const string YEAR_2022 = '2022';
+    const int YEAR_2022_ID = 923;
+    const string YEAR_2023 = '2023';
+    const int YEAR_2023_ID = 922;
+    const string YEAR_2024 = '2024';
+    const int YEAR_2024_ID = 262;
+    const string YEAR_2025 = '2025';
+    const int YEAR_2025_ID = 1089;
+    const string YEAR_2026 = '2026';
+    const int YEAR_2026_ID = 1088;
+    const string YEAR_2027 = '2027';
+    const int YEAR_2027_ID = 1087;
+    const string YEAR_2028 = '2028';
+    const int YEAR_2028_ID = 1086;
+    const string YEAR_2029 = '2029';
+    const int YEAR_2029_ID = 1085;
+    const string YEAR_2030 = '2030';
+    const int YEAR_2030_ID = 1084;
 
     // SI units for testing
     const string LIGHT = 'light';
@@ -244,7 +264,7 @@ class words
     const string SPEED = 'speed';
     const int SPEED_ID = 87;
     const string METER = 'meter';
-    const int METER_ID = 1132;
+    const int METER_ID = 1138;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 131;
     const string TRANSITION = 'transition';

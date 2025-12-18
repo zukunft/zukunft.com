@@ -8,8 +8,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
-    TODO review and create missinf formula unit, read and write tests
+    TODO review and create missing formula unit, read and write tests
     TODO m2 should be the formula meter * meter in unit.jsom import message
+    TODO document why there is a hidden word for each formula: the reason is that 
+         this way values and results are assigned to a list of phrases not terms 
+         because a value is never assign to a verb only a triple
     TODO check the formula test coverage via script
     TODO split the formula backend class into formula_base, formula_calc and the interface formula class
     TODO group the function by suggested test category which is unit, db read or db write
@@ -119,6 +122,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
+
+    TODO add a documentation how to add a phrase type (and make the process easier)
 
     TODO complete system view with: about, async_process, calculate
 

@@ -1779,6 +1779,8 @@ class library
             => 'sandbox',
             'can_be_ready', 'db_ready', 'check_order', 'is_valid'
             => 'check',
+            'calc_predefined'
+            => 'predefined',
             'get_similar', 'add_insert'
             => 'save',
             'get_ready', 'reserved_names', 'fixed_names'

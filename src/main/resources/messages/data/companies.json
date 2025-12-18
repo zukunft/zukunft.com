@@ -231,6 +231,42 @@
       "description": "used to define the number of forecast periods"
     },
     {
+      "name": "2030",
+      "type": "time"
+    },
+    {
+      "name": "2029",
+      "type": "time"
+    },
+    {
+      "name": "2028",
+      "type": "time"
+    },
+    {
+      "name": "2027",
+      "type": "time"
+    },
+    {
+      "name": "2026",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "type": "time"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "2023",
+      "type": "time"
+    },
+    {
+      "name": "2022",
+      "type": "time"
+    },
+    {
       "name": "2021",
       "type": "time"
     },
@@ -363,6 +399,60 @@
       "to": "scaling"
     },
     {
+      "name": "2030 (year)",
+      "from": "2030",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2029 (year)",
+      "from": "2029",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2028 (year)",
+      "from": "2028",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2027 (year)",
+      "from": "2027",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2026 (year)",
+      "from": "2026",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2025 (year)",
+      "from": "2025",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2024 (year)",
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2023 (year)",
+      "from": "2023",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "2022 (year)",
+      "from": "2022",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
       "name": "2021 (year)",
       "from": "2021",
       "verb": "is a",
@@ -415,6 +505,60 @@
       "from": "2013",
       "verb": "is a",
       "to": "year"
+    },
+    {
+      "name": "2030 is follower of 2029",
+      "from": "2030",
+      "verb": "is follower of",
+      "to": "2029"
+    },
+    {
+      "name": "2029 is follower of 2028",
+      "from": "2029",
+      "verb": "is follower of",
+      "to": "2028"
+    },
+    {
+      "name": "2028 is follower of 2027",
+      "from": "2028",
+      "verb": "is follower of",
+      "to": "2027"
+    },
+    {
+      "name": "2027 is follower of 2026",
+      "from": "2027",
+      "verb": "is follower of",
+      "to": "2026"
+    },
+    {
+      "name": "2026 is follower of 2025",
+      "from": "2026",
+      "verb": "is follower of",
+      "to": "2025"
+    },
+    {
+      "name": "2025 is follower of 2024",
+      "from": "2025",
+      "verb": "is follower of",
+      "to": "2024"
+    },
+    {
+      "name": "2024 is follower of 2023",
+      "from": "2024",
+      "verb": "is follower of",
+      "to": "2023"
+    },
+    {
+      "name": "2023 is follower of 2022",
+      "from": "2023",
+      "verb": "is follower of",
+      "to": "2022"
+    },
+    {
+      "name": "2022 is follower of 2021",
+      "from": "2022",
+      "verb": "is follower of",
+      "to": "2021"
     },
     {
       "name": "2021 is follower of 2020",

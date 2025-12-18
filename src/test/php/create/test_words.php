@@ -430,14 +430,11 @@ class test_words extends test_objects
      */
     function word_2019(): word
     {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(words::YEAR_2019_ID, words::YEAR_2019);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
-        return $wrd;
+        return $this->year_x(words::YEAR_2019_ID, words::YEAR_2019);
     }
 
     /**
-     * @return word 2020 to test create a year
+     * @return word 2020 to test creating a year
      */
     function word_2020(): word
     {
@@ -448,8 +445,69 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function word_2021(): word
+    {
+        return $this->year_x(words::YEAR_2021_ID, words::YEAR_2021);
+    }
+
+    function word_2022(): word
+    {
+        return $this->year_x(words::YEAR_2022_ID, words::YEAR_2022);
+    }
+
+    function word_2023(): word
+    {
+        return $this->year_x(words::YEAR_2023_ID, words::YEAR_2023);
+    }
+
+    function word_2024(): word
+    {
+        return $this->year_x(words::YEAR_2024_ID, words::YEAR_2024);
+    }
+
+    function word_2025(): word
+    {
+        return $this->year_x(words::YEAR_2025_ID, words::YEAR_2025);
+    }
+
+    function word_2026(): word
+    {
+        return $this->year_x(words::YEAR_2026_ID, words::YEAR_2026);
+    }
+
+    function word_2027(): word
+    {
+        return $this->year_x(words::YEAR_2027_ID, words::YEAR_2027);
+    }
+
+    function word_2028(): word
+    {
+        return $this->year_x(words::YEAR_2028_ID, words::YEAR_2028);
+    }
+
+    function word_2029(): word
+    {
+        return $this->year_x(words::YEAR_2029_ID, words::YEAR_2029);
+    }
+
+    function word_2030(): word
+    {
+        return $this->year_x(words::YEAR_2030_ID, words::YEAR_2030);
+    }
+
     /**
-     * @return word percent to test percent related rules e.g. to remove measure at division
+     * @return word of a year with the given id and name
+     */
+    private function year_x(int $id, string $name): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set($id, $name);
+        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        return $wrd;
+    }
+
+    /**
+     * @return word per cent to test percent related rules e.g. to remove measure at division
      */
     function word_percent(): word
     {

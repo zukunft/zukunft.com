@@ -140,6 +140,7 @@ class all_unit_tests extends test_cleanup
         new value_tests()->run($this);
         new value_list_tests()->run($this);
         new formula_tests()->run($this);
+        new formula_calc_tests()->run($this);
         new formula_list_tests()->run($this);
         new formula_link_tests()->run($this); // TODO add assert_api_to_ui
         new element_tests()->run($this);

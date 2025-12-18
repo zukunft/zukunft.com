@@ -586,6 +586,11 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
 
+    case PHRASE_TYPE_UNEXPECTED = 'it is not yet defined how "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" should be handled to '
+        . self::VAR_START . self::VAR_FUNCTION_NAME . self::VAR_END;
+
     case TERM_MISSING_IMPORT = 'term "'
         . self::VAR_START . self::VAR_TERM . self::VAR_END
         . '" is missing in the import message '

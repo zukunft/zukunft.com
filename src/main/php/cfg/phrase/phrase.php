@@ -97,6 +97,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -131,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -936,6 +938,17 @@ class phrase extends combine_named
     }
 
     /**
+     * select the best definition of "now" related to this word or triple
+     * e.g. if this word is "year" and now is 18. Dez 2025 09:05, the triple "2025 (year)" is returned if in the list
+     * @return phrase that best matches the definition of now bases on this word
+     */
+    function related_now(phrase_list $phr_lst): phrase
+    {
+        $phr = new phrase();
+        return $phr;
+    }
+
+    /**
      * to enable the recursive function in work_link
      * TODO add a list of triple already split to detect endless loops
      */
@@ -958,7 +971,7 @@ class phrase extends combine_named
     /**
      * return either the word type id or the word link type id
      * e.g. 2020 can be a year but also any other identification number e.g. a valor number,
-     * so if there is both in the database the type must be saved on the word link instead of the word
+     * so if there is both in the database, the type must be saved on the word link instead of the word
      */
     function type_id(): ?int
     {
@@ -1405,6 +1418,22 @@ class phrase extends combine_named
         return $sql;
     }
 
+
+    /*
+     * fixed
+     */
+
+    /**
+     *
+     */
+    function is_year(): bool
+    {
+        if ($this->name() == words::YEAR) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * display functions

@@ -369,7 +369,7 @@ class element extends db_object_seq_id_user
                 $this->wrd_obj = $wrd;
                 */
                 //
-                if ($frm->is_special()) {
+                if ($frm->is_predefined()) {
                     $this->frm_type = $frm->type_cl;
                 }
             } else {

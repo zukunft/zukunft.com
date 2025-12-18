@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -52,6 +53,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -749,6 +751,95 @@ class test_triples extends test_objects
         return $tl->list_to_ui($this->triple_list_all(), [api_type::INCL_PHRASES]);
     }
 
+
+    /*
+     * time
+     */
+
+    function year_2019(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2019_ID, triples::YEAR_2019, $t_wrd->word_2019());
+    }
+
+    function year_2020(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2020_ID, triples::YEAR_2020, $t_wrd->word_2020());
+    }
+
+    function year_2021(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2021_ID, triples::YEAR_2021, $t_wrd->word_2021());
+    }
+
+    function year_2022(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2022_ID, triples::YEAR_2022, $t_wrd->word_2022());
+    }
+
+    function year_2023(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2023_ID, triples::YEAR_2023, $t_wrd->word_2023());
+    }
+
+    function year_2024(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2024_ID, triples::YEAR_2024, $t_wrd->word_2024());
+    }
+
+    function year_2025(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2025_ID, triples::YEAR_2025, $t_wrd->word_2025());
+    }
+
+    function year_2026(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2026_ID, triples::YEAR_2026, $t_wrd->word_2026());
+    }
+
+    function year_2027(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2027_ID, triples::YEAR_2027, $t_wrd->word_2027());
+    }
+
+    function year_2028(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2028_ID, triples::YEAR_2028, $t_wrd->word_2028());
+    }
+
+    function year_2029(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2029_ID, triples::YEAR_2029, $t_wrd->word_2029());
+    }
+
+    function year_2030(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2030_ID, triples::YEAR_2030, $t_wrd->word_2030());
+    }
+
+
+    private function year_x(int $id, string $name, word $year): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set($id, $name);
+        $trp->set_from($year->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_year()->phrase());
+        return $trp;
+    }
 
     /*
      * random

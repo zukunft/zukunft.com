@@ -222,6 +222,7 @@ include_once test_paths::UNIT . 'term_list_tests.php';
 include_once test_paths::UNIT . 'value_tests.php';
 include_once test_paths::UNIT . 'value_list_tests.php';
 include_once test_paths::UNIT . 'formula_tests.php';
+include_once test_paths::UNIT . 'formula_calc_tests.php';
 include_once test_paths::UNIT . 'formula_list_tests.php';
 include_once test_paths::UNIT . 'formula_link_tests.php';
 include_once test_paths::UNIT . 'result_tests.php';

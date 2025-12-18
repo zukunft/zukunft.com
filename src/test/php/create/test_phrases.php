@@ -298,6 +298,30 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list with simple year phrases
+     */
+    function years(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->year_1967()->phrase());
+        $lst->add($t_trp->year_1983()->phrase());
+        $lst->add($t_trp->year_2019()->phrase());
+        $lst->add($t_trp->year_2020()->phrase());
+        $lst->add($t_trp->year_2021()->phrase());
+        $lst->add($t_trp->year_2022()->phrase());
+        $lst->add($t_trp->year_2023()->phrase());
+        $lst->add($t_trp->year_2024()->phrase());
+        $lst->add($t_trp->year_2025()->phrase());
+        $lst->add($t_trp->year_2026()->phrase());
+        $lst->add($t_trp->year_2027()->phrase());
+        $lst->add($t_trp->year_2028()->phrase());
+        $lst->add($t_trp->year_2029()->phrase());
+        $lst->add($t_trp->year_2030()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list with all phrases used for unit testing
      */
     function phrase_list_all(): phrase_list

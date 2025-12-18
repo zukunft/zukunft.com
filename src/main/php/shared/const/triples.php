@@ -106,6 +106,30 @@ class triples
     const int YEAR_1983_ID = 81;
     const string YEAR_1967 = '1967 (year)';
     const int YEAR_1967_ID = 79;
+    const string YEAR_2019 = '2019 (year)';
+    const int YEAR_2019_ID = 82;
+    const string YEAR_2020 = '2020 (year)';
+    const int YEAR_2020_ID = 143;
+    const string YEAR_2021 = '2021 (year)';
+    const int YEAR_2021_ID = 1152;
+    const string YEAR_2022 = '2022 (year)';
+    const int YEAR_2022_ID = 1151;
+    const string YEAR_2023 = '2023 (year)';
+    const int YEAR_2023_ID = 1150;
+    const string YEAR_2024 = '2024 (year)';
+    const int YEAR_2024_ID = 1149;
+    const string YEAR_2025 = '2025 (year)';
+    const int YEAR_2025_ID = 1148;
+    const string YEAR_2026 = '2026 (year)';
+    const int YEAR_2026_ID = 1147;
+    const string YEAR_2027 = '2027 (year)';
+    const int YEAR_2027_ID = 1146;
+    const string YEAR_2028 = '2028 (year)';
+    const int YEAR_2028_ID = 1145;
+    const string YEAR_2029 = '2029 (year)';
+    const int YEAR_2029_ID = 1144;
+    const string YEAR_2030 = '2030 (year)';
+    const int YEAR_2030_ID = 1143;
 
 
     const string SYSTEM_TEST_ADD = 'System Test Triple';

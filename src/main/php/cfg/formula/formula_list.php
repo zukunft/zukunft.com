@@ -793,7 +793,7 @@ class formula_list extends sandbox_list_named
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
                     $exp = $frm->expression($trm_lst);
-                    if ($exp->is_valid() or $frm->is_special()) {
+                    if ($exp->is_valid() or $frm->is_predefined()) {
                         $frm_trm_lst = $exp->terms($trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
                             $frm_trm = $trm_lst->get_by_name($trm->name());

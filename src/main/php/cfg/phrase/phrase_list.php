@@ -60,6 +60,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
@@ -1229,6 +1231,11 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+
+    /*
+     * select
+     */
+
     /**
      * makes sure that all combinations of "are" and "contains" are included
      * @return phrase_list with the additional are and contains phrases
@@ -1319,6 +1326,50 @@ class phrase_list extends sandbox_list_named
         $result = $result->del_list($filter_lst);
         log_debug($result->dsp_id());
         return $result;
+    }
+
+    /**
+     * to get the best matching time phrase from the list based on the given point in time,
+     * a fixed definition is used instead of a LLM KI-based guess to have consist results
+     * e.g. if the date ist 2022-08-26, the year 2022 is returned
+     *
+     * if this phrase list is empty, it should loaded from the database
+     *
+     * @param phrase $typ the time period description that should be preferred selected
+     * @param user_message $usr_msg to collect the problems and suggested solutions for the user
+     * @param DateTime|null $time the point in time that should be used for matching
+     * @param phrase_list|null $phr_lst use this phrase list for the selection if not null
+     * @return phrase|null the phrase that matches best the phrase from the list and the $typ
+     */
+    function best_matching_time(
+        phrase $typ,
+        user_message $usr_msg,
+        ?DateTime $time = null,
+        ?phrase_list $phr_lst = null
+    ): ?phrase
+    {
+        $phr = null;
+        if ($typ->is_year()) {
+            $phr = $this->get_year($time->format('Y'));
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_UNEXPECTED, [
+                msg_id::VAR_PHRASE_NAME => $typ->dsp_id(),
+                msg_id::VAR_FUNCTION_NAME => 'get a time word representing now',
+            ]);
+        }
+        return $phr;
+    }
+
+    function get_year(string $name): ?phrase
+    {
+        $year = null;
+        foreach ($this->lst() as $phr) {
+            // TODO Prio 0 and check if the phrase is of type TIME (or YEAR?)
+            if (str_contains($phr->name(), $name)) {
+                $year = $phr;
+            }
+        }
+        return $year;
     }
 
 

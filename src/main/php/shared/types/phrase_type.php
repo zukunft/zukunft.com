@@ -42,6 +42,8 @@ class phrase_type
     const string MATH_CONST_NAME = "math constant";
     const string TIME = "time";
     const string TIME_NAME = "time";
+    const string TIME_NUMBER = "time_number";
+    const string TIME_NUMBER_NAME = "time number";
     const string TIME_JUMP = "time_jump";
     const string TIME_JUMP_NAME = "time jump";
     const string LATEST = "latest"; // TODO add usage sample

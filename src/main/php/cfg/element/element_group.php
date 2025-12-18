@@ -233,7 +233,7 @@ class element_group extends base_list
             // e.g. 1: setting the $val_time_phr to 2020
             if ($frm_elm->type == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
-                if ($frm_elm->obj->is_special()) {
+                if ($frm_elm->obj->is_predefined()) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
                     if (isset($val_time_phr)) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());

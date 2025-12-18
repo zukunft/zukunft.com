@@ -137,23 +137,25 @@ class formula extends formula_map
      */
 
     /**
-     * return the true if the formula has a special type and the result is a kind of hardcoded
+     * if the formula has a fixed process for the result
      * e.g. "this" or "next" where the value of this or the following time word is returned
+     * @return bool true if result calculation is a kind of hardcoded
      */
-    function is_special(): bool
+    function is_predefined(): bool
     {
-        $result = false;
-        if ($this->type_cl <> "") {
-            $result = true;
-        }
-        return $result;
+        return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
     }
+
+
+    /*
+     * predefined
+     */
 
     /**
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */
-    function special_result(phrase_list $phr_lst, ?phrase $time_phr = null): value
+    function calc_predefined(phrase_list $phr_lst, ?phrase $time_phr = null): value
     {
         log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->get_user()->name . ")");
         $val = null;
@@ -193,6 +195,7 @@ class formula extends formula_map
     /**
      * return the time word id used for the special formula results
      * e.g. "this" or "next" where the value of this or the following time word is returned
+     * TODO Prio 1 move to phrase list
      */
     function special_time_phr(phrase $time_phr): phrase
     {
@@ -226,6 +229,7 @@ class formula extends formula_map
     /**
      * get all phrases included by a special formula element for a list of phrases
      * e.g. if the list of phrases is "2016" and "2017" and the special formulas are "prior" and "next" the result should be "2015", "2016","2017" and "2018"
+     * TODO Prio 1 move to phrase list
      */
     function special_phr_lst(phrase_list $phr_lst): phrase_list
     {
@@ -256,6 +260,7 @@ class formula extends formula_map
 
     /**
      * lists of all words directly assigned to a formula and where the formula should be used
+     * TODO Prio 1 move to phrase list
      * TODO rename to
      * - linked_phrases:               for the phrases directly linked       to the formula based on the user settings
      * - linked_phrases_standard:      for the phrases directly linked       to the formula based on the standard settings for new user
@@ -289,6 +294,7 @@ class formula extends formula_map
 
     /**
      * the complete list of a phrases assigned to a formula
+     * TODO Prio 1 move to phrase list
      * TODO rename to linked_foaf_phrases_standard
      */
     function assign_phr_lst_direct(): ?phrase_list
@@ -298,6 +304,7 @@ class formula extends formula_map
 
     /**
      * the user specific list of a phrases assigned to a formula
+     * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst_direct(): ?phrase_list
     {
@@ -307,6 +314,7 @@ class formula extends formula_map
     /**
      * returns a list of all words that the formula is assigned to
      * e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the word list
+     * TODO Prio 1 move to phrase list
      */
     function assign_phr_glst($sbx): phrase_list
     {
@@ -342,6 +350,7 @@ class formula extends formula_map
 
     /**
      * the complete list of a phrases assigned to a formula
+     * TODO Prio 1 move to phrase list
      */
     function assign_phr_lst(): phrase_list
     {
@@ -350,16 +359,11 @@ class formula extends formula_map
 
     /**
      * the user specific list of a phrases assigned to a formula
+     * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst(): phrase_list
     {
         return $this->assign_phr_glst(true);
-    }
-
-    // TODO review
-    public static function cmp($a, $b): string
-    {
-        return strcmp($a->name, $b->name);
     }
 
 
@@ -446,7 +450,7 @@ class formula extends formula_map
         $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
-        // to check if all needed value are given
+        // to check if all needed values are given
         $all_elm_grp_filled = true;
 
         // loop over the element groups and replace the symbol with a number
@@ -464,7 +468,7 @@ class formula extends formula_map
             // fill the figure into the formula text and create as much value and results as needed
             if ($fig_lst->lst() != null) {
                 if (count($fig_lst->lst()) == 1) {
-                    // if no figure is found use the master result as placeholder
+                    // if no figure is found, use the master result as a placeholder
                     if ($res_lst->lst() != null) {
                         if (count($res_lst->lst()) == 0) {
                             $res_lst->add_obj($res_init);
@@ -472,9 +476,9 @@ class formula extends formula_map
                     } else {
                         $res_lst->add_obj($res_init);
                     }
-                    // fill each results created by any previous number filling
+                    // fill each result created by any previous number filling
                     foreach ($res_lst->lst() as $res) {
-                        // fill each results created by any previous number filling
+                        // fill each result created by any previous number filling
                         if (!$res->val_missing) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
                                 log_debug('figure missing');
@@ -494,7 +498,7 @@ class formula extends formula_map
                     if (count($res_lst->lst()) == 0) {
                         $res_lst->add_obj($res_init);
                     }
-                    // if there is more than one number to fill replicate each previous result, so in fact it multiplies the number of results
+                    // if there is more than one number to fill, replicate each previous result, so in fact it multiplies the number of results
                     foreach ($res_lst->lst() as $res) {
                         $res_master = clone $res;
                         $fig_nbr = 1;
@@ -846,7 +850,7 @@ class formula extends formula_map
      * @param string $formula the formula expression in the reference format
      * @param string $start_maker
      * @param string $end_maker
-     * @return int a positive term object (e.g. word, triple, verb or formula) id
+     * @return int a positive term object (e.g. word, triple, verb, or formula) id
      *             if the formula string in the database format contains a link
      */
     private function get_term_id(string $formula, string $start_maker, string $end_maker): int

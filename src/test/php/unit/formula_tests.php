@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/formula.php - unit testing of the formula functions
+    test/unit/formula.php - unit testing of the formula database and map functions
     ---------------------
 
     TODO move the sql tests to a separate class
@@ -35,7 +35,6 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
@@ -44,22 +43,10 @@ include_once html_paths::ELEMENT . 'element_group.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
-use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
-use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
-use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
-use Zukunft\ZukunftCom\test\php\create\test_phrases;
-use Zukunft\ZukunftCom\test\php\create\test_terms;
-use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_tests
@@ -71,17 +58,13 @@ class formula_tests
         global $usr_sys;
 
         // init
-        $lib = new library();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
-        $t_wrd = new test_words($t);
-        $t_phr = new test_phrases($t);
-        $t_trm = new test_terms($t);
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
         // start the test section (ts)
-        $ts = 'unit formula ';
+        $ts = 'unit formula map ';
         $t->header($ts);
 
         $t->subheader($ts . 'sql setup');
@@ -157,157 +140,6 @@ class formula_tests
         $t->assert_ex_and_import($t_frm->formula_filled(), $usr_sys);
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
-
-        $t->subheader($ts . 'expression');
-
-        $test_name = 'formula increase expression';
-        $frm = $t_frm->formula_increase();
-        $frm_this = $t_frm->formula_this();
-        $frm_prior = $t_frm->formula_prior();
-        $wrd_pct = $t_wrd->word_percent();
-        $trm_lst = $t_trm->term_list_increase();
-
-        // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression($trm_lst);
-
-        $result = $exp->dsp_id();
-        $target = '""' . words::PERCENT . '" = ( "'
-            . words::THIS_NAME . '" - "'
-            . words::PRIOR_NAME . '" ) / "'
-            . words::PRIOR_NAME . '"" ({w'
-            . $wrd_pct->id() . '}=({f'
-            . $frm_this->id() . '}-{f'
-            . $frm_prior->id() . '})/{f'
-            . $frm_prior->id() . '})';
-        $t->assert($test_name . ' for ' . $frm->dsp_id(), $result, $target);
-
-        // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-        $test_name = 'formula increase: test the element group creation';
-        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
-        $result = $elm_grp_lst->dsp_id();
-        $target = '"'
-            . formulas::THIS_NAME . '" ('
-            . $frm_this->id() . ') / "'
-            . formulas::PRIOR . '" ('
-            . $frm_prior->id() . ') / "'
-            . formulas::PRIOR . '" ('
-            . $frm_prior->id() . ')';
-        $t->dsp_contains($test_name, $target, $result);
-
-        $test_name = 'formula increase; test the display name that can be used for user debugging';
-        $frm_html = new formula_ui($frm->api_json());
-        $trm_lst_dsp = new term_list_ui($trm_lst->api_json());
-        $back = 0;
-        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
-        $target = '"' . words::PERCENT
-            . '" = ( <a href="/http/formula_edit.php?id='
-            . $frm_this->id() . '&back=0" title="'
-            . words::THIS_NAME . '">'
-            . words::THIS_NAME
-            . '</a> - <a href="/http/formula_edit.php?id='
-            . $frm_prior->id()
-            . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
-            . words::PRIOR_NAME
-            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id='
-            . $frm_prior->id() . '&back=0" title="'
-            . words::PRIOR_NAME . '">'
-            . words::PRIOR_NAME . '</a>>'
-            . words::PRIOR_NAME . '</a>';
-        $t->assert($test_name, $result, $target);
-
-        // define the element group object to retrieve the value
-        // test the display name that can be used for user debugging
-        if (count($elm_grp_lst->lst()) > 0) {
-            // get "this" from the formula element group list
-            $elm_grp = $elm_grp_lst->lst()[0];
-            $elm_grp_dsp = new element_group_ui($elm_grp->api_json());
-            $result = $elm_grp_dsp->dsp_names();
-            $target = '<a href="/http/formula_edit.php?id='
-                . $frm_this->id() . '" title="'
-                . words::THIS_NAME . '">'
-                . words::THIS_NAME . '</a>';
-            $t->assert('element_group->dsp_names', trim($result), trim($target));
-        }
-        /*
-        if (count($elm_grp_lst->lst()) > 0) {
-            // get "this" from the formula element group list
-            $elm_grp = $elm_grp_lst->lst()[0];
-            $fig_lst = $elm_grp->figures($trm_lst);
-
-            $test_name = 'formula increase; test if the values for an element group are displayed correctly';
-            $frm_html = new formula_dsp($frm->api_json());
-            $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
-            $back = 0;
-            $result = $frm_html->dsp_text($back, $trm_lst_dsp);
-            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            $t->assert($test_name, $result, $target);
-        }
-        */
-
-
-        // TODO Prio 2 activate
-        //$t->assert_true($ts . 'with at least one predefined formula', $t_frm->formula_increase()->is_special());
-        $t->assert_false($ts . 'without predefined formula', $t_frm->formula()->is_special());
-
-        // get the id of the phrases that should be added to the result based on the formula reference text
-        $target = new phrase_list($usr);
-        $trm_lst = new term_list($usr);
-        $frm = $t_wrd->word_one();
-        $target->add($frm->phrase());
-        $trm_lst->add($frm->term());
-        $exp = new expression($usr);
-        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t_trm->term_list_scale());
-        $result = $exp->result_phrases($trm_lst);
-        $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
-
-        // get the special formulas used in a formula to calculate the result
-        // e.g. "next" is a special formula to get the following values
-        /*
-        $frm_next = new formula($usr);
-        $frm_next->name = "next";
-        $frm_next->type_id = $sys->typ_lst->frm_typ->id(formula_type::NEXT);
-        $frm_next->id = 1;
-        $frm_has_next = new formula($usr);
-        $frm_has_next->usr_text = '=next';
-        $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
-        */
-
-        $test_name = 'formula term list';
-        $frm = $t_frm->formula();
-        $trm_lst = $frm->term_list($t_trm->term_list_time());
-        $t->assert($test_name, $trm_lst->dsp_id(),
-            '"' . words::MINUTE . '","' . words::SECOND . '" ('
-            . $lib->term_id(words::SECOND_ID, word::class) . ','
-            . $lib->term_id(words::MINUTE_ID, word::class) . ')');
-
-        // TODO add result display test
-
-        // test the calculation of one value
-        $trm_lst = $t->term_list_for_tests(array(
-            words::PCT,
-            formulas::THIS_NAME,
-            formulas::PRIOR
-        ));
-        $phr_lst = $t_phr->phrase_list_increase();
-
-        $frm = $t_frm->formula_increase();
-        // TODO Prio 1 activate
-        // $res_lst = $frm->to_num($phr_lst);
-        //$res = $res_lst->lst[0];
-        //$result = $res->num_text;
-        $target = '=(' . values::CH_INHABITANTS_2020_IN_MIO . '-' .
-            values::CH_INHABITANTS_2019_IN_MIO . ')/' .
-            values::CH_INHABITANTS_2019_IN_MIO;
-        //$t->assert('get numbers for formula ' . $frm->dsp_id() . ' based on term list ' . $trm_lst->dsp_id(), $result, $target);
-
-        // TODO Prio 2 add calculation test
-        $test_name = 'formula city population reference text';
-        $frm = $t_frm->formula_city_population();
-        $result = $frm->get_ref_text();
-        $target = '{w' . words::TOTAL_ID . '}=&sum;({w' . words::INHABITANT_ID . '}{v' . verbs::IS_ID . '}{w' . words::CITY_ID . '})';
-        $t->assert($test_name, $result, $target);
 
     }
 

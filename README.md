@@ -1,12 +1,12 @@
 # zukunft.com 
 
-## Calculating with RDF data.
+## Calculating with words
 
 This program should
 - be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser
-- a wordpress like frontend for the GGG using mayly a similar view editor
+- have a wordpress like frontend for the GGG using mayly a similar view editor
 - make the GGG usable for a real-time [delphi-method](https://en.wikipedia.org/wiki/Delphi_method)
-- an [exoskeleton](https://en.wikipedia.org/wiki/Exoskeleton_(human)) for the brain
+- be an [exoskeleton](https://en.wikipedia.org/wiki/Exoskeleton_(human)) for the brain
 - make slow thinking ([Kahneman](https://en.wikipedia.org/wiki/Daniel_Kahneman)) faster
 - allow each user have her/his own [OLAP cube](https://en.wikipedia.org/wiki/OLAP_cube)
 - make efficient community learning easy by connecting all user OLAP cubes point to point
@@ -15,6 +15,25 @@ This program should
 - enable data exchange to [wikidata](https://www.wikidata.org/) and other interlinking databases
 - secure the relevant LLM tokens to enable live learning without losing the [golden rule](https://en.wikipedia.org/wiki/Golden_Rule) as a target
 - help everyone to move smart and fix it
+
+See the [concept](docs/concept.md) for more details.
+
+## main objects
+
+the logical order of the main objects is
+- word - use single words for better assignments
+- verb - a predicate to connect two words
+- triple - combine two words or triples with a verb
+- source - import only data source
+- ref - im- and export to external systems
+- value - a number for calculation
+- group - list of words or triples
+- formula - expression for calculation
+- result - numeric result of a formula
+- view - named display mask
+- component - parts of a display mask
+
+More in the detailed [object description](docs/code_objects.md)
 
 ## Development installation
 
@@ -126,20 +145,3 @@ Deployment process
 4. if the public test is fine, merge it to master and update the production system using the CI/CD Process, which needs to be created
 
 More in the detailed [coding guidelines](docs/code_guidelines.md)
-
-## main objects
-
-the logical order of the main objects is
-- word - use single words for better assignments
-- verb - a predicate to connect two words
-- triple - combine two words or triples with a verb
-- source - import only data source
-- ref - im- and export to external systems
-- value - a number for calculation 
-- group - list of words or triples
-- formula - expression for calculation
-- result - numeric result of a formula
-- view - named display mask
-- component - parts of a display mask
-
-More in the detailed [object description](docs/code_objects.md)

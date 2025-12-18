@@ -28,6 +28,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
@@ -50,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -142,6 +145,15 @@ class phrase_list_tests
         $t->assert($test_name, $wrd_lst->count(), 3);
 
         // TODO add assume time sql statement test
+
+        $test_name = 'get this year from a list of years';
+        $phr_lst = $t_phr->years();
+        $fix_now = new DateTime(test_const::DUMMY_DATETIME);
+        $usr_msg = new user_message();
+        $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $usr_msg, $fix_now);
+        $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
+        // TODO mix it with months and quarters to select the best matching and automatic estimations
+
 
 
         $t->subheader($ts . 'FOAF');

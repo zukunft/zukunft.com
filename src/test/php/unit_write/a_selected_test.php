@@ -146,8 +146,8 @@ class a_selected_test extends test_cleanup
             /*
              * unit testing - with system users
              */
-            //$t_db = new test_db_load($this);
-            //$t_db->type_list_recreate($this, $this->usr1);
+            $t_db = new test_db_load($this);
+            $t_db->type_list_recreate($this, $this->usr1);
 
 
             $ui = new frontend('api based ui tests');
