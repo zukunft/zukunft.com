@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // open database
 $app = new frontend();
@@ -57,6 +58,7 @@ if ($db_con->is_open()) {
 
     if (isset($_POST['submit'])) {
         $html = new html_base();
+        $msg = '';
 
         $usr_id = $_POST[url_var::ID];
         $debug = $_POST['debug'];

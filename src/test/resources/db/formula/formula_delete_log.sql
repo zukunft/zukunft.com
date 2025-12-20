@@ -23,5 +23,5 @@ SELECT formula_delete_log
     (3::bigint,
      3::smallint,
      30::smallint,
-     '"one" = "millions" * 1000000'::text,
+     'scale minute to sec'::text,
      1::bigint);

@@ -881,6 +881,9 @@ enum messages: string
     case FORMULA_REF_EXPRESSION_MISSING = 'the reference is missing in formula '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
 
+    case CANNOT_DELETE_TYPE_WITH_CODE_IS = 'the type  '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' with a link to the program code can only be delete by an administrator user';
     case ID_MISSING_FOR_DEL = 'Deleting of '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' not possible because database id is missing in '

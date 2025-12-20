@@ -112,7 +112,8 @@ class source_tests
         $t->subheader($ts . 'sql delete');
         $t->assert_sql_delete($sc, $src);
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);

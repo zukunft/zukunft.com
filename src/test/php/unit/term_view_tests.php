@@ -104,7 +104,8 @@ class term_view_tests
         $t->subheader($ts . 'term_view sql delete');
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);

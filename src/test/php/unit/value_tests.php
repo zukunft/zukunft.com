@@ -206,7 +206,8 @@ class value_tests
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $val, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $val, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);

@@ -144,7 +144,8 @@ class result_tests
         // TODO Prio 2 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $res);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
         $t->subheader($ts . 'result base object handling');

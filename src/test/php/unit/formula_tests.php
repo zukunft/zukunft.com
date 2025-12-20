@@ -114,7 +114,8 @@ class formula_tests
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $frm);
         $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $frm, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'base object handling');

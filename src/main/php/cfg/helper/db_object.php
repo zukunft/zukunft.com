@@ -321,7 +321,7 @@ class db_object extends IdObject
      */
 
     /**
-     * name of prime index field of the table
+     * name of the prime index field of the table
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
      * e.g. to group_id for values and results
@@ -331,6 +331,16 @@ class db_object extends IdObject
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * name of log entry used shown to the user which entry has been deleted
+     * e.g. for the user it can be the name, the ip-address, or as fallback the database id
+     * @return string the field name(s) of the prime database index of the object
+     */
+    function log_name_field(): string
+    {
+        return '';
     }
 
 }

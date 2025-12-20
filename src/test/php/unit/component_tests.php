@@ -112,7 +112,8 @@ class component_tests
 
         $t->subheader($ts . 'component sql delete');
         $t->assert_sql_delete($sc, $cmp);
-        $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 
         $t->subheader($ts . 'component base object handling');
         $cmp = $t_cmp->component_filled();

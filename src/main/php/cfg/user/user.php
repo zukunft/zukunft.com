@@ -2972,6 +2972,29 @@ class user extends db_id_object_non_sandbox
 
 
     /*
+     * info
+     */
+
+    /**
+     * name of log entry used shown to the user which entry has been deleted
+     * e.g. for the user it can be the name, the ip-address, or as fallback the database id
+     * @return string the field name(s) of the prime database index of the object
+     */
+    function log_name_field(): string
+    {
+        $fld_name = $this->id_field();
+        if ($this->name != '') {
+            $fld_name = user_db::FLD_NAME;
+        } elseif ($this->email != '') {
+            $fld_name = user_db::FLD_EMAIL;
+        } elseif ($this->ip_addr != '') {
+            $fld_name = user_db::FLD_IP_ADDR;
+        }
+        return $fld_name;
+    }
+
+
+    /*
      * debug
      */
 

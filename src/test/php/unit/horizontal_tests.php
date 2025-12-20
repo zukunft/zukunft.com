@@ -146,7 +146,7 @@ class horizontal_tests
             }
             $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
             //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
-            //$t->assert_sql_delete($sc, $obj, [sql_type::LOG]);
+            $t->assert_sql_delete($sc, $obj, $sql_typ_lst);
 
         }
 

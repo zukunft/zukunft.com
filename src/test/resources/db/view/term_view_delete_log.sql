@@ -34,4 +34,4 @@ SELECT term_view_delete_log
      1::bigint,
      1::smallint,
      1::bigint,
-     0::bigint);
+     1::bigint);

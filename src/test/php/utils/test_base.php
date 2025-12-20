@@ -1508,6 +1508,8 @@ class test_base
     function assert_sql_delete(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         $usr_msg = new user_message();
+        // use the system user for the sql creation test because otherwise no statement would be created e.g. to delete a verb
+        $usr_msg->usr = $this->usr_system;
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

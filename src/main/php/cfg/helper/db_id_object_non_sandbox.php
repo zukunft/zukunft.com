@@ -266,8 +266,13 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::DELETE);
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
         // set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used);
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
@@ -407,8 +412,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $qp->sql = $qp_func->sql . ' ' . $sql . ';';
         $qp->par = $fvt_lst_out->values();
 
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
+
         // create the function call
-        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . $ext . ' (';
 
         $call_val_str = $fvt_lst_out->par_sql($sc);
 

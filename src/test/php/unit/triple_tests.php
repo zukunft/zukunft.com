@@ -86,7 +86,8 @@ class triple_tests
         // TODO Prio 2 activate db write
         $t->assert_sql_delete($sc, $trp);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $trp, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $trp, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);

@@ -183,7 +183,7 @@ class verb extends type_object
      */
     function reset(bool $keep_user = false): void
     {
-        parent::reset($keep_user);
+        parent::reset();
         $this->set_user(null);
         $this->plural = null;
         $this->reverse = null;
@@ -191,13 +191,6 @@ class verb extends type_object
         $this->frm_name = null;
         $this->usage = null;
         $this->impact = null;
-    }
-
-    function clone_reset(): verb
-    {
-        $obj_cpy = clone $this;
-        $obj_cpy->reset();
-        return $obj_cpy;
     }
 
     /**
