@@ -29,13 +29,13 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class share_type extends type_object
 {
@@ -45,8 +45,8 @@ class share_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the read access control';
-    const FLD_NAME_COM = 'the name of the share type as displayed for the user';
-    const FLD_DESCRIPTION_COM = 'to explain the code action of the share type';
+    const string TBL_COMMENT = 'for the read access control';
+    const string FLD_NAME_COM = 'the name of the share type as displayed for the user';
+    const string FLD_DESCRIPTION_COM = 'to explain the code action of the share type';
 
 }

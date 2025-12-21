@@ -30,18 +30,18 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\element\element_list;
-use cfg\element\element_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_tests
 {
@@ -52,6 +52,7 @@ class element_tests
 
         // init
         $sc = new sql_creator();
+        $t_frm = new test_formulas($t);
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
@@ -63,30 +64,30 @@ class element_tests
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_sql_table_create($elm);
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
         $t->subheader($ts . 'formula sql read');
 
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_sql_by_id($sc, $elm);
 
         $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_insert($sc, $elm);
         //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_update($sc, $elm);
         //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         //$t->assert_sql_delete($sc, $elm);
         //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 
 
         $t->subheader($ts . 'element api');
-        $elm = $t->element();
+        $elm = $t_frm->element();
         $t->assert_api_json($elm);
 
         // JSON export list
@@ -95,7 +96,7 @@ class element_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_encode($wrd_lst->export_json());
+        $json = json_encode($wrd_lst->export_json([]));
         $t->assert($t->name . '->measure list', $json, '[{"plural":"","description":"","type":"time","view":"","refs":[],"name":"time_word","share":"","protection":""},{"plural":"","description":"","type":"measure","view":"","refs":[],"name":"measure_word","share":"","protection":""},{"plural":"","description":"","type":"scaling","view":"","refs":[],"name":"scale_word","share":"","protection":""}]');
         */
 

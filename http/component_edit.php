@@ -33,41 +33,43 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\component\component;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\component\component_exe as component_dsp;
-use shared\api;
-use shared\json_fields;
-
 // open database
-$db_con = prg_start("component_edit");
+$app = new frontend();
+$db_con = $app->start("component_edit");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user
 $usr = new user;
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
     $upd_result = '';
 
     $usr->load_usr_data();
 
     // get the view component id
-    if (!isset($_GET[api::URL_VAR_ID])) {
+    if (!isset($_GET[url_var::ID])) {
         log_info("The view component id must be set to display a view.", "component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
         // init the display object to show the standard elements such as the header
@@ -75,7 +77,7 @@ if ($usr->id() > 0) {
 
         // create the view component object to apply the user changes to it
         $cmp = new component($usr);
-        $result .= $cmp->load_by_id($_GET[api::URL_VAR_ID]);
+        $result .= $cmp->load_by_id($_GET[url_var::ID]);
 
         // get the word used as a sample to illustrate the changes
         $wrd = new word($usr);
@@ -86,7 +88,7 @@ if ($usr->id() > 0) {
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done
-        $back = $_GET[api::URL_VAR_BACK] = '';
+        $back = $_GET[url_var::BACK] = '';
 
         // save the direct changes
         // link or unlink a view
@@ -95,59 +97,51 @@ if ($usr->id() > 0) {
             $dsp_link = new view($usr);
             $result .= $dsp_link->load_by_id($dsp_link_id);
             $order_nbr = $cmp->next_nbr($dsp_link_id);
-            $upd_result = $cmp->link($dsp_link, $order_nbr);
+            $upd_result = $cmp->link($dsp_link, $order_nbr, $usr_msg);
         }
 
         $dsp_unlink_id = $_GET['unlink_view'];  // to unlink a view component from the view
         if ($dsp_unlink_id > 0) {
             $dsp_unlink = new view($usr);
             $result .= $dsp_unlink->load_by_id($dsp_unlink_id);
-            $upd_result .= $cmp->unlink($dsp_unlink);
+            $upd_result .= $cmp->unlink($dsp_unlink, $usr_msg);
         }
 
         // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
-        $cmp_name = $_GET[api::URL_VAR_NAME];
+        $cmp_name = $_GET[url_var::NAME];
         if ($cmp_name <> '') {
 
             // save the user changes in the database
             $upd_result = '';
 
             // get other field parameters
-            if (isset($_GET[api::URL_VAR_NAME])) {
-                $cmp->set_name($_GET[api::URL_VAR_NAME]);
+            if (isset($_GET[url_var::NAME])) {
+                $cmp->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[api::URL_VAR_COMMENT])) {
-                $cmp->description = $_GET[api::URL_VAR_COMMENT];
+            if (isset($_GET[url_var::DESCRIPTION])) {
+                $cmp->description = $_GET[url_var::DESCRIPTION];
             }
             if (isset($_GET['type'])) {
                 $cmp->type_id = $_GET['type'];
             } //
             if (isset($_GET[json_fields::PHRASE_ROW])) {
-                $cmp->load_row_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_row_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
             if (isset($_GET[json_fields::PHRASE_COL])) {
-                $cmp->load_col_phrase($_GET[json_fields::PHRASE_ROW]);
+                $cmp->reload_col_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
 
             // save the changes
-            $upd_result .= $cmp->save()->get_last_message();
+            $cmp->save($usr_msg);
 
-            // if update was fine ...
-            if (str_replace('1', '', $upd_result) == '') {
-                // ... display the calling page (switched off because it seems more useful it the user goes back by selecting the related word)
-                // $result .= dsp_go_back($back, $usr);
-            } else {
-                // ... or in case of a problem prepare to show the message
-                $msg .= $upd_result;
-            }
         }
 
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // in view edit views the view cannot be changed
-            $msk_dsp = new view_dsp($msk->api_json());
+            $msk_dsp = new view_ui($msk->api_json());
             $result .= $msk_dsp->dsp_navbar_no_view($wrd->id());
-            $result .= $html->dsp_err($msg);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // if the user has requested to use this display component also in another view, $add_link is greater than 0
             $add_link = 0;
@@ -156,7 +150,7 @@ if ($usr->id() > 0) {
             }
 
             // show the word and its relations, so that the user can change it
-            $cmp_dsp = new component_dsp($cmp->api_json());
+            $cmp_dsp = new component_ui($cmp->api_json());
             $result .= $cmp_dsp->dsp_edit($add_link, $wrd, $back);
         }
     }
@@ -164,4 +158,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

@@ -27,13 +27,13 @@ PREPARE value_prime_p3_insert_log_11000_user_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_prime_p3_insert_log_11000_user
-       (1,
+       (3,
         1,
         1,
         3.1415926535898,
-         1163953635467,
-        271,
-        267,
+        914840879243,
+        213,
+        196,
         139,
         0,
         null);

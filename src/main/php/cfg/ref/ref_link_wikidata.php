@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
 class ref_link_wikidata
 {

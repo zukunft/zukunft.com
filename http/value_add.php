@@ -33,27 +33,30 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\user\user;
-use cfg\value\value;
-use cfg\view\view;
-use html\html_base;
-use html\value\value as value_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-
 // open database
-$db_con = prg_start("value_add");
+$app = new frontend();
+$db_con = $app->start("value_add");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -66,8 +69,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VALUE_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
+    $msk->load_by_code_id(views::VALUE_ADD);
+    $back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $val = new value($usr);
@@ -111,7 +114,7 @@ if ($usr->id() > 0) {
         $val->convert();
 
         // add the new value to the database
-        $upd_result = $val->save()->get_last_message();
+        $upd_result = $val->save($usr_msg);
 
         // if update was successful ...
         if ($val->id() > 0 and str_replace('1', '', $upd_result) == '') {
@@ -123,12 +126,12 @@ if ($usr->id() > 0) {
                 if ($val->get_source_id() > 0) {
                     log_debug("save source" . $val->get_source_id() . ".");
                     $usr->set_source($val->get_source_id());
-                    $upd_result = $val->save()->get_last_message();
+                    $upd_result = $val->save($usr_msg);
                     log_debug("save source done.");
                 }
             }
         } else {
-            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp->dsp_id() . " failed (" . $upd_result . ").", "value_add");
+            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp()->dsp_id() . " failed (" . $upd_result . ").", "value_add");
         }
 
         log_debug("go back to " . $back . ".");
@@ -138,15 +141,16 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the view header
-        $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
-        $result .= $html->dsp_err($msg);
+        $msk_dsp = new view_ui($msk->api_json());
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
-        $val_dsp = new value_dsp($val->api_json());
+        $val_dsp = new value_ui($val->api_json());
         $result .= $val_dsp->dsp_edit($type_ids, $back);
     }
 }
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

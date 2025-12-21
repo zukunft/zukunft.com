@@ -12,6 +12,7 @@ CREATE INDEX triples_user_idx           ON triples (user_id);
 CREATE INDEX triples_triple_name_idx    ON triples (triple_name);
 CREATE INDEX triples_name_given_idx     ON triples (name_given);
 CREATE INDEX triples_name_generated_idx ON triples (name_generated);
+CREATE INDEX triples_weight_idx         ON triples (weight);
 CREATE INDEX triples_phrase_type_idx    ON triples (phrase_type_id);
 CREATE INDEX triples_view_idx           ON triples (view_id);
 
@@ -26,5 +27,6 @@ CREATE INDEX user_triples_language_idx       ON user_triples (language_id);
 CREATE INDEX user_triples_triple_name_idx    ON user_triples (triple_name);
 CREATE INDEX user_triples_name_given_idx     ON user_triples (name_given);
 CREATE INDEX user_triples_name_generated_idx ON user_triples (name_generated);
+CREATE INDEX user_triples_weight_idx         ON user_triples (weight);
 CREATE INDEX user_triples_phrase_type_idx    ON user_triples (phrase_type_id);
 CREATE INDEX user_triples_view_idx           ON user_triples (view_id);

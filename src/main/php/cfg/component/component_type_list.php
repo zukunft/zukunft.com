@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/component_type_list.php - to link coded functionality to a view component
+    model/component/component_type_list.php - to link coded functionality to a view component
     ---------------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::DB . 'sql_db.php';
@@ -39,9 +39,9 @@ include_once paths::MODEL_COMPONENT . 'component_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use shared\types\component_type as comp_type_shared;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class component_type_list extends type_list
 {
@@ -50,13 +50,8 @@ class component_type_list extends type_list
      * adding the view component types used for unit tests to the dummy list
      */
     function load_dummy(): void {
-        parent::load_dummy();
-        foreach (comp_type_shared::TEST_TYPES as $cmp_typ) {
-            $code_id = $cmp_typ[0];
-            $id = $cmp_typ[1];
-            $type = new type_object($code_id, $code_id, '', $id);
-            $this->add($type);
-        }
+        // TODO Prio 0 check if and why any other load_dummy function uses something else
+        parent::load_from_csv_resource();
     }
 
     /**

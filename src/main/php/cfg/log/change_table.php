@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::DB . 'sql.php';
@@ -40,11 +40,11 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class change_table extends type_object
 {
@@ -55,18 +55,18 @@ class change_table extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
-    const FLD_ID = 'change_table_id';
-    const FLD_NAME_COM = 'the real name';
-    const FLD_NAME = 'change_table_name';
-    const FLD_CODE_ID_COM = 'with this field tables can be combined in case of renaming';
-    const FLD_DESCRIPTION_COM = 'the user readable name';
+    const string TBL_COMMENT = 'to keep the original table name even if a table name has changed and to avoid log changes in case a table is renamed';
+    const string FLD_ID = 'change_table_id';
+    const string FLD_NAME_COM = 'the real name';
+    const string FLD_NAME = 'change_table_name';
+    const string FLD_CODE_ID_COM = 'with this field tables can be combined in case of renaming';
+    const string FLD_DESCRIPTION_COM = 'the user readable name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );

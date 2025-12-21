@@ -34,31 +34,34 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\import\import;
-use cfg\user\user;
-use cfg\view\view;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-
 // open database
-$db_con = prg_start("import");
+$app = new frontend();
+$db_con = $app->start("import");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 log_debug('import.php check user ');
@@ -69,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::IMPORT);
+    $msk->load_by_code_id(views::IMPORT);
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];
@@ -124,8 +127,9 @@ if ($usr->id() > 0) {
             if ($_FILES['fileToUpload']['error'] == UPLOAD_ERR_OK
                 && is_uploaded_file($_FILES['fileToUpload']['tmp_name'])) {
                 $json_str = file_get_contents($_FILES['fileToUpload']['tmp_name']);
+                $json_array = json_decode($json_str, true);
                 $import = new import;
-                $import_result = $import->put($json_str, $usr);
+                $import_result = $import->put($json_array, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
@@ -167,9 +171,10 @@ if ($usr->id() > 0) {
     if ($result == '') {
         log_debug('import.php display mask ');
         // show the value and the linked words to edit the value (again after removing or adding a word)
-        $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
-        $result .= $html->dsp_err($msg);
+        $msk_dsp = new view_ui($msk->api_json());
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
+        $result .= $html->dsp_err($usr_msg->all_message_text());
 
         $result .= $html->dsp_form_file_select();
         // $result .= dsp_btn_text ('Start import', '/http/import.php?confirm=1&filepath='.);
@@ -184,9 +189,9 @@ if ($usr->id() > 0) {
 }
 
 $result .= '<br><br>';
-$result .= \html\btn_back($back);
+$result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

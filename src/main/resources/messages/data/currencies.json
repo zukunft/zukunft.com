@@ -1,0 +1,418 @@
+{
+  "version": "0.0.1",
+  "pod": "zukunft.com",
+  "time": "2020-03-08 19:05:57",
+  "user": "timon",
+  "selection": [
+    "most relevant currency selection demo"
+  ],
+  "words": [
+    {
+      "name": "Currency",
+      "description": "A currency is a system of money in common use within a specific environment over time, especially for people in a nation state.",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "turnover"
+    },
+    {
+      "name": "OTC"
+    },
+    {
+      "name": "foreign"
+    },
+    {
+      "name": "exchange"
+    },
+    {
+      "name": "instruments"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "US dollar"
+    },
+    {
+      "name": "Euro"
+    },
+    {
+      "name": "Yen"
+    },
+    {
+      "name": "Pound (sterling)"
+    },
+    {
+      "name": "Renminbi"
+    },
+    {
+      "name": "Australian dollar"
+    },
+    {
+      "name": "Canadian dollar"
+    },
+    {
+      "name": "Swiss franc"
+    },
+    {
+      "name": "Japanese yen",
+      "refs": [
+        {
+          "name": "Japanese yen",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "other"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "base"
+    },
+    {
+      "name": "spot"
+    },
+    {
+      "name": "transaction"
+    },
+    {
+      "name": "outright"
+    },
+    {
+      "name": "forwards"
+    },
+    {
+      "name": "swap"
+    },
+    {
+      "name": "option"
+    },
+    {
+      "name": "April"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "2022"
+    },
+    {
+      "name": "daily"
+    },
+    {
+      "name": "weekly"
+    },
+    {
+      "name": "monthly"
+    },
+    {
+      "name": "yearly"
+    },
+    {
+      "name": "trading"
+    },
+    {
+      "name": "most"
+    },
+    {
+      "name": "relevant"
+    },
+    {
+      "name": "ranking"
+    },
+    {
+      "name": "criteria"
+    },
+    {
+      "name": "¥",
+      "refs": [
+        {
+          "name": "Yen and yuan sign",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "ranking criteria",
+      "from": "ranking",
+      "verb": "has a",
+      "to": "criteria"
+    },
+    {
+      "name": "most relevant",
+      "from": "relevant",
+      "verb": "can be",
+      "to": "most"
+    },
+    {
+      "name": "trading turnover",
+      "from": "trading",
+      "verb": "can have",
+      "to": "turnover"
+    },
+    {
+      "name": "daily turnover",
+      "from": "trading turnover",
+      "verb": "can be",
+      "to": "daily"
+    },
+    {
+      "name": "weekly turnover",
+      "from": "trading turnover",
+      "verb": "can be",
+      "to": "weekly"
+    },
+    {
+      "name": "yearly turnover",
+      "from": "trading turnover",
+      "verb": "can be",
+      "to": "yearly"
+    },
+    {
+      "name": "daily turnover ranking",
+      "from": "daily turnover",
+      "verb": "can be",
+      "to": "ranking criteria"
+    },
+    {
+      "name": "weekly turnover ranking",
+      "from": "weekly turnover",
+      "verb": "can be",
+      "to": "ranking criteria"
+    },
+    {
+      "name": "yearly turnover ranking",
+      "from": "yearly turnover",
+      "verb": "can be",
+      "to": "ranking criteria"
+    },
+    {
+      "name": "primary ranked by yearly turnover",
+      "from": "yearly turnover ranking",
+      "verb": "is a",
+      "to": "most relevant"
+    },
+    {
+      "name": "ranked by weekly turnover",
+      "from": "weekly turnover ranking",
+      "verb": "can be",
+      "to": "relevant"
+    },
+    {
+      "name": "ranked by daily turnover",
+      "from": "daily turnover ranking",
+      "verb": "can be",
+      "to": "relevant"
+    },
+    {
+      "from": "Currency",
+      "verb": "has a",
+      "to": "primary ranked by yearly turnover"
+    },
+    {
+      "from": "Currency",
+      "verb": "can have",
+      "to": "ranked by weekly turnover"
+    },
+    {
+      "from": "Currency",
+      "verb": "can have",
+      "to": "ranked by daily turnover"
+    },
+    {
+      "name": "average turnover",
+      "from": "turnover",
+      "verb": "can use",
+      "to": "average"
+    },
+    {
+      "name": "daily average turnover",
+      "from": "average turnover",
+      "verb": "can be",
+      "to": "daily"
+    },
+    {
+      "name": "monthly average turnover",
+      "from": "average turnover",
+      "verb": "can be",
+      "to": "monthly"
+    },
+    {
+      "name": "yearly average turnover",
+      "from": "average turnover",
+      "verb": "can be",
+      "to": "yearly"
+    },
+    {
+      "name": "in USD",
+      "verb": "in",
+      "to": "US dollar"
+    },
+    {
+      "name": "net-net basis",
+      "from": "net",
+      "verb": "to",
+      "to": "net"
+    },
+    {
+      "name": "net-net basis",
+      "from": "net",
+      "verb": "to",
+      "to": "net"
+    },
+    {
+      "name": "April 2022",
+      "from": "April",
+      "verb": "of",
+      "to": "2022"
+    },
+    {
+      "from": "¥",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "yearly average turnover",
+      "expression": "\"yearly\" = sum ( \"monthly average turnover\" ) / count ( \"monthly average turnover\" )",
+      "assigned_word": "turnover"
+    }
+  ],
+  "sources": [
+    {
+      "name": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022",
+      "url": "https://data.bis.org/topics/DER/tables-and-dashboards/BIS,DER_D11_1,1.0"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "US dollar",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "6638789.57647",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Euro",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "2292443.97231",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Yen",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "1253236.255855",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Pound (sterling)",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "968138.60876",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Renminbi",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "526230.879331",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Australian dollar",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "478576.590891",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Canadian dollar",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "465775.584672",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Swiss franc",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "389699.544224",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    },
+    {
+      "words": [
+        "Other currencies",
+        "daily average turnover",
+        "total",
+        "million",
+        "in USD",
+        "net-net basis",
+        "April 2022"
+      ],
+      "number": "1999092.60199",
+      "source": "BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022"
+    }
+  ]
+}

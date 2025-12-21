@@ -30,26 +30,22 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\db\sql;
-use cfg\db\sql_type;
-use cfg\group\group_id;
-use cfg\log\change_values_norm;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use cfg\value\value;
-use shared\const\groups;
-use shared\const\triples;
-use shared\const\values;
-use shared\const\words;
-use shared\enum\change_fields;
-use shared\types\phrase_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_read_tests
 {
@@ -58,10 +54,11 @@ class value_read_tests
     {
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'value->';
 
         // start the test section (ts)
-        $ts = 'read value ';
+        $ts = 'db read value ';
         $t->header($ts);
 
         $t->subheader($ts . 'by id');
@@ -96,13 +93,13 @@ class value_read_tests
         $t->assert($ts . $test_name, $val->number(), values::CH_INHABITANTS_2020_IN_MIO);
 
         $test_name = 'value without time returns the latest value';
-        $val = $t->load_value(array(
+        $val = $t_db->load_value(array(
             words::CANTON,
             words::ZH,
             words::INHABITANTS,
             words::MIO
         ));
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert($ts . $test_name, $val->number(), values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         $test_name = 'value of a words group can be accessed by the triple e.g. '
@@ -111,8 +108,8 @@ class value_read_tests
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate Prio 2
-        $val = $t->load_value(array(
+        // TODO Prio 2 activate
+        $val = $t_db->load_value(array(
             triples::CANTON_ZURICH,
             words::INHABITANTS,
             words::MIO,
@@ -127,8 +124,8 @@ class value_read_tests
         // check if loading value with a phrase returns a value created with the phrase parts
         // e.g. the value created with words canton and zurich
         // should be returned if requested with the phrase canton of zurich
-        // TODO activate Prio 2
-        $val = $t->load_value(array(
+        // TODO Prio 2 activate
+        $val = $t_db->load_value(array(
             words::CANTON,
             words::ZH,
             words::INHABITANTS,
@@ -139,7 +136,7 @@ class value_read_tests
         //    $val->number(), values::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // test load by phrase list first to get the value id
-        $ch_inhabitants = $t->test_value(array(
+        $ch_inhabitants = $t_db->test_value(array(
             words::CH,
             words::INHABITANTS,
             words::MIO,
@@ -151,13 +148,13 @@ class value_read_tests
             log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
         } else {
             // test load by value id
-            $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id());
+            $val = $t_db->load_value_by_id($t->usr1, $ch_inhabitants->id());
             $result = $val->number();
             $target = values::CH_INHABITANTS_2019_IN_MIO;
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
             // test load by phrase list first to get the value id
-            $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
+            $phr_lst = $t_db->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
             $val_by_phr_lst = new value($t->usr1);
             $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
@@ -202,8 +199,8 @@ class value_read_tests
         $val->load_objects();
 
         $test_name = groups::TN_READ;
-        $phr_grp = $t->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
-        $val = $t->load_value_by_phr_grp($phr_grp);
+        $phr_grp = $t_db->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
+        $val = $t_db->load_value_by_phr_grp($phr_grp);
         $t->assert_export_reload($ts . $test_name, $val);
 
     }

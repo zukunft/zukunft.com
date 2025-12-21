@@ -37,10 +37,10 @@ SELECT term_view_insert_log_015505 (
                1,
                1,
                1,
-               1,
+               3,
                1,
                89,
                'Start view',
-               'default',
+               'standard',
                'mathematics',
                725);

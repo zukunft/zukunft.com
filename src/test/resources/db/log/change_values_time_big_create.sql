@@ -20,4 +20,4 @@ COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done b
 COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify the change change_values_time_big';
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';

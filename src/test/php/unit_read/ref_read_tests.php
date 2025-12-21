@@ -30,36 +30,37 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CONST . 'refs.php';
 
-use cfg\ref\ref;
-use cfg\ref\ref_type_list;
-use shared\library;
-use shared\const\refs;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_read_tests
 {
 
     function run(test_cleanup $t): void
     {
-
+        global $sys;
         global $db_con;
-        global $phr_typ_cac;
 
         // init
         $lib = new library();
         $t->name = 'ref db read->';
 
-        $t->header('Reference db read tests');
+        // start the test section (ts)
+        $ts = 'db read reference ';
+        $t->header($ts);
 
-        $t->subheader('Reference types tests');
+        $t->subheader($ts . 'types');
 
         // load the ref types
         $lst = new ref_type_list();
@@ -68,10 +69,10 @@ class ref_read_tests
 
         // ... and check if at least the most critical is loaded
         // TODO check
-        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
-        $t->subheader('API unit db tests');
+        $t->subheader($ts . 'apis');
 
         $ref = new ref($t->usr1);
         $ref->load_by_id(refs::PI_ID);

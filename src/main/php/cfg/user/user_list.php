@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -60,33 +60,31 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\formula\formula;
-use cfg\helper\db_object;
-use cfg\helper\db_object_multi;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\users;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\library;
-use shared\types\api_type_list;
-
-global $system_users;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 // TODO base it on the base_list object
 class user_list
 {
     // internal db field name to count the changes by on user
-    const FLD_CHANGES = 'changes';
+    const string FLD_CHANGES = 'changes';
 
     public ?array $lst = null;  // the list of users
     public array $code_id_hash = [];
@@ -99,11 +97,13 @@ class user_list
 
     /**
      * always set the user because a link list is always user specific
-     * @param user $usr the user who requested to see e.g. the formula links
+     * @param user|null $usr the user who requested to see e.g. the formula links
      */
-    function __construct(user $usr)
+    function __construct(?user $usr = null)
     {
-        $this->set_user($usr);
+        if ($usr != null) {
+            $this->set_user($usr);
+        }
     }
 
 
@@ -124,7 +124,7 @@ class user_list
      * set the SQL query parameters to load a list of figure objects
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -134,7 +134,7 @@ class user_list
         $sc->set_class(user::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
@@ -146,7 +146,7 @@ class user_list
      * @param array $ids list of user ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -156,7 +156,7 @@ class user_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(user::FLD_ID, $ids);
+        $sc->add_where(user_db::FLD_ID, $ids);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -168,7 +168,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id all users with this code id should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
@@ -187,7 +187,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $profile_id list of user that have at least this profile level
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
     {
@@ -208,7 +208,7 @@ class user_list
     {
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);
-        $sql = 'SELECT ' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . user_db::FLD_ID . ',';
         $id_fields = $dbo->id_field();
         if (is_array($id_fields)) {
             $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
@@ -216,7 +216,7 @@ class user_list
             $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
         }
         $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -226,14 +226,15 @@ class user_list
      */
     private function load_sql_count_all_changes(): string
     {
-        $sql = $this->load_sql_count_changes_dbo(new word($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($this->user()));
-        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($this->user()));
-        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($this->user()));
+        $usr = new user(); // dummy user because the user is not relevant for counting
+        $sql = $this->load_sql_count_changes_dbo(new word($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($usr));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($usr));
+        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($usr));
         /* TODO activate if a class name can be used to create a class instance
         foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
             $sql_count .= $this->load_sql_count_changes($class);
@@ -244,10 +245,10 @@ class user_list
 
     private function load_sql_count_sum_changes(): string
     {
-        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user_db::FLD_ID . ',';
         $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
         $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() . ') ' . sql_db::GRP_TBL;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -255,13 +256,13 @@ class user_list
      * create an SQL statement to retrieve users that have changed something
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_count_changes(sql_creator $sc): sql_par
     {
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
-        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
+        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user_db::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL, sql_db::LNK_TBL);
         $sc->set_order(self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -334,16 +335,6 @@ class user_list
         return $this->load($db_con, $qp);
     }
 
-    /**
-     * load all system users that have a code id
-     */
-    function load_system(sql_db $db_con): void
-    {
-        global $system_users;
-        $this->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
-        $system_users = clone $this;
-    }
-
 
     /*
      * set and get
@@ -363,7 +354,7 @@ class user_list
     /**
      * @return user the person who wants to see the user list
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -379,7 +370,7 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->set_id($db_usr[user::FLD_ID]);
+                $usr->id = $db_usr[user_db::FLD_ID];
                 $usr->name = $db_usr[user_db::FLD_NAME];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
@@ -418,7 +409,7 @@ class user_list
         $result = array();
         if ($this->lst != null) {
             foreach ($this->lst as $usr) {
-                $result[] = $usr->id();
+                $result[] = $usr->id;
             }
         }
         return $result;
@@ -486,38 +477,38 @@ class user_list
      */
     function load_dummy(): void
     {
-        global $usr_pro_cac;
+        global $sys;
 
         $this->lst = array();
         $this->code_id_hash = array();
 
         $usr = new user(users::SYSTEM_NAME, users::SYSTEM_EMAIL);
         $usr->code_id = users::SYSTEM_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::SYSTEM);
         $this->lst[users::SYSTEM_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_CODE_ID] = users::SYSTEM_ID;
 
         $usr = new user(users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
         $usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::ADMIN);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::ADMIN);
         $this->lst[users::SYSTEM_ADMIN_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_ADMIN_CODE_ID] = users::SYSTEM_ADMIN_ID;
 
         $usr = new user(users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
         $this->lst[users::SYSTEM_TEST_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_CODE_ID] = users::SYSTEM_TEST_ID;
 
         $usr = new user(users::SYSTEM_TEST_PARTNER_NAME, users::SYSTEM_TEST_PARTNER_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_PARTNER_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::TEST);
         $this->lst[users::SYSTEM_TEST_PARTNER_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_PARTNER_CODE_ID] = users::SYSTEM_TEST_PARTNER_ID;
 
         $usr = new user(users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
         $usr->code_id = users::SYSTEM_TEST_NORMAL_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
+        $usr->profile_id = $sys->typ_lst->usr_pro->id(user_profiles::NORMAL);
         $this->lst[users::SYSTEM_TEST_NORMAL_ID] = $usr;
         $this->code_id_hash[users::SYSTEM_TEST_NORMAL_CODE_ID] = users::SYSTEM_TEST_NORMAL_ID;
 
@@ -577,8 +568,8 @@ class user_list
         if ($allow_duplicates) {
             $this->add_direct($usr_to_add);
         } else {
-            if ($usr_to_add->id() != 0) {
-                if (!array_key_exists($usr_to_add->id(), $this->id_lst())) {
+            if ($usr_to_add->id != 0) {
+                if (!array_key_exists($usr_to_add->id, $this->id_lst())) {
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
@@ -653,29 +644,31 @@ class user_list
      * simple loop to save all users of the list
      * because there are probably not many users to save at once
      *
-     * @param user $usr_req the user who has requested the database update
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user|null $usr_req the user who has request the user adding or update
+     * @param user_message $usr_msg_all in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(user $usr_req): user_message
+    function save(user_message $usr_msg_all, user|null $usr_req = null): void
     {
-        $usr_msg = new user_message();
-
         if ($this->is_empty()) {
-            $usr_msg->add_info_text('no users to save');
+            $usr_msg_all->add_info_text('no users to save');
         } else {
             foreach ($this->lst() as $usr) {
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $usr_msg = $usr_msg_all->clone_reset();
+                // actual save the user to the database
                 if ($usr->excluded === true) {
-                    if ($usr->id() == 0 and $usr->name() != '') {
+                    if ($usr->id == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
-                    $usr_msg->add($usr->del($usr_req));
+                    $usr->del($usr_msg_all, $usr_req);
                 } else {
-                    $usr_msg->add($usr->save($usr_req));
+                    $usr->save_user($usr_msg, $usr_req);
                 }
+                // collect the user message for a consolidated list for the user
+                $usr_msg_all->add($usr_msg);
             }
         }
-
-        return $usr_msg;
     }
 
 }

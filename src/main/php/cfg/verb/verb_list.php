@@ -30,9 +30,9 @@
   
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql_db.php';
@@ -42,7 +42,7 @@ include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -51,21 +51,20 @@ include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_list;
-use cfg\phrase\phrase;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\word\triple_db;
-use cfg\word\word;
-use shared\enum\foaf_direction;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class verb_list extends type_list
 {
@@ -111,7 +110,7 @@ class verb_list extends type_list
     /**
      * @return user|null the person who wants to see the verbs
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
@@ -127,7 +126,7 @@ class verb_list extends type_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
      * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction): sql_par
     {
@@ -147,7 +146,7 @@ class verb_list extends type_list
         if ($qp->name != '') {
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->get_user()->id);
             $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
@@ -178,11 +177,11 @@ class verb_list extends type_list
 
         $result = false;
         // check the all minimal input parameters
-        if ($this->user() == null) {
+        if ($this->get_user() == null) {
             log_err("The user id must be set to load a list of verbs.", "verb_list->load");
             /*
             } elseif (!isset($this->wrd) OR $this->direction->value == '')  {
-              zu_err("The word id, the direction and the user (".$this->user()->name.") must be set to load a list of verbs.", "verb_list->load");
+              zu_err("The word id, the direction and the user (".$this->get_user()->name.") must be set to load a list of verbs.", "verb_list->load");
             */
         } else {
             $qp = $this->load_by_linked_phrases_sql($db_con, $phr, $direction);
@@ -197,7 +196,7 @@ class verb_list extends type_list
                             $vrb->row_mapper_verb($db_vrb);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
-                            $vrb_id_lst[] = $vrb->id();
+                            $vrb_id_lst[] = $vrb->id;
                             log_debug('verb_list->load added (' . $vrb->name() . ')');
                         }
                     }
@@ -240,79 +239,174 @@ class verb_list extends type_list
     function load_dummy(): void
     {
         $vrb = new verb();
-        $vrb->set_id(verbs::NOT_SET_ID);
+        $vrb->id = verbs::NOT_SET_ID;
         $vrb->set_name(verbs::NOT_SET_NAME);
         $vrb->set_code_id_db(verbs::NOT_SET);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::IS_ID);
+        $vrb->id = verbs::IS_ID;
         $vrb->set_name(verbs::IS_NAME);
         $vrb->set_code_id_db(verbs::IS);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::OF_ID);
-        $vrb->set_name(verbs::OF_NAME);
-        $vrb->set_code_id_db(verbs::OF);
-        $this->add_verb($vrb);
-        $vrb = new verb();
-        $vrb->set_id(verbs::PART_ID);
+        $vrb->id = verbs::PART_ID;
         $vrb->set_name(verbs::PART_NAME);
         $vrb->set_code_id_db(verbs::PART);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::WITH_ID);
+        $vrb->id = verbs::CAN_BE_PART_OF_ID;
+        $vrb->set_name(verbs::CAN_BE_PART_OF_NAME);
+        $vrb->set_code_id_db(verbs::CAN_BE_PART_OF);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::OF_ID;
+        $vrb->set_name(verbs::OF_NAME);
+        $vrb->set_code_id_db(verbs::OF);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::WITH_ID;
         $vrb->set_name(verbs::WITH_NAME);
         $vrb->set_code_id_db(verbs::WITH_NAME);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::FOLLOW_ID);
+        $vrb->id = verbs::HAS_ID;
+        $vrb->set_name(verbs::HAS_NAME);
+        $vrb->set_code_id_db(verbs::HAS);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::TIME_STEP_ID;
+        $vrb->set_name(verbs::TIME_STEP_NAME);
+        $vrb->set_formula_name(verbs::TIME_STEP_NAME_FORMULA);
+        $vrb->set_code_id_db(verbs::TIME_STEP);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::TERM_STEP_ID;
+        $vrb->set_name(verbs::TERM_STEP_NAME);
+        $vrb->set_code_id_db(verbs::TERM_STEP);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::TERM_NEED_STEP_ID;
+        $vrb->set_name(verbs::TERM_NEED_STEP_NAME);
+        $vrb->set_code_id_db(verbs::TERM_NEED_STEP);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::FOLLOW_ID;
         $vrb->set_name(verbs::FOLLOW_NAME);
         $vrb->set_code_id_db(verbs::FOLLOW);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::MEASURE_ID);
+        $vrb->id = verbs::USES_ID;
+        $vrb->set_name(verbs::USES_NAME);
+        $vrb->set_code_id_db(verbs::USES);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::ISSUE_ID;
+        $vrb->set_name(verbs::ISSUE_NAME);
+        $vrb->set_code_id_db(verbs::ISSUE);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::MEASURE_ID;
         $vrb->set_name(verbs::MEASURE_NAME);
         $vrb->set_code_id_db(verbs::MEASURE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::ALIAS_ID);
+        $vrb->id = verbs::ACRONYM_ID;
+        $vrb->set_name(verbs::ACRONYM_NAME);
+        $vrb->set_code_id_db(verbs::ACRONYM);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::CAN_CONTAIN_ID;
+        $vrb->set_name(verbs::CAN_CONTAIN_NAME);
+        $vrb->set_code_id_db(verbs::CAN_CONTAIN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::INFLUENCE_ID;
+        $vrb->set_name(verbs::INFLUENCE_NAME);
+        $vrb->set_code_id_db(verbs::INFLUENCE);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::ALIAS_ID;
         $vrb->set_name(verbs::ALIAS_NAME);
         $vrb->set_code_id_db(verbs::ALIAS);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_BE_ID);
+        $vrb->id = verbs::CAN_ID;
+        $vrb->set_name(verbs::CAN_NAME);
+        $vrb->set_code_id_db(verbs::CAN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::CAN_BE_ID;
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->set_code_id_db(verbs::CAN_BE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_GET_ID);
+        $vrb->id = verbs::CAN_GET_ID;
         $vrb->set_name(verbs::CAN_GET_NAME);
         $vrb->set_code_id_db(verbs::CAN_GET);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_USE_ID);
-        $vrb->set_name(verbs::CAN_USE_NAME);
-        $vrb->set_code_id_db(verbs::CAN_USE);
-        $this->add_verb($vrb);
-        $vrb = new verb();
-        $vrb->set_id(verbs::CAN_CAUSE_ID);
+        $vrb->id = verbs::CAN_CAUSE_ID;
         $vrb->set_name(verbs::CAN_CAUSE_NAME);
         $vrb->set_code_id_db(verbs::CAN_CAUSE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::PER_ID);
+        $vrb->id = verbs::CAN_HAVE_ID;
+        $vrb->set_name(verbs::CAN_HAVE_NAME);
+        $vrb->set_code_id_db(verbs::CAN_HAVE);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::CAN_USE_ID;
+        $vrb->set_name(verbs::CAN_USE_NAME);
+        $vrb->set_code_id_db(verbs::CAN_USE);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::SCALED_ID;
+        $vrb->set_name(verbs::SCALED_NAME);
+        $vrb->set_code_id_db(verbs::SCALED);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::PER_ID;
         $vrb->set_name(verbs::PER_NAME);
         $vrb->set_code_id_db(verbs::PER);
         $this->add_verb($vrb);
+        $vrb->id = verbs::TIMES_ID;
+        $vrb->set_name(verbs::TIMES_NAME);
+        $vrb->set_code_id_db(verbs::TIMES);
+        $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::SYMBOL_ID);
+        $vrb->id = verbs::SELECTOR_ID;
+        $vrb->set_name(verbs::SELECTOR_NAME);
+        $vrb->set_code_id_db(verbs::SELECTOR);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::SYMBOL_ID;
         $vrb->set_name(verbs::SYMBOL_NAME);
         $vrb->set_code_id_db(verbs::SYMBOL);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::AND_ID);
+        $vrb->id = verbs::AND_ID;
         $vrb->set_name(verbs::AND_NAME);
         $vrb->set_code_id_db(verbs::AND);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::ON_ID;
+        $vrb->set_name(verbs::ON_NAME);
+        $vrb->set_code_id_db(verbs::ON);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::IN_ID;
+        $vrb->set_name(verbs::IN_NAME);
+        $vrb->set_code_id_db(verbs::IN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::TO_ID;
+        $vrb->set_name(verbs::TO_NAME);
+        $vrb->set_code_id_db(verbs::TO);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::RANK_ID;
+        $vrb->set_name(verbs::RANK_NAME);
+        $vrb->set_code_id_db(verbs::RANK);
         $this->add_verb($vrb);
     }
 
@@ -364,7 +458,7 @@ class verb_list extends type_list
      */
     function add_verb(verb $vrb): void
     {
-        //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
+        //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id);
         $this->add($vrb);
     }
 
@@ -391,18 +485,18 @@ class verb_list extends type_list
     {
         log_debug('verb_list->calc_usage');
 
+        global $sys;
         global $db_con;
-        global $sys_times;
 
         $sql = "UPDATE verbs v
                    SET words = ( SELECT COUNT(to_phrase_id) 
                                    FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
-        $db_con->usr_id = $this->user()->id();
-        $sys_times->switch(system_time_type::DB_WRITE);
+        $db_con->usr_id = $this->get_user()->id;
+        $sys->times->switch(system_time_type::DB_WRITE);
         $result = $db_con->exe_try('Calculation of the verb usage', $sql);
-        $sys_times->switch();
+        $sys->times->switch();
         return $result;
     }
 
@@ -514,11 +608,11 @@ class verb_list extends type_list
                     $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
-                    $select_row[] = $vrb->usage();
+                    $select_row[] = $vrb->get_usage();
                     $combined_list[$id] = $select_row;
 
                     $select_row = array();
-                    $select_name = $vrb->reverse();
+                    $select_name = $vrb->get_reverse();
                     /* like above ...
                     if ($vrb->name() != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->name() . ')';
@@ -528,7 +622,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->usage(); // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->get_usage(); // TODO separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }
@@ -580,21 +674,26 @@ class verb_list extends type_list
      * simple loop to save all verbs of the list
      * because there are hopefully never many verbs to save
      *
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
-                $usr_msg->add($vrb->save());
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $vrb_usr_msg = $usr_msg->clone_reset();
+                // actual save the reference to the database
+                $vrb->save($vrb_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($vrb_usr_msg);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

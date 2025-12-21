@@ -20,8 +20,8 @@ $$ BEGIN
 END $$ LANGUAGE plpgsql;
 
 SELECT formula_delete_log
-    (1::bigint,
+    (3::bigint,
      3::smallint,
      30::smallint,
-     '"one" = "millions" * 1000000'::text,
+     'scale minute to sec'::text,
      1::bigint);

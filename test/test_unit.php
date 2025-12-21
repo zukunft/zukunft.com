@@ -2,7 +2,7 @@
 
 /*
 
-    test_unit.php - run the interlal unit tests without db read or write
+    test_unit.php - run the internal unit tests without db read or write
     -------------
 
     checks that only developers and local admin can start the tests
@@ -32,46 +32,45 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+// load the main test class to get the test environment
+include_once TEST_PHP_PATH . 'test_app.php';
+use Zukunft\ZukunftCom\test\php\test_app;
+
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+include_once test_paths::UTILS . 'test_base.php';
 
 // load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 
-use cfg\log_text\text_log_format;
-use cfg\user\user;
-use test\all_tests;
-
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 global $db_con;
+global $cac;
 
 // open database and display header
-$db_con = prg_start("unit tests", '', false);
+$app = new test_app();
+$db_con = $app->start("unit tests", '', false, true);
 
 if ($db_con->is_open()) {
 
     // load the session user parameters
     $start_usr = new user;
     $result = $start_usr->get();
+    $cac->set_user($start_usr);
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($start_usr->id() > 0) {
         if ($start_usr->is_admin()) {
 
-            global $errors;
+            global $t_cac;
 
             // init tests
-            $errors = 0;
             $t = new all_tests();
             $t->header('Start zukunft.com unit tests');
 
@@ -91,6 +90,6 @@ if ($db_con->is_open()) {
     }
 
     // Closing connection
-    prg_end($db_con, false);
+    $app->end($db_con, false);
 
 }

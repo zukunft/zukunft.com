@@ -29,7 +29,7 @@ SELECT component_link_update_log_000200000_user
         ($1,$2,$3,$4,$5, $6);
 
 SELECT component_link_update_log_000200000_user
-       (1::bigint,
+       (3::bigint,
         2::smallint,
         48::smallint,
         1::bigint,

@@ -30,24 +30,23 @@
 
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\html_base;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\system\job as job_dsp;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
-class job_list extends list_dsp
+class job_list extends ListBase
 {
 
     /*
@@ -62,7 +61,7 @@ class job_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        // TODO activate Prio 3
+        // TODO Prio 3 activate
         //$ctrl = new controller();
         //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
         return parent::api_mapper_list($json_array, new job());

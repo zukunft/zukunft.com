@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/utils/enum/level.php - enum for the test reporting levels
-    -----------------------------
+    model/log_text/text_log_level.php - enum for the test reporting levels
+    ---------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\log_text;
+namespace Zukunft\ZukunftCom\main\php\cfg\log_text;
 
 enum text_log_level: int
 {

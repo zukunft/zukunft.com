@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/combine_named.php - parent object for a phrase or term objects
-    -------------------------------
+    model/helper/combine_named.php - parent object for a phrase or term objects
+    ------------------------------
 
     phrase and term have the fields name, description and type in common
 
@@ -32,9 +32,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
@@ -42,19 +42,19 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_where_type.php';
 include_once paths::MODEL_HELPER . 'combine_object.php';
-include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class combine_named extends combine_object
 {
@@ -64,7 +64,7 @@ class combine_named extends combine_object
      */
 
     // list of phrase types used for the database views
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::PRIME],
         [sql_type::MOST],
         [sql_type::PRIME, sql_type::USER],
@@ -73,7 +73,7 @@ class combine_named extends combine_object
     // list of original tables that should be connoted with union
     // with fields used in the view
     // overwritten by the child objects
-    const TBL_FLD_LST_VIEW = [];
+    const array TBL_FLD_LST_VIEW = [];
 
     /*
      * construct and map
@@ -81,10 +81,11 @@ class combine_named extends combine_object
 
     /**
      * set the object vars of a phrase or term to the neutral initial value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        $this->obj?->reset();
+        $this->obj?->reset($keep_user);
     }
 
 
@@ -100,7 +101,7 @@ class combine_named extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -146,7 +147,7 @@ class combine_named extends combine_object
      */
     function description(): ?string
     {
-        return $this->obj()?->description();
+        return $this->obj()?->get_description();
     }
 
     /**
@@ -228,7 +229,7 @@ class combine_named extends combine_object
      */
     function set_plural(?string $plural): void
     {
-        $this->obj()?->set_plural($plural);
+        $this->obj()->plural = $plural;
     }
 
 

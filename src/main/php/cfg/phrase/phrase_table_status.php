@@ -1,8 +1,8 @@
 <?php
 /*
 
-    model/system/phrase_table_status.php - the status of a phrase table
-    ----------------------------------
+    model/phrase/phrase_table_status.php - the status of a phrase table
+    ------------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,23 +30,23 @@
 */
 
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class phrase_table_status extends type_object
 {
 
     // list of the pod statuus
-    const REQUESTED = 'requested'; // the system has requested the table creation
-    const CREATING = 'creating'; // the tables are created and filled with data
-    const ACTIVE = 'active'; // the tables are filled and are used as the primary source and target
-    const TO_DEPRECATE = 'to_deprecate'; // data should no longer be saved in the tables and are moved to other places
-    const DEPRECATED = "deprecated"; // tables should be empty and can be removed
+    const string REQUESTED = 'requested'; // the system has requested the table creation
+    const string CREATING = 'creating'; // the tables are created and filled with data
+    const string ACTIVE = 'active'; // the tables are filled and are used as the primary source and target
+    const string TO_DEPRECATE = 'to_deprecate'; // data should no longer be saved in the tables and are moved to other places
+    const string DEPRECATED = "deprecated"; // tables should be empty and can be removed
 
 
     /*
@@ -54,7 +54,7 @@ class phrase_table_status extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the actual status of tables for a phrase';
-    const FLD_ID = 'phrase_table_status_id';
+    const string TBL_COMMENT = 'for the actual status of tables for a phrase';
+    const string FLD_ID = 'phrase_table_status_id';
 
 }

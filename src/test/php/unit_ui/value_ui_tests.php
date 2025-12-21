@@ -30,33 +30,42 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\value\value;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_ui_tests
 {
     function run(test_cleanup $t): void
     {
         $html = new html_base();
+        $t_val = new test_values($t);
+        $tl = new test_lib();
 
-        $t->subheader('value html ui tests');
+        // start the test section (ts)
+        $ts = 'unit ui value ';
+        $t->header($ts);
 
-        $val = new value($t->value()->api_json([api_type::INCL_PHRASES]));
+        $t->subheader($ts . 'html');
+
+        $val = new value($t_val->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with name and tooltip: ' . $val->name_tip() . '<br>';
         $test_page .= 'with name and link: ' . $val->name_link() . '<br>';
         $test_page .= 'with tooltip: ' . $val->value() . '<br>';
         $test_page .= 'with detail link: ' . $val->value_link() . '<br>';
         $test_page .= 'with edit link: ' . $val->value_edit() . '<br>';
+        $test_page .= 'with measure type: ' . $tl->ui_value($t_val->light_speed())->with_unit_and_info() . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $val->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $val->btn_del() . '<br>';
-        $t->html_test($test_page, 'value html components', 'value', $t);
+        $t->html_page_test($test_page, 'value html components', 'value', $t);
 
 
         // TODO review
@@ -110,13 +119,13 @@ class value_ui_tests
         $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
-        $t->header('Test the value list class (classes/value_list.php)');
+        $t->subheader($ts . 'Test the value list class (classes/value_list.php)');
 
         // check the database consistency for all values
         $val_lst = new value_list($usr);
         $result = $val_lst->check_all();
         $target = '';
-        $t->display('value_list->check_all', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->check_all', $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // test get a single value from a value list by group and time
         // get all value for Switzerland
@@ -130,13 +139,13 @@ class value_ui_tests
         $grp = $wrd_lst->get_grp();
         $result = $grp->id();
         $target = '2116';
-        $t->display('word_list->get_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('word_list->get_grp for ' . $wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
         $val = $val_lst->get_by_grp($grp, $wrd_time);
         if ($val != null) {
             $result = $val->number();
         }
         $target = values::TV_CH_INHABITANTS_2020_IN_MIO;
-        $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         // ... get all times of the Switzerland values
         $time_lst = $val_lst->time_list();
@@ -147,7 +156,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name(), true, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('value_list->time_lst is ' . $time_lst->dsp_name() . ', which includes ' . $wrd_2014->name(), $result, true, $t::TIMEOUT_LIMIT_DB);
 
         // ... and filter by times
         $time_lst = new word_list($usr);
@@ -159,7 +168,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name(), true, $result);
+        $t->assert('value_list->time_lst is ' . $used_time_lst->dsp_name() . ', which does not include ' . $wrd_2014->name(), $result, true);
 
         // ... but not 2020
         $wrd_2020 = new word($usr);
@@ -169,7 +178,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_time_lst->dsp_name() . ', but includes ' . $wrd_2020->name(), $result, true);
 
         // ... and filter by phrases
         $sector_lst = new word_list($usr);
@@ -184,7 +193,7 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', which does not include ' . $wrd_auto->name(), $result, true);
 
         // ... but not 2016
         $wrd_power = new word($usr);
@@ -194,10 +203,10 @@ class value_ui_tests
         } else {
             $result = false;
         }
-        $t->display('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name(), true, $result);
+        $t->assert('value_list->filter_by_phrase_lst is ' . $used_phr_lst->dsp_name() . ', but includes ' . $wrd_power->name(), $result, true);
 
 
-        $t->header('Test the value list display class (classes/value_list_display.php)');
+        $t->subheader($ts . 'Test the value list display class (classes/value_list_display.php)');
 
         // test the value table
         $wrd = new word($usr);
@@ -212,7 +221,7 @@ class value_ui_tests
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
         //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());
-        //$t->display('value_list_dsp->dsp_table for "'.$wrd->name.'"', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        //$t->assert('value_list_dsp->dsp_table for "'.$wrd->name.'"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         */
 
     }

@@ -2,8 +2,8 @@
 
 /*
 
-    web/sandbox/sandbox_typed.php - extends the superclass for named html objects with the type id
-    ------------------------------
+    web/sandbox/sandbox_code_id.php - extends the superclass for named html objects with the type id
+    -------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,22 +30,23 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\user\user_message;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class sandbox_code_id extends sandbox_typed
 {
 
     // the code_id to use single objects with predefined functionality also in the frontend
-    private ?string $code_id = null;
+    public ?string $code_id = null;
 
 
     /*
@@ -55,17 +56,18 @@ class sandbox_code_id extends sandbox_typed
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->set_code_id($json_array[json_fields::CODE_ID]);
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
-            $this->set_code_id(null);
+            $this->code_id = null;
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -80,23 +82,8 @@ class sandbox_code_id extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        $vars[json_fields::CODE_ID] = $this->code_id;
         return $vars;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_code_id(?string $code_id): void
-    {
-        $this->code_id = $code_id;
-    }
-
-    function code_id(): ?string
-    {
-        return $this->code_id;
     }
 
 }

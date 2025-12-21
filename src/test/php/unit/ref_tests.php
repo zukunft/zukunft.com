@@ -30,20 +30,22 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'refs.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\ref\ref;
-use cfg\ref\ref_type_list;
-use html\ref\ref as ref_dsp;
-use shared\const\refs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_tests
 {
@@ -55,6 +57,7 @@ class ref_tests
 
         // init for reference
         $sc = new sql_creator();
+        $t_ref = new test_refs($t);
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
 
@@ -75,7 +78,7 @@ class ref_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $ref = new ref($usr);
-        $ref->set_id(3);
+        $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
 
         $t->subheader($ts . 'sql read all type');
@@ -83,19 +86,20 @@ class ref_tests
         $t->assert_sql_all($sc, $ref_type_list);
 
         $t->subheader($ts . 'sql write insert');
-        $ref = $t->reference();
+        $ref = $t_ref->reference();
         $t->assert_sql_insert($sc, $ref);
-        $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
-        $ref_usr = $t->reference_user();
+        $ref_usr = $t_ref->reference_user();
         $t->assert_sql_insert($sc, $ref_usr, [sql_type::USER]);
         $t->assert_sql_insert($sc, $ref_usr, [sql_type::LOG, sql_type::USER]);
-        $ref_filled = $t->ref_filled();
+        $ref_filled = $t_ref->ref_filled();
         $t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG]);
-        $ref_filled_usr = $t->ref_filled_user();
+        $ref_filled_usr = $t_ref->ref_filled_user();
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
+        $ref = $t_ref->reference_incomplete();
+        $t->assert_sql_insert_fail($sc, $ref, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
-        $ref = $t->reference_change();
+        $ref = $t_ref->reference_change();
         $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
         $t->assert_sql_update($sc, $ref_changed, $ref);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
@@ -108,22 +112,22 @@ class ref_tests
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'base object handling');
-        $ref = $t->ref_filled();
+        $ref = $t_ref->ref_filled();
         $t->assert_reset($ref);
 
         $t->subheader($ts . 'api');
-        $ref = $t->reference1();
+        $ref = $t_ref->reference1();
         $t->assert_api_json($ref);
-        $ref = $t->reference_plus();
+        $ref = $t_ref->reference_plus();
         $t->assert_api($ref);
 
         $t->subheader($ts . 'frontend');
-        $ref = $t->reference_plus();
-        $t->assert_api_to_dsp($ref, new ref_dsp());
+        $ref = $t_ref->reference_plus();
+        $t->assert_api_to_ui($ref, new ref_ui());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->reference(), $usr_sys);
-        $t->assert_ex_and_import($t->ref_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_ref->reference(), $usr_sys);
+        $t->assert_ex_and_import($t_ref->ref_filled(), $usr_sys);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($usr), $json_file);
 

@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql.php';
@@ -45,14 +45,14 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_list;
-use cfg\user\user;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 class view_sys_list extends type_list
 {
@@ -84,7 +84,7 @@ class view_sys_list extends type_list
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -120,7 +120,7 @@ class view_sys_list extends type_list
     /**
      * set the SQL query parameters to load a list of views from the database that have a used code id
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_list(sql_creator $sc): sql_par
     {
@@ -128,7 +128,7 @@ class view_sys_list extends type_list
         $dsp_lst = new view_list($this->usr);
         $qp = $dsp_lst->load_sql($sc, 'sys_views');
         $sc->set_name($qp->name);
-        $msk = new view($this->user());
+        $msk = new view($this->get_user());
         $sc->set_id_field($msk->id_field());
         $sc->add_where(sql_db::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
         $sc->set_order(view_db::FLD_ID);
@@ -159,9 +159,9 @@ class view_sys_list extends type_list
     {
         parent::load_dummy();
         $msk = new view($this->usr);
-        $msk->set_id(2);
-        $msk->set_name(view_shared::WORD);
-        $msk->set_code_id_db(view_shared::WORD_CODE_ID);
+        $msk->id = 2;
+        $msk->set_name(view_shared::WORD_NAME);
+        $msk->set_code_id_db(view_shared::WORD);
         $this->add($msk);
     }
 
@@ -170,7 +170,7 @@ class view_sys_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_shared::WORD);
+        return parent::id(view_shared::WORD_NAME);
     }
 
 }

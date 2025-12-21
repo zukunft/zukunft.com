@@ -2,7 +2,7 @@
 
 /*
 
-    cfg\sandbox\user_service.php - that parent object for user specific services
+    cfg/sandbox/user_service.php - that parent object for user specific services
     ----------------------------
 
     e.g. used for the im- and export processes
@@ -32,15 +32,15 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::EXPORT . 'export.php';
 include_once paths::MODEL_USER . 'user.php';
 
-use cfg\export\export;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\export\export;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 class user_service
 {
@@ -79,7 +79,7 @@ class user_service
     /**
      * @return user the person who wants to see a word, verb, triple, formula, view or result
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }

@@ -8,7 +8,7 @@
     actually only used for phrase splitting; in most other cases phrase_list is used
 
     TODO: check the consistence usage of the parameter $back
-    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
+    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
     TODO: add bool $incl_alias to include all alias words that are of the ids
     TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
           e.g. remove "Country", but keep "Switzerland"
@@ -49,15 +49,17 @@
 
 */
 
-namespace cfg\word;
+namespace Zukunft\ZukunftCom\main\php\cfg\word;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
@@ -67,7 +69,6 @@ include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -77,7 +78,6 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
-include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -85,36 +85,36 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\helper\combine_named;
-use cfg\helper\data_object;
-use cfg\import\import;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_list;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\enum\foaf_direction;
-use shared\enum\messages as msg_id;
-use shared\library;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class word_list extends sandbox_list_named
 {
@@ -138,7 +138,7 @@ class word_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new word($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new word($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -183,7 +183,7 @@ class word_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new word($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new word($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -229,7 +229,7 @@ class word_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -239,11 +239,11 @@ class word_list extends sandbox_list_named
         int                                            $offset = 0
     ): sql_par
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
-        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -255,7 +255,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -263,11 +263,11 @@ class word_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(word_db::FLD_NAMES);
         $sc->set_usr_fields(word_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word_db::FLD_VALUES) . ' DESC, '
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(sql_db::FLD_USAGE) . ' DESC, '
             . word_db::FLD_NAME);
         return $qp;
     }
@@ -280,7 +280,7 @@ class word_list extends sandbox_list_named
      * @param array $wrd_ids a list of int values with the word ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -305,7 +305,7 @@ class word_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -320,7 +320,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words by the type
      * @param sql_creator $sc with the target db_type set
      * @param int $type_id the id of the word type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_type(sql_creator $sc, int $type_id): sql_par
     {
@@ -339,7 +339,7 @@ class word_list extends sandbox_list_named
      * set the SQL query parameters to load a list of words by a word pattern
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the words
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
@@ -361,7 +361,7 @@ class word_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to select only words linked with this verb
      * @param foaf_direction $direction to define the link direction
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_linked_words(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
@@ -406,7 +406,7 @@ class word_list extends sandbox_list_named
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user $usr the user for whom the changes should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_user_changes_sql(sql_db $db_con, user $usr): sql_par
     {
@@ -437,7 +437,7 @@ class word_list extends sandbox_list_named
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $wrd = new word($this->user());
+                    $wrd = new word($this->get_user());
                     $wrd->row_mapper_sandbox($db_row);
                     $this->add_obj($wrd);
                     $result = true;
@@ -461,20 +461,20 @@ class word_list extends sandbox_list_named
 
         global $db_con;
         $lib = new library();
-        $additional_added = new word_list($this->user()); // list of the added words with this call
+        $additional_added = new word_list($this->get_user()); // list of the added words with this call
 
         $qp = $this->load_sql_linked_words($db_con->sql_creator(), $vrb, $direction);
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->get_user()->id;
             $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[sql_db::FLD_EXCLUDED]) or $db_wrd[sql_db::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word_db::FLD_ID] > 0 and !in_array($db_wrd[word_db::FLD_ID], $this->ids())) {
-                            $new_word = new word($this->user());
+                            $new_word = new word($this->get_user());
                             $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);
                             log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb_db::FLD_ID] . ')');
@@ -496,40 +496,39 @@ class word_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
-            $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $usr_req, $dto, $test_obj));
-            $this->add($wrd);
+            $wrd = new word($this->get_user());
+            if ($wrd->import_obj($value, $usr_msg, $dto)) {
+                $this->add_by_name($wrd);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $wrd_lst = [];
         foreach ($this->lst() as $wrd) {
             if (get_class($wrd) == word::class) {
                 if ($wrd->has_cfg()) {
-                    $wrd_lst[] = $wrd->export_json($do_load);
+                    $wrd_lst[] = $wrd->export_json($exp_typ, $do_load);
                 }
             } else {
                 log_err('The function wrd_lst->export_json returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
@@ -603,7 +602,7 @@ class word_list extends sandbox_list_named
         if ($max_level > 0) {
             $max_loops = $max_level;
         } else {
-            $max_loops = MAX_RECURSIVE;
+            $max_loops = def::MAX_RECURSIVE;
         }
         $loops = 0;
         $additional_added = clone $this;
@@ -616,7 +615,7 @@ class word_list extends sandbox_list_named
             // remember the added words
             $added_wrd_lst->merge($additional_added);
 
-            if ($loops >= MAX_RECURSIVE) {
+            if ($loops >= def::MAX_RECURSIVE) {
                 log_fatal("max number (" . $loops . ") of loops reached.", "word_list->foaf_level");
             }
         } while (!empty($additional_added->lst()) and $loops < $max_loops);
@@ -625,7 +624,7 @@ class word_list extends sandbox_list_named
     }
 
     /**
-     * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is"
+     * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "company" if the verb_id is "is"
      *
      * @param verb|null $vrb id of the verb that is used to select the parents
      * @returns word_list the accumulated list of added words
@@ -633,7 +632,7 @@ class word_list extends sandbox_list_named
     function foaf_parents(?verb $vrb): word_list
     {
         $level = 0;
-        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
+        $added_wrd_lst = new word_list($this->get_user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP);
 
         log_debug($added_wrd_lst->dsp_id());
@@ -649,7 +648,7 @@ class word_list extends sandbox_list_named
      */
     function parents(?verb $vrb, int $level): word_list
     {
-        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
+        $added_wrd_lst = new word_list($this->get_user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP, $level);
 
         log_debug($added_wrd_lst->name());
@@ -667,7 +666,7 @@ class word_list extends sandbox_list_named
      */
     function children(?verb $vrb, int $level = 0): word_list
     {
-        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
+        $added_wrd_lst = new word_list($this->get_user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::DOWN, $level);
 
         log_debug($added_wrd_lst->dsp_id());
@@ -682,7 +681,7 @@ class word_list extends sandbox_list_named
      */
     function direct_children(?verb $vrb): word_list
     {
-        $added_wrd_lst = new word_list($this->user()); // list of the added word ids
+        $added_wrd_lst = new word_list($this->get_user()); // list of the added word ids
         $added_wrd_lst = $this->foaf_level(1, $added_wrd_lst, $vrb, foaf_direction::DOWN, 1);
 
         log_debug($added_wrd_lst->dsp_id());
@@ -691,28 +690,28 @@ class word_list extends sandbox_list_named
 
     /**
      * returns a list of words that are related to this word list
-     * e.g. for "ABB" and "Daimler" it will return "Company", but not "ABB"
+     * e.g. for "ABB" and "Daimler" it will return "company", but not "ABB"
      * @returns word_list with the added words
      */
     function is(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
+        global $sys;
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
 
     /**
      * returns a list of words that are related to this word list
-     * e.g. for "Company" it will return "ABB" and "Daimler" and "Company"
+     * e.g. for "company" it will return "ABB" and "Daimler" and "company"
      * e.g. to get all related values
      * @returns word_list with the added words
      */
     function are(): word_list
     {
-        global $vrb_cac;
+        global $sys;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS));
+        $wrd_lst = $this->children($sys->typ_lst->vrb->get_verb(verbs::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -724,8 +723,8 @@ class word_list extends sandbox_list_named
      */
     function contains(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::PART_NAME));
+        global $sys;
+        $wrd_lst = $this->children($sys->typ_lst->vrb->get_verb(verbs::PART_NAME));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -763,7 +762,7 @@ class word_list extends sandbox_list_named
                 }
                 $wrd_lst->merge($added_lst);
                 $loops++;
-            } while (count($next_lst->lst()) > 0 and $loops < MAX_LOOP);
+            } while (count($next_lst->lst()) > 0 and $loops < def::MAX_LOOP);
         }
         log_debug($this->dsp_id() . ' are_and_contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -777,8 +776,8 @@ class word_list extends sandbox_list_named
      */
     function differentiators(): word_list
     {
-        global $vrb_cac;
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        global $sys;
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -790,10 +789,10 @@ class word_list extends sandbox_list_named
      */
     function differentiators_all(): word_list
     {
-        global $vrb_cac;
+        global $sys;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 
@@ -817,7 +816,7 @@ class word_list extends sandbox_list_named
      */
     function keep_only_specific(): word_list
     {
-        $parents = new word_list($this->user());
+        $parents = new word_list($this->get_user());
         foreach ($this->lst() as $wrd) {
             $phr_lst = $wrd->parents();
             $wrd_lst = $phr_lst->wrd_lst_all();
@@ -844,7 +843,7 @@ class word_list extends sandbox_list_named
         log_debug($wrd_id_to_add);
         if (!in_array($wrd_id_to_add, $this->ids())) {
             if ($wrd_id_to_add > 0) {
-                $wrd_to_add = new word($this->user());
+                $wrd_to_add = new word($this->get_user());
                 $wrd_to_add->load_by_id($wrd_id_to_add);
 
                 $this->add($wrd_to_add);
@@ -863,10 +862,10 @@ class word_list extends sandbox_list_named
     {
         $result = false;
         log_debug($wrd_name_to_add);
-        if (is_null($this->user()->id())) {
+        if (is_null($this->get_user()->id)) {
             log_err("The user must be set.", "word_list->add_name");
         } else {
-            $wrd_to_add = new word($this->user());
+            $wrd_to_add = new word($this->get_user());
             $wrd_to_add->load_by_name($wrd_name_to_add);
 
             $this->add($wrd_to_add);
@@ -974,7 +973,7 @@ class word_list extends sandbox_list_named
      */
     function wlsort(): array
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
         $name_lst = array();
         $result = array();
@@ -1053,9 +1052,9 @@ class word_list extends sandbox_list_named
         log_debug('for words "' . $this->dsp_id() . '"');
         $lib = new library();
 
-        global $phr_typ_cac;
-        $result = new word_list($this->user());
-        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
+        global $sys;
+        $result = new word_list($this->get_user());
+        $time_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id() == $time_type) {
@@ -1109,13 +1108,13 @@ class word_list extends sandbox_list_named
      */
     function measure_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
-        $result = new word_list($this->user());
-        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
+        $result = new word_list($this->get_user());
+        $measure_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $measure_type) {
@@ -1135,18 +1134,18 @@ class word_list extends sandbox_list_named
      */
     function scaling_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
-        $result = new word_list($this->user());
-        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
+        $result = new word_list($this->get_user());
+        $scale_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
-                $wrd->usr = $this->user(); // review: should not be needed
+                $wrd->usr = $this->get_user(); // review: should not be needed
                 $result->add_obj($wrd);
                 log_debug('found (' . $wrd->name() . ')');
             } else {
@@ -1163,13 +1162,13 @@ class word_list extends sandbox_list_named
      */
     function percent_lst(): word_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
-        $result = new word_list($this->user());
-        $percent_type = $phr_typ_cac->id(phrase_type_shared::PERCENT);
+        $result = new word_list($this->get_user());
+        $percent_type = $sys->typ_lst->phr_typ->id(phrase_type_shared::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $percent_type) {
@@ -1195,13 +1194,13 @@ class word_list extends sandbox_list_named
     {
         log_debug('->get_grp');
 
-        $grp = new group($this->user());
+        $grp = new group($this->get_user());
 
         // get or create the group
         if (count($this->ids()) <= 0) {
             log_err('Cannot create phrase group for an empty list.', 'word_list->get_grp');
         } else {
-            $grp = new group($this->user());
+            $grp = new group($this->get_user());
             $grp->load_by_ids((new phr_ids($this->ids())));
         }
 
@@ -1209,12 +1208,12 @@ class word_list extends sandbox_list_named
         TODO check if a new group is not created
         $result = $grp->get_id();
         if ($result->id() > 0) {
-          zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
+          zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->get_user()->name);
         } else {
           zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids()).') and user '.$grp->usr->name);
           $result = $grp->get_id();
           if ($result->id() > 0) {
-            zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
+            zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->get_user()->name);
           }
         }
         */
@@ -1228,7 +1227,7 @@ class word_list extends sandbox_list_named
      */
     function phrase_list(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
                 $phr_lst->add($phr->phrase());
@@ -1249,7 +1248,7 @@ class word_list extends sandbox_list_named
      */
     function phrase_lst_of_names(): phrase_list
     {
-        $phr_lst = new phrase_list($this->user());
+        $phr_lst = new phrase_list($this->get_user());
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
                 $phr_lst->add_by_name($phr->phrase());
@@ -1269,13 +1268,13 @@ class word_list extends sandbox_list_named
      */
     function value(): value
     {
-        $val = new value($this->user());
+        $val = new value($this->get_user());
         $phr_lst = $this->phrase_list();
-        $phr_grp = new group($this->user());
+        $phr_grp = new group($this->get_user());
         $phr_grp->load_by_phr_lst($phr_lst);
         $val->load_by_grp($phr_grp);
 
-        log_debug($val->name() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->name() . ' for "' . $this->get_user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -1285,7 +1284,7 @@ class word_list extends sandbox_list_named
      */
     function value_scaled(): value
     {
-        log_debug($this->dsp_id() . " for " . $this->user()->name);
+        log_debug($this->dsp_id() . " for " . $this->get_user()->name);
 
         $val = $this->value();
 
@@ -1328,6 +1327,8 @@ class word_list extends sandbox_list_named
     {
         log_debug('for ' . $this->dsp_id());
         $result = false;
+        $lib = new library();
+
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1337,7 +1338,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1347,6 +1348,7 @@ class word_list extends sandbox_list_named
     function has_measure(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1356,7 +1358,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1366,6 +1368,7 @@ class word_list extends sandbox_list_named
     function has_scaling(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1375,7 +1378,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1386,6 +1389,7 @@ class word_list extends sandbox_list_named
     function has_percent(): bool
     {
         $result = false;
+        $lib = new library();
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             log_debug('check (' . $wrd->name() . ')');
@@ -1395,7 +1399,7 @@ class word_list extends sandbox_list_named
                 }
             }
         }
-        log_debug(zu_dsp_bool($result));
+        log_debug($lib->dsp_bool($result));
         return $result;
     }
 
@@ -1416,8 +1420,8 @@ class word_list extends sandbox_list_named
 
         foreach ($this->lst() as $wrd) {
             // $wrd_dsp = $wrd->dsp_obj();
-            // TODO review $view = $wrd_dsp->view();
-            $view = $wrd->view();
+            // TODO review $view = $wrd_dsp->get_view();
+            $view = $wrd->get_view();
             if (isset($view)) {
                 $is_in_list = false;
                 foreach ($result as $check_view) {
@@ -1445,8 +1449,8 @@ class word_list extends sandbox_list_named
      */
     function max_time(): word
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
-        $max_wrd = new word($this->user());
+        log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
+        $max_wrd = new word($this->get_user());
         if (count($this->lst()) > 0) {
             foreach ($this->lst() as $wrd) {
                 // TODO replaced by "is following"
@@ -1466,13 +1470,13 @@ class word_list extends sandbox_list_named
      */
     function max_val_time(?term_list $trm_lst = null): ?word
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->name);
+        log_debug($this->dsp_id() . ' and user ' . $this->get_user()->name);
         $lib = new library();
         $wrd = null;
 
         if ($trm_lst == null) {
             // load the list of all value related to the word list
-            $val_lst = new value_list($this->user());
+            $val_lst = new value_list($this->get_user());
             $val_lst->load_by_phr_lst($this->phrase_list());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
@@ -1490,13 +1494,13 @@ class word_list extends sandbox_list_named
                 }
             }
 
-            $time_lst = new word_list($this->user());
+            $time_lst = new word_list($this->get_user());
             if (count($time_ids) > 0) {
                 $time_lst->load_by_ids($time_ids);
                 $wrd = $time_lst->max_time();
             }
         } else {
-            $time_lst = new word_list($this->user());
+            $time_lst = new word_list($this->get_user());
             foreach ($trm_lst->lst() as $trm) {
                 if ($trm->is_time()) {
                     $time_lst->add($trm->word());
@@ -1509,7 +1513,7 @@ class word_list extends sandbox_list_named
         // get all values related to the selecting word, because this is probably strongest selection and to save time reduce the number of records asap
         $val = New value;
         $val->wrd_lst = $this;
-        $val->usr = $this->user();
+        $val->usr = $this->get_user();
         $val->load_by_wrd_lst();
         $value_lst = array();
         $value_lst[$val->id] = $val->number();
@@ -1518,7 +1522,7 @@ class word_list extends sandbox_list_named
         if (sizeof($value_lst) > 0) {
 
           // get all words related to the value list
-          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->user()->id());
+          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->get_user()->id());
 
           // get the time words
           $time_lst = zut_time_lst($all_word_lst);
@@ -1527,10 +1531,10 @@ class word_list extends sandbox_list_named
           ar sort($time_lst);
           $time_keys = array_keys($time_lst);
           $wrd_id = $time_keys[0];
-          $wrd = New word_dsp;
+          $wrd = New word_ui;
           if ($wrd_id > 0) {
             $wrd->id = $wrd_id;
-            $wrd->usr = $this->user();
+            $wrd->usr = $this->get_user();
             $wrd->load();
           }
         }
@@ -1563,7 +1567,7 @@ class word_list extends sandbox_list_named
             foreach ($time_phr_lst->lst() as $time_wrd) {
                 if (is_null($phr)) {
                     $phr = $time_wrd;
-                    $phr->set_user($this->user());
+                    $phr->set_user($this->get_user());
                 } else {
                     log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
                 }
@@ -1597,11 +1601,12 @@ class word_list extends sandbox_list_named
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->get_user()), $usr_msg);
     }
 
 }

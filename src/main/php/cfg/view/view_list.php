@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
@@ -54,22 +54,22 @@ include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\combine_named;
-use cfg\helper\data_object;
-use cfg\helper\type_list;
-use cfg\import\import;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\const\words;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class view_list extends sandbox_list_named
 {
@@ -91,7 +91,7 @@ class view_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new view($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new view($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -113,7 +113,7 @@ class view_list extends sandbox_list_named
     /**
      * @return user the person who wants to see the phrases
      */
-    function user(): user
+    function get_user(): user
     {
         return $this->usr;
     }
@@ -132,7 +132,7 @@ class view_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -162,12 +162,12 @@ class view_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
-        array $names,
-        string $fld = view_db::FLD_NAME
+        array       $names,
+        string      $fld = view_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -177,7 +177,7 @@ class view_list extends sandbox_list_named
      * set the SQL query parameters to load a list of views
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -185,7 +185,7 @@ class view_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(view_db::FLD_NAMES);
         $sc->set_usr_fields(view_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(view_db::FLD_NAMES_NUM_USR);
@@ -196,7 +196,7 @@ class view_list extends sandbox_list_named
      * set the SQL query parameters to load a list of views by the component id
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the component to which the views should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_component_id(sql_creator $sc, int $id): sql_par
     {
@@ -224,7 +224,7 @@ class view_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new view($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new view($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -250,26 +250,24 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
-            $msk = new view($this->user());
-            $usr_msg->add($msk->import_obj($dsp_json, $usr_req, $dto, $test_obj));
-            $this->add($msk);
+            $msk = new view($this->get_user());
+            if ($msk->import_obj($dsp_json, $usr_msg, $dto)) {
+                $this->add($msk);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -277,18 +275,25 @@ class view_list extends sandbox_list_named
      * TODO create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
-        $usr_msg = parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
+        parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->get_user()), $usr_msg);
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
-                $usr_msg->add($msk->save_component_links());
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $cmp_lnk_usr_msg = $usr_msg->clone_reset();
+                // actual save the component link to the database
+                $msk->save_component_links($cmp_lnk_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($cmp_lnk_usr_msg);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

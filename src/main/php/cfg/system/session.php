@@ -30,19 +30,19 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 
-use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 
 class session extends db_object_seq_id
 {
@@ -52,17 +52,17 @@ class session extends db_object_seq_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to control the user frontend sessions';
-    const FLD_UID_COM = 'the user session id as get by the frontend';
-    const FLD_UID = 'uid';
-    const FLD_HASH = 'hash';
-    const FLD_EXPIRE = 'expire_date';
-    const FLD_IP_ADDR = 'ip';
-    const FLD_AGENT = 'agent';
-    const FLD_COOKIE = 'cookie_crc';
+    const string TBL_COMMENT = 'to control the user frontend sessions';
+    const string FLD_UID_COM = 'the user session id as get by the frontend';
+    const string FLD_UID = 'uid';
+    const string FLD_HASH = 'hash';
+    const string FLD_EXPIRE = 'expire_date';
+    const string FLD_IP_ADDR = 'ip';
+    const string FLD_AGENT = 'agent';
+    const string FLD_COOKIE = 'cookie_crc';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_UID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_UID_COM],
         [self::FLD_HASH, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
         [self::FLD_EXPIRE, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', ''],

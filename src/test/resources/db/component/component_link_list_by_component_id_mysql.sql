@@ -5,6 +5,7 @@ PREPARE component_link_list_by_component_id FROM
             s.view_id,
             s.component_id,
             l.code_id,
+            l.`usage`,
             IF(u.order_nbr        IS NULL,  s.order_nbr,        u.order_nbr)        AS order_nbr,
             IF(u.position_type_id IS NULL,  s.position_type_id, u.position_type_id) AS position_type_id,
             IF(u.view_style_id    IS NULL, s.view_style_id,     u.view_style_id)    AS view_style_id,

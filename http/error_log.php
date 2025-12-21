@@ -36,36 +36,38 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // load what is used here
 include_once paths::API_OBJECT . 'controller.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\system\sys_log;
-use cfg\user\user;
-use cfg\view\view;
-use html\system\sys_log as sys_log_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views;
-
-$db_con = prg_start("error_log");
+$app = new frontend();
+$db_con = $app->start("error_log");
 
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
-$err_id = $_GET[api::URL_VAR_ID] ?? 0;
-$back = $_GET[api::URL_VAR_BACK] ?? '';
+$err_id = $_GET[url_var::ID] ?? 0;
+$back = $_GET[url_var::BACK] ?? '';
 
 // load the session user parameters
 $usr = new user;
@@ -76,7 +78,7 @@ if ($back <= 0) {
 }
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
     if ($err_id > 0) {
         log_debug("error_log (" . $err_id . ")");
 
@@ -87,23 +89,24 @@ if ($usr->id() > 0) {
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
-        $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
+        $msk_dsp = new view_ui($msk->api_json());
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
-        $result .= err_dsp($err_id, $usr->id());
+        $result .= err_dsp($err_id, $usr->id);
     }
 }
 
 echo $result;
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);
 
 function err_dsp($err_id, $user_id): string
 {
     $log = new sys_log();
     $log->load_by_id($err_id);
-    $dsp = new sys_log_dsp($log->api_json());
+    $dsp = new sys_log_ui($log->api_json());
     return $dsp->page_view();
 }
 

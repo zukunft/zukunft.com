@@ -24,7 +24,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT component_link_delete_log_user
-       (1::bigint,
+       (3::bigint,
         3::smallint,
         16::smallint,
         'Start view'::text,

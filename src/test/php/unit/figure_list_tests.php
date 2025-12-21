@@ -30,22 +30,23 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::MODEL_FORMULA . 'fig_ids.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once html_paths::FIGURE . 'figure_list.php';
 
-use cfg\db\sql_creator;
-use cfg\formula\fig_ids;
-use cfg\formula\figure_list;
-use html\figure\figure_list as figure_list_dsp;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_figures;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class figure_list_tests
 {
@@ -57,6 +58,7 @@ class figure_list_tests
 
         // init
         $sc = new sql_creator();
+        $t_fig = new test_figures($t);
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
@@ -75,15 +77,15 @@ class figure_list_tests
 
         $t->subheader($ts . 'api');
 
-        $fig_lst = $t->figure_list();
+        $fig_lst = $t_fig->figure_list();
         $t->assert_api($fig_lst, 'figure_list_without_phrases');
         $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_type::INCL_PHRASES]);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $fig_lst = $t->figure_list();
-        $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
+        $fig_lst = $t_fig->figure_list();
+        $t->assert_api_to_ui($fig_lst, new figure_list_ui());
 
     }
 

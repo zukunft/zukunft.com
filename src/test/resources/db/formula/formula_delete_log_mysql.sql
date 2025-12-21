@@ -21,8 +21,8 @@ BEGIN
 END;
 
 SELECT formula_delete_log
-    (1,
+    (3,
      3,
      30,
-     '"one" = "millions" * 1000000',
+     'scale minute to sec',
      1);;

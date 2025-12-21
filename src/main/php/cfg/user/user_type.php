@@ -36,28 +36,28 @@
 
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class user_type extends type_object
 {
 
     // list of the user types that have a coded functionality
-    const GUEST = "Guest"; // a read only access
-    const IP_ADDR = "IP address"; // identified only by IP address
-    const VERIFIED = "Verified"; // verified by email or mobile
-    const SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
+    const string GUEST = "Guest"; // a read only access
+    const string IP_ADDR = "IP address"; // identified only by IP address
+    const string VERIFIED = "Verified"; // verified by email or mobile
+    const string SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
 
     /*
      * database link
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the user types e.g. to set the confirmation level of a user';
+    const string TBL_COMMENT = 'for the user types e.g. to set the confirmation level of a user';
 
 }

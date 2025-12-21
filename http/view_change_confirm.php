@@ -30,28 +30,32 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\html_base;
-use html\view\view as view_dsp;
-use cfg\user\user;
-use cfg\word\word;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'init.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
-$db_con = prg_start("view_confirm");
+$app = new frontend();
+$db_con = $app->start("view_confirm");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 $word_id = $back;
 $view_id = 0;
 
 // get the view id used utils now and the word id
-if (isset($_GET[api::URL_VAR_ID])) {
-    $view_id = $_GET[api::URL_VAR_ID];
+if (isset($_GET[url_var::ID])) {
+    $view_id = $_GET[url_var::ID];
 }
 if (isset($_GET['word'])) {
     $word_id = $_GET['word'];
@@ -70,7 +74,7 @@ if ($usr->id() > 0) {
     if ($word_id <= 0) {
         $result .= $html->dsp_err('word not found');
     } else {
-        $msk = new view_dsp();
+        $msk = new view_ui();
         //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
         $back = $word_id;
         $result .= $msk->dsp_navbar_no_view($back);
@@ -85,7 +89,7 @@ if ($usr->id() > 0) {
     if ($view_id <= 0) {
         $result .= $html->dsp_err('view not found');
     } else {
-        $msk = new view_dsp();
+        $msk = new view_ui();
         $msk->set_id($view_id);
         $result .= $msk->selector_page($word_id, $back);
     }
@@ -93,5 +97,5 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);
 

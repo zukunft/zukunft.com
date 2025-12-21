@@ -2,8 +2,8 @@
 
 /*
 
-    model/helper/db_object_non_sandbox.php - a base object for not user specific database id objects
-    -------------------------------------
+    model/helper/db_id_object_non_sandbox.php - a base object for not user specific database id objects
+    -----------------------------------------
 
     used for the user, ip_range, pod and job
 
@@ -11,7 +11,7 @@
     - set and get:       to capsule the single variables from unexpected changes
     - load:              database access object (DAO) functions
     - del:               database access object (DAO) functions
-    - sql:               create the curl sql statements based on the sql creator
+    - sql:               create the crud sql statements based on the sql creator
     - overwrite:         declared functions that must be overwritten by the child objects
 
 
@@ -39,9 +39,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
@@ -60,21 +60,21 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Exception;
 
 class db_id_object_non_sandbox extends db_object_seq_id
@@ -87,17 +87,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * fill the vars with this db id object based on the given api json array
      * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
-     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
+            $this->id = $api_json[json_fields::ID];
         }
-
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -119,11 +117,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * set the vars of this object based on json string from the frontend object
      * @param string $api_json
-     * @return user_message
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function set_from_api(string $api_json): user_message
+    function set_from_api(string $api_json, user_message $usr_msg): bool
     {
-        return $this->api_mapper(json_decode($api_json, true));
+        return $this->api_mapper(json_decode($api_json, true), $usr_msg);
     }
 
 
@@ -177,12 +176,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @param user $usr_req the user who has requested the deletion
-     * @return user_message if the deletion cannot be done the reason why for the user
+     * @param user_message $usr_msg if the deletion cannot be done the reason why for the user
+     * @return bool true if everything has been fine
      */
-    function del(user $usr_req): user_message
+    function del(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
+        global $usr;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
@@ -202,7 +201,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                     $class_name . '->del',
                     'Reload of ' . $class_name . ' ' . $this->dsp_id()
                     . ' for deletion has failed.',
-                    (new Exception)->getTraceAsString(), $usr_req);
+                    (new Exception)->getTraceAsString(), $usr);
             } else {
                 log_debug('reloaded ' . $this->dsp_id());
                 // check if the object is still valid
@@ -210,14 +209,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
                     log_warning('Delete failed',
                         $class_name . '->del',
                         'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
-                        . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr_req);
+                        . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $usr_msg->add($this->del_exe($usr_req));
+                    $usr_msg->add($this->del_exe($usr));
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -225,17 +224,18 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param user $usr_req the user who has requested the deletion
      * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(user $usr_req): user_message
+    protected function del_exe(user $usr_req): user_message
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         $usr_msg = new user_message();
+        $usr_msg->usr = $usr_req;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_req, new sql_type_list([sql_type::LOG]));
-        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
+        $qp = $this->sql_delete($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
         return $usr_msg;
@@ -251,12 +251,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr_req the user who has requested the deletion
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
         user          $usr_req,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -264,8 +266,13 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::DELETE);
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
         // set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used);
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
@@ -296,8 +303,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $cng_act_cac;
-        global $cng_fld_cac;
+        global $sys;
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
@@ -333,14 +339,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::DELETE),
+            $sys->typ_lst->cng_act->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($key_fld != '') {
             // add the field_id of the field actually changed if needed
             $fvt_lst_out->add_field(
                 sql::FLD_LOG_FIELD_PREFIX . $key_fld,
-                $cng_fld_cac->id($table_id . $key_fld),
+                $sys->typ_lst->cng_fld->id($table_id . $key_fld),
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
@@ -406,8 +412,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $qp->sql = $qp_func->sql . ' ' . $sql . ';';
         $qp->par = $fvt_lst_out->values();
 
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
+
         // create the function call
-        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . $ext . ' (';
 
         $call_val_str = $fvt_lst_out->par_sql($sc);
 
@@ -461,18 +473,17 @@ class db_id_object_non_sandbox extends db_object_seq_id
         return false;
     }
 
-    function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
-    ): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $msg = 'import_mapper_user used but not overwritten in ' . $this::class;
+        $msg = 'import_mapper used but not overwritten in ' . $this::class;
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_message_text($msg);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 }

@@ -2,7 +2,7 @@
 
 /*
 
-    model/element/element_list.php - a list of formula elements to place the name function
+    web/element/element_list.php - a list of formula elements to place the name function
     ----------------------------
 
     The main sections of this object are
@@ -35,15 +35,14 @@
 
 */
 
-namespace html\element;
+namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'ListBase.php';
 
-use html\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 
-class element_list extends list_dsp
+class element_list extends ListBase
 {
 
 

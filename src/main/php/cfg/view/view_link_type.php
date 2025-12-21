@@ -30,13 +30,13 @@
 
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class view_link_type extends type_object
 {
@@ -46,7 +46,7 @@ class view_link_type extends type_object
      */
 
     // list of selection types for a view starting from a word, triple or formula
-    const DEFAULT = "main_word"; // use the main word as start for the view
+    const string DEFAULT = "main_word"; // use the main word as start for the view
 
 
     /*
@@ -54,7 +54,7 @@ class view_link_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
-    const FLD_ID = 'view_link_type_id';
+    const string TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
+    const string FLD_ID = 'view_link_type_id';
 
 }

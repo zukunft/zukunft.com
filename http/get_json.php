@@ -30,17 +30,21 @@
 
 */
 
-use cfg\export\json_io;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\cfg\export\json_io;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'init.php';
+
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 // open database
-$db_con = prg_start_api("get_json");
+$app = new frontend();
+$db_con = $app->start_api("get_json");
 
 // load the session user parameters
 $usr = new user;
@@ -52,7 +56,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET[api::URL_VAR_WORDS];
+    $phrases = $_GET[url_var::WORDS];
     log_debug("get_json(" . $phrases . ")");
     $word_names = explode(",", $phrases);
 
@@ -89,4 +93,4 @@ if ($usr->id() > 0) {
 
 
 // Closing connection
-prg_end_api($db_con);
+$app->end_api($db_con);

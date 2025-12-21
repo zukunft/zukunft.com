@@ -18,9 +18,9 @@
     formula "increase": (next[] - last[]) / last[]
     formula "next": needs time jump value[is time jump for
     so                       -> next["time jump"->,         "follower of"->"Now"]
-    1. find_missing_phrase_types: next["time jump"->"Company","follower of"->"Now"]
+    1. find_missing_phrase_types: next["time jump"->"company","follower of"->"Now"]
     2. calc word:               next["YoY",                 "follower of"->"Now"]
-    3. calc word:               next["YoY",                 "follower of"->"This Year"]
+    3. calc word:               next["YoY",                 "follower of"->"This year"]
     4. calc word:               next["YoY",                 "follower of"->"2013"]
     5. calc word:               next["YoY",                 "2014"]
 
@@ -48,12 +48,12 @@
     formula types: calc:
 
     syntax: function_name["link_type->phrase_type:word_name"]
-    or: word_from>triple:word_to e.g. “>is a:Company” lists all companies
+    or: word_from>triple:word_to e.g. “>is a:company” lists all companies
     or: word[condition_formula] e.g. “GAAP[>is:US]” use GAAP only for US based companies
     or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
     or: -word e.g. “-word” remove the word from the context
 
-    samples: next["->Timejump"] means next needs a time jump word
+    samples: next["->time_jump"] means next needs a time jump word
     db format: {f2}[->{}]
 
     Four steps to get the result
@@ -68,12 +68,12 @@
         -> increase needs time_jump phrase_type
       -> assume_missing words("Nestlé", "turnover") with phrase_type "time_jump"
           -> get time_jump for "Nestlé", "turnover"
-            -> add_word "YoY" linked to "Company" linked to "Nestlé"
+            -> add_word "YoY" linked to "company" linked to "Nestlé"
             -> result increase("Nestlé", "turnover", "YoY")
     -> zu_calc("next(Nestlé, turnover, YoY)")
        -> increase formula: (next() - last()) / last()
-       -> add_word("Next Year")
-          -> zu_calc("get_value(Nestlé, turnover, YoY, Next Year)")
+       -> add_word("Next year")
+          -> zu_calc("get_value(Nestlé, turnover, YoY, Next year)")
 
     Sample 2
     zu_calc("countryweight("Nestlé")")
@@ -120,11 +120,12 @@
 
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CALC . 'expression.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_ELEMENT . 'element_group_list.php';
@@ -142,24 +143,25 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\element\element;
-use cfg\element\element_group;
-use cfg\element\element_group_list;
-use cfg\element\element_list;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Exception;
-use shared\calc\expression as shared_expression;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\library;
-use shared\types\phrase_type as phrase_type_shared;
 
 class expression extends shared_expression
 {
@@ -169,11 +171,11 @@ class expression extends shared_expression
      */
 
     // predefined type selectors potentially used also in other classes
-    const SELECT_ALL = "all";              // to get all formula elements
-    const SELECT_PHRASE = "phrases";       // to filter only the words from the expression element list
-    const SELECT_VERB = "verbs";           // to filter only the verbs from the expression element list
-    const SELECT_FORMULA = "formulas";     // to filter only the formulas from the expression element list
-    const SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
+    const string SELECT_ALL = "all";              // to get all formula elements
+    const string SELECT_PHRASE = "phrases";       // to filter only the words from the expression element list
+    const string SELECT_VERB = "verbs";           // to filter only the verbs from the expression element list
+    const string SELECT_FORMULA = "formulas";     // to filter only the formulas from the expression element list
+    const string SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
 
 
     /*
@@ -189,8 +191,8 @@ class expression extends shared_expression
 
     function __construct(user $usr)
     {
-        $this->usr = $usr;
         $this->reset();
+        $this->usr = $usr;
     }
 
 
@@ -310,7 +312,7 @@ class expression extends shared_expression
      */
     function element_special_following(?term_list $trm_lst = null): phrase_list
     {
-        global $phr_typ_cac;
+        global $sys;
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
@@ -329,9 +331,9 @@ class expression extends shared_expression
                     }
                 }
                 if ($elm->type == word::class or $elm->type == triple::class) {
-                    if ($elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::THIS)
-                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::NEXT)
-                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PRIOR)) {
+                    if ($elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::THIS)
+                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::NEXT)
+                        or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PRIOR)) {
                         $phr_lst->add($elm->obj->phrase());
                     }
                 }
@@ -433,6 +435,7 @@ class expression extends shared_expression
         log_debug($this->dsp_id());
         $result = false;
 
+        $lib = new library();
         if ($this->get_word_id($this->ref_text()) > 0
             or $this->get_triple_id($this->ref_text()) > 0
             or $this->get_formula_id($this->ref_text()) > 0
@@ -440,7 +443,7 @@ class expression extends shared_expression
             $result = true;
         }
 
-        log_debug('done ' . zu_dsp_bool($result));
+        log_debug('done ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -626,7 +629,7 @@ class expression extends shared_expression
             // loop over the formula text and replace ref by ref from left to right
             $found = true;
             $nbr = 0;
-            while ($found and $nbr < MAX_LOOP) {
+            while ($found and $nbr < def::MAX_LOOP) {
                 log_debug('in "' . $work . '"');
                 $found = false;
 
@@ -779,8 +782,8 @@ class expression extends shared_expression
     {
         $frm = new formula($this->usr);
         $frm->load_by_name($name);
-        if ($frm->id() > 0) {
-            $db_sym = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
+        if ($frm->id > 0) {
+            $db_sym = chars::FORMULA_START . $frm->id . chars::FORMULA_END;
             log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -792,8 +795,8 @@ class expression extends shared_expression
     {
         $wrd = new word($this->usr);
         $wrd->load_by_name($name);
-        if ($wrd->id() > 0) {
-            $db_sym = chars::WORD_START . $wrd->id() . chars::WORD_END;
+        if ($wrd->id > 0) {
+            $db_sym = chars::WORD_START . $wrd->id . chars::WORD_END;
             log_debug('found word "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -805,8 +808,8 @@ class expression extends shared_expression
     {
         $trp = new triple($this->usr);
         $trp->load_by_name($name);
-        if ($trp->id() > 0) {
-            $db_sym = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
+        if ($trp->id > 0) {
+            $db_sym = chars::TRIPLE_START . $trp->id . chars::TRIPLE_END;
             log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -819,8 +822,8 @@ class expression extends shared_expression
         $vrb = new verb;
         $vrb->set_user($this->usr);
         $vrb->load_by_name($name);
-        if ($vrb->id() > 0) {
-            $db_sym = chars::VERB_START . $vrb->id() . chars::VERB_END;
+        if ($vrb->id > 0) {
+            $db_sym = chars::VERB_START . $vrb->id . chars::VERB_END;
             log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -832,7 +835,7 @@ class expression extends shared_expression
     {
         $wrd = new word($this->usr);
         $wrd->load_by_id($id);
-        if ($wrd->id() == 0) {
+        if ($wrd->id == 0) {
             $wrd = null;
         }
         return $wrd;
@@ -842,7 +845,7 @@ class expression extends shared_expression
     {
         $trp = new triple($this->usr);
         $trp->load_by_id($id);
-        if ($trp->id() == 0) {
+        if ($trp->id == 0) {
             $trp = null;
         }
         return $trp;
@@ -852,7 +855,7 @@ class expression extends shared_expression
     {
         $frm = new formula($this->usr);
         $frm->load_by_id($id);
-        if ($frm->id() == 0) {
+        if ($frm->id == 0) {
             $frm = null;
         }
         return $frm;
@@ -863,7 +866,7 @@ class expression extends shared_expression
         $vrb = new verb();
         $vrb->set_user($this->usr);
         $vrb->load_by_id($id);
-        if ($vrb->id() == 0) {
+        if ($vrb->id == 0) {
             $vrb = null;
         }
         return $vrb;

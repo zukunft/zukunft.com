@@ -26,13 +26,13 @@ BEGIN
 END;
 
 SELECT term_view_delete_log
-    (1,
+    (3,
      3,
      89,
      'Start view',
-     'default',
+     'standard',
      'mathematics',
      1,
      1,
      1,
-     0);
+     1);

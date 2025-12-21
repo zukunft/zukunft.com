@@ -25,13 +25,13 @@ $$ BEGIN
 END $$ LANGUAGE plpgsql;
 
 SELECT term_view_delete_log
-    (1::bigint,
+    (3::bigint,
      3::smallint,
      89::smallint,
      'Start view'::text,
-     'default'::text,
+     'standard'::text,
      'mathematics'::text,
      1::bigint,
      1::smallint,
      1::bigint,
-     0::bigint);
+     1::bigint);

@@ -41,15 +41,15 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_field.php';
 include_once paths::SHARED . 'library.php';
 
 use DateTime;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sql_field_list
 {

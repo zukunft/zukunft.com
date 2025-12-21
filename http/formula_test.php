@@ -42,28 +42,30 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\formula\formula_list;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase_list;
-use cfg\result\result_list;
-use cfg\user\user;
-use cfg\view\view;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\library;
-use shared\const\views as view_shared;
-
 // open database
-$db_con = prg_start("start formula_test.php");
+$app = new frontend();
+$db_con = $app->start("start formula_test.php");
 $html = new html_base();
 
 global $sys_msk_cac;
@@ -73,20 +75,21 @@ $session_usr = new user;
 $result = $session_usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($session_usr->id() > 0) {
+if ($session_usr->id > 0) {
 
     $session_usr->load_usr_data();
     $lib = new library();
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::FORMULA_TEST));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
-    $msk_dsp = new view_dsp($msk->api_json());
-    echo $msk_dsp->dsp_navbar($back);
+    $msk->id = $sys_msk_cac->id(views::FORMULA_TEST);
+    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $msk_dsp = new view_ui($msk->api_json());
+    $dto = new data_object();
+    echo $msk_dsp->dsp_navbar($dto, $back);
 
     // get all parameters
-    $frm_id = $_GET[api::URL_VAR_ID];
+    $frm_id = $_GET[url_var::ID];
     $phr_ids_txt = $_GET['phrases'];
     $usr_id = $_GET['user'];    // to force another user view for testing the formula calculation
     $refresh = $_GET['refresh']; // delete all results for this formula and calculate the results again
@@ -97,7 +100,7 @@ if ($session_usr->id() > 0) {
         $usr = $session_usr;
     } else {
         $usr = new user;
-        $usr->set_id($usr_id);
+        $usr->id = $usr_id;
         $usr->get();
     }
 
@@ -157,7 +160,7 @@ if ($session_usr->id() > 0) {
                         } else {
                             $debug_text = '' . $frm->name_linked() . ' for ' . $res->grp->phr_lst->name_linked();
                         }
-                        $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
+                        $debug_text .= ' = ' . $res->display_linked($back) . ' (<a href="/http/formula_test.php?id=' . $frm_id . '&phrases=' . $phr_ids_txt . '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>)';
                         log_debug($debug_text);
                     }
                 }
@@ -171,7 +174,7 @@ if ($session_usr->id() > 0) {
             ob_end_flush();
             log_debug("create the calculation queue ... ");
             $calc_pos = 0;
-            $last_msg_time = time();
+            $last_msg_time =microtime(true);
 
             // build the calculation queue
             // the standard value will always be checked first
@@ -204,7 +207,7 @@ if ($session_usr->id() > 0) {
                                     if (implode(",", $r->phr_lst->ids) <> "") {
                                         $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                     }
-                                    $debug_text .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details for this result</a>)';
+                                    $debug_text .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details for this result</a>)';
                                     log_debug($debug_text);
                                 } else {
                                     log_debug("Skipped " . $debug_text);
@@ -219,13 +222,13 @@ if ($session_usr->id() > 0) {
                                 if (implode(",", $r->phr_lst->ids) <> "") {
                                     $debug_text .= '&phrases=' . implode(",", $r->phr_lst->ids);
                                 }
-                                $debug_text .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details only for this result</a>)';
+                                $debug_text .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details only for this result</a>)';
                                 log_debug($debug_text);
                             }
                         }
 
                         // show the user the progress every two seconds
-                        if ($last_msg_time + $ui_response_time < time()) {
+                        if ($last_msg_time + $ui_response_time < microtime(true)) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($res->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";
@@ -234,7 +237,7 @@ if ($session_usr->id() > 0) {
                             }
                             ob_flush();
                             flush();
-                            $last_msg_time = time();
+                            $last_msg_time = microtime(true);
                         }
                     }
                 }
@@ -250,7 +253,7 @@ if ($session_usr->id() > 0) {
         if ($phr_ids_txt <> "") {
             $call_next_level .= '&phrases=' . $phr_ids_txt;
         }
-        $call_next_level .= '&user=' . $usr->id() . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>';
+        $call_next_level .= '&user=' . $usr->id . '&back=' . $back . '&debug=' . $debug_next_level . '">more details</a>';
         echo $call_next_level . ")<br>";
 
     }
@@ -259,4 +262,4 @@ if ($session_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+$app->end($db_con);

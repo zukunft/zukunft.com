@@ -1,35 +1,29 @@
 <?php
 
-// standard zukunft header for callable php files to allow debugging and use of the library
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-// TODO check if dirname should be used in all scripts
-//define('ROOT_PATH', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR);
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once 'test_const.php';
 
-// path for the general tests and test setup
-const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // load the base testing functions
-include_once TEST_PHP_UTIL_PATH . 'test_base.php';
+include_once test_paths::UTILS . 'test_base.php';
 
 // load the main test control class
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 
 // load the sql sequence check functions
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_sync_sequences.php';
 
-use cfg\db\sql_sync_sequences;
-use cfg\user\user;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_sync_sequences;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("sql sequence check", '', false);
+$app = new application();
+$db_con = $app->start("sql sequence check", '', false);
 
 // load the session user parameters
 $start_usr = new user;
@@ -53,4 +47,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con, false);
+$app->end($db_con, false);

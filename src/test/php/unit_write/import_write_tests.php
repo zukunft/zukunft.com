@@ -30,45 +30,48 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
-include_once TEST_CONST_PATH . 'files.php';
+include_once test_paths::CONST . 'files.php';
 
-use cfg\component\component;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\helper\type_object;
-use cfg\import\import_file;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_named;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\components;
-use shared\const\formulas;
-use shared\const\refs;
-use shared\const\sources;
-use shared\const\triples;
-use shared\const\users;
-use shared\const\views;
-use shared\const\words;
-use shared\library;
-use shared\types\verbs;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_write_tests
 {
@@ -77,12 +80,16 @@ class import_write_tests
         global $usr;
         global $db_con;
 
+        // init
+        $t_usr = new test_users();
+        $usr_msg = new user_message($t->usr1);
+
         // start the test section (ts)
         $ts = 'db write import ';
         $t->header($ts);
 
         $this->assert_import_json_named($t, $ts, new user(),
-            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS);
+            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS, $t_usr->system_user());
 
         $this->assert_import_json_named($t, $ts, new word($usr),
             words::TEST_ADD, words::TEST_ADD_COM, test_files::IMPORT_WORDS);
@@ -98,7 +105,7 @@ class import_write_tests
         $wrd = new word($usr);
         $wrd->load_by_name(words::TEST_ADD);
         if ($wrd->id() > 0) {
-            $wrd->del();
+            $wrd->del($usr_msg);
         }
         $wrd = new word($usr);
         $wrd->load_by_name(words::TEST_ADD);
@@ -106,7 +113,7 @@ class import_write_tests
         $wrd_to = new word($usr);
         $wrd_to->load_by_name(words::TEST_ADD_TO);
         if ($wrd_to->id() > 0) {
-            $wrd_to->del();
+            $wrd_to->del($usr_msg);
         }
         $wrd_to = new word($usr);
         $wrd_to->load_by_name(words::TEST_ADD_TO);
@@ -154,7 +161,7 @@ class import_write_tests
         $ref = new ref($usr);
         $ref->load_by_ex_key(refs::SYSTEM_TEST_ADD);
         if ($ref->id() > 0) {
-            $ref->del();
+            $ref->del($usr_msg);
         }
         $ref = new ref($usr);
         $ref->load_by_ex_key(refs::SYSTEM_TEST_ADD);
@@ -192,33 +199,39 @@ class import_write_tests
         sandbox_named|sandbox_link_named|type_object|user $sbx,
         string                                            $add_name,
         string                                            $description,
-        string                                            $filename
+        string                                            $filename,
+        user|null                                         $usr_req = null
     ): void
     {
         global $usr;
 
+        if ($usr_req == null) {
+            $usr_req = $usr;
+        }
+
         $lib = new library();
         $imf = new import_file();
+        $usr_msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);
 
         $test_name = 'import the test ' . $name;
-        $imp_msg = $imf->json_file($filename . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_name($add_name);
         $t->assert_greater_zero($test_name, $sbx->id());
 
         $test_name = 'add the description to the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
         $sbx->load_by_name($add_name);
-        $t->assert($test_name, $sbx->description(), $description);
+        $t->assert($test_name, $sbx->get_description(), $description);
 
         $test_name = 'remove the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
         $sbx->load_by_name($add_name);
@@ -233,7 +246,7 @@ class import_write_tests
             if ($sbx::class == verb::class) {
                 $sbx->set_user($usr);
             }
-            $sbx->del();
+            $sbx->del($usr_msg);
         }
         $sbx->load_by_name($add_name);
         $t->assert($test_name, $sbx->id(), 0);
@@ -264,6 +277,7 @@ class import_write_tests
 
         $lib = new library();
         $imf = new import_file();
+        $usr_msg = new user_message($t->usr1);
 
         $name = $lib->class_to_name($sbx::class);
         $t->subheader($ts . $name);
@@ -292,7 +306,7 @@ class import_write_tests
         $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';
         $sbx->load_by_names([$add_name]);
         if ($sbx->id() > 0) {
-            $sbx->del();
+            $sbx->del($usr_msg);
         }
         $sbx->load_by_names([$add_name]);
         $t->assert($test_name, $sbx->id(), 0);

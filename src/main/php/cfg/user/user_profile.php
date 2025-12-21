@@ -30,19 +30,19 @@
   
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
-use cfg\helper\type_object;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 
 class user_profile extends type_object
 {
@@ -52,15 +52,15 @@ class user_profile extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the user roles and read and write rights';
+    const string TBL_COMMENT = 'to define the user roles and read and write rights';
 
     // database fields additional to the standard field names
-    const FLD_ID = 'user_profile_id';
-    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
-    const FLD_LEVEL = 'right_level';
+    const string FLD_ID = 'user_profile_id';
+    const string FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
+    const string FLD_LEVEL = 'right_level';
 
     // additional fields for the table creation of user profiles
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
     );
 

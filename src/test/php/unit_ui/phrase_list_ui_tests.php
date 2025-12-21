@@ -30,16 +30,21 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_ui_tests
 {
@@ -47,24 +52,28 @@ class phrase_list_ui_tests
     {
 
         $html = new html_base();
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html phrase list ';
         $t->header($ts);
 
         // fill the phrase list based on the api message
-        $db_lst = $t->phrase_list();
-        $lst = new phrase_list_dsp($db_lst->api_json());
+        $db_lst = $t_phr->phrase_list();
+        $lst = new phrase_list($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
         // create the phrase list test set
-        $lst = new phrase_list_dsp();
-        $phr_city = $t->zh_city()->phrase();
-        $phr_canton = $t->zh_canton()->phrase();
-        $phr_ch = $t->word_ch()->phrase();
-        $phr_city_dsp = new phrase_dsp($phr_city->api_json());
-        $phr_canton_dsp = new phrase_dsp($phr_canton->api_json());
-        $phr_ch_dsp = new phrase_dsp($phr_ch->api_json());
+        $form = 'phrase_list_ui_test';
+        $lst = new phrase_list();
+        $phr_city = $t_trp->zh_city()->phrase();
+        $phr_canton = $t_trp->zh_canton()->phrase();
+        $phr_ch = $t_wrd->word_ch()->phrase();
+        $phr_city_dsp = new phrase($phr_city->api_json());
+        $phr_canton_dsp = new phrase($phr_canton->api_json());
+        $phr_ch_dsp = new phrase($phr_ch->api_json());
         $lst->add_phrase($phr_city_dsp);
         $lst->add_phrase($phr_canton_dsp);
         $lst->add_phrase($phr_ch_dsp);
@@ -77,10 +86,11 @@ class phrase_list_ui_tests
         $test_page .= $lst->tbl();
         */
 
-        $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
+        $from_rows = 'selector: ' . '<br>';
+        $from_rows .= $lst->selector($form, 0, url_var::PHRASE, msg_id::FORM_SELECT_PHRASE) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
-        $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
+        $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $t);
 
         /*
          * TODO add a phrase selector if the phrase list is short and add an test

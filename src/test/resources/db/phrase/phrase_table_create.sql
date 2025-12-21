@@ -7,9 +7,9 @@
 CREATE TABLE IF NOT EXISTS phrase_tables
 (
     phrase_table_id BIGSERIAL PRIMARY KEY,
-    phrase_id              bigint NOT NULL,
-    pod_id                 bigint NOT NULL,
-    phrase_table_status_id bigint NOT NULL
+    phrase_id                bigint NOT NULL,
+    pod_id                   bigint NOT NULL,
+    phrase_table_status_id smallint NOT NULL
 );
 
 COMMENT ON TABLE phrase_tables IS 'remember which phrases are stored in which table and pod';

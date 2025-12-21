@@ -30,14 +30,14 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\view\view;
-use shared\const\components;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_read_tests
 {
@@ -48,14 +48,15 @@ class component_read_tests
         // init
         $t->name = 'component read db->';
 
+        // start the test section (ts)
+        $ts = 'db read component ';
+        $t->header($ts);
 
-        $t->header('component db read tests');
-
-        $t->subheader('component load');
+        $t->subheader($ts . 'load');
         $msk = new view($t->usr1);
         $t->assert_load($msk, views::START_NAME);
 
-        $t->subheader('Component link db read tests');
+        $t->subheader($ts . 'link');
         $test_name = 'load component link ' . views::START_NAME . ' to ' . components::WORD_NAME . ' by id';
         $msk = new view($t->usr1);
         $msk->load_by_name(views::START_NAME);
@@ -64,9 +65,9 @@ class component_read_tests
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';
-        $t->assert($test_name, $cmp_lnk->view()->id(), $msk->id());
+        $t->assert($test_name, $cmp_lnk->get_view()->id, $msk->id);
         $test_name .= ' component id';
-        $t->assert($test_name, $cmp_lnk->component()->id(), $cmp->id());
+        $t->assert($test_name, $cmp_lnk->get_component()->id, $cmp->id);
 
     }
 

@@ -2,8 +2,8 @@
 
 /*
 
-    html_base.php - function to create the basic HTML elements used for zukunft.com
-    -------------
+    web/html/html_base.php - function to create the basic HTML elements used for zukunft.com
+    ----------------------
 
     depending on the settings either pure HTML, BOOTSTRAP HTML or vue.js code is created
 
@@ -32,59 +32,68 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once html_paths::HTML . 'styles.php';
-include_once paths::SHARED . 'library.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-use shared\api;
-use shared\library;
-use shared\types\view_styles;
+include_once html_paths::WEB . 'frontend.php';
+//include_once paths::SHARED_CONST . 'rest_ctrl.php';
+//include_once paths::SHARED_ENUM . 'messages.php';
+//include_once paths::SHARED_TYPES . 'view_styles.php';
+//include_once paths::SHARED . 'api.php';
+//include_once paths::SHARED . 'url_var.php';
+//include_once paths::SHARED . 'library.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 class html_base
 {
 
-    // html const used in zukunft.com
-
-    // html base elements
-    const SPAN = 'span';
-    const HTML_CLASS = 'class';
-    const TITLE = 'title';
+    // TODO move all html const used in zukunft.com to html_names
 
     // fixed elements
-    const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
+    const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
 
     // the html input types used
-    const INPUT_TEXT = 'text';
-    const INPUT_SUBMIT = 'submit';
-    const INPUT_SEARCH = 'search';
-    const INPUT_CHECKBOX = 'checkbox';
-    const INPUT_FILE = 'file';
-    const INPUT_HIDDEN = 'hidden';
-    const INPUT_PASSWORD = 'password';
-    const INPUT_EMAIL = 'email';
+    const string INPUT_TEXT = 'text';
+    const string INPUT_NUMBER = 'text';
+    const string INPUT_INT = 'text';
+    // TODO Prio 2 add frontend validation checks
+    const string INPUT_PERCENT = 'text';
+    const string INPUT_SUBMIT = 'submit';
+    const string INPUT_SEARCH = 'search';
+    const string INPUT_CHECKBOX = 'checkbox';
+    const string INPUT_FILE = 'file';
+    const string INPUT_HIDDEN = 'hidden';
+    const string INPUT_PASSWORD = 'password';
+    const string INPUT_EMAIL = 'email'; // to validate the email in the frontend
 
-    // bootstrap const used in zukunft.com
-    const BS_FORM = 'form-control';
-    const BS_BTN = 'btn btn-space col-1';
-    const BS_BTN_SUCCESS = 'btn-outline-success';
-    const BS_BTN_CANCEL = 'btn-outline-secondary';
-    const BS_BTN_DEL = 'btn-outline-secondary';
+    // bootstrap const string used in zukunft.com
+    const string BS_FORM = 'form-control';
+    const string BS_BTN = 'btn btn-space col-1';
+    const string BS_BTN_SUCCESS = 'btn-outline-success';
+    const string BS_BTN_CANCEL = 'btn-outline-secondary';
+    const string BS_BTN_DEL = 'btn-outline-secondary';
+    const string BS_BTN_IMPORT = 'btn-outline-secondary';
+    const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
-    const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
+    const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
-    const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
+    const string IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
-    const SIZE_FULL = 'full';
-    const SIZE_HALF = 'half';
+    const string SIZE_FULL = 'full';
+    const string SIZE_HALF = 'half';
 
-    const WIDTH_FULL = '800px';
-    const WIDTH_HALF = '400px';
+    const string WIDTH_FULL = '800px';
+    const string WIDTH_HALF = '400px';
 
     /*
      * header & footer
@@ -264,14 +273,14 @@ class html_base
      */
     function span(string $text, string $style = '', string $title = ''): string
     {
-        $result = '<' . self::SPAN;
+        $result = '<' . html_names::SPAN;
         if ($style != '') {
-            $result .= ' ' . self::HTML_CLASS . '="' . $style . '"';
+            $result .= ' ' . html_names::HTML_CLASS . '="' . $style . '"';
         }
         if ($title != '') {
-            $result .= ' ' . self::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+            $result .= ' ' . html_names::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
         }
-        $result .= '>' . $text . '</' . self::SPAN . '>';
+        $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
     }
 
@@ -280,7 +289,7 @@ class html_base
      */
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
@@ -338,7 +347,7 @@ class html_base
     ): string
     {
         $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-        $result .= api::URL_VAR_MASK . '=' . $view;
+        $result .= url_var::MASK . '=' . $view;
         if (is_string($id)) {
             $result .= '&id=' . $id;
         } elseif ($id <> 0) {
@@ -354,7 +363,7 @@ class html_base
     }
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @return string the created url
@@ -362,6 +371,21 @@ class html_base
     function url_api(string $obj_name): string
     {
         return $this->host() . rest_ctrl::PATH . $obj_name . '/';
+    }
+
+    /**
+     * build a url for an external webside
+     *
+     * @param string $url the base url of the external page
+     * @param string $id the external id of the entry or subpage
+     * @param string $name the name of the link as shown to the user
+     * @param string $description the tooltip for the link
+     * @
+     * @return string the created url
+     */
+    function url_ex(string $url, string $id, string $name, string $description, string $style = ''): string
+    {
+        return $this->ref($url . $id, $name, $description, $style);
     }
 
     /**
@@ -379,29 +403,29 @@ class html_base
 
     function text_h1(string $title, string $style = ''): string
     {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h2>" . $title . "</h2>";
-        } else {
-            if ($style <> "") {
-                $result .= '<h1 class="' . $style . '">' . $title . '</h1>';
-            } else {
-                $result .= "<h1>" . $title . "</h1>";
-            }
-        }
-        return $result;
+        return $this->text_h($title, 2, 1, $style);
     }
 
     function text_h2(string $title, string $style = ''): string
     {
+        return $this->text_h($title, 4, 2, $style);
+    }
+
+    function text_h3(string $title, string $style = ''): string
+    {
+        return $this->text_h($title, 5, 3, $style);
+    }
+
+    private function text_h(string $title, int $bs_i, int $i, string $style = ''): string
+    {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h4>" . $title . "</h4>";
+            $result .= '<h' . $bs_i . '>' . $title . '</h' . $bs_i . '>';
         } else {
             if ($style <> "") {
-                $result .= '<h2 class="' . $style . '">' . $title . '</h2>';
+                $result .= '<h' . $i . ' class="' . $style . '">' . $title . '</h' . $i . '>';
             } else {
-                $result .= "<h2>" . $title . "</h2>";
+                $result .= "<h' . $i . '>" . $title . "</h' . $i . '>";
             }
         }
         return $result;
@@ -467,6 +491,14 @@ class html_base
                 return '<th>' . $header_text . '</th>';
             }
         }
+    }
+
+    /**
+     * @return string with the html code for a line feed
+     */
+    function lf(): string
+    {
+        return '<br>';
     }
 
     /**
@@ -646,14 +678,14 @@ class html_base
 
     /**
      * @param string $field the name of the form field
-     * @param string $txt_value the expected value of the form field
-     * @param string $label the expected value of the form field
+     * @param string|null $txt_value the expected value of the form field
+     * @param msg_id $label the expected value of the form field
      * @return string the html code of the form field
      */
     function form_text(string  $field,
                        ?string $txt_value = '',
-                       string  $label = '',
-                       string  $class = view_styles::COL_SM_4,
+                       msg_id $label = msg_id::FORM_FIELD_NAME,
+                       string  $type = '',
                        string  $attribute = ''): string
     {
         $result = '';
@@ -661,7 +693,10 @@ class html_base
             $label = strtoupper($field[0]) . substr($field, 1) . ':';
         }
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            if ($txt_value == null) {
+                $txt_value = '';
+            }
+            $result .= $this->form_field($field, $label, $txt_value, $type, $attribute);
         } else {
             $result .= $field .
                 ': <input type="' . html_base::INPUT_TEXT .
@@ -690,6 +725,7 @@ class html_base
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
+        $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
@@ -715,10 +751,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -732,7 +768,14 @@ class html_base
     {
         $result = $this->header('about', "center_form"); // reset the html code var
 
-        $result .= $this->dsp_form_center();
+        $result .= $this->about_body();
+
+        return $result;
+    }
+
+    function about_body(): string
+    {
+        $result = $this->dsp_form_center();
         $result .= $this->logo_big();
         $result .= '<br><br>';
         $result .= 'is sponsored by <br><br>';
@@ -751,6 +794,7 @@ class html_base
 
         return $result;
     }
+
 
     /*
      * output device specific support functions for the pure HTML version
@@ -798,6 +842,7 @@ class html_base
         string $script_parameter,
         string $back = ''): string
     {
+        $but = new button();
         $result = '';
 
         $row_nbr = 0;
@@ -820,7 +865,8 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            // TODO Prio 1 review
+            //$result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -892,7 +938,7 @@ class html_base
 // ------------------------
 
 // simply to display headline text
-    function dsp_text_h1($title, $style = '')
+    function dsp_text_h1($title, $style = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
@@ -1107,6 +1153,7 @@ class html_base
 // end a html form
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
+        $but = new button();
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
@@ -1133,10 +1180,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -1172,12 +1219,13 @@ class html_base
             '" value="' . $id . '">';
     }
 
+    // TODO Prio 0 easy deprecate and use
 // add the text field to a form
-    function dsp_form_text($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
+    function dsp_form_text($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
                 ': <input type="' . html_base::INPUT_TEXT .
@@ -1188,34 +1236,16 @@ class html_base
     }
 
 // add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
+    function dsp_form_text_big($field, $txt_value, msg_id $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
+            $result .= $this->form_field($field, $label, $txt_value, $class, $attribute);
         } else {
             $result .= '' . $field .
                 ': <input type="' . html_base::INPUT_TEXT .
                 '" name="' . $field .
                 '" class="resizedTextbox" value="' . $txt_value . '">';
-        }
-        return $result;
-    }
-
-// add the field to a form
-    function dsp_form_fld($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
-    {
-        $result = '';
-        if ($label == '') {
-            $label = $field;
-        }
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-group ' . $class . '">';
-            $result .= '<label for="' . $field . '">' . $label . '</label>';
-            $result .= '<input class="form-control" name="' . $field . '" id="' . $field . '" value="' . $txt_value . '" ' . $attribute . '>';
-            $result .= '</div>';
-        } else {
-            $result .= $label . ' <input name="' . $field . '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1275,7 +1305,7 @@ class html_base
           $result .= '</script> ';
         } else {
         */
-        $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
+        $result .= ' <form action="/view.php?m=import" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
         $result .= '   <input type="' . html_base::INPUT_FILE .
             '" name="fileToUpload" id="fileToUpload">';
@@ -1304,6 +1334,13 @@ class html_base
         return '<button' . $class . $type . '>' . $text . '</button>';
     }
 
+    /**
+     * create the html code for a label
+     * TODO Prio 1
+     * @param string $text the translated text to be shown as a label
+     * @param string $for the url id of the html form field
+     * @return string the html code to show the label
+     */
     function label(string $text, string $for = ''): string
     {
         if ($for == '') {
@@ -1313,8 +1350,22 @@ class html_base
     }
 
     /**
+     * translate and create the html code for a label
+     * TODO use if if possible
+     * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
+     * @param string $for the url id of the html form field
+     * @return string the html code to show the label
+     */
+    function label_lan(msg_id $msg_id, string $for = ''): string
+    {
+        global $mtr;
+        return $this->label($mtr->txt($msg_id), $for);
+    }
+
+    /**
      * create the HTML code for an input field
-     * @param string $name the title and id of the input field e.g. Name
+     * @param string $url_id the url id of the input field e.g. Name
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $class_add the formatting code to adjust the formatting e.g. extend the description to the full screen width
@@ -1322,25 +1373,29 @@ class html_base
      * @return string the HTML code for the field
      */
     function input(
-        string $name = '',
+        string $url_id,
+        msg_id $msg_id,
         string $value = '',
         string $type = '',
         string $class_add = '',
         string $placeholder = ''): string
     {
+        global $mtr;
+        $name = $mtr->txt($msg_id);
         if ($name != '') {
-            $id = strtolower($name);
             $name = ' name="' . $name . '"';
+        }
+        if ($url_id != '') {
+            $id = strtolower($url_id);
         } else {
             $id = '1';
         }
         if ($value != '') {
             $value = ' value="' . $value . '"';
         }
-        if ($type == '') {
-            $type = self::INPUT_SUBMIT;
+        if ($type != '') {
+            $type = ' type="' . $type . '"';
         }
-        $type = ' type="' . $type . '"';
         if ($class_add != '' and $class_add[0] != ' ') {
             $class_add = ' ' . $class_add;
         }
@@ -1352,14 +1407,42 @@ class html_base
         return '<input' . $class . $type . $name . $id . $value . $placeholder . '>';
     }
 
-    function div(string $text, string $class = ''): string
+    function div_form(string $text, string $style = ''): string
     {
-        if ($class == '') {
-            $class = 'form-group ' . view_styles::COL_SM_4;
-        } else {
-            $class = 'form-group ' . $class;
+        return $this->div($text, 'form-group ' . $style);
+    }
+
+    function div_row(string $text, string $style = ''): string
+    {
+        return $this->div($text, 'row ' . $style);
+    }
+
+    function div(string $text, string $style = ''): string
+    {
+        if ($style == '') {
+            $style = view_styles::DEFAULT;
         }
-        return '<div class="' . $class . '">' . $text . '</div>';
+        return '<div class="' . $style . '">' . $text . '</div>';
+    }
+
+    function add_style(string $text, ?int $style_id = null): string
+    {
+        if ($style_id != null and $text != '') {
+            $style_txt = $this->get_style_code($style_id);
+            $text = $this->div($text, $style_txt);
+        }
+        return $text;
+    }
+
+    function get_style_code(?int $style_id = null): string
+    {
+        if ($style_id != null) {
+            global $sys;
+            $style = $sys->typ_lst->msk_sty->get($style_id);
+            return $style->get_code_id();
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -1378,23 +1461,33 @@ class html_base
 
     /**
      * create the HTML code for an input field including the label
-     * @param string $name the title and id of the input field e.g. Name
+     * @param string $url_id the id of the input field e.g. n
+     * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
      * @param string $value the suggested value which is in most cases the value already saved in the db
      * @param string $type the type of the input e.g. a text or if not set a submit field
      * @param string $input_class the formatting code to change the input type
-     * @param string $col_class the formatting code to adjust the formatting e.g. extend the description to the full screen width
+     * @param string $style the formatting code to adjust the formatting e.g. extend the description to the full screen width
      * @return string the HTML code for the field with the label
      */
     function form_field(
-        string $name,
-        string $value,
-        string $type = '',
+        string $url_id,
+        msg_id $msg_id,
+        string $value = '',
+        string $type = html_base::INPUT_TEXT,
         string $input_class = '',
-        string $col_class = ''
+        string $style = view_styles::COL_SM_12
     ): string
     {
-        $text = $this->label($name) . $this->input($name, $value, $type, $input_class);
-        return $this->div($text, $col_class);
+        // TODO Prio 2 move mtr to label
+        global $mtr;
+        $name = $mtr->txt($msg_id);
+        if (self::UI_USE_BOOTSTRAP) {
+            $text = $this->label($name, $url_id);
+            $text .= $this->input($url_id, $msg_id, $value, $type, $input_class);
+            return $this->div_form($text, $style);
+        } else {
+            return $this->input($url_id, $msg_id, $value, $type);
+        }
     }
 
     /**
@@ -1421,7 +1514,8 @@ class html_base
      */
     function row_right(): string
     {
-        $result = '<div class="row ';
+        $result = $this->lf();
+        $result .= '<div class="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
         return $result;
@@ -1468,8 +1562,9 @@ class html_base
      * TODO create a db table, where the async process can drop the status
      * TODO add the refresh frequency setting to the general and user settings
      */
-    function ui_progress($id, $value, $max, $text)
+    function ui_progress($id, $value, $max, $text): string
     {
         echo $text;
+        return $text;
     }
 }

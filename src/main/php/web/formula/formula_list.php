@@ -2,8 +2,8 @@
 
 /*
 
-    formula_list_dsp.php - a list function to create the HTML code to display a formula list
-    -----------------
+    web/formula/formula_list.php - a list function to create the HTML code to display a formula list
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,23 +29,31 @@
 
 */
 
-namespace html\formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+//include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
-include_once html_paths::FORMULA . 'formula.php';
-include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::RESULT . 'result.php';
+//include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once paths::SHARED_CONST . 'formulas.php';
 
-use html\html_base;
-use html\sandbox\list_dsp;
-use html\formula\formula as formula_dsp;
-use html\styles;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 
-class formula_list extends list_dsp
+class formula_list extends ListBase
 {
 
     /*
@@ -59,7 +67,49 @@ class formula_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new formula_dsp());
+        return parent::api_mapper_list($json_array, new formula());
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * get the default formula
+     * TODO if a phrase can be ranked use the ranking formula
+     * @param sandbox $sbx the object to which the default formula should be found
+     * @return int the formula id if no formula has been selected until now
+     */
+    function default_id(sandbox $sbx): int
+    {
+        return match ($sbx::class) {
+            result::class => formulas::NOT_SET_ID,
+            default => formulas::INCREASE_ID
+        };
+    }
+
+
+    /*
+     * filter
+     */
+
+    /**
+     * select the references that are linked to the given phrase
+     * @param verb|null $vrb
+     * @return formula_list
+     */
+    function get_by_verb(verb|null $vrb): formula_list
+    {
+        $frm_lst = new formula_list();
+        if ($vrb != null) {
+            foreach ($this->lst() as $frm) {
+                if ($frm->has_verb($vrb)) {
+                    $frm_lst->add($frm);
+                }
+            }
+        }
+        return $frm_lst;
     }
 
 
@@ -142,7 +192,7 @@ class formula_list extends list_dsp
                     //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
                     //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
                     $frm_dsp = $frm->dsp_obj_old();
-                    $frm_html = new formula_dsp($frm->api_json());
+                    $frm_html = new formula($frm->api_json());
                     $result = '';
                     if ($frm->name_wrd != null) {
                         $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);

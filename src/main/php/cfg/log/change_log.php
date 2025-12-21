@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/user_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
-    ----------------------
+    model/log/change_log.php - object to save the user changes in the database in a format, so that it can fast be displayed to the user
+    ------------------------
 
     for reading the user changes from the database and forwarding them to
     the API and frontend model/log/changeLog* should be used
@@ -37,7 +37,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -69,9 +69,9 @@ TODO    rename to change_base
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -99,6 +99,7 @@ include_once paths::MODEL_REF . 'ref_db.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
@@ -112,53 +113,56 @@ include_once paths::MODEL_REF . 'ref_db.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula_db;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\db_object_seq_id_user;
-use cfg\helper\type_object;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\ref\source_db;
-use cfg\ref\ref_db;
-use cfg\sandbox\sandbox_link;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\value\value_db;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\view\term_view;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\word_db;
-use shared\const\users;
-use shared\enum\change_tables;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class change_log extends db_object_seq_id_user
 {
@@ -168,35 +172,35 @@ class change_log extends db_object_seq_id_user
      */
 
     // change log database and JSON object field names
-    const FLD_ID_COM = 'the prime key to identify the change';
-    const FLD_ID = 'change_id';
-    const FLD_TIME_COM = 'time when the user has confirmed the change';
-    const FLD_TIME = 'change_time';
-    const FLD_USER_COM = 'reference to the user who has done the change';
-    const FLD_ACTION_COM = 'the curl action';
-    const FLD_ACTION = 'change_action_id';
-    const FLD_ROW_ID_COM = 'the prime id in the table with the change';
-    const FLD_ROW_ID = 'row_id';
+    const string FLD_ID_COM = 'the prime key to identify the change';
+    const string FLD_ID = 'change_id';
+    const string FLD_TIME_COM = 'time when the user has confirmed the change';
+    const string FLD_TIME = 'change_time';
+    const string FLD_USER_COM = 'reference to the user who has done the change';
+    const string FLD_ACTION_COM = 'the crud action';
+    const string FLD_ACTION = 'change_action_id';
+    const string FLD_ROW_ID_COM = 'the prime id in the table with the change';
+    const string FLD_ROW_ID = 'row_id';
 
     // sql table comments
-    const TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
+    const string TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
-    const FLD_LST_KEY = array(
+    const array FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
-    const FLD_LST_CHANGE = array();
+    const array FLD_LST_CHANGE = array();
     // field list to identify the database row in the table that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
     // list of classes that store change log entries except log link because logging a link is too different
-    const LOG_CLASSES = [
+    const array LOG_CLASSES = [
         change::class,
         changes_norm::class,
         changes_big::class,
@@ -254,7 +258,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_action(string $action_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_act_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -263,14 +267,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->action_id = $cng_act_cac->id($action_name);
+        $this->action_id = $sys->typ_lst->cng_act->id($action_name);
         if ($this->action_id <= 0) {
             $this->add_action($used_db_con, $action_name);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
                 $act = new type_object($action_name, $action_name, '', $this->action_id);
-                $cng_act_cac->add($act);
+                $sys->typ_lst->cng_act->add($act);
                 $db_changed = true;
             }
         }
@@ -283,8 +287,8 @@ class change_log extends db_object_seq_id_user
      */
     function action(): string
     {
-        global $cng_act_cac;
-        return $cng_act_cac->name($this->action_id);
+        global $sys;
+        return $sys->typ_lst->cng_act->name($this->action_id);
     }
 
     /**
@@ -311,7 +315,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_table(string $table_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_tbl_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -320,14 +324,14 @@ class change_log extends db_object_seq_id_user
         }
 
         $db_changed = false;
-        $this->table_id = $cng_tbl_cac->id($table_name);
+        $this->table_id = $sys->typ_lst->cng_tbl->id($table_name);
         if ($this->table_id <= 0) {
             $this->add_table($used_db_con, $table_name);
             if ($this->table_id <= 0) {
                 log_err("Cannot add table name " . $table_name);
             } else {
                 $tbl = new type_object($table_name, $table_name, '', $this->table_id);
-                $cng_tbl_cac->add($tbl);
+                $sys->typ_lst->cng_tbl->add($tbl);
                 $db_changed = true;
             }
         }
@@ -340,8 +344,8 @@ class change_log extends db_object_seq_id_user
      */
     function table(): string
     {
-        global $cng_tbl_cac;
-        return $cng_tbl_cac->name($this->table_id);
+        global $sys;
+        return $sys->typ_lst->cng_tbl->name($this->table_id);
     }
 
     /**
@@ -352,7 +356,7 @@ class change_log extends db_object_seq_id_user
      */
     function set_field(string $field_name, ?sql_db $given_db_con = null): bool
     {
-        global $cng_fld_cac;
+        global $sys;
         global $db_con;
 
         $used_db_con = $db_con;
@@ -362,7 +366,7 @@ class change_log extends db_object_seq_id_user
 
         $db_changed = false;
         if ($this->table_id > 0) {
-            $this->field_id = $cng_fld_cac->id($this->table_id . $field_name);
+            $this->field_id = $sys->typ_lst->cng_fld->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
                 if ($used_db_con->connected()) {
                     $this->add_field($used_db_con, $field_name);
@@ -372,13 +376,13 @@ class change_log extends db_object_seq_id_user
                         $tbl = new type_object(
                             $this->table_id . $field_name,
                             $this->table_id . $field_name,
-                            '',
+                            $field_name,
                             $this->field_id);
-                        $cng_fld_cac->add($tbl);
+                        $sys->typ_lst->cng_fld->add($tbl);
                         $db_changed = true;
                     }
                 } else {
-                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id);
+                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id . '. Probably field needs to be added to the src/main/resources/db_code_links/change_fields.csv');
                 }
             }
         } else {
@@ -393,11 +397,11 @@ class change_log extends db_object_seq_id_user
      */
     function field(): string
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $lib = new library();
 
-        $field_key = $cng_fld_cac->name($this->field_id);
+        $field_key = $sys->typ_lst->cng_fld->name($this->field_id);
         return $lib->str_right_of_or_all($field_key, $this->table_id);
     }
 
@@ -650,7 +654,7 @@ class change_log extends db_object_seq_id_user
                 }
             } else {
                 $sys_usr = new user();
-                $sys_usr->set_id(users::SYSTEM_ID);
+                $sys_usr->id = users::SYSTEM_ID;
                 $sys_usr->set_name(users::SYSTEM_NAME);
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
@@ -674,8 +678,8 @@ class change_log extends db_object_seq_id_user
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
-        if ($this->user() != null) {
-            $vars[json_fields::USR] = $this->user()->api_json_array_core($typ_lst, $usr);
+        if ($this->get_user() != null) {
+            $vars[json_fields::USR] = $this->get_user()->api_json_array_core($typ_lst, $usr);
         }
         $vars[json_fields::ACTION_ID] = $this->action_id;
         $vars[json_fields::TABLE_ID] = $this->table_id;
@@ -727,7 +731,7 @@ class change_log extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
      * @param int|null $row_id the database id of the database row of the changes that the user wants to see
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
@@ -739,7 +743,7 @@ class change_log extends db_object_seq_id_user
             $sc->add_where($this::FLD_ROW_ID, $row_id);
         }
         // TODO check!
-        //$fields[] = user::FLD_ID;
+        //$fields[] = user_db::FLD_ID;
         $sc->set_page();
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -863,6 +867,12 @@ class change_log extends db_object_seq_id_user
         return true;
     }
 
+    function use_type_id(): bool
+    {
+        log_err('use_type_id not overwritten by ' . $this::class);
+        return false;
+    }
+
 
     /*
      * sql write
@@ -878,7 +888,7 @@ class change_log extends db_object_seq_id_user
      * @param string $add_fld name of the database key field
      * @param string $row_fld name of the database id field
      * @param string $par_name name of the database name parameter field
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
@@ -907,6 +917,25 @@ class change_log extends db_object_seq_id_user
                 $lib = new library();
                 $qp->name = $lib->class_to_name($this::class) . $ext;
             }
+
+            // TODO Prio 3 activate if needed
+            /*
+            $name_ext = '';
+            if ($this->action() == change_actions::ADD) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::ADD;
+            } elseif ($this->action() == change_actions::UPDATE) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::UPDATE;
+            } elseif ($this->action() == change_actions::DELETE) {
+                $name_ext .= $sc::SEP . $sc::LOG . $sc::SEP . $sc::DELETE;
+            }
+            if ($this->use_type_id()) {
+                $name_ext .= $sc::SEP . $sc::ID;
+            }
+            if ($name_ext != '') {
+                $qp->name .= $name_ext;
+            }
+            */
+
             $sc->set_name($qp->name);
             $qp->sql = $sc->create_sql_insert(
                 $this->db_field_values_types(
@@ -948,6 +977,11 @@ class change_log extends db_object_seq_id_user
         ?sandbox_link $sbx = null
     ): sql_par
     {
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'sql_insert_link',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
         return new sql_par($this::class);
     }
 
@@ -974,10 +1008,10 @@ class change_log extends db_object_seq_id_user
     {
         $fvt_lst = new sql_par_field_list();
         if ($sc_par_lst->has_requesting_user()) {
-            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
+            $fvt_lst->add_field(user_db::FLD_ID, $this->get_user()->id, db_object_seq_id::FLD_ID_SQL_TYP,
                 null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
         } else {
-            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
+            $fvt_lst->add_field(user_db::FLD_ID, $this->get_user()->id, db_object_seq_id::FLD_ID_SQL_TYP);
         }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
@@ -997,7 +1031,7 @@ class change_log extends db_object_seq_id_user
     function db_fields(): array
     {
         $sql_fields = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 
@@ -1012,7 +1046,7 @@ class change_log extends db_object_seq_id_user
     function db_values(): array
     {
         $sql_values = array();
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->get_user()->id;
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
@@ -1026,9 +1060,10 @@ class change_log extends db_object_seq_id_user
 
     /**
      * log a user change of a word, value or formula
+     * @param user_message $usr_msg ok or the error message for the user with the suggested solution
      * @return true if the change has been logged successfully
      */
-    function add(): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -1043,23 +1078,22 @@ class change_log extends db_object_seq_id_user
                 $qp = $this->sql_insert($sc);
             }
         }
-        $usr_msg = $db_con->insert($qp, 'log change');
         $log_id = 0;
-        if ($usr_msg->is_ok()) {
+        if ($db_con->insert($qp, 'log change', $usr_msg)) {
             $log_id = $usr_msg->get_row_id();
         }
 
         if ($log_id <= 0) {
             // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
+            if ($this->get_user() == null) {
                 log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->get_user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
             }
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             // restore the type before saving the log
             $db_con->set_class($db_type);
             $result = True;

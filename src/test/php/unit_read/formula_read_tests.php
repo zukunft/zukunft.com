@@ -30,18 +30,19 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'formulas.php';
 
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use shared\const\formulas;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_read_tests
 {
@@ -49,14 +50,15 @@ class formula_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $frm_typ_cac;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'formula read db->';
 
         // start the test section (ts)
-        $ts = 'read formula ';
+        $ts = 'db read formula ';
         $t->header($ts);
 
         $t->subheader($ts . 'load' );
@@ -64,7 +66,7 @@ class formula_read_tests
         $frm = new formula($t->usr1);
         $t->assert_load($frm, formulas::SCALE_TO_SEC);
 
-        $t->subheader('formula tests');
+        $t->subheader($ts . 'by name');
 
         /*
         // ... check if the link is shown correctly also for the second user
@@ -77,11 +79,11 @@ class formula_read_tests
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
-        $t->display('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
+        $t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $result, $target);
         */
 
 
-        $t->subheader('formula types tests');
+        $t->subheader($ts . 'types');
 
         // load the formula types
         $lst = new formula_type_list();
@@ -89,7 +91,7 @@ class formula_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $frm_typ_cac->id(formula_type::CALC);
+        $result = $sys->typ_lst->frm_typ->id(formula_type::CALC);
         $target = 1;
         $t->assert('check ' . formula_type::CALC, $result, 1);
 
@@ -97,10 +99,10 @@ class formula_read_tests
         $calc_blocks = (new formula_list($t->usr1))->calc_blocks($db_con);
         $t->assert_greater_zero('calc_blocks', $calc_blocks);
 
-        $t->subheader('Frontend API tests');
+        $t->subheader($ts . 'api');
 
         $test_name = formulas::INCREASE;
-        $frm = $t->load_formula(formulas::INCREASE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         if ($frm->name() != '') {
             $t->assert_export_reload($ts . $test_name, $frm);
         } else {

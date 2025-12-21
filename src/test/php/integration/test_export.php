@@ -30,32 +30,35 @@
 
 */
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\phrase\phrase_list;
-use cfg\export\json_io;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\export\xml;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\service\export\json_io;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_export_test(test_cleanup $t): void
 {
 
     global $usr;
 
-    $t->header('Test the xml export class (classes/xml.php)');
+    // start the test section (ts)
+    $ts = 'integration export ';
+    $t->header($ts);
+
+    $t->subheader($ts . 'xml');
 
     $phr_lst = new phrase_list($usr);
     $phr_lst->load_by_names(array(words::MATH));
-    $xml_export = new xml_io;
-    $xml_export->usr = $usr;
-    $xml_export->phr_lst = $phr_lst;
-    $result = $xml_export->export();
+    $xml_export = new xml($usr);
+    $result = $xml_export->export_by_phrase_list($phr_lst, $usr);
     $target = 'mathematics';
     $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    $t->header('Test the json export class (classes/json.php)');
+    $t->subheader($ts . 'json');
 
     $json_export = new json_io($usr, $phr_lst);
     $result = $json_export->export();

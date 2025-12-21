@@ -29,11 +29,11 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_field_default.php';
@@ -42,123 +42,140 @@ include_once paths::DB . 'sql_where.php';
 include_once paths::DB . 'sql_where_list.php';
 include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
+include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
-include_once paths::MODEL_ELEMENT . 'element.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-include_once paths::MODEL_LOG . 'change_value.php';
-include_once paths::MODEL_FORMULA . 'formula_link.php';
-include_once paths::MODEL_GROUP . 'group.php';
-include_once paths::MODEL_GROUP . 'group_id.php';
-include_once paths::MODEL_SYSTEM . 'ip_range.php';
-include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-include_once paths::MODEL_SYSTEM . 'job.php';
-include_once paths::MODEL_LOG . 'change.php';
-include_once paths::MODEL_LOG . 'change_action.php';
-include_once paths::MODEL_LOG . 'change_link.php';
-include_once paths::MODEL_LOG . 'change_log.php';
-include_once paths::MODEL_LOG . 'change_values_big.php';
-include_once paths::MODEL_LOG . 'change_values_norm.php';
-include_once paths::MODEL_LOG . 'change_values_prime.php';
-include_once paths::MODEL_LOG . 'change_values_time_prime.php';
-include_once paths::MODEL_LOG . 'change_values_time_big.php';
-include_once paths::MODEL_LOG . 'change_values_time_norm.php';
-include_once paths::MODEL_LOG . 'change_values_time_prime.php';
-include_once paths::MODEL_LOG . 'change_values_text_big.php';
-include_once paths::MODEL_LOG . 'change_values_text_norm.php';
-include_once paths::MODEL_LOG . 'change_values_text_prime.php';
-include_once paths::MODEL_LOG . 'change_values_geo_big.php';
-include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
-include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
-include_once paths::MODEL_LOG . 'change_table.php';
-include_once paths::MODEL_LOG . 'changes_big.php';
-include_once paths::MODEL_LOG . 'changes_norm.php';
-include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_RESULT . 'result.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::MODEL_USER . 'user_type.php';
-include_once paths::MODEL_USER . 'user_official_type.php';
-include_once paths::MODEL_VALUE . 'value_base.php';
-include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VALUE . 'value_time.php';
-include_once paths::MODEL_VALUE . 'value_text.php';
-include_once paths::MODEL_VALUE . 'value_geo.php';
-include_once paths::MODEL_VALUE . 'value_time_series.php';
-include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_ELEMENT . 'element.php';
+//include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_LOG . 'change_value.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_LOG . 'change.php';
+//include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_LOG . 'change_values_big.php';
+//include_once paths::MODEL_LOG . 'change_values_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_time_big.php';
+//include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_text_big.php';
+//include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+//include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_LOG . 'changes_big.php';
+//include_once paths::MODEL_LOG . 'changes_norm.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_official_type.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component_link;
-use cfg\helper\db_object_seq_id;
-use cfg\element\element;
-use cfg\formula\formula_link;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\log\change_log;
-use cfg\log\change_value;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\sandbox\sandbox_multi;
-use cfg\system\ip_range;
-use cfg\system\ip_range_list;
-use cfg\system\job;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_values_big;
-use cfg\log\change_link;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_table;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\ref\ref;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_link_named;
-use cfg\system\sys_log;
-use cfg\value\value;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\user\user_official_type;
-use cfg\value\value_base;
-use cfg\value\value_time_series;
-use cfg\view\term_view;
-use shared\const\users;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 
 class sql_creator
 {
 
     // internal const for unit testing
-    const FILE_INSERT = 'insert'; // for insert (or create in curl notation) unit test files
-    const FILE_UPDATE = 'update'; // for update unit test files
-    const FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
-    const FILE_LOAD = 'load'; // for load unit test files
+    const string FILE_INSERT = 'insert'; // for insert (or create in crud notation) unit test files
+    const string FILE_UPDATE = 'update'; // for update unit test files
+    const string FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
+    const string FILE_LOAD = 'load'; // for load unit test files
+
+    // name const used for the query name
+    // the separator between the query name parts
+    const string SEP = '_';
+    const string LOG = 'log';
+    const string ADD = 'add';
+    const string UPDATE = 'update';
+    const string DELETE = 'delete';
+    const string ID = 'id';
 
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
-    const DB_TYPES_NOT_NAMED = [
+    const array DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
         value_time::class,
@@ -170,6 +187,7 @@ class sql_creator
         element::class,
         component_link::class,
         term_view::class,
+        view_relation::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
@@ -185,25 +203,25 @@ class sql_creator
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     // classes where the tables have no auto increase id
-    const DB_TYPES_NO_SEQ = [
+    const array DB_TYPES_NO_SEQ = [
         group::class,
         value::class,
         result::class
     ];
 
     // name the positions in the field definition array
-    private const FLD_POS_NAME = 0;
-    private const FLD_POS_TYPE = 1;
-    private const FLD_POS_DEFAULT_VALUE = 2;
-    private const FLD_POS_INDEX = 3;
-    private const FLD_POS_FOREIGN_LINK = 4;
-    private const FLD_POS_COMMENT = 5;
-    private const FLD_POS_NAME_LINK = 6;
+    private const int FLD_POS_NAME = 0;
+    private const int FLD_POS_TYPE = 1;
+    private const int FLD_POS_DEFAULT_VALUE = 2;
+    private const int FLD_POS_INDEX = 3;
+    private const int FLD_POS_FOREIGN_LINK = 4;
+    private const int FLD_POS_COMMENT = 5;
+    private const int FLD_POS_NAME_LINK = 6;
 
     // positions in the field, value and type array
-    private const FVT_FLD = 0;
-    private const FVT_VAL = 1;
-    private const FVT_TYP = 2;
+    private const int FVT_FLD = 0;
+    private const int FVT_VAL = 1;
+    private const int FVT_TYP = 2;
 
     // parameters for the sql creation that might be used for the next query creation
     private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
@@ -295,7 +313,7 @@ class sql_creator
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
     private ?array $join_usr_geo_field_lst;    // list of fields that should be returned to the next select query that are taken from a joined table
-    // TODO activate or review
+    // TODO Prio 2 activate or review
     //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
     //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
     //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join
@@ -543,8 +561,8 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        global $cng_tbl_cac;
-        return $cng_tbl_cac->id($this->get_table_name($class));
+        global $sys;
+        return $sys->typ_lst->cng_tbl->id($this->get_table_name($class));
     }
 
 
@@ -585,10 +603,10 @@ class sql_creator
         if ($usr == null) {
             $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id() == null) {
+            if ($usr->id == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id()); // by default use the session user id
+                $this->set_usr($usr->id); // by default use the session user id
             }
         }
         $this->set_table($sc_par_lst, $ext);
@@ -713,7 +731,7 @@ class sql_creator
             $this->join4_field = $join_field;
             $this->join4_sub_query = true;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
 
 
@@ -862,7 +880,7 @@ class sql_creator
             $this->join4_usr_query = false;
             $this->join4_sub_query = false;
         } else {
-            log_err('Max four table joins expected on version ' . PRG_VERSION);
+            log_err('Max four table joins expected on version ' . def::PRG_VERSION);
         }
     }
 
@@ -915,7 +933,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -965,7 +983,7 @@ class sql_creator
             $this->join4_force_rename = $force_rename;
             $this->join4_usr_fields = true;
         } else {
-            log_err('Max four table joins expected in version ' . PRG_VERSION);
+            log_err('Max four table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -988,7 +1006,7 @@ class sql_creator
             $this->join_force_rename = $force_rename;
             $this->join_usr_fields = true;
         } else {
-            log_err('Max one geo table joins expected in version ' . PRG_VERSION);
+            log_err('Max one geo table joins expected in version ' . def::PRG_VERSION);
         }
     }
 
@@ -1453,8 +1471,8 @@ class sql_creator
                 } else {
                     if ($usr_tbl) {
                         $sql_where = $this->sql_where_no_par(
-                            [$id_field, user::FLD_ID],
-                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+                            [$id_field, user_db::FLD_ID],
+                            [$id, '_' . user_db::FLD_ID], $offset, $id, true);
 
                     } else {
                         $sql_where = $this->sql_where($id_field, $id, $offset, $id);
@@ -1608,8 +1626,8 @@ class sql_creator
                 } else {
                     if ($usr_tbl) {
                         $sql_where = $this->sql_where_no_par(
-                            [$id_field, user::FLD_ID],
-                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+                            [$id_field, user_db::FLD_ID],
+                            [$id, '_' . user_db::FLD_ID], $offset, $id, true);
 
                     } else {
                         $sql_where = $this->sql_where($id_field, $id, $offset, $id);
@@ -1705,6 +1723,7 @@ class sql_creator
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
@@ -1714,6 +1733,7 @@ class sql_creator
         user               $usr,
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
+        user_message       $usr_msg,
         sql_type_list      $sc_par_lst,
         sandbox_multi|null $val = null
     ): sql_par
@@ -1772,8 +1792,8 @@ class sql_creator
             }
             // add the user id to the field list
             $par_lst_out->add_field(
-                user::FLD_ID,
-                $fvt_lst->get_value(user::FLD_ID),
+                user_db::FLD_ID,
+                $fvt_lst->get_value(user_db::FLD_ID),
                 sql_par_type::INT);
             // add the action id to the field list
             $par_lst_out->add_field(
@@ -1814,15 +1834,15 @@ class sql_creator
                     $fvt_lst->get_id($fld),
                     $fvt_lst->get_type_id($fld));
             } else {
-                $par_lst_out->add($fvt_lst->get($fld));
+                $par_lst_out->add($fvt_lst->get($fld, $usr_msg));
             }
             if ($usr_tbl) {
                 if (is_array($id_fld)) {
                     foreach ($id_fld as $is_fld_part) {
-                        $par_lst_out->add($fvt_lst->get($is_fld_part));
+                        $par_lst_out->add($fvt_lst->get($is_fld_part, $usr_msg));
                     }
                 } else {
-                    $par_lst_out->add($fvt_lst->get($id_fld));
+                    $par_lst_out->add($fvt_lst->get($id_fld, $usr_msg));
                 }
             }
         }
@@ -1929,12 +1949,12 @@ class sql_creator
             $qp->sql .= ' ' . $qp_log->sql . ';';
 
             // add the user_id if needed
-            $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
+            $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id();
+                $log_usr_id = $usr->id;
             }
             $par_lst_out->add_field(
-                user::FLD_ID,
+                user_db::FLD_ID,
                 $log_usr_id,
                 db_object_seq_id::FLD_ID_SQL_TYP);
 
@@ -2025,8 +2045,8 @@ class sql_creator
         // TODO remove the double creation of this list in the calling functions
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
-            user::FLD_ID,
-            $fvt_lst->get_value(user::FLD_ID),
+            user_db::FLD_ID,
+            $fvt_lst->get_value(user_db::FLD_ID),
             sql_par_type::INT);
         $par_lst_out->add_field(
             change_action::FLD_ID,
@@ -2113,9 +2133,9 @@ class sql_creator
         $log->new_text_from = '';
         if ($sbx::class == triple::class) {
             // triples have a verb as type
-            $log->old_link_id = $sbx->verb_id();
+            $log->old_link_id = $sbx->get_verb_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->verb_name();
+            $log->old_text_link = $sbx->get_verb_name();
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
             // other links can have a type
@@ -2146,8 +2166,8 @@ class sql_creator
 
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
-            user::FLD_ID,
-            $fvt_lst->get_value(user::FLD_ID),
+            user_db::FLD_ID,
+            $fvt_lst->get_value(user_db::FLD_ID),
             sql_par_type::INT);
         $par_lst_out->add_field(
             change_action::FLD_ID,
@@ -2179,13 +2199,12 @@ class sql_creator
         sql_type_list      $sc_par_lst
     ): sql_par
     {
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
+        global $sys;
 
         // get the change table id
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
-        $table_id = $cng_tbl_cac->id($table_name);
+        $table_id = $sys->typ_lst->cng_tbl->id($table_name);
 
         // select which log to use and set the parameters
         $num_fld = $sbx::FLD_VALUE;
@@ -2214,12 +2233,12 @@ class sql_creator
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
-        $usr_id = $fvt_lst->get_value(user::FLD_ID);
+        $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
         if ($usr_id == null) {
-            $usr_id = $usr->id();
+            $usr_id = $usr->id;
         }
         $par_lst_out->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $usr_id,
             sql_par_type::INT);
         $par_lst_out->add_field(
@@ -2228,7 +2247,7 @@ class sql_creator
             sql_par_type::INT_SMALL);
         $par_lst_out->add_field(
             sql::FLD_LOG_FIELD_PREFIX . $num_fld,
-            $cng_fld_cac->id($table_id . $num_fld),
+            $sys->typ_lst->cng_fld->id($table_id . $num_fld),
             change::FLD_FIELD_ID_SQL_TYP
         );
         if ($sc_par_lst->is_update()) {
@@ -2414,8 +2433,8 @@ class sql_creator
             if ($sc_par_lst->is_usr_tbl()) {
 
                 $sql_where = $this->sql_where_no_par(
-                    [$id_field, user::FLD_ID],
-                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+                    [$id_field, user_db::FLD_ID],
+                    ['_' . $id_field, '_' . user_db::FLD_ID], 0, '_' . $id_field, true);
             } else {
                 $sql_where = $this->sql_where_fvt($fvt_lst_id);
             }
@@ -2506,8 +2525,8 @@ class sql_creator
         if ($sc_par_lst->use_named_par()) {
             if ($sc_par_lst->is_usr_tbl_and_select()) {
                 $sql_where = $this->sql_where_no_par(
-                    [$id_field, user::FLD_ID],
-                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+                    [$id_field, user_db::FLD_ID],
+                    ['_' . $id_field, '_' . user_db::FLD_ID], 0, '_' . $id_field, true);
             } else {
                 if (is_array($id_field)) {
                     $sql_where = $this->sql_where_no_par($id_field, $id);
@@ -2691,7 +2710,7 @@ class sql_creator
     function add_usr_grp_field(string $fld_name, sql_par_type $spt): void
     {
         // assuming that the user specific part is selected in the sub query
-        $this->add_par(sql_par_type::INT_SUB, $this->usr_id, sql_db::USR_TBL . '.' . user::FLD_ID);
+        $this->add_par(sql_par_type::INT_SUB, $this->usr_id, sql_db::USR_TBL . '.' . user_db::FLD_ID);
 
         $this->grp_field_lst[] = $fld_name;
         //$this->add_par($spt, '', $fld_name);
@@ -2738,7 +2757,7 @@ class sql_creator
                     $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
                 }
                 if (!$this->all_query) {
-                    $this->join .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '' and !$this->sub_query) {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -2746,7 +2765,7 @@ class sql_creator
                             $usr_fld = '';
                             if ($usr_par == '') {
                                 $usr_par = $this->par_name();
-                                $usr_fld = sql_db::USR_TBL . '.' . user::FLD_ID;
+                                $usr_fld = sql_db::USR_TBL . '.' . user_db::FLD_ID;
                             }
                             $this->join_usr_par_name = $usr_par;
                             if ($usr_par == '' or !$this->has_field($usr_par)) {
@@ -2925,7 +2944,7 @@ class sql_creator
                     $usr_field_lst[] = $this->name_field();
                 }
                 if (!$this->all_query) {
-                    $field_lst[] = user::FLD_ID;
+                    $field_lst[] = user_db::FLD_ID;
                 }
             } else {
                 if (!in_array($this->class, self::DB_TYPES_NOT_NAMED)) {
@@ -3070,7 +3089,7 @@ class sql_creator
                         // add the user sandbox id for user sandbox queries to find out if the user sandbox has already been created
                         if ($this->all_query) {
                             $result = $this->sep($result);
-                            $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                            $result .= ' ' . sql_db::USR_TBL . '.' . user_db::FLD_ID;
                         } else {
                             if ($this->usr_query) {
                                 $result = $this->sep($result);
@@ -3089,7 +3108,7 @@ class sql_creator
         // select the owner of the standard values in case of an overview query
         if ($this->all_query) {
             $result = $this->sep($result);
-            $result .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' '
+            $result .= ' ' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' '
                 . sql::AS . ' owner_id';
         }
 
@@ -3281,7 +3300,7 @@ class sql_creator
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             if ($field == sandbox::FLD_CHANGE_USER) {
-                $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' ' . sql::AS . ' ' . $field;
+                $result .= ' ' . sql_db::USR_TBL . '.' . user_db::FLD_ID . ' ' . sql::AS . ' ' . $field;
             } else {
                 $result .= ' ' . sql_db::USR_TBL . '.' . $field;
             }
@@ -3390,7 +3409,7 @@ class sql_creator
                     $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
-                        $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK_TBL . '.' . user::FLD_ID . ' = ';
+                        $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK_TBL . '.' . user_db::FLD_ID . ' = ';
                         if ($this->query_name == '') {
                             $this->join .= $this->usr_view_id;
                         } else {
@@ -3430,7 +3449,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK2_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK2_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3469,7 +3488,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK3_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK3_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3508,7 +3527,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK4_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK4_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3994,7 +4013,7 @@ class sql_creator
 
         $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
         if ($this->all_query) {
-            $this->order .= ', ' . $table_prefix . user::FLD_ID;
+            $this->order .= ', ' . $table_prefix . user_db::FLD_ID;
         }
     }
 
@@ -4260,12 +4279,18 @@ class sql_creator
         // loop over the fields
         $sql .= '(';
         $sql_fields = '';
+        $key_field = '';
+        $key_field_unique = true;
+        $prime_keys = [];
         foreach ($fields as $field) {
             if ($sql_fields != '') {
                 $sql_fields .= ', ';
             }
             $name = $this->name_sql_esc($field[self::FLD_POS_NAME]);
             $type = $field[self::FLD_POS_TYPE];
+            if ($type->is_key() or $type->is_key_part()) {
+                $prime_keys[] = $name;
+            }
             if ($this->db_type() == sql_db::POSTGRES) {
                 $type_used = $type->pg_type();
             } elseif ($this->db_type() == sql_db::MYSQL) {
@@ -4295,10 +4320,28 @@ class sql_creator
                     }
                     $comment_used .= "'";
                 }
+                if ($type->is_key()) {
+                    if ($key_field_unique) {
+                        $key_field = $name;
+                        $key_field_unique = false;
+                    } else {
+                        $key_field = '';
+                    }
+                }
             }
             $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
-        $sql .= $sql_fields . ')';
+        $sql .= $sql_fields;
+        if ($this->db_type() == sql_db::MYSQL) {
+            if (count($prime_keys) > 0) {
+                $sql .= ', ' . sql::PRIMARY_KEY . ' (' . implode(', ', $prime_keys) . ')';
+            } else {
+                if ($key_field != '') {
+                    $sql .= ', ' . sql::PRIMARY_KEY . ' (' . $key_field . ')';
+                }
+            }
+        }
+        $sql .= ')';
         if ($this->db_type() == sql_db::MYSQL) {
             $sql .= ' ENGINE = InnoDB DEFAULT CHARSET = utf8 ';
             $sql .= "COMMENT '" . $tbl_comment . "'";
@@ -4398,7 +4441,10 @@ class sql_creator
                     $sql .= '); ';
                 }
             } elseif ($this->db_type() == sql_db::MYSQL) {
-                $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                if (count($index_fields) > 0) {
+                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' ';
+                }
+                /* moved to table creation by using MariaDB 15.1
                 $sql .= ' ADD PRIMARY KEY (';
                 $sql .= implode(', ', $prime_keys);
                 if (count($index_fields) > 0) {
@@ -4406,6 +4452,7 @@ class sql_creator
                 } else {
                     $sql .= '); ';
                 }
+                */
             }
         } else {
             if ($this->db_type() == sql_db::MYSQL) {
@@ -4476,10 +4523,18 @@ class sql_creator
     {
         $sql = '';
         $id_fld = '';
+        $type_used = '';
         foreach ($fields as $field) {
             $type = $field[self::FLD_POS_TYPE];
             if ($type->is_auto_increment()) {
                 $id_fld = $field[self::FLD_POS_NAME];
+                if ($this->db_type() == sql_db::POSTGRES) {
+                    $type_used = $type->pg_type();
+                } elseif ($this->db_type() == sql_db::MYSQL) {
+                    $type_used = $type->mysql_type();
+                } else {
+                    $type_used = 'field type for ' . $this->db_type() . ' missing';
+                }
             }
         }
         if ($id_fld != '') {
@@ -4487,7 +4542,7 @@ class sql_creator
             $sql .= '-- AUTO_INCREMENT for table ' . $this->table . ' ' . "\n";
             $sql .= '-- ' . "\n";
             $sql .= 'ALTER ' . 'TABLE ' . $this->name_sql_esc($this->table) . ' ' . "\n";
-            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' int(11) NOT NULL AUTO_INCREMENT; ' . "\n";
+            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' ' . $type_used . ' NOT NULL AUTO_INCREMENT; ' . "\n";
             $sql .= ' ' . "\n";
         }
         return $sql;
@@ -4707,7 +4762,7 @@ class sql_creator
 
     /**
      * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
@@ -5141,6 +5196,9 @@ class sql_creator
         if ($result == 'view_link_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
+        if ($result == 'view_relation_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
         if ($result == 'component_type_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
@@ -5320,7 +5378,7 @@ class sql_creator
      * @param int|string $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string|array $id_field the field name or field list of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
@@ -5339,7 +5397,7 @@ class sql_creator
         $this->set_name($qp->name);
         $this->set_table($sc_par_lst);
         $this->set_id_field($id_field);
-        $this->set_fields(array(user::FLD_ID));
+        $this->set_fields(array(user_db::FLD_ID));
         $pos = $this->par_count();
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
@@ -5380,7 +5438,7 @@ class sql_creator
                 $sql_mid_where .= ' ' . sql::WHERE . ' ';
                 $this->add_par(sql_par_type::INT, $id);
             }
-            $sql_mid = " " . user::FLD_ID;
+            $sql_mid = " " . user_db::FLD_ID;
             $sql_mid .= " " . sql::FROM . " " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
             if (!is_array($this->id_field)) {
                 $pos++;
@@ -5390,7 +5448,7 @@ class sql_creator
             if ($owner_id > 0) {
                 $pos++;
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " " . sql::AND . " " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $sql_mid .= " " . sql::AND . " " . user_db::FLD_ID . " <> " . $this->par_name($pos);
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
             $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
@@ -5406,7 +5464,7 @@ class sql_creator
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string $id_field the field name of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
@@ -5419,21 +5477,21 @@ class sql_creator
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_id_field($id_field);
-        $this->set_fields(array(user::FLD_ID));
+        $this->set_fields(array(user_db::FLD_ID));
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
             // TODO use where function
             $pos = 1;
             $this->add_par(sql_par_type::INT, $id);
-            $sql_mid = " " . user::FLD_ID .
+            $sql_mid = " " . user_db::FLD_ID .
                 " " . sql::FROM . " " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
                 " WHERE " . $this->id_field . " = " . $this->par_name($pos) . "
                  " . sql::AND . " (excluded <> 1 OR excluded is NULL)";
             $pos++;
             if ($owner_id > 0) {
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " " . sql::AND . " " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $sql_mid .= " " . sql::AND . " " . user_db::FLD_ID . " <> " . $this->par_name($pos);
                 $pos++;
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
@@ -5467,6 +5525,25 @@ class sql_creator
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
         $qp->par = [implode(',', $id_lst)];
+        return $qp;
+    }
+
+    /**
+     * return a sql statement to get all rows and all fields of the given class
+     * should not be used for big tables because it might take long
+     *
+     * @param string $class
+     * @return sql_par
+     */
+    function sql_all(string $class): sql_par
+    {
+        $lib = new library();
+        $qp = new sql_par($class);
+        $this->set_class($class);
+        $sql = sql::SELECT . ' * ' . sql::FROM . ' ' . $this->name_sql_esc($this->table) . ' '
+            . sql::ORDER_BY . ' ' . $lib->class_to_id_field($class);
+        $qp->name .= 'all';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, []);
         return $qp;
     }
 

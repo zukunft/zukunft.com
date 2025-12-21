@@ -30,34 +30,35 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-include_once paths::MODEL_COMPONENT . 'component.php';
-include_once paths::MODEL_COMPONENT . 'component_list.php';
-include_once paths::MODEL_HELPER . 'data_object.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-include_once paths::MODEL_IMPORT . 'import.php';
-include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_PHRASE . 'phrase_list.php';
-include_once paths::MODEL_PHRASE . 'term.php';
-include_once paths::MODEL_REF . 'source_list.php';
-include_once paths::MODEL_WORD . 'triple_list.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_list.php';
-include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::MODEL_WORD . 'word.php';
-include_once paths::MODEL_WORD . 'word_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_list.php';
+//include_once paths::MODEL_HELPER . 'data_object.php';
+//include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_IMPORT . 'import.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_REF . 'source_list.php';
+//include_once paths::MODEL_WORD . 'triple_list.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'view_list.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -67,36 +68,38 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_list;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_par_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\import\import;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\ref\source_list;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\word\triple_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\word\word_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -140,6 +143,12 @@ class sandbox_list_named extends sandbox_list
         $this->lst_name_dirty_all = true;
     }
 
+    function set_name_pos_list(array $lst): void
+    {
+        $this->name_pos_lst = $lst;
+        $this->lst_name_dirty = false;
+    }
+
     /**
      * @return true if the name hash table is updated
      */
@@ -166,8 +175,7 @@ class sandbox_list_named extends sandbox_list
             foreach ($this->lst() as $key => $obj) {
                 $result[$obj->name()] = $key;
             }
-            $this->name_pos_lst = $result;
-            $this->lst_name_dirty = false;
+            $this->set_name_pos_list($result);
         } else {
             $result = $this->name_pos_lst;
         }
@@ -217,11 +225,29 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * load a list by the code_id
+     * @param array $code_id_lst a named object used for selection e.g. a word type
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
+     * @return bool true if at least one found
+     */
+    function load_by_code_ids(array $code_id_lst = [], bool $load_all = false): bool
+    {
+        global $db_con;
+        if (count($code_id_lst) > 0) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_code_id_list($sc, $code_id_lst);
+            return $this->load($qp, $load_all);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * set the SQL query parameters to load a list by the names
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -241,12 +267,36 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * set the SQL query parameters to load a list by a list of code id
+     * @param sql_creator $sc with the target db_type set
+     * @param array $code_id_lst a list of strings with the names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_code_id_list(
+        sql_creator $sc,
+        array       $code_id_lst,
+        string      $fld = sql_db::FLD_CODE_ID
+    ): sql_par
+    {
+        $qp = $this->load_sql($sc, 'code_ids');
+        if (count($code_id_lst) > 0) {
+            $sc->add_where($fld, $code_id_lst, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve a list from the database
      * expected to be overwritten by the child objects to set the specific vars
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -267,19 +317,17 @@ class sandbox_list_named extends sandbox_list
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        return new user_message();
+        return $usr_msg->is_ok();
     }
 
 
@@ -406,6 +454,8 @@ class sandbox_list_named extends sandbox_list
      */
     function add_by_name(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
     {
+        // TODO Prio 1 add $usr_msg to the parameters
+        $usr_msg = new user_message();
         $result = false;
         if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
@@ -413,9 +463,7 @@ class sandbox_list_named extends sandbox_list
             if ($name != '') {
                 if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     // add only objects that have all mandatory values
-                    $result = $obj_to_add->can_be_ready()->is_ok();
-
-                    if ($result) {
+                    if ($obj_to_add->can_be_ready($usr_msg)) {
                         $this->add_direct($obj_to_add);
                         $this->set_lst_dirty();
                     }
@@ -530,7 +578,7 @@ class sandbox_list_named extends sandbox_list
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
-                    msg_id::VAR_WORD_NAME => $obj_to_fill->dsp_id(),
+                    msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
                     msg_id::VAR_NAME => $this->name()
                 ]);
             }
@@ -545,7 +593,7 @@ class sandbox_list_named extends sandbox_list
             if ($id != 0 and $name != '') {
                 $sbx_old = $this->get_by_name($name);
                 if ($sbx_old != null) {
-                    $sbx_old->set_id($id);
+                    $sbx_old->id = $id;
                 } else {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
@@ -591,9 +639,9 @@ class sandbox_list_named extends sandbox_list
      *
      * @param string $name the unique name of the object that should be returned
      * @param bool $use_all force to include also the excluded names e.g. for import
-     * @return phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return word|phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name, bool $use_all = false): phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name, bool $use_all = false): word|phrase|term|CombineObject|IdObject|TextIdObject|null
     {
         if ($use_all) {
             $key_lst = $this->name_pos_lst_all();
@@ -687,10 +735,11 @@ class sandbox_list_named extends sandbox_list
         bool                                                         $allow_duplicates = false
     ): user_message
     {
+        // TODO Prio 1 add $usr_msg as parameter
         $usr_msg = new user_message();
 
         // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
+        $obj_to_add->db_ready($usr_msg);
 
         // add only object with the same user
         $usr_msg->add($this->same_user($obj_to_add));
@@ -712,7 +761,8 @@ class sandbox_list_named extends sandbox_list
                     }
                 } elseif ($obj_to_add->name() != '') {
                     if (!in_array($obj_to_add->name(), $this->names())) {
-                        $usr_msg->add(parent::add_obj($obj_to_add));
+                        $usr_msg->add($this->add_user_check($obj_to_add));
+                        parent::add_direct($obj_to_add);
                     } else {
                         $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
                             [
@@ -746,6 +796,15 @@ class sandbox_list_named extends sandbox_list
         $result = array();
         foreach ($this->lst() as $obj) {
             $result[$obj->id()] = $obj->name();
+        }
+        return $result;
+    }
+
+    function code_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst() as $obj) {
+            $result[$obj->id()] = $obj->get_code_id();
         }
         return $result;
     }
@@ -789,7 +848,7 @@ class sandbox_list_named extends sandbox_list
             // TODO test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name(true), true);
             if ($db_sbx != null) {
-                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other opbejct like values
+                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other object like values
                 // if ($sbx->is_excluded() and $sbx->not_used()) {
                 if ($sbx->is_excluded()) {
                     $del_lst->add($sbx);
@@ -810,18 +869,19 @@ class sandbox_list_named extends sandbox_list
      * @param import $imp the import object with the estimate of the total save time
      * @param string $cfg_wrd the word related to the class to select the config values
      * @param string $class the class name of the list entries that should be saved e.g. word or formula
-     * @return user_message the problem description what has failed and a suggested solution
+     * @param sandbox_list_named $db_lst
+     * @param user_message $usr_msg the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
     function save_block_wise(
         import             $imp,
         string             $cfg_wrd,
         string             $class,
-        sandbox_list_named $db_lst
-    ): user_message
+        sandbox_list_named $db_lst,
+        user_message       $usr_msg
+    ): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -848,7 +908,7 @@ class sandbox_list_named extends sandbox_list
             $usr_msg->add($this->delete($db_lst, true, $imp, $class, $del_per_sec));
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -864,7 +924,7 @@ class sandbox_list_named extends sandbox_list
     function insert(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = ''
     ): user_message
     {
@@ -945,7 +1005,7 @@ class sandbox_list_named extends sandbox_list
     function update(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = '',
         float                                                            $upd_per_sec = 0.1
     ): user_message
@@ -1009,7 +1069,7 @@ class sandbox_list_named extends sandbox_list
     function delete(
         word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
         bool                                                             $use_func = true,
-        import                                                           $imp = null,
+        ?import                                                          $imp = null,
         string                                                           $class = '',
         float                                                            $del_per_sec = 0.1
     ): user_message
@@ -1075,9 +1135,12 @@ class sandbox_list_named extends sandbox_list
             if ($use_func) {
                 $sc_par_lst->add(sql_type::LOG);
             }
-            $qp = $sbx->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $sbx->name();
-            $sql_list->add($qp);
+            $usr_msg = new user_message();
+            $qp = $sbx->sql_insert($sc, $usr_msg, $sc_par_lst);
+            if ($usr_msg->is_ok()) {
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            }
         }
         return $sql_list;
     }
@@ -1098,9 +1161,12 @@ class sandbox_list_named extends sandbox_list
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add_by_name($qp);
+                $usr_msg = new user_message();
+                $qp = $sbx->sql_update($sc, $db_row, $usr_msg, $sc_par_lst);
+                if ($usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add_by_name($qp);
+                }
             }
         }
         return $sql_list;
@@ -1117,14 +1183,17 @@ class sandbox_list_named extends sandbox_list
             $db_row = $db_lst->get_by_name($sbx->name());
             // another validation check as a second line of defence
             if ($db_row != null) {
-                // check always user sandbox and normal name, because reading from database for check would take longer
+                // check always user sandbox and normal name, because reading from the database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_delete($sc, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add_by_name($qp);
+                $usr_msg = new user_message();
+                $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
+                if ($usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add_by_name($qp);
+                }
             }
         }
         return $sql_list;
@@ -1143,18 +1212,28 @@ class sandbox_list_named extends sandbox_list
      */
     function sql_insert_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
     {
+        // TODO Prio 1 add $usr_msg as parameter
+        $usr_msg = new user_message();
+
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($sbx->db_ready()) {
+            if ($sbx->db_ready($usr_msg)) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_insert($sc, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add($qp);
+                $ins_usr_msg = new user_message();
+                $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
+                if ($ins_usr_msg->is_ok()) {
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add($qp);
+                } else {
+                    // TODO Prio 0 create error because this case should neven happen
+                    $usr_msg->add($ins_usr_msg);
+                    //log_err('Internal import error: ' . $usr_msg->all_message_text());
+                }
             }
         }
         return $sql_list;
@@ -1175,6 +1254,9 @@ class sandbox_list_named extends sandbox_list
         bool               $use_func = true
     ): sql_par_list
     {
+        // TODO Prio 1 add $usr_msg as parameter
+        $usr_msg = new user_message();
+
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             $db_row = $db_lst->get_by_name($sbx->name());
@@ -1183,7 +1265,7 @@ class sandbox_list_named extends sandbox_list
                 // do not overwrite db values not set by the import
                 $sbx->fill($db_row, $usr_req);
 
-                if (!$sbx->db_ready()) {
+                if (!$sbx->db_ready($usr_msg)) {
                     log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
                 } else {
                     if (!$sbx->needs_db_update($db_row)) {
@@ -1194,9 +1276,15 @@ class sandbox_list_named extends sandbox_list
                         if ($use_func) {
                             $sc_par_lst->add(sql_type::LOG);
                         }
-                        $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                        $qp->obj_name = $sbx->name();
-                        $sql_list->add($qp);
+                        $upd_usr_msg = new user_message();
+                        $qp = $sbx->sql_update($sc, $db_row, $upd_usr_msg, $sc_par_lst);
+                        if ($upd_usr_msg->is_ok()) {
+                            $qp->obj_name = $sbx->name();
+                            $sql_list->add($qp);
+                        } else {
+                            $usr_msg->add($upd_usr_msg);
+                            log_err('Internal import error: ' . $usr_msg->all_message_text());
+                        }
                     }
                 }
             }
@@ -1211,6 +1299,7 @@ class sandbox_list_named extends sandbox_list
      */
     function sql_delete_call_with_par(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
     {
+        $usr_msg = new user_message();
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             $db_row = $db_lst->get_by_name($sbx->name(true));
@@ -1221,7 +1310,7 @@ class sandbox_list_named extends sandbox_list
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $sbx->sql_delete($sc, $sc_par_lst);
+                $qp = $sbx->sql_delete($sc, $usr_msg, $sc_par_lst);
                 $qp->obj_name = $sbx->name(true);
                 $sql_list->add($qp);
             }
@@ -1233,13 +1322,12 @@ class sandbox_list_named extends sandbox_list
      * overwrite
      */
 
-    function save(import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         $msg = 'sandbox_list_named function save not overwritten';
         log_err($msg);
-        $usr_msg = new user_message();
         $usr_msg->add_warning_text($msg);
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -1253,7 +1341,7 @@ class sandbox_list_named extends sandbox_list
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         if ($limit == null and !$this->is_name_list_dirty()) {
             $result = array_keys($this->name_pos_lst);
@@ -1262,7 +1350,11 @@ class sandbox_list_named extends sandbox_list
             $pos = 0;
             foreach ($this->lst() as $sbx_obj) {
                 if ($pos <= $limit or $limit == null) {
-                    $result[] = $sbx_obj->name($ignore_excluded);
+                    $name = $sbx_obj->name($ignore_excluded);
+                    // do not add excluded names
+                    if ($name != null and $name != '') {
+                        $result[] = $sbx_obj->name($ignore_excluded);
+                    }
                     $pos++;
                 }
             }

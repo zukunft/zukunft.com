@@ -8,22 +8,25 @@ CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
     from_phrase_id      bigint       DEFAULT NULL COMMENT 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)',
-    verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
+    verb_id             smallint         NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
     user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
     triple_name         varchar(255) DEFAULT NULL COMMENT 'the name used which must be unique within the terms of the user',
     name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
     description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
+    weight              double       DEFAULT NULL COMMENT 'the weight of this triple compared to others where 1 represents 100% weight',
     triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
     phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
-    `values`            bigint       DEFAULT NULL COMMENT 'number of values linked to the word,which gives an indication of the importance',
+    `usage`             bigint       DEFAULT NULL COMMENT 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing',
+    impact              double       DEFAULT NULL COMMENT 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting',
     inactive            smallint     DEFAULT NULL COMMENT 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id',
     code_id             varchar(255) DEFAULT NULL COMMENT 'to link coded functionality to a specific triple e.g. to get the values of the system configuration',
     excluded            smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id       smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id          smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id          smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (triple_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -33,7 +36,7 @@ CREATE TABLE IF NOT EXISTS triples
 -- AUTO_INCREMENT for table triples
 --
 ALTER TABLE triples
-    MODIFY triple_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY triple_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link one word or triple with a verb to another word or triple
@@ -41,20 +44,23 @@ ALTER TABLE triples
 
 CREATE TABLE IF NOT EXISTS user_triples
 (
-    triple_id           bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id             bigint           NOT NULL COMMENT 'the changer of the triple',
-    language_id         bigint NOT NULL DEFAULT 1 COMMENT 'the name used which must be unique within the terms of the user',
-    triple_name         varchar(255) DEFAULT NULL COMMENT 'the name used which must be unique within the terms of the user',
-    name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
-    name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
-    description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
-    triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
-    phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
-    view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
-    `values`            bigint       DEFAULT NULL COMMENT 'number of values linked to the word,which gives an indication of the importance',
-    excluded            smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id       smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id          smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    triple_id           bigint             NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id             bigint             NOT NULL COMMENT 'the changer of the triple',
+    language_id         smallint NOT NULL DEFAULT 1 COMMENT 'the name used which must be unique within the terms of the user',
+    triple_name         varchar(255)   DEFAULT NULL COMMENT 'the name used which must be unique within the terms of the user',
+    name_given          varchar(255)   DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
+    name_generated      varchar(255)   DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
+    description         text           DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
+    weight              double         DEFAULT NULL COMMENT 'the weight of this triple compared to others where 1 represents 100% weight',
+    triple_condition_id bigint         DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
+    phrase_type_id      smallint       DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    view_id             bigint         DEFAULT NULL COMMENT 'the default mask for this triple',
+    `usage`             bigint         DEFAULT NULL COMMENT 'number of values,formulas and results linked to this triple,which gives an indication of the importance and is used for sorting if the impact calculation is incomplete or missing',
+    impact              double         DEFAULT NULL COMMENT 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting',
+    excluded            smallint       DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id       smallint       DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id          smallint       DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (triple_id, user_id, language_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

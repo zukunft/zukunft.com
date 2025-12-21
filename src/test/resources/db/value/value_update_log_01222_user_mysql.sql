@@ -41,7 +41,7 @@ PREPARE value_update_log_01222_user_call FROM
        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_update_log_01222_user
-       (1,
+       (3,
         1,
         5,
         1,

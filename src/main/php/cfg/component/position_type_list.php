@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/position_type_list.php - to link coded functionality to a view component position
-    ---------------------------------
+    model/component/position_type_list.php - to link coded functionality to a view component position
+    --------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,16 +29,16 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_COMPONENT . 'position_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 
-use cfg\helper\type_list;
-use shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 
 class position_type_list extends type_list
 {

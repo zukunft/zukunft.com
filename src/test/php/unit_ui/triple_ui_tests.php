@@ -30,30 +30,36 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
-use html\html_base;
-use html\phrase\phrase_list;
-use html\word\triple;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
         $html = new html_base();
+        $t_trp = new test_triples($t);
+        $t_phr = new test_phrases($t);
 
         // start the test section (ts)
         $ts = 'unit ui html triple ';
         $t->header($ts);
 
-        $trp = new triple($t->triple()->api_json());
-        $phr_lst = new phrase_list($t->phrase_list()->api_json());
+        $trp = new triple($t_trp->triple()->api_json());
+        $phr_lst = new phrase_list($t_phr->phrase_list()->api_json());
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
@@ -63,14 +69,14 @@ class triple_ui_tests
         $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT) . '<br>';
-        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT) . '<br>';
-        $from_rows .= $trp->phrase_selector_from(views::TRIPLE_EDIT, $phr_lst) . '<br>';
-        $from_rows .= $trp->phrase_selector_to(views::TRIPLE_EDIT, $phr_lst) . '<br>';
+        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->dto->typ_lst_cache) . '<br>';
+        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_FROM,views::TRIPLE_EDIT, $trp->get_from()->id()) . '<br>';
+        $from_rows .= $trp->phrase_selector($phr_lst, url_var::PHRASE_TO, views::TRIPLE_EDIT, $trp->get_to()->id()) . '<br>';
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));
-        $t->html_test($test_page, 'triple', 'triple', $t);
+        $t->html_page_test($test_page, 'triple', 'triple', $t);
     }
 
 }

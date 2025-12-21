@@ -2,10 +2,10 @@
 
 /*
 
-    result_list_min_display.php - the display extension of the api result list object
-    ---------------------------
+    web/result/result_list.php - the display extension of the api result list object
+    --------------------------
 
-    to creat the HTML code to display a list of formula results
+    to create the HTML code to display a list of formula results
 
 
     This file is part of zukunft.com - calc with words
@@ -32,40 +32,61 @@
 
 */
 
-namespace html\result;
+namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_value.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::SANDBOX . 'sandbox_list_value.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use html\rest_ctrl as api_dsp;
-use html\html_base;
-use html\formula\formula;
-use html\group\group_list;
-use html\phrase\phrase_list;
-use html\sandbox\list_value;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_value;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class result_list extends list_value
+class result_list extends sandbox_list_value
 {
 
     /*
@@ -98,34 +119,13 @@ class result_list extends list_value
     {
         $result = false;
 
-        $api = new api_dsp();
+        $api = new rest_call();
         $data = array();
-        $data[api::URL_VAR_FORMULA] = $frm->id();
-        $data[api::URL_VAR_GROUP] = $lst->ids();
+        $data[url_var::FORMULA] = $frm->id();
+        $data[url_var::GROUP] = $lst->ids();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
-            $result = true;
-        }
-        return $result;
-    }
-
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a formula result to the list
-     * @returns bool true if the formula result has been added
-     */
-    function add(result|IdObject|TextIdObject|CombineObject|null $to_add): bool
-    {
-        $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
-            $this->add_direct($to_add);
-            $this->set_lst_dirty();
             $result = true;
         }
         return $result;
@@ -149,6 +149,64 @@ class result_list extends list_value
 
         $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
         return $this->load($qp);
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a formula result to the list
+     * @returns bool true if the formula result has been added
+     */
+    function add(triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    {
+        $result = false;
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
+            $this->set_lst_dirty();
+            $result = true;
+        }
+        return $result;
+    }
+
+    function get_by_formula(formula $frm): result_list
+    {
+        return $this->filter($frm);
+    }
+
+    /**
+     * get a list with the results related directly to the given formula, word, triple or source
+     *
+     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @return result_list with only the direct linked values
+     */
+    function filter(word|triple|source|formula|db_object|null $dbo = null): result_list
+    {
+        $res_lst = new result_list();
+        if ($dbo::class == formula::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->calculated_by_formula($dbo)) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->has_phrase($dbo->phrase())) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        if ($dbo::class == source::class) {
+            foreach ($this->lst() as $res) {
+                if ($res->source_id() == $dbo->id()) {
+                    $res_lst->add($res);
+                }
+            }
+        }
+        return $res_lst;
     }
 
 
@@ -195,7 +253,7 @@ class result_list extends list_value
     /**
      * @return string the html code to show the results as a table to the user
      */
-    function table(phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 

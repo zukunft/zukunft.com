@@ -2,33 +2,37 @@
 
 /*
 
-  import.php - IMPORT a json in the zukunft.com exchange format
-  ----------
-  
+    model/import/import_file.php - IMPORT a json in the zukunft.com exchange format
+    ----------------------------
 
-zukunft.com - calc with words
+    This file is part of zukunft.com - calc with words
 
-copyright 1995-2021 by zukunft.com AG, Zurich
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 
 */
 
-namespace cfg\import;
+namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -39,22 +43,20 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
-include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\const\files;
-use cfg\helper\config_numbers;
-use cfg\user\user;
-use cfg\user\user_message;
-use const\files as test_files;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\file_types;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\file_types;
 
 class import_file
 {
 
-    const FILE = 'file';
+    const string FILE = 'file';
 
     public float $start_time;
     public float $start_read;
@@ -85,10 +87,11 @@ class import_file
 
     /**
      * import a single json file
-     * TODO return a user message instead of a string
+     * TODO add user_message as a parameter
+     * TODO set $direct by default to false
      *
      * @param string $filename
-     * @param user $usr the user who has requested the import
+     * @param user $usr the user who has requested the import (only used for direct import of the system users)
      * @param bool $direct true if each object should be saved separate in the database
      * @return user_message
      */
@@ -96,7 +99,7 @@ class import_file
     {
         global $cfg;
 
-        $usr_msg = new user_message();
+        $usr_msg = new user_message($usr);
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
         // TODO Prio 1 use import user instead of $usr_req
@@ -141,13 +144,13 @@ class import_file
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str);
+                    $imp->put_json_direct($json_str, $usr_msg);
                 } else {
-                    $import_result = $imp->put_json($json_str);
+                    $imp->put_json($json_str, $usr_msg);
                 }
 
                 // show the summery to the user
-                if ($import_result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $usr_msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
@@ -168,8 +171,13 @@ class import_file
                         $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-                    $usr_msg->add($import_result);
-                    //$usr_msg->add_message_text('import of ' . $filename . ' failed');
+
+                    // TODO Prio 0 activate
+                    // TODO Prio 1 move to calling function and include save
+                    //if (!$usr_msg->is_ok()) {
+                    //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                    //}
+                    $usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
         }
@@ -220,6 +228,8 @@ class import_file
      */
     function import_config_yaml(user $usr, bool $validate = false): user_message
     {
+        global $sys;
+        global $db_con;
         global $mtr;
         global $log_txt;
 
@@ -260,7 +270,8 @@ class import_file
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
                     $dto = $imp->get_data_object_yaml($yaml_array);
-                    $load_msg = $dto->load();
+                    $load_msg = $dto->load($db_con);
+                    $sys->typ_lst->load($db_con);
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values
@@ -387,7 +398,7 @@ class import_file
             $usr, true
         );
 
-        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+        foreach (files::BASE_IMPORT_FILE_LIST as $filename) {
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

@@ -2,8 +2,8 @@
 
 /*
 
-    model/value/value_text.php - the main numeric value object using the prime, norm and big value keys
-    --------------------------
+    model/value/value.php - the main numeric value object using the prime, norm and big value keys
+    ---------------------
 
 
     The main sections of this object are
@@ -40,26 +40,28 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\group\group;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
-use shared\json_fields;
-use shared\types\api_type_list;
 
 class value extends value_base
 {
@@ -69,16 +71,16 @@ class value extends value_base
      */
 
     // object specific database and JSON object field names
-    const FLD_VALUE = 'numeric_value';
-    const FLD_COM = 'the numeric given by the user';
-    const FLD_USER_COM = 'the user specific numeric value change';
+    const string FLD_VALUE = 'numeric_value';
+    const string FLD_COM = 'the numeric given by the user';
+    const string FLD_USER_COM = 'the user specific numeric value change';
 
     // database field with the sql type specification
-    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
-    const FLD_ALL_VALUE = array(
+    const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', self::FLD_COM],
     );
-    const FLD_ALL_VALUE_USER = array(
+    const array FLD_ALL_VALUE_USER = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_USER_COM],
     );
 
@@ -129,7 +131,7 @@ class value extends value_base
      * overwrite the sandbox_value value() function to return the numeric value
      * @return float|null the numeric value
      */
-    function value(): float|null
+    function get_value(): float|null
     {
         return $this->number;
     }
@@ -161,7 +163,7 @@ class value extends value_base
         $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the numeric string itself
-        $vars[json_fields::NUMBER] = $this->value();
+        $vars[json_fields::NUMBER] = $this->get_value();
 
         return $vars;
     }
@@ -176,15 +178,16 @@ class value extends value_base
      * create an array with the export json fields
      * differs from the api array by NOT using the internal id
      * instead of the names for a complete independent recreation
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         // add the numeric value itself
-        $vars[json_fields::NUMBER] = $this->value();
+        $vars[json_fields::NUMBER] = $this->get_value();
 
         return $vars;
     }

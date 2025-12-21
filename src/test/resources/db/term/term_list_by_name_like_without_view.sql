@@ -9,7 +9,7 @@ PREPARE term_list_by_name_like (bigint,text) AS
       FROM (
 
         SELECT ((s.word_id * 2) - 1) AS term_id,
-               s.values            AS usage,
+               s.usage             AS usage,
                CASE WHEN (u.word_name   <> '' IS NOT TRUE) THEN s.word_name     ELSE u.word_name     END AS term_name,
                CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
                CASE WHEN (u.excluded              IS NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
@@ -19,7 +19,7 @@ PREPARE term_list_by_name_like (bigint,text) AS
      LEFT JOIN user_words u ON s.word_id = u.word_id AND u.user_id = $1
 
   UNION SELECT ((s.triple_id * -2) + 1) AS term_id,
-               s.values                    AS usage,
+               s.usage                     AS usage,
                CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN
                CASE WHEN (s.name_given     <> '' IS NOT TRUE) THEN
                CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated

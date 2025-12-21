@@ -33,10 +33,10 @@
 
 */
 
-namespace shared\calc;
+namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -44,33 +44,32 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'word.php';
-include_once html_paths::FORMULA . 'formula.php';
-include_once html_paths::PHRASE . 'term.php';
-include_once html_paths::PHRASE . 'term_list.php';
-include_once html_paths::WORD . 'triple.php';
-include_once html_paths::VERB . 'verb.php';
-include_once html_paths::WORD . 'word.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::PHRASE . 'term.php';
+//include_once html_paths::PHRASE . 'term_list.php';
+//include_once html_paths::WORD . 'triple.php';
+//include_once html_paths::VERB . 'verb.php';
+//include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\verb\verb;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\phrase\term as term_dsp;
-use html\phrase\term_list as term_list_dsp;
-use html\word\triple as triple_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\word as word_dsp;
-use shared\const\chars;
-use shared\enum\messages;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class expression
 {
@@ -89,8 +88,6 @@ class expression
     private bool $ref_text_dirty = false;
     // the formula name only for better user messages
     private string $frm_name = '';
-    // description of the problems that appeared during the conversion from the human-readable to the database reference format
-    public ?string $err_text = null;
 
 
     /*
@@ -104,7 +101,6 @@ class expression
         $this->ref_text = null;
         $this->ref_text_dirty = false;
         $this->frm_name = '';
-        $this->err_text = null;
     }
 
 
@@ -115,10 +111,10 @@ class expression
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string|null $usr_txt the formula expression in the human-readable format
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_user_text(?string $usr_txt, term_list|term_list_dsp|null $trm_lst = null): void
+    function set_user_text(?string $usr_txt, term_list|term_list_ui|null $trm_lst = null): void
     {
         if ($usr_txt != null) {
             $this->usr_text = $usr_txt;
@@ -131,10 +127,10 @@ class expression
     /**
      * update the expression by setting the database reference format and try to update the human-readable format
      * @param string|null $ref_txt the formula expression in the database reference format
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_ref_text(?string $ref_txt, term_list|term_list_dsp|null $trm_lst = null): void
+    function set_ref_text(?string $ref_txt, term_list|term_list_ui|null $trm_lst = null): void
     {
         if ($ref_txt != null) {
             $this->ref_text = $ref_txt;
@@ -145,10 +141,10 @@ class expression
     }
 
     /**
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string|null the recreated expression in the human-readable format or null if an error has occurred
      */
-    function user_text(term_list|term_list_dsp|null $trm_lst = null): ?string
+    function user_text(term_list|term_list_ui|null $trm_lst = null): ?string
     {
         if ($this->usr_text_dirty) {
             $this->usr_text = $this->get_usr_text($trm_lst);
@@ -163,13 +159,13 @@ class expression
     /**
      * get and set the reference text based on the user formula expression
      * TODO Prio 2 do not call it from the frontend
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
     function ref_text(
-        term_list|term_list_dsp|null $trm_lst = null,
-        user_message                 $usr_msg = new user_message()
+        term_list|term_list_ui|null $trm_lst = null,
+        user_message                $usr_msg = new user_message()
     ): ?string
     {
         if ($this->ref_text_dirty) {
@@ -193,13 +189,13 @@ class expression
 
     /**
      * convert the user text to the database reference format
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string the expression in the formula reference format
      */
     protected function get_ref_text(
-        term_list|term_list_dsp|null $trm_lst = null,
-        user_message                 $usr_msg = new user_message()
+        term_list|term_list_ui|null $trm_lst = null,
+        user_message                $usr_msg = new user_message()
     ): string
     {
         $result = '';
@@ -222,11 +218,11 @@ class expression
     }
 
     /**
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string the formula expression converted to the user text from the database reference format
      * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
-    protected function get_usr_text(term_list|term_list_dsp|null $trm_lst = null): string
+    protected function get_usr_text(term_list|term_list_ui|null $trm_lst = null): string
     {
         log_debug($this->ref_text());
         $result = '';
@@ -294,14 +290,14 @@ class expression
      * e.g. converts "='sales' 'differentiator'/'Total sales'" to "={w6}{l12}/{f19}"
      *
      * @param string $frm_part_text the expression text in user format that should be converted
-     * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string the expression text in the database ref format
      */
     private function get_ref_part(
-        string                  $frm_part_text,
-        term_list|term_list_dsp $trm_lst = null,
-        user_message            $usr_msg = new user_message()
+        string                      $frm_part_text,
+        term_list|term_list_ui|null $trm_lst = null,
+        user_message                $usr_msg = new user_message()
     ): string
     {
         $result = $frm_part_text;
@@ -340,7 +336,7 @@ class expression
                 }
 
                 if ($db_sym == '') {
-                    $db_sym = $this->get_term_symbol($name);
+                    $db_sym = $this->get_term_symbol($name, $usr_msg);
                 }
 
                 $result = $left . $db_sym . $right;
@@ -371,10 +367,10 @@ class expression
      * converts a formula from the database reference format to the human-readable format
      * e.g. converts "{w6}{l12}/{f19}" to "'sales' 'differentiator'/'Total sales'"
      * @param string $frm_part_text the expression text in user format that should be converted
-     * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format
      */
-    private function get_usr_part(string $frm_part_text, ?term_list $trm_lst = null): string
+    private function get_usr_part(string $frm_part_text, term_list|term_list_ui|null $trm_lst = null): string
     {
         $result = $frm_part_text;
 
@@ -397,10 +393,12 @@ class expression
      * get the next term from the expression part in the database reference format
      *
      * @param string $frm_part_ref_text
-     * @param term_list|null $trm_lst
-     * @return term|null
+     * @param term_list|term_list_ui|null $trm_lst
+     * @return term|term_ui|null
      */
-    private function get_next_term_from_ref(string $frm_part_ref_text, term_list $trm_lst = null): ?term
+    private function get_next_term_from_ref(
+        string $frm_part_ref_text, term_list|term_list_ui|null $trm_lst = null
+    ): term|term_ui|null
     {
         $trm = null;
 
@@ -408,7 +406,7 @@ class expression
 
         /*
         if ($trm_lst == null) {
-            $trm_lst = new term_list_dsp();
+            $trm_lst = new term_list_ui();
         }
         */
 
@@ -488,10 +486,10 @@ class expression
 
     /**
      * create the symbol for a term e.g. {w1} for the word with id 1
-     * @param term|term_dsp $trm the term that should be used to create the database reference symbol
+     * @param term|term_ui $trm the term that should be used to create the database reference symbol
      * @return string the database reference symbol e.g. {w1} for word with the id 1
      */
-    protected function get_db_sym(term|term_dsp $trm): string
+    protected function get_db_sym(term|term_ui $trm): string
     {
         $db_sym = '';
         if ($trm->is_word()) {
@@ -506,7 +504,7 @@ class expression
         return $db_sym;
     }
 
-    protected function get_term_symbol(string $name): string
+    protected function get_term_symbol(string $name, user_message $usr_msg): string
     {
         // check for formulas first, because for every formula a word is also existing
         // similar to a part in get_usr_part, maybe combine
@@ -530,7 +528,9 @@ class expression
         // if still not found report the missing link
         if ($db_sym == '' and $name <> '') {
             $this->ref_text_dirty = true;
-            $this->err_text .= 'No word, triple, formula or verb found for "' . $name . '". ';
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_TERM_NAME_MISSING, [
+                msg_id::VAR_NAME => $name
+            ]);
         }
 
         return $db_sym;
@@ -561,28 +561,28 @@ class expression
         return 'Error: function get_verb_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function load_word(int $id): word|word_dsp|null
+    protected function load_word(int $id): word|word_ui|null
     {
         log_err('Error: function load_word() is expected to be overwritten');
-        return new word_dsp();
+        return new word_ui();
     }
 
-    protected function load_triple(int $id): triple|triple_dsp|null
+    protected function load_triple(int $id): triple|triple_ui|null
     {
         log_err('Error: function load_triple() is expected to be overwritten');
-        return new triple_dsp();
+        return new triple_ui();
     }
 
-    protected function load_formula(int $id): formula|formula_dsp|null
+    protected function load_formula(int $id): formula|formula_ui|null
     {
         log_err('Error: function load_formula() is expected to be overwritten');
-        return new formula_dsp();
+        return new formula_ui();
     }
 
-    protected function load_verb(int $id): verb|verb_dsp|null
+    protected function load_verb(int $id): verb|verb_ui|null
     {
         log_err('Error: function load_verb() is expected to be overwritten');
-        return new verb_dsp();
+        return new verb_ui();
     }
 
 }

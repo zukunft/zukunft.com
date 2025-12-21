@@ -30,9 +30,9 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
@@ -41,21 +41,21 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\phrase\phrase;
-use cfg\phrase\term;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\word\triple;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\word_db;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_read_tests
 {
@@ -67,7 +67,9 @@ class term_read_tests
         // init
         $t->name = 'term->';
 
-        $t->header('term database read tests');
+        // start the test section (ts)
+        $ts = 'db read term ';
+        $t->header($ts);
 
         // test load by term by a word db row
         $wrd = new word($t->usr1); // create a word object just to create the query parameters

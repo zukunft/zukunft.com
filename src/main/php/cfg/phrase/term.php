@@ -9,7 +9,7 @@
         check triple
 
     mainly to check the term consistency of all objects
-    a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
+    a term must be unique for word, verb and triple e.g. "company" is a word "is a" is a verb and "Kanton Zurich" is a triple
     all terms are the same for each user
     if a user changes a term and the term has been used already
     a new term is created and the deletion of the existing term is requested
@@ -43,9 +43,9 @@
 
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::DB . 'sql.php';
@@ -54,14 +54,16 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_field_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -72,33 +74,37 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula_db;
-use cfg\helper\combine_named;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_field_type;
-use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\user\user;
-use cfg\verb\verb_db;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\triple;
-use cfg\word\word_db;
-use shared\enum\messages as msg_id;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class term extends combine_named
 {
@@ -109,45 +115,47 @@ class term extends combine_named
 
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
-    const FLD_ID = 'term_id';
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_NAME = 'term_name';
-    const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
-    const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
+    const string FLD_ID = 'term_id';
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
+    const string FLD_NAME = 'term_name';
+    const string FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
+    const string FLD_IMPACT = 'impact';
+    const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
     // the common term database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_TYPE
     );
     // list of the user specific database field names
     // some fields like the formula expression are only used for one term class e.g. formula
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION,
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_USAGE,
+    const array FLD_NAMES_NUM_USR = array(
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of term types used for the database views
     // using one array of sql table types per view
-    const TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
-    const TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
-    const TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
-    const TBL_COM = 'terms with an id that is not prime';
-    const FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
-    const FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
-    const FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
-    const FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id
+    const string TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
+    const string TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
+    const array TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
+    const string TBL_COM = 'terms with an id that is not prime';
+    const string FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
+    const string FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
+    const string FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
+    const string FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id
     // each db view can have several sql table types and as second entry a where conditions
     // or list of or where conditions
-    const TBL_LIST = [
+    const array TBL_LIST = [
         [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
         [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
         [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_type::USER],
@@ -159,13 +167,14 @@ class term extends combine_named
     // each fields can have additional to the name the target name (AS) and a calculation rules
     // the field name can also be an array where the first field is use with priority over the following
     // the where field can be a single field or an array
-    const TBL_FLD_LST_VIEW = [
+    const array TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [word_db::FLD_VALUES, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -175,10 +184,11 @@ class term extends combine_named
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [triple_db::FLD_VALUES, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -188,10 +198,11 @@ class term extends combine_named
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [formula_db::FLD_USAGE, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [formula_db::FLD_TYPE, self::FLD_TYPE],
             [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
@@ -201,10 +212,11 @@ class term extends combine_named
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
-            [verb_db::FLD_WORDS, self::FLD_USAGE],
+            [sql_db::FLD_USAGE],
+            [sql_db::FLD_IMPACT],
             [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
             [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
             [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
@@ -238,7 +250,7 @@ class term extends combine_named
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->set_id(0);
     }
@@ -256,7 +268,7 @@ class term extends combine_named
             if ($db_row[self::FLD_ID] != 0) {
                 $this->set_obj_from_id($db_row[self::FLD_ID]);
                 $this->set_name($db_row[self::FLD_NAME]);
-                $this->set_usage($db_row[self::FLD_USAGE]);
+                $this->set_usage($db_row[sql_db::FLD_USAGE]);
                 $result = true;
             }
         }
@@ -316,13 +328,13 @@ class term extends combine_named
     function set_obj_from_class(string $class): void
     {
         if ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->user());
+            $this->obj = new formula($this->get_user());
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
         }
     }
 
@@ -338,15 +350,15 @@ class term extends combine_named
     {
         if ($id > 0) {
             if ($id % 2 == 0) {
-                $this->obj = new formula($this->user());
+                $this->obj = new formula($this->get_user());
             } else {
-                $this->obj = new word($this->user());
+                $this->obj = new word($this->get_user());
             }
         } else {
             if ($id % 2 == 0) {
                 $this->obj = new verb();
             } else {
-                $this->obj = new triple($this->user());
+                $this->obj = new triple($this->get_user());
             }
         }
         $this->set_id($id);
@@ -382,26 +394,22 @@ class term extends combine_named
         if ($id != null) {
             if ($class == word::class) {
                 if ($this->obj == null) {
-                    $this->obj = new word($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj = new word($this->get_user());
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
-                    $this->obj = new triple($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj = new triple($this->get_user());
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
-                    $this->obj = new formula($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj = new formula($this->get_user());
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj->id = $id;
         }
     }
 
@@ -414,11 +422,11 @@ class term extends combine_named
     private function set_obj_by_class(string $class): void
     {
         if ($class == word::class) {
-            $this->obj = new word($this->user());
+            $this->obj = new word($this->get_user());
         } elseif ($class == triple::class) {
-            $this->obj = new triple($this->user());
+            $this->obj = new triple($this->get_user());
         } elseif ($class == formula::class) {
-            $this->obj = new formula($this->user());
+            $this->obj = new formula($this->get_user());
         } elseif ($class == verb::class) {
             $this->obj = new verb();
         } else {
@@ -439,7 +447,7 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_name($name);
+        $this->obj()->set_name($name);
     }
 
     /**
@@ -455,7 +463,38 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_user($usr);
+        $this->obj()->set_user($usr);
+    }
+
+    /**
+     * @return int the id of the user or 0 if the user is not set
+     */
+    function get_user_id(): int
+    {
+        return $this->obj()->get_user_id();
+    }
+
+    /**
+     * @return int|null the id of the owner if the user is not set
+     */
+    function owner_id(): ?int
+    {
+        return $this->obj()->owner_id();
+    }
+
+    function code_id(): ?int
+    {
+        return $this->obj()->get_code_id();
+    }
+
+    function share_id(): ?int
+    {
+        return $this->obj()->share_id();
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->obj()->protection_id();
     }
 
     /**
@@ -467,9 +506,24 @@ class term extends combine_named
     function set_usage(?int $usage): void
     {
         if ($usage == null) {
-            $this->obj->set_usage(0);
+            $this->obj()->set_usage(0);
         } else {
-            $this->obj->set_usage($usage);
+            $this->obj()->set_usage($usage);
+        }
+    }
+
+    /**
+     * set the value to rank the terms by impact
+     *
+     * @param float|null $impact a higher value moves the term to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        if ($impact == null) {
+            $this->obj()->set_impact(0);
+        } else {
+            $this->obj()->set_impact($impact);
         }
     }
 
@@ -519,8 +573,8 @@ class term extends combine_named
     function name(): string
     {
         $result = '';
-        if (isset($this->obj)) {
-            $result = $this->obj->name();
+        if ($this->obj() != null) {
+            $result = $this->obj()->name();
         }
         return $result;
     }
@@ -529,11 +583,11 @@ class term extends combine_named
      * @return user|null the person who wants to see a term (word, verb, triple or formula)
      *                   in case of a verb it can be null
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         $result = new user();
-        if (isset($this->obj)) {
-            $result = $this->obj->user();
+        if ($this->obj() != null) {
+            $result = $this->obj()->get_user();
         }
         return $result;
     }
@@ -541,15 +595,20 @@ class term extends combine_named
     function type(): string
     {
         $result = '';
-        if (isset($this->obj)) {
+        if ($this->obj() != null) {
             $result = $this->obj::class;
         }
         return $result;
     }
 
-    function usage(): int
+    function get_usage(): ?int
     {
-        return $this->obj->usage();
+        return $this->obj()->get_usage();
+    }
+
+    function get_impact(): ?float
+    {
+        return $this->obj()->get_impact();
     }
 
 
@@ -563,7 +622,7 @@ class term extends combine_named
     public
     function phrase(): phrase
     {
-        $phr = new phrase($this->user());
+        $phr = new phrase($this->get_user());
         if ($this->is_word()) {
             $phr->set_id_from_obj($this->id_obj(), word::class);
             $phr->obj = $this->obj;
@@ -585,7 +644,7 @@ class term extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -606,7 +665,7 @@ class term extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the term as defined in the database term view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -623,7 +682,7 @@ class term extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -721,13 +780,13 @@ class term extends combine_named
     private
     function load_word_by_id(int $id): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if ($wrd->load_by_id($id)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
-            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -746,7 +805,7 @@ class term extends combine_named
     {
         $result = false;
         if ($including_triples) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             if ($trp->load_by_id($id)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
@@ -763,7 +822,7 @@ class term extends combine_named
     private function load_formula_by_id(int $id): bool
     {
         $result = false;
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if ($frm->load_by_id($id)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
@@ -780,7 +839,7 @@ class term extends combine_named
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
-        $vrb->set_user($this->user());
+        $vrb->set_user($this->get_user());
         if ($vrb->load_by_id($id)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
@@ -821,13 +880,13 @@ class term extends combine_named
     private
     function load_word_by_name(string $name): bool
     {
-        global $phr_typ_cac;
+        global $sys;
 
         $result = false;
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if ($wrd->load_by_name($name)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
-            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -846,7 +905,7 @@ class term extends combine_named
     {
         $result = false;
         if ($including_triples) {
-            $trp = new triple($this->user());
+            $trp = new triple($this->get_user());
             if ($trp->load_by_name($name)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
@@ -864,7 +923,7 @@ class term extends combine_named
     function load_formula_by_name(string $name): bool
     {
         $result = false;
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if ($frm->load_by_name($name)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
@@ -882,7 +941,7 @@ class term extends combine_named
         $result = false;
         $vrb = new verb;
         $vrb->set_name($this->name());
-        $vrb->set_user($this->user());
+        $vrb->set_user($this->get_user());
         if ($vrb->load_by_name($name)) {
             $this->set_id_from_obj($vrb->id(), verb::class);
             $this->obj = $vrb;
@@ -961,13 +1020,14 @@ class term extends combine_named
         return $result;
     }
 
+
     /*
      * conversion
      */
 
     function get_word(): word
     {
-        $wrd = new word($this->user());
+        $wrd = new word($this->get_user());
         if (get_class($this->obj) == word::class) {
             $wrd = $this->obj;
         }
@@ -976,7 +1036,7 @@ class term extends combine_named
 
     function get_triple(): triple
     {
-        $lnk = new triple($this->user());
+        $lnk = new triple($this->get_user());
         if (get_class($this->obj) == triple::class) {
             $lnk = $this->obj;
         }
@@ -985,7 +1045,7 @@ class term extends combine_named
 
     function get_formula(): formula
     {
-        $frm = new formula($this->user());
+        $frm = new formula($this->get_user());
         if (get_class($this->obj) == formula::class) {
             $frm = $this->obj;
         }
@@ -1005,9 +1065,9 @@ class term extends combine_named
     {
         $phr = null;
         if (get_class($this->obj) == word::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         } elseif (get_class($this->obj) == triple::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         }
         return $phr;
     }
@@ -1044,6 +1104,7 @@ class term extends combine_named
     {
         return $this->id_used_msg($obj_to_add)->get_last_message_translated();
     }
+
 
     /*
      * info functions
@@ -1097,19 +1158,26 @@ class term extends combine_named
     }
 
     /**
-     * @return user_message ok message if this word or triple might be read to be added to the database
+     * check if the word, verb, triple or formula can be added to the database if all related terms are added
+     * the differentiation to the db_ready is relevant to save a list of triples to the database
+     * where some triples are part of other triples that have to be added with another save list attempt
+     * @param user_message $usr_msg fill up with the message if this term might be read to be added to the database
+     * @return bool true if another save list attempt is expected to add more word, verb, triple or formula to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->can_be_ready();
+        return $this->obj()->can_be_ready($usr_msg);
     }
 
     /**
-     * @return user_message ok message if this word or triple can be added to the database
+     * checks if the word, verb, triple or formula object can be added to the database
+     *
+     * @param user_message $usr_msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
+     * @return true if all mandatory vars of the underlying object are set and the term can be stored in the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->db_ready();
+        return $this->obj()->db_ready($usr_msg);
     }
 
     /**
@@ -1118,6 +1186,92 @@ class term extends combine_named
     function is_valid(): bool
     {
         return $this->obj()->is_valid();
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * set the vars of this term object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the data object that contains the already imported formulas
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        // reset the all parameters for these formula link object but keep the user
+        $this->reset(true);
+
+        if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
+            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD)  {
+                $wrd = new word($this->get_user());
+                $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($wrd);
+            } elseif ($class == json_fields::CLASS_VERB)  {
+                $vrb = new verb();
+                $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($vrb);
+            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+                $trp = new triple($this->get_user());
+                $trp->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($trp);
+            } elseif ($class == json_fields::CLASS_FORMULA)  {
+                $frm = new formula($this->get_user());
+                $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+                $this->set_obj($frm);
+            } else {
+                // TODO Prio 0 review
+                $usr_msg->add_err_with_vars(msg_id::IMPORT_FAILED, []);
+            }
+        }
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * create an array with the export json fields of this component
+     * which does not include the internal database id
+     * @param export_type_list|array $exp_typ define the export format
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
+    {
+        if ($this->is_word()) {
+            $wrd = $this->get_word();
+            $vars = $wrd->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+        } elseif ($this->is_verb()) {
+            $vrb = $this->get_verb();
+            $vars = $vrb->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+        } elseif ($this->is_triple()) {
+            $trp = $this->get_triple();
+            $vars = $trp->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+        } elseif ($this->is_formula()) {
+            $frm = $this->get_formula();
+            $vars = $frm->export_json($exp_typ, $do_load);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+        } else {
+            $msg = 'term with unknown object';
+            log_err($msg);
+            $vars = [];
+        }
+        return $vars;
     }
 
 
@@ -1133,7 +1287,9 @@ class term extends combine_named
         if ($this->obj() != null) {
             return $this->obj()->dsp_id() . ' as term';
         } else {
-            return 'term with null object';
+            $msg = 'ERROR: term with null object';
+            log_err($msg);
+            return $msg;
         }
     }
 

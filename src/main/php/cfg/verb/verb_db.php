@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/ref_db.php - the database const for reference tables
-    --------------------
+    model/verb/verb_db.php - the database const for predicate/verb tables
+    ----------------------
 
     The main sections of this object are
     - db const:          const for the database link
@@ -33,29 +33,21 @@
 
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-//include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 //include_once paths::MODEL_HELPER . 'type_object.php';
-//include_once paths::MODEL_LANGUAGE . 'language.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 
-use cfg\component\view_style;
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
-use cfg\language\language;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class verb_db
 {
@@ -68,43 +60,44 @@ class verb_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'verb_id';
-    const FLD_NAME = 'verb_name';
-    const FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
-    const FLD_CONDITION = 'condition_type';
-    const FLD_FORMULA_COM = 'naming used in formulas';
-    const FLD_FORMULA = 'formula_name';
-    const FLD_PLURAL = 'name_plural';
-    const FLD_REVERSE = 'name_reverse';
-    const FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
-    const FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const FLD_WORDS_COM = 'used for how many phrases or formulas';
-    const FLD_WORDS = 'words';
+    const string FLD_ID = 'verb_id';
+    const string FLD_NAME = 'verb_name';
+    const string FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
+    const string FLD_CONDITION = 'condition_type';
+    const string FLD_FORMULA_COM = 'naming used in formulas';
+    const string FLD_NAME_FORMULA = 'formula_name';
+    const string FLD_PLURAL = 'name_plural';
+    const string FLD_REVERSE = 'name_reverse';
+    const string FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
+    const string FLD_PLURAL_REVERSE = 'name_plural_reverse';
+    const string FLD_USAGE_COM = 'used for how many phrases or formulas';
 
     // all database field names excluding the id used to identify if there are some user specific changes
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
-        self::FLD_FORMULA,
-        self::FLD_WORDS
+        self::FLD_NAME_FORMULA,
+        sql_db::FLD_USAGE,
+        sql_db::FLD_IMPACT
     );
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', type_object::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
+        [self::FLD_NAME_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
         [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_WORDS, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_WORDS_COM],
+        [sql_db::FLD_USAGE, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
+        [sql_db::FLD_IMPACT, sql_db::FLD_IMPACT_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_IMPACT_COM],
     );
 
 

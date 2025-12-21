@@ -36,9 +36,9 @@
 
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_object.php';
 include_once paths::MODEL_GROUP . 'group.php';
@@ -50,14 +50,14 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\helper\combine_object;
-use cfg\group\group;
-use cfg\result\result;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_base;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
 
 class figure extends combine_object
@@ -68,10 +68,10 @@ class figure extends combine_object
      */
 
     // the database and JSON object duplicate field names for combined value and result mainly to link figures
-    const FLD_ID = 'figure_id';
+    const string FLD_ID = 'figure_id';
 
     // the common figure database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         group::FLD_ID
     );
 
@@ -109,14 +109,14 @@ class figure extends combine_object
             if ($db_row[$id_fld] > 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
-                $val = new value($this->user());
+                $val = new value($this->get_user());
                 $val->row_mapper_sandbox_multi($db_row, $ext);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a formula result
-                $res = new result($this->user());
+                $res = new result($this->get_user());
                 $res->row_mapper($db_row);
                 $this->set_obj($res);
                 $result = true;
@@ -130,26 +130,24 @@ class figure extends combine_object
     /**
      * map a figure api json to this model figure object
      * @param array $api_json the api array with the figure values that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($api_json[json_fields::ID] > 0) {
-            $val = new value($this->user());
-            $usr_msg->add($val->api_mapper($api_json));
-            if ($usr_msg->is_ok()) {
+            $val = new value($this->get_user());
+            if ($val->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $val;
             }
         } else {
-            $res = new result($this->user());
+            $res = new result($this->get_user());
             $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-            $usr_msg->add($res->api_mapper($api_json));
-            if ($usr_msg->is_ok()) {
+            if ($res->api_mapper($api_json, $usr_msg)) {
                 $this->obj = $res;
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -177,7 +175,7 @@ class figure extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -205,9 +203,9 @@ class figure extends combine_object
     /**
      * @return user the person who wants to see a word, verb, triple, formula or view
      */
-    function user(): user
+    function get_user(): user
     {
-        return $this->obj()->user();
+        return $this->obj()->get_user();
     }
 
     /**
@@ -230,9 +228,9 @@ class figure extends combine_object
     /**
      * @return string the reference text either from the formula result or the db value from a user or source
      */
-    function symbol(): string
+    function get_symbol(): string
     {
-        return $this->obj()->symbol();
+        return $this->obj()->get_symbol();
     }
 
     /**
@@ -315,7 +313,7 @@ class figure extends combine_object
     {
 
         $result = ' ' . $this->number();
-        $result .= ' ' . $this->symbol();
+        $result .= ' ' . $this->get_symbol();
         if (isset($this->obj)) {
             $result .= $this->obj->name();
         }

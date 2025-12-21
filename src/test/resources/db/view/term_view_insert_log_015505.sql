@@ -39,10 +39,10 @@ SELECT term_view_insert_log_015505
     (1::bigint,
      1::smallint,
      1::bigint,
-     1::bigint,
+     3::bigint,
      1::smallint,
      89::smallint,
      'Start view'::text,
-     'default'::text,
+     'standard'::text,
      'mathematics'::text,
      725::smallint);

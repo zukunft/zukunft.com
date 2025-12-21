@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/view_style_list.php - to define the view or component style e.g. the number of columns to use
-    ------------------------------
+    model/component/view_style_list.php - to define the view or component style e.g. the number of columns to use
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -40,9 +40,9 @@ include_once paths::MODEL_COMPONENT . 'component_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use shared\types\view_styles;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class view_style_list extends type_list
 {

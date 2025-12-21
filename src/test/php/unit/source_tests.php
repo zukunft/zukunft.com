@@ -30,16 +30,18 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\ref\source;
-use cfg\ref\source_type_list;
-use html\ref\source as source_dsp;
-use shared\const\sources;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_tests
 {
@@ -51,6 +53,7 @@ class source_tests
 
         // init for source
         $sc = new sql_creator();
+        $t_src = new test_sources($t);
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
 
@@ -71,9 +74,9 @@ class source_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $src = new source($usr);
-        $src->set_id(4);
+        $src->id = 4;
         $t->assert_sql_standard($sc, $src);
-        $src->set_id(5);
+        $src->id = 5;
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 
@@ -84,13 +87,15 @@ class source_tests
 
         $t->subheader($ts . 'sql write insert');
         // TODO test the log version for db write
-        $src = $t->source();
+        $src = $t_src->source();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $src, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
+        $src = $t_src->source_incomplete();
+        $t->assert_sql_insert_fail($sc, $src, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
+        $src = $t_src->source();
         $src_renamed = $src->cloned(sources::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
@@ -107,29 +112,30 @@ class source_tests
         $t->subheader($ts . 'sql delete');
         $t->assert_sql_delete($sc, $src);
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader($ts . 'base object handling');
-        $src = $t->source_filled();
+        $src = $t_src->source_filled();
         $t->assert_reset($src);
 
         $t->subheader($ts . 'api');
-        $src = $t->source();
+        $src = $t_src->source();
         $t->assert_api_json($src);
         $db_con = new sql_db();
         $src->set_code_id_db(sources::SIB_CODE);
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader($ts . 'frontend');
-        $src = $t->source();
-        $t->assert_api_to_dsp($src, new source_dsp());
+        $src = $t_src->source();
+        $t->assert_api_to_ui($src, new source_ui());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->source(), $usr_sys);
-        $t->assert_ex_and_import($t->source_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_src->source(), $usr_sys);
+        $t->assert_ex_and_import($t_src->source_filled(), $usr_sys);
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($usr), $json_file);
 

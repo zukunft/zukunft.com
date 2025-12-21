@@ -1,9 +1,6 @@
 {
-  "name": "mathematics",
   "protection": "admin_protection",
-  "plural": "",
+  "name": "mathematics",
   "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-  "type": "",
-  "view": "",
-  "refs": []
+  "type_code_id": "default"
 }

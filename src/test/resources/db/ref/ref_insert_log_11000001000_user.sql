@@ -23,7 +23,7 @@ SELECT ref_insert_log_11000001000_user
         ($1,$2,$3,$4,$5);
 
 SELECT ref_insert_log_11000001000_user (
-               1::bigint,
+               3::bigint,
                1::smallint,
                65::smallint,
                'pi - ratio of the circumference of a circle to its diameter'::text,

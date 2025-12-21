@@ -30,53 +30,56 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\word\triple;
-use shared\api;
-use const test\TEST_UNIT_UI_PATH;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
-include_once TEST_UNIT_UI_PATH . 'base_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'type_lists_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'user_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'word_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'word_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'verb_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'triple_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'triple_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'phrase_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'phrase_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'group_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'term_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'term_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'value_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'value_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'formula_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'formula_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'result_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'result_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'figure_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'figure_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'view_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'view_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'component_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'component_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'source_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'reference_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'language_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'change_log_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'sys_log_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'job_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'system_views_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'start_ui_tests.php';
+//include_once test_paths::UNIT . 'all_unit_tests.php';
+include_once test_paths::UNIT_UI . 'base_ui_tests.php';
+//include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
+include_once test_paths::UNIT_UI . 'user_ui_tests.php';
+include_once test_paths::UNIT_UI . 'word_ui_tests.php';
+include_once test_paths::UNIT_UI . 'word_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'verb_ui_tests.php';
+include_once test_paths::UNIT_UI . 'triple_ui_tests.php';
+include_once test_paths::UNIT_UI . 'triple_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'phrase_ui_tests.php';
+include_once test_paths::UNIT_UI . 'phrase_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'group_ui_tests.php';
+include_once test_paths::UNIT_UI . 'term_ui_tests.php';
+include_once test_paths::UNIT_UI . 'term_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'value_ui_tests.php';
+include_once test_paths::UNIT_UI . 'value_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'formula_ui_tests.php';
+include_once test_paths::UNIT_UI . 'formula_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'result_ui_tests.php';
+include_once test_paths::UNIT_UI . 'result_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'figure_ui_tests.php';
+include_once test_paths::UNIT_UI . 'figure_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'view_ui_tests.php';
+include_once test_paths::UNIT_UI . 'view_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'component_ui_tests.php';
+include_once test_paths::UNIT_UI . 'component_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'source_ui_tests.php';
+include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
+include_once test_paths::UNIT_UI . 'reference_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'language_ui_tests.php';
+include_once test_paths::UNIT_UI . 'change_log_ui_tests.php';
+include_once test_paths::UNIT_UI . 'sys_log_ui_tests.php';
+include_once test_paths::UNIT_UI . 'job_ui_tests.php';
+include_once test_paths::UNIT_UI . 'localhost_ui_tests.php';
+include_once test_paths::UNIT_UI . 'spacial_cases_ui_tests.php';
+include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 
-use test\test_cleanup;
-use unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class all_ui_tests extends all_unit_tests
 {
 
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
 
         // start the test section (ts)
@@ -84,43 +87,49 @@ class all_ui_tests extends all_unit_tests
         $t->header($ts);
 
         $t->subheader($ts . 'base');
-        (new base_ui_tests)->run($t);
-        (new type_lists_ui_tests)->run($t);
-        (new user_ui_tests)->run($t);
+        // the used html elements e.g. the buttons
+        new base_ui_tests()->run($t);
+        new user_ui_tests()->run($t);
+        new horizontal_ui_tests()->run($t);
 
         $t->subheader($ts . 'page');
-        (new word_ui_tests)->run($t);
-        (new word_list_ui_tests)->run($t);
-        (new verb_ui_tests())->run($t);
-        (new triple_ui_tests)->run($t);
-        (new triple_list_ui_tests)->run($t);
-        (new phrase_ui_tests)->run($t);
-        (new phrase_list_ui_tests)->run($t);
-        (new group_ui_tests)->run($t);
-        (new term_ui_tests)->run($t);
-        (new term_list_ui_tests)->run($t);
-        (new value_ui_tests)->run($t);
-        (new value_list_ui_tests)->run($t);
-        (new formula_ui_tests)->run($t);
-        (new formula_list_ui_tests)->run($t);
-        (new result_ui_tests)->run($t);
-        (new result_list_ui_tests)->run($t);
-        (new figure_ui_tests())->run($t);
-        (new figure_list_ui_tests)->run($t);
-        (new view_ui_tests)->run($t);
-        (new view_list_ui_tests)->run($t);
-        (new component_ui_tests)->run($t);
-        (new component_list_ui_tests)->run($t);
-        (new source_ui_tests)->run($t);
-        (new reference_ui_tests)->run($t);
-        (new language_ui_tests)->run($t);
-        (new change_log_ui_tests)->run($t);
-        (new sys_log_ui_tests)->run($t);
-        (new job_ui_tests)->run($t);
+        // test all interface functions of the frontend classes
+        new word_ui_tests()->run($t, $ui->dto->typ_lst_cache);
+        new word_list_ui_tests()->run($t);
+        new verb_ui_tests()->run($t);
+        new triple_ui_tests()->run($t, $ui);
+        new triple_list_ui_tests()->run($t);
+        new phrase_ui_tests()->run($t);
+        new phrase_list_ui_tests()->run($t);
+        new source_ui_tests()->run($t);
+        new reference_ui_tests()->run($t);
+        new reference_list_ui_tests()->run($t);
+        new group_ui_tests()->run($t);
+        new value_ui_tests()->run($t);
+        new value_list_ui_tests()->run($t);
+        new formula_ui_tests()->run($t);
+        new formula_list_ui_tests()->run($t);
+        new result_ui_tests()->run($t);
+        new result_list_ui_tests()->run($t);
+        new figure_ui_tests()->run($t);
+        new figure_list_ui_tests()->run($t);
+        new term_ui_tests()->run($t);
+        new term_list_ui_tests()->run($t);
+        new view_ui_tests()->run($t, $ui);
+        new view_list_ui_tests()->run($t);
+        new component_ui_tests()->run($t);
+        new component_list_ui_tests()->run($t);
+        new language_ui_tests()->run($t);
+        new change_log_ui_tests()->run($t);
+        new sys_log_ui_tests()->run($t);
+        new job_ui_tests()->run($t);
+
+        new localhost_ui_tests()->run($t);
 
         // TODO compare with run_ui_test in all_unit_read_tests
-        (new start_ui_tests)->run($t);
-        (new system_views_ui_tests)->run($t);
+        //new start_ui_tests()->run($t);
+        // test all relevant system views (to deprecate? - new in horizontal_test.php)
+        new spacial_cases_ui_tests()->run($t, $ui);
 
         $t->subheader($ts . 'check about page e.g. to check the library');
 

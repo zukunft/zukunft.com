@@ -30,12 +30,12 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\component\component_exe as component_dsp;
-use html\html_base;
-use shared\const\components;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_ui_tests
 {
@@ -57,21 +57,21 @@ class component_ui_tests
         $test_page .= 'table<br>';
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id) . '<br>';
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */
-        $cmp = new component_dsp();
+        $cmp = new component_exe();
         $cmp->set_id(0);
         $test_page .= 'add mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $cmp = new component_dsp();
+        $cmp = new component_exe();
         $cmp->set_id(1);
         $cmp->set_name(components::WORD_NAME);
         $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $t->html_test($test_page, 'component', 'component', $t);
+        $t->html_page_test($test_page, 'component', 'component', $t);
     }
 
 }

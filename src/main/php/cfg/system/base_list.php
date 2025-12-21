@@ -31,12 +31,12 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'combine_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
@@ -50,18 +50,18 @@ include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use cfg\helper\combine_object;
-use cfg\helper\db_object_seq_id;
-use cfg\user\user;
-use cfg\user\user_message;
-use controller\api_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\ListOfIdObjects;
-use shared\helper\TextIdObject;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class base_list extends ListOfIdObjects
 {
@@ -142,26 +142,14 @@ class base_list extends ListOfIdObjects
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
     /**

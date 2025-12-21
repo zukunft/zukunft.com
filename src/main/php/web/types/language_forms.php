@@ -30,18 +30,41 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class language_forms extends type_list
 {
 
+    const string NAME = url_var::LANGUAGE_FORM;
+
     /**
+     * create the HTML code to select a language form
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected language form
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style e.g. to overwrite the size of the select field
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME,
+        string   $style = view_styles::COL_SM_4
+    ): string
     {
-        global $html_language_forms;
-        return parent::type_selector($html_language_forms->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_LANGUAGE_FORM, $style);
     }
 
 }

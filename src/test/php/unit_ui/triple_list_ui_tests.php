@@ -30,16 +30,20 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
-use html\html_base;
-use html\word\triple;
-use html\word\triple_list as triple_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_ui_tests
 {
@@ -47,26 +51,28 @@ class triple_list_ui_tests
     {
 
         $html = new html_base();
+        $t_trp = new test_triples($t);
 
         // start the test section (ts)
         $ts = 'unit ui html triple list ';
         $t->header($ts);
 
         // fill the triple list based on the api message
-        $db_lst = $t->triple_list();
-        $lst = new triple_list_dsp($db_lst->api_json());
+        $db_lst = $t_trp->triple_list_short();
+        $lst = new triple_list($db_lst->api_json());
         $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
 
         // create the triple list test set
-        $lst = new triple_list_dsp();
-        $phr_city = $t->zh_city();
-        $phr_canton = $t->zh_canton();
+        $lst = new triple_list();
+        $phr_city = $t_trp->zh_city();
+        $phr_canton = $t_trp->zh_canton();
         $phr_city_dsp = new triple($phr_city->api_json());
         $phr_canton_dsp = new triple($phr_canton->api_json());
         $lst->add($phr_city_dsp);
         $lst->add($phr_canton_dsp);
 
         // test the triple list display functions
+        $form = 'formula_list_ui_test';
         $test_page = $html->text_h2('triple list display test');
         /*
         $test_page .= 'names with links: ' . $lst->display() . '<br>';
@@ -74,11 +80,11 @@ class triple_list_ui_tests
         $test_page .= $lst->tbl();
         */
 
-        $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0,
-                'triple list test selector', 'please select') . '<br>';
+        $from_rows = 'selector: ' . '<br>';
+        $from_rows .= $lst->selector($form, 0, url_var::TRIPLE, msg_id::FORM_SELECT_FORMULA) . '<br>';
+        $test_page .= $html->form($form, $from_rows);
 
-        $t->html_test($test_page, 'triple_list', 'triple_list', $t);
+        $t->html_page_test($test_page, 'triple_list', 'triple_list', $t);
     }
 
 }

@@ -39,14 +39,32 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-class sandbox_list extends list_dsp
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+
+class sandbox_list extends ListBase
 {
+
+    /*
+     * sort
+     */
+
+    function sort_by_relevance(): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->count() > 0) {
+            $lst = $this->lst();
+            $sbx = $lst[0];
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * debug
@@ -55,23 +73,28 @@ class sandbox_list extends list_dsp
     /**
      * to show the list name to the user in the most simple form (without any ids)
      * this function is called from dsp_id, so no other call is allowed
-     * e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
+     * e.g. >company Zurich< can be either >"company Zurich"< or >"company" "Zurich"<, means either a triple or two words
      *      but this "short" form probably confuses the user less and
      *      if the user cannot change the tags anyway the saving of a related value is possible
      *
      * @param ?int $limit the max number of ids to show
      * @return string a simple name of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
-        return '"' . implode('","', $this->names(false, $limit)) . '"';
+        return '"' . $this->name_pur($limit) . '"';
+    }
+
+    function name_pur(?int $limit = null): string
+    {
+        return implode('","', $this->names($limit));
     }
 
     /**
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(?int $limit = null): array
     {
         $result = [];
         $pos = 0;

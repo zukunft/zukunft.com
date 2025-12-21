@@ -2,10 +2,10 @@
 
 /*
 
-    web/value_list.php - the display extension of the api value list object
-    ------------------
+    web/value/value_list.php - the display extension of the api value list object
+    ------------------------
 
-    to creat the HTML code to display a list of values
+    to create the HTML code to display a list of values
 
 
     This file is part of zukunft.com - calc with words
@@ -32,48 +32,73 @@
 
 */
 
-namespace html\value;
+namespace Zukunft\ZukunftCom\main\php\web\value;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
+// TODO move phr_ids to shared objects
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::REF . 'source.php';
+//include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::VALUE . 'value.php';
+//include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use html\button;
-use html\group\group;
-use html\html_base;
-use html\group\group_list;
-use html\phrase\phrase_list;
-use html\rest_ctrl;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\user\user_message;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
-class value_list extends list_dsp
+class value_list extends ListBase
 {
 
     /*
@@ -98,7 +123,7 @@ class value_list extends list_dsp
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         $result = false;
-        $rest = new rest_ctrl();
+        $rest = new rest_call();
 
         $data = array();
         $data[api::JSON_LIST_PHRASE_IDS] = $phr_lst->ids();
@@ -154,17 +179,139 @@ class value_list extends list_dsp
         return $result;
     }
 
+    /**
+     * get a list with the values related directly to the given word, triple or source
+     *
+     * @param word|triple|source|formula|db_object|null $dbo to filter the values
+     * @return value_list with only the direct linked values
+     */
+    function filter(word|triple|source|formula|db_object|null $dbo = null): value_list
+    {
+        $val_lst = new value_list();
+        if ($dbo::class == word::class or $dbo::class == triple::class) {
+            foreach ($this->lst() as $val) {
+                if ($val->has_phrase($dbo->phrase())) {
+                    $val_lst->add($val);
+                }
+            }
+        }
+        if ($dbo::class == source::class) {
+            foreach ($this->lst() as $val) {
+                if ($val->source_id() == $dbo->id()) {
+                    $val_lst->add($val);
+                }
+            }
+        }
+        return $val_lst;
+    }
+
 
     /*
      * display
      */
 
     /**
+     * create the html code to show a list of values
+     * TODO use a more general parent function
+     *
+     * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
+     * @param string $back list of the last view to suggest the best follow-up view
+     * @param string $style to define e.g. the width of the list
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
+     * @return string the html code to display the values to the user
+     */
+    function list(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string $back = '',
+        string $style = '',
+        ?int $limit = null,
+        ?int $page = null
+    ): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        if (!$this->is_empty()) {
+            if ($limit == null) {
+                global $cfg;
+                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+            }
+
+            $i = 0;
+            foreach ($this->lst() as $val) {
+                if ($i <= $limit) {
+                    if ($i < $limit) {
+                        $row = $val->grp->name_link_list($context_phr_lst);
+                        $row .= ' ';
+                        $row .= $val->value_edit($back);
+                        $row .= $html->lf();
+                        $result .= $row;
+                    } else {
+                        $diff = $this->count() - $i;
+                        if ($diff > 0) {
+                            // TODO Prio 1 base the translation on the $mtr object
+                            $result .= ' ... and ' . $diff . ' more';
+                        }
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the html code to show a list of values where the unit is behind the value
+     * TODO use a more general parent function
+     *
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
+     * @return string the html code to display the values to the user
+     */
+    function list_unit(
+        ?int $limit = null,
+        ?int $page = null
+    ): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        if (!$this->is_empty()) {
+            if ($limit == null) {
+                global $cfg;
+                $limit = $cfg->get_by([triples::LINK_LIST, words::LIMIT, words::LISTS, words::FRONTEND, words::USER], config::LIMIT_VALUE_LIST);
+            }
+
+            $i = 0;
+            foreach ($this->lst() as $val) {
+                if ($i <= $limit) {
+                    if ($i < $limit) {
+                        $row = $val->with_unit_and_info();
+                        $row .= $html->lf();
+                        $result .= $row;
+                    } else {
+                        $diff = $this->count() - $i;
+                        if ($diff > 0) {
+                            // TODO Prio 1 base the translation on the $mtr object
+                            $result .= ' ... and ' . $diff . ' more';
+                        }
+                    }
+                    $i++;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase_list|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @param string $back
      * @return string the html code to show the values as a table to the user
      */
-    function table(phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -202,7 +349,7 @@ class value_list extends list_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->grp()->name_link_list($common_phrases));
+            $row = $html->td($val->grp->name_link_list($common_phrases));
             $row .= $html->td($val->value_edit($back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
@@ -240,7 +387,7 @@ class value_list extends list_dsp
         $lib = new library();
         $grp_lst = new group_list();
         foreach ($this->lst() as $val) {
-            $grp = $val->grp();
+            $grp = $val->grp;
             if ($grp != null) {
                 $grp_lst->lst[] = $grp;
             } else {
@@ -258,6 +405,7 @@ class value_list extends list_dsp
 
     // creates a table of all values related to a word and a related word and all the sub words of the related word
     // e.g. for "ABB" ($this->phr) list all values for the cash flow statement ($phr_row)
+    /*
     function dsp_table($phr_row, $back): string
     {
         global $usr;
@@ -286,7 +434,7 @@ class value_list extends list_dsp
 
         // if parameters are fine display the table
         if ($result == '') {
-            log_debug('"' . $phr_row->name . '" for "' . $this->phr->name() . '" and user "' . $usr->name . '"');
+            log_debug('"' . $phr_row->name . '" for "' . $this->common_phrases()->name() . '" and user "' . $usr->name . '"');
 
             // init the display vars
             $val_main = null; // the "main" value used as a sample for a new value
@@ -299,13 +447,13 @@ class value_list extends list_dsp
             $result .= '<br>';
 
             // get all values related to the selecting word, because this is probably the strongest selection and to save time reduce the number of records asap
-            $val_lst = $this->phr->val_lst();
+            //$val_lst = $this->common_phrases()->val_lst();
             log_debug('all values: ' . $lib->dsp_count($val_lst->lst));
 
             //$val_lst->load_phrases();
-            /*foreach ($val_lst->lst AS $val) {
+            foreach ($val_lst->lst AS $val) {
               zu_debug('value_list_dsp->dsp_table value: '.$val->number().' (group '.$val->grp_id.' and time '.$val->time_id.')');
-            }*/
+            }
 
             // get all words related to the value list to be able to define the column and the row names
             $phr_lst_all = $val_lst->phr_lst();
@@ -361,7 +509,7 @@ class value_list extends list_dsp
             if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
-                    if ($common_word->id() <> $this->phr->id()) {
+                    if ($common_word->id() <> $common_word->phrase()->id()) {
                         $common_text .= $common_word->dsp_tbl_row();
                     }
                 }
@@ -455,7 +603,7 @@ class value_list extends list_dsp
                             }
 
                             //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . \html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
                             $modal_nbr++;
                             //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
@@ -561,7 +709,7 @@ class value_list extends list_dsp
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . \html\btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_lst, $type_ids, $back);
                                     $result .= '      </td>' . "\n";
                                 } else {
                                     $result .= $tbl_value->dsp_tbl($back);
@@ -594,7 +742,7 @@ class value_list extends list_dsp
                         $type_ids[] = $type_phr->id();
                         $type_ids[] = $type_phr->id();
 
-                        $result .= '      &nbsp;&nbsp;' . \html\btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_ids, $type_ids, $back);
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }
@@ -638,6 +786,7 @@ class value_list extends list_dsp
 
         return $result;
     }
+    */
 
     /**
      * return the html code to display all values related to a given word
@@ -722,7 +871,7 @@ class value_list extends list_dsp
                 log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id() > 0) {
-                        $time_phr = new phrase($val->user());
+                        $time_phr = new phrase();
                         $time_phr->load_by_id($val->time_phr->id());
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
@@ -738,7 +887,7 @@ class value_list extends list_dsp
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related results
-                $res_lst = new result_list($this->user());
+                $res_lst = new result_list();
                 $res_lst->load_by_val($val);
                 $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
@@ -749,21 +898,21 @@ class value_list extends list_dsp
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(view_shared::VALUE_ADD, $val->id(), $back);
+                    $url = $html->url(views::VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
-                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->common_phrases()->ids());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(view_shared::VALUE_EDIT, $val->id(), $back);
+                $url = $html->url(views::VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(view_shared::VALUE_DEL, $val->id(), $back);
+                $url = $html->url(views::VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
-                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
+                $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->common_phrases()->ids());
                 $result .= '    </td>';
                 $result .= '  </tr>';
             }
@@ -775,12 +924,12 @@ class value_list extends list_dsp
         // allow the user to add a completely new value
         log_debug('new');
         if (empty($common_phr_ids)) {
-            $common_phr_lst_new = new word_list($this->user());
+            $common_phr_lst_new = new word_list();
             $common_phr_ids[] = $this->phr->id();
             $common_phr_lst_new->load_by_ids($common_phr_ids);
         }
 
-        $common_phr_lst = $common_phr_lst->phrase_lst();
+        $common_phr_lst = $common_phr_lst->phrase_list();
 
         // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*

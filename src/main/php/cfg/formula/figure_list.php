@@ -34,9 +34,9 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
@@ -49,14 +49,14 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\phrase\term_list;
-use cfg\result\result;
-use cfg\sandbox\sandbox_list;
-use cfg\user\user_message;
-use cfg\value\value;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class figure_list extends sandbox_list
 {
@@ -78,20 +78,19 @@ class figure_list extends sandbox_list
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
+     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         foreach ($api_json as $json_phr) {
-            $fig = new figure($this->user());
-            $usr_msg->add($fig->api_mapper($json_phr));
-            if ($usr_msg->is_ok()) {
+            $fig = new figure($this->get_user());
+            if ($fig->api_mapper($json_phr, $usr_msg)) {
                 $this->add($fig);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -130,10 +129,10 @@ class figure_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
-                        $val = new value($this->user());
+                        $val = new value($this->get_user());
                         $fig = new figure($val);
                     } else {
-                        $res = new result($this->user());
+                        $res = new result($this->get_user());
                         $fig = new figure($res);
                     }
                     $fig->row_mapper($db_row, $qp->ext);
@@ -153,7 +152,7 @@ class figure_list extends sandbox_list
      * @param fig_ids $ids figure ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -174,7 +173,7 @@ class figure_list extends sandbox_list
      * set the SQL query parameters to load a list of figure objects
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -184,7 +183,7 @@ class figure_list extends sandbox_list
         $sc->set_class(figure::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(figure::FLD_NAMES);
         //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
         //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
@@ -269,7 +268,7 @@ class figure_list extends sandbox_list
         return $result;
     }
 
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         $result = '';
 

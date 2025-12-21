@@ -26,12 +26,12 @@ PREPARE value_prime_p1_insert_log_110000_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_prime_p1_insert_log_110000
-       (1,
+       (3,
         1,
         1,
         3.1415926535898,
-        32819,
-        -51,
+        32770,
+        -2,
         0,
         0,
         0);
