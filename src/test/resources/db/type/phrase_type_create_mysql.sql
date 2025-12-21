@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS phrase_types
     code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
     scaling_factor bigint       DEFAULT NULL COMMENT 'e.g. for percent the scaling factor is 100',
-    word_symbol    varchar(255) DEFAULT NULL COMMENT 'e.g. for percent the symbol is %'
+    word_symbol    varchar(255) DEFAULT NULL COMMENT 'e.g. for percent the symbol is %',
+    PRIMARY KEY (phrase_type_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -21,4 +22,4 @@ CREATE TABLE IF NOT EXISTS phrase_types
 -- AUTO_INCREMENT for table phrase_types
 --
 ALTER TABLE phrase_types
-    MODIFY phrase_type_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY phrase_type_id smallint NOT NULL AUTO_INCREMENT;

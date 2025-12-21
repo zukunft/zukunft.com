@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/result_list.php - a list of formula results
-    ------------------------------------
+    model/result/result_list.php - a list of formula results
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
 include_once paths::DB . 'sql_creator.php';
@@ -57,6 +57,7 @@ include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
@@ -66,36 +67,37 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula_db;
-use cfg\helper\data_object;
-use cfg\sandbox\sandbox_value_list;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_list;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\group\group_list;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\system\job;
-use cfg\system\job_list;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\user\user_list;
-use cfg\user\user_message;
-use cfg\value\value_base;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\word_db;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Exception;
 
 class result_list extends sandbox_value_list
@@ -211,7 +213,7 @@ class result_list extends sandbox_value_list
             $db_rows = $db_con->get($qp);
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
-                    $res = new result($this->user());
+                    $res = new result($this->get_user());
                     $res->row_mapper($db_row);
                     $this->add_obj($res);
                     $result = true;
@@ -239,7 +241,7 @@ class result_list extends sandbox_value_list
      * @param bool $or if true all results are returned that are linked to any phrase of the list
      * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator $sc,
@@ -286,7 +288,7 @@ class result_list extends sandbox_value_list
      * @param bool $or true if all results related to any phrase of the list should be loaded
      * @param int $limit the number of results that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_src(
         sql_creator $sc,
@@ -345,7 +347,7 @@ class result_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->get_user()->id, sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -379,7 +381,7 @@ class result_list extends sandbox_value_list
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
      * @param array $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
     {
@@ -406,7 +408,7 @@ class result_list extends sandbox_value_list
      * @param array $ids result ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -434,7 +436,7 @@ class result_list extends sandbox_value_list
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
      * @param sql_type $tbl_typ the table extension to force the sub table selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
@@ -443,11 +445,11 @@ class result_list extends sandbox_value_list
 
         $sc->set_class(result::class, new sql_type_list(), $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $res = new result($this->user());
+        $res = new result($this->get_user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(result_db::FLD_NAMES);
         return $qp;
     }
@@ -457,7 +459,7 @@ class result_list extends sandbox_value_list
      *
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -486,7 +488,7 @@ class result_list extends sandbox_value_list
      *
      * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_src_grp(sql_creator $sc, group $grp): sql_par
     {
@@ -507,7 +509,7 @@ class result_list extends sandbox_value_list
      * create the SQL statement to load the results created by the given formula
      *
      * @param string $query_name symbol by what the results are selected e.g. frm
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
 
     private function load_sql_init_query_par(string $query_name): sql_par
@@ -539,7 +541,7 @@ class result_list extends sandbox_value_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param object $obj a named object used for selection e.g. a formula
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_obj_old(sql_db $db_con, object $obj, bool $by_source = false): sql_par
     {
@@ -561,18 +563,18 @@ class result_list extends sandbox_value_list
             }
         }
         if ($sql_by == '') {
-            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id() .
+            log_err('Either the formula id or the phrase group id and the user (' . $this->get_user()->id .
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
             $db_con->set_class(result::class);
             // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-            $res = new result($this->user());
+            $res = new result($this->get_user());
             $db_con->set_id_field($res->id_field());
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
             $db_con->set_fields(result_db::FLD_NAMES);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->get_user()->id);
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
@@ -671,26 +673,24 @@ class result_list extends sandbox_value_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $res_json) {
-            $res = new result($this->user());
-            $usr_msg->add($res->import_obj($res_json, $usr_req, $dto, $test_obj));
-            $this->add($res);
+            $res = new result($this->get_user());
+            if ($res->import_obj($res_json, $usr_msg, $dto)) {
+                $this->add($res);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -725,7 +725,7 @@ class result_list extends sandbox_value_list
      * @param ?int $limit the max number of ids to show
      * @return string one string with all names of the list
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -752,7 +752,7 @@ class result_list extends sandbox_value_list
     /**
      * return a list of the formula result names
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         $lib = new library();
@@ -762,9 +762,9 @@ class result_list extends sandbox_value_list
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($res->usr)) {
-                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user of "' . $res->name() . '" is missing, but the list user is "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
-                } elseif ($res->usr <> $this->user()) {
-                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user "' . $res->usr->name . '" of "' . $res->name() . '" does not match the list user "' . $this->user()->name . '".', (new Exception)->getTraceAsString(), $this->user());
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user of "' . $res->name() . '" is missing, but the list user is "' . $this->get_user()->name . '".', (new Exception)->getTraceAsString(), $this->get_user());
+                } elseif ($res->usr <> $this->get_user()) {
+                    log_err('The user of a formula result list element differs from the list user.', 'res_lst->names', 'The user "' . $res->usr->name . '" of "' . $res->name() . '" does not match the list user "' . $this->get_user()->name . '".', (new Exception)->getTraceAsString(), $this->get_user());
                 }
             }
         }
@@ -783,9 +783,9 @@ class result_list extends sandbox_value_list
      * - the word assigned to the formula ($phr_id)
      * - the word that are used in the formula ($frm_phr_ids)
      * - the formula ($frm_row) to provide parameters, but not for selection
-     * - the user ($this->user()->id) to filter the results
+     * - the user ($this->get_user()->id) to filter the results
      * and request on formula result for each word group
-     * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
+     * e.g. the formula is assigned to company ($phr_id) and the "operating income" formula result should be calculated
      *      so sales and Cost are words of the formula
      *      if sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
      *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -801,7 +801,7 @@ class result_list extends sandbox_value_list
     function add_frm_val(int $phr_id, $frm_phr_ids, $frm_row, $usr_id)
     {
         $lib = new library();
-        log_debug($phr_id . ',' . $lib->dsp_array($frm_phr_ids) . ',u' . $this->user()->id() . ')');
+        log_debug($phr_id . ',' . $lib->dsp_array($frm_phr_ids) . ',u' . $this->get_user()->id() . ')');
 
         global $debug;
 
@@ -812,7 +812,7 @@ class result_list extends sandbox_value_list
         $phr->load_by_id($phr_id);
 
         $val_lst = new value_list($this->usr);
-        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id());
+        $value_lst = $val_lst->load_frm_related_grp_phrases($phr_id, $frm_phr_ids, $this->get_user()->id());
 
         foreach (array_keys($value_lst) as $val_id) {
             // maybe use for debugging
@@ -836,7 +836,7 @@ class result_list extends sandbox_value_list
 
             // build the single calculation request
             $calc_row = array();
-            $calc_row['usr_id'] = $this->user()->id();
+            $calc_row['usr_id'] = $this->get_user()->id();
             $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
             $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
             $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];
@@ -903,14 +903,14 @@ class result_list extends sandbox_value_list
         }
 
         // loop over the word categories assigned to the formulas
-        // get the words where the formula is used including the based on the assigned word e.g. Company or year
-        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id());
+        // get the words where the formula is used including the based on the assigned word e.g. company or year
+        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->get_user()->id());
         //zu_debug('res_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
         //while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id()));
+        //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->get_user()->id()));
 
-        // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
-        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id()); // should later be taken from the original array to increase speed
+        // also use the formula for all related words e.g. if the formula should be used for "company" use it also for "ABB"
+        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->get_user()->id()); // should later be taken from the original array to increase speed
 
         // include also the main word in the testing
         //$is_word_ids[] = $frm_row['word_id'];
@@ -918,27 +918,27 @@ class result_list extends sandbox_value_list
         /*
         $used_word_lst = New word_list;
         $used_word_lst->ids    = $used_word_ids;
-        $used_word_lst->usr_id = $this->user()->id();
+        $used_word_lst->usr_id = $this->get_user()->id();
         $used_word_lst->load ();
 
         // loop over the words assigned to the formulas
-        zu_debug('the formula "'.$frm_row['formula_name'].'" is assigned to "'.zut_name($frm_row['word_id'], $this->user()->id).'", which are '.implode(",",$used_word_lst->names_linked()));
+        zu_debug('the formula "'.$frm_row['formula_name'].'" is assigned to "'.zut_name($frm_row['word_id'], $this->get_user()->id).'", which are '.implode(",",$used_word_lst->names_linked()));
         foreach ($used_word_ids AS $phr_id) {
           $special_frm_phr_ids = array();
 
-          if (zuf_has_verb($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id)) {
+          if (zuf_has_verb($frm_row[url_var::USER_EXPRESSION], $this->get_user()->id)) {
             // special case
-            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row[api::URL_VAR_USER_EXPRESSION].')');
+            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row[url_var::USER_EXPRESSION].')');
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
+            $all_frm_ids = zuf_frm_ids ($frm_row[url_var::USER_EXPRESSION], $this->get_user()->id);
 
             // get fixed / special formulas
             $frm_ids = array();
             foreach ($all_frm_ids as $chk_frm_id) {
-              if (zuf_is_special ($chk_frm_id, $this->user()->id)) {
-                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id, $phr_id);
+              if (zuf_is_special ($chk_frm_id, $this->get_user()->id)) {
+                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row[url_var::USER_EXPRESSION], $this->get_user()->id, $phr_id);
 
                 //get all values related to the words
               } else {
@@ -947,25 +947,25 @@ class result_list extends sandbox_value_list
             }
 
             // include the results of the underlying formulas, but only the once related to one of the words assigned to the formula
-            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id());
+            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->get_user()->id);
             $result = array_merge($result, $result_res);
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "sales" all values that are related to sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
+            $frm_phr_ids = zuf_phr_ids ($frm_row[url_var::USER_EXPRESSION], $this->get_user()->id);
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
-            // e.g. if the formula text contains the special word "prior" and the formula is linked to "Year" and "2016" is a "Year"
+            // e.g. if the formula text contains the special word "prior" and the formula is linked to "year" and "2016" is a "year"
             //      than the "prior" of "2016" is "2015", so the word "2015" should be included in the value selection
             $frm_phr_ids = array_unique (array_merge ($frm_phr_ids, $special_frm_phr_ids));
             $frm_phr_ids = array_filter($frm_phr_ids);
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
 
-            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
-            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
+            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->get_user()->id);
+            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->get_user()->id);
             $result = array_merge($result, $result_val);
 
             // show the user the progress every two seconds
@@ -982,7 +982,7 @@ class result_list extends sandbox_value_list
             -> calculate the formula result for each word list (zuc_frm)
             -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
             -> r) check in which formula the formula results are used
-            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a Year
+            -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a year
             -> calculate the formula result for each word list of the formula result
             -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2019" "estimate"
             -> repeat at r)
@@ -1008,17 +1008,17 @@ class result_list extends sandbox_value_list
         $lib = new library();
 
         // to inform the user about the progress
-        $last_msg_time = time(); // the start time
+        $last_msg_time = microtime(true); // the start time
         $collect_pos = 0;        // to calculate the progress in percent
 
         $result = null;
 
         // get a list of all words and triples where the formula should be used (assigned words)
-        // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"
-        // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
+        // including all child phrases that should also be included in the assignment e.g. for "year" include "2018"
+        // e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $frm->assign_phr_lst();
-        log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->user()->name . '');
+        log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->get_user()->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
         // e.g. for the formula "net profit" the word "sales" & "cost of sales" is used
@@ -1028,8 +1028,8 @@ class result_list extends sandbox_value_list
         log_debug('formula "' . $frm->name() . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
-        $trm_lst_back = new term_list($this->user());
-        $trm_back = new term($this->user());
+        $trm_lst_back = new term_list($this->get_user());
+        $trm_back = new term($this->get_user());
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
         $phr_lst_preset_following = $exp->element_special_following($trm_lst_back);
@@ -1048,7 +1048,7 @@ class result_list extends sandbox_value_list
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }
 
-        // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "Year"
+        // convert the special formulas to normal phrases e.g. use "2018" instead of "this" if the formula is assigned to "year"
         foreach ($frm_lst_preset_following->lst() as $frm_special) {
             $frm_special->load();
             log_debug('get preset phrases for formula ' . $frm_special->dsp_id() . ' and phrases ' . $phr_lst_frm_assigned->dsp_name());
@@ -1089,7 +1089,7 @@ class result_list extends sandbox_value_list
         // this is a kind of word group list, where for each word group list several results are possible,
         // because there may be one value and several results for the same word group
         log_debug('get all results used in the formula ' . $frm->usr_text . ' that are related to one of the phrases assigned ' . $phr_lst_frm_assigned->dsp_name());
-        $phr_grp_lst_val = new group_list($this->user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
+        $phr_grp_lst_val = new group_list($this->get_user()); // by default the calling user is used, but if needed the value for other users also needs to be updated
         $phr_grp_lst_val->get_by_val_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_res_with_one_phr_each($phr_lst_frm_assigned, $phr_lst_frm_used, $phr_frm, $phr_lst_res);
         $phr_grp_lst_val->get_by_val_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // for predefined formulas ...
@@ -1098,7 +1098,7 @@ class result_list extends sandbox_value_list
 
         // first calculate the standard results for all user and then the user specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
-        $usr_lst = new user_list($this->user());
+        $usr_lst = new user_list($this->get_user());
         $usr_lst->load_active();
 
         $lib = new library();
@@ -1106,10 +1106,10 @@ class result_list extends sandbox_value_list
         foreach ($usr_lst->lst() as $usr) {
             // check
             $usr_calc_needed = False;
-            if ($usr->id() == $this->user()->id()) {
+            if ($usr->id == $this->get_user()->id) {
                 $usr_calc_needed = true;
             }
-            if ($this->user()->id() == 0 or $usr_calc_needed) {
+            if ($this->get_user()->id == 0 or $usr_calc_needed) {
                 log_debug('update results for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);
@@ -1123,7 +1123,7 @@ class result_list extends sandbox_value_list
 
     function get_first(): result
     {
-        $result = new result($this->user());
+        $result = new result($this->get_user());
         if (!$this->is_empty()) {
             $result = $this->get(0);
         }

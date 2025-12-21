@@ -2,8 +2,8 @@
 
 /*
 
-    model/log/change_values_prime.php - log object for changes of values with a prime group id
-    -------------------------------
+    model/log/change_values_text_prime.php - log object for changes of values with a prime group id
+    --------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,16 +29,16 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG . 'change_value_text.php';
 include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 
 class change_values_text_prime extends change_value_text
 {
@@ -48,10 +48,10 @@ class change_values_text_prime extends change_value_text
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all text value changes done by any user on values with a prime group id';
+    const string TBL_COMMENT = 'to log all text value changes done by any user on values with a prime group id';
 
     // field list to identify the value with a prime group id that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [change_value::FLD_GROUP_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
     );
 

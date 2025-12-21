@@ -40,9 +40,9 @@
   
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -56,17 +56,17 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\figure_list;
-use cfg\formula\formula;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\phrase\term_list;
-use cfg\system\base_list;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\word\word;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class element_group extends base_list
 {
@@ -233,7 +233,7 @@ class element_group extends base_list
             // e.g. 1: setting the $val_time_phr to 2020
             if ($frm_elm->type == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
-                if ($frm_elm->obj->is_special()) {
+                if ($frm_elm->obj->is_predefined()) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
                     if (isset($val_time_phr)) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
@@ -268,7 +268,7 @@ class element_group extends base_list
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 
@@ -338,7 +338,7 @@ class element_group extends base_list
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $frm_elm) {

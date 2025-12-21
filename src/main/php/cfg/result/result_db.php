@@ -2,8 +2,8 @@
 
 /*
 
-    model/word/triple_db.php - the database const for triple tables
-    ------------------------
+    model/result/result_db.php - the database const for triple tables
+    --------------------------
 
     The main sections of this object are
     - db const:          const for the database link
@@ -33,9 +33,9 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
@@ -49,19 +49,21 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_type;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\group\group;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 
 class result_db
 {
@@ -74,72 +76,72 @@ class result_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'group_id';
-    const FLD_SOURCE = 'source_';
+    const string FLD_ID = 'group_id';
+    const string FLD_SOURCE = 'source_';
     // TODO replace with result_db::FLD_SOURCE . group::FLD_ID
-    const FLD_SOURCE_GRP = 'source_group_id';
+    const string FLD_SOURCE_GRP = 'source_group_id';
     // TODO replace with group::FLD_ID
-    const FLD_GRP = 'group_id';
-    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
-    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
-    const FLD_RESULT_TS_ID = 'result_time_series_id';
+    const string FLD_GRP = 'group_id';
+    const string FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
+    const string FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
+    const string FLD_RESULT_TS_ID = 'result_time_series_id';
     // TODO maybe use the dirty flag for faster dirty selection
-    //const FLD_DIRTY = 'dirty';
-    const FLD_ALL_TIME_SERIES = array(
+    //const string FLD_DIRTY = 'dirty';
+    const array FLD_ALL_TIME_SERIES = array(
         [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
     );
-    const FLD_ALL_TIME_SERIES_USER = array(
+    const array FLD_ALL_TIME_SERIES_USER = array(
         [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
     );
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         formula_db::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE
     );
-    const FLD_NAMES_ALL = array(
-        user::FLD_ID,
+    const array FLD_NAMES_ALL = array(
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
         sandbox_multi::FLD_VALUE,
     );
-    const FLD_NAMES_NON_STD = array(
-        user::FLD_ID,
+    const array FLD_NAMES_NON_STD = array(
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
-    const FLD_NAMES_STD = array(
+    const array FLD_NAMES_STD = array(
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
         sandbox_multi::FLD_VALUE,
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
-    const FLD_NAMES_STD_DUMMY = array(
-        user::FLD_ID,
+    const array FLD_NAMES_STD_DUMMY = array(
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
     );
-    const FLD_NAMES_STD_NON_DUMMY = array(
+    const array FLD_NAMES_STD_NON_DUMMY = array(
         formula_db::FLD_ID,
     );
-    const FLD_NAMES_DUMMY = array(
-        user::FLD_ID,
+    const array FLD_NAMES_DUMMY = array(
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR_EX_STD = array(
+    const array FLD_NAMES_NUM_USR_EX_STD = array(
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific datetime database field names
-    const FLD_NAMES_DATE_USR_EX_STD = array(
+    const array FLD_NAMES_DATE_USR_EX_STD = array(
         sandbox_multi::FLD_LAST_UPDATE
     );
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
@@ -149,21 +151,21 @@ class result_db
     // e.g. the standard result does not need the share type, because it is by definition public
     // (even if share types within a group of users needs to be defined,
     // the value for the user group are also user sandbox table)
-    const FLD_NAMES_USR_ONLY = array(
+    const array FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_CHANGE_USER,
         sandbox::FLD_SHARE
     );
 
     // database table extensions used
     // TODO add a similar list to the value class
-    const TBL_EXT_LST = array(
+    const array TBL_EXT_LST = array(
         sql_type::PRIME,
         sql_type::MAIN,
         sql_type::MOST,
         sql_type::BIG
     );
     // list of fixed tables where a value might be stored
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::PRIME, sql_type::STANDARD],
         [sql_type::MAIN, sql_type::STANDARD],
         [sql_type::MOST, sql_type::STANDARD],
@@ -173,20 +175,20 @@ class result_db
         [sql_type::BIG]
     );
     // list of fixed tables without the pure key value tables
-    const TBL_LIST_EX_STD = array(
+    const array TBL_LIST_EX_STD = array(
         [sql_type::MOST],
         [sql_type::PRIME],
         [sql_type::MAIN],
         [sql_type::BIG]
     );
 
-    const FLD_KEY_PRIME = array(
+    const array FLD_KEY_PRIME = array(
         [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
-    const FLD_KEY_MAIN_STD = array(
+    const array FLD_KEY_MAIN_STD = array(
         [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
@@ -196,7 +198,7 @@ class result_db
         [sandbox_value::FLD_ID_PREFIX . '6', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
-    const FLD_KEY_MAIN = array(
+    const array FLD_KEY_MAIN = array(
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
@@ -206,13 +208,13 @@ class result_db
         [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
-    const FLD_KEY_PRIME_USER = array(
+    const array FLD_KEY_PRIME_USER = array(
         [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
-    const FLD_KEY_MAIN_USER = array(
+    const array FLD_KEY_MAIN_USER = array(
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
@@ -222,25 +224,25 @@ class result_db
         [sandbox_value::FLD_ID_PREFIX . '7', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
-    const FLD_ALL_CHANGED = array(
+    const array FLD_ALL_CHANGED = array(
         [sandbox_multi::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
     );
-    const FLD_ALL_SOURCE = array();
-    const FLD_ALL_SOURCE_GROUP = array(
+    const array FLD_ALL_SOURCE = array();
+    const array FLD_ALL_SOURCE_GROUP = array(
         [self::FLD_SOURCE . group::FLD_ID, sql_field_type::REF_512, sql_field_default::NULL, sql::INDEX, '', '512-bit reference to the sorted phrase list used to calculate this result'],
     );
-    const FLD_ALL_SOURCE_GROUP_PRIME = array(
+    const array FLD_ALL_SOURCE_GROUP_PRIME = array(
         [self::FLD_SOURCE . group::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', '64-bit reference to the sorted phrase list used to calculate this result'],
     );
-    const FLD_ALL_SOURCE_GROUP_BIG = array(
+    const array FLD_ALL_SOURCE_GROUP_BIG = array(
         [self::FLD_SOURCE . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
     );
-    const FLD_ALL_OWNER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
+    const array FLD_ALL_OWNER = array(
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
     );
-    const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the id of the user who has requested the change of the '],
+    const array FLD_ALL_CHANGER = array(
+        [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the id of the user who has requested the change of the '],
     );
 
 }

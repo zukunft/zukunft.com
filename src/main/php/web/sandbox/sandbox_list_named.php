@@ -30,30 +30,39 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::HELPER . 'config.php';
+//include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 
-use html\phrase\phrase;
-use html\phrase\term;
-use html\user\user_message;
-use html\word\triple;
-use html\word\word;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -116,15 +125,81 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
+     * base
+     */
+
+    /**
+     * show the most relevant names of the list as one string
+     * @param int $limit the number of initial entries to show in the list
+     * @return string with a list of the names with html links
+     * ex. names_linked
+     */
+    function name_tip(int $limit = config::LIMIT_NAME_LIST): string
+    {
+        $arr = array();
+        $this->sort_by_relevance();
+        $lst = $this->lst();
+        $max = $limit;
+        if ($this->count() < $max) {
+            $max = $this->count();
+        }
+        for ($i = 0; $i < $max; $i++) {
+            $sbx = $lst[$i];
+            $arr[] = $sbx->name_tip();
+        }
+        $msg = '';
+        if ($i < $this->count()) {
+            $additional_diff = $this->count() - $i;
+            $dots = msg_id::THREE_POINTS->text();
+            $and_txt = msg_id::AND_MORE_BEFORE->text();
+            $more_txt = msg_id::AND_MORE_AFTER->text();
+            $msg .= $dots . ' ' . $and_txt . ' ' . $additional_diff . ' ' . $more_txt;
+        }
+        return implode(', ', $arr) . $msg;
+    }
+
+    /**
+     * create the html code to display the e.g. the phrases with the most useful link
+     * @param string $back the back trace url for the undo functionality
+     * @return string with a list of the component names with html links
+     * ex. names_linked
+     */
+    function name_link(string $back = '', $limit = config::LIMIT_NAME_LIST): string
+    {
+        $this->sort_by_name();
+        return implode(', ', $this->names_linked($back, $limit));
+    }
+
+    /**
+     * an array of the names with a http link
+     * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of entries to show
+     * @return array with a list of the component names with html links
+     */
+    private function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
+    {
+        $result = array();
+        $i = 0;
+        foreach ($this->lst() as $sbx) {
+            if ($i < $limit) {
+                $result[] = $sbx->name_link($back);
+                $i++;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
-     * @param sandbox_named|triple|phrase|term|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @param sandbox_named|triple|phrase|term|sandbox_value|value|result|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
      * @returns bool true the object has been added
      */
-    function add(sandbox_named|triple|phrase|term|IdObject|TextIdObject|CombineObject|null $to_add): bool
+    function add(triple|phrase|term|sandbox_named|value|result|sandbox_value|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
         if ($to_add != null) {
@@ -158,6 +233,21 @@ class sandbox_list_named extends sandbox_list
             $result = parent::add_obj($to_add, $allow_duplicates);
         }
         return $result;
+    }
+
+    /**
+     * add the object to the list without duplicate check
+     * and add the id to the id hash
+     *
+     * @param sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add
+     * @return void
+     */
+    protected function add_direct(sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
+    {
+        if (!$this->lst_name_dirty) {
+            $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
+        }
+        parent::add_direct($obj_to_add);
     }
 
     /**

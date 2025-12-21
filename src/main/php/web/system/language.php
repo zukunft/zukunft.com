@@ -35,23 +35,20 @@
   
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\rest_ctrl as api_dsp;
-use html\html_base;
-use html\sandbox\sandbox_typed;
-use html\user\user_message;
-use shared\const\views;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_typed;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class language extends sandbox_typed
 {
@@ -61,6 +58,7 @@ class language extends sandbox_typed
      */
 
     private ?string $url;
+    public string $symbol;
 
 
     /*
@@ -85,17 +83,18 @@ class language extends sandbox_typed
     /**
      * set the vars of this language frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
         if (array_key_exists(json_fields::URL, $json_array)) {
             $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**

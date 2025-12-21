@@ -30,19 +30,19 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'source_types.php';
 
-use cfg\ref\source;
-use cfg\ref\source_list;
-use cfg\ref\source_type_list;
-use shared\enum\source_types;
-use shared\library;
-use shared\const\sources;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_read_tests
 {
@@ -50,30 +50,32 @@ class source_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $sys;
         global $db_con;
-        global $src_typ_cac;
 
         // init
         $lib = new library();
         $t->name = 'source db read->';
 
-        $t->header('source db read tests');
+        // start the test section (ts)
+        $ts = 'db read source ';
+        $t->header($ts);
 
-        $t->subheader('source load');
+        $t->subheader($ts . 'load');
         $src = new source($t->usr1);
         $t->assert_load($src, sources::SIB);
         $test_name = 'check description of source ' . sources::SIB;
         $t->assert($test_name, $src->description, sources::SIB_COM);
         $t->assert_load_by_code_id($src, sources::SIB_CODE);
 
-        $t->subheader('source load types');
+        $t->subheader($ts . 'types');
         $lst = new source_type_list();
         $result = $lst->load($db_con);
         $t->assert('load_source_types', $result, true);
         $test_name = '... and check if at least ' . source_types::XBRL . ' is loaded';
-        $t->assert($test_name, $src_typ_cac->id(source_types::XBRL), source_types::XBRL_ID);
+        $t->assert($test_name, $sys->typ_lst->src_typ->id(source_types::XBRL), source_types::XBRL_ID);
 
-        $t->subheader('source list tests');
+        $t->subheader($ts . 'list');
         $test_name = 'loading by source list by ids ';
         $src_lst = new source_list($t->usr1);
         $src_lst->load_by_ids([sources::WIKIDATA_ID]);

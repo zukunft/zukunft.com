@@ -30,24 +30,23 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
-
-use cfg\phrase\phrase;
-use cfg\word\triple;
-use cfg\word\word;
-use html\phrase\phrase as phrase_dsp;
-use shared\api;
-use shared\library;
-use shared\const\triples;
-use shared\const\views;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
 
 class phrase_write_tests
 {
@@ -56,19 +55,24 @@ class phrase_write_tests
     {
 
         global $usr;
-        global $vrb_cac;
-        $lib = new library();
+        global $sys;
 
-        $t->header('phrase database write tests');
+        // init
+        $lib = new library();
+        $t_db = new test_db_load($t);
+
+        // start the test section (ts)
+        $ts = 'db write phrase ';
+        $t->header($ts);
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
-        $wrd = $t->test_word(words::COMPANY);
+        $wrd = $t_db->test_word(words::COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
-        $wrd = $t->test_word(words::ZH);
+        $wrd = $t_db->test_word(words::ZH);
         $zh_id = $wrd->id();
-        $is_id = $vrb_cac->id(verbs::IS);
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
         $trp->load_by_link_id($zh_id, $is_id, $company_id);
@@ -83,9 +87,9 @@ class phrase_write_tests
         $target = words::COMPANY;
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
-        $phr_dsp = new phrase_dsp($phr->api_json());
+        $phr_dsp = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
+        $url = '<td><a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
             words::COMPANY . '">' . words::COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . words::COMPANY, $result, $target);
@@ -98,24 +102,24 @@ class phrase_write_tests
         $target = triples::COMPANY_ZURICH;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
 
-        $phr_dsp = new phrase_dsp($phr->api_json());
+        $phr_dsp = new phrase_ui($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td> <a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
+        $target = $lib->trim_html(' <tr> <td><a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
             triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test getting the parent for phrase Vestas
-        $phr = $t->load_phrase(words::VESTAS);
+        $phr = $t_db->load_phrase(words::VESTAS);
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();
         } else {
-            // TODO activate
+            // TODO Prio 2 activate
             //log_err('Vestas type test failed');
             log_warning('Vestas type test failed');
         }
         $target = words::COMPANY;
-        $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);
+        $t->assert('phrase->is_mainly for ' . $phr->name(), $result, $target);
 
     }
 

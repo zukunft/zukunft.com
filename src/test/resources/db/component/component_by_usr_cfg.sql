@@ -9,6 +9,7 @@ PREPARE component_by_usr_cfg (bigint, bigint) AS
            formula_id,
            word_id_col,
            word_id_col2,
+           usage,
            excluded,
            share_type_id,
            protect_id

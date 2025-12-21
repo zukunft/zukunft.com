@@ -30,18 +30,19 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\triple;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_read_tests
 {
@@ -49,32 +50,32 @@ class triple_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $vrb_cac;
-        global $db_con;
-        global $usr;
-        global $phr_typ_cac;
+        global $sys;
 
         // init
+        $t_db = new test_db_load($t);
         $t->name = 'triple read db->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple db read tests');
+        // start the test section (ts)
+        $ts = 'db read triple ';
+        $t->header($ts);
 
-        $t->subheader('triple prepare read tests');
+        $t->subheader($ts . 'prepare');
         // load the verb used for testing
-        $is_id = $vrb_cac->id(verbs::IS);
+        $is_id = $sys->typ_lst->vrb->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
-        $wrd_zh = $t->load_word(words::ZH);
-        $wrd_canton = $t->load_word(words::CANTON);
+        $wrd_zh = $t_db->load_word(words::ZH);
+        $wrd_canton = $t_db->load_word(words::CANTON);
         // create the group test word
-        $wrd_company = $t->test_word(words::COMPANY);
+        $wrd_company = $t_db->test_word(words::COMPANY);
 
-        $t->subheader('triple load tests');
+        $t->subheader($ts . 'load');
         $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::MATH_CONST);
         $trp_by_id = new triple($t->usr1);
-        $trp_by_id->load_by_id($trp->id(), triple::class);
+        $trp_by_id->load_by_id($trp->id());
         $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
 
@@ -99,7 +100,7 @@ class triple_read_tests
 
         $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
         $lnk_company->set_name('');
-        $target = 'Zurich (Company)';
+        $target = 'Zurich (company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);
 

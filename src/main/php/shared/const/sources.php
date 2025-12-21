@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\const;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 class sources
 {
@@ -49,38 +49,38 @@ class sources
     // TC_* is the code_id for testing
     // TD_* is the description  of the predefined source
     // TU_* is the URL of the predefined source
-    const SIB_ID = 1;
-    const SIB = 'The International System of Units';
-    const SIB_COM = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
-    const SIB_URL = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
-    const SIB_CODE = 'BIPM';
-    const MATH_CONST = 'mathematical constant';
-    const WIKIDATA = 'wikidata';
-    const WIKIDATA_ID = 2;
-    const TRUST_ME_BRO = 'my estimates';
-    const TRUST_ME_BRO_ID = 9;
-    const SYSTEM_TEST_ADD = 'System Test Source';
-    const SYSTEM_TEST_ADD_COM = 'System Test Source Description';
-    const SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
-    const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';
-    const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Source added via sql insert';
-    const SYSTEM_TEST_RENAMED = 'System Test Source Renamed';
+    const int SIB_ID = 1;
+    const string SIB = 'The International System of Units';
+    const string SIB_COM = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
+    const string SIB_URL = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
+    const string SIB_CODE = 'BIPM';
+    const string MATH_CONST = 'mathematical constant';
+    const string WIKIDATA = 'wikidata';
+    const int WIKIDATA_ID = 2;
+    const string TRUST_ME_BRO = 'my estimates';
+    const int TRUST_ME_BRO_ID = 9;
+    const string SYSTEM_TEST_ADD = 'System Test Source';
+    const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';
+    const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
+    const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';
+    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Source added via sql insert';
+    const string SYSTEM_TEST_RENAMED = 'System Test Source Renamed';
 
     // must be the same as in /resource/api/source/source_put.json
-    const SYSTEM_TEST_ADD_API = 'System Test Source API added';
-    const SYSTEM_TEST_ADD_API_COM = 'System Test Source Description API';
-    const SYSTEM_TEST_ADD_API_URL = 'https://api.zukunft.com/';
-    const SYSTEM_TEST_UPD_API = 'System Test Source API renamed';
-    const SYSTEM_TEST_UPD_API_COM = 'System Test Source Description renamed API';
-    const IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
-    const IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
+    const string SYSTEM_TEST_ADD_API = 'System Test Source API added';
+    const string SYSTEM_TEST_ADD_API_COM = 'System Test Source Description API';
+    const string SYSTEM_TEST_ADD_API_URL = 'https://api.zukunft.com/';
+    const string SYSTEM_TEST_UPD_API = 'System Test Source API renamed';
+    const string SYSTEM_TEST_UPD_API_COM = 'System Test Source Description renamed API';
+    const string IPCC_AR6_SYNTHESIS = 'IPCC AR6 Synthesis Report: Climate Change 2022';
+    const string IPCC_AR6_SYNTHESIS_URL = 'https://www.ipcc.ch/report/sixth-assessment-report-cycle/';
 
     // parameters used for unit and integration tests
-    const TEST_URL_CHANGED = 'https://api.zukunft.com/';
-    const TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
+    const string TEST_URL_CHANGED = 'https://api.zukunft.com/';
+    const string TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
 
     // array of source names that used for testing and remove them after the test
-    const RESERVED_NAMES = array(
+    const array RESERVED_NAMES = array(
         self::WIKIDATA, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
         self::SIB,
         self::SYSTEM_TEST_ADD,
@@ -89,11 +89,11 @@ class sources
     );
 
     // array of source names that used for db read testing and that should not be renamed
-    const FIXED_NAMES = array(
+    const array FIXED_NAMES = array(
         self::SIB
     );
 
-    const TEST_SOURCES = array(
+    const array TEST_SOURCES = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_API,
         self::SYSTEM_TEST_RENAMED

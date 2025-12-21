@@ -26,37 +26,32 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\phrase\trm_ids;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use html\html_base;
-use html\phrase\term_list as term_list_dsp;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_list_tests
 {
-
-    // to avoid the need to forward the test setup to every function
-    public test_cleanup $t;
 
     /**
      * execute all term list unit tests and add the test result to the given testing object
@@ -67,8 +62,8 @@ class term_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql_creator();
+        $t_trm = new test_terms($t);
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
@@ -78,7 +73,6 @@ class term_list_tests
 
         $t->subheader($ts . 'term list display');
 
-        $this->t = $t;
 
 
         $t->subheader($ts . 'sql statement creation');
@@ -92,38 +86,27 @@ class term_list_tests
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
         $t->assert_sql_by_ids($test_name, $sc, $trm_lst, $trm_ids);
-        $lst = $this->new_list();
+        $lst = $t_trm->term_list();
         $t->assert_sql_like($sc, $lst);
 
+        /*
+         * TODO Prio 2 activate
+        $test_name = 'like speed test';
+        $lst = $t_trm->list_huge($t, 1000);
+        $t->assert_sql_like($sc, $lst);
+        */
 
         $t->subheader($ts . 'api');
 
-        $trm_lst = $t->term_list();
+        $trm_lst = $t_trm->term_list_short();
         $t->assert_api($trm_lst);
 
 
         $t->subheader($ts . 'html frontend');
 
-        $trm_lst = $t->term_list();
-        $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
+        $trm_lst = $t_trm->term_list_short();
+        $t->assert_api_to_ui($trm_lst, new term_list_ui());
 
-    }
-
-    /**
-     * @returns term_list a dummy term list for unit tests
-     */
-    function new_list(): term_list
-    {
-        global $usr;
-
-        $lst = new term_list($usr);
-        $lst->add($this->t->new_word(words::MATH)->term());
-        $lst->add($this->t->new_triple(
-            triples::PI_NAME,
-            words::PI, verbs::IS, words::MATH)->term());
-        $lst->add($this->t->new_formula(formulas::INCREASE)->term());
-        $lst->add($this->t->new_verb(verbs::IS)->term());
-        return $lst;
     }
 
     /**
@@ -133,9 +116,11 @@ class term_list_tests
     function get_term_list_related(test_cleanup $t): term_list
     {
         global $usr;
+        $t_wrd = new test_words($t);
+        $t_trp = new test_triples($t);
         $trm_lst = new term_list($usr);
-        $trm_lst->add($t->triple_pi()->term());
-        $trm_lst->add($t->word()->term());
+        $trm_lst->add($t_trp->triple_pi()->term());
+        $trm_lst->add($t_wrd->word()->term());
         return $trm_lst;
     }
 

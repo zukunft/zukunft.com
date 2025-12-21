@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/component_list.php - list of predefined system components
-    ------------------------
+    model/component/component_list.php - list of predefined system components
+    ----------------------------------
 
     The main sections of this object are
     - construct and map: including the mapping of the db row to this component link list object
@@ -12,6 +12,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all variables of this list object
+    - save:              manage to update the database
 
 
     This file is part of zukunft.com - calc with words
@@ -38,9 +39,9 @@
 
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::DB . 'sql.php';
@@ -48,6 +49,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
@@ -67,25 +69,26 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\data_object;
-use cfg\import\import;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\sandbox\sandbox_link_named;
-use cfg\helper\combine_named;
-use cfg\helper\type_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view_db;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
 
 class component_list extends sandbox_list_named
 {
@@ -102,7 +105,7 @@ class component_list extends sandbox_list_named
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new component($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new component($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -119,7 +122,7 @@ class component_list extends sandbox_list_named
      */
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
-        return parent::load_sbx_names(new component($this->user()), $pattern, $limit, $offset);
+        return parent::load_sbx_names(new component($this->get_user()), $pattern, $limit, $offset);
     }
 
     /**
@@ -171,7 +174,7 @@ class component_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -201,7 +204,7 @@ class component_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -219,7 +222,7 @@ class component_list extends sandbox_list_named
      * @param array $ids component ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -228,6 +231,7 @@ class component_list extends sandbox_list_named
         int         $offset = 0
     ): sql_par
     {
+        // TODO Prio 1 move the query name to a const
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(component::FLD_ID, $ids);
         $sc->set_order(component::FLD_ID, sql::ORDER_ASC);
@@ -241,7 +245,7 @@ class component_list extends sandbox_list_named
      * set the SQL query parameters to load a list of components by the view id
      * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param int $id the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
     {
@@ -264,7 +268,7 @@ class component_list extends sandbox_list_named
      * set the common SQL query parameters to load a list of components
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -272,7 +276,7 @@ class component_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->get_user()->id);
         $sc->set_fields(component::FLD_NAMES);
         $sc->set_usr_fields(component::FLD_NAMES_USR);
         $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
@@ -288,41 +292,45 @@ class component_list extends sandbox_list_named
      * import a list of components from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
-            $cmp = new component($this->user());
-            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $dto, $test_obj));
-            $this->add($cmp);
+            $cmp = new component($this->get_user());
+            if ($cmp->import_obj($dsp_json, $usr_msg, $dto)) {
+                $this->add($cmp);
+            }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
         $cmp_lst = [];
         foreach ($this->lst() as $cmp) {
-            $cmp_lst[] = $cmp->export_json($do_load);
+            $cmp_lst[] = $cmp->export_json($exp_typ, $do_load);
         }
         return $cmp_lst;
     }
+
+
+    /*
+     * save
+     */
 
     /**
      * add or update all components to the database
@@ -331,13 +339,12 @@ class component_list extends sandbox_list_named
      * similar to triple_list->save_with_cache but using the term_list
      *
      * @param import|null $imp the import object with the filename and the estimated time of arrival
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param user_message $usr_msg the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function save(import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         global $cfg;
-
-        $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -354,8 +361,8 @@ class component_list extends sandbox_list_named
             // until it is clear that a component is missing
             $frm_added = true;
             $level = 0;
-            $db_lst_all = new component_list($this->user());
-            $add_lst = new component_list($this->user());
+            $db_lst_all = new component_list($this->get_user());
+            $add_lst = new component_list($this->get_user());
             while ($frm_added and $level < $max_frm_levels) {
                 $frm_added = false;
                 $usr_msg->unset_added_depending();
@@ -368,7 +375,7 @@ class component_list extends sandbox_list_named
                 // load the components by name from the database that does not yet have a database id
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, component::class, $load_lst->count(), $step_time);
-                $db_lst = new component_list($this->user());
+                $db_lst = new component_list($this->get_user());
                 // force to load all names including the components excluded by the user to potential include the components due to the import
                 // TODO add load_all = true also to the other objects
                 $db_lst->load_by_names($load_lst->names(true), true);
@@ -405,7 +412,7 @@ class component_list extends sandbox_list_named
 
             // reload the id of the components added with the last run
             // TODO use the insert message instead to increase speed
-            $db_lst = new component_list($this->user());
+            $db_lst = new component_list($this->get_user());
             if (!$add_lst->is_empty()) {
                 $db_lst->load_by_names($add_lst->names(true), true);
             }
@@ -427,23 +434,29 @@ class component_list extends sandbox_list_named
 
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
+
+
+    /*
+     * save helper
+     */
 
     /**
      * get a list of components that are ready to be added to the database
-     * TODO Prio 2 move to
+     * TODO Prio 2 move to parent?
+     *
+     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param string $file_name the name of the import file which has delevered the data
      * @return component_list list of the components that have an id or a name
      */
     function get_ready(user_message $usr_msg, string $file_name = ''): component_list
     {
-        $cmp_lst = new component_list($this->user());
+        $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
-            $cmp_msg = $cmp->db_ready();
-            if ($cmp_msg->is_ok()) {
+            if ($cmp->db_ready($usr_msg)) {
                 $cmp_lst->add_by_name($cmp);
             } else {
-                $usr_msg->add($cmp_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $cmp->dsp_id(),

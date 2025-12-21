@@ -2,10 +2,10 @@
 
 /*
 
-    web/result_dsp.php - the display extension of the api result object
-    ------------------
+    web/result/result.php - the display extension of the api result object
+    ---------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to display a formula
 
 
     This file is part of zukunft.com - calc with words
@@ -32,33 +32,59 @@
 
 */
 
-namespace html\result;
+namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::FIGURE . 'figure.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\formula\formula;
-use html\group\group;
-use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\sandbox_value;
-use html\figure\figure as figure_dsp;
-use html\user\user_message;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\figure\figure;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 
 class result extends sandbox_value
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const string VIEW_EDIT = views::RESULT_EDIT;
+    const string VIEW_DEL = views::RESULT_DEL;
+
+    // curl message id
+    const msg_id MSG_EDIT = msg_id::RESULT_EDIT;
+    const msg_id MSG_DEL = msg_id::RESULT_DEL;
+
+
+    /*
+     * object vars
+     */
 
     // the phrase group used that selected the numbers to calculate this result
     public ?group $src_grp = null;
@@ -75,11 +101,12 @@ class result extends sandbox_value
      * set the vars of this result bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($json_array);
+        parent::api_mapper($json_array, $usr_msg);
 
         if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
             $frm = new formula();
@@ -94,7 +121,12 @@ class result extends sandbox_value
             $this->set_usr_text(null);
         }
         */
-        return $usr_msg;
+        return $usr_msg->is_ok();
+    }
+
+    function formula_id(): ?int
+    {
+        return $this->frm?->id;
     }
 
 
@@ -103,21 +135,57 @@ class result extends sandbox_value
      */
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function display(phrase_list_dsp $phr_lst_header = null): string
+    function display(?phrase_list $phr_lst_header = null): string
     {
-        return $this->grp()->name_tip($phr_lst_header);
+        return $this->grp->name_tip($phr_lst_header);
     }
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function name(): string
+    {
+        return $this->grp->name();
+    }
+
+    /**
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function get_description(): string
+    {
+        return $this->grp->get_description();
+    }
+
+    /**
+     * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function display_linked(phrase_list_dsp $phr_lst_header = null): string
+    function display_linked(?phrase_list $phr_lst_header = null): string
     {
-        return $this->grp()->name_link_list($phr_lst_header);
+        return $this->grp->name_link_list($phr_lst_header);
+    }
+
+    /**
+     * create the HTML code to select a formula
+     * @param string $form the name of the html form
+     * @param formula_list $frm_lst with the suggested formulas
+     * @param string $name the unique html field name for the selection of the formula
+     * @return string the html code to select a formula
+     */
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::FORMULA
+    ): string
+    {
+        $frm_id = $this->formula_id();
+        if ($frm_id == null) {
+            $frm_id = $frm_lst->default_id($this);
+        }
+        return $frm_lst->selector($form, $frm_id, $name, msg_id::FORM_SELECT_VIEW);
     }
 
 
@@ -127,11 +195,11 @@ class result extends sandbox_value
      */
 
     /**
-     * @returns figure_dsp the figure display object base on this value object
+     * @returns figure the figure display object base on this value object
      */
-    function figure(): figure_dsp
+    function figure(): figure
     {
-        $fig = new figure_dsp();
+        $fig = new figure();
         $fig->set_obj($this);
         return $fig;
     }
@@ -158,6 +226,44 @@ class result extends sandbox_value
 
 
     /*
+     * buttons
+     */
+
+    /**
+     * overwrite because results should not be added via the user interface by the user
+     * @return string an empty string
+     */
+    function btn_add(string $back = ''): string
+    {
+        return '';
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to change a result e.g. to add a description as not
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return $this->btn_edit_sbx(
+            $this::VIEW_EDIT,
+            $this::MSG_EDIT,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to exclude a result from further usage
+     */
+    function btn_del(string $back = ''): string
+    {
+        return $this->btn_del_sbx(
+            $this::VIEW_DEL,
+            $this::MSG_DEL,
+            $back);
+    }
+
+
+    /*
      * review
      */
 
@@ -173,14 +279,14 @@ class result extends sandbox_value
         // display the leading word
         // $lead_wrd =
         // $lead_wrd->id()  = $lead_phr_id;
-        // $lead_wrd->usr = $this->user();
+        // $lead_wrd->usr = $this->get_user();
         // $lead_wrd->load();
         //$result .= $lead_phr_id->name();
 
         // build the title
         $title = '';
         // add the words that specify the calculated value to the title
-        $val_phr_lst = clone $this->grp()->phrase_list();
+        $val_phr_lst = clone $this->grp->phrase_list();
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());

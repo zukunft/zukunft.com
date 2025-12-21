@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 class group_id_list
 {

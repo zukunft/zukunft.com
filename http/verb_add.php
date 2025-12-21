@@ -34,30 +34,33 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::VERB . 'verb.php';
 
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\view\view;
-use html\html_base;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-
 /* open database */
-$db_con = prg_start("link_type_add");
+$app = new frontend();
+$db_con = $app->start("link_type_add");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$msg = ''; // to collect all messages that should be shown to the user immediately
+$usr_msg = new user_message(); // to collect all messages that should be shown to the user immediately
 
 // load the session user parameters
 $usr = new user;
@@ -70,8 +73,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::VERB_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling word which should be displayed after saving
+    $msk->load_by_code_id(views::VERB_ADD);
+    $back = $_GET[url_var::BACK] = ''; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
         $result .= log_err("Only user with the administrator profile can add verbs (triple types).", "verb_add.php");
@@ -82,17 +85,20 @@ if ($usr->id() > 0) {
         $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
-        if ($_GET[api::URL_VAR_NAME] != null) {
-            $vrb->set_name($_GET[api::URL_VAR_NAME]);
+        if ($_GET[url_var::NAME] != null) {
+            $vrb->set_name($_GET[url_var::NAME]);
         }
-        if ($_GET[api::URL_VAR_PLURAL] != null) {
-            $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
+        if ($_GET[url_var::PLURAL] != null) {
+            $vrb->set_plural($_GET[url_var::PLURAL]);
         }
-        if (isset($_GET[api::URL_VAR_REVERSE])) {
-            $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
+        if (isset($_GET[url_var::REVERSE])) {
+            $vrb->set_reverse($_GET[url_var::REVERSE]);
         }
-        if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
-            $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
+        if (isset($_GET[url_var::REVERSE_PLURAL])) {
+            $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
+        }
+        if (isset($_GET[url_var::NAME_IN_FORMULA])) {
+            $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
         }
 
         if ($_GET['confirm'] > 0) {
@@ -112,7 +118,7 @@ if ($usr->id() > 0) {
                 // if the parameters are fine
                 if ($msg == '') {
                     // add the new verb
-                    $add_result = $vrb->save()->get_last_message();
+                    $add_result = $vrb->save($usr_msg);
 
                     // if adding was successful ...
                     if (str_replace('1', '', $add_result) == '') {
@@ -129,12 +135,13 @@ if ($usr->id() > 0) {
         // if nothing yet done display the add view (and any message on the top)
         if ($result == '') {
             // show the header
-            $msk_dsp = new view_dsp($msk->api_json());
-            $result .= $msk_dsp->dsp_navbar($back);
-            $result .= $html->dsp_err($msg);
+            $msk_dsp = new view_ui($msk->api_json());
+            $dto = new data_object();
+            $result .= $msk_dsp->dsp_navbar($dto, $back);
+            $result .= $html->dsp_err($usr_msg->all_message_text());
 
             // get the form to add a new verb
-            $vrb_dsp = new verb_dsp($vrb->api_json());
+            $vrb_dsp = new verb_ui($vrb->api_json());
             $result .= $vrb_dsp->dsp_edit($back);
         }
     }
@@ -142,4 +149,4 @@ if ($usr->id() > 0) {
 
 echo $result;
 
-prg_end($db_con);
+$app->end($db_con);

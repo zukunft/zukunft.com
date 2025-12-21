@@ -52,16 +52,16 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
-use cfg\db\sql_type;
-use cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 
 class group_id extends id
 {
@@ -71,12 +71,12 @@ class group_id extends id
      */
 
     // the database table name extensions
-    const TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
-    const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
-    const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
-    const PRIME_PHRASES_STD = 4;
-    const MAIN_PHRASES_STD = 7;
-    const STANDARD_PHRASES = 16;
+    const string TBL_EXT_PRIME = '_prime'; // the table name extension for up to four prime phrase ids
+    const string TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
+    const string TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
+    const int PRIME_PHRASES_STD = 4;
+    const int MAIN_PHRASES_STD = 7;
+    const int STANDARD_PHRASES = 16;
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value
@@ -166,6 +166,20 @@ class group_id extends id
     function count(int|string $grp_id): int
     {
         return count($this->get_array($grp_id));
+    }
+
+    /**
+     * test if the group id can be used to save a value or result in the database
+     * @param int|string $grp_id the group id that should be tested
+     * @return bool true if the group id can be used to save a value or result in the database
+     */
+    function is_valid(int|string $grp_id): bool
+    {
+        if ($this->count($grp_id) > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

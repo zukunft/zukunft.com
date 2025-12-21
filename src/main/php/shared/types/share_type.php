@@ -29,16 +29,19 @@
 
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class share_type
 {
 
     // list of the ref types that have a coded functionality
-    const PUBLIC = "public";
-    const PUBLIC_ID = 1;
-    const PERSONAL = "personal";
-    const GROUP = "group";
-    const PRIVATE = "private";
+    const string PUBLIC = "public";
+    const int PUBLIC_ID = 1;
+    const string PERSONAL = "personal";
+    const string GROUP = "group";
+    const string PRIVATE = "private";
+    const string PERSONAL_LOG = "personal_log";
+    const string GROUP_LOG = "group_log";
+    const string PRIVATE_LOG = "private_log";
 
 }

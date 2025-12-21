@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/sandbox/sandbox_named_code_id.php - superclass for handling objects with a code id
-    -------------------------------------
+    cfg/sandbox/sandbox_code_id.php - superclass for handling objects with a code id
+    -------------------------------
 
     This superclass adds the code_id handling to named classes words, formula, ...
 
@@ -43,9 +43,9 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 
@@ -56,6 +56,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
@@ -63,27 +64,30 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\types\api_type_list;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_code_id extends sandbox_typed
 {
@@ -103,10 +107,11 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * reset the object vars e.g. to detect the vars changed by the api versus the db value
+     * @param bool $keep_user set to true to keep the original user
      */
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
-        parent::reset();
+        parent::reset($keep_user);
         $this->code_id = null;
     }
 
@@ -119,17 +124,19 @@ class sandbox_code_id extends sandbox_typed
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
-     * @return bool true if the word is loaded and valid
+     * @param string $type_fld the name of the type field as defined in this child class
+     * @return bool true if this object is loaded and valid
      */
     function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = '',
-        string $name_fld = ''
+        string $name_fld = '',
+        string $type_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
@@ -144,17 +151,18 @@ class sandbox_code_id extends sandbox_typed
      * so mapping the code id is only allowed if the code id is empty
      *
      * @param array $api_json an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json): user_message
+    function api_mapper(array $api_json, user_message $usr_msg): bool
     {
-        $usr_msg = parent::api_mapper($api_json);
-        if ($this->code_id() == null) {
+        parent::api_mapper($api_json, $usr_msg);
+        if ($this->get_code_id() == null) {
             if (array_key_exists(json_fields::CODE_ID, $api_json)) {
                 $this->set_code_id_db($api_json[json_fields::CODE_ID]);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -163,27 +171,25 @@ class sandbox_code_id extends sandbox_typed
      * set the code id only if the requesting user is allowed to
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
-    function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
-    ): user_message
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
 
@@ -203,7 +209,9 @@ class sandbox_code_id extends sandbox_typed
         $vars = parent::api_json_array($typ_lst, $usr);
         // the code id is included in the api message towards the frontend
         // but not overwritten via api message
-        $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->get_code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->get_code_id();
+        }
         return $vars;
     }
 
@@ -214,15 +222,16 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
         // include the code id in the api message so that the frontend can execute some behavior
-        if ($this->code_id() != '' and $this->code_id() != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id();
+        if ($this->get_code_id() != '' and $this->get_code_id() != null) {
+            $vars[json_fields::CODE_ID] = $this->get_code_id();
         }
         return $vars;
     }
@@ -268,7 +277,7 @@ class sandbox_code_id extends sandbox_typed
     /**
      * @return string|null the unique key or null if the word is not used by the system
      */
-    function code_id(): ?string
+    function get_code_id(): ?string
     {
         return $this->code_id;
     }
@@ -302,7 +311,7 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
@@ -332,8 +341,8 @@ class sandbox_code_id extends sandbox_typed
     function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->code_id() != null) {
-            $usr_msg->add($this->set_code_id($obj->code_id(), $usr_req));
+        if ($obj->get_code_id() != null) {
+            $usr_msg->add($this->set_code_id($obj->get_code_id(), $usr_req));
         }
         return $usr_msg;
     }
@@ -351,11 +360,11 @@ class sandbox_code_id extends sandbox_typed
     function diff_msg(sandbox|CombineObject|db_object_seq_id $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->code_id() != $obj->code_id()) {
+        if ($this->get_code_id() != $obj->get_code_id()) {
             $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_CODE_ID, [
-                msg_id::VAR_NAME => $obj->code_id(),
-                msg_id::VAR_NAME_CHK => $this->code_id(),
+                msg_id::VAR_NAME => $obj->get_code_id(),
+                msg_id::VAR_NAME_CHK => $this->get_code_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->name(),
             ]);
@@ -366,14 +375,14 @@ class sandbox_code_id extends sandbox_typed
     /**
      * check if the named object in the database needs to be updated
      * is expected to be similar to the diff_msg function
-     * @param sandbox|sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param sandbox|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox|sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(sandbox|sandbox_link|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->code_id != null) {
-            if ($this->code_id() != $db_obj->code_id()) {
+            if ($this->get_code_id() != $db_obj->get_code_id()) {
                 $result = true;
             }
         }
@@ -405,26 +414,28 @@ class sandbox_code_id extends sandbox_typed
      * add the code id field to the list of changed fields if the code_id has been changed
      *
      * @param sandbox_code_id|sandbox $sbx the same named sandbox as this to compare which fields have been changed
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_code_id|sandbox $sbx,
+        user_message            $usr_msg,
         sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        global $cng_fld_cac;
+        global $sys;
 
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
-        if ($sbx->code_id <> $this->code_id) {
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        if ($sbx->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql_db::FLD_CODE_ID),
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

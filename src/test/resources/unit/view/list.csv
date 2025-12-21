@@ -1,0 +1,111 @@
+view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,excluded,share_type_id,protect_id
+1,1,Start view,A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.,2,,,entry_view,,,3
+2,1,Add new word,Create a new word with all parameters e.g. the phrase type,7,,,word_add,,,3
+3,1,Change word,Change name, description or settings of a word,7,,,word_edit,,,3
+4,1,Delete word,Exclude or delete a word,7,,,word_del,,,3
+5,1,word usage and log,subview to show the usage and changes of a word,7,,,word_usage,,,3
+6,1,Add new verb,Request to add a new verb/predicate,7,,,verb_add,,,3
+7,1,Change verb,Rename a verb/predicate,7,,,verb_edit,,,3
+8,1,Delete verb,Exclude or delete a verb,7,,,verb_del,,,3
+9,1,Add new triple,Create a new triple with all parameters,7,,,triple_add,,,3
+10,1,Change triple,Rename a triple,7,,,triple_edit,,,3
+11,1,Delete triple,Exclude or delete a triple,7,,,triple_del,,,3
+12,1,Add new source,Create a new source with all parameters e.g. the type,7,,,source_add,,,3
+13,1,Change source,Rename a triple or change the type,7,,,source_edit,,,3
+14,1,Delete source,To confirm the exclusion or deleting of an external source,7,,,source_del,,,3
+15,1,Add new reference,Create a new data link to external systems,7,,,ref_add,,,3
+16,1,Change reference,Change then link to external system,7,,,ref_edit,,,3
+17,1,Delete reference,To confirm the exclusion or deleting of a reference,7,,,ref_del,,,3
+18,1,Add new number,Create a new value,7,,,value_add,,,3
+19,1,Change number,Change a number,7,,,value_edit,,,3
+20,1,Delete number,Exclude or delete a number,7,,,value_del,,,3
+21,1,Add a group name,Add a new group name,7,,,group_add,,,3
+22,1,Change group,Change a group name,7,,,group_edit,,,3
+23,1,Delete group,Exclude or delete a group name,7,,,group_del,,,3
+24,1,Add new formula,Create a new formula with all parameters e.g. the type,7,,,formula_add,,,3
+25,1,Change formula,Change a formula, the name or the type,7,,,formula_edit,,,3
+26,1,Delete formula,To confirm the exclusion or deleting of a formula,7,,,formula_del,,,3
+27,1,Add result number,Administrator can add manually a formula result e.g. for debugging,7,,,result_add,,,3
+28,1,Change result,Overwrite a result,7,,,result_edit,,,3
+29,1,Delete result,Exclude or delete a result,7,,,result_del,,,3
+30,1,Add view,Create a new view and set the type,7,,,view_add,,,3
+31,1,Change view,Rename a view,7,,,view_edit,,,3
+32,1,Delete view,Exclude or delete a view,7,,,view_del,,,3
+33,1,Add new view component,Create a new view component with all parameters,7,,,component_add,,,3
+34,1,Change view component,Adjust a view component,7,,,component_edit,,,3
+35,1,Delete view component,Exclude or delete a view component,7,,,component_del,,,3
+36,1,Add view link,Create a new link between a view and a term,7,,,view_link_add,,,3
+37,1,Change view link,Change a link between a view and a term,7,,,view_link_edit,,,3
+38,1,Delete view link,To confirm the exclusion or deleting of a view link,7,,,view_link_del,,,3
+39,1,Add component link,Create a new link between a component and a view,7,,,component_link_add,,,3
+40,1,Change component link,Change a link between a component and a view,7,,,component_link_edit,,,3
+41,1,Delete component link,To confirm the exclusion or deleting of a component link,7,,,component_link_del,,,3
+42,1,Add view relation,Create a new relation between two views,7,,,view_relation_add,,,3
+43,1,Change view relation,Change a relation between a component and a view,7,,,view_relation_edit,,,3
+44,1,Delete view relation,To confirm the exclusion or deleting of a view relation,7,,,view_relation_del,,,3
+45,1,Add formula link,Create a new link between a formula and a phrase,7,,,formula_link_add,,,3
+46,1,Change formula link,Change a link between a formula and a phrase,7,,,formula_link_edit,,,3
+47,1,Delete formula link,To confirm the exclusion or deleting of a formula link,7,,,formula_link_del,,,3
+48,1,Admin add user,View for administrators to create a new user,7,,,admin_user_add,,,3
+49,1,Admin change user,View for administrators to update a user,7,,,admin_user_edit,,,3
+50,1,Admin delete user,View for administrators to delete or exclude a new user,7,,,admin_user_del,,,3
+51,1,Add language,Add a language by an admin user,7,,,language_add,,,3
+52,1,Change language,Change a language name or symbol by an admin user,7,,,language_edit,,,3
+53,1,Delete language,View for administrators to delete a language,7,,,language_del,,,3
+54,1,Confirm adding,Ask the user for confirmation of the changes to be written to the database,7,,,confirm_add,,,3
+55,1,Confirm update,Show the impact of the changes to the user and ask the user for confirmation,7,,,confirm_update,,,3
+56,1,Confirm delete,Show the impact of the deletion to the user and ask the user for confirmation,7,,,confirm_delete,,,3
+57,1,Change confirm view,show the old and the new view and let the user confirm the change,7,,,view_preview,,,3
+58,1,about,Show the about page,7,,,about,,,
+59,1,Setup,The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation,7,,,setup,,,
+60,1,Signup,the system signup form,7,,,signup,,,
+61,1,Login,the system login form,7,,,login,,,
+62,1,Login activate,the system login activate form,7,,,login_activate,,,
+63,1,Login reset,reset the password of a login user name,7,,,login_reset,,,
+64,1,Logout,the system logout form,7,,,logout,,,
+65,1,Error Log,simple confirm page for a new error that has been logged in the database,7,,,error_log,,,
+66,1,System Error List,List the system errors and allow the user to change the status,7,,,error_update,,,
+67,1,Search,The search page for all words, triples, verbs and formulas,7,,,word_find,,,
+68,1,Search detail,The full search page for all words, triples, verbs and formulas,7,,,search_full,,,
+69,1,Value detail,show all details of one value,7,,,value_detail,,,3
+70,1,Explain result,explains one formula result,7,,,result_explain,,,3
+71,1,Formula test,debug the formula results,7,,,formula_test,,,3
+72,1,Sandbox,show the differences between the user sandbox and the standard and offer a selective switch to the standard,7,,,sandbox,,,
+73,1,Undo,show the last changes of the user and offer selective undo,7,,,undo,,,
+74,1,User Settings,to change the user settings,7,,,user,,,
+75,1,Paste table,add more than one values by pasting a table,7,,,paste_table,,,3
+76,1,Import,Select a file to import data,7,,,import,,,
+77,1,Export,Show the control page to export a selection from this pod in the selected format,10,,,export_in_selected_format,,,
+78,1,Export JSON,Show the control page to export a selection from this pod in the json format,10,,,export_json,,,
+79,1,Export XML,Show the control page to export a selection from this pod in the xml format,10,,,export_xml,,,
+80,1,Export CSV,Show the control page to export a selection from this pod in the csv format,10,,,export_csv,,,
+81,1,Export ODS,Show the control page to export a selection from this pod in the ods format,10,,,export_ods,,,
+82,1,Asynchronous process,Show the progress of one asynchronous process,7,,,job_async,,,
+83,1,Job and process overview,Show all batch progress jobs with the progress and offer process control,7,,,job_control,,,
+84,1,Job overview,Show the control board to start and monitor the system consistency check e.g. to calc again all formula results,7,,,job_check,,,
+85,1,Verb List,List all available ways how to link two words,7,,,verbs,,,
+86,1,Complete,Show a word, all related words to edit the word tree and the linked formulas with some results,,,,complete,,,
+87,1,base units,view the base units with the formulas,6,,,base_units,,,
+88,1,Word (default),the default view for words,11,,,word_default,,,
+89,1,Verb,the default view for verbs,12,,,verb_default,,,
+90,1,Triple (default),the default view for triples,13,,,triple_default,,,
+91,1,Source,the default view for sources,14,,,source_default,,,
+92,1,Reference,the default view for references,15,,,ref_default,,,
+93,1,Language,the default view for languages,16,,,language_default,,,
+94,1,Display Number,the default view for values,17,,,value_default,,,
+95,1,Formula,Show a formula and the related results and words,18,,,formula_default,,,
+96,1,Result,the default view for results,19,,,result_default,,,
+97,1,Ranking,the default view for all phrases where a better could be selected,,,,ranking,,,
+98,1,Science,show mainly related words that are relevant in sciences,,,,science,,,
+99,1,Historic,show the related words in historic order,,,,hist,,,
+100,1,Biological,show what is relevant from the biological point of view,,,,bio,,,
+101,1,Education,sort related topics by difficulty,,,,edu,,,
+102,1,Touristic,show things to see,,,,touristic,,,
+103,1,Graph,show the related topics as a visual graph,,,,graph,,,
+104,1,Simple,show only the most relevant facts,,,,simple,,,
+105,1,Mathematical constance,Show a mathematical constance and the related words and formulas,,,,math_const,,,
+106,1,company sheet,,6,,,,,,
+107,1,company list with main ratios,,6,,,,,,
+108,1,Country ratios,,,,,,,,
+109,1,complete,,5,,,,,,
+110,1,Wind investment,,6,,,,,,

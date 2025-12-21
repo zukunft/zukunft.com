@@ -30,28 +30,33 @@
 
 */
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'users.php';
 
-use cfg\user\user;
-use cfg\user\user_list;
-use shared\const\users;
-use shared\const\words;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_system_test(all_tests $t): void
 {
 
     global $usr;
 
-    $t->header('Consistency check of the \"zukunft.com\" code');
+    $t_db = new test_db_load($t);
+
+    // start the test section (ts)
+    $ts = 'db read code consistency ';
+    $t->header($ts);
 
     // load the main test word
-    $wrd_company = $t->test_word(words::COMPANY);
+    $wrd_company = $t_db->test_word(words::COMPANY);
 
     if ($t::TEST_EMAIL) {
-        $t->header('est mail sending');
+        $t->subheader($ts . 'est mail sending');
         $mail_to = 'timon@zukunft.com';
         $mail_subject = 'Test mailto';
         $mail_body = 'Hello';
@@ -67,9 +72,9 @@ function run_system_test(all_tests $t): void
     //$sbx = New _sandbox;
     //$chk_txt = $sbx->chk_owner(sql_db::TBL_TRIPLE, False); if ($chk_txt <> '') { echo $chk_txt."<br>"; }
 
-    $t->header('Test the blocked IP addresses');
+    $t->subheader($ts . 'blocked IP addresses');
 
-    // check the first predefined word "Company"
+    // check the first predefined word "company"
     // load by id
     $usr_test = new user;
     $usr_test->ip_addr = users::TEST_IP;
@@ -78,10 +83,10 @@ function run_system_test(all_tests $t): void
     if ($usr_test->id() > 0) {
         $result = 'permitted!';
     }
-    $t->display('IP blocking for ' . $usr_test->ip_addr, $target, $result);
+    $t->assert('IP blocking for ' . $usr_test->ip_addr, $result, $target);
 
     // TODO combine with the other user unit tests
-    $t->header('user unit tests');
+    $t->subheader($ts . 'user unit tests');
 
     // load by name
     $usr_by_id = new user;
@@ -90,10 +95,10 @@ function run_system_test(all_tests $t): void
     $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_by_id->display();
-    $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
+    $t->assert('user->load for id ' . $wrd_company->id(), $result, $target);
 
 
-    $t->header('Test the user list class (classes/user_list.php)');
+    $t->subheader('user list');
 
     $usr_lst = new user_list($usr);
     $usr_lst->load_active();

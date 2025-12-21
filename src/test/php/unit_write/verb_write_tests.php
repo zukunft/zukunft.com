@@ -30,66 +30,77 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\verb\verb;
-use shared\enum\foaf_direction;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_write_tests
 {
 
     function run(test_cleanup $t): void
     {
+        global $sys;
 
-        global $vrb_cac;
+        // init
+        $t_vrb = new test_verbs($t);
+        $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
 
-        $t->header('verb database write tests');
+        // start the test section (ts)
+        $ts = 'db write verb ';
+        $t->header($ts);
+        $t_vrb->cleanup($ts);
 
-        // check the loading of the "is a" verb
+        $test_name = 'check the loading of the "' . verbs::IS . ')" verb';
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_id($vrb_cac->id(verbs::IS));
-        $t->assert('verb->load ', $vrb->name(), verbs::IS_NAME);
+        $vrb->load_by_id($sys->typ_lst->vrb->id(verbs::IS));
+        $t->assert($test_name, $vrb->name(), verbs::IS_NAME);
 
-        // test the creation of a new verb
+        $test_name = 'test the creation of a new verb with name "' . verbs::TEST_ADD_NAME . ')" verb';
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->set_name(verbs::TEST_ADD_NAME);
-        $result = $vrb->save()->get_last_message();
-        $t->assert('verb->add', $result);
+        $t->assert_true($test_name, $vrb->save($usr_msg));
 
-        // ... test if adding the verb is part of the change log
+        $test_name = '... test if adding the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert('verb->add log', $result, 'zukunft.com system test added "System Test Verb"');
+        $t->assert($test_name, $result, 'zukunft.com system test added "System Test Verb"');
 
-        // test verb not yet used can be deleted
+        $test_name = 'test verb not yet used can be deleted';
         $vrb = new verb;
         $vrb->load_by_name(verbs::TEST_ADD_NAME);
         // TODO this setting of the user should actually not be needed
         $vrb->set_user($t->usr1);
-        $result = $vrb->del();
-        $t->assert('verb->del ', $result);
+        $t->assert_true($test_name, $vrb->del($usr_msg));
 
-        // ... test if deleting the verb is part of the change log
+        $test_name = '... test if deleting the verb is part of the change log';
         $result = $t->log_last_by_user();
-        $t->assert('verb->add log', $result, 'zukunft.com system test deleted "System Test Verb"');
+        $t->assert($test_name, $result, 'zukunft.com system test deleted "System Test Verb"');
 
         // TODO add more tests e.g. that a verb name cannot be used for a word any more
 
 
-        $t->header('verb list write tests');
+        $t->subheader($ts . 'list');
 
         // check the loading of the "is a" verb
-        $wrd_ZH = $t->load_word(words::ZH);
+        $wrd_ZH = $t_db->load_word(words::ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::IS_NAME]);
+
+        $t_vrb->cleanup($ts);
+
     }
 
 }

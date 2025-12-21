@@ -14,6 +14,10 @@
         {
           "name": "Mathematics",
           "type": "wikipedia"
+        },
+        {
+          "name": "Q395",
+          "type": "wikidata"
         }
       ]
     },
@@ -228,7 +232,7 @@
           "name": "Q82435",
           "source": "wikidata",
           "type": "wikidata",
-          "description": "limit of (1 + 1/n)^n as n approaches infinity"
+          "description": "limit of (1 + 1/n)^n as n approaches infinity; transcendental number approximately equal 2.718281828"
         }
       ]
     },
@@ -243,10 +247,10 @@
           "type": "wikipedia"
         },
         {
-          "name": "Q82435",
+          "name": "Q273023",
           "source": "wikidata",
           "type": "wikidata",
-          "description": "limit of (1 + 1/n)^n as n approaches infinity"
+          "description": "limiting difference between the harmonic series and the natural logarithm; equal to ca 0.577"
         }
       ]
     },
@@ -470,7 +474,7 @@
     },
     {
       "name": "Hz",
-      "description": "Is a symbol for hertz",
+      "description": "Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
       "type": "measure",
       "protection": "admin_protection"
     },
@@ -1132,7 +1136,7 @@
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "year",
           "type": "wikipedia"
         }
       ]
@@ -1337,22 +1341,21 @@
       ]
     },
     {
-      "name": "Caesium-133",
+      "name": "Caesium",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Isotopes_of_caesium#Caesium-133",
+          "name": "Caesium",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Year",
-      "type": "time",
+      "name": "Caesium-133",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Year",
+          "name": "Isotopes_of_caesium#Caesium-133",
           "type": "wikipedia"
         }
       ]
@@ -1781,6 +1784,7 @@
     },
     {
       "name": "speed of light",
+      "description": "The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.",
       "from": "speed",
       "verb": "of",
       "to": "light",
@@ -1947,6 +1951,7 @@
     },
     {
       "name": "m/s",
+      "description": "The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.",
       "from": "m/s",
       "verb": "is alias of",
       "to": "metre per second",
@@ -2039,7 +2044,7 @@
     {
       "name": "per km",
       "verb": "per",
-      "to": "day",
+      "to": "km",
       "type": "measure_divisor",
       "protection": "admin_protection"
     },
@@ -2099,32 +2104,32 @@
       ]
     },
     {
-      "name": "1967 (Year)",
+      "name": "1967 (year)",
       "from": "1967",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "1979 (Year)",
+      "name": "1979 (year)",
       "from": "1979",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "1983 (Year)",
+      "name": "1983 (year)",
       "from": "1983",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
-      "name": "2019 (Year)",
+      "name": "2019 (year)",
       "from": "2019",
       "verb": "is a",
-      "to": "Year"
+      "to": "year"
     },
     {
       "name": "year of definition",
-      "from": "Year",
+      "from": "year",
       "verb": "of",
       "to": "definition"
     },
@@ -2374,7 +2379,8 @@
   "views": [
     {
       "name": "base units",
-      "comment": "view the base units with the formulas",
+      "description": "view the base units with the formulas",
+      "code_id": "base_units",
       "type": "detail_view",
       "components": [
         {

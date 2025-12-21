@@ -2,7 +2,7 @@
 
 /*
 
-    web/html/sheet.php - create the html code to display a spreadsheet
+    web/html/table.php - create the html code to display a spreadsheet
     ------------------
 
 
@@ -30,17 +30,15 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::HELPER . 'data_object.php';
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::SHEET . 'position_list.php';
 
-use html\phrase\phrase;
-use html\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 
 class table
 {

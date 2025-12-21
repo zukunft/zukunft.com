@@ -39,28 +39,32 @@
 
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-//include_once paths::SHARED . 'library.php';
-
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_message
 {
-    // the message types that defines what needs to be done next
-    const OK = 1;
-    const NOK = 2;
-    const WARNING = 3;
-    //const YES_NO = 4;
-    //const CONFIRM_CANCEL = 5;
 
+    // the user who has started the process
+    // and who should see the problem descriptions
+    // and the suggested solutions
+    public user|null $usr;
     private int $msg_status;
     private int|null $checksum = null;
+
+    // the start time for longer processes
+    public ?float $start_time;
 
     // array of the information only messages that should be shown to the user
     // to explain the result of a process
@@ -99,25 +103,39 @@ class user_message
 
     /**
      * assumes that normally everything is fine
+     * @param user|null $usr the user for whom the messages should be created
      * @param string $msg_text an initial message text
      *                         if this text is not empty it is assumed that something went wrong
      */
-    function __construct(string $msg_text = '')
+    function __construct(?user $usr = null, string $msg_text = '')
     {
+        $this->usr = $usr;
         $this->info_text = [];
         $this->msg_text = [];
         if ($msg_text == '') {
-            $this->msg_status = self::OK;
+            $this->msg_status = msg_id::OK;
         } else {
             $this->msg_text[] = $msg_text;
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
+        $this->start_time = null;
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->added_depending = false;
         $this->msg_id_lst = [];
         $this->msg_var_lst = [];
         $this->typ_lst = [];
+    }
+
+    /**
+     * create user message list without errors but with the original user
+     * @return user_message empty but with the same user
+     */
+    function clone_reset(): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr;
+        return $usr_msg;
     }
 
 
@@ -131,7 +149,7 @@ class user_message
      */
     function set_not_ok(): void
     {
-        $this->msg_status = self::NOK;
+        $this->msg_status = msg_id::NOK;
 
     }
 
@@ -141,7 +159,7 @@ class user_message
      */
     function set_ok(): void
     {
-        $this->msg_status = self::OK;
+        $this->msg_status = msg_id::OK;
 
     }
 
@@ -151,7 +169,7 @@ class user_message
      */
     function set_warning(): void
     {
-        $this->msg_status = self::WARNING;
+        $this->msg_status = msg_id::WARNING;
 
     }
 
@@ -209,6 +227,77 @@ class user_message
 
 
     /*
+     * api
+     */
+
+    /**
+     * create a json array to send the messages to the frontend
+     * TODO Prio 0 move the message status to a shared const object
+     * TODO Prio 1 move the text messages to id message and include it in the json
+     * TODO Prio 2 add the solution with the prepared job id
+     * @return array with the messages
+     */
+    function api_array(): array
+    {
+        $vars = array();
+        $msg_lst = [];
+        foreach ($this->msg_id_lst as $id_msg) {
+            $msg_lst[] = $id_msg;
+        }
+        $vars[json_fields::USER_MESSAGES] = $msg_lst;
+        $var_lst = [];
+        foreach ($this->msg_var_lst as $var_msg) {
+            $var_lst[] = $var_msg;
+        }
+        $vars[json_fields::USER_MESSAGES_WITH_VARS] = $var_lst;
+        $vars[json_fields::USER_MESSAGES_STATUS] = $this->msg_status;
+        if ($this->usr != null) {
+            $vars[json_fields::USER] = $this->usr->api_json_array(new api_type_list([]));
+        }
+        return $vars;
+    }
+
+    /**
+     * @return string the json message to the backend as a string
+     */
+    function api_json(): string
+    {
+        return json_encode($this->api_array());
+    }
+
+    /**
+     * fill the vars with this database message object based on the given api json array
+     * @param array $api_json the api array with the frontend message
+     */
+    function api_mapper(array $api_json): void
+    {
+        if (array_key_exists(json_fields::USER_MESSAGES, $api_json)) {
+            $msg_lst = $api_json[json_fields::USER_MESSAGES];
+            foreach ($msg_lst as $id_msg) {
+                $this->msg_id_lst[] = $id_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_WITH_VARS, $api_json)) {
+            $var_lst = $api_json[json_fields::USER_MESSAGES_WITH_VARS];
+            foreach ($var_lst as $var_msg) {
+                $this->msg_var_lst[] = $var_msg;
+            }
+        }
+        if (array_key_exists(json_fields::USER_MESSAGES_STATUS, $api_json)) {
+            $this->msg_status = $api_json[json_fields::USER_MESSAGES_STATUS];
+        }
+        if (array_key_exists(json_fields::USER, $api_json)) {
+            $usr = new user();
+            $usr_msg = new user_message();
+            $usr->api_mapper($api_json[json_fields::USER],$usr_msg);
+            if ($usr_msg->is_ok()) {
+                $this->usr = $usr;
+            }
+        }
+    }
+
+
+    /*
      * add
      */
 
@@ -228,7 +317,7 @@ class user_message
             if (!in_array($msg_id, $this->msg_id_lst)) {
                 $this->msg_id_lst[] = $msg_id;
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -267,11 +356,44 @@ class user_message
     }
 
     /**
+     * add a warning message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_warning($msg);
+    }
+
+    /**
+     * add a error message with variables
+     * and add the translated message to the log so that the admin can also see it
+     * TODO Prio 3 check if the causing user is added to the log
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $msg = $this->get_last_message_translated();
+        log_err($msg);
+    }
+
+    /**
      * add a message id and a list of related variables
      * to offer the user to see more details without retry
      * more than one message id can be added to a user message result
      * the message id is translated to the user interface language at the latest possible moment
      * the vars are expected to be in the target language already
+     *
+     * the function just adds the message and sets the status to fail
+     * without writing to the log
      *
      * @param msg_id|null $msg_id the message text to add
      * @return void is never expected to fail
@@ -297,7 +419,7 @@ class user_message
                 $key_lst)) {
                 $this->msg_var_lst[] = [$msg_id, $var_lst];
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok() and !$ok) {
                 $this->set_not_ok();
             }
@@ -326,7 +448,7 @@ class user_message
             } else {
                 $this->typ_lst[$type] = [$msg_text];
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -348,7 +470,7 @@ class user_message
             if (!in_array($msg_text, $this->msg_text)) {
                 $this->msg_text[] = $msg_text;
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -466,7 +588,7 @@ class user_message
      */
     function is_ok(): bool
     {
-        if ($this->msg_status == self::OK) {
+        if ($this->msg_status == msg_id::OK) {
             return true;
         } else {
             return false;
@@ -524,40 +646,14 @@ class user_message
     }
 
     /**
-     * TODO review
+     * TODO Prio 3 review
      * @return string the translated text for all messages with vars
      */
     function var_message_text(): string
     {
         global $mtr;
-
-        $part = '';
-        foreach ($this->msg_var_lst as $msg_var) {
-            if ($part != '') {
-                $part .= ', ';
-            }
-            $msg_txt = $mtr->txt($msg_var[0]);
-            foreach ($msg_var[1] as $key => $var) {
-                // TODO use a library function for this
-                // avoid using escaped var makers (probably not 100% correct)
-                $msg_txt = str_replace(
-                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
-                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
-                // replace the var
-                $msg_txt = str_replace(
-                    msg_id::VAR_START . $key . msg_id::VAR_END,
-                    $var, $msg_txt);
-                // undo escaped vars
-                $msg_txt = str_replace(
-                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
-                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
-            }
-            // replace the escaped var makers
-            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
-            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
-            $part .= $msg_txt;
-        }
-        return $part;
+        $lib = new library();
+        return $lib->msg_var_text($this->msg_var_lst, $mtr);
     }
 
     /**
@@ -572,6 +668,10 @@ class user_message
         if (count($this->msg_text) > $pos and $pos >= 0) {
             return $this->msg_text[$pos];
         } else {
+            // TODO Prio 1 activate
+            //$msg = 'user message position ' . $pos . ' not found';
+            //log_warning($msg);
+            //return $msg;
             return '';
         }
     }
@@ -589,7 +689,9 @@ class user_message
         if (count($this->msg_var_lst) > $pos and $pos >= 0) {
             return $this->var_message_text();
         } else {
-            return '';
+            $msg = 'user message translation for position ' . $pos . ' not found';
+            log_warning($msg);
+            return $msg;
         }
     }
 
@@ -685,7 +787,7 @@ class user_message
     private function combine_status(user_message $msg_to_add): void
     {
         if (!$msg_to_add->is_ok()) {
-            $this->msg_status = self::NOK;
+            $this->msg_status = msg_id::NOK;
         }
     }
 

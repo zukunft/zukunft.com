@@ -32,17 +32,19 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\formula\formula;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\result\results;
-use cfg\value\value;
-use shared\const\formulas;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_write_tests
 {
@@ -52,29 +54,29 @@ class result_write_tests
 
         global $usr;
 
-        $t->header('result database write tests');
+        // init
+        $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
+
+        // start the test section (ts)
+        $ts = 'db write result ';
+        $t->header($ts);
 
         /*
          * prepare
          */
 
-        // test adding of one formula
+        $test_name = 'add of formula ' . formulas::INCREASE_EXP . ' with name ' . formulas::SYSTEM_TEST_ADD;
         $frm = new formula($t->usr1);
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
         $frm->usr_text = formulas::INCREASE_EXP;
-        $result = $frm->save()->get_last_message();
-        if ($frm->id() > 0) {
-            $result = $frm->usr_text;
-        }
-        $target = formulas::INCREASE_EXP;
-        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
+        $test_name = 'rename formula to ' . formulas::SYSTEM_TEST_RENAMED;
         // check if the formula can be renamed
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_ADD);
         $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
-        $result = $frm->save()->get_last_message();
-        $target = '';
-        $t->display('formula->save rename "' . formulas::SYSTEM_TEST_ADD . '" to "' . formulas::SYSTEM_TEST_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert_true($test_name, $frm->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // test load result without time
@@ -97,8 +99,8 @@ class result_write_tests
         }
         // TODO review
         $target = results::TV_INCREASE_LONG;
-        // TODO activate Prio 1
-        //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        // TODO Prio 1 activate
+        //$t->assert('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test load result with time
         $phr_lst->add_name(words::YEAR_2020);
@@ -117,10 +119,10 @@ class result_write_tests
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
-            // TODO activate Prio 1
-            //$t->display('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result);
+            // TODO Prio 1 activate
+            //$t->assert('value->val_formatted incl time (' . $time_phr->dsp_id() . ') for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $result, $target);
         } else {
-            $t->display('value->val_formatted incl time for ', $target, $result);
+            $t->assert('value->val_formatted incl time for ', $result, $target);
         }
 
         // test the scaling
@@ -148,8 +150,8 @@ class result_write_tests
             $result = '';
         }
         $target = 8505.251;
-        // TODO activate Prio 1
-        //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        // TODO Prio 1 activate
+        //$t->assert('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value
         // e.g. if ABB,sales,2014 is requested, but there is only a value for ABB,sales,2014,CHF,million get it
@@ -166,7 +168,7 @@ class result_write_tests
         if ($result != $target) {
             $target = 0.007871833296164;
         }
-        $t->display('value->load the best guess for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert('value->load the best guess for ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_PAGE);
         */
 
         /*
@@ -185,16 +187,16 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
-        $frm->del();
+        $frm->del($usr_msg);
         $frm->set_user($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
-        $frm->del();
+        $frm->del($usr_msg);
 
 
     }
@@ -204,10 +206,14 @@ class result_write_tests
 
         global $usr;
 
-        $t->header('result list database write tests');
+        $t_db = new test_db_load($t);
+
+        // start the test section (ts)
+        $ts = 'db write result list ';
+        $t->header($ts);
 
         // load results by formula
-        $frm = $t->load_formula(formulas::SYSTEM_TEST_RENAMED);
+        $frm = $t_db->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
@@ -215,7 +221,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
@@ -223,14 +229,14 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K, words::YEAR_2020));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K, words::YEAR_2020));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by source phrase group
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::MIO));
+        $grp = $t_db->load_phrase_group(array(words::CH, words::INHABITANTS, words::MIO));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
@@ -238,14 +244,14 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $time_phr = $t->load_phrase(words::YEAR_2020);
+        $time_phr = $t_db->load_phrase(words::YEAR_2020);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by word id
-        $wrd = $t->load_word(words::INHABITANTS);
+        $wrd = $t_db->load_word(words::INHABITANTS);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($wrd);
         $result = $res_lst->dsp_id();
@@ -253,8 +259,8 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // TODO add PE frm test
-        //$frm = $t->load_formula(TF_PE);
-        $frm = $t->load_formula(formulas::INCREASE);
+        //$frm = $t_db->load_formula(TF_PE);
+        $frm = $t_db->load_formula(formulas::INCREASE);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();

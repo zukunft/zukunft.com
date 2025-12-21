@@ -40,10 +40,12 @@
 
 */
 
-namespace html\group;
+namespace Zukunft\ZukunftCom\main\php\web\group;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -51,14 +53,17 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\phrase\phrase as phrase;
-use html\phrase\phrase_list as phrase_list;
-use html\sandbox\sandbox_named as sandbox_named;
-use html\user\user_message;
-use html\word\triple as triple;
-use html\word\word as word;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple;
+use Zukunft\ZukunftCom\main\php\web\word\word as word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class group extends sandbox_named
 {
@@ -172,9 +177,9 @@ class group extends sandbox_named
      */
     function phr_lst(): phrase_list
     {
-        $result = new phrase_list();
-        $result->set_lst($this->lst());
-        return $result;
+        $phr_lst = new phrase_list();
+        $phr_lst->set_lst($this->lst());
+        return $phr_lst;
     }
 
 
@@ -185,12 +190,13 @@ class group extends sandbox_named
     /**
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array): user_message
+    function api_mapper(array $json_array, user_message $usr_msg): bool
     {
         if (array_key_exists(json_fields::ID, $json_array)) {
-            $usr_msg = parent::api_mapper($json_array);
+            parent::api_mapper($json_array, $usr_msg);
             if (array_key_exists(json_fields::PHRASES, $json_array)) {
                 $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
@@ -204,22 +210,42 @@ class group extends sandbox_named
                 $this->set_phrase_from_json_array($phr_json);
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
+     * set the vars of this group frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param data_object|null $dto the cache as a parameter to be able to simulate test conditions
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array, user_message $usr_msg, data_object|null $dto = null): user_message
+    {
+        parent::url_mapper($url_array, $usr_msg, $dto);
+        // even if the group is added set already the id
+        if (array_key_exists(url_var::ID, $url_array)) {
+            $this->set_id($url_array[url_var::ID]);
+        }
+        return $usr_msg;
+    }
+
+
+    /**
+     * TODO Prio 1 add user_message parameter
      * @param array $phr_json the json array of a phrase
      * @return void
      */
     private function set_phrase_from_json_array(array $phr_json): void
     {
+        $usr_msg = new user_message();
         $wrd_or_trp = new word();
         if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
             if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $wrd_or_trp = new triple();
             }
         }
-        $wrd_or_trp->api_mapper($phr_json);
+        $wrd_or_trp->api_mapper($phr_json, $usr_msg);
         $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;
@@ -288,17 +314,46 @@ class group extends sandbox_named
      */
 
     /**
-     * the name of the phrase group with the tooltip 
+     * the name of the phrase group as pure text
+     * e.g. for form fields
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the html code to show the group name
+     */
+    function name(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    {
+        $result = '';
+        if (parent::name() <> '') {
+            $result .= parent::name();
+        } else {
+            $lst_to_show = $this->phr_lst();
+            if ($phr_lst_exclude != null) {
+                if (!$phr_lst_exclude->is_empty()) {
+                    $lst_to_show->remove($phr_lst_exclude);
+                }
+            }
+            foreach ($lst_to_show->lst() as $phr) {
+                if ($result <> '') {
+                    $result .= $sep;
+                }
+                $result .= $phr->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the phrase group with the tooltip
      * or the names of the phrases with the tooltip
      * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
      * @param string $sep the separator between the phrase names
      * @return string the html code to show the group name
      */
-    function name_tip(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    function name_tip(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
     {
         $result = '';
         if ($this->name_tip_dirty or $phr_lst_exclude != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= parent::name_tip();
             } else {
                 $lst_to_show = $this->phr_lst();
@@ -317,39 +372,28 @@ class group extends sandbox_named
             $this->name_tip = $result;
             $this->name_tip_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_tip;
         }
         return $result;
     }
 
     /**
-     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
+     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
      * @return string
      */
-    function name_link_list(phrase_list $phr_lst_header = null): string
+    function name_link_list(?phrase_list $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_link_dirty or $phr_lst_header != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= $this->name_link();
             } else {
-                $lst_to_show = $this->phr_lst();
-                if ($phr_lst_header != null) {
-                    if (!$phr_lst_header->is_empty()) {
-                        $lst_to_show->remove($phr_lst_header);
-                    }
-                }
-                foreach ($lst_to_show->lst() as $phr) {
-                    if ($result <> '') {
-                        $result .= ', ';
-                    }
-                    $result .= $phr->name_link();
-                }
+                $result .= $this->phr_lst()->name_link_list($phr_lst_header);
             }
             $this->name_link = $result;
             $this->name_link_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_link;
         }
         return $result;
     }

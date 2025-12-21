@@ -44,12 +44,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 
 include_once PHP_PATH . 'frontend.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
+
 // reset the html code var
 $result = '';
 
 // start the user session
 $session = new frontend('view');
-$result .= $session->start(); // e.g. if requested write to the system log server that a user has sent a new request
+$result .= $session->start('view pur'); // e.g. if requested write to the system log server that a user has sent a new request
 
 // check e.g. if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($result != '') {

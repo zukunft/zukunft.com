@@ -2,9 +2,11 @@
 
 /*
 
-    cfg/db/db_check.php - test if the database exists and start the creation or upgrade process
-    -------------------
+    model/db/db_check.php - test if the database exists and start the creation or upgrade process
+    ---------------------
   
+    The main sections of this object are
+    - upgrade:        perform a version upgrade
 
     This file is part of zukunft.com - calc with words
 
@@ -30,11 +32,12 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -42,39 +45,43 @@ include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_RESULT . 'result_two.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
-include_once paths::MODEL_SYSTEM . 'system_time_type.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\config;
-use cfg\const\files;
-use cfg\formula\formula_list;
-use cfg\group\group;
-use cfg\phrase\phrase;
-use cfg\result\result_two;
-use cfg\system\sys_log_function;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\user\user_profile_list;
-use cfg\value\value;
-use cfg\value\value_db;
-use shared\const\users;
-use shared\enum\user_profiles;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_two;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_check
 {
 
-    const TBL_WORD = 'word';
-    const TBL_TRIPLE = 'triple';
+    /*
+     * upgrade
+     */
 
     /**
      * read the version number from the database and compare it with the backend version
@@ -107,20 +114,20 @@ class db_check
         }
 
         $cfg = new config();
-        $cfg->check(config::SITE_NAME, POD_NAME, $db_con);
+        $cfg->check(config::SITE_NAME, def::POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
         if ($db_version == '') {
-            $cfg->set(config::VERSION_DB, FIRST_VERSION, $db_con);
-        } elseif ($db_version != PRG_VERSION) {
+            $cfg->set(config::VERSION_DB, def::FIRST_VERSION, $db_con);
+        } elseif ($db_version != def::PRG_VERSION) {
             $do_consistency_check = true;
-            if (prg_version_is_newer($db_version)) {
+            if ($lib->prg_version_is_newer($db_version)) {
                 log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
             } else {
                 $diff_txt = match ($db_version) {
-                    NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
-                    FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
+                    def::NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
+                    def::FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
                 };
                 $usr_msg->add_message_text($diff_txt);
             }
@@ -160,11 +167,12 @@ class db_check
      */
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
-        global $sys_times;
+        global $sys;
 
         $cfg = new config();
         $lib = new library();
-        $sys_times->switch(system_time_type::DB_UPGRADE);
+        $usr_msg = new user_message();
+        $sys->times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
         $msg = $this->db_move_time_phrase_to_group();
@@ -246,7 +254,7 @@ class db_check
         $result .= $db_con->add_column('user_' . 'values_time_series', 'protect_id', 'smallint');
         $result .= $db_con->add_column('position_type', 'code_id', 'varchar(50)');
         $result .= $db_con->add_column('source_type', 'description', 'text');
-        $result .= $db_con->add_column('ref', user::FLD_ID, 'bigint');
+        $result .= $db_con->add_column('ref', user_db::FLD_ID, 'bigint');
         $result .= $db_con->add_column('ref', 'source_id', 'bigint');
         $result .= $db_con->add_column('ref', 'url', 'text');
         $result .= $db_con->add_column('ref', 'description', 'text');
@@ -301,7 +309,7 @@ class db_check
         }
         $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint');
         $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint');
-        $result .= $db_con->add_column('view_term_link', user::FLD_ID, 'bigint');
+        $result .= $db_con->add_column('view_term_link', user_db::FLD_ID, 'bigint');
         $result .= $db_con->add_column('view_term_link', 'description', 'text');
         $result .= $db_con->add_column('view_term_link', 'excluded', 'smallint');
         $result .= $db_con->add_column('view_term_link', 'share_type_id', 'smallint');
@@ -332,7 +340,7 @@ class db_check
         $result .= $db_con->column_allow_null('job', 'start_time');
         $result .= $db_con->column_allow_null('job', 'end_time');
         $result .= $db_con->column_allow_null('job', 'row_id');
-        $result .= $db_con->column_force_not_null('user_' . 'source', user::FLD_ID);
+        $result .= $db_con->column_force_not_null('user_' . 'source', user_db::FLD_ID);
         $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
         $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', 'phrase_type');
@@ -358,11 +366,11 @@ class db_check
             $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_MYSQL);
             $result .= $db_con->exe_try('Finally add the new views', $sql);
         }
         if ($db_con->db_type == sql_db::POSTGRES) {
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_POSTGRES);
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }
@@ -371,23 +379,23 @@ class db_check
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
-            global $usr_pro_cac;
-            $usr_pro_cac = new user_profile_list();
-            $usr_pro_cac->load($db_con);
+            global $sys;
+            $sys->typ_lst->usr_pro = new user_profile_list();
+            $sys->typ_lst->usr_pro->load($db_con);
 
             // add missing system users if needed
             $sys_usr = new user();
             if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 $sys_usr->load_by_name(users::SYSTEM_NAME);
                 $sys_usr->set_profile(user_profiles::SYSTEM);
-                $sys_usr->save();
+                $sys_usr->save_user($usr_msg, $sys_usr);
             }
             // add missing system users if needed
             $usr_admin = new user();
             if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
                 $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
                 $usr_admin->set_profile(user_profiles::ADMIN);
-                $usr_admin->save();
+                $usr_admin->save_user($usr_msg, $sys_usr);
             }
 
             // add missing system test users if needed
@@ -395,11 +403,11 @@ class db_check
             if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
                 $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
                 $test_usr->set_profile(user_profiles::TEST);
-                $test_usr->save();
+                $test_usr->save_user($usr_msg, $sys_usr);
                 $test_usr2 = new user();
                 $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
                 $test_usr2->set_profile(user_profiles::TEST);
-                $test_usr2->save();
+                $test_usr2->save_user($usr_msg, $sys_usr);
             }
 
             $test_usr_normal = new user();
@@ -407,7 +415,7 @@ class db_check
                 $test_usr_normal = new user();
                 $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
                 $test_usr_normal->set_profile(user_profiles::NORMAL);
-                $test_usr_normal->save();
+                $test_usr_normal->save_user($usr_msg, $sys_usr);
             }
         }
 
@@ -422,16 +430,16 @@ class db_check
         // Change code_id in verbs from contains to is_part_of
 
         // update the database version number in the config
-        $cfg->set(config::VERSION_DB, PRG_VERSION, $db_con);
+        $cfg->set(config::VERSION_DB, def::PRG_VERSION, $db_con);
 
 
         // TODO create table user_value_time_series
         // check if the config save has been successful
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
-        if ($db_version != PRG_VERSION) {
+        if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
-        $sys_times->switch();
+        $sys->times->switch();
 
         return $result;
     }
@@ -457,7 +465,7 @@ class db_check
         $cfg = new config();
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);
-        if ($db_version != PRG_VERSION) {
+        if ($db_version != def::PRG_VERSION) {
             $result = 'Database upgrade to 0.0.4 has failed';
         }
 

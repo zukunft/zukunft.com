@@ -2,8 +2,8 @@
 
 /*
 
-    model/source/source_list.php - al list of source objects
-    ----------------------------
+    model/ref/source_list.php - al list of source objects
+    -------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,9 +30,9 @@
   
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql.php';
@@ -47,14 +47,14 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\import\import;
-use cfg\sandbox\sandbox_list_named;
-use cfg\user\user_message;
-use shared\const\words;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class source_list extends sandbox_list_named
 {
@@ -74,7 +74,7 @@ class source_list extends sandbox_list_named
      */
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
-        return parent::rows_mapper_obj(new source($this->user()), $db_rows, $load_all);
+        return parent::rows_mapper_obj(new source($this->get_user()), $db_rows, $load_all);
     }
 
 
@@ -88,7 +88,7 @@ class source_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -112,7 +112,7 @@ class source_list extends sandbox_list_named
      * @param array $ids an array of source ids which should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -135,7 +135,7 @@ class source_list extends sandbox_list_named
      * uses the erm view which includes only the main fields
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
@@ -160,7 +160,7 @@ class source_list extends sandbox_list_named
 
         $src_lst = $db_con->get($qp);
         foreach ($src_lst as $db_row) {
-            $src = new source($this->user());
+            $src = new source($this->get_user());
             $src->row_mapper_sandbox($db_row);
             $result = $this->add($src);
         }
@@ -187,7 +187,7 @@ class source_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -218,13 +218,20 @@ class source_list extends sandbox_list_named
     /**
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
+     * @param user_message in case of an issue the problem description what has failed and a suggested solution
      * @param import|null $imp the import object with the estimate of the total save time
-     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     * @return bool true if everything has been fine
      */
-    function save(import $imp = null): user_message
+    function save(user_message $usr_msg, ?import $imp = null): bool
     {
         // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
-        return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));
+        return parent::save_block_wise(
+            $imp,
+            words::SOURCES,
+            source::class,
+            new source_list($this->get_user()),
+            $usr_msg
+        );
     }
 
 }

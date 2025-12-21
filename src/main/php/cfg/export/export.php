@@ -2,7 +2,7 @@
 
 /*
 
-    export.php - create an object to export data - the object can be converted to a json, yaml or XML message
+    model/export.php - create an object to export data - the object can be converted to a json, yaml or XML message
     ----------
 
     offer the user the long or the short version
@@ -41,22 +41,21 @@
   
 */
 
-namespace cfg\export;
+namespace Zukunft\ZukunftCom\main\php\cfg\export;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED . 'library.php';
-include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\config;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class export
 {
@@ -89,7 +88,7 @@ class export
             } else {
 
                 // 1. create the header
-                $export_obj->version = PRG_VERSION;
+                $export_obj->version = def::PRG_VERSION;
                 $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
@@ -111,7 +110,7 @@ class export
                 // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
                 log_debug('export->get typed words');
                 if ($wrd_lst != null) {
-                    $exp_words = $wrd_lst->export_json();
+                    $exp_words = $wrd_lst->export_json([]);
                     if (count($exp_words) > 0) {
                         $export_obj->words = $exp_words;
                     }
@@ -122,7 +121,7 @@ class export
                 $lnk_lst = $phr_lst->triples();
                 $exp_triples = array();
                 foreach ($lnk_lst->lst() as $lnk) {
-                    $exp_lnk = $lnk->export_json();
+                    $exp_lnk = $lnk->export_json([]);
                     if (isset($exp_lnk)) {
                         $exp_triples[] = $exp_lnk;
                     }
@@ -137,7 +136,7 @@ class export
                 $exp_formulas = array();
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
-                        $exp_frm = $frm->export_json();
+                        $exp_frm = $frm->export_json([]);
                         if (isset($exp_frm)) {
                             $exp_formulas[] = $exp_frm;
                         }
@@ -153,7 +152,7 @@ class export
                 if ($source_lst != null) {
                     foreach ($source_lst as $src) {
                         if (isset($src)) {
-                            $exp_src = $src->export_json();
+                            $exp_src = $src->export_json([]);
                             if (isset($exp_src)) {
                                 $exp_sources[] = $exp_src;
                             }
@@ -169,7 +168,7 @@ class export
                 $exp_values = array();
                 foreach ($val_lst->lst() as $val) {
                     if (isset($val)) {
-                        $exp_val = $val->export_json();
+                        $exp_val = $val->export_json([]);
                         if (isset($exp_val)) {
                             $exp_values[] = $exp_val;
                         }
@@ -184,7 +183,7 @@ class export
                 $view_lst = $wrd_lst->view_lst();
                 $exp_view_lst = array();
                 foreach ($view_lst as $view) {
-                    $exp_view_lst[] = $view->export_json();
+                    $exp_view_lst[] = $view->export_json([]);
                 }
                 $export_obj->views = $exp_view_lst;
 
@@ -197,7 +196,7 @@ class export
                         $res_lst = $frm->get_res_lst();
                         if ($res_lst->lst() != null) {
                             foreach ($res_lst->lst() as $res) {
-                                $exp_res = $res->export_json();
+                                $exp_res = $res->export_json([]);
                                 if (isset($exp_res)) {
                                     $exp_results[] = $exp_res;
                                 }

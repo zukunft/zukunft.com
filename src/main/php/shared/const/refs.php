@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\const;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 class refs
 {
@@ -42,29 +42,32 @@ class refs
     // *_COM is the tooltip/description of the link to the external reference
     // *_ID the fixed database due to the initial setup
     // *_URL is the url overwrite for this reference
-    const WIKIDATA_TYPE = 'wikidata';
-    const PI_COM = 'pi - ratio of the circumference of a circle to its diameter';
-    const PI_KEY = 'Q167';
-    const PI_ID = 21;
-    const PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    const string WIKIDATA_TYPE = 'wikidata';
+    const string PI_COM = 'pi - ratio of the circumference of a circle to its diameter';
+    const string PI_KEY = 'Q167';
+    const int PI_ID = 22;
+    const string PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    const string MATH_KEY = 'Q395';
+    const int MATH_ID = 2;
+    const string MATH_COM = 'field of study';
 
     // to test changing the external key of a reference
-    const CHANGE_OLD_KEY = 'Q901028';
-    const CHANGE_COM = 'global warming potential - estimate of how an atmospheric gas affects global climate change';
-    const CHANGE_NEW_KEY = 'Q999999999';
+    const string CHANGE_OLD_KEY = 'Q901028';
+    const string CHANGE_COM = 'global warming potential - estimate of how an atmospheric gas affects global climate change';
+    const string CHANGE_NEW_KEY = 'Q999999999';
 
     // to test adding a new reference type
-    const SYSTEM_TEST_ADD = 'System Test Reference External Key';
-    const SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
+    const string SYSTEM_TEST_ADD = 'System Test Reference External Key';
+    const string SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
 
     // must be the same as in /resource/api/source/source_put.json
-    const SYSTEM_TEST_API_ADD_KEY = 'System Test Reference API added';
-    const SYSTEM_TEST_API_ADD_COM = 'System Test Reference Description API';
-    const SYSTEM_TEST_API_ADD_URL = 'https://api.zukunft.com/';
+    const string SYSTEM_TEST_API_ADD_KEY = 'System Test Reference API added';
+    const string SYSTEM_TEST_API_ADD_COM = 'System Test Reference Description API';
+    const string SYSTEM_TEST_API_ADD_URL = 'https://api.zukunft.com/';
 
     // reference group for testing
-    // TODO activate Prio 3
-    const RESERVED_REFERENCES_TYPES = array(
+    // TODO Prio 3 activate
+    const array RESERVED_REFERENCES_TYPES = array(
         self::SYSTEM_TEST_ADD_COM
     );
 

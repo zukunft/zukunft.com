@@ -35,13 +35,13 @@ PREPARE value_prime_p1_update_log_21000_user_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_prime_p1_update_log_21000_user
-       (1,
+       (3,
         1,
         1,
         123.456,
         3.1415926535898,
-        32819,
-        -51,
+        32770,
+        -2,
         0,
         0,
         0,

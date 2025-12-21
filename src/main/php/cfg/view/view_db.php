@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/ref_db.php - the database const for reference tables
-    --------------------
+    model/view/view_db.php - the database const for view tables
+    ----------------------
 
     The main sections of this object are
     - db const:          const for the database link
@@ -33,9 +33,9 @@
 
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::DB . 'sql.php';
@@ -47,15 +47,15 @@ include_once paths::DB . 'sql_field_type.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 
-use cfg\component\view_style;
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\helper\type_object;
-use cfg\language\language;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 
 class view_db
 {
@@ -68,46 +68,48 @@ class view_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'view_id';
-    const FLD_NAME_COM = 'the name of the view used for searching';
-    const FLD_NAME = 'view_name';
-    const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
-    const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
-    const FLD_TYPE = 'view_type_id';
-    const FLD_STYLE_COM = 'the default display style for this view';
-    const FLD_STYLE = 'view_style_id';
-    const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
+    const string FLD_ID = 'view_id';
+    const string FLD_NAME_COM = 'the name of the view used for searching';
+    const string FLD_NAME = 'view_name';
+    const string FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
+    const string FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
+    const string FLD_TYPE = 'view_type_id';
+    const string FLD_STYLE_COM = 'the default display style for this view';
+    const string FLD_STYLE = 'view_style_id';
+    const string FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
 
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array(
+    const array FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [language::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
+        [sql_db::FLD_USAGE, sql_db::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_USAGE_COM],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
+    const array FLD_LST_NON_CHANGEABLE = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
-        sql_db::FLD_CODE_ID
+    const array FLD_NAMES = array(
+        sql_db::FLD_CODE_ID,
+        sql_db::FLD_USAGE
     );
     // list of the user specific database field names
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
     );
     // list of the user specific database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_STYLE,
         sql_db::FLD_EXCLUDED,
@@ -115,10 +117,11 @@ class view_db
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_STYLE,
+        sql_db::FLD_USAGE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT

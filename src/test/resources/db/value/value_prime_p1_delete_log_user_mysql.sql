@@ -27,11 +27,11 @@ BEGIN
 END;
 
 SELECT value_prime_p1_delete_log_user
-       (1,
+       (3,
         3,
         1,
-        32819,
-        -51,
+        32770,
+        -2,
         0,
         0,
         0,

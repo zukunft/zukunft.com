@@ -30,10 +30,10 @@
   
 */
 
-namespace html\element;
+namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FIGURE . 'figure.php';
@@ -42,28 +42,28 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::RESULT . 'result.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED . 'library.php';
 
-use html\figure\figure as figure;
-use html\figure\figure_list;
-use html\formula\formula;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term_list;
-use html\result\result;
-use html\sandbox\list_dsp;
-use html\user\user_message;
-use html\value\value;
-use html\word\word;
-use shared\library;
-use shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 
-class element_group extends list_dsp
+class element_group extends ListBase
 {
 
     // $lst is here an array of formula elements such as a word, verb or formula
@@ -96,7 +96,7 @@ class element_group extends list_dsp
     }
 
     // TODO handle multi entry cases if needed
-    function id(): int
+    function id(string $code_id): int
     {
         if (count($this->lst()) == 1) {
             return $this->lst()[0]->obj->id();
@@ -145,6 +145,7 @@ class element_group extends list_dsp
         $result = '';
 
         $fig_lst = $this->figures();
+        $usr_msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -153,7 +154,7 @@ class element_group extends list_dsp
             log_debug('display figure');
             $api_json = $fig->api_json([api_type::INCL_PHRASES]);
             $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json);
+            $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
         }
 
@@ -222,7 +223,7 @@ class element_group extends list_dsp
             // e.g. 1: setting the $val_time_phr to 2020
             if ($frm_elm->type == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
-                if ($frm_elm->obj->is_special()) {
+                if ($frm_elm->obj->is_predefined()) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);
                     if (isset($val_time_phr)) {
                         log_debug('adjusted time ' . $val_time_phr->dsp_id());
@@ -257,7 +258,7 @@ class element_group extends list_dsp
                 $fig = $wrd_val->figure();
                 $fig->set_symbol($frm_elm->symbol);
                 $fig_lst->add($fig);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->symbol() . ')');
+                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
             } else {
                 // if there is no number that the user has entered for the word list, try to get the most useful formula result
 
@@ -309,6 +310,7 @@ class element_group extends list_dsp
         $result = '';
 
         $fig_lst = $this->figures();
+        $usr_msg = new user_message();
         log_debug('got figures');
 
         // show the time if adjusted by a special formula element
@@ -317,7 +319,7 @@ class element_group extends list_dsp
             log_debug('display figure');
             $api_json = $fig->api_json([api_type::INCL_PHRASES]);
             $fig_dsp = new figure();
-            $fig_dsp->set_from_json($api_json);
+            $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
         }
 

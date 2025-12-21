@@ -5,7 +5,6 @@
 --
 
 ALTER TABLE refs
-    ADD PRIMARY KEY (ref_id),
     ADD KEY refs_user_idx (user_id),
     ADD KEY refs_external_key_idx (external_key),
     ADD KEY refs_source_idx (source_id),
@@ -17,7 +16,6 @@ ALTER TABLE refs
 --
 
 ALTER TABLE user_refs
-    ADD PRIMARY KEY (ref_id,user_id),
     ADD KEY user_refs_ref_idx (ref_id),
     ADD KEY user_refs_user_idx (user_id),
     ADD KEY user_refs_external_key_idx (external_key),

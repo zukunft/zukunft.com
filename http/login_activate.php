@@ -34,29 +34,33 @@ global $debug;
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-use html\html_base;
-use cfg\db\sql_db;
-use cfg\user\user;
-use shared\api;
-use shared\const\users;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 // open database
-$db_con = prg_start("login_activate", "center_form");
+$app = new frontend();
+$db_con = $app->start("login_activate", "center_form");
 $html = new html_base();
 
 if ($db_con->is_open()) {
 
     $result = ''; // reset the html code var
-    $msg = '';
+    $usr_msg = new user_message();
 
     $_SESSION['logged'] = FALSE;
 
     if (isset($_POST['submit'])) {
         $html = new html_base();
+        $msg = '';
 
-        $usr_id = $_POST[api::URL_VAR_ID];
+        $usr_id = $_POST[url_var::ID];
         $debug = $_POST['debug'];
         log_debug("login_activate (user: " . $usr_id . ")");
 
@@ -134,10 +138,10 @@ if ($db_con->is_open()) {
     }
 
     if (!$_SESSION['logged']) {
-        $usr_id = $_GET[api::URL_VAR_ID];
+        $usr_id = $_GET[url_var::ID];
         if ($usr_id <= 0) {
             if (isset($_POST['submit'])) {
-                $usr_id = $_POST[api::URL_VAR_ID];
+                $usr_id = $_POST[url_var::ID];
             }
         }
         if ($usr_id > 0) {
@@ -175,5 +179,5 @@ if ($db_con->is_open()) {
     echo $result;
 
     // close the database
-    prg_end($db_con);
+    $app->end($db_con);
 }

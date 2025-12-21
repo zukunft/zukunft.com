@@ -30,34 +30,43 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once paths::SHARED_TYPES . 'view_styles.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
 
-use shared\enum\source_types;
-use shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class source_type_list extends type_list
 {
 
-    const NAME = 'source type';
+    const string NAME = url_var::SOURCE_TYPE;
 
     /**
+     * create the HTML code to select a source type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected source type
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style e.g. to overwrite the size of the select field
      * @returns string the html code to select a type from this list
      */
     function selector(
-        string $form = '',
-        int $selected = 0,
-        string $name = self::NAME,
-        string $bs_class = view_styles::COL_SM_4,
-        string $label = ''
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME,
+        string   $style = view_styles::COL_SM_4
     ): string
     {
-        global $html_source_types;
-        return parent::type_selector($html_source_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_SOURCE_TYPE, $style);
     }
 
 

@@ -29,24 +29,58 @@
   
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class view_type
 {
 
     // list of the view types that have a coded functionality
-    const DEFAULT = "default";
-    const ENTRY = "entry";
-    const MASK_DEFAULT = "mask_default";
-    const PRESENT = "presentation";
-    const WORD_DEFAULT = "word_default";
-    const DETAIL = "detail_view";
-    const SYSTEM = "system";
+    const string DEFAULT = "default";
+    const string ENTRY = "entry";
+    const string MASK_DEFAULT = "mask_default";
+    const string PRESENT = "presentation";
+    const string WORD_DEFAULT = "word_default";
+    const string DETAIL = "detail_view";
+    const string SYSTEM = "system";
+    const string EXPORT = "export";
+
+    // object specific views
+    const string WORD = "word";
+    const string VERB = "verb";
+    const string TRIPLE = "triple";
+    const string SOURCE = "source";
+    const string REF = "ref";
+    const string LANGUAGE = "language";
+    const string VALUE = "value";
+    const string FORMULA = "formula";
+    const string RESULT = "result";
+
 
     // list of view types that are used by the system
     // and should not be assignable by users
-    const SYSTEM_TYPES = array(
-        self::SYSTEM
+    const array SYSTEM_TYPES = array(
+        self::ENTRY,
+        self::MASK_DEFAULT,
+        self::SYSTEM,
+        self::EXPORT,
+    );
+
+    // list of view types that are specific for other objects than words or triples
+    // and should not be assignable to words or triples
+    const array NON_PHRASE_TYPES = array(
+        self::VERB,
+        self::SOURCE,
+        self::REF,
+        self::LANGUAGE,
+        self::VALUE,
+        self::FORMULA,
+        self::RESULT,
+    );
+
+    // list of view types that can be used for values and results
+    const array VALUE_TYPES = array(
+        self::VALUE,
+        self::RESULT,
     );
 
 }

@@ -32,19 +32,26 @@
 
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table_list.php';
@@ -54,6 +61,7 @@ include_once paths::MODEL_LOG . 'changes_big.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
@@ -63,31 +71,40 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\data_object;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\phrase\term;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\word;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class verb extends type_object
 {
 
+    // TODO MAYBE base verb on named sandbox object like suggested in the frontend or change the frontend object
     // TODO add an easy way to get the name from the code id
 
 
@@ -96,13 +113,13 @@ class verb extends type_object
      */
 
     // object specific database and JSON object field names and comments
-    const TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
+    const string TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = verb_db::FLD_ID;
-    const FLD_NAMES = verb_db::FLD_NAMES;
-    const FLD_LST_NAME = verb_db::FLD_LST_NAME;
-    const FLD_LST_ALL = verb_db::FLD_LST_ALL;
+    const string FLD_ID = verb_db::FLD_ID;
+    const array FLD_NAMES = verb_db::FLD_NAMES;
+    const array FLD_LST_NAME = verb_db::FLD_LST_NAME;
+    const array FLD_LST_ALL = verb_db::FLD_LST_ALL;
 
 
     /*
@@ -130,18 +147,26 @@ class verb extends type_object
     private ?string $frm_name = null;
     // how often this current used has used the verb
     // (until now just the usage of all users)
-    private int $usage = 0;
+    private ?int $usage = null;
+    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
+    private ?float $impact = null;
 
 
     /*
      * construct and map
      */
 
+    /**
+     * set the main mandatory vars of this verb object
+     * @param int $id the id can be null for new verbs
+     * @param string $name the name of the verb must be unique
+     * @param string|null $code_id the code id can be null for new verbs that does not yet have any fixed assigned code
+     */
     function __construct(int $id = 0, string $name = '', ?string $code_id = null)
     {
         parent::__construct($code_id);
         if ($id > 0) {
-            $this->set_id($id);
+            $this->id = $id;
         }
         if ($name != '') {
             $this->set_name($name);
@@ -151,7 +176,12 @@ class verb extends type_object
         }
     }
 
-    function reset(): void
+    /**
+     * set the vars of this verb object to the default values
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
+    function reset(bool $keep_user = false): void
     {
         parent::reset();
         $this->set_user(null);
@@ -159,7 +189,78 @@ class verb extends type_object
         $this->reverse = null;
         $this->rev_plural = null;
         $this->frm_name = null;
-        $this->usage = 0;
+        $this->usage = null;
+        $this->impact = null;
+    }
+
+    /**
+     * map a verb api json to this model verb object
+     * @param array $api_json the api array with the word values that should be mapped
+     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @return bool true if the mapping has been completed successful
+     */
+    function api_mapper(array $api_json, user_message $usr_msg): bool
+    {
+        parent::api_mapper($api_json, $usr_msg);
+
+        // TODO add user to request new verbs via api
+
+        // TODO move plural to language forms
+        if (array_key_exists(json_fields::PLURAL, $api_json)) {
+            if ($api_json[json_fields::PLURAL] <> '') {
+                $this->set_plural($api_json[json_fields::PLURAL]);
+            }
+        }
+        if (array_key_exists(json_fields::REVERSE, $api_json)) {
+            if ($api_json[json_fields::REVERSE] <> '') {
+                $this->set_reverse($api_json[json_fields::REVERSE]);
+            }
+        }
+        if (array_key_exists(json_fields::REV_PLURAL, $api_json)) {
+            if ($api_json[json_fields::REV_PLURAL] <> '') {
+                $this->set_reverse_plural($api_json[json_fields::REV_PLURAL]);
+            }
+        }
+
+        // the usage and impact var is not expected to be changed via api
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return bool true if everything was fine
+     */
+    function import_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
+    {
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
+            }
+        }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            if ($in_ex_json[json_fields::CODE_ID] <> '') {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+            }
+        }
+
+        // the usage and impact var is not expected to be changed via import
+
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -192,90 +293,28 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
                 $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
             }
-            if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
-                $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
+            if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
+                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
-            if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
-                if ($db_row[verb_db::FLD_WORDS] == null) {
-                    $this->usage = 0;
+            if (array_key_exists(sql_db::FLD_USAGE, $db_row)) {
+                if ($db_row[sql_db::FLD_USAGE] == null) {
+                    $this->usage = null;
                 } else {
-                    $this->usage = $db_row[verb_db::FLD_WORDS];
+                    $this->usage = $db_row[sql_db::FLD_USAGE];
+                }
+            }
+            if (array_key_exists(sql_db::FLD_IMPACT, $db_row)) {
+                if ($db_row[sql_db::FLD_IMPACT] == null) {
+                    $this->impact = null;
+                } else {
+                    $this->impact = $db_row[sql_db::FLD_IMPACT];
                 }
             }
         }
         return $result;
-    }
-
-    /**
-     * map a verb api json to this model verb object
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function api_mapper(array $api_json): user_message
-    {
-        $usr_msg = parent::api_mapper($api_json);
-
-        // TODO add user to request new verbs via api
-
-        // TODO move plural to language forms
-        if (array_key_exists(json_fields::PLURAL, $api_json)) {
-            if ($api_json[json_fields::PLURAL] <> '') {
-                $this->set_plural($api_json[json_fields::PLURAL]);
-            }
-        }
-        if (array_key_exists(json_fields::REVERSE, $api_json)) {
-            if ($api_json[json_fields::REVERSE] <> '') {
-                $this->set_reverse($api_json[json_fields::REVERSE]);
-            }
-        }
-        if (array_key_exists(json_fields::REV_PLURAL, $api_json)) {
-            if ($api_json[json_fields::REV_PLURAL] <> '') {
-                $this->set_reverse_plural($api_json[json_fields::REV_PLURAL]);
-            }
-        }
-
-        // the usage var is not expected to be changed via api
-
-        return $usr_msg;
-    }
-
-    /**
-     * function to import the core user sandbox object values from a json string
-     * e.g. the share and protection settings
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
-    ): user_message
-    {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
-
-        if (key_exists(json_fields::NAME, $in_ex_json)) {
-            $this->set_name($in_ex_json[json_fields::NAME]);
-        }
-        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
-            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
-                $this->description = $in_ex_json[json_fields::DESCRIPTION];
-            }
-        }
-        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
-            }
-        }
-
-        return $usr_msg;
     }
 
 
@@ -290,7 +329,7 @@ class verb extends type_object
      */
     function set(int $id = 0, string $name = ''): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
     }
 
@@ -313,23 +352,12 @@ class verb extends type_object
         $this->usr = $usr;
     }
 
-    /**
-     * set the value to rank the verbs by usage
-     *
-     * @param int $usage a higher value moves the verb to the top of the selection list
-     * @return void
-     */
-    function set_usage(int $usage): void
-    {
-        //$this->values = $usage;
-    }
-
     function set_plural(?string $plural): void
     {
         $this->plural = $plural;
     }
 
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return $this->plural;
     }
@@ -339,7 +367,7 @@ class verb extends type_object
         $this->reverse = $reverse;
     }
 
-    function reverse(): ?string
+    function get_reverse(): ?string
     {
         return $this->reverse;
     }
@@ -349,7 +377,7 @@ class verb extends type_object
         $this->rev_plural = $reverse_plural;
     }
 
-    function reverse_plural(): ?string
+    function get_reverse_plural(): ?string
     {
         return $this->rev_plural;
     }
@@ -359,7 +387,7 @@ class verb extends type_object
         $this->frm_name = $formula_name;
     }
 
-    function formula_name(): ?string
+    function get_formula_name(): ?string
     {
         return $this->frm_name;
     }
@@ -367,7 +395,7 @@ class verb extends type_object
     /**
      * @return string a unique name for the verb that is also used in the code
      */
-    function code_id(): string
+    function get_code_id(): string
     {
         if ($this->code_id == null) {
             return '';
@@ -379,7 +407,7 @@ class verb extends type_object
     /**
      * @return string the description of the verb
      */
-    function description(): string
+    function get_description(): string
     {
         if ($this->description == null) {
             return '';
@@ -391,106 +419,55 @@ class verb extends type_object
     /**
      * @return user|null the person who wants to see this verb
      */
-    function user(): ?user
+    function get_user(): ?user
     {
         return $this->usr;
     }
 
     /**
+     * set the value to rank the verbs by usage
+     *
+     * @param int $usage a higher value moves the verb to the top of the selection list
+     * @return void
+     */
+    function set_usage(int $usage): void
+    {
+        $this->usage = $usage;
+    }
+
+    /**
      * @return int a higher number indicates a higher usage
      */
-    function usage(): int
+    function get_usage(): ?int
     {
-        return 0;
+        return $this->usage;
+    }
+
+    /**
+     * set the cache value to sort this verb by relevance
+     * the impact is calculated based on the formula assigned to the object
+     * by the system triple "impact phrase"
+     *
+     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->impact = $impact;
+    }
+
+    /**
+     * @return float a higher number indicates a higher impact
+     */
+    function get_impact(): ?float
+    {
+        return $this->impact;
     }
 
 
     /*
      * load
      */
-
-    /**
-     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
-    {
-        $qp = parent::load_sql($sc, $query_name, $class);
-
-        $sc->set_class(self::class);
-        $sc->set_name($qp->name);
-        $sc->set_fields(verb_db::FLD_NAMES);
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a verb by id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param int $id the id of the user sandbox object
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($class);
-        return parent::load_sql_by_id_fwd($sc, $id, $class);
-    }
-
-    /**
-     * create an SQL statement to retrieve a verb by name from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $name the name of the verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
-    {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
-        $sc->add_where(verb_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(verb_db::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a verb by code id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $code_id the code id of the verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
-    {
-        $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load a verb from the database
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
-     */
-    protected function load(sql_par $qp): int
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_verb($db_row);
-        return $this->id();
-    }
 
     /**
      * load a verb by the verb name
@@ -520,6 +497,94 @@ class verb extends type_object
         return $this->load($qp);
     }
 
+    /**
+     * load a verb from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_verb($db_row);
+        return $this->id();
+    }
+
+
+    /*
+     * load sql
+     */
+
+    /**
+     * create an SQL statement to retrieve a verb by id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int $id the id of the user sandbox object
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($class);
+        return parent::load_sql_by_id_fwd($sc, $id, $class);
+    }
+
+    /**
+     * create an SQL statement to retrieve a verb by name from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $name the name of the verb
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $sc->add_where(verb_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(verb_db::FLD_NAME_FORMULA, $name, sql_par_type::TEXT_OR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a verb by code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $code_id the code id of the verb
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($sc, 'code_id', $class);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of a verb from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
+    {
+        $qp = parent::load_sql($sc, $query_name, $class);
+
+        $sc->set_class(self::class);
+        $sc->set_name($qp->name);
+        $sc->set_fields(verb_db::FLD_NAMES);
+
+        return $qp;
+    }
+
 
     /*
      * api
@@ -537,13 +602,14 @@ class verb extends type_object
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::CODE_ID] = $this->code_id();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::PLURAL] = $this->plural();
-        $vars[json_fields::REVERSE] = $this->reverse();
-        $vars[json_fields::REV_PLURAL] = $this->reverse_plural();
-        $vars[json_fields::FRM_NAME] = $this->formula_name();
-        $vars[json_fields::USAGE] = $this->usage();
+        $vars[json_fields::CODE_ID] = $this->get_code_id();
+        $vars[json_fields::DESCRIPTION] = $this->get_description();
+        $vars[json_fields::PLURAL] = $this->get_plural();
+        $vars[json_fields::REVERSE] = $this->get_reverse();
+        $vars[json_fields::REV_PLURAL] = $this->get_reverse_plural();
+        $vars[json_fields::FRM_NAME] = $this->get_formula_name();
+        $vars[json_fields::USAGE] = $this->get_usage();
+        $vars[json_fields::IMPACT] = $this->get_impact();
         $vars[json_fields::ID] = $this->id();
 
         return $vars;
@@ -558,35 +624,33 @@ class verb extends type_object
     /**
      * add a verb in the database from an imported json object of external database from
      *
-     * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return bool true if everything was fine
      */
     function import_obj(
-        array        $json_obj,
-        user         $usr_req,
-        ?data_object $dto = null,
-        object       $test_obj = null
-    ): user_message
+        array        $in_ex_json,
+        user_message $usr_msg,
+        ?data_object $dto = null
+    ): bool
     {
-        global $vrb_cac;
+        global $db_con;
+        global $sys;
 
-        log_debug();
-        $usr_msg = parent::import_db_obj($this, $test_obj);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this verb object but keep the user
-        $usr = $this->usr;
-        $this->reset();
-        $this->set_user($usr);
-        foreach ($json_obj as $key => $value) {
+        $this->reset(true);
+
+        // TODO Prio 0 switch to a key_exists
+        foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                    if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
                         $this->code_id = $value;
                     }
                 }
@@ -600,7 +664,7 @@ class verb extends type_object
             if ($key == verb_db::FLD_PLURAL) {
                 $this->set_plural($value);
             }
-            if ($key == verb_db::FLD_FORMULA) {
+            if ($key == verb_db::FLD_NAME_FORMULA) {
                 $this->set_formula_name($value);
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
@@ -609,40 +673,47 @@ class verb extends type_object
         }
 
         // save the verb in the database
-        if (!$test_obj) {
+        if ($db_con->is_open()) {
             if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
+                $this->save($usr_msg);
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * create an array with the export json fields
+     * @param export_type_list|array $exp_typ define the export format
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
-    function export_json(bool $do_load = true): array
+    function export_json(export_type_list|array $exp_typ = [], bool $do_load = true): array
     {
-        $vars = parent::export_json($do_load);
+        $vars = parent::export_json($exp_typ, $do_load);
 
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
-        if ($this->plural() <> '') {
-            $vars[json_fields::NAME_PLURAL] = $this->plural();
+        if ($this->get_plural() <> '') {
+            $vars[json_fields::NAME_PLURAL] = $this->get_plural();
         }
-        if ($this->reverse() <> '') {
-            $vars[json_fields::NAME_REVERSE] = $this->reverse();
+        if ($this->get_reverse() <> '') {
+            $vars[json_fields::NAME_REVERSE] = $this->get_reverse();
         }
-        if ($this->reverse_plural() <> '') {
-            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->reverse_plural();
+        if ($this->get_reverse_plural() <> '') {
+            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->get_reverse_plural();
         }
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $sys->typ_lst->ptc_typ->id(protection_type::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
         */
@@ -658,37 +729,49 @@ class verb extends type_object
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg to fill with the suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the verb can be added to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->db_ready();
+        return $this->db_ready($usr_msg);
     }
 
     /**
-     * @return user_message empty if all vars of the phrase are set and the phrase can be stored in the database
+     * check if the named sandbox object can be added to the database
+     * @param user_message $usr_msg empty if all vars of the verb are set and the verb can be stored in the database
+     * @return bool true if the verb can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return new user_message();
+        if ($this->id() == 0) {
+            if ($this->name() == '') {
+                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+            }
+        }
+        return $usr_msg->is_ok();
     }
 
 
     /*
-     * convert functions
+     * related
      */
 
     /**
      * get the term corresponding to this verb name
      * so in this case, if a word or formula with the same name already exists, get it
      */
-    private function get_term(): term
+    private function reload_term(): term
     {
         $trm = new term($this->usr);
         $trm->load_by_name($this->name);
         return $trm;
     }
+
+
+    /*
+     * cast
+     */
 
     /**
      * @returns term the formula object cast into a term object
@@ -704,25 +787,8 @@ class verb extends type_object
 
 
     /*
-     * save
+     * sandbox
      */
-
-    // TODO to review: additional check the database foreign keys
-    function not_used_sql(sql_db $db_con): sql_par
-    {
-        $qp = new sql_par(verb::class);
-
-        $qp->name .= 'usage';
-        $db_con->set_class(word::class);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(verb_db::FLD_NAMES);
-        $db_con->set_where_std($this->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
 
     /**
      * @returns bool true if no one has used this verb
@@ -737,22 +803,40 @@ class verb extends type_object
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
         $db_row = $db_con->get1($qp);
-        $used_by_words = $db_row[verb_db::FLD_WORDS];
-        if ($used_by_words > 0) {
+        $usage = $db_row[sql_db::FLD_USAGE];
+        if ($usage > 0) {
             $result = false;
         }
 
         return $result;
     }
 
+    // TODO to review: additional check the database foreign keys
+    function not_used_sql(sql_db $db_con): sql_par
+    {
+        $qp = new sql_par(verb::class);
+
+        $qp->name .= 'usage';
+        $db_con->set_class(word::class);
+        $db_con->set_name($qp->name);
+        $db_con->set_usr($this->get_user()->id);
+        $db_con->set_fields(verb_db::FLD_NAMES);
+        $db_con->set_where_std($this->id());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+
+        return $qp;
+    }
+
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id() . ')');
+        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->get_user()->id . ')');
 
         global $db_con;
         $result = true;
 
+        $lib = new library();
         /*
         $change_user_id = 0;
         $sql = "SELECT user_id
@@ -761,14 +845,14 @@ class verb extends type_object
                    AND user_id <> ".$this->owner_id."
                    AND (excluded <> 1 OR excluded is NULL)";
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->get_user()->id();
         $change_user_id = $db_con->get1($sql);
         if ($change_user_id > 0) {
           $result = false;
         }
         */
 
-        log_debug('verb->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
+        log_debug('verb->not_changed for ' . $this->id() . ' is ' . $lib->dsp_bool($result));
         return $result;
     }
 
@@ -776,19 +860,26 @@ class verb extends type_object
     function can_change(): bool
     {
         log_debug('verb->can_change ' . $this->id());
+        $lib = new library();
         $can_change = false;
-        if ($this->usage == 0) {
+        if ($this->usage == null or $this->usage == 0) {
             $can_change = true;
         }
 
-        log_debug(zu_dsp_bool($can_change));
+        log_debug($lib->dsp_bool($can_change));
         return $can_change;
     }
+
+
+    /*
+     * log
+     */
 
     // set the log entry parameter for a new verb
     private function log_add(): change
     {
         log_debug('verb->log_add ' . $this->dsp_id());
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::VERB);
@@ -796,7 +887,7 @@ class verb extends type_object
         $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
@@ -804,7 +895,7 @@ class verb extends type_object
     // set the main log entry parameters for updating one verb field
     private function log_upd(): change
     {
-        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
         $log = new change($this->usr);
         $log->set_action(change_actions::UPDATE);
         $log->set_table(change_tables::VERB);
@@ -815,7 +906,8 @@ class verb extends type_object
     // set the log entry parameter to delete a verb
     private function log_del(): change
     {
-        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->get_user()->name);
+        $usr_msg = new user_message();
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::VERB);
@@ -823,10 +915,15 @@ class verb extends type_object
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
-        $log->add();
+        $log->add($usr_msg);
 
         return $log;
     }
+
+
+    /*
+     * save
+     */
 
     // actually update a formula field in the main database record or the user sandbox
     private function save_field_do(sql_db $db_con, $log): user_message
@@ -840,7 +937,7 @@ class verb extends type_object
             $new_value = $log->new_value;
             $std_value = $log->std_value;
         }
-        if ($log->add()) {
+        if ($log->add($usr_msg)) {
             if ($this->can_change()) {
                 $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
@@ -895,11 +992,11 @@ class verb extends type_object
     private function save_field_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->plural() <> $this->plural()) {
+        if ($db_rec->get_plural() <> $this->get_plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->plural();
-            $log->new_value = $this->plural();
-            $log->std_value = $db_rec->plural();
+            $log->old_value = $db_rec->get_plural();
+            $log->new_value = $this->get_plural();
+            $log->std_value = $db_rec->get_plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -911,11 +1008,11 @@ class verb extends type_object
     private function save_field_reverse(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->reverse() <> $this->reverse()) {
+        if ($db_rec->get_reverse() <> $this->get_reverse()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->reverse();
-            $log->new_value = $this->reverse();
-            $log->std_value = $db_rec->reverse();
+            $log->old_value = $db_rec->get_reverse();
+            $log->new_value = $this->get_reverse();
+            $log->std_value = $db_rec->get_reverse();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -927,11 +1024,11 @@ class verb extends type_object
     private function save_field_rev_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->reverse_plural() <> $this->reverse_plural()) {
+        if ($db_rec->get_reverse_plural() <> $this->get_reverse_plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->reverse_plural();
-            $log->new_value = $this->reverse_plural();
-            $log->std_value = $db_rec->reverse_plural();
+            $log->old_value = $db_rec->get_reverse_plural();
+            $log->new_value = $this->get_reverse_plural();
+            $log->std_value = $db_rec->get_reverse_plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -959,13 +1056,13 @@ class verb extends type_object
     private function save_field_formula_name(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->formula_name() <> $this->formula_name()) {
+        if ($db_rec->get_formula_name() <> $this->get_formula_name()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->formula_name();
-            $log->new_value = $this->formula_name();
-            $log->std_value = $db_rec->formula_name();
+            $log->old_value = $db_rec->get_formula_name();
+            $log->new_value = $this->get_formula_name();
+            $log->std_value = $db_rec->get_formula_name();
             $log->row_id = $this->id();
-            $log->set_field(verb_db::FLD_FORMULA);
+            $log->set_field(verb_db::FLD_NAME_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -1001,7 +1098,7 @@ class verb extends type_object
                 if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
                   // ... if yes request to delete or exclude the record with the id parameters before the change
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and use it for the update
                   $this->id = $db_chk->id();
                   $this->set_owner_id($db_chk->owner_id());
@@ -1023,12 +1120,12 @@ class verb extends type_object
                   // if the target link has not yet been created
                   // ... request to delete the old
                   $to_del = clone $db_rec;
-                  $result .= $to_del->del();
+                  $result .= $to_del->del($usr_msg);
                   // .. and create a deletion request for all users ???
 
                   // ... and create a new display component link
                   $this->set_id(0);
-                  $this->set_owner_id($this->user()->id());
+                  $this->set_owner_id($this->get_user()->id());
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
                 }
@@ -1053,7 +1150,7 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(verb::class);
-            $this->set_id($db_con->insert_old(verb_db::FLD_NAME, $this->name));
+            $this->id = $db_con->insert_old(verb_db::FLD_NAME, $this->name);
             if ($this->id() > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id())) {
@@ -1081,15 +1178,14 @@ class verb extends type_object
      * check if the user has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @return user_message
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    protected function check_preserved(): user_message
+    protected function check_preserved(user_message $usr_msg): bool
     {
         global $usr;
-        global $mtr;
 
         // init
-        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1104,35 +1200,39 @@ class verb extends type_object
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return bool true if everything has been fine
      */
-    function save(): user_message
+    function save(user_message $usr_msg, ?bool $use_func = null): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         // check the preserved names
-        $usr_msg = $this->check_preserved();
+        $this->check_preserved($usr_msg);
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($usr_msg->usr->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
-            $trm = $this->get_term();
+            $this->set_user($usr_msg->usr);
+            $trm = $this->reload_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));
             } else {
-                $this->set_id($trm->id_obj());
+                $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
             }
         }
@@ -1153,7 +1253,7 @@ class verb extends type_object
                 // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
                 if ($db_rec->name <> $this->name) {
                     // check if a verb, formula or verb with the same name is already in the database
-                    $trm = $this->get_term();
+                    $trm = $this->reload_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                         $usr_msg->add($trm->id_used_msg($this));
                     } else {
@@ -1183,19 +1283,24 @@ class verb extends type_object
             log_info($usr_msg->get_last_message());
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
+
+
+    /*
+     * del
+     */
 
     /**
      * exclude or delete a verb
-     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @return bool true if everything has been fine
      */
-    function del(): string
+    function del(user_message $usr_msg): bool
     {
         log_debug('verb->del');
 
         global $db_con;
-        $result = '';
 
         // reload only if needed
         if ($this->name == '') {
@@ -1215,9 +1320,9 @@ class verb extends type_object
             if ($this->can_change()) {
                 $log = $this->log_del();
                 if ($log->id() > 0) {
-                    $db_con->usr_id = $this->user()->id();
+                    $db_con->usr_id = $this->get_user()->id();
                     $db_con->set_class(verb::class);
-                    $result = $db_con->delete_old(verb_db::FLD_ID, $this->id());
+                    $usr_msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
                 }
             } else {
                 // TODO: create a new verb and request to delete the old
@@ -1225,8 +1330,335 @@ class verb extends type_object
             }
         }
 
-        return $result;
+        return $usr_msg->is_ok();
     }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a verb to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        global $sys;
+
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // get the fields and values that are filled and should be written to the db
+        $vrb_empty = new verb();
+        $vrb_empty->usr = $this->usr;
+        $fvt_lst = $this->db_fields_changed($vrb_empty, $usr_msg, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+        // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
+        // log functions must always use named parameters
+        $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        // list of parameters actually used in order of the function usage
+        $par_lst_out = new sql_par_field_list();
+        // set some var names to shorten the code lines
+        $id_field = $sc->id_field_name();
+        $var_name_row_id = $sc->var_name_row_id($sc_par_lst_used);
+        // add the change action field to the field list for the log entries
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $sys->typ_lst->cng_act->id(change_actions::ADD),
+            type_object::FLD_ID_SQL_TYP
+        );
+        // init the function body
+        $id_fld_new = $sc->var_name_new_id($sc_par_lst_used);
+        $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst_used);
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
+        $sc_par_lst_log->add(sql_type::INSERT_PART);
+        // create sql to set the prime key upfront to get the sequence id
+        $qp_id = clone $qp;
+        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+        $par_lst_out->add($qp_id->par_fld);
+        $sql .= $qp_id->sql;
+        // get the data fields and move the unique db key field to the first entry
+        $fld_lst_log = array_intersect($fvt_lst->names(), $fld_lst_all);
+        $key_fld_pos = array_search($this->id_field(), $fld_lst_log);
+        unset($fld_lst_log[$key_fld_pos]);
+
+        // add the user to the field list so that the id can be used for the log
+        $fvt_lst->add_field(
+            user_db::FLD_ID,
+            $this->get_user()->id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+
+        // create the query parameters for the log entries for the single fields
+        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
+        $sql .= ' ' . $qp_log->sql;
+        $par_lst_out->add_list($qp_log->par_fld_lst);
+
+        // update the fields excluding the unique id
+        $fld_lst_chg = $fld_lst_log;
+        $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
+        unset($fld_lst_chg[$key_fld_pos]);
+        $update_fvt_lst = new sql_par_field_list();
+        foreach ($fld_lst_chg as $fld) {
+            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
+        }
+        $sc_update = clone $sc;
+        $sc_par_lst_upd = $sc_par_lst_used;
+        $sc_par_lst_upd->add(sql_type::UPDATE);
+        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+        $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+
+        $qp_update->sql = $sc_update->create_sql_update(
+            $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_update->sql . ' ';
+
+        if ($sc->db_type == sql_db::POSTGRES) {
+            if ($id_fld_new != '') {
+                $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
+            }
+        }
+
+        // create the query parameters for the actual change
+        $qp_chg = clone $qp;
+
+        $sql .= $sc->sql_func_end();
+
+        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst_used);
+
+        // merge all together and create the function
+        $qp->sql = $qp_chg->sql . $sql . ';';
+        $qp->par = $par_lst_out->values();
+
+        // create the call sql statement
+        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+    }
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert_key_field(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
+
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * TODO Prio 2 maybe move to type object to allow at least admin users to add a type
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                verb_db::FLD_PLURAL,
+                verb_db::FLD_REVERSE,
+                verb_db::FLD_PLURAL_REVERSE,
+                sql_db::FLD_USAGE,
+                sql_db::FLD_IMPACT
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param verb|type_object $typ the compare value to detect the changed fields
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        verb|type_object $typ,
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($typ, $usr_msg, $sc_par_lst);
+        // TODO move to language forms
+        if ($typ->plural !== $this->plural) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL,
+                    $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_PLURAL),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                verb_db::FLD_PLURAL,
+                $this->plural,
+                sql_field_type::NAME,
+                $typ->plural
+            );
+        }
+        if ($typ->reverse !== $this->reverse) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_REVERSE,
+                    $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_REVERSE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                verb_db::FLD_REVERSE,
+                $this->reverse,
+                sql_field_type::NAME,
+                $typ->reverse
+            );
+        }
+        if ($typ->rev_plural !== $this->rev_plural) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL_REVERSE,
+                    $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_PLURAL_REVERSE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                verb_db::FLD_PLURAL_REVERSE,
+                $this->rev_plural,
+                sql_field_type::NAME,
+                $typ->rev_plural
+            );
+        }
+        if ($typ->usage !== $this->usage) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_USAGE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_USAGE,
+                $this->usage,
+                sql_db::FLD_USAGE_SQL_TYP,
+                $typ->usage
+            );
+        }
+        if ($typ->impact !== $this->impact) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
+                    $sys->typ_lst->cng_fld->id($table_id . sql_db::FLD_IMPACT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_IMPACT,
+                $this->impact,
+                sql_db::FLD_IMPACT_SQL_TYP,
+                $typ->impact
+            );
+        }
+        return $lst;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    private function id_field_typ(string $class): string
+    {
+        return verb_db::FLD_ID;
+    }
+
+    function name_field(): string
+    {
+        return verb_db::FLD_NAME;
+    }
+
+    function all_fields(): array
+    {
+        return verb_db::FLD_NAMES;
+    }
+
 
     /*
      * debug
@@ -1239,49 +1671,17 @@ class verb extends type_object
     {
         global $debug;
         $result = parent::dsp_id();
-        if ($debug > DEBUG_SHOW_USER or $debug == 0) {
-            if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+        if ($debug > def::DEBUG_SHOW_USER or $debug == 0) {
+            if ($this->get_user() != null) {
+                $result .= ' for user ' . $this->get_user()->id . ' (' . $this->get_user()->name . ')';
             }
         }
         return $result;
     }
-
-
-    /*
-     * display
-     */
 
     function name(): string
     {
         return $this->name;
-    }
-
-    // create the HTML code to display the formula name with the HTML link
-    function display(?string $back = ''): string
-    {
-        return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    // returns the html code to select a verb link type
-    // database link must be open
-    function dsp_selector($side, $form, $class, $back): string
-    {
-        global $html_verbs;
-
-        $result = "Verb:";
-        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
-
-        log_debug('admin id ' . $this->id());
-        if ($this->user() != null) {
-            if ($this->user()->is_admin()) {
-                // admin users should always have the possibility to create a new verb / link type
-                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
-            }
-        }
-
-        log_debug('done verb id ' . $this->id());
-        return $result;
     }
 
 }

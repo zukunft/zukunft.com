@@ -2,7 +2,7 @@
 
 /*
 
-    test/php/unit/math.php - Test the internal math function
+    test/php/unit/calc_internal.php - Test the internal math function
     ----------------------
 
     the internal math function should be replaced by REST R-Project calls
@@ -32,10 +32,10 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use math;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 global $db_con;
 
@@ -48,7 +48,7 @@ class math_tests
         $t->header($ts);
 
         // init
-        $calc = new math();
+        $calc = new calc_internal();
 
         // test bracket finding
         $math_text = "(2 - 1) * 2";

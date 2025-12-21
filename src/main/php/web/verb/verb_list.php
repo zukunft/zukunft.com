@@ -29,21 +29,21 @@
   
 */
 
-namespace html\verb;
+namespace Zukunft\ZukunftCom\main\php\web\verb;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
-use html\html_base;
-use html\types\type_list;
-use html\user\user;
-use html\user\user_message;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class verb_list extends type_list
 {
@@ -83,6 +83,7 @@ class verb_list extends type_list
 
     /**
      * set the vars of a term object based on the given json
+     * TODO Prio 1 add user_message as parameter
      * @param array $json_array an api single object json message
      * @param string $class to force to use the verb child class of the type object
      * @return user_message ok or a warning e.g. if the server version does not match
@@ -92,9 +93,9 @@ class verb_list extends type_list
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone new verb();
-            $msg = $new->api_mapper($value);
-            $usr_msg->add($msg);
-            $this->add_obj($new);
+            if ($new->api_mapper($value, $usr_msg)) {
+                $this->add_obj($new);
+            }
         }
         return $usr_msg;
     }
@@ -123,7 +124,7 @@ class verb_list extends type_list
         foreach ($item_lst as $item) {
             $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
         }
-        $result .= \html\btn_add('Add ' . $item_type, $add_script);
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('Add ' . $item_type, $add_script);
         $result .= '<br>';
 
         return $result;

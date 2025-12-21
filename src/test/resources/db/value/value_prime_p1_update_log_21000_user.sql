@@ -35,13 +35,13 @@ PREPARE value_prime_p1_update_log_21000_user_call
         ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
 
 SELECT value_prime_p1_update_log_21000_user
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         1::smallint,
         123.456::numeric,
         3.1415926535898::numeric,
-        32819::bigint,
-        -51::smallint,
+        32770::bigint,
+        -2::smallint,
         0::smallint,
         0::smallint,
         0::smallint,

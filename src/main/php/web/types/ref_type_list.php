@@ -3,7 +3,7 @@
 /*
 
     web/types/ref_type_list.php - the preloaded data ref types used for the html frontend
-    -------------------------------
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,33 +23,50 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
 
-use shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class ref_type_list extends type_list
 {
 
-    const NAME = 'ref type';
+    const string NAME = url_var::REF_TYPE;
 
     /**
+     * create the HTML code to select a reference type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected reference type
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style the formatting code to adjust the formatting
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME,
+        string $style = view_styles::COL_SM_4
+    ): string
     {
-        global $html_ref_types;
-        return parent::type_selector($html_ref_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::FORM_SELECT_REF_TYPE, $style);
     }
 
 
@@ -60,6 +77,16 @@ class ref_type_list extends type_list
     function default_id(): int
     {
         return parent::id(refs::WIKIDATA_TYPE);
+    }
+
+    function url(int $id): string
+    {
+        $result = '';
+        $ref = $this->get($id);
+        if ($ref != null) {
+            $result = $ref->url;
+        }
+        return $result;
     }
 
 }

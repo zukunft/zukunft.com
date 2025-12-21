@@ -30,29 +30,37 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
-include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 
-use cfg\phrase\phrase;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\language_codes;
-use shared\api;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
 
 class config_numbers extends value_list
@@ -60,19 +68,19 @@ class config_numbers extends value_list
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
-    const HIDDEN_KEYWORDS = [
+    const array HIDDEN_KEYWORDS = [
         words::THIS_SYSTEM,
     ];
 
     // list of triples that should be hidden be default for normal selections
     // TODO check on pod start that these triples exists and are of hidden type
-    const HIDDEN_KEY_TRIPLES = [
+    const array HIDDEN_KEY_TRIPLES = [
         [words::SYSTEM, words::CONFIGURATION],
     ];
 
     // list of words that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these words exists and are admin protected
-    const ADMIN_KEYWORDS = [
+    const array ADMIN_KEYWORDS = [
         words::AUTOMATIC,
         words::AVERAGE,
         words::BACKEND,
@@ -131,7 +139,7 @@ class config_numbers extends value_list
 
     // list of triples that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these triples exists and are admin protected
-    const ADMIN_KEY_TRIPLES = [
+    const array ADMIN_KEY_TRIPLES = [
         [words::START, words::DELAY],
         [words::MAX, words::DELAY],
         [words::SYS_CONF_VALUE, words::TABLE],
@@ -154,7 +162,7 @@ class config_numbers extends value_list
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
     // TODO check on pod start that these comments are still normal
-    const INTERNAL_COMMENTS = [
+    const array INTERNAL_COMMENTS = [
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
         [words::SYS_CONF_SOURCE_COM, words::SYS_CONF_SOURCE],
@@ -167,6 +175,9 @@ class config_numbers extends value_list
         [words::AVERAGE_COM, words::AVERAGE],
         [words::DEFAULT_COM, words::DEFAULT],
         [words::DATABASE_COM, words::DATABASE],
+        [words::LISTS, words::LISTS_COM],
+        [words::MOST, words::MOST_COM],
+        [words::RELEVANT, words::RELEVANT_COM],
     ];
 
 
@@ -210,25 +221,78 @@ class config_numbers extends value_list
      */
     function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
-        $usr_msg = new user_message();
-        $phr_sys_cfg = new phrase($usr);
-        $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
-        // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
-        $this->load_by_phr($phr_sys_cfg);
-        // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
-        if ($phr != null) {
-            // TODO Prio 1 activate
-            //$this->filter_by_phrase($phr);
-            log_debug('filter by phrase');
-        }
-        if (!$this->is_empty()) {
-            log_debug($this->count() . ' config values loaded');
-            $this->load_phrases();
+        global $sys;
+        $usr_msg = new user_message($usr);
+        if ($this->is_cache_valid($usr, $phr)) {
+            $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
+            $this->read_cache($usr, $usr_msg, $phr);
         } else {
-            log_debug('no config values loaded');
-            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
+            $phr_sys_cfg = new phrase($usr);
+            $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
+            // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
+            $this->load_by_phr($phr_sys_cfg);
+            // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
+            if ($phr != null) {
+                // TODO Prio 1 activate
+                //$this->filter_by_phrase($phr);
+                log_debug('filter by phrase');
+            }
+            if (!$this->is_empty()) {
+                log_debug($this->count() . ' config values loaded');
+                $this->load_phrases();
+            } else {
+                log_debug('no config values loaded');
+                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            }
+            if ($usr_msg->is_ok()) {
+                $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
+                $this->write_cache($usr, $phr);
+            }
         }
         return $usr_msg;
+    }
+
+    private function is_cache_valid(user $usr, ?phrase $phr = null): bool
+    {
+        $file_path = $this->cache_file($usr, $phr);
+        if (file_exists($file_path)) {
+            $cac_time = filemtime($file_path);
+            $cfg_time = filemtime(files::SYSTEM_CONFIG);
+            if ($cfg_time < $cac_time) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private function write_cache(user $usr, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $array = $this->cache_array();
+        $json = json_encode($array);
+        file_put_contents($file_name, $json);
+    }
+
+    private function read_cache(user $usr, user_message $usr_msg, ?phrase $phr = null): void
+    {
+        $file_name = $this->cache_file($usr, $phr);
+        $json = file_get_contents($file_name);
+        $array = json_decode($json, true);
+        $this->api_mapper($array, $usr_msg);
+    }
+
+    private function cache_file(user $usr, ?phrase $phr = null): string
+    {
+        $file_path = paths::CACHE . files::CACHE_CONFIG . files::SEP . $usr->name();
+        if ($phr != null) {
+            $file_path .= files::SEP . $phr->name();
+        }
+        $file_path .= files::JSON;
+        return $file_path;
     }
 
     /**
@@ -257,6 +321,15 @@ class config_numbers extends value_list
         return $this->load_cfg($usr, $phr);
     }
 
+
+    /*
+     * mapping
+     */
+
+    private function cache_array(): array
+    {
+        return $this->api_json_array(new api_type_list([api_type::PHRASE_NAMES]));
+    }
 
     /*
      * default

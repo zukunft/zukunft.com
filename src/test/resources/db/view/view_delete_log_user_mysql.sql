@@ -19,7 +19,7 @@ BEGIN
 END;
 
 SELECT view_delete_log_user
-       (1,
+       (3,
         3,
         42,
         'Start view',

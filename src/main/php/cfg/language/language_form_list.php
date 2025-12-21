@@ -30,15 +30,15 @@
   
 */
 
-namespace cfg\language;
+namespace Zukunft\ZukunftCom\main\php\cfg\language;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
 
-use cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 
 class language_form_list extends type_list
 {

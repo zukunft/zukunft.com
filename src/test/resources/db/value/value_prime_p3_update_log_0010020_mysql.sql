@@ -32,13 +32,13 @@ PREPARE value_prime_p3_update_log_0010020_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_prime_p3_update_log_0010020
-       (1,
+       (3,
         1,
         3,
         3,
         null,
-        1163953635467,
-        271,
-        267,
+        914840879243,
+        213,
+        196,
         139,
         0);

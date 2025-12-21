@@ -30,10 +30,12 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'table.php';
 include_once html_paths::HTML . 'scopes.php';
@@ -43,12 +45,12 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use html\helper\data_object;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\word\triple;
-use html\word\word;
-use shared\const\words;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class list_sort
 {
@@ -57,12 +59,12 @@ class list_sort
     /**
      * TODO review
      * @param phrase $phr the start phrase to select the rows
-     * @param data_object|null $dbo the data cache use to reduce the backend traffic
+     * @param data_object|null $cac the data cache use to reduce the backend traffic
      * @return string html code to display a spreadsheet
      */
     function list_sort(
-        phrase      $phr,
-        data_object $dbo = null
+        phrase       $phr,
+        ?data_object $cac = null
     ): string
     {
         // create the table
@@ -73,7 +75,7 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
+        $phr_lst = $phr->is_or_can_be($cac?->phr_lst, $cac->typ_lst_cache);
 
         // TODO remove temp hardcoded solution
         if ($phr_lst->is_empty()) {
@@ -103,10 +105,24 @@ class list_sort
             $htp = new word();
             $htp->load_by_name('htp');
         } else {
-            $trillion = $phr_lst->get_by_name(words::TRILLION);
-            $billion = $phr_lst->get_by_name(words::BILLION);
-            $usd = $phr_lst->get_by_name(words::USD);
-            $htp = $phr_lst->get_by_name(words::HTP);
+            $trillion = $cac?->phr_lst->get_by_name(words::TRILLION);
+            $billion = $cac?->phr_lst->get_by_name(words::BILLION);
+            $usd = $cac?->phr_lst->get_by_name(words::USD);
+            $htp = $cac?->phr_lst->get_by_name(words::HTP);
+        }
+
+        // check if the phrase list has at least the most necessary entries
+        if ($trillion == null) {
+            log_err('trillion is null');
+        }
+        if ($billion == null) {
+            log_err('billion is null');
+        }
+        if ($usd == null) {
+            log_err('usd is null');
+        }
+        if ($htp == null) {
+            log_err('htp is null');
         }
 
         // get the most relevant result
@@ -139,7 +155,6 @@ class list_sort
         $html = new html_base();
         $col_lst = new phrase_list();
         // add phrase_views class: a phrase_list with a selected component and component parameters
-
 
 
         $th = $html->th('Priority', scopes::COL);

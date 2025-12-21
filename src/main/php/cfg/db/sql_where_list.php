@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 class sql_where_list
 {

@@ -5,6 +5,7 @@ PREPARE component_link_list_by_component_id (bigint, bigint) AS
            s.view_id,
            s.component_id,
            l.code_id,
+           l.usage,
            CASE WHEN (u.order_nbr          IS     NULL) THEN s.order_nbr        ELSE u.order_nbr        END AS order_nbr,
            CASE WHEN (u.position_type_id   IS     NULL) THEN s.position_type_id ELSE u.position_type_id END AS position_type_id,
            CASE WHEN (u.view_style_id       IS    NULL) THEN s.view_style_id    ELSE u.view_style_id    END AS view_style_id,

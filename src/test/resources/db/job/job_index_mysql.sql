@@ -5,7 +5,6 @@
 --
 
 ALTER TABLE jobs
-    ADD PRIMARY KEY (job_id),
     ADD KEY jobs_user_idx (user_id),
     ADD KEY jobs_job_type_idx (job_type_id),
     ADD KEY jobs_request_time_idx (request_time),

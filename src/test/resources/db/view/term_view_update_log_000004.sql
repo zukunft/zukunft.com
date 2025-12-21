@@ -27,10 +27,10 @@ SELECT term_view_update_log_000004
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
 SELECT term_view_update_log_000004
-    (1::bigint,
+    (3::bigint,
      2::smallint,
      726::smallint,
-     'default'::text,
+     'standard'::text,
      1::smallint,
      null::text,
      null::smallint,

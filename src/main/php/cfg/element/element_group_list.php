@@ -29,15 +29,17 @@
   
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 
-use cfg\sandbox\sandbox_list;
-use cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 
 class element_group_list extends sandbox_list
 {
@@ -65,8 +67,8 @@ class element_group_list extends sandbox_list
 
         // show at least 4 elements by name
         $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
+        if ($min_names < def::LIST_MIN_NAMES) {
+            $min_names = def::LIST_MIN_NAMES;
         }
 
         if ($this->lst() != null) {

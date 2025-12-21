@@ -2,8 +2,8 @@
 
 /*
 
-    model/system/text_log.php - object to handle standard io logging
-    -------------------------
+    model/log_text/text_log.php - object to handle standard io logging
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,14 +29,31 @@
   
 */
 
-namespace cfg\log_text;
+namespace Zukunft\ZukunftCom\main\php\cfg\log_text;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 
 class text_log
 {
+
+    /*
+     * const
+     */
+
+    // fallback log level if not set by the environment settings or overwritten by the system configuration
+    const int DSP_LEVEL = sys_log_level::ERROR;   // starting from this criticality level messages are shown to the user
+    const int LOG_LEVEL = sys_log_level::WARNING; // starting from this criticality level messages are written to the log for debugging
+    const int MSG_LEVEL = sys_log_level::ERROR;   // in case of an error or fatal error
+    // additional the message a link to the system log shown
+    // so that the user can track when the error is solved
+
 
     /*
      * object vars

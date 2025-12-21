@@ -4,6 +4,7 @@ PREPARE view_by_term (bigint, bigint) AS
                 u.view_id AS user_view_id,
                 s.user_id,
                 s.code_id,
+                s.usage,
                 l.term_id,
                 l.view_link_type_id,
                 l.view_id,

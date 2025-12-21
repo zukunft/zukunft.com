@@ -2,8 +2,9 @@
 
 /*
 
-    word_list_dsp.php - a list function to create the HTML code to display a word list
-    -----------------
+    web/word/word_list.php - a list function to create the HTML code to display a word list
+    ----------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,12 +30,14 @@
 
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_named.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -42,19 +45,26 @@ include_once html_paths::PHRASE . 'term_list.php';
 //include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term_list;
-use html\sandbox\list_named;
-use html\styles;
-use html\user\user_message;
-use html\value\value_list;
-use html\html_base;
-use shared\library;
-use shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class word_list extends list_named
 {
@@ -82,7 +92,7 @@ class word_list extends list_named
      * convert the word list object into a phrase list object
      * @return phrase_list with all words of this list
      */
-    function phrase_lst(): phrase_list
+    function phrase_list(): phrase_list
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -128,6 +138,28 @@ class word_list extends list_named
     /*
      * select
      */
+
+    /**
+     * add the word list default values to the selector function
+     *
+     * @param string $form the html form name which must be unique within the html page
+     * @param int|string|null $selected the unique database id of the object that has been selected
+     * @param string $name the name of this selector which must be unique within the form
+     * @param msg_id $label_id the text show to the user
+     * @param string $style the formatting code to adjust the formatting
+     * @returns string the html code to select a word from this list
+     */
+    function selector(
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = url_var::WORD,
+        msg_id          $label_id = msg_id::FORM_SELECT_WORD,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
+    ): string
+    {
+        return parent::selector($form, $selected, $name, $label_id, $style, $type);
+    }
 
     /**
      * diff as a function, because the array_diff does not seem to work for an object list
@@ -244,7 +276,7 @@ class word_list extends list_named
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list();
-            $val_lst->load_by_phr_lst($this->phrase_lst());
+            $val_lst->load_by_phr_lst($this->phrase_list());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();

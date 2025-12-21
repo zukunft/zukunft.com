@@ -2,7 +2,7 @@
 
 /*
 
-    web\ref\source_list.php - create the HTML code to display a source list
+    web/ref/source_list.php - create the HTML code to display a source list
     -----------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,19 +29,19 @@
 
 */
 
-namespace html\ref;
+namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
-include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\sandbox\list_dsp;
-use html\ref\source as source_dsp;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
-class source_list extends list_dsp
+class source_list extends ListBase
 {
 
     /*
@@ -55,7 +55,7 @@ class source_list extends list_dsp
      */
     function api_mapper(array $json_array): user_message
     {
-        return parent::api_mapper_list($json_array, new source_dsp());
+        return parent::api_mapper_list($json_array, new source());
     }
 
 }

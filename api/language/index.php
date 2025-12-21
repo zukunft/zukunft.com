@@ -32,34 +32,26 @@
 
 */
 
-// standard zukunft header for callable php files to allow debugging and lib loading
-global $debug;
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_const.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::API_OBJECT . 'controller.php';
-include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\language\language;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
-$db_con = prg_start("api/language", "", false);
+$app = new application();
+$db_con = $app->start_api("language", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $lan_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $lan_typ_id = $_GET[url_var::ID] ?? 0;
 
     $msg = '';
     $result = ''; // reset the html code var
@@ -69,7 +61,7 @@ if ($db_con->is_open()) {
     $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         if ($lan_typ_id != '') {
             $lan_typ = new language(language::DEFAULT);
@@ -84,5 +76,5 @@ if ($db_con->is_open()) {
     $ctrl->get_json($result, $msg);
 
 
-    prg_end_api($db_con);
+    $app->end_api($db_con);
 }

@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/element_type.php - to assign coded functionality to a formula element
-    ----------------------------
+    model/element/element_type.php - to assign coded functionality to a formula element
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,13 +29,13 @@
 
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class element_type extends type_object
 {
 
@@ -44,7 +44,7 @@ class element_type extends type_object
      */
 
     // list of the element types that have a coded functionality
-    const WORD_SELECTOR = "word_selector";
+    const string WORD_SELECTOR = "word_selector";
 
 
     /*
@@ -52,7 +52,7 @@ class element_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to a formula element';
-    const FLD_ID = "element_type_id";
+    const string TBL_COMMENT = 'to assign predefined behaviour to a formula element';
+    const string FLD_ID = "element_type_id";
 
 }

@@ -29,13 +29,13 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class component_type extends type_object
 {
@@ -49,6 +49,6 @@ class component_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to display e.g. a fixed text, term or formula result';
+    const string TBL_COMMENT = 'to display e.g. a fixed text, term or formula result';
 
 }

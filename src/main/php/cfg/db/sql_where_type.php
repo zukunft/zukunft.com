@@ -29,7 +29,7 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 enum sql_where_type: string
 {

@@ -30,33 +30,39 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_obj.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\group\group;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\value\value;
-use cfg\value\value_geo;
-use cfg\value\value_obj;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use DateTime;
-use html\value\value as value_dsp;
-use shared\const\values;
-use shared\const\views;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_tests
 {
@@ -70,6 +76,9 @@ class value_tests
         // init
         $db_con = new sql_db();
         $sc = new sql_creator();
+        $tl = new test_lib();
+        $t_val = new test_values($t);
+        $t_grp = new test_groups($t);
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
@@ -79,41 +88,41 @@ class value_tests
 
         $t->subheader($ts . 'value object selection');
         $test_name = 'create a numeric value object';
-        $val = (new value_obj())->get($usr, values::PI_LONG);
+        $val = new value_obj()->get($usr, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
         $test_name = 'create a time value object';
-        $val = (new value_obj())->get($usr, (new DateTime(values::TIME)));
+        $val = new value_obj()->get($usr, new DateTime(values::TIME));
         $t->assert($test_name, $val::class, value_time::class);
         $test_name = 'create a text value object';
-        $val = (new value_obj())->get($usr, values::TEXT);
+        $val = new value_obj()->get($usr, values::TEXT);
         $t->assert($test_name, $val::class, value_text::class);
         $test_name = 'create a geolocation value object';
-        $val = (new value_obj())->get($usr, values::GEO);
+        $val = new value_obj()->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
         $t->subheader($ts . 'sql setup');
-        $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
+        $val = $t_val->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
         $t->subheader($ts . 'sql read');
-        $val = $t->value();
-        $val_16 = $t->value_16();
-        $val_txt = $t->text_value();
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_prime_3());
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_16());
-        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
-        $this->assert_sql_by_grp($t, $db_con, $val_txt, $t->group_pod_url());
+        $val = $t_val->value();
+        $val_16 = $t_val->value_16();
+        $val_txt = $t_val->text_value();
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_prime_3());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_16());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t_grp->group_17_plus());
+        $this->assert_sql_by_grp($t, $db_con, $val_txt, $t_grp->group_pod_url());
         $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader($ts . 'sql read default and user changes');
-        $val = $t->value();
-        $val_3 = $t->value_prime_3();
-        $val_16 = $t->value_16();
-        $val_17 = $t->value_17_plus();
-        $val_txt = $t->text_value();
-        $val_txt_4 = $t->text_value();
+        $val = $t_val->value();
+        $val_3 = $t_val->value_prime_3();
+        $val_16 = $t_val->value_16();
+        $val_17 = $t_val->value_17_plus();
+        $val_txt = $t_val->text_value();
+        $val_txt_4 = $t_val->text_value();
         $t->assert_sql_not_changed($sc, $val_3);
         $t->assert_sql_not_changed($sc, $val_17);
         $t->assert_sql_user_changes($sc, $val_3);
@@ -128,28 +137,27 @@ class value_tests
         $t->assert_sql_standard($sc, $val_17);
         $t->assert_sql_standard($sc, $val_txt);
 
-        // TODO activate db write
+        // TODO Prio 2 activate db write
         $t->subheader($ts . 'sql write insert');
-        $val = $t->value();
+        $val = $t_val->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
-        $val_0 = $t->value_zero();
-        $val_3 = $t->value_prime_3();
+        $val_0 = $t_val->value_zero();
+        $val_3 = $t_val->value_prime_3();
         $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
-        $db_val_3_share = $t->value_shared($val_3);
-        $val_4 = $t->value_prime_max();
-        $val_main = $t->value_main();
-        $db_val_main_share = $t->value_shared($val_3);
-        $val_16 = $t->value_16();
+        $db_val_3_share = $t_val->value_shared($val_3);
+        $val_4 = $t_val->value_prime_max();
+        $val_main = $t_val->value_main();
+        $db_val_main_share = $t_val->value_shared($val_3);
+        $val_16 = $t_val->value_16();
         $db_val_16 = $val_16->cloned(values::SAMPLE_FLOAT);
-        $val_fill = $t->value_16_filled();
-        $val_17 = $t->value_17_plus();
+        $val_fill = $t_val->value_16_filled();
+        $val_17 = $t_val->value_17_plus();
         $db_val_17 = $val_17->cloned(values::SAMPLE_FLOAT);
-        $val_txt = $t->text_value();
+        $val_txt = $t_val->text_value();
         $db_val_txt = $val_txt->cloned(values::DB_TEXT);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::STANDARD]);
         $t->assert_sql_insert($sc, $val_3);
@@ -167,12 +175,15 @@ class value_tests
         $t->assert_sql_insert($sc, $val_txt);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
+        $val = $t_val->value_incomplete();
+        $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
+        $val = $t_val->value();
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
@@ -195,7 +206,8 @@ class value_tests
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $val, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $val, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
@@ -206,45 +218,62 @@ class value_tests
         $t->subheader($ts . 'database query creation');
 
         // sql to load a user specific value by phrase group id
-        $val->reset($usr);
+        $val->reset(true);
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
         $t->subheader($ts . 'value base object handling');
-        $val = $t->value_16_filled();
+        $val = $t_val->value_16_filled();
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t->value(), $usr_sys);
-        $t->assert_ex_and_import($t->value_16_filled(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value(), $usr_sys);
+        $t->assert_ex_and_import($t_val->value_16_filled(), $usr_sys);
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
 
+        $t->subheader($ts . 'ui formatting');
+
+        $test_case = 'show the unit after the value';
+        $val = $tl->ui_value($t_val->light_speed());
+        $result = $tl->text_from_html($val->with_unit_and_info());
+        $target = groups::LENGTH_DEFINITION . ' ' . values::SPEED_OF_LIGHT_TXT . ' ' . triples::M_PER_S;
+        $t->assert($test_case, $result, $target);
+
+        $t->subheader($ts . 'ui validation');
+
+        $test_case = 'check the warning message if a value has more than one unit phrase';
+        $val = $tl->ui_value($t_val->light_speed_with_two_units());
+        $result = $val->warning_text();
+        // TODO add warning
+        $target = '';
+        $t->assert($test_case, $result, $target);
+
         $t->subheader($ts . 'html frontend');
 
-        $val = $t->value();
+        $val = $t_val->value();
         // TODO add class field to api message
-        $t->assert_api_to_dsp($val, new value_dsp());
+        $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
-        $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32819" title="3.14">3.14</a>');
+        $val_dsp = new value_ui($val->api_json([api_type::INCL_PHRASES]));
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 
         // casting API
-        $grp = $t->group();
+        $grp = $t_grp->group();
         $val = new value($usr, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->time_value();
+        $val = $t_val->time_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->text_value();
+        $val = $t_val->text_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
-        $val = $t->geo_value();
+        $val = $t_val->geo_value();
         $t->assert_api($val);
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
 
@@ -262,7 +291,7 @@ class value_tests
 
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
-        $vts->set_grp($t->group_16());
+        $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
 
         // ... and the related default time series
@@ -270,15 +299,15 @@ class value_tests
         //$t->assert_sql_standard($sc, $vts);
 
         // sql to load a user specific time series by phrase group id
-        $vts->reset($usr);
+        $vts->reset(true);
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
 
         $t->subheader($ts . 'data sql setup');
-        $tsn = $t->value_ts_data();
+        $tsn = $t_val->value_ts_data();
         $t->assert_sql_table_create($tsn);
         $t->assert_sql_index_create($tsn);
-        // TODO activate
+        // TODO Prio 2 activate
         //$t->assert_sql_foreign_key_create($tsn);
 
     }
@@ -319,20 +348,25 @@ class value_tests
      * @param value $db_val the value as it is expected to be in the database
      * @return bool true if all tests are fine
      */
-    function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
+    function assert_sql_update_trigger(
+        test_cleanup $t,
+        sql_db $db_con, value $val,
+        value $db_val
+    ): bool
     {
         $sc = $db_con->sql_creator();
+        $usr_msg = new user_message();
         $fields = array(sandbox_multi::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $val->sql_update($sc, $db_val);
+        $qp = $val->sql_update($sc, $db_val, $usr_msg);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $val->sql_update($sc, $db_val);
+            $qp = $val->sql_update($sc, $db_val, $usr_msg);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

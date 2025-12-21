@@ -34,10 +34,14 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use cfg\user\user;
-use html\user\user as user_dsp;
-use shared\const\users;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_user_test(all_tests $t): void
 {
@@ -47,9 +51,11 @@ function run_user_test(all_tests $t): void
     $back = 0;
 
     // test the user display after the word changes to have a sample case
-    $t->header('Test the user display class (classes/user_display.php)');
+    // start the test section (ts)
+    $ts = 'db write user ';
+    $t->header($ts);
 
-    $usr_dsp = new user_dsp($usr->api_json());
+    $usr_dsp = new user_ui($usr->api_json());
     $result = $usr_dsp->form_edit($back);
     $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
@@ -57,19 +63,19 @@ function run_user_test(all_tests $t): void
     // display system usernames
     echo "based on<br>";
     if (isset($_SERVER)) {
-        if (in_array('PHP_AUTH_USER', $_SERVER)) {
-            echo 'php user: ' . $_SERVER['PHP_AUTH_USER'] . '<br>';
-            echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
+        if (in_array(rest_ctrl::PHP_AUTH_USER, $_SERVER)) {
+            echo 'php user: ' . $_SERVER[rest_ctrl::PHP_AUTH_USER] . '<br>';
+            echo 'remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>';
         }
     }
-    echo 'user id: ' . $usr->id() . '<br>';
+    echo 'user id: ' . $usr->id . '<br>';
 
-    $t->header('user permission tests');
+    $t->subheader($ts . 'permission');
 
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);
     $target = '';
-    $t->display(', usr->ip_check', $target, $result);
+    $t->assert(', usr->ip_check', $result, $target);
 
     // TODO add a test signup process to
 

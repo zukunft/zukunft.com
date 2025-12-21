@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/group_triple_link.php - only for fast selection of the phrase group assigned to one triple
-    -----------------------------------------
+    model/group/group_link.php - only for fast selection of the phrase group assigned to one triple
+    --------------------------
 
     replication of the words linked to a phrase group saved in the triple_ids field
 
@@ -31,9 +31,9 @@
 
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -42,20 +42,20 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_creator;
-use cfg\db\sql_par_type;
-use cfg\helper\db_object_seq_id;
-use cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 
 class group_link extends db_object_seq_id
 {
     // object specific database and JSON object field names
-    const FLD_ID = 'group_triple_link_id';
+    const string FLD_ID = 'group_triple_link_id';
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         group::FLD_ID,
         triple_db::FLD_ID
     );
@@ -99,7 +99,7 @@ class group_link extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -117,7 +117,7 @@ class group_link extends db_object_seq_id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param group $grp the phrase group which should be used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_group_id_sql(sql_db $db_con, group $grp): sql_par
     {

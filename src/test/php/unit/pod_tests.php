@@ -30,9 +30,9 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'pod_type.php';
 include_once paths::MODEL_SYSTEM . 'pod_status.php';
@@ -40,12 +40,12 @@ include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
 include_once paths::MODEL_PHRASE . 'phrase_table.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\system\pod;
-use cfg\system\pod_status;
-use cfg\system\pod_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class pod_tests
 {

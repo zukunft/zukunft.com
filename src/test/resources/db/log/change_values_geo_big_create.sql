@@ -20,4 +20,4 @@ COMMENT ON TABLE change_values_geo_big IS 'to log all geo value changes done by 
 COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify the change change_values_geo_big';
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';

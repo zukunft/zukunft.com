@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_CONST . 'def.php';
@@ -93,6 +93,8 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_relation_type.php';
+include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
@@ -100,71 +102,73 @@ include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component_link_type;
-use cfg\component\component_link_type_list;
-use cfg\component\component_type;
-use cfg\component\component_type_list;
-use cfg\component\position_type;
-use cfg\component\position_type_list;
-use cfg\component\view_style;
-use cfg\component\view_style_list;
-use cfg\const\def;
-use cfg\const\files;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\element\element_type;
-use cfg\element\element_type_list;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\ref\source_type;
-use cfg\ref\source_type_list;
-use cfg\system\job_type;
-use cfg\system\job_type_list;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\log\change_action;
-use cfg\log\change_action_list;
-use cfg\log\change_field;
-use cfg\log\change_field_list;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use cfg\log\change_table_list;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\ref\ref;
-use cfg\sandbox\protection_type_list;
-use cfg\sandbox\sandbox_named;
-use cfg\sandbox\share_type_list;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_function_list;
-use cfg\system\sys_log_status_list;
-use cfg\system\sys_log_status;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_profile_list;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\verb\verb_list;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_link_type_list;
-use cfg\view\view_type;
-use cfg\view\view_type_list;
-use controller\api_message;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\protection_type;
-use shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 
 class type_list
 {
@@ -174,15 +178,15 @@ class type_list
      */
 
     // database and export JSON object field names
-    const FLD_NAME = 'sys_log_function_name';
-    const FLD_NAME_SQL_TYP = sql_field_type::NAME;
+    const string FLD_NAME = 'sys_log_function_name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::NAME;
 
     // error return codes
-    const CODE_ID_NOT_FOUND = -1;
+    const int CODE_ID_NOT_FOUND = -1;
 
     // persevered type name and code id for unit and integration tests
-    const TEST_NAME = 'System Test Type Name';
-    const TEST_TYPE = 'System Test Type Code ID';
+    const string TEST_NAME = 'System Test Type Name';
+    const string TEST_TYPE = 'System Test Type Code ID';
 
 
     /*
@@ -255,11 +259,11 @@ class type_list
     {
         if ($item->id() <= 0) {
             log_err('Type id ' . $item->id() . ' not expected');
-        } elseif ($item->code_id() == '' and !$this->usr_can_add) {
+        } elseif ($item->get_code_id() == '' and !$this->usr_can_add) {
             log_err('Type code id for ' . $item->id() . ' cannot be empty');
         } else {
             $this->lst[$item->id()] = $item;
-            $this->hash[$item->code_id()] = $item->id();
+            $this->hash[$item->get_code_id()] = $item->id();
         }
         if ($this->usr_can_add) {
             $this->name_hash[$item->name] = $item->id();
@@ -269,6 +273,22 @@ class type_list
     function add_direct(type_object|ref|view $item): void
     {
         $this->lst[] = $item;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * TODO Prio 1 check if the overwrites can be removed
+     * adding the view component position types used for unit tests to the dummy list
+     */
+    function load_from_csv_resource(): void
+    {
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $this->read_from_config_csv($this);
     }
 
 
@@ -382,6 +402,7 @@ class type_list
             view_type_list::class => view_type::class,
             view_style_list::class => view_style::class,
             view_link_type_list::class => view_link_type::class,
+            view_relation_type_list::class => view_relation_type::class,
             component_type_list::class => component_type::class,
             component_link_type_list::class => component_link_type::class,
             position_type_list::class => position_type::class,
@@ -439,7 +460,7 @@ class type_list
         $this->hash = [];
         if ($type_list != null) {
             foreach ($type_list as $key => $type) {
-                $this->hash[$type->code_id()] = $key;
+                $this->hash[$type->get_code_id()] = $key;
             }
         }
         return $this->hash;
@@ -501,29 +522,17 @@ class type_list
      */
     function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
+        global $db_con;
+        $api_msg = new api_message();
+        $pod_name = $api_msg->api_site_name($db_con);
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-
-        // null values are not needed in the api message to the frontend
-        // but in the api message to the backend null values are relevant
-        // e.g. to remove empty string overwrites
         $vars = $this->api_json_array($typ_lst, $usr);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        // add header if requested
-        if ($typ_lst->use_header()) {
-            global $db_con;
-            $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
-        } else {
-            $msg = $vars;
-        }
-
-        return json_encode($msg);
+        return $api_msg->api_json($pod_name, $this::class, $vars, $typ_lst, $usr);
     }
 
-    function api_json_array(): array
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
     {
         $vars = [];
         foreach ($this->lst() as $typ) {
@@ -531,11 +540,11 @@ class type_list
             if ($typ::class == ref_type::class
                 or $typ::class == verb::class
                 or $typ::class == view::class) {
-                $typ_vars = $typ->api_json_array(new api_type_list([]));
+                $typ_vars = $typ->api_json_array($typ_lst);
             } else {
                 $typ_vars[json_fields::NAME] = $typ->name();
-                $typ_vars[json_fields::CODE_ID] = $typ->code_id();
-                $typ_vars[json_fields::DESCRIPTION] = $typ->description();
+                $typ_vars[json_fields::CODE_ID] = $typ->get_code_id();
+                $typ_vars[json_fields::DESCRIPTION] = $typ->description;
                 $typ_vars[json_fields::ID] = $typ->id();
             }
             $vars[] = $typ_vars;
@@ -604,7 +613,7 @@ class type_list
                         } else {
                             $typ_obj = new type_object($data[$name_col]);
                         }
-                        $typ_obj->set_id($data[$id_col]);
+                        $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id_db($data[$code_id_col]);
@@ -679,6 +688,30 @@ class type_list
     }
 
     /**
+     * return the database row id based on the name
+     *
+     * @param string $name of the type
+     * @return int the database id for the given code_id
+     */
+    function id_by_name(string $name): int
+    {
+        $lib = new library();
+        $result = 0;
+        if ($name != '' and $name != null) {
+            if ($this->has_name($name)) {
+                $result = $this->name_hash[$name];
+            } else {
+                $result = self::CODE_ID_NOT_FOUND;
+                log_err('Type id not found for name "' . $name . '" in ' . $lib->dsp_array_keys($this->name_hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+
+        return $result;
+    }
+
+    /**
      * return user specific type name based on the database row id
      *
      * @param int|null $id
@@ -725,9 +758,9 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return type_object|null the type object
+     * @return type_object|view|null the type object or the system view
      */
-    function get(int $id): ?type_object
+    function get(int $id): type_object|view|null
     {
         $result = null;
         if ($id > 0) {
@@ -755,7 +788,17 @@ class type_list
         return $this->get($this->id($code_id));
     }
 
-    function get_by_name(string $name): ?type_object
+    /**
+     * true if the name exists in this type list
+     * @param string $name the name of the type
+     * @return bool true if the name exists in this type list
+     */
+    function has_name(string $name): bool
+    {
+        return array_key_exists($name, $this->name_hash);
+    }
+
+    function get_by_name(string $name): verb|type_object|null
     {
         $result = null;
         if (array_key_exists($name, $this->name_hash)) {
@@ -764,14 +807,16 @@ class type_list
         return $result;
     }
 
-    function code_id(int $id): string
+    function code_id(?int $id): ?string
     {
-        $result = '';
-        $type = $this->get($id);
-        if ($type != null) {
-            $result = $type->code_id;
-        } else {
-            log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+        $result = null;
+        if ($id != null) {
+            $type = $this->get($id);
+            if ($type != null) {
+                $result = $type->code_id;
+            } else {
+                log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+            }
         }
         return $result;
     }
@@ -816,11 +861,11 @@ class type_list
      */
     function view_id_list(array $code_id_list): array
     {
-        global $msk_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $msk_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->msk_typ->id($code_id);
         }
         return $result;
     }
@@ -831,11 +876,11 @@ class type_list
      */
     function component_id_list(array $code_id_list): array
     {
-        global $cmp_typ_cac;
+        global $sys;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $cmp_typ_cac->id($code_id);
+            $result[] = $sys->typ_lst->cmp_typ->id($code_id);
         }
         return $result;
     }

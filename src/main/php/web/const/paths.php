@@ -2,8 +2,11 @@
 
 /*
 
-    model/const/paths.php - set the path const for the frontend php scripts
-    ---------------------
+    web/const/paths.php - set the path const for the frontend php scripts
+    -------------------
+
+    the paths for the backend php scripts are in main/php/cfg/const/paths.php
+    the paths for the resources are in main/php/cfg/const/files.php or test/php/const/files.php
 
 
     This file is part of zukunft.com - calc with words
@@ -30,41 +33,41 @@
 
 */
 
-namespace html\const;
+namespace Zukunft\ZukunftCom\main\php\web\const;
 
 class paths
 {
+
     // path of the const and classes that are shared between the backend and the html frontend
-    const SHARED = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
-    const SHARED_TYPES = self::SHARED . 'types' . DIRECTORY_SEPARATOR;
+    const string SHARED = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
+    const string SHARED_TYPES = self::SHARED . 'types' . DIRECTORY_SEPARATOR;
 
     // path of the pure html frontend objects
-    const WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
+    const string WEB = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
 
-    const COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
-    const SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
-    const FORM = self::COMPONENT . 'form' . DIRECTORY_SEPARATOR;
+    const string COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
+    const string SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
+    const string EXECUTE = self::COMPONENT . 'execute' . DIRECTORY_SEPARATOR;
 
-    const CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
-    const ELEMENT = self::WEB . 'element' . DIRECTORY_SEPARATOR;
-    const FIGURE = self::WEB . 'figure' . DIRECTORY_SEPARATOR;
-    const FORMULA = self::WEB . 'formula' . DIRECTORY_SEPARATOR;
-    const GROUP = self::WEB . 'group' . DIRECTORY_SEPARATOR;
-    const HELPER = self::WEB . 'helper' . DIRECTORY_SEPARATOR;
-    const HIST = self::WEB . 'hist' . DIRECTORY_SEPARATOR;
-    const HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
-    const LOG = self::WEB . 'log' . DIRECTORY_SEPARATOR;
-    const PHRASE = self::WEB . 'phrase' . DIRECTORY_SEPARATOR;
-    const REF = self::WEB . 'ref' . DIRECTORY_SEPARATOR;
-    const RESULT = self::WEB . 'result' . DIRECTORY_SEPARATOR;
-    const SANDBOX = self::WEB . 'sandbox' . DIRECTORY_SEPARATOR;
-    const SYSTEM = self::WEB . 'system' . DIRECTORY_SEPARATOR;
-    const TYPES = self::WEB . 'types' . DIRECTORY_SEPARATOR;
-    const USER = self::WEB . 'user' . DIRECTORY_SEPARATOR;
-    const VALUE = self::WEB . 'value' . DIRECTORY_SEPARATOR;
-    const VERB = self::WEB . 'verb' . DIRECTORY_SEPARATOR;
-    const VIEW = self::WEB . 'view' . DIRECTORY_SEPARATOR;
-    const WORD = self::WEB . 'word' . DIRECTORY_SEPARATOR;
-
+    const string CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
+    const string ELEMENT = self::WEB . 'element' . DIRECTORY_SEPARATOR;
+    const string FIGURE = self::WEB . 'figure' . DIRECTORY_SEPARATOR;
+    const string FORMULA = self::WEB . 'formula' . DIRECTORY_SEPARATOR;
+    const string GROUP = self::WEB . 'group' . DIRECTORY_SEPARATOR;
+    const string HELPER = self::WEB . 'helper' . DIRECTORY_SEPARATOR;
+    const string HIST = self::WEB . 'hist' . DIRECTORY_SEPARATOR;
+    const string HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
+    const string LOG = self::WEB . 'log' . DIRECTORY_SEPARATOR;
+    const string PHRASE = self::WEB . 'phrase' . DIRECTORY_SEPARATOR;
+    const string REF = self::WEB . 'ref' . DIRECTORY_SEPARATOR;
+    const string RESULT = self::WEB . 'result' . DIRECTORY_SEPARATOR;
+    const string SANDBOX = self::WEB . 'sandbox' . DIRECTORY_SEPARATOR;
+    const string SYSTEM = self::WEB . 'system' . DIRECTORY_SEPARATOR;
+    const string TYPES = self::WEB . 'types' . DIRECTORY_SEPARATOR;
+    const string USER = self::WEB . 'user' . DIRECTORY_SEPARATOR;
+    const string VALUE = self::WEB . 'value' . DIRECTORY_SEPARATOR;
+    const string VERB = self::WEB . 'verb' . DIRECTORY_SEPARATOR;
+    const string VIEW = self::WEB . 'view' . DIRECTORY_SEPARATOR;
+    const string WORD = self::WEB . 'word' . DIRECTORY_SEPARATOR;
 
 }
