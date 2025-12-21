@@ -78,7 +78,7 @@ SELECT triple_insert_log_01551155000000001
          68::smallint,
          'A mathematical constant that never changes e.g. Pi'::text,
          69::smallint,
-         'constant'::text,
+         'math constant'::text,
          17::smallint,
          97::smallint,
          3::smallint);

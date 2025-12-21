@@ -126,7 +126,7 @@ class verb_list extends type_list
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param phrase $phr the phrase used as a base for selecting the verb list e.g. Zurich
      * @param foaf_direction $direction the direction towards the verbs should be selected e.g. for Zurich and UP the verb "is" should be in the list
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_linked_phrases_sql(sql_db $db_con, phrase $phr, foaf_direction $direction): sql_par
     {
@@ -683,7 +683,13 @@ class verb_list extends type_list
             $usr_msg->add_info_text('no verbs to save');
         } else {
             foreach ($this->lst() as $vrb) {
-                $vrb->save($usr_msg);
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $vrb_usr_msg = $usr_msg->clone_reset();
+                // actual save the reference to the database
+                $vrb->save($vrb_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($vrb_usr_msg);
             }
         }
 

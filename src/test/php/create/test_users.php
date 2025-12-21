@@ -33,19 +33,55 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Config.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_users
 {
+
+    /*
+     * init
+     */
+
+    // use the global test environment only used for cleanup, so in many cases just null
+    private ?test_cleanup $env;
+
+    function __construct(?test_cleanup $env = null)
+    {
+        $this->env = $env;
+    }
+
+
+    /*
+     * cleanup
+     */
+
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        $this->env->subheader($ts . 'cleanup');
+        foreach (users::TEST_USERS as $usr_name) {
+            $this->env->write_named_cleanup_user($usr_name, $this->env->usr_system);
+        }
+    }
+
+
+    /*
+     * unit
+     */
 
     /**
      * @return user a user used for unit testing with has only the ip set
@@ -66,6 +102,8 @@ class test_users
         $usr = new user();
         $usr->set_name(users::TEST_USER_NAME);
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->email = users::TEST_USER_MAIL;
+        $usr->set_description(users::TEST_USER_COM);
         $usr->excluded = true;
         return $usr;
     }

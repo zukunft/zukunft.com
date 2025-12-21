@@ -198,7 +198,7 @@ class sandbox_list extends base_list
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     protected function load_sql_names_pre(
         sql_creator                                    $sc,
@@ -237,7 +237,7 @@ class sandbox_list extends base_list
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -326,7 +326,7 @@ class sandbox_list extends base_list
         int                                            $offset = 0
     ): sql_par
     {
-        $qp = new sql_par();
+        $qp = new sql_par($this::class);
         // TODO Prio 0 fill
         return $qp;
     }
@@ -408,10 +408,11 @@ class sandbox_list extends base_list
         bool                                                         $allow_duplicates = false
     ): user_message
     {
+        // TODO Prio 1 add $usr_msg as parameter
         $usr_msg = new user_message();
 
         // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
+        $obj_to_add->db_ready($usr_msg);
 
         // add a missing user to the object
         // or check if the object user matches the list user

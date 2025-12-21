@@ -127,6 +127,17 @@ class user_message
         $this->typ_lst = [];
     }
 
+    /**
+     * create user message list without errors but with the original user
+     * @return user_message empty but with the same user
+     */
+    function clone_reset(): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->usr = $this->usr;
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
@@ -380,6 +391,9 @@ class user_message
      * more than one message id can be added to a user message result
      * the message id is translated to the user interface language at the latest possible moment
      * the vars are expected to be in the target language already
+     *
+     * the function just adds the message and sets the status to fail
+     * without writing to the log
      *
      * @param msg_id|null $msg_id the message text to add
      * @return void is never expected to fail

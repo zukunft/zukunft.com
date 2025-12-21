@@ -91,6 +91,21 @@ class TextIdObject
         return clone $this;
     }
 
+    /**
+     * create a fresh copy of this object
+     * used to avoid detecting again which object is used
+     *
+     * @return $this a cloned object including a clone of all child objects
+     *               with all vars set to the default value
+     *               except the owner if requested
+     */
+    function clone_reset(): TextIdObject
+    {
+        $obj_cpy = $this->clone_all();
+        $obj_cpy->reset();
+        return $obj_cpy;
+    }
+
 
     /*
      * modify

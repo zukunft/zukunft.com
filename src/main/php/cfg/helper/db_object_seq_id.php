@@ -144,6 +144,31 @@ class db_object_seq_id extends db_object
 
 
     /*
+     * sql write
+     */
+
+    /**
+     * the common part of the sql_insert and sql_update functions
+     * TODO include the sql statements to log the changes
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext the query name extension to differ the queries based on the fields changed
+     * @return sql_par prepared sql parameter object with the name set
+     */
+    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): sql_par
+    {
+        $qp = new sql_par($this::class, $sc_par_lst, $ext);
+
+        // update the sql creator settings
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+
+        return $qp;
+    }
+
+
+    /*
      * sql create
      */
 
@@ -271,7 +296,7 @@ class db_object_seq_id extends db_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -360,14 +385,9 @@ class db_object_seq_id extends db_object
     ): bool
     {
         global $db_con;
-        global $usr; // must always be the user who has initiated the import
 
         // map the json to the object
-        if (in_array($this::class, def::CODE_ID_CLASSES)) {
-            $this->import_mapper_user($in_ex_json, $usr, $usr_msg, $dto);
-        } else {
-            $this->import_mapper($in_ex_json, $usr_msg, $dto);;
-        }
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);;
 
         // save the object and the related objects in the database
         if ($db_con->is_open()) {
@@ -463,27 +483,6 @@ class db_object_seq_id extends db_object
     /*
      * overwrite
      */
-
-    /**
-     * set the vars of this view object based on the given json without writing to the database
-     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
-     * @param data_object|null $dto cache of the objects imported until now for the primary references
-     * @return bool true if everything was fine
-     */
-    function import_mapper_user(
-        array        $in_ex_json,
-        user         $usr_req,
-        user_message $usr_msg,
-        ?data_object $dto = null
-    ): bool
-    {
-        log_err('overwrite of import_mapper_user missing in ' . $this::class);
-        return $usr_msg->is_ok();
-    }
 
     /**
      * get the name of the database object (only used by named objects)

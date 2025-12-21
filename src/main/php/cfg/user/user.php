@@ -395,26 +395,24 @@ class user extends db_id_object_non_sandbox
      * set the vars of this user object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
         // map the fields that are common for import and api json messages
-        $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
+        $this->json_mapper($in_ex_json, $usr_msg->usr, $usr_msg);
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code od
-            if ($usr_req->is_admin() or $usr_req->is_system()) {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+            if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
             }
         }
 
@@ -913,7 +911,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -941,7 +939,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
@@ -959,7 +957,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
@@ -977,7 +975,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the user
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
@@ -995,7 +993,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
     {
@@ -1014,7 +1012,7 @@ class user extends db_id_object_non_sandbox
      * @param ?string $name the name of the user
      * @param ?string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name_or_email(sql_creator $sc, ?string $name, ?string $email, string $class = self::class): sql_par
     {
@@ -1037,7 +1035,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param string $ip_addr the ip address with which the user has logged in
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
     {
@@ -1055,7 +1053,7 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param int $profile_id the id of the profile of which the first matching user should be loaded
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
     {
@@ -1476,7 +1474,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        $this->import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // reset all parameters of this user object
         $this->reset();
@@ -1564,6 +1562,26 @@ class user extends db_id_object_non_sandbox
         }
 
         return $vars;
+    }
+
+
+    /*
+     * check
+     */
+
+    /**
+     * returns ok message if this formula can be added to the database
+     * e.g. a formula without expression should not be added to the database
+     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @return true if the formula can be added to the database
+     */
+    function db_ready(user_message $usr_msg): bool
+    {
+        if (($this->ip_addr == null or $this->ip_addr == '')) {
+            $usr_msg->add_id_with_vars(msg_id::USER_IP_ADDR_MISSING,
+                [msg_id::VAR_USER_NAME => $this->dsp_id()]);
+        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -1969,10 +1987,10 @@ class user extends db_id_object_non_sandbox
         return $usr_msg->is_ok();
     }
 
-    function is_same(user $usr): bool
+    function is_same(user $usr, user_message $usr_msg): bool
     {
         $result = false;
-        $fvt_lst = $this->db_fields_changed($usr);
+        $fvt_lst = $this->db_fields_changed($usr, $usr_msg);
         if ($fvt_lst->is_empty()) {
             $result = true;
         }
@@ -2056,7 +2074,7 @@ class user extends db_id_object_non_sandbox
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
-                    if (!$this->is_same($db_rec)) {
+                    if (!$this->is_same($db_rec, $usr_msg)) {
                         $usr_msg->add($this->db_update($db_con, $db_rec, $usr_req));
                     }
                 }
@@ -2084,13 +2102,13 @@ class user extends db_id_object_non_sandbox
         // fields and values that the word has additional to the standard named user sandbox object
         $usr_empty = $this->clone_reset();
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($usr_empty, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($usr_empty, $usr_msg, $sc_par_lst);
         // get the list of all fields that can be changed by the user
         $fld_lst_all = $this->db_fields_all();
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
 
         // update the sql creator settings
         $sc = $db_con->sql_creator();
@@ -2183,7 +2201,7 @@ class user extends db_id_object_non_sandbox
         if ($this->can_add($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_req, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_insert($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
             $msg = 'add and log ' . $this->dsp_id();
             if ($db_con->insert($qp, $msg, $usr_msg)) {
                 $this->id = $usr_msg->get_row_id();
@@ -2226,10 +2244,10 @@ class user extends db_id_object_non_sandbox
             $sc = $db_con->sql_creator();
 
             if (in_array($this->name(), users::TEST_NO_LOG)) {
-                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, $usr_msg, new sql_type_list([]));
                 $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
             } else {
-                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
                 $db_con->update($qp, 'update and log ' . $this->dsp_id(), $usr_msg);
             }
 
@@ -2255,12 +2273,14 @@ class user extends db_id_object_non_sandbox
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr the user who has request the user adding or update
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
         user          $usr,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2274,13 +2294,13 @@ class user extends db_id_object_non_sandbox
         // fields and values that the word has additional to the standard named user sandbox object
         $sbx_empty = $this->clone_reset();
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($sbx_empty, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($sbx_empty, $usr_msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user
         $fld_lst_all = $this->db_fields_all();
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
 
         // TODO check if the prepared function already exists and if yes, skip the query recreation
 
@@ -2313,7 +2333,7 @@ class user extends db_id_object_non_sandbox
 
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
-        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
         $par_lst_out->add($qp_id->par_fld);
         $sql .= $qp_id->sql;
 
@@ -2333,7 +2353,7 @@ class user extends db_id_object_non_sandbox
         );
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $usr, $fld_lst_log, $fvt_lst_log, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log($this::class, $usr, $fld_lst_log, $fvt_lst_log, $usr_msg, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -2342,7 +2362,7 @@ class user extends db_id_object_non_sandbox
             // update the fields excluding the unique id
             $update_fvt_lst = new sql_par_field_list();
             foreach ($fld_lst_ex_log as $fld) {
-                $update_fvt_lst->add($fvt_lst->get($fld));
+                $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
             }
             $sc_update = clone $sc;
             $sc_par_lst_upd = $sc_par_lst_used;
@@ -2386,13 +2406,15 @@ class user extends db_id_object_non_sandbox
      * @param sql_creator $sc with the target db_type set
      * @param user $db_row the sandbox object with the database values before the update
      * @param user $usr the user who has request the user adding or update
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         user          $db_row,
         user          $usr,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -2411,7 +2433,7 @@ class user extends db_id_object_non_sandbox
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user
         $fld_lst_all = $this->db_fields_all();
 
@@ -2421,7 +2443,7 @@ class user extends db_id_object_non_sandbox
 
         // make the query name unique based on the changed fields
         $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
 
         // TODO check if the prepared function already exists and if yes, skip the query recreation
 
@@ -2498,7 +2520,7 @@ class user extends db_id_object_non_sandbox
             // update the fields excluding the unique id
             $update_fvt_lst = new sql_par_field_list();
             foreach ($fld_lst_chg as $fld) {
-                $update_fvt_lst->add($fvt_lst->get($fld));
+                $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
             }
             $sc_update = clone $sc;
             if ($sc_par_lst->incl_log()) {
@@ -2552,14 +2574,16 @@ class user extends db_id_object_non_sandbox
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
+        user_message       $usr_msg,
         sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
@@ -2568,7 +2592,7 @@ class user extends db_id_object_non_sandbox
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert = $fvt_lst->get(user_db::FLD_NAME);
+        $fvt_insert = $fvt_lst->get(user_db::FLD_NAME, $usr_msg);
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
@@ -2617,14 +2641,14 @@ class user extends db_id_object_non_sandbox
      * get a list of database field names, values and types that have been updated
      *
      * @param user $db_usr the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         user          $db_usr,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2944,6 +2968,29 @@ class user extends db_id_object_non_sandbox
             ]);
         }
         return $usr_msg->is_ok();
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * name of log entry used shown to the user which entry has been deleted
+     * e.g. for the user it can be the name, the ip-address, or as fallback the database id
+     * @return string the field name(s) of the prime database index of the object
+     */
+    function log_name_field(): string
+    {
+        $fld_name = $this->id_field();
+        if ($this->name != '') {
+            $fld_name = user_db::FLD_NAME;
+        } elseif ($this->email != '') {
+            $fld_name = user_db::FLD_EMAIL;
+        } elseif ($this->ip_addr != '') {
+            $fld_name = user_db::FLD_IP_ADDR;
+        }
+        return $fld_name;
     }
 
 

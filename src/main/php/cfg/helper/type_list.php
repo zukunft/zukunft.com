@@ -277,6 +277,22 @@ class type_list
 
 
     /*
+     * load
+     */
+
+    /**
+     * TODO Prio 1 check if the overwrites can be removed
+     * adding the view component position types used for unit tests to the dummy list
+     */
+    function load_from_csv_resource(): void
+    {
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $this->read_from_config_csv($this);
+    }
+
+
+    /*
      * database (dao) functions
      */
 

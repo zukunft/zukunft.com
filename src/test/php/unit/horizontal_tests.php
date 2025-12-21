@@ -46,6 +46,8 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -95,6 +97,7 @@ class horizontal_tests
         $tl = new test_lib();
         $t_usr = new test_users();
         $t_map = new test_mappers($t);
+        $sc = new sql_creator();
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
@@ -117,22 +120,33 @@ class horizontal_tests
             $t->assert_json_string($test_name, $api_json, test_api::JSON_ID_ONLY);
         }
 
+        $t->subheader($ts . 'db ready');
+        foreach (def::MAIN_CLASSES as $class) {
+            $filled_obj = $t_map->class_to_filled_object($class);
+            $t->assert_db_ready($filled_obj);
+            $filled_obj->reset();
+            $t->assert_not_db_ready($filled_obj);
+        }
+
         $t->subheader($ts . 'sql');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'sql creation for ' . $lib->class_to_name($class);
             $t->resource_path = $lib->class_to_resource_path($class);
             $obj = $t_map->class_to_base_object($class);
-            $obj_changed = clone $obj;
-            $obj_changed->reset();
+            $obj_changed = $obj->clone_reset();
             $t->assert_sql_table_create($obj);
             $t->assert_sql_index_create($obj);
             if (!in_array($class, def::NO_FOREIGN_DB_KEY_CLASSES)) {
                 $t->assert_sql_foreign_key_create($obj);
             }
-            // TODO maybe move here from the single class tests
-            //$t->assert_sql_insert($sc, $obj, [sql_type::LOG]);
+            // TODO Prio 1 move here from the single class tests
+            $sql_typ_lst = [];
+            if (!in_array($class,def::MAIN_CLASSES_NO_CHANGE_LOG)) {
+                $sql_typ_lst[] = sql_type::LOG;
+            }
+            $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
             //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
-            //$t->assert_sql_delete($sc, $obj, [sql_type::LOG]);
+            $t->assert_sql_delete($sc, $obj, $sql_typ_lst);
 
         }
 
@@ -222,11 +236,9 @@ class horizontal_tests
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
-                $sys_usr = $t->user_system();
-                $filled_obj->import_mapper_user($ex_json, $sys_usr, $usr_msg, $dto);
-            } else {
-                $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
+                $usr_msg->usr = $t->user_system();
             }
+            $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);

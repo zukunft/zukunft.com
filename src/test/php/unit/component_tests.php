@@ -96,12 +96,13 @@ class component_tests
         $cmp = $t_cmp->component();
         $t->assert_sql_insert($sc, $cmp);
         $t->assert_sql_insert($sc, $cmp, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG, sql_type::USER]);
         $cmp = $t_cmp->component_word_add_title(); // a component with a code_id as it might be imported
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
         $cmp = $t_cmp->component_filled_all();
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
+        $cmp = $t_cmp->component_incomplete();
+        $t->assert_sql_insert_fail($sc, $cmp, [sql_type::LOG]);
 
         $t->subheader($ts . 'component sql write update');
         $cmp = $t_cmp->component();
@@ -111,7 +112,8 @@ class component_tests
 
         $t->subheader($ts . 'component sql delete');
         $t->assert_sql_delete($sc, $cmp);
-        $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 
         $t->subheader($ts . 'component base object handling');
         $cmp = $t_cmp->component_filled();

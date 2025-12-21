@@ -120,7 +120,7 @@ class view_sys_list extends type_list
     /**
      * set the SQL query parameters to load a list of views from the database that have a used code id
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_list(sql_creator $sc): sql_par
     {

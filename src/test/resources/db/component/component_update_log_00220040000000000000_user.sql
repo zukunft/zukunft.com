@@ -49,7 +49,7 @@ SELECT component_update_log_00220040000000000000_user
         'simply show the word or triple name'::text,
         null::text,
         53::smallint,
-        'phrase_name'::text,
+        'word name'::text,
         8::smallint,
         null::text,
         null::smallint);

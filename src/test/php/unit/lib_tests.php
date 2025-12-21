@@ -271,13 +271,13 @@ class lib_tests
         $result = $lib->ids_not_empty($test_array);
         $t->assert("ids_not_empty", $result, $target);
 
-        $t->assert_true("same function order but add to all list", $lib->arrayCompareOrder([1,2,3],[1,2]));
-        $t->assert_true("function missing at end but same order in all list", $lib->arrayCompareOrder([1,2],[1,2,3]));
-        $t->assert_true("function missing in the middle but same order in all list", $lib->arrayCompareOrder([1,3],[1,2,3]));
-        $t->assert_true("no function but same order in all list", $lib->arrayCompareOrder([],[1,2,3]));
-        $t->assert_true("last function differs the order is still fine", $lib->arrayCompareOrder([1,2,3,4,5],[1,2,3,4,6]));
-        $t->assert_true("same function order because all list is empty", $lib->arrayCompareOrder([1,2,3],[]));
-        $t->assert_false("function order differs from all function list", $lib->arrayCompareOrder([3,1],[1,2,3]));
+        $t->assert_true("same function order but add to all list", $lib->arrayCompareOrder([1, 2, 3], [1, 2]));
+        $t->assert_true("function missing at end but same order in all list", $lib->arrayCompareOrder([1, 2], [1, 2, 3]));
+        $t->assert_true("function missing in the middle but same order in all list", $lib->arrayCompareOrder([1, 3], [1, 2, 3]));
+        $t->assert_true("no function but same order in all list", $lib->arrayCompareOrder([], [1, 2, 3]));
+        $t->assert_true("last function differs the order is still fine", $lib->arrayCompareOrder([1, 2, 3, 4, 5], [1, 2, 3, 4, 6]));
+        $t->assert_true("same function order because all list is empty", $lib->arrayCompareOrder([1, 2, 3], []));
+        $t->assert_false("function order differs from all function list", $lib->arrayCompareOrder([3, 1], [1, 2, 3]));
 
         $test_name = 'add string to array after a given string';
         $lst = ['first', 'middle', 'last'];
@@ -301,6 +301,48 @@ class lib_tests
         $result = $lib->arrayAddArrayBefore($lst, ['even before first', 'before first'], 'first');
         $target = ['even before first', 'before first', 'first', 'middle', 'last'];
         $t->assert($test_name . ' before first', $result, $target);
+        $test_name = 'add array to array before a the last';
+        $result = $lib->arrayAddArrayBefore($lst, ['before last'], 'last');
+        $target = ['first', 'middle', 'before last', 'last'];
+        $t->assert($test_name, $result, $target);
+        $test_name = 'add array to array before a the last and add after the previous insert';
+        $result = $lib->arrayAddArrayBefore($result, ['after before last'], 'last');
+        $target = ['first', 'middle', 'before last', 'after before last', 'last'];
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'function tree md page tests';
+        $t_code = new coding_rule_tests();
+        $fnc_lst = [
+            'main backend errors' => [
+                'component link' => [
+                    'get_predicate_name' => 'description'],
+                'formula' => [
+                    'special result' => 'description']],
+            'main backend' => [
+                'construct and map' => [
+                    '__construct' => 'description'],
+                'reset' => [
+                    'component' => 'description']]];
+        $result = $t_code->php_function_list_to_md_row_start($fnc_lst);
+        $target = '### main backend errors
+
+```
+\-- component link
+    \-- get_predicate_name - description
+\-- formula
+    \-- special result - description
+```
+
+### main backend
+
+```
+\-- construct and map
+    \-- __construct - description
+\-- reset
+    \-- component - description
+```
+';
+        $t->assert($test_name, $result, $target);
 
         $t->subheader($ts . 'display');
 
@@ -419,7 +461,7 @@ class lib_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'json result to bool';
-        $test_result = $lib->json_is_similar([1,2], [1]);
+        $test_result = $lib->json_is_similar([1, 2], [1]);
         $result = $lib->diff_msg($test_result, true);
         if ($result == '//-1////+//') {
             $target = '//-1////+//';

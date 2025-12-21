@@ -221,19 +221,17 @@ class source extends sandbox_code_id
      * set the object vars of this source object based on the import json array
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
@@ -372,7 +370,7 @@ class source extends sandbox_code_id
      * create the SQL to load the default source always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -392,7 +390,7 @@ class source extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -410,7 +408,7 @@ class source extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -501,7 +499,7 @@ class source extends sandbox_code_id
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the source has been changed
      */
     function not_changed_sql(sql_creator $sc): sql_par
@@ -636,14 +634,14 @@ class source extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|source $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
     function db_fields_changed(
         sandbox|source $sbx,
-        sql_type_list  $sc_par_lst = new sql_type_list(),
-        user_message   $usr_msg = new user_message()
+        user_message   $usr_msg,
+        sql_type_list  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -652,7 +650,7 @@ class source extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

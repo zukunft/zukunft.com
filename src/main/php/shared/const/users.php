@@ -107,6 +107,7 @@ class users
     // a test user for db write tests
     const string TEST_USER_NAME = 'zukunft.com system write test user';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
+    const string TEST_USER_MAIL = 'test@zukunft.com';
     // invalid address used to test creating a new user
     const string TEST_USER_IP = '258.257.256.255';
 
@@ -136,5 +137,11 @@ class users
     const int RIGHT_LEVEL_DEVELOPER = 80;
     const int RIGHT_LEVEL_SYSTEM_TEST = 90;
     const int RIGHT_LEVEL_SYSTEM = 99;
+
+    // list of user that is used for system testing that should be removed are the system test has been completed
+    // and where no real user is allowed to use the username
+    const array TEST_USERS = array(
+        self::TEST_USER_NAME
+    );
 
 }

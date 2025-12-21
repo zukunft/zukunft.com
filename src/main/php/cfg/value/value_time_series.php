@@ -184,7 +184,7 @@ class value_time_series extends sandbox_value
      * create the SQL to load the default time series always by the id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
@@ -198,7 +198,7 @@ class value_time_series extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -236,7 +236,7 @@ class value_time_series extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -266,7 +266,7 @@ class value_time_series extends sandbox_value
      * @param sql_creator $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {

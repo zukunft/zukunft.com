@@ -260,14 +260,12 @@ class view extends sandbox_code_id
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -279,7 +277,7 @@ class view extends sandbox_code_id
 
         // reset the all parameters for the view object but keep the user
         $this->reset(true);
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
@@ -287,7 +285,7 @@ class view extends sandbox_code_id
             $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req));
+            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr));
         }
 
         // TODO get component from the dto object
@@ -413,7 +411,7 @@ class view extends sandbox_code_id
     ): bool
     {
         global $db_con;
-        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         if ($db_con->is_open()) {
             if ($this->name == '') {
@@ -708,7 +706,7 @@ class view extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param term $trm the code id of the view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_term(sql_creator $sc, term $trm): sql_par
     {
@@ -732,7 +730,7 @@ class view extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -749,7 +747,7 @@ class view extends sandbox_code_id
      * create the SQL to load the default view always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -797,7 +795,7 @@ class view extends sandbox_code_id
      * TODO make the order user specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
@@ -1106,7 +1104,7 @@ class view extends sandbox_code_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -1217,14 +1215,14 @@ class view extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|view $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|view  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1233,7 +1231,7 @@ class view extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

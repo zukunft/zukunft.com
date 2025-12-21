@@ -621,7 +621,7 @@ class test_db_load
         if ($frm->id() == 0) {
             $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
-            $frm->generate_ref_text();
+            $frm->generate_ref_text(null, $usr_msg);
             $frm->save($usr_msg);
             // TODO add this check to all add functions
             if (!$usr_msg->is_ok()) {

@@ -20,6 +20,8 @@
     - log:               functions to track the changes
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
+    - message:           add message function that might be overwritten by a child object for a more precise message
+    - debug:             internal support functions for debugging
 
     TODO Prio 2 rename predicate to type
                 because predicate makes only sense for triples
@@ -329,7 +331,7 @@ class sandbox_link extends sandbox
      * to be overwritten by the child objects
      * @return string|null the name of connection type
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         return null;
     }
@@ -349,7 +351,7 @@ class sandbox_link extends sandbox
     function verb_empty(): bool
     {
         if ($this->predicate_id() == 0
-            and ($this->get_predicate_name() == null or $this->get_predicate_name() == '')) {
+            and ($this->predicate_name() == null or $this->predicate_name() == '')) {
             return true;
         } else {
             return false;
@@ -436,7 +438,7 @@ class sandbox_link extends sandbox
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name;
     }
@@ -557,7 +559,7 @@ class sandbox_link extends sandbox
      * @param int $predicate_id the predicate object id
      * @param int|string $to the object (grammar) object id or the unique external key
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
@@ -602,19 +604,19 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg to add the suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
 
-        if ($this->needs_triple_from()) {
+        if ($this->needs_from()) {
             if ($this->fob == null) {
                 $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                $usr_msg->add($this->fob->can_be_ready());
+                $this->fob->can_be_ready($usr_msg);
             }
         }
         if ($this->needs_to()) {
@@ -624,20 +626,11 @@ class sandbox_link extends sandbox
             } else {
                 // a reference have only an external key but not a target object
                 if ($this::class != ref::class) {
-                    $usr_msg->add($this->tob->can_be_ready());
+                    $this->tob->can_be_ready($usr_msg);
                 }
             }
         }
-        return $usr_msg;
-    }
-
-    private function needs_triple_from(): bool
-    {
-        if ($this::class == triple::class) {
-            return $this->needs_from();
-        } else {
-            return false;
-        }
+        return $usr_msg->is_ok();
     }
 
     function needs_from(): bool
@@ -654,35 +647,40 @@ class sandbox_link extends sandbox
      * returns ok message if this link e.g. triple can be added to the database
      * if e.g. the database id of the from or the to object is missing
      *         first the linked object needs to be added to the database
-     * @return user_message the explanation why the link cannot yet be added to the database
+     * @param user_message $usr_msg is enriched with the explanation why the link cannot yet be added to the database
+     * @return bool false if something is missing
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
 
-        if ($this->needs_triple_from()) {
+        if ($this->needs_from()) {
             if ($this->fob == null) {
+                // for some triples it is ok if the from object is not set
+                // e.g. per day
                 $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
+                // if the from object is set it should be valid
+                // e.g. for cubic meter per second
                 if (!$this->fob->is_valid()) {
                     $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
                         [msg_id::VAR_NAME => $this->dsp_id()]);
-
                 }
             }
         }
-        if ($this->tob == null) {
-            $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            if (!$this->tob->is_valid()) {
-                $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+        if ($this->needs_to()) {
+            if ($this->tob == null) {
+                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
-
+            } else {
+                if (!$this->tob->is_valid()) {
+                    $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+                        [msg_id::VAR_NAME => $this->dsp_id()]);
+                }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -899,7 +897,7 @@ class sandbox_link extends sandbox
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 $msg = 'add and log ' . $this->dsp_id();
                 if ($db_con->insert($qp, $msg, $usr_msg)) {
@@ -916,7 +914,7 @@ class sandbox_link extends sandbox
                 // TODO check that always before a db action is called the db type is set correctly
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc);
+                    $qp = $this->sql_insert($sc, $usr_msg);
                     if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
                         $this->id = $usr_msg->get_row_id();
                     }
@@ -1121,15 +1119,17 @@ class sandbox_link extends sandbox
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert_key_field(
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1144,19 +1144,21 @@ class sandbox_link extends sandbox
         }
 
         // get the parameters used for the table key
-        $fvt_from = $fvt_lst->get($this->from_field(), $from_can_be_missing);
-        $fvt_type = $fvt_lst->get($this->type_field());
-        $fvt_to = $fvt_lst->get($this->to_field());
+        $fvt_from = $fvt_lst->get($this->from_field(), $usr_msg, $from_can_be_missing);
+        $fvt_type = $fvt_lst->get($this->type_field(), $usr_msg);
+        $fvt_to = $fvt_lst->get($this->to_field(), $usr_msg);
 
         // create the list of parameters in order of the function usage
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add_id_part($fvt_from);
         $fvt_insert_list->add_id_part($fvt_type);
-        if ($fvt_to->id == null) {
-            // for the external reference key
-            $fvt_insert_list->add($fvt_to);
-        } else {
-            $fvt_insert_list->add_id_part($fvt_to);
+        if ($fvt_to != null) {
+            if ($fvt_to->id == null) {
+                // for the external reference key
+                $fvt_insert_list->add($fvt_to);
+            } else {
+                $fvt_insert_list->add_id_part($fvt_to);
+            }
         }
 
         // create the sql to insert the row
@@ -1169,7 +1171,7 @@ class sandbox_link extends sandbox
         }
         $qp_insert->sql = $sc_insert->create_sql_insert(
             $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_from?->value, $fvt_type->value, $fvt_to->value];
+        $qp_insert->par = [$fvt_from?->value, $fvt_type->value, $fvt_to?->value];
 
         // add the insert row to the function body
         $sql .= ' ' . $qp_insert->sql . '; ';
@@ -1359,14 +1361,14 @@ class sandbox_link extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox|sandbox_link $sbx the same named sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox|sandbox_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list(),
-        user_message         $usr_msg = new user_message()
+        user_message         $usr_msg,
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1385,8 +1387,16 @@ class sandbox_link extends sandbox
         } else {
             $lst->add_user($this, $sbx, $do_log, $table_id);
         }
-        // the link type cannot be changed by the user, because this would be another link
+        // the user cannot change the link type, because this would be another link
         if (!$usr_tbl) {
+            // to delete a link, the actual link is compared with an empty link, so no message should be created
+            if ($this->needs_from() and !$sc_par_lst->is_delete()) {
+                if ($this->fob() == null) {
+                    $this->message_from_invalid($usr_msg);
+                } elseif (!$this->fob()->is_valid()) {
+                    $this->message_from_invalid($usr_msg);
+                }
+            }
             if ($sbx->from_id() !== $this->from_id()) {
                 if ($do_log) {
                     $lst->add_field(
@@ -1402,6 +1412,16 @@ class sandbox_link extends sandbox
                     $this->fob(),
                     $sbx->fob()
                 );
+            }
+            if ($this:: class != ref::class) {
+                // to delete a link, the actual link is compared with an empty link, so no message should be created
+                if ($this->needs_to() and !$sc_par_lst->is_delete()) {
+                    if ($this->tob() == null) {
+                        $this->message_to_invalid($usr_msg);
+                    } elseif (!$this->tob()->is_valid()) {
+                        $this->message_to_invalid($usr_msg);
+                    }
+                }
             }
             if ($sbx->to_id() !== $this->to_id()) {
                 if ($do_log) {
@@ -1601,14 +1621,14 @@ class sandbox_link extends sandbox
      * TODO check first the query name and skip the sql building if not needed
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -1624,11 +1644,11 @@ class sandbox_link extends sandbox
             $lnk_empty = $this->set_link_objects($lnk_empty);
         }
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst_used, $usr_msg);
+        $fvt_lst = $this->db_fields_changed($lnk_empty, $usr_msg, $sc_par_lst_used);
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all($sc_par_lst_used);
         // create either the prepared sql query or a sql function that includes the logging of the changes
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst_used);
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
     /**
@@ -1636,15 +1656,15 @@ class sandbox_link extends sandbox
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox $db_row the word with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox       $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        user_message  $usr_msg = new user_message()
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -1655,10 +1675,31 @@ class sandbox_link extends sandbox
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used, $usr_msg);
+        $fld_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst_used);
         $all_fields = $this->db_fields_all($sc_par_lst_used);
         // unlike the db_* function the sql_update_* parent function is called directly
-        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
+        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $usr_msg, $sc_par_lst_used);
+    }
+
+
+    /*
+     * message
+     */
+
+    function message_from_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_FROM_OBJECT_INVALID, [
+            msg_id::VAR_NAME_FROM => $this->fob()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
+    }
+
+    function message_to_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TO_OBJECT_INVALID, [
+            msg_id::VAR_NAME_TO => $this->tob()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
     }
 
 

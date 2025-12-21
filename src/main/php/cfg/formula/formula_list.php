@@ -160,7 +160,7 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -180,7 +180,7 @@ class formula_list extends sandbox_list_named
      * @param array $frm_ids an array of formula ids which should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -205,7 +205,7 @@ class formula_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names an array of formula names which should be loaded
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -220,7 +220,7 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas by a pattern
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the formulas
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
@@ -235,7 +235,7 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr a phrase used to select the formulas
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr(sql_creator $sc, phrase $phr): sql_par
     {
@@ -260,7 +260,7 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst a phrase list used to select the formulas
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(sql_creator $sc, phrase_list $phr_lst): sql_par
     {
@@ -288,7 +288,7 @@ class formula_list extends sandbox_list_named
      * @param int $ref_id the id of the used object
      * @param int $par_type_id the id of the parameter type
      * @param string $type_query_name the short name of the parameter type to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ref(
         sql_creator $sc,
@@ -319,7 +319,7 @@ class formula_list extends sandbox_list_named
      * use the results of the given word
      * @param sql_creator $sc with the target db_type set
      * @param word $wrd the word to which the depending on formulas should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_word_ref(sql_creator $sc, word $wrd): sql_par
     {
@@ -335,7 +335,7 @@ class formula_list extends sandbox_list_named
      * use the results of the given triple
      * @param sql_creator $sc with the target db_type set
      * @param triple $trp the triple to which the depending on formulas should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_triple_ref(sql_creator $sc, triple $trp): sql_par
     {
@@ -351,7 +351,7 @@ class formula_list extends sandbox_list_named
      * use the results of the given verb
      * @param sql_creator $sc with the target db_type set
      * @param verb $vrb the verb to which the depending on formulas should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_verb_ref(sql_creator $sc, verb $vrb): sql_par
     {
@@ -367,7 +367,7 @@ class formula_list extends sandbox_list_named
      * use the results of the given formula
      * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_formula_ref(sql_creator $sc, formula $frm): sql_par
     {
@@ -383,7 +383,7 @@ class formula_list extends sandbox_list_named
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param int $limit the number of formulas that should be loaded
      * @param int $page the offset
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_all(sql_db $db_con, int $limit, int $page): sql_par
     {
@@ -751,10 +751,10 @@ class formula_list extends sandbox_list_named
      * similar to triple_list->save_with_cache but using the term_list
      *
      * @param import $imp the import object with the filename and the estimated time of arrival
-     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
+     * @param term_list $trm_lst the cached phrases that does not need to be loaded from the db again
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save_with_cache(import $imp, term_list $cache): user_message
+    function save_with_cache(import $imp, term_list $trm_lst): user_message
     {
         global $cfg;
 
@@ -777,18 +777,26 @@ class formula_list extends sandbox_list_named
             $level = 0;
             $db_lst_all = new formula_list($this->get_user());
             $add_lst = new formula_list($this->get_user());
+
+            // create a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+            $lst_usr_msg = new user_message();
+
             while ($frm_added and $level < $max_frm_levels) {
+
+                // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+                $lst_usr_msg = new user_message();
+
                 $frm_added = false;
-                $usr_msg->unset_added_depending();
+                $lst_usr_msg->unset_added_depending();
 
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
-                    $exp = $frm->expression($cache);
-                    if ($exp->is_valid() or $frm->is_special()) {
-                        $frm_trm_lst = $exp->terms($cache);
+                    $exp = $frm->expression($trm_lst);
+                    if ($exp->is_valid() or $frm->is_predefined()) {
+                        $frm_trm_lst = $exp->terms($trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_trm = $cache->get_by_name($trm->name());
+                            $frm_trm = $trm_lst->get_by_name($trm->name());
                             if ($frm_trm == null) {
                                 $chk_lst->add_by_name($frm_trm);
                             }
@@ -797,7 +805,7 @@ class formula_list extends sandbox_list_named
                 }
 
                 // add the database id to the formula list of words and formulas used until now
-                $chk_lst->fill_by_name($cache, true, false);
+                $chk_lst->fill_by_name($trm_lst, true, false);
 
                 // get the formulas that needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -814,7 +822,7 @@ class formula_list extends sandbox_list_named
 
                 // fill up the cache to prevent loading the same formula again in the next level
                 // TODO increase speed!
-                $cache = $cache->merge($db_lst->term_list());
+                $trm_lst = $trm_lst->merge($db_lst->term_list());
 
                 // fill up the overall db list with db value for later detection of the formulas that needs to be updated
                 $db_lst_all->merge($db_lst);
@@ -822,8 +830,12 @@ class formula_list extends sandbox_list_named
                 // fill up the loaded list with db value to select only the formulas that really needs to be inserted
                 $load_lst->fill_by_name($db_lst, true, false);
 
+                // refresh reference text
+                $ref_usr_msg = new user_message();
+                $load_lst->refresh_ref_text($trm_lst, $ref_usr_msg);
+
                 // select the formulas that are ready to be added to the database
-                $load_lst = $load_lst->get_ready($usr_msg, $imp->file_name);
+                $load_lst = $load_lst->get_ready($lst_usr_msg, $imp->file_name);
 
                 // get the formulas that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
@@ -832,26 +844,33 @@ class formula_list extends sandbox_list_named
                 // create any missing sql insert functions and insert the missing formulas
                 if (!$add_lst->is_empty()) {
 
-                    // refresh reference text
-                    $this->refresh_ref_text($cache, $usr_msg);
+                    // TODO Prio 2
+                    //   loop over the ist of items
+                    //     add to the item with an issues a message, what the problem is
+                    //     add only the item that don't habe an issue and can be saved
+                    //     try to fix the issue by adding the related items
+                    //     report the remaining issues to the user
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
-                    $usr_msg->add($add_lst->insert($cache, true, $imp, formula::class));
+                    $lst_usr_msg->add($add_lst->insert($trm_lst, true, $imp, formula::class));
                     if ($add_lst->count() > 0) {
-                        $usr_msg->set_added_depending();
+                        $lst_usr_msg->set_added_depending();
                         $frm_added = true;
                     }
                     $imp->step_end($add_lst->count(), $save_per_sec);
                 }
 
                 // create the related words
-                $this->save_formulas_words($imp, $usr_msg);
+                $this->save_formulas_words($imp, $lst_usr_msg);
 
-                $cache->filter_valid();
+                $trm_lst->filter_valid();
 
                 $level++;
             }
+
+            // add the user_messages to the last try
+            $usr_msg->add($lst_usr_msg);
 
             // reload the id of the formulas added with the last run
             // TODO use the insert message instead to increase speed
@@ -869,12 +888,12 @@ class formula_list extends sandbox_list_named
 
 
             // fill up the main list with the words
-            $this->fill_by_name($cache, true);
+            $this->fill_by_name($trm_lst, true);
             // fill up the main list with the formulas to check if anything is missing
             $this->fill_by_name($db_lst_all, true);
 
             // report missing formulas
-            $this->report_missing($usr_msg, $cache);
+            $this->report_missing($usr_msg, $trm_lst);
 
 
             // create any missing sql delete functions and delete unused sandbox objects
@@ -979,11 +998,9 @@ class formula_list extends sandbox_list_named
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            $frm_msg = $frm->db_ready();
-            if ($frm_msg->is_ok()) {
+            if ($frm->db_ready($usr_msg)) {
                 $frm_lst->add_by_name($frm);
             } else {
-                $usr_msg->add($frm_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),

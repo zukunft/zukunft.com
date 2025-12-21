@@ -62,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
@@ -1695,6 +1696,49 @@ class library
     }
 
     /**
+     * returns the main test category for a function
+     * e.g.
+     *
+     * @param string $fnc_name the name of the function
+     * @return string name of the expected test category
+     */
+    function php_function_to_test_category(string $fnc_name): string
+    {
+        $tst_cat = match ($fnc_name) {
+            '__construct'
+            => 'none',
+            'name_field', 'all_sandbox_fields'
+            => 'sql_creator',
+            'to_num', 'export_json'
+            => 'db_read',
+            'import_mapper', 'api_json_array', 'fill'
+            => 'horizontal_tests',
+            'row_mapper_sandbox'
+            => 'horizontal_read_tests',
+            'api_mapper'
+            => 'horizontal_ui_tests',
+            'calc', 'import_obj',
+            => 'db_write',
+            default => 'unit'
+        };
+        if ($tst_cat == '') {
+            if (str_starts_with($fnc_name, 'set')
+                or str_starts_with($fnc_name, 'get_')) {
+                $tst_cat = 'dismiss or unit';
+            } elseif (str_starts_with($fnc_name, 'load_sql_')) {
+                $tst_cat = 'unit';
+            } elseif (str_starts_with($fnc_name, 'load_')
+                or str_starts_with($fnc_name, 'reload_')) {
+                $tst_cat = 'db_read';
+            } elseif (str_starts_with($fnc_name, 'save')
+                or str_starts_with($fnc_name, 'assign_')) {
+                $tst_cat = 'db_write';
+            }
+        }
+        return $tst_cat;
+    }
+
+    /**
      * get the expected class section name for a function
      * @param string $fnc_name the name of the function
      * @return string name of the expected class section
@@ -1704,7 +1748,7 @@ class library
         // assign the function to class sections
         $result = match ($fnc_name) {
             '__construct', 'reset', 'row_mapper_sandbox', 'row_mapper_verb',
-            'api_mapper', 'import_mapper', 'import_mapper_user'
+            'api_mapper', 'import_mapper'
             => 'construct and map',
             'load_standard'
             => 'load',
@@ -1712,7 +1756,7 @@ class library
             => 'preloaded',
             'value_list', 'link_types'
             => 'related',
-            'name_field', 'from_field', 'to_field', 'type_field', 'type_name_field', 'all_sandbox_fields'
+            'name_field', 'from_field', 'to_field', 'type_field', 'type_name_field', 'all_sandbox_fields', 'all_fields'
             => 'sql fields',
             'api_json_array', 'set_by_api_json'
             => 'api',
@@ -1733,12 +1777,16 @@ class library
             => 'ui support',
             'has_cfg', 'not_used', 'not_used_sql', 'can_change', 'not_changed', 'not_changed_sql'
             => 'sandbox',
-            'can_be_ready', 'db_ready', 'check_order'
+            'can_be_ready', 'db_ready', 'check_order', 'is_valid'
             => 'check',
+            'calc_predefined'
+            => 'predefined',
             'get_similar', 'add_insert'
             => 'save',
             'get_ready', 'reserved_names', 'fixed_names'
             => 'save helper',
+            'sql_insert', 'sql_insert_key_field'
+            => 'sql write',
             'db_fields_all', 'db_fields_changed'
             => 'sql write fields',
             'dsp_id', 'assigned_msk_ids', 'name', 'name_dsp'
@@ -1763,6 +1811,8 @@ class library
                 $result = 'info';
             } elseif (str_starts_with($fnc_name, 'log_')) {
                 $result = 'log';
+            } elseif (str_starts_with($fnc_name, 'message_')) {
+                $result = 'message';
             } elseif (str_starts_with($fnc_name, 'link')
                 or str_starts_with($fnc_name, 'unlink')) {
                 $result = 'link';
@@ -3084,14 +3134,19 @@ class library
      *
      * @param sql_par_field_list $fvt_lst list of fields that have been changed
      * @param array $fld_lst_all list of all fields of the given object
+     * @param user_message $usr_msg collect the messages for the user
      * @return string the query name extension to make the query name
      */
-    function sql_field_ext(sql_par_field_list $fvt_lst, array $fld_lst_all): string
+    function sql_field_ext(
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_all,
+        user_message       $usr_msg
+    ): string
     {
         $result = '';
         foreach ($fld_lst_all as $fld) {
             if (in_array($fld, $fvt_lst->names())) {
-                $fvt = $fvt_lst->get($fld);
+                $fvt = $fvt_lst->get($fld, $usr_msg);
                 if ($fvt->id == null) {
                     if ($fvt->old_id == null) {
                         if ($fvt->old == null) {

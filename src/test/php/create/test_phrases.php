@@ -119,13 +119,16 @@ class test_phrases
         $lst = new phrase_list($this->env->usr1);
         $lst->add($t_wrd->word()->phrase());
         $lst->add($t_wrd->word_const()->phrase());
-        $lst->add($t_wrd->word_pi_symbol()->phrase());
+        $lst->add($t_wrd->word_pi()->phrase());
         $lst->add($t_trp->triple()->phrase());
-        $lst->add($t_trp->triple_pi_symbol()->phrase());
+        $lst->add($t_trp->triple_pi()->phrase());
         return $lst;
     }
 
-    function phrase_list_pi_const(): phrase_list
+    /**
+     * @return phrase_list as it is returned from the phrase list api, so at the moment without triple links
+     */
+    function phrase_list_api(): phrase_list
     {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
@@ -133,8 +136,8 @@ class test_phrases
         $lst->add($t_wrd->word()->phrase());
         $lst->add($t_wrd->word_const()->phrase());
         $lst->add($t_wrd->word_pi()->phrase());
-        $lst->add($t_trp->triple()->phrase());
-        $lst->add($t_trp->triple_pi()->phrase());
+        $lst->add($t_trp->triple_api()->phrase());
+        $lst->add($t_trp->triple_pi_api()->phrase());
         return $lst;
     }
 
@@ -146,7 +149,7 @@ class test_phrases
         $lst->add($t_wrd->word()->phrase());
         $lst->add($t_wrd->word_const()->phrase());
         $lst->add($t_trp->triple()->phrase());
-        $lst->add($t_trp->triple_pi_symbol()->phrase());
+        $lst->add($t_trp->triple_pi()->phrase());
         return $lst;
     }
 
@@ -291,6 +294,30 @@ class test_phrases
         $lst->add($t_trp->triple_ge()->phrase());
         $lst->add($t_wrd->word_inhabitant()->phrase());
         $lst->add($t_wrd->word_2020()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with simple year phrases
+     */
+    function years(): phrase_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->year_1967()->phrase());
+        $lst->add($t_trp->year_1983()->phrase());
+        $lst->add($t_trp->year_2019()->phrase());
+        $lst->add($t_trp->year_2020()->phrase());
+        $lst->add($t_trp->year_2021()->phrase());
+        $lst->add($t_trp->year_2022()->phrase());
+        $lst->add($t_trp->year_2023()->phrase());
+        $lst->add($t_trp->year_2024()->phrase());
+        $lst->add($t_trp->year_2025()->phrase());
+        $lst->add($t_trp->year_2026()->phrase());
+        $lst->add($t_trp->year_2027()->phrase());
+        $lst->add($t_trp->year_2028()->phrase());
+        $lst->add($t_trp->year_2029()->phrase());
+        $lst->add($t_trp->year_2030()->phrase());
         return $lst;
     }
 

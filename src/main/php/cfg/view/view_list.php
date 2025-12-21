@@ -132,7 +132,7 @@ class view_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -162,7 +162,7 @@ class view_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -177,7 +177,7 @@ class view_list extends sandbox_list_named
      * set the SQL query parameters to load a list of views
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -196,7 +196,7 @@ class view_list extends sandbox_list_named
      * set the SQL query parameters to load a list of views by the component id
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the component to which the views should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_component_id(sql_creator $sc, int $id): sql_par
     {
@@ -284,7 +284,13 @@ class view_list extends sandbox_list_named
         // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
             if ($msk->has_components()) {
-                $msk->save_component_links($usr_msg);
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $cmp_lnk_usr_msg = $usr_msg->clone_reset();
+                // actual save the component link to the database
+                $msk->save_component_links($cmp_lnk_usr_msg);
+                // collect the user message for a consolidated list for the user
+                $usr_msg->add($cmp_lnk_usr_msg);
             }
         }
         return $usr_msg->is_ok();

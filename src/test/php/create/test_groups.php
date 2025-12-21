@@ -77,6 +77,16 @@ class test_groups
     }
 
     /**
+     * @return group object where the most specific mandatory var is not set which is in case of a group the id and the name
+     */
+    function group_incomplete(): group
+    {
+        $ref = $this->group();
+        $ref->set_id('');
+        return $ref;
+    }
+
+    /**
      * @return group with one prime phrases
      */
     function group_pi_symbol(): group

@@ -231,9 +231,10 @@ class db_id_object_non_sandbox extends db_object_seq_id
         global $db_con;
 
         $usr_msg = new user_message();
+        $usr_msg->usr = $usr_req;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_req, new sql_type_list([sql_type::LOG]));
+        $qp = $this->sql_delete($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
         $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
@@ -250,12 +251,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr_req the user who has requested the deletion
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
         user          $usr_req,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -263,8 +266,13 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::DELETE);
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
         // set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used);
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
@@ -404,8 +412,14 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $qp->sql = $qp_func->sql . ' ' . $sql . ';';
         $qp->par = $fvt_lst_out->values();
 
+        // make the query name unique depending on the log entry
+        $ext = '';
+        if ($this::class == user::class) {
+            $ext = sql::NAME_SEP . $this->log_name_field();
+        }
+
         // create the function call
-        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
+        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . $ext . ' (';
 
         $call_val_str = $fvt_lst_out->par_sql($sc);
 
@@ -459,14 +473,13 @@ class db_id_object_non_sandbox extends db_object_seq_id
         return false;
     }
 
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
-        $msg = 'import_mapper_user used but not overwritten in ' . $this::class;
+        $msg = 'import_mapper used but not overwritten in ' . $this::class;
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_message_text($msg);

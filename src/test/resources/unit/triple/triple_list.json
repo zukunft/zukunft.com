@@ -14,7 +14,7 @@
     "share": "personal",
     "protection": "user_protection",
     "description": "sample of a personal measure triple that user without personal login cannot change",
-    "type": "measure",
+    "type": "measure type",
     "view": "measure view",
     "from": "meter",
     "verb": "is a",

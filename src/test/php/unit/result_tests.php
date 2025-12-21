@@ -117,11 +117,13 @@ class result_tests
         $t->assert_sql_insert($sc, $res_main_max);
         $t->assert_sql_insert($sc, $res_filled);
         $t->assert_sql_insert($sc, $res_filled, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $res);
         $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res_big);
+        $res = $t_res->result_incomplete();
+        $t->assert_sql_insert_fail($sc, $res);
         // TODO Prio 2 activate db write
         // TODO add tests for text, time and geo values
+        $res = $t_res->result();
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
         $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);
         $db_res_main = $res_main->cloned(results::TV_FLOAT);
@@ -142,7 +144,8 @@ class result_tests
         // TODO Prio 2 activate db write
         $t->assert_sql_delete($sc, $res_prime);
         $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $res);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
         $t->subheader($ts . 'result base object handling');

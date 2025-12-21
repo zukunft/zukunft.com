@@ -106,15 +106,19 @@ enum messages: string
     const string VAR_NAME_CHK = 'VarObjNameCheck';
     // the description of a sandbox object using dsp_id()
     const string VAR_SANDBOX_NAME = 'VarSandboxName';
-    // the name and if of a word
+    // the name of a word
     const string VAR_WORD_NAME = 'VarWordName';
-    // the name and if of a triple
+    // the name of a triple
     const string VAR_TRIPLE_NAME = 'VarTripleName';
-    // the name and if of a phrase
+    // the name of the source object of a link
+    const string VAR_NAME_FROM = 'VarFromName';
+    // the name of the destination object of a link
+    const string VAR_NAME_TO = 'VarToName';
+    // the name of a phrase
     const string VAR_PHRASE_NAME = 'VarPhraseName';
-    // the name and if of a term
+    // the name of a term
     const string VAR_TERM_NAME = 'VarTermName';
-    // the name and if of a view
+    // the name of a view
     const string VAR_VIEW_NAME = 'VarViewName';
     // the user/owner of an object
     const string VAR_USER = 'VarUser';
@@ -421,6 +425,8 @@ enum messages: string
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
+    case VALUE_ID_MISSING = 'to add a value to the database at least one word must specify the value "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END;
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';
@@ -550,6 +556,9 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not found any more after expected to be added to the database';
 
+    case USER_IP_ADDR_MISSING = 'ip addr for user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" is missing';
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
         . '" is missing in the import message '
@@ -571,9 +580,16 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
+    case FORMULA_TERM_NAME_MISSING = 'no word, triple, formula or verb found for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
     case FORMULA_CREATED = 'formula with name "'
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
+
+    case PHRASE_TYPE_UNEXPECTED = 'it is not yet defined how "'
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . '" should be handled to '
+        . self::VAR_START . self::VAR_FUNCTION_NAME . self::VAR_END;
 
     case TERM_MISSING_IMPORT = 'term "'
         . self::VAR_START . self::VAR_TERM . self::VAR_END
@@ -628,8 +644,46 @@ enum messages: string
         . self::VAR_START . self::VAR_REQUEST . self::VAR_END
         . ' has not returned any response';
     case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case MANDATORY_FIELD_MISSING = 'Mandatory field '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' missing in "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END . '"';
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case MANDATORY_GROUP_ID_MISSING = 'at least one word or triple must be given to save the value '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case MANDATORY_EXPRESSION_MISSING = 'the formula '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' must have an valid expression';
+    case MANDATORY_FROM_OBJECT_INVALID = 'object '
+        . self::VAR_START . self::VAR_NAME_FROM . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_TO_OBJECT_INVALID = 'object '
+        . self::VAR_START . self::VAR_NAME_TO . self::VAR_END
+        . ' is not valid and cannot be linked from '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_PHRASE_IN_LINK_INVALID = 'word or triple '
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_FORMULA_IN_LINK_INVALID = 'formula '
+        . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_TERM_IN_LINK_INVALID = 'word, verb, triple or formula '
+        . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_VIEW_IN_LINK_INVALID = 'view '
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+    case MANDATORY_COMPONENT_IN_LINK_INVALID = 'component '
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . ' is not valid and cannot be linked to '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END . '"';
+
     case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
@@ -824,7 +878,12 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' with the expression '
         . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
+    case FORMULA_REF_EXPRESSION_MISSING = 'the reference is missing in formula '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
 
+    case CANNOT_DELETE_TYPE_WITH_CODE_IS = 'the type  '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' with a link to the program code can only be delete by an administrator user';
     case ID_MISSING_FOR_DEL = 'Deleting of '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' not possible because database id is missing in '

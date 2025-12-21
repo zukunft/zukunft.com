@@ -90,10 +90,12 @@ class source_tests
         $src = $t_src->source();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $src, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
+        $src = $t_src->source_incomplete();
+        $t->assert_sql_insert_fail($sc, $src, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
+        $src = $t_src->source();
         $src_renamed = $src->cloned(sources::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
@@ -110,7 +112,8 @@ class source_tests
         $t->subheader($ts . 'sql delete');
         $t->assert_sql_delete($sc, $src);
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);

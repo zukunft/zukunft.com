@@ -60,6 +60,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
@@ -284,7 +286,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern phrase names that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_like(sql_creator $sc, string $pattern): sql_par
     {
@@ -302,7 +304,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names phrase names that should be loaded
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -320,7 +322,7 @@ class phrase_list extends sandbox_list_named
      * @param phr_ids $ids phrase ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -343,7 +345,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -368,7 +370,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
     {
@@ -385,7 +387,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
@@ -633,31 +635,29 @@ class phrase_list extends sandbox_list_named
     /**
      * fill this list with the phrases of the given json without writing to the database
      * @param array $json_array
-     * @return user_message
+     * @param user_message $usr_msg to collect the message and including the requesting user
+     * @return bool true if the import context has been mapped
      */
-    function import_context(array $json_array): user_message
+    function import_context(array $json_array, user_message $usr_msg): bool
     {
-        global $usr;
-
-        $usr_msg = new user_message();
         foreach ($json_array as $key => $json_obj) {
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
-                    $wrd = new word($usr);
-                    if ($wrd->import_mapper_user($word, $usr, $usr_msg)) {
+                    $wrd = new word($usr_msg->usr);
+                    if ($wrd->import_mapper($word, $usr_msg)) {
                         $this->add_by_name($wrd->phrase());
                     }
                 }
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
-                    $trp = new triple($usr);
+                    $trp = new triple($usr_msg->usr);
                     if ($trp->import_mapper($triple, $usr_msg)) {
                         $this->add_by_name($trp->phrase());
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1231,6 +1231,11 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
+
+    /*
+     * select
+     */
+
     /**
      * makes sure that all combinations of "are" and "contains" are included
      * @return phrase_list with the additional are and contains phrases
@@ -1321,6 +1326,50 @@ class phrase_list extends sandbox_list_named
         $result = $result->del_list($filter_lst);
         log_debug($result->dsp_id());
         return $result;
+    }
+
+    /**
+     * to get the best matching time phrase from the list based on the given point in time,
+     * a fixed definition is used instead of a LLM KI-based guess to have consist results
+     * e.g. if the date ist 2022-08-26, the year 2022 is returned
+     *
+     * if this phrase list is empty, it should loaded from the database
+     *
+     * @param phrase $typ the time period description that should be preferred selected
+     * @param user_message $usr_msg to collect the problems and suggested solutions for the user
+     * @param DateTime|null $time the point in time that should be used for matching
+     * @param phrase_list|null $phr_lst use this phrase list for the selection if not null
+     * @return phrase|null the phrase that matches best the phrase from the list and the $typ
+     */
+    function best_matching_time(
+        phrase $typ,
+        user_message $usr_msg,
+        ?DateTime $time = null,
+        ?phrase_list $phr_lst = null
+    ): ?phrase
+    {
+        $phr = null;
+        if ($typ->is_year()) {
+            $phr = $this->get_year($time->format('Y'));
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_UNEXPECTED, [
+                msg_id::VAR_PHRASE_NAME => $typ->dsp_id(),
+                msg_id::VAR_FUNCTION_NAME => 'get a time word representing now',
+            ]);
+        }
+        return $phr;
+    }
+
+    function get_year(string $name): ?phrase
+    {
+        $year = null;
+        foreach ($this->lst() as $phr) {
+            // TODO Prio 0 and check if the phrase is of type TIME (or YEAR?)
+            if (str_contains($phr->name(), $name)) {
+                $year = $phr;
+            }
+        }
+        return $year;
     }
 
 
@@ -2225,11 +2274,23 @@ class phrase_list extends sandbox_list_named
 
         // add the missing phrase
         foreach ($add_lst->lst() as $phr) {
-            $phr->save($usr_msg);
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $phr_usr_msg = $usr_msg->clone_reset();
+            // actual save the phrase to the database
+            $phr->save($phr_usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($phr_usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $phr_usr_msg = $usr_msg->clone_reset();
+            // actual save the phrase to the database
             $phr->save($usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($phr_usr_msg);
         }
 
         return $usr_msg->is_ok();
@@ -2449,7 +2510,7 @@ class phrase_list extends sandbox_list_named
      * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param foaf_direction $direction to define the link direction
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_linked_phrases(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {

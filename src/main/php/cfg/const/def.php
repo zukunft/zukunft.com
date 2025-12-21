@@ -43,17 +43,33 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_ELEMENT . 'element_type.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_FORMULA . 'formula_map.php';
 //include_once paths::MODEL_FORMULA . 'formula_type.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
 //include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
 //include_once paths::MODEL_LANGUAGE . 'language_form.php';
+//include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_LOG . 'change_table.php';
 //include_once paths::MODEL_LOG . 'change_field.php';
 //include_once paths::MODEL_LOG . 'change_link.php';
 //include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_LOG . 'change_value.php';
+//include_once paths::MODEL_LOG . 'change_values_big.php';
+//include_once paths::MODEL_LOG . 'change_values_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_time_big.php';
+//include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_text_big.php';
+//include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+//include_once paths::MODEL_LOG . 'changes_big.php';
+//include_once paths::MODEL_LOG . 'changes_norm.php';
 //include_once paths::MODEL_PHRASE . 'phrase_types.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SYSTEM . 'job.php';
@@ -108,10 +124,26 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_map;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -244,6 +276,22 @@ class def
         component_link::class,
     ];
 
+    // classes that are directly linked to the main classes and that should be included in the same code function docs part
+    const array MAIN_SUB_CLASSES = [
+        formula_map::class,
+    ];
+
+    // list of classes that have a unique name
+    const array NAME_CLASSES = [
+        word::class,
+        verb::class,
+        triple::class,
+        source::class,
+        formula::class,
+        view::class,
+        component::class,
+    ];
+
     // classes that have a frontend and backend object but are not user specific
     const array SYSTEM_UI_CLASSES = [
         language::class,
@@ -362,6 +410,27 @@ class def
         view::class,
     ];
 
+    // list of log classes that does not need to fill up usr_msg object when creating the sql statements
+    const array CLASSES_CHANGE_LOG = [
+        change::class,
+        change_log::class,
+        changes_norm::class,
+        changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_norm::class,
+        change_values_text_prime::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
+        change_link::class,
+    ];
+
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
         sys_log_status::class,
@@ -388,6 +457,11 @@ class def
         'user_prime_term*',
         'result*',
         'user_result*',
+    ];
+
+    // similar to self::CLASSES_NO_CHANGE_LOG but without wildcards and only for self::MAIN_CLASSES
+    const array MAIN_CLASSES_NO_CHANGE_LOG = [
+        result::class,
     ];
 
     // TODO Prio 2 base it on the class names

@@ -231,7 +231,7 @@ class ip_range extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -248,7 +248,7 @@ class ip_range extends db_object_seq_id
      * create an SQL statement to retrieve the ip range from the database
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_vars(sql_db $db_con): sql_par
     {

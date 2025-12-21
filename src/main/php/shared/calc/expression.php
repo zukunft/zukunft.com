@@ -88,8 +88,6 @@ class expression
     private bool $ref_text_dirty = false;
     // the formula name only for better user messages
     private string $frm_name = '';
-    // description of the problems that appeared during the conversion from the human-readable to the database reference format
-    public ?string $err_text = null;
 
 
     /*
@@ -103,7 +101,6 @@ class expression
         $this->ref_text = null;
         $this->ref_text_dirty = false;
         $this->frm_name = '';
-        $this->err_text = null;
     }
 
 
@@ -168,7 +165,7 @@ class expression
      */
     function ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                 $usr_msg = new user_message()
+        user_message                $usr_msg = new user_message()
     ): ?string
     {
         if ($this->ref_text_dirty) {
@@ -198,7 +195,7 @@ class expression
      */
     protected function get_ref_text(
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                 $usr_msg = new user_message()
+        user_message                $usr_msg = new user_message()
     ): string
     {
         $result = '';
@@ -298,9 +295,9 @@ class expression
      * @return string the expression text in the database ref format
      */
     private function get_ref_part(
-        string                       $frm_part_text,
+        string                      $frm_part_text,
         term_list|term_list_ui|null $trm_lst = null,
-        user_message                 $usr_msg = new user_message()
+        user_message                $usr_msg = new user_message()
     ): string
     {
         $result = $frm_part_text;
@@ -339,7 +336,7 @@ class expression
                 }
 
                 if ($db_sym == '') {
-                    $db_sym = $this->get_term_symbol($name);
+                    $db_sym = $this->get_term_symbol($name, $usr_msg);
                 }
 
                 $result = $left . $db_sym . $right;
@@ -507,7 +504,7 @@ class expression
         return $db_sym;
     }
 
-    protected function get_term_symbol(string $name): string
+    protected function get_term_symbol(string $name, user_message $usr_msg): string
     {
         // check for formulas first, because for every formula a word is also existing
         // similar to a part in get_usr_part, maybe combine
@@ -531,7 +528,9 @@ class expression
         // if still not found report the missing link
         if ($db_sym == '' and $name <> '') {
             $this->ref_text_dirty = true;
-            $this->err_text .= 'No word, triple, formula or verb found for "' . $name . '". ';
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_TERM_NAME_MISSING, [
+                msg_id::VAR_NAME => $name
+            ]);
         }
 
         return $db_sym;

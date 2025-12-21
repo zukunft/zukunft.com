@@ -44,18 +44,19 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
-class test_verbs
+class test_verbs extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env) {
-        $this->env = $env;
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
+    {
+        parent::cleanup_objects($ts, verbs::TEST_VERBS, new verb());
     }
 
 

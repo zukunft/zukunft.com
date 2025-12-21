@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_obj;
@@ -157,7 +158,6 @@ class value_tests
         $db_val_txt = $val_txt->cloned(values::DB_TEXT);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::STANDARD]);
         $t->assert_sql_insert($sc, $val_3);
@@ -175,12 +175,15 @@ class value_tests
         $t->assert_sql_insert($sc, $val_txt);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
+        $val = $t_val->value_incomplete();
+        $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
+        $val = $t_val->value();
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
@@ -203,7 +206,8 @@ class value_tests
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $val, [sql_type::LOG]);
+        // is covered already by the horizontal tests
+        //$t->assert_sql_delete($sc, $val, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
@@ -254,7 +258,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_dsp = new value_ui($val->api_json([api_type::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32819" title="3.14">3.14</a>');
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 
@@ -344,20 +348,25 @@ class value_tests
      * @param value $db_val the value as it is expected to be in the database
      * @return bool true if all tests are fine
      */
-    function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
+    function assert_sql_update_trigger(
+        test_cleanup $t,
+        sql_db $db_con, value $val,
+        value $db_val
+    ): bool
     {
         $sc = $db_con->sql_creator();
+        $usr_msg = new user_message();
         $fields = array(sandbox_multi::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $val->sql_update($sc, $db_val);
+        $qp = $val->sql_update($sc, $db_val, $usr_msg);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $val->sql_update($sc, $db_val);
+            $qp = $val->sql_update($sc, $db_val, $usr_msg);
             $result = $t->assert_qp($qp, $sc->db_type);
         }
         return $result;

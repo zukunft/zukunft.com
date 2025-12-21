@@ -2,9 +2,11 @@
 
 /*
 
-    test/php/unit_write/triple_tests.php - write test triples to the database and check the results
-    ------------------------------------
-  
+    test/php/unit_write/triple_write_tests.php - write test triples to the database and check the results
+    ------------------------------------------
+
+    just the special test cases not covered by the horizontal write tests
+
 
     This file is part of zukunft.com - calc with words
 
@@ -72,6 +74,7 @@ class triple_write_tests
         // start the test section (ts)
         $ts = 'db write triple ';
         $t->header($ts);
+        $t_trp->cleanup($ts);
 
         $t->subheader($ts . 'prepare');
         $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
@@ -306,6 +309,9 @@ class triple_write_tests
         // ... and the owner should now be the second user
 
         // the code changes and tests for formula link should be moved the component_link
+
+        // cleanup - fallback delete
+        $t_trp->cleanup($ts);
 
     }
 

@@ -118,7 +118,7 @@ class view_relation_list extends sandbox_link_list
      * set the SQL query parameters to load all components linked to a view
      * @param sql_creator $sc with the target db_type set
      * @param view $msk the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
@@ -138,7 +138,7 @@ class view_relation_list extends sandbox_link_list
      * set the common part of the SQL query view relations
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -263,15 +263,20 @@ class view_relation_list extends sandbox_link_list
     function save(user_message $usr_msg): bool
     {
         foreach ($this->lst() as $sbx) {
+            // for each item of a list an empty user_message statement should be used
+            // so that an issue in one item does not prevent other item from being saved
+            $msk_rel_usr_msg = $usr_msg->clone_reset();
             // save upfront and missing components
             $cmp = $sbx->get_component();
             if (!$cmp->is_valid()) {
-                if ($cmp->db_ready()) {
-                    $cmp->save($usr_msg);
+                if ($cmp->db_ready($msk_rel_usr_msg)) {
+                    $cmp->save($msk_rel_usr_msg);
                 }
             }
             // save the link of the view to the component
-            $sbx->save($usr_msg);
+            $sbx->save($msk_rel_usr_msg);
+            // collect the user message for a consolidated list for the user
+            $usr_msg->add($msk_rel_usr_msg);
         }
         return $usr_msg->is_ok();
     }

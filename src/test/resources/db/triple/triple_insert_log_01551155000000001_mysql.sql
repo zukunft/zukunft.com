@@ -73,7 +73,7 @@ SELECT triple_insert_log_01551155000000001
          68,
          'A mathematical constant that never changes e.g. Pi',
          69,
-         'constant',
+         'math constant',
          17,
          97,
          3);

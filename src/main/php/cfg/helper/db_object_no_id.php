@@ -247,7 +247,7 @@ class db_object_no_id
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -282,7 +282,7 @@ class db_object_no_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -294,7 +294,7 @@ class db_object_no_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id_str(sql_creator $sc, int|string $id): sql_par
     {

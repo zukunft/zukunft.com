@@ -99,7 +99,7 @@ class group_link extends db_object_seq_id
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -117,7 +117,7 @@ class group_link extends db_object_seq_id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param group $grp the phrase group which should be used for the selection
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_by_group_id_sql(sql_db $db_con, group $grp): sql_par
     {

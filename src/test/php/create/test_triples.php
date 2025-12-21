@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -52,6 +53,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -62,19 +64,23 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class test_triples
+class test_triples extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env)
+    /**
+     * delete any remaining test triples for a clean test start
+     */
+    function cleanup(string $ts): void
     {
-        $this->env = $env;
+        parent::cleanup_objects($ts, triples::TEST_TRIPLES, new triple($this->env->usr1));
+
+        // also clean up the words used for the triples
+        $t_wrd = new test_words($this->env);
+        $t_wrd->cleanup($ts);
     }
 
 
@@ -95,6 +101,32 @@ class test_triples
         $trp->set_from($t_wrd->word_const()->phrase());
         $trp->set_verb($t_vrb->verb_part());
         $trp->set_to($t_wrd->word()->phrase());
+        $trp->set_type(phrase_type::MATH_CONST, $this->env->usr1);
+        global $sys;
+        $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        return $trp;
+    }
+
+    /**
+     * @return triple object where the most specific mandatory var is not set which is in case of a word the id and the name of the to phrase
+     */
+    function triple_incomplete(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $trp = $this->triple();
+        $trp->set_to($t_wrd->word_incomplete()->phrase());
+        return $trp;
+    }
+
+    /**
+     * TODO PRIO 1
+     * @return triple as it is returned at the moment via phrase list api, means without links
+     */
+    function triple_api(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::MATH_CONST_ID, triples::MATH_CONST);
+        $trp->description = triples::MATH_CONST_COM;
         $trp->set_type(phrase_type::MATH_CONST, $this->env->usr1);
         global $sys;
         $trp->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
@@ -193,6 +225,19 @@ class test_triples
         $trp->set_from($t_wrd->word_pi()->phrase());
         $trp->set_verb($t_vrb->verb_is());
         $trp->set_to($this->triple()->phrase());
+        $trp->set_type(phrase_type::TRIPLE_HIDDEN, $this->env->usr1);
+        return $trp;
+    }
+
+    /**
+     * TODO PRIO 1
+     * @return triple pi as it is returned at the moment via phrase list api, means without links
+     */
+    function triple_pi_api(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triples::PI_ID, triples::PI_NAME);
+        $trp->description = triples::PI_COM;
         $trp->set_type(phrase_type::TRIPLE_HIDDEN, $this->env->usr1);
         return $trp;
     }
@@ -644,7 +689,7 @@ class test_triples
     function triple_list_one(): triple_list
     {
         $lst = new triple_list($this->env->usr1);
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         return $lst;
     }
 
@@ -655,7 +700,7 @@ class test_triples
     {
         $lst = new triple_list($this->env->usr1);
         $lst->add($this->triple_filled());
-        $lst->add($this->triple_pi_symbol());
+        $lst->add($this->triple_pi());
         $lst->add($this->triple_gwp());
         return $lst;
     }
@@ -706,6 +751,95 @@ class test_triples
         return $tl->list_to_ui($this->triple_list_all(), [api_type::INCL_PHRASES]);
     }
 
+
+    /*
+     * time
+     */
+
+    function year_2019(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2019_ID, triples::YEAR_2019, $t_wrd->word_2019());
+    }
+
+    function year_2020(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2020_ID, triples::YEAR_2020, $t_wrd->word_2020());
+    }
+
+    function year_2021(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2021_ID, triples::YEAR_2021, $t_wrd->word_2021());
+    }
+
+    function year_2022(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2022_ID, triples::YEAR_2022, $t_wrd->word_2022());
+    }
+
+    function year_2023(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2023_ID, triples::YEAR_2023, $t_wrd->word_2023());
+    }
+
+    function year_2024(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2024_ID, triples::YEAR_2024, $t_wrd->word_2024());
+    }
+
+    function year_2025(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2025_ID, triples::YEAR_2025, $t_wrd->word_2025());
+    }
+
+    function year_2026(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2026_ID, triples::YEAR_2026, $t_wrd->word_2026());
+    }
+
+    function year_2027(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2027_ID, triples::YEAR_2027, $t_wrd->word_2027());
+    }
+
+    function year_2028(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2028_ID, triples::YEAR_2028, $t_wrd->word_2028());
+    }
+
+    function year_2029(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2029_ID, triples::YEAR_2029, $t_wrd->word_2029());
+    }
+
+    function year_2030(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        return $this->year_x(triples::YEAR_2030_ID, triples::YEAR_2030, $t_wrd->word_2030());
+    }
+
+
+    private function year_x(int $id, string $name, word $year): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set($id, $name);
+        $trp->set_from($year->phrase());
+        $trp->set_verb($t_vrb->verb_is());
+        $trp->set_to($t_wrd->word_year()->phrase());
+        return $trp;
+    }
 
     /*
      * random

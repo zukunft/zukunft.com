@@ -8,6 +8,16 @@ A proper issue ticket should be created for these TODOs notes:
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO review and create missing formula unit, read and write tests
+    TODO m2 should be the formula meter * meter in unit.jsom import message
+    TODO document why there is a hidden word for each formula: the reason is that 
+         this way values and results are assigned to a list of phrases not terms 
+         because a value is never assign to a verb only a triple
+    TODO check the formula test coverage via script
+    TODO split the formula backend class into formula_base, formula_calc and the interface formula class
+    TODO group the function by suggested test category which is unit, db read or db write
+         and check automatically that each case is at least covered by a test
+         start with the formula unit tests
     TODO add test blocks db read, api, workflow and integration which actually gets data from e.g. wikidata
     TODO add user_message parameter to all functions that return a user message or might create a message to the user
     TODO type versus predicate:
@@ -113,6 +123,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use the 8.4 set and get feature like in the word, triple and phrase list of the ui data object
     TODO use one cache object for the frontend and the backend cache and replace the single type list cache objects
 
+    TODO add a documentation how to add a phrase type (and make the process easier)
+
     TODO complete system view with: about, async_process, calculate
 
     TODO object chart 
@@ -184,6 +196,8 @@ A proper issue ticket should be created for these TODOs notes:
 
 
     TODO add a frontend cache that includes the most often used terms, values and views 
+    TODO add validation select statement to all sql functions that checks if tha db status is still matching the generated function 
+         or if due to db update another function mus be used 
     TODO create pure tuple export and import according the the W3C definition
     TODO in the config api return the user cache frontend json 1-to-1 if the trigger date is valid 
     TODO add parent to source and ref

@@ -28,7 +28,7 @@ SELECT term_view_update_log_0004_user
     (3,
      2,
      726,
-     'default',
+     'standard',
      1,
      null,
      null,

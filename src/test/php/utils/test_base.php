@@ -51,6 +51,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -221,6 +222,7 @@ include_once test_paths::UNIT . 'term_list_tests.php';
 include_once test_paths::UNIT . 'value_tests.php';
 include_once test_paths::UNIT . 'value_list_tests.php';
 include_once test_paths::UNIT . 'formula_tests.php';
+include_once test_paths::UNIT . 'formula_calc_tests.php';
 include_once test_paths::UNIT . 'formula_list_tests.php';
 include_once test_paths::UNIT . 'formula_link_tests.php';
 include_once test_paths::UNIT . 'result_tests.php';
@@ -461,8 +463,9 @@ class test_base
         $this->usr2 = new user();
         $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
 
+        // TODO Prio 2 use SYSTEM_TEST_ADMIN_NAME
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(users::SYSTEM_TEST_ADMIN_NAME);
+        $this->usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
 
         $this->usr_system = new user();
         $this->usr_system->load_by_name(users::SYSTEM_NAME);
@@ -922,7 +925,7 @@ class test_base
         user             $usr,
         db_object_seq_id $dbo,
         int              $id = 0,
-        ?data_object_ui $cfg = null
+        ?data_object_ui  $cfg = null
     ): bool
     {
         $lib = new library();
@@ -996,7 +999,7 @@ class test_base
     function assert_json_file(
         object $usr_obj,
         string $json_file_name,
-        ?user $usr = null
+        ?user  $usr = null
     ): bool
     {
         if ($usr == null) {
@@ -1359,24 +1362,30 @@ class test_base
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_save_fields(sql_creator $sc, object $usr_obj, object $norm_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_save_fields(
+        sql_creator $sc,
+        object      $usr_obj,
+        object      $norm_obj,
+        array       $sc_par_lst_in = []
+    ): bool
     {
+        $usr_msg = new user_message();
         // prepare like in save_fields_func
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         $sc_par_lst->add(sql_type::INSERT);
         $sc_par_lst->add(sql_type::NO_ID_RETURN);
         $all_fields = $usr_obj->db_fields_all();
-        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $sc_par_lst);
+        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $usr_msg, $sc_par_lst);
 
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1393,13 +1402,16 @@ class test_base
      */
     function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $usr_msg = new user_message();
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
-        } else {
+            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+        } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
             $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1407,13 +1419,40 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
-            } else {
+                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+            } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
                 $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
+    }
+
+    /**
+     * check the SQL statement creation to add a database row
+     * returns the expected error message
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_insert_fail(
+        sql_creator $sc,
+        object      $usr_obj,
+        array       $sc_par_lst_in = []
+    ): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($usr_obj::class);
+        $test_name = 'if a mandatory parameter in a ' . $class . ' object is not set an error message should be returned';
+        $usr_msg = new user_message();
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
+        return $this->assert_false($test_name, $usr_msg->is_ok());
     }
 
     /**
@@ -1433,13 +1472,14 @@ class test_base
         array                                                           $sql_type_array = []
     ): bool
     {
+        $usr_msg = new user_message();
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
         } else {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1447,9 +1487,9 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
             } else {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+                $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1467,13 +1507,16 @@ class test_base
      */
     function assert_sql_delete(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $usr_msg = new user_message();
+        // use the system user for the sql creation test because otherwise no statement would be created e.g. to delete a verb
+        $usr_msg->usr = $this->usr_system;
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
         } else {
-            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -1481,9 +1524,9 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
             } else {
-                $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+                $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
             }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -2318,7 +2361,7 @@ class test_base
      */
 
     /**
-     * check the object loading by id and name
+     * check the object loading by id
      *
      * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
@@ -2339,6 +2382,26 @@ class test_base
             $usr_obj->load_by_id($id);
             return $this->assert($test_name, $usr_obj->id(), $id);
         }
+    }
+
+    /**
+     * check the object loading by  name
+     *
+     * @param sandbox_named|sandbox_link|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param string $name the name of the object
+     * @return bool the load object to use it for more tests
+     */
+    function assert_load_by_name(sandbox_named|sandbox_link|type_object|db_id_object_non_sandbox $usr_obj, string $name = ''): bool
+    {
+        $lib = new library();
+        // check the loading via name
+        $test_name = 'check the loading of a ' . $lib->class_to_name($usr_obj::class) . ' by name ' . $name
+            . ' and check if the name has been mapped';
+        $usr_obj->reset();
+        $usr_obj->id = 0;
+        $usr_obj->set_name('');
+        $usr_obj->load_by_name($name);
+        return $this->assert($test_name, $usr_obj->name(), $name);
     }
 
     /**
@@ -2512,6 +2575,8 @@ class test_base
         // add the named object and remember the name
         $name = $sbx->name();
         $sbx->save($usr_msg, $use_func);
+        // reset the user_message because we don't care if the object already existed before saving it,
+        $usr_msg = new user_message($this->usr1);
         $sbx->reset();
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -3118,13 +3183,13 @@ class test_base
     /**
      * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
-     *                    e.g. to detect incomplete cleanup of previous tests
+     *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
-    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase $sbx, string $name, bool $check = false): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase|verb $sbx, string $name, bool $check = false): void
     {
         $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
         $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
@@ -3135,30 +3200,56 @@ class test_base
     /**
      * remove remaining test rows for one name and one user
      *
-     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase|verb $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
-     *                    e.g. to detect incomplete cleanup of previous tests
+     *                    e.g. to detect incomplete clean-up of previous tests
      * @return void
      */
     private
     function write_named_cleanup_one(
-        sandbox_named|sandbox_link_named|phrase $sbx,
-        user                                    $usr,
-        string                                  $name,
-        bool                                    $check = false
+        sandbox_named|sandbox_link_named|phrase|verb $sbx,
+        user                                         $usr,
+        string                                       $name,
+        bool                                         $check = false
     ): void
     {
         $usr_msg = new user_message($usr);
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
-        if ($check) {
-            if ($sbx->id() != 0) {
+        if ($sbx->id() != 0) {
+            if ($check) {
                 log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
             }
+            $sbx->del($usr_msg);
         }
-        $sbx->del($usr_msg);
+    }
+
+    /**
+     * remove remaining test users
+     *
+     * @param string $name the name of the test user that should be removed
+     * @param user $usr the user used to remove the users
+     * @param bool $check if true, an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete clean-up of previous tests
+     * @return void
+     */
+    public
+    function write_named_cleanup_user(
+        string $name,
+        user   $usr,
+        bool   $check = false
+    ): void
+    {
+        $usr_msg = new user_message($usr);
+        $usr->load_by_name($name);
+        if ($check) {
+            if ($usr->id() != 0) {
+                log_warning('Unexpected cleanup of ' . $usr->dsp_id());
+            }
+        }
+        $usr->del($usr_msg);
     }
 
     /**
@@ -3723,6 +3814,36 @@ class test_base
         $sbx->reset();
         $api_json = $sbx->api_json([api_type::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
+    }
+
+    /**
+     * check if all mandatory vars of the given object are set so that it can be saved in the database
+     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with all vars
+     * @return bool true if the test was successful
+     */
+    function assert_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    {
+        $usr_msg = new user_message();
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is db_ready';
+        return $this->assert_true($test_name, $sbx->db_ready($usr_msg));
+    }
+
+    /**
+     * check if an error message is added to the user_message if a mandatory vars of the given object is missing
+     * @param sandbox_named|sandbox_link|sandbox_value|verb|user $sbx the object filled with some vars
+     * @return bool true if the test was successful
+     */
+    function assert_not_db_ready(sandbox_named|sandbox_link|sandbox_value|verb|user $sbx): bool
+    {
+        $usr_msg = new user_message();
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is not db_ready';
+        $this->assert_false($test_name, $sbx->db_ready($usr_msg));
+        $test_name = $class . ' message is is not db_ready';
+        return $this->assert_not($test_name, $usr_msg->all_message_text(), '');
     }
 
     /**

@@ -17,6 +17,7 @@
     - modify:            change the order
     - save:              manage to update the database
     - sql write fields:  field list for writing to the database
+    - message:           add message function that might be overwritten by a child object for a more precise message
     - debug:             internal support functions for debugging
 
     TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
@@ -787,7 +788,7 @@ class component_link extends sandbox_link
     function get_key(): string
     {
         $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
-        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->get_predicate_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
         $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
         return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->get_pos());
     }
@@ -847,7 +848,7 @@ class component_link extends sandbox_link
     /**
      * @return string the name of the preloaded view component link type
      */
-    function get_predicate_name(): string
+    function predicate_name(): string
     {
         global $sys;
         return $sys->typ_lst->cmp_lnk_typ->name($this->predicate_id);
@@ -965,7 +966,7 @@ class component_link extends sandbox_link
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1008,7 +1009,7 @@ class component_link extends sandbox_link
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -1029,7 +1030,7 @@ class component_link extends sandbox_link
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -1047,7 +1048,7 @@ class component_link extends sandbox_link
      * @param int $dsp_id the view id
      * @param int $type_id the link type id
      * @param int $cmp_id the component id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
     {
@@ -1061,7 +1062,7 @@ class component_link extends sandbox_link
      * @param int $msk_id the id of the view
      * @param int $cmp_id the id of the lin type
      * @param int $pos the position of the component
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link_and_pos(sql_creator $sc, int $msk_id, int $cmp_id, int $pos): sql_par
     {
@@ -1080,7 +1081,7 @@ class component_link extends sandbox_link
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_max_pos(sql_creator $sc, int $id): sql_par
     {
@@ -1492,14 +1493,14 @@ class component_link extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|component_link $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|component_link $sbx,
-        sql_type_list          $sc_par_lst = new sql_type_list(),
-        user_message           $usr_msg = new user_message()
+        user_message           $usr_msg,
+        sql_type_list          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1509,7 +1510,7 @@ class component_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -1521,7 +1522,7 @@ class component_link extends sandbox_link
             }
             if ($this->predicate_id() < 0) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_TYPE_MISSING, [
-                    msg_id::VAR_TYPE => $this->get_predicate_name(),
+                    msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
@@ -1594,6 +1595,27 @@ class component_link extends sandbox_link
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * message
+     */
+
+    function message_from_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+            msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
+    }
+
+    function message_to_invalid(user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::MANDATORY_COMPONENT_IN_LINK_INVALID, [
+            msg_id::VAR_COMPONENT_NAME => $this->get_component()?->dsp_id(),
+            msg_id::VAR_NAME => $this->dsp_id(),
+        ]);
     }
 
 

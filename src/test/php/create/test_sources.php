@@ -86,6 +86,17 @@ class test_sources
     }
 
     /**
+     * @return source object where the most specific mandatory var is not set which is in case of a source the id and the name
+     */
+    function source_incomplete(): source
+    {
+        $src = $this->source();
+        $src->id = 0;
+        $src->set_name(null);
+        return $src;
+    }
+
+    /**
      * @return source with all fields set for testing the sql function creation
      */
     function source_filled(): source

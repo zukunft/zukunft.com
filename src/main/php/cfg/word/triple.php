@@ -384,14 +384,12 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req if it is a system user the import can also set the code_id
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the inclded user is a system user the import can also set the code_id
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -425,7 +423,7 @@ class triple extends sandbox_link_named
                             // create a phrase without saving to the database
                             $phr = new phrase($this->get_user());
                             $phr->set_name($value, word::class);
-                            if ($phr->db_ready()) {
+                            if ($phr->db_ready($usr_msg)) {
                                 $this->set_from($phr);
                             } else {
                                 $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
@@ -453,7 +451,7 @@ class triple extends sandbox_link_named
                         // create a phrase without saving to the database
                         $phr = new phrase($this->get_user());
                         $phr->set_name($value, word::class);
-                        if ($phr->db_ready()) {
+                        if ($phr->db_ready($usr_msg)) {
                             $this->set_to($phr);
                         } else {
                             $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
@@ -499,7 +497,7 @@ class triple extends sandbox_link_named
             $this->weight = $in_ex_json[json_fields::WEIGHT];
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+            $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
         }
 
 
@@ -692,7 +690,7 @@ class triple extends sandbox_link_named
     {
         global $db_con;
 
-        $this->import_mapper_user($in_ex_json, $this->get_user(), $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $usr_msg, $dto);
 
         // add related parameters to the triple object
         if ($usr_msg->is_ok()) {
@@ -950,7 +948,7 @@ class triple extends sandbox_link_named
      * overwrite the link type function
      * @return string|null the name of the verb
      */
-    function get_predicate_name(): ?string
+    function predicate_name(): ?string
     {
         return $this->get_verb_name();
     }
@@ -1605,7 +1603,7 @@ class triple extends sandbox_link_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the triple and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -1623,7 +1621,7 @@ class triple extends sandbox_link_named
      * @param sql_creator $sc with the target db_type set
      * @param string $name the generated name of the triple and the related word, triple, formula or verb
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
     {
@@ -1643,7 +1641,7 @@ class triple extends sandbox_link_named
      * @param int $predicate_id the type id of the link
      * @param int|string $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
@@ -1661,7 +1659,7 @@ class triple extends sandbox_link_named
      * create the SQL to load the default triple always by the id
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc): sql_par
     {
@@ -1736,7 +1734,7 @@ class triple extends sandbox_link_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_user_changes(
         sql_creator   $sc,
@@ -1757,7 +1755,7 @@ class triple extends sandbox_link_named
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
@@ -2050,26 +2048,26 @@ class triple extends sandbox_link_named
     /**
      * check if the triple might be added to the database
      * if all related objects have been added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @return bool false if a mandatory var of the triple is not yet set that will not be added if the linked phrased are saved
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::can_be_ready();
+        parent::can_be_ready($usr_msg);
         $usr_msg->add($this->check());
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
      * check if the triple can be added to the database
-     * @return user_message including suggested solutions
-     *       if something is missing e.g. a linked object
+     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @return bool true if the triple can be added to the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        $usr_msg = parent::db_ready();
+        parent::db_ready($usr_msg);
         $usr_msg->add($this->check());
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2232,7 +2230,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the triple has been changed
      */
     function not_changed_sql(sql_creator $sc): sql_par
@@ -2646,7 +2644,7 @@ class triple extends sandbox_link_named
             // TODO review: do not set the generated name if it matches the name
             $this->set_names();
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             if ($usr_msg->is_ok()) {
                 $msg = 'add and log ' . $this->dsp_id();
                 if ($db_con->insert($qp, $msg, $usr_msg)) {
@@ -2661,7 +2659,7 @@ class triple extends sandbox_link_named
                 // insert the new triple
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc);
+                    $qp = $this->sql_insert($sc, $usr_msg);
                     $msg = 'add ' . $this->dsp_id();
                     if ($db_con->insert($qp, $msg, $usr_msg)) {
                         $this->id = $usr_msg->get_row_id();
@@ -2928,14 +2926,14 @@ class triple extends sandbox_link_named
      * get a list of database field names, values and types that have been updated
      *
      * @param sandbox|triple $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|triple $sbx,
-        sql_type_list  $sc_par_lst = new sql_type_list(),
-        user_message   $usr_msg = new user_message()
+        user_message   $usr_msg,
+        sql_type_list  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2947,10 +2945,10 @@ class triple extends sandbox_link_named
         $table_id = $sc->table_id($this::class);
 
         // should be corresponding with the list of triple object vars
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         // for triple the type is the phrase type
-        // the type is object specific that why it is not part of sandbox_link_types
+        // the type is object-specific that why it is not part of sandbox_link_types
         if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

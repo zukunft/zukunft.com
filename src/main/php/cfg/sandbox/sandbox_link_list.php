@@ -186,7 +186,7 @@ class sandbox_link_list extends sandbox_list
         $usr_msg = new user_message();
 
         // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
+        $obj_to_add->can_be_ready($usr_msg);
 
         // add a missing user to the object
         // or check if the object user matches the list user
@@ -196,9 +196,7 @@ class sandbox_link_list extends sandbox_list
         // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
         if (!in_array($obj_to_add->get_key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
             // add only objects that have all mandatory values
-            $result = $obj_to_add->can_be_ready()->is_ok();
-
-            if ($result) {
+            if ($obj_to_add->can_be_ready($usr_msg)) {
                 $this->add_direct($obj_to_add);
             }
         } else {

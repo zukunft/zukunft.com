@@ -97,6 +97,7 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -131,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
@@ -584,19 +586,27 @@ class phrase extends combine_named
     }
 
     /**
-     * @return user_message ok message if this word or triple might be read to be added to the database
+     * check if the word or triple can be added to the database
+     * if all related words or triples are added
+     * the differentiation to the db_ready is relevant to save a list of triples to the database
+     * where some triples are part of other triples that have to be added with another save list attempt
+     * @param user_message $usr_msg fill up with the message if this word or triple might be read to be added to the database
+     * @return bool true if another save list attempt is expected to add more words or triples to the database
      */
-    function can_be_ready(): user_message
+    function can_be_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->can_be_ready();
+        return $this->obj()->can_be_ready($usr_msg);
     }
 
     /**
-     * @return user_message ok message if this word or triple can be added to the database
+     * checks if the word or triple object can be added to the database
+     *
+     * @param user_message $usr_msg the explanation for the user why the underlying word or triple cannot yet be added to the database
+     * @return true if all mandatory vars of the underlying object are set and the phrase can be stored in the database
      */
-    function db_ready(): user_message
+    function db_ready(user_message $usr_msg): bool
     {
-        return $this->obj()->db_ready();
+        return $this->obj()->db_ready($usr_msg);
     }
 
     /**
@@ -805,7 +815,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
@@ -822,7 +832,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
@@ -840,7 +850,7 @@ class phrase extends combine_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private
     function load_sql(sql_creator $sc, string $query_name): sql_par
@@ -928,6 +938,17 @@ class phrase extends combine_named
     }
 
     /**
+     * select the best definition of "now" related to this word or triple
+     * e.g. if this word is "year" and now is 18. Dez 2025 09:05, the triple "2025 (year)" is returned if in the list
+     * @return phrase that best matches the definition of now bases on this word
+     */
+    function related_now(phrase_list $phr_lst): phrase
+    {
+        $phr = new phrase();
+        return $phr;
+    }
+
+    /**
      * to enable the recursive function in work_link
      * TODO add a list of triple already split to detect endless loops
      */
@@ -950,7 +971,7 @@ class phrase extends combine_named
     /**
      * return either the word type id or the word link type id
      * e.g. 2020 can be a year but also any other identification number e.g. a valor number,
-     * so if there is both in the database the type must be saved on the word link instead of the word
+     * so if there is both in the database, the type must be saved on the word link instead of the word
      */
     function type_id(): ?int
     {
@@ -1397,6 +1418,22 @@ class phrase extends combine_named
         return $sql;
     }
 
+
+    /*
+     * fixed
+     */
+
+    /**
+     *
+     */
+    function is_year(): bool
+    {
+        if ($this->name() == words::YEAR) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /*
      * display functions

@@ -80,7 +80,7 @@ class user_tests
         $this->assert_sql_by_profile($t, $db_con, $usr_test);
 
         $t->subheader($ts . 'sql write insert');
-        $usr_ip = $t_usr->user_ip();
+        $usr_ip = $t_usr->user_filled();
         $t->assert_sql_insert($sc, $usr_ip, [sql_type::LOG]);
         $usr_test = $t_usr->user_sys_test();
         $t->assert_sql_insert($sc, $usr_test, [sql_type::LOG]);

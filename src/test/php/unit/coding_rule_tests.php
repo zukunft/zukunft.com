@@ -109,8 +109,9 @@ class coding_rule_tests
     {
         $fnc_lst = [];
         // TODO Prio 0 the target class sections are
-        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', def::MAIN_CLASSES));
-        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], def::MAIN_CLASSES));
+        $main_classes = array_merge(def::MAIN_CLASSES, def::MAIN_SUB_CLASSES);
+        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'main backend', $main_classes));
+        $fnc_lst = array_merge($fnc_lst, $this->php_functions(paths::MODEL, 'other backend', [], $main_classes));
         $fnc_lst = array_merge($fnc_lst, $this->php_functions(html_paths::WEB, 'frontend'));
         $fnc_tree = $this->functionTree($fnc_lst);
         return $this->php_function_list_to_md($fnc_tree);
@@ -130,17 +131,14 @@ class coding_rule_tests
         return $md_txt;
     }
 
-    private function php_function_list_to_md(array $class_tree): string
+    private function php_function_list_to_md(array $fnc_lst): string
     {
         $md_txt = '# Object functions' . "\n";
         $md_txt .= "\n";
         $md_txt .= '## Functions sections' . "\n";
         $md_txt .= "\n";
-        $md_txt .= 'the function sections are:' . "\n";
+        $md_txt .= $this->php_function_list_to_md_row_start($fnc_lst);
         $md_txt .= "\n";
-        $md_txt .= '```' . "\n";
-        $md_txt .= $this->php_function_list_to_md_row($class_tree);
-        $md_txt .= '```' . "\n";
         return $md_txt;
     }
 
@@ -165,22 +163,47 @@ class coding_rule_tests
         return $md_txt;
     }
 
-    private function php_function_list_to_md_row(array $class_tree, string $intent = '+-- '): string
+    function php_function_list_to_md_row_start(array $fnc_lst): string
+    {
+        $md_txt = $this->php_function_list_to_md_row($fnc_lst);
+        if ($md_txt != '') {
+            $md_txt .= '```' . "\n";
+        }
+        return $md_txt;
+    }
+
+    function php_function_list_to_md_row(array $fnc_lst, string $intent = '### ', string $code_maker = ''): string
     {
         $md_txt = '';
-        foreach ($class_tree as $child => $info_lst) {
+        foreach ($fnc_lst as $child => $info_lst) {
             if (is_string($info_lst)) {
                 $md_txt .= $intent . $child . ' - ' . $info_lst . "\n";
             } else {
-                if ($intent == '+-- ') {
+                $before = '';
+                $after = '';
+                if ($intent == '### ') {
+                    // close the code section
+                    if ($md_txt != '') {
+                        $before = '```' . "\n" . "\n";
+                    }
+                    $this_intent = $intent;
+                    $next_intent = '+-- ';
+                    // extra line after the headline
+                    $after = "\n";
+                } elseif ($intent == '+-- ') {
+                    // open the code section
+                    if ($code_maker == '') {
+                        $code_maker = '```';
+                        $before = $code_maker . "\n";
+                    }
                     $this_intent = '\-- ';
                     $next_intent = '    ' . $this_intent;
                 } else {
                     $this_intent = $intent;
                     $next_intent = '    ' . $intent;
                 }
-                $md_txt .= $this_intent . $child . "\n";
-                $md_txt .= $this->php_class_list_to_md_row($info_lst, $next_intent);
+                $md_txt .= $before . $this_intent . $child . "\n" . $after;
+                $md_txt .= $this->php_function_list_to_md_row($info_lst, $next_intent, $code_maker);
             }
         }
         return $md_txt;
@@ -464,10 +487,10 @@ class coding_rule_tests
 
         }
 
-        $result[$obj_grp_txt] = $all_fnc_lst;
         if ($msg_lst != []) {
             $result[$obj_grp_txt . ' errors'] = $msg_lst;
         }
+        $result[$obj_grp_txt] = $all_fnc_lst;
 
         return $result;
     }

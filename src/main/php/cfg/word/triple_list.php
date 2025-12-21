@@ -256,7 +256,7 @@ class triple_list extends sandbox_list_named
      * @param string $pattern the pattern to filter the triples
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_names(
         sql_creator                                    $sc,
@@ -281,7 +281,7 @@ class triple_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_names(
         sql_creator $sc,
@@ -296,7 +296,7 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples by the ids
      * @param sql_creator $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -322,7 +322,7 @@ class triple_list extends sandbox_list_named
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr(
         sql_creator    $sc,
@@ -369,7 +369,7 @@ class triple_list extends sandbox_list_named
      * @param phrase_list $phr_lst a list of phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator    $sc,
@@ -410,7 +410,7 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
@@ -706,9 +706,17 @@ class triple_list extends sandbox_list_named
             $level = 0;
             $db_lst_all = new triple_list($this->get_user());
             $add_lst = new triple_list($this->get_user());
+
+            // create a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+            $lst_usr_msg = new user_message();
+
             while ($trp_added and $level < $max_trp_levels) {
+
+                // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+                $lst_usr_msg = new user_message();
+
                 $trp_added = false;
-                $usr_msg->unset_added_depending();
+                $lst_usr_msg->unset_added_depending();
 
                 // collect all triples with names that does not yet have a database id and needs to be added
                 $chk_lst = $this->triples_to_add_to_db();
@@ -753,9 +761,9 @@ class triple_list extends sandbox_list_named
                 if (!$add_lst->is_empty()) {
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
-                    $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
+                    $lst_usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
                     if ($add_lst->count() > 0) {
-                        $usr_msg->set_added_depending();
+                        $lst_usr_msg->set_added_depending();
                         $trp_added = true;
                     }
                     $imp->step_end($add_lst->count(), $save_per_sec);
@@ -765,6 +773,9 @@ class triple_list extends sandbox_list_named
 
                 $level++;
             }
+
+            // add the user_messages to the last try
+            $usr_msg->add($lst_usr_msg);
 
             // reload the id of the triples added with the last run
             // TODO use the insert message instead to increase speed
@@ -902,11 +913,9 @@ class triple_list extends sandbox_list_named
     {
         $trp_lst = new triple_list($this->get_user());
         foreach ($this->lst() as $trp) {
-            $trp_msg = $trp->db_ready();
-            if ($trp_msg->is_ok()) {
+            if ($trp->db_ready($usr_msg)) {
                 $trp_lst->add_by_name($trp);
             } else {
-                $usr_msg->add($trp_msg);
                 $usr_msg->add_id_with_vars(msg_id::IMPORT_TRIPLE_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_TRIPLE_NAME => $trp->dsp_id(),

@@ -329,7 +329,7 @@ class change_log_list extends base_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $usr the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_user(sql_creator $sc, user $usr): sql_par
     {
@@ -347,7 +347,7 @@ class change_log_list extends base_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {

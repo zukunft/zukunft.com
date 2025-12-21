@@ -171,23 +171,21 @@ class sandbox_code_id extends sandbox_typed
      * set the code id only if the requesting user is allowed to
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
-    function import_mapper_user(
+    function import_mapper(
         array        $in_ex_json,
-        user         $usr_req,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper_user($in_ex_json, $usr_req, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
             }
         }
 
@@ -313,7 +311,7 @@ class sandbox_code_id extends sandbox_typed
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
@@ -416,14 +414,14 @@ class sandbox_code_id extends sandbox_typed
      * add the code id field to the list of changed fields if the code_id has been changed
      *
      * @param sandbox_code_id|sandbox $sbx the same named sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_code_id|sandbox $sbx,
-        sql_type_list           $sc_par_lst = new sql_type_list(),
-        user_message            $usr_msg = new user_message()
+        user_message            $usr_msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -432,7 +430,7 @@ class sandbox_code_id extends sandbox_typed
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
         if ($sbx->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(

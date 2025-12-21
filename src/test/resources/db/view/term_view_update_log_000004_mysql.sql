@@ -27,7 +27,7 @@ SELECT term_view_update_log_000004
     (3,
      2,
      726,
-     'default',
+     'standard',
      1,
      null,
      null,

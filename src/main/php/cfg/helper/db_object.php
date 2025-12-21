@@ -230,7 +230,7 @@ class db_object extends IdObject
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -265,7 +265,7 @@ class db_object extends IdObject
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -277,7 +277,7 @@ class db_object extends IdObject
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_id_str(sql_creator $sc, int|string $id): sql_par
     {
@@ -321,7 +321,7 @@ class db_object extends IdObject
      */
 
     /**
-     * name of prime index field of the table
+     * name of the prime index field of the table
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
      * e.g. to group_id for values and results
@@ -331,6 +331,16 @@ class db_object extends IdObject
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * name of log entry used shown to the user which entry has been deleted
+     * e.g. for the user it can be the name, the ip-address, or as fallback the database id
+     * @return string the field name(s) of the prime database index of the object
+     */
+    function log_name_field(): string
+    {
+        return '';
     }
 
 }

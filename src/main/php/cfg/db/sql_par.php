@@ -123,6 +123,8 @@ class sql_par
         $this->call_name = '';
         $this->call = '';
         $this->obj_name = '';
+        $this->par_fld = new sql_par_field();
+        $this->par_fld_lst = new sql_par_field_list();
     }
 
     /**

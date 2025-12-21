@@ -2,9 +2,11 @@
 
 /*
 
-    test/php/unit_write/formula_tests.php - write test FORMULAS to the database and check the results
-    -------------------------------------
-  
+    test/php/unit_write/formula_write_tests.php - write test FORMULAS to the database and check the results
+    -------------------------------------------
+
+    just the special test cases not covered by the horizontal write tests
+
 
     This file is part of zukunft.com - calc with words
 
@@ -80,6 +82,7 @@ class formula_write_tests
         // start the test section (ts)
         $ts = 'db write formula ';
         $t->header($ts);
+        $t_frm->cleanup($ts);
 
         $t->subheader($ts . 'formula prepared write');
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
@@ -112,7 +115,7 @@ class formula_write_tests
         $t->assert('load for "' . $frm->name() . '"', $result, $target);
 
         // test the formula type
-        $result = $lib->dsp_bool($frm->is_special());
+        $result = $lib->dsp_bool($frm->is_predefined());
         $target = $lib->dsp_bool(false);
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
@@ -122,7 +125,7 @@ class formula_write_tests
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {
                 $elm_frm = $frm_lst->lst()[0];
-                $result = $lib->dsp_bool($elm_frm->is_special());
+                $result = $lib->dsp_bool($elm_frm->is_predefined());
                 $target = $lib->dsp_bool(true);
                 $t->assert('formula->is_special for "' . $elm_frm->name() . '"', $result, $target);
 
@@ -132,7 +135,7 @@ class formula_write_tests
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
-                $val = $elm_frm->special_result($phr_lst, $time_phr);
+                $val = $elm_frm->calc_predefined($phr_lst, $time_phr);
                 $result = $val->number();
                 $target = words::YEAR_2019;
                 // TODO: get the best matching number
@@ -543,10 +546,7 @@ class formula_write_tests
         // TODO check if the word assignment can be done for each user
 
         // cleanup - fallback delete
-        $frm = new formula($t->usr1);
-        foreach (formulas::TEST_FORMULAS as $frm_name) {
-            $t->write_named_cleanup($frm, $frm_name);
-        }
+        $t_frm->cleanup($ts);
 
     }
 

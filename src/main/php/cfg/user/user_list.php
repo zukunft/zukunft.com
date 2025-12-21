@@ -124,7 +124,7 @@ class user_list
      * set the SQL query parameters to load a list of figure objects
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
@@ -146,7 +146,7 @@ class user_list
      * @param array $ids list of user ids that should be loaded
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
@@ -168,7 +168,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $code_id all users with this code id should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
@@ -187,7 +187,7 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $profile_id list of user that have at least this profile level
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
     {
@@ -256,7 +256,7 @@ class user_list
      * create an SQL statement to retrieve users that have changed something
      *
      * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_count_changes(sql_creator $sc): sql_par
     {
@@ -645,22 +645,28 @@ class user_list
      * because there are probably not many users to save at once
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @param user_message $usr_msg in case of an issue the problem description what has failed and a suggested solution
+     * @param user_message $usr_msg_all in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(user_message $usr_msg, user|null $usr_req = null): void
+    function save(user_message $usr_msg_all, user|null $usr_req = null): void
     {
         if ($this->is_empty()) {
-            $usr_msg->add_info_text('no users to save');
+            $usr_msg_all->add_info_text('no users to save');
         } else {
             foreach ($this->lst() as $usr) {
+                // for each item of a list an empty user_message statement should be used
+                // so that an issue in one item does not prevent other item from being saved
+                $usr_msg = $usr_msg_all->clone_reset();
+                // actual save the user to the database
                 if ($usr->excluded === true) {
                     if ($usr->id == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
-                    $usr->del($usr_msg, $usr_req);
+                    $usr->del($usr_msg_all, $usr_req);
                 } else {
                     $usr->save_user($usr_msg, $usr_req);
                 }
+                // collect the user message for a consolidated list for the user
+                $usr_msg_all->add($usr_msg);
             }
         }
     }

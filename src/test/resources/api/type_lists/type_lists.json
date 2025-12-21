@@ -821,6 +821,12 @@
         "code_id": "user_view_relations",
         "description": "",
         "id": 110
+      },
+      {
+        "name": "results",
+        "code_id": "results",
+        "description": "",
+        "id": 111
       }
     ],
     "change_field_list": [
@@ -5815,6 +5821,12 @@
         "code_id": "110protect_id",
         "description": "",
         "id": 832
+      },
+      {
+        "name": "111numeric_value",
+        "code_id": "111numeric_value",
+        "description": "",
+        "id": 833
       }
     ],
     "job_types": [
@@ -6633,6 +6645,12 @@
         "code_id": "ignore",
         "description": "words that indicate e.g. to set column names to be excluded from the import",
         "id": 27
+      },
+      {
+        "name": "time number",
+        "code_id": "time_number",
+        "description": "A numeric time word that defines the time period for which a value is valid and values with a time can be used to display time series and where the order can be defined automatically based on the numeric value e.g. year 2025 or month 6.",
+        "id": 28
       }
     ],
     "ref_types": [

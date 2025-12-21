@@ -556,7 +556,7 @@ class formula extends sandbox_code_id
             view_styles::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
-        if (!$this->is_special() or $usr->is_admin()) {
+        if (!$this->is_predefined() or $usr->is_admin()) {
             $result .= $html->form_field(
                 url_var::USER_EXPRESSION,
                 msg_id::FORM_FIELD_FORMULA_EXPRESSION,

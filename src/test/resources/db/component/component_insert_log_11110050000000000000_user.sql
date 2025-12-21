@@ -40,5 +40,5 @@ SELECT component_insert_log_11110050000000000000_user (
                52::smallint,
                'simply show the word or triple name'::text,
                53::smallint,
-               'phrase_name'::text,
+               'word name'::text,
                8::smallint);

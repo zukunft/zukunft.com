@@ -794,7 +794,7 @@ class value_base extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
      * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -835,7 +835,7 @@ class value_base extends sandbox_value
      * create the SQL to load the single default value always by the id
      * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_standard(sql_creator $sc, array $fld_lst = []): sql_par
     {
@@ -1677,7 +1677,7 @@ class value_base extends sandbox_value
 
     /**
      * TODO switch to sql creator
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the value has been changed
      */
     function not_changed_sql(sql_creator $sc): sql_par
@@ -1759,7 +1759,7 @@ class value_base extends sandbox_value
                 // create an entry in the user sandbox
                 $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
+                $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
                 $db_con->insert($qp, 'add user specific value', $usr_msg);
             }
         }
@@ -2254,7 +2254,7 @@ class value_base extends sandbox_value
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
             $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
         } else {
 
@@ -2262,7 +2262,7 @@ class value_base extends sandbox_value
             $log = $this->log_add();
             if ($log->id() > 0) {
                 // insert the value
-                $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value', $usr_msg);
+                $db_con->insert($this->sql_insert($db_con->sql_creator(), $usr_msg), 'add value', $usr_msg);
                 // the id of value is the given group id not a sequence
                 //if ($ins_result->has_row()) {
                 //    $this->set_id($ins_result->get_row_id());
@@ -2445,21 +2445,21 @@ class value_base extends sandbox_value
      * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox_multi|sandbox_value|value_base $sbx the same value sandbox as this to compare which fields have been changed
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|value_base $sbx,
-        sql_type_list                          $sc_par_lst = new sql_type_list(),
-        user_message                           $usr_msg = new user_message()
+        user_message                           $usr_msg,
+        sql_type_list                          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
+        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
         // but only if any other field has been updated, update the last_update field also

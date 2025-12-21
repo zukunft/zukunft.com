@@ -84,6 +84,7 @@ include_once paths::MODEL_CONST . 'def.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_USER . 'user_profile.php';
 //include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_USER . 'user_official_type.php';
@@ -136,6 +137,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
@@ -1721,6 +1723,7 @@ class sql_creator
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
@@ -1730,6 +1733,7 @@ class sql_creator
         user               $usr,
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
+        user_message       $usr_msg,
         sql_type_list      $sc_par_lst,
         sandbox_multi|null $val = null
     ): sql_par
@@ -1830,15 +1834,15 @@ class sql_creator
                     $fvt_lst->get_id($fld),
                     $fvt_lst->get_type_id($fld));
             } else {
-                $par_lst_out->add($fvt_lst->get($fld));
+                $par_lst_out->add($fvt_lst->get($fld, $usr_msg));
             }
             if ($usr_tbl) {
                 if (is_array($id_fld)) {
                     foreach ($id_fld as $is_fld_part) {
-                        $par_lst_out->add($fvt_lst->get($is_fld_part));
+                        $par_lst_out->add($fvt_lst->get($is_fld_part, $usr_msg));
                     }
                 } else {
-                    $par_lst_out->add($fvt_lst->get($id_fld));
+                    $par_lst_out->add($fvt_lst->get($id_fld, $usr_msg));
                 }
             }
         }
@@ -2060,7 +2064,7 @@ class sql_creator
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
                 $log->old_link_id = $dbo->predicate_id();
-                $log->old_text_link = $dbo->get_predicate_name();
+                $log->old_text_link = $dbo->predicate_name();
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -2075,7 +2079,7 @@ class sql_creator
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
                 $log->new_link_id = $sbx->predicate_id();
-                $log->new_text_link = $sbx->get_predicate_name();
+                $log->new_text_link = $sbx->predicate_name();
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2137,7 +2141,7 @@ class sql_creator
             // other links can have a type
             $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->get_predicate_name();
+            $log->old_text_link = $sbx->predicate_name();
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {
@@ -4758,7 +4762,7 @@ class sql_creator
 
     /**
      * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
@@ -5374,7 +5378,7 @@ class sql_creator
      * @param int|string $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string|array $id_field the field name or field list of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
@@ -5460,7 +5464,7 @@ class sql_creator
      * @param int $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string $id_field the field name of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par

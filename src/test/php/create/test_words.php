@@ -62,22 +62,21 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\share_type;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
-class test_words
+class test_words extends test_objects
 {
 
     /*
-     * init
+     * cleanup
      */
 
-    // use the global test environment
-    private test_cleanup $env;
-
-    function __construct(test_cleanup $env)
+    /**
+     * delete any remaining test words for a clean test start
+     */
+    function cleanup(string $ts): void
     {
-        $this->env = $env;
+        parent::cleanup_objects($ts, words::TEST_WORDS, new word($this->env->usr1));
     }
 
 
@@ -96,6 +95,17 @@ class test_words
         $wrd->set_type(phrase_type::NORMAL, $this->env->usr1);
         global $sys;
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::ADMIN));
+        return $wrd;
+    }
+
+    /**
+     * @return word object where the most specific mandatory var is not set which is in case of a word the id and the name
+     */
+    function word_incomplete(): word
+    {
+        $wrd = $this->word();
+        $wrd->id = 0;
+        $wrd->set_name(null);
         return $wrd;
     }
 
@@ -420,14 +430,11 @@ class test_words
      */
     function word_2019(): word
     {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(words::YEAR_2019_ID, words::YEAR_2019);
-        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
-        return $wrd;
+        return $this->year_x(words::YEAR_2019_ID, words::YEAR_2019);
     }
 
     /**
-     * @return word 2020 to test create a year
+     * @return word 2020 to test creating a year
      */
     function word_2020(): word
     {
@@ -438,8 +445,69 @@ class test_words
         return $wrd;
     }
 
+    function word_2021(): word
+    {
+        return $this->year_x(words::YEAR_2021_ID, words::YEAR_2021);
+    }
+
+    function word_2022(): word
+    {
+        return $this->year_x(words::YEAR_2022_ID, words::YEAR_2022);
+    }
+
+    function word_2023(): word
+    {
+        return $this->year_x(words::YEAR_2023_ID, words::YEAR_2023);
+    }
+
+    function word_2024(): word
+    {
+        return $this->year_x(words::YEAR_2024_ID, words::YEAR_2024);
+    }
+
+    function word_2025(): word
+    {
+        return $this->year_x(words::YEAR_2025_ID, words::YEAR_2025);
+    }
+
+    function word_2026(): word
+    {
+        return $this->year_x(words::YEAR_2026_ID, words::YEAR_2026);
+    }
+
+    function word_2027(): word
+    {
+        return $this->year_x(words::YEAR_2027_ID, words::YEAR_2027);
+    }
+
+    function word_2028(): word
+    {
+        return $this->year_x(words::YEAR_2028_ID, words::YEAR_2028);
+    }
+
+    function word_2029(): word
+    {
+        return $this->year_x(words::YEAR_2029_ID, words::YEAR_2029);
+    }
+
+    function word_2030(): word
+    {
+        return $this->year_x(words::YEAR_2030_ID, words::YEAR_2030);
+    }
+
     /**
-     * @return word percent to test percent related rules e.g. to remove measure at division
+     * @return word of a year with the given id and name
+     */
+    private function year_x(int $id, string $name): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set($id, $name);
+        $wrd->set_type(phrase_type::TIME, $this->env->usr1);
+        return $wrd;
+    }
+
+    /**
+     * @return word per cent to test percent related rules e.g. to remove measure at division
      */
     function word_percent(): word
     {

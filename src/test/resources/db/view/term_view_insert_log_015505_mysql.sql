@@ -41,6 +41,6 @@ SELECT term_view_insert_log_015505 (
                1,
                89,
                'Start view',
-               'default',
+               'standard',
                'mathematics',
                725);

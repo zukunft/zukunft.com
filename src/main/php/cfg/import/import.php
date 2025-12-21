@@ -1091,7 +1091,7 @@ class import
         $i = 0;
         foreach ($json_array as $wrd_json) {
             $wrd = new word($this->usr);
-            if ($wrd->import_mapper_user($wrd_json, $this->usr, $usr_msg, $dto)) {
+            if ($wrd->import_mapper($wrd_json, $usr_msg, $dto)) {
                 $dto->add_word($wrd);
                 $i++;
             }
@@ -1117,7 +1117,7 @@ class import
         $i = 0;
         foreach ($json_array as $vrb_json) {
             $vrb = new verb();
-            if ($vrb->import_mapper_user($vrb_json, $this->usr, $usr_msg, $dto)) {
+            if ($vrb->import_mapper($vrb_json, $usr_msg, $dto)) {
                 $vrb->set_user($this->usr);
                 $dto->add_verb($vrb);
                 $i++;
@@ -1144,7 +1144,7 @@ class import
         $i = 0;
         foreach ($json_array as $trp_json) {
             $trp = new triple($this->usr);
-            if ($trp->import_mapper_user($trp_json, $this->usr, $usr_msg, $dto)) {
+            if ($trp->import_mapper($trp_json, $usr_msg, $dto)) {
                 $dto->add_triple_without_ready_check($trp);
                 $i++;
             }
@@ -1170,7 +1170,7 @@ class import
         $i = 0;
         foreach ($json_array as $src_json) {
             $src = new source($this->usr);
-            if ($src->import_mapper_user($src_json, $this->usr, $usr_msg, $dto)) {
+            if ($src->import_mapper($src_json, $usr_msg, $dto)) {
                 $dto->add_source($src);
                 $i++;
             }
@@ -1196,7 +1196,7 @@ class import
         $i = 0;
         foreach ($json_array as $ref_json) {
             $ref = new ref($this->usr);
-            if ($ref->import_mapper_user($ref_json, $this->usr, $usr_msg, $dto)) {
+            if ($ref->import_mapper($ref_json, $usr_msg, $dto)) {
                 $dto->add_reference($ref);
                 $i++;
             }
@@ -1275,7 +1275,7 @@ class import
         $i = 0;
         foreach ($json_array as $msk_json) {
             $msk = new view($this->usr);
-            if ($msk->import_mapper_user($msk_json, $this->usr, $usr_msg, $dto)) {
+            if ($msk->import_mapper($msk_json, $usr_msg, $dto)) {
                 $dto->add_view($msk);
                 $i++;
             }
@@ -1301,7 +1301,7 @@ class import
         $i = 0;
         foreach ($json_array as $cmp_json) {
             $cmp = new component($this->usr);
-            if ($cmp->import_mapper_user($cmp_json, $this->usr, $usr_msg, $dto)) {
+            if ($cmp->import_mapper($cmp_json, $usr_msg, $dto)) {
                 $dto->add_component($cmp);
                 $i++;
             }
@@ -1327,7 +1327,7 @@ class import
         $i = 0;
         foreach ($json_array as $usr_json) {
             $usr = new user();
-            if ($usr->import_mapper_user($usr_json, $this->usr, $usr_msg, $dto)) {
+            if ($usr->import_mapper($usr_json, $usr_msg, $dto)) {
                 $dto->add_user($usr);
                 $i++;
             }

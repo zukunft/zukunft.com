@@ -57,5 +57,5 @@ SELECT component_insert_log_01110150000000000000 (
                63,
                'form_title',
                53,
-               'system_form_title',
+               'system form title',
                17);

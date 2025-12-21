@@ -1565,5 +1565,6 @@ class html_base
     function ui_progress($id, $value, $max, $text): string
     {
         echo $text;
+        return $text;
     }
 }

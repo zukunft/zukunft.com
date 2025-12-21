@@ -52,6 +52,14 @@ class formula_type extends type_object
     const string REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
     const string DEFAULT = self::CALC;
 
+    // list of formula types where the calculation of the result is a kind of hardcoded
+    // e.g. to get the value for a named point in time such as "this"
+    const array PREDEFINED_CALCULATION = [
+        self::THIS,
+        self::NEXT,
+        self::PREV,
+    ];
+
 
     /*
      * database link

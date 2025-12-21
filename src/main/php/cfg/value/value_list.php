@@ -361,7 +361,7 @@ class value_list extends sandbox_value_list
      * @param bool $or true if all values related to any phrase of the list should be loaded
      * @param int $limit the number of values that should be loaded at once
      * @param int $page the offset for the limit
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_lst(
         sql_creator $sc,
@@ -380,7 +380,7 @@ class value_list extends sandbox_value_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr(
         sql_creator      $sc,
@@ -465,7 +465,7 @@ class value_list extends sandbox_value_list
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_multi(
         sql_creator   $sc,
@@ -620,7 +620,7 @@ class value_list extends sandbox_value_list
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @param value_types|null $val_typ if not null load only the types of this list
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
         sql_creator      $sc,
@@ -712,7 +712,7 @@ class value_list extends sandbox_value_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_grp_lst(sql_creator $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
     {
@@ -777,7 +777,7 @@ class value_list extends sandbox_value_list
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @param sql_field_list $par_lst list of parameters use for all table types
      * @param sql_type_list $sc_typ_lst
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_phr_single(
         sql_creator    $sc,

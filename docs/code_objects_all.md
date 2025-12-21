@@ -167,7 +167,8 @@ the object structure is:
                         \-- sandbox_typed
                             \-- sandbox_code_id
                                 \-- component - a single display object like a headline or a table
-                                \-- formula - the main formula object
+                                \-- formula_map
+                                    \-- formula - the main formula object for calculation
                                 \-- source - the source object to define a source for values
                                 \-- view - the main display object
                                 \-- word - the main word object

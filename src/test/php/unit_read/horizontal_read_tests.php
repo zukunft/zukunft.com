@@ -61,6 +61,11 @@ class horizontal_read_tests
             $t->assert_load_by_id($base_obj, $base_obj->id());
         }
 
+        foreach (def::NAME_CLASSES as $class) {
+            $base_obj = $t_map->class_to_base_object($class);
+            $t->assert_load_by_name($base_obj, $base_obj->name());
+        }
+
     }
 
 }
