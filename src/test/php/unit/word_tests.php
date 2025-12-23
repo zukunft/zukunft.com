@@ -33,7 +33,6 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
@@ -48,11 +47,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -119,8 +120,10 @@ class word_tests
         $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
-        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
+        $wrd_renamed_admin = $wrd->cloned(words::TEST_RENAMED);
+        $wrd_renamed_admin->set_protection_by_code_id(protection_type::ADMIN);
+        $t->assert_sql_update($sc, $wrd_renamed_admin, $wrd, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t_wrd->word();

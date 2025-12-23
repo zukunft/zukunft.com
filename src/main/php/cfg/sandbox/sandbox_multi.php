@@ -606,6 +606,12 @@ class sandbox_multi extends db_object_multi_user
         $this->protection_id = $id;
     }
 
+    function set_protection_by_code_id(?string $code_id): void
+    {
+        global $sys;
+        $this->set_protection_id($sys->typ_lst->ptc_typ->id($code_id));
+    }
+
     function protection_id(): ?int
     {
         return $this->protection_id;

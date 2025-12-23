@@ -325,10 +325,10 @@ class sandbox extends db_object_seq_id_user
      *
      * @return $this a clone with the name changed
      */
-    function clone_reset(): sandbox
+    function clone_reset(bool $keep_user = false): sandbox
     {
         $obj_cpy = $this->clone_all();
-        $obj_cpy->reset();
+        $obj_cpy->reset($keep_user);
         return $obj_cpy;
     }
 
@@ -582,6 +582,12 @@ class sandbox extends db_object_seq_id_user
             global $sys;
             $this->protection_id = $sys->typ_lst->ptc_typ->id($code_id);
         }
+    }
+
+    function set_protection_by_code_id(?string $code_id): void
+    {
+        global $sys;
+        $this->set_protection_id($sys->typ_lst->ptc_typ->id($code_id));
     }
 
     /**

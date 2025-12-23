@@ -168,6 +168,7 @@ class verbs
     // persevered verb names for unit and integration tests based on the database
     const string TEST_ADD_NAME = "System Test Verb";
     const string TEST_ADD_COM = "test description if it can be added to the verb via import";
+    const string TEST_ADD_RENAMED = "System Test Verb Renamed";
 
     // search directions to get related words (phrases)
     const string DIRECTION_NO = '';
@@ -182,9 +183,13 @@ class verbs
         self::IS_NAME,
         self::PART_NAME,
         self::TEST_ADD_NAME,
+        self::TEST_ADD_RENAMED,
     );
+
+    // list of verb names only used for system testing that should always be removed after testing
     const array TEST_VERBS = array(
-        self::TEST_ADD_NAME
+        self::TEST_ADD_NAME,
+        self::TEST_ADD_RENAMED,
     );
 
     // list of verbs that does not need a from phrase e.g. "per day" oder "m/s is alias of meter per second"

@@ -78,8 +78,19 @@ include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'results.php';
+include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
@@ -105,10 +116,6 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -127,6 +134,21 @@ use Zukunft\ZukunftCom\main\php\web\view\view_relation as view_relation_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as view_link_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_mappers
@@ -216,6 +238,71 @@ class test_mappers
                 break;
             default:
                 log_err('no base object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    function change_base_object(
+        sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox $obj
+    ): sandbox|sandbox_value|sandbox_link|type_object|db_id_object_non_sandbox
+    {
+        $t_wrd = new test_words($this->env);
+        $t_frm = new test_formulas($this->env);
+        $t_msk = new test_views($this->env);
+        switch ($obj::class) {
+            case user::class;
+                $obj->name = users::TEST_USER_NAME_UPDATED;
+                break;
+            case word::class;
+                $obj->set_name(words::TEST_RENAMED);
+                break;
+            case verb::class;
+                $obj->set_name(verbs::TEST_ADD_RENAMED);
+                break;
+            case triple::class;
+                $obj->set_name(triples::SYSTEM_TEST_RENAMED);
+                break;
+            case source::class;
+                $obj->set_name(sources::SYSTEM_TEST_RENAMED);
+                break;
+            case ref::class;
+                $obj->set_name(refs::SYSTEM_TEST_RENAMED);
+                break;
+            case value::class;
+                $obj->set_value(values::SAMPLE_FLOAT);
+                $obj->set_protection_by_code_id(protection_type::USER);
+                break;
+            case formula::class;
+                $obj->set_name(formulas::SYSTEM_TEST_RENAMED);
+                break;
+            case formula_link::class;
+                $obj->set_formula($t_frm->formula());
+                break;
+            case result::class;
+                $obj->set_value(results::TV_FLOAT);
+                $obj->set_protection_by_code_id(protection_type::USER);
+                break;
+            case view::class;
+                $obj->set_name(views::TEST_RENAMED_NAME);
+                break;
+            case view_relation::class;
+                $obj->set_parent($t_msk->view_word_edit());
+                $obj->set_child($t_msk->view_word_log());
+                $obj->set_protection_by_code_id(protection_type::USER);
+                break;
+            case term_view::class;
+                $obj->set_term($t_wrd->word()->term());
+                $obj->set_view($t_msk->view());
+                $obj->set_protection_by_code_id(protection_type::ADMIN);
+                break;
+            case component::class;
+                $obj->set_name(components::TEST_RENAMED_NAME);
+                break;
+            case component_link::class;
+                $obj->set_view($t_msk->view());
+                break;
+            default:
+                log_err('no base object defined for ' . $obj::class);
         }
         return $obj;
     }

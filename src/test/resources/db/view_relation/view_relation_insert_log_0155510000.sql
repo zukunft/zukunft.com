@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION view_relation_insert_log_0155510
+CREATE OR REPLACE FUNCTION view_relation_insert_log_0155510000
     (_parent_view_id bigint,
      _view_relation_type_id smallint,
      _child_view_id bigint,
@@ -36,12 +36,12 @@ BEGIN
 
 END $$ LANGUAGE plpgsql;
 
-PREPARE view_relation_insert_log_0155510_call
+PREPARE view_relation_insert_log_0155510000_call
     (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, smallint, bigint) AS
-SELECT view_relation_insert_log_0155510
+SELECT view_relation_insert_log_0155510000
     ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
-SELECT view_relation_insert_log_0155510
+SELECT view_relation_insert_log_0155510000
        (3::bigint,
         1::smallint,
         5::bigint,

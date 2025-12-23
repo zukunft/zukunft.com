@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS term_view_insert_log_015515;
-CREATE PROCEDURE term_view_insert_log_015515
+DROP PROCEDURE IF EXISTS term_view_insert_log_015515000;
+CREATE PROCEDURE term_view_insert_log_015515000
     (_view_id bigint,
      _view_link_type_id smallint,
      _term_id bigint,
@@ -36,10 +36,10 @@ UPDATE term_views
 
 END;
 
-PREPARE term_view_insert_log_015515_call FROM
-    'SELECT term_view_insert_log_015515 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE term_view_insert_log_015515000_call FROM
+    'SELECT term_view_insert_log_015515000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT term_view_insert_log_015515 (
+SELECT term_view_insert_log_015515000 (
                1,
                1,
                1,

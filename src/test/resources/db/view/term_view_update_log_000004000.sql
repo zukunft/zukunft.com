@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION term_view_update_log_0004_user
+CREATE OR REPLACE FUNCTION term_view_update_log_000004000
     (_user_id bigint,
      _change_action_id smallint,
      _field_id_view_link_type_id smallint,
@@ -14,20 +14,19 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,                   old_value,     new_value, old_id,                new_id,            row_id)
          SELECT         _user_id,_change_action_id,       _field_id_view_link_type_id,_type_name_old,_type_name,_view_link_type_id_old,_view_link_type_id,_term_view_id ;
 
-    UPDATE user_term_views
+    UPDATE term_views
        SET view_link_type_id = _view_link_type_id
-     WHERE term_view_id = _term_view_id
-       AND user_id = _user_id;
+     WHERE term_view_id = _term_view_id;
 
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE term_view_update_log_0004_user_call
+PREPARE term_view_update_log_000004000_call
     (bigint, smallint, smallint, text, smallint, text, smallint, bigint) AS
-SELECT term_view_update_log_0004_user
+SELECT term_view_update_log_000004000
     ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT term_view_update_log_0004_user
+SELECT term_view_update_log_000004000
     (3::bigint,
      2::smallint,
      726::smallint,

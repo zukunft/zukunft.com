@@ -309,7 +309,7 @@ class test_cleanup extends test_api
         }
 
         $test_name_loop = 'request to delete the added test phrases';
-        foreach (triples::TEST_TRIPLE_STANDARD as $phr_name) {
+        foreach (triples::TEST_TRIPLES as $phr_name) {
             $test_name = $test_name_loop . ' "' . $phr_name . '"';
             $phr = $t_db->load_phrase($phr_name);
             if ($phr->id() <> 0) {

@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS view_relation_insert_log_0155510;
-CREATE PROCEDURE view_relation_insert_log_0155510
+DROP PROCEDURE IF EXISTS view_relation_insert_log_0155510000;
+CREATE PROCEDURE view_relation_insert_log_0155510000
     (_parent_view_id bigint,
      _view_relation_type_id smallint,
      _child_view_id bigint,
@@ -36,10 +36,10 @@ BEGIN
 
 END;
 
-PREPARE view_relation_insert_log_0155510_call FROM
-    'SELECT view_relation_insert_log_0155510 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE view_relation_insert_log_0155510000_call FROM
+    'SELECT view_relation_insert_log_0155510000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT view_relation_insert_log_0155510 (
+SELECT view_relation_insert_log_0155510000 (
                3,
                1,
                5,

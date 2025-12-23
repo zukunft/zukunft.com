@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION term_view_insert_log_015515
+CREATE OR REPLACE FUNCTION term_view_insert_log_015515000
     (_view_id bigint,
      _view_link_type_id smallint,
      _term_id bigint,
@@ -36,12 +36,12 @@ UPDATE term_views
 
 END $$ LANGUAGE plpgsql;
 
-PREPARE term_view_insert_log_015515_call
+PREPARE term_view_insert_log_015515000_call
     (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, smallint, text) AS
-SELECT term_view_insert_log_015515
+SELECT term_view_insert_log_015515000
     ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 
-SELECT term_view_insert_log_015515
+SELECT term_view_insert_log_015515000
     (1::bigint,
      1::smallint,
      1::bigint,

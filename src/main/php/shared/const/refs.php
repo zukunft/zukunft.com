@@ -59,6 +59,7 @@ class refs
     // to test adding a new reference type
     const string SYSTEM_TEST_ADD = 'System Test Reference External Key';
     const string SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
+    const string SYSTEM_TEST_RENAMED = 'System Test Reference External Key Changed';
 
     // must be the same as in /resource/api/source/source_put.json
     const string SYSTEM_TEST_API_ADD_KEY = 'System Test Reference API added';
@@ -68,7 +69,7 @@ class refs
     // reference group for testing
     // TODO Prio 3 activate
     const array RESERVED_REFERENCES_TYPES = array(
-        self::SYSTEM_TEST_ADD_COM
+        self::SYSTEM_TEST_ADD_COM,
     );
 
 }

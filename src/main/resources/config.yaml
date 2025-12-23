@@ -185,6 +185,13 @@ zukunft.com:
         table name:
           max phrase: 3
           tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+        source table:
+          min values:
+            sys-conf-value: 1000
+            tooltip-comment: "the minimal number of values before considering a separate table where the table name includes the source id so that the table can be a pure key value tables"
+          max tables:
+            sys-conf-value: 200
+            tooltip-comment: "the maximal number of value source tables with one database"
       triples:
         max levels: 99
         tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"

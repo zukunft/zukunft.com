@@ -711,7 +711,8 @@ class term_view extends sandbox_link
             [
                 sql_db::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
-            ]
+            ],
+            parent::db_fields_all_sandbox()
         );
     }
 
@@ -774,7 +775,7 @@ class term_view extends sandbox_link
                 $sbx->predicate_id(),
                 $sys->typ_lst->phr_typ);
         }
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 

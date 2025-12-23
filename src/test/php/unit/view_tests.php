@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -108,7 +109,9 @@ class view_tests
         $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
+        $msk_renamed_admin = $msk->cloned(views::TEST_RENAMED_NAME);
+        $msk_renamed_admin->set_protection_by_code_id(protection_type::ADMIN);
+        $t->assert_sql_update($sc, $msk_renamed_admin, $msk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write delete');

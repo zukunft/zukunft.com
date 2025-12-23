@@ -673,7 +673,8 @@ class view_relation extends sandbox_link
                 view_relation_type::FLD_ID,
                 view_relation_db::FLD_START_POS,
                 sql_db::FLD_DESCRIPTION,
-            ]
+            ],
+            parent::db_fields_all_sandbox()
         );
     }
 
@@ -754,7 +755,7 @@ class view_relation extends sandbox_link
             );
         }
 
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 

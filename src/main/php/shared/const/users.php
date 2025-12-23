@@ -106,6 +106,7 @@ class users
 
     // a test user for db write tests
     const string TEST_USER_NAME = 'zukunft.com system write test user';
+    const string TEST_USER_NAME_UPDATED = 'zukunft.com system write test user changed';
     const string TEST_USER_COM = 'test description if it can be added to the user via import';
     const string TEST_USER_MAIL = 'test@zukunft.com';
     // invalid address used to test creating a new user
@@ -118,6 +119,7 @@ class users
         self::LOCALHOST_NAME,
         self::TEST_NAME,
         self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
     );
 
     // array of usernames that used for db read testing and that should not be renamed
@@ -125,9 +127,17 @@ class users
         self::SYSTEM_NAME
     );
 
+    // list of user that is used for system testing that should be removed are the system test has been completed
+    // and where no real user is allowed to use the username
+    const array TEST_USERS = array(
+        self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
+    );
+
     // list of usernames that are only used for system testing and that does not create log entries
     const array TEST_NO_LOG = [
-        self::TEST_USER_NAME
+        self::TEST_USER_NAME,
+        self::TEST_USER_NAME_UPDATED,
     ];
 
 
@@ -137,11 +147,5 @@ class users
     const int RIGHT_LEVEL_DEVELOPER = 80;
     const int RIGHT_LEVEL_SYSTEM_TEST = 90;
     const int RIGHT_LEVEL_SYSTEM = 99;
-
-    // list of user that is used for system testing that should be removed are the system test has been completed
-    // and where no real user is allowed to use the username
-    const array TEST_USERS = array(
-        self::TEST_USER_NAME
-    );
 
 }

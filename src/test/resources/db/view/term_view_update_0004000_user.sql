@@ -1,4 +1,4 @@
-PREPARE term_view_update_0004_user
+PREPARE term_view_update_0004000_user
     (smallint, bigint, bigint) AS
         UPDATE user_term_views
            SET view_link_type_id = $1
