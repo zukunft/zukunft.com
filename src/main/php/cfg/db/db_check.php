@@ -114,7 +114,7 @@ class db_check
         }
 
         $cfg = new config();
-        $cfg->check(config::SITE_NAME, def::POD_NAME, $db_con);
+        $cfg->check_cfg(config::SITE_NAME, def::POD_NAME, $db_con);
 
         // get the db version and start the upgrade process if needed
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con);

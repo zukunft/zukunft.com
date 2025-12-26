@@ -658,7 +658,7 @@ class type_object extends db_object_seq_id
         $log->set_field($name_fld);
         $log->old_value = $this->name();
         $log->new_value = null;
-        $qp_log = $log->sql_insert(
+        $qp_log = $log->sql_insert_log(
             $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
 
         // TODO get the fields used in the change log sql from the sql
@@ -749,41 +749,38 @@ class type_object extends db_object_seq_id
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return [
-            $this->id_field_typ($this::class),
-            $this->name_field(),
-            sql_db::FLD_CODE_ID,
-            sql_db::FLD_DESCRIPTION
-        ];
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                $this->name_field(),
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_DESCRIPTION
+            ]
+        );
     }
 
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param type_object $typ the compare value to detect the changed fields
+     * @param type_object|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        type_object   $typ,
+        type_object|db_object_seq_id   $obj,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
 
-        $lst = new sql_par_field_list();
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst->add_field(
-            $this->id_field_typ($this::class),
-            $typ->id(),
-            db_object_seq_id::FLD_ID_SQL_TYP
-        );
-        if ($typ->name <> $this->name) {
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($obj->name <> $this->name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
@@ -791,7 +788,7 @@ class type_object extends db_object_seq_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            $used_old_name = $typ->name;
+            $used_old_name = $obj->name;
             if ($used_old_name == '') {
                 $used_old_name = null;
             }
@@ -802,7 +799,7 @@ class type_object extends db_object_seq_id
                 $used_old_name
             );
         }
-        if ($typ->code_id !== $this->code_id) {
+        if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
@@ -814,10 +811,10 @@ class type_object extends db_object_seq_id
                 sql_db::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
-                $typ->code_id
+                $obj->code_id
             );
         }
-        if ($typ->description <> $this->description) {
+        if ($obj->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -829,7 +826,7 @@ class type_object extends db_object_seq_id
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $typ->description
+                $obj->description
             );
         }
         return $lst;

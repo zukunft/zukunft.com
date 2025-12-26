@@ -134,6 +134,24 @@ function log_info(string $msg_text,
         $force_log);
 }
 
+function log_reject(string  $msg_text,
+                     string  $function_name = '',
+                     string  $msg_description = '',
+                     string  $function_trace = '',
+                     ?user   $calling_usr = null,
+                     ?sql_db $given_db_con = null): string
+{
+    return log_msg($msg_text,
+        $msg_description,
+        sys_log_level::REJECT,
+        $function_name,
+        $function_trace,
+        $calling_usr,
+        false,
+        $given_db_con
+    );
+}
+
 function log_warning(string  $msg_text,
                      string  $function_name = '',
                      string  $msg_description = '',

@@ -1400,7 +1400,7 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
@@ -1421,7 +1421,7 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {

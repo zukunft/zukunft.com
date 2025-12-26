@@ -1383,10 +1383,10 @@ class verb extends type_object
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
-        sql_creator   $sc,
-        type_object   $db_row,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_creator      $sc,
+        db_object_seq_id $db_row,
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -1407,10 +1407,10 @@ class verb extends type_object
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write(
-        sql_creator   $sc,
-        type_object   $db_row,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_creator      $sc,
+        db_object_seq_id $db_row,
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         global $sys;
@@ -1632,15 +1632,15 @@ class verb extends type_object
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param verb|type_object $typ the compare value to detect the changed fields
+     * @param verb|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        verb|type_object $typ,
-        user_message     $usr_msg,
-        sql_type_list    $sc_par_lst = new sql_type_list()
+        verb|db_object_seq_id $obj,
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1649,9 +1649,9 @@ class verb extends type_object
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($typ, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // TODO move to language forms
-        if ($typ->plural !== $this->plural) {
+        if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL,
@@ -1663,10 +1663,10 @@ class verb extends type_object
                 verb_db::FLD_PLURAL,
                 $this->plural,
                 sql_field_type::NAME,
-                $typ->plural
+                $obj->plural
             );
         }
-        if ($typ->reverse !== $this->reverse) {
+        if ($obj->reverse !== $this->reverse) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_REVERSE,
@@ -1678,10 +1678,10 @@ class verb extends type_object
                 verb_db::FLD_REVERSE,
                 $this->reverse,
                 sql_field_type::NAME,
-                $typ->reverse
+                $obj->reverse
             );
         }
-        if ($typ->rev_plural !== $this->rev_plural) {
+        if ($obj->rev_plural !== $this->rev_plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL_REVERSE,
@@ -1693,10 +1693,10 @@ class verb extends type_object
                 verb_db::FLD_PLURAL_REVERSE,
                 $this->rev_plural,
                 sql_field_type::NAME,
-                $typ->rev_plural
+                $obj->rev_plural
             );
         }
-        if ($typ->usage !== $this->usage) {
+        if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1708,10 +1708,10 @@ class verb extends type_object
                 sql_db::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
-                $typ->usage
+                $obj->usage
             );
         }
-        if ($typ->impact !== $this->impact) {
+        if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -1723,7 +1723,7 @@ class verb extends type_object
                 sql_db::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $typ->impact
+                $obj->impact
             );
         }
         return $lst;

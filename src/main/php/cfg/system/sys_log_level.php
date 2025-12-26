@@ -41,9 +41,10 @@ class sys_log_level extends BasicEnum
 {
     const int UNDEFINED = 0;
     const int INFO = 1;
-    const int WARNING = 2;
-    const int ERROR = 3;
-    const int FATAL = 4;
+    const int REJECT = 2;
+    const int WARNING = 3;
+    const int ERROR = 4;
+    const int FATAL = 5;
 
     /**
      * @throws ReflectionException
@@ -54,6 +55,9 @@ class sys_log_level extends BasicEnum
         switch ($value) {
 
             // system log
+            case sys_log_level::REJECT:
+                $result = 'Reject';
+                break;
             case sys_log_level::WARNING:
                 $result = 'Warning';
                 break;

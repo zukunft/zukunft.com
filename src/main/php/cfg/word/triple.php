@@ -1991,12 +1991,11 @@ class triple extends sandbox_link_named
     /**
      * check if the object can be added to the database
      * e.g. if from and to are valid
-     * @return user_message if not valid the message for the user what needs to be changed
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    function check(): user_message
+    function check(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->needs_from()) {
             if ($this->get_from() == null) {
                 $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
@@ -2021,7 +2020,7 @@ class triple extends sandbox_link_named
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2054,7 +2053,7 @@ class triple extends sandbox_link_named
     function can_be_ready(user_message $usr_msg): bool
     {
         parent::can_be_ready($usr_msg);
-        $usr_msg->add($this->check());
+        $this->check($usr_msg);
         return $usr_msg->is_ok();
     }
 
@@ -2066,7 +2065,7 @@ class triple extends sandbox_link_named
     function db_ready(user_message $usr_msg): bool
     {
         parent::db_ready($usr_msg);
-        $usr_msg->add($this->check());
+        $this->check($usr_msg);
         return $usr_msg->is_ok();
     }
 
@@ -2925,15 +2924,15 @@ class triple extends sandbox_link_named
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|triple $sbx the compare value to detect the changed fields
+     * @param triple|db_object_seq_id $sbx the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|triple $sbx,
-        user_message   $usr_msg,
-        sql_type_list  $sc_par_lst = new sql_type_list()
+        triple|db_object_seq_id $sbx,
+        user_message            $usr_msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

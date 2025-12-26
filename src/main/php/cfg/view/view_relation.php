@@ -185,7 +185,7 @@ class view_relation extends sandbox_link
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -681,15 +681,15 @@ class view_relation extends sandbox_link
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param sandbox|view_relation $sbx the compare value to detect the changed fields
+     * @param view_relation|db_object_seq_id $sbx the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|view_relation $sbx,
-        user_message          $usr_msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        view_relation|db_object_seq_id $sbx,
+        user_message                   $usr_msg,
+        sql_type_list                  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

@@ -1214,15 +1214,15 @@ class view extends sandbox_code_id
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|view $sbx the compare value to detect the changed fields
+     * @param view|db_object_seq_id $sbx the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|view  $sbx,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        view|db_object_seq_id $sbx,
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

@@ -33,7 +33,6 @@
 namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -46,6 +45,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -63,7 +63,9 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -124,7 +126,7 @@ class ip_range extends db_object_seq_id
      * construct and map
      */
 
-    function reset(): void
+    function reset(bool $keep_user = false): void
     {
         $this->id = 0;
         $this->from = '';
@@ -563,9 +565,9 @@ class ip_range extends db_object_seq_id
     /**
      * get a similar or overlapping ip range
      *
-     * @return ip_range|null the ip range that matches e.g. to update the reason
+     * @return ip_range|db_object|null the ip range that matches e.g. to update the reason
      */
-    function get_similar(): ?ip_range
+    function get_similar(user_message $usr_msg): ip_range|db_object|null
     {
         global $db_con;
         $result = null;

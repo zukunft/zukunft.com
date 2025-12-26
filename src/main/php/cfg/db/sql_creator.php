@@ -1781,7 +1781,7 @@ class sql_creator
             }
 
             // create the sql for the log entry
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
@@ -1942,7 +1942,7 @@ class sql_creator
             }
 
             // TODO replace dummy value table with an enum value
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
             // TODO get the fields used in the change log sql from the sql
@@ -2229,7 +2229,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', $num_fld);
+        $qp = $log->sql_insert_log($sc_log, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();

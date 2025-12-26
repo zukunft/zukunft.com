@@ -1158,7 +1158,7 @@ class sandbox_named extends sandbox
      * @return sandbox a filled object that has the same name
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox
+    function get_similar(user_message $usr_msg): sandbox
     {
         $result = new sandbox_named($this->get_user());
 
@@ -1287,7 +1287,7 @@ class sandbox_named extends sandbox
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1355,13 +1355,13 @@ class sandbox_named extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox_named|sandbox $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_named|sandbox $sbx,
+        sandbox|db_object_seq_id $sbx,
         user_message          $usr_msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list

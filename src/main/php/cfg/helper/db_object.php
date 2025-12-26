@@ -5,6 +5,8 @@
     model/helper/db_object.php - a base object for all model database objects contains the table and index creation
     --------------------------
 
+    The main sections of this object are
+    - debug:             internal support functions for debugging
 
     This file is part of zukunft.com - calc with words
 
@@ -341,6 +343,17 @@ class db_object extends IdObject
     function log_name_field(): string
     {
         return '';
+    }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string {
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        return $class . ' with ' . $this->id_field() . '=' . $this->id();
     }
 
 }

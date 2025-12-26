@@ -1070,10 +1070,11 @@ class sandbox_link extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      * @returns string a filled object that links the same objects
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox
+    function get_similar(user_message $usr_msg): sandbox
     {
         $result = new sandbox($this->get_user());
 
@@ -1129,7 +1130,7 @@ class sandbox_link extends sandbox
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1360,15 +1361,15 @@ class sandbox_link extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox|sandbox_link $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox_link|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|sandbox_link $sbx,
-        user_message         $usr_msg,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        sandbox_link|db_object_seq_id $sbx,
+        user_message                  $usr_msg,
+        sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1655,16 +1656,16 @@ class sandbox_link extends sandbox
      * create the sql statement to update a sandbox link object in the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox $db_row the word with the database values before the update
+     * @param sandbox|db_object_seq_id $db_row the word with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
-        sql_creator   $sc,
-        sandbox       $db_row,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_creator              $sc,
+        sandbox|db_object_seq_id $db_row,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list

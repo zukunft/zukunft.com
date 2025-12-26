@@ -1391,8 +1391,9 @@ class component_link extends sandbox_link
 
     /**
      * get a similar reference
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(): component_link
+    function get_similar(user_message $usr_msg): component_link
     {
         $result = new component_link($this->get_user());
 
@@ -1492,15 +1493,15 @@ class component_link extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|component_link $sbx the compare value to detect the changed fields
+     * @param component_link|db_object_seq_id $sbx the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|component_link $sbx,
-        user_message           $usr_msg,
-        sql_type_list          $sc_par_lst = new sql_type_list()
+        component_link|db_object_seq_id $sbx,
+        user_message                    $usr_msg,
+        sql_type_list                   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

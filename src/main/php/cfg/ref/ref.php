@@ -301,7 +301,7 @@ class ref extends sandbox_link
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -1326,8 +1326,9 @@ class ref extends sandbox_link
 
     /**
      * get a similar reference
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(): ref
+    function get_similar(user_message $usr_msg): ref
     {
         $result = new ref($this->get_user());
         log_debug('ref->get_similar ' . $this->dsp_id());
@@ -1455,15 +1456,15 @@ class ref extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|ref $sbx the compare value to detect the changed fields
+     * @param ref|db_object_seq_id $sbx the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|ref   $sbx,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        ref|db_object_seq_id $sbx,
+        user_message         $usr_msg,
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;

@@ -52,6 +52,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -474,11 +476,13 @@ class element extends db_object_seq_id_user
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
+        user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
@@ -507,10 +511,15 @@ class element extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param element $db_row the word with the database values before the update
+     * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
-    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
+    function sql_update(
+        sql_creator              $sc,
+        element|db_object_seq_id $db_row,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()): sql_par
     {
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
@@ -538,7 +547,7 @@ class element extends db_object_seq_id_user
      *
      * @return array list of all database field names that might have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return [
             $this::FLD_ID,
@@ -550,10 +559,14 @@ class element extends db_object_seq_id_user
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param element $sbx the compare value to detect the changed fields
+     * @param element|db_object_seq_id $sbx the compare value to detect the changed fields
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(element $sbx): sql_par_field_list
+    function db_fields_changed(
+        element|db_object_seq_id $sbx,
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
         if ($sbx->trm_id() !== $this->trm_id()) {

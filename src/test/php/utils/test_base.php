@@ -1407,9 +1407,10 @@ class test_base
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+            $usr_msg->usr = $this->usr_admin;
+            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         } else {
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
@@ -1419,7 +1420,8 @@ class test_base
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
+                $usr_msg->usr = $this->usr_admin;
+                $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
                 $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
             } else {

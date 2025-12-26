@@ -962,6 +962,13 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
 
+    case NO_UPDATE_PRIVILEGES =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '  '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' cannot be changed by user '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END;
+
     case USER_NO_IMPORT_PRIVILEGES = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be imported due to missing privileges of the requesting user '
@@ -1242,7 +1249,7 @@ enum messages: string
     case FORM_SUB_TITLE_REF = 'system_sub_title_references';
     case FORM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case FORM_SUB_TITLE_FORMULAS = 'system_sub_title_formulas';
-    case FORM_SUB_TITLE_ASSIGNED_PHRASES= 'system_sub_title_assigned_phrases';
+    case FORM_SUB_TITLE_ASSIGNED_PHRASES = 'system_sub_title_assigned_phrases';
     case FORM_SUB_TITLE_RESULTS = 'system_sub_title_results';
     case FORM_SUB_TITLE_LOG = 'system_sub_title_log';
 
