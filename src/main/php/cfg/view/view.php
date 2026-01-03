@@ -1214,13 +1214,13 @@ class view extends sandbox_code_id
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param view|db_object_seq_id $sbx the compare value to detect the changed fields
+     * @param view|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        view|db_object_seq_id $sbx,
+        view|db_object_seq_id $obj,
         user_message          $usr_msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -1231,8 +1231,8 @@ class view extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
-        if ($sbx->type_id() !== $this->type_id()) {
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_TYPE,
@@ -1251,11 +1251,11 @@ class view extends sandbox_code_id
                 view_db::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
-                $sbx->type_id(),
+                $obj->type_id(),
                 $sys->typ_lst->msk_typ
             );
         }
-        if ($sbx->get_style_id() !== $this->get_style_id()) {
+        if ($obj->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,
@@ -1275,11 +1275,11 @@ class view extends sandbox_code_id
                 view_db::FLD_STYLE,
                 view_style::FLD_NAME,
                 $this->get_style_id(),
-                $sbx->get_style_id(),
+                $obj->get_style_id(),
                 $sys->typ_lst->msk_sty
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

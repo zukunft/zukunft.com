@@ -644,13 +644,13 @@ class sandbox_link_named extends sandbox_link
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox_link_named|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox_link_named|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_link_named|db_object_seq_id $sbx,
+        sandbox_link_named|db_object_seq_id $obj,
         user_message                        $usr_msg,
         sql_type_list                       $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -659,9 +659,9 @@ class sandbox_link_named extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
-        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
         return $lst;
     }
 

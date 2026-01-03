@@ -36,9 +36,9 @@ namespace Zukunft\ZukunftCom\main\php\cfg\system;
 class log
 {
 
-    CONST MSG_ERR = ' failed due to: ';
-    CONST MSG_ERR_USING = ' failed due using "';
-    CONST MSG_ERR_BECAUSE = '" because: ';
-    CONST MSG_ERR_INTERNAL = ' failed due to an internal error. The error has been logged and the fixing of this error can be traced with this link: ';
+    CONST string MSG_ERR = ' failed due to: ';
+    CONST string MSG_ERR_USING = ' failed due using "';
+    CONST string MSG_ERR_BECAUSE = '" because: ';
+    CONST string MSG_ERR_INTERNAL = ' failed due to an internal error. The error has been logged and the fixing of this error can be traced with this link: ';
 
 }

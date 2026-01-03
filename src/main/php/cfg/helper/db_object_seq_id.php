@@ -796,61 +796,19 @@ class db_object_seq_id extends db_object
         }
         $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst);
 
-        // don't use the log parameter for the sub queries
-        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
-        $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_log = clone $sc_par_lst_sub;
-        $sc_par_lst_log->add(sql_type::INSERT_PART);
-        if ($sc_par_lst->is_insert()) {
-            // create sql to set the prime key upfront to get the sequence id
-            $qp_id = clone $qp;
-            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
-            $par_lst_out->add($qp_id->par_fld);
-            $sql .= $qp_id->sql;
-        }
-
         // get the data fields and move the unique db key field to the first entry
-        $fld_lst_log = array_intersect($fvt_lst->names(), $fld_lst_all);
-        $key_fld_pos = array_search($this->id_field(), $fld_lst_log);
-        unset($fld_lst_log[$key_fld_pos]);
+        $fld_lst_chg = array_intersect($fvt_lst->names(), $fld_lst_all);
+        $key_fld_pos = array_search($this->id_field(), $fld_lst_chg);
+        unset($fld_lst_chg[$key_fld_pos]);
 
         // add the user to the field list so that the id can be used for the log
         $fvt_lst->add_field(
             user_db::FLD_ID,
-            $this->get_user()->id(),
+            $usr_msg->usr->id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
-        // create the query parameters for the log entries for the single fields
-        if ($sc_par_lst->is_insert()) {
-            $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
-        } else {
-            $qp_log = $sc->sql_func_log_update($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id);
-        }
-        $sql .= ' ' . $qp_log->sql;
-        $par_lst_out->add_list($qp_log->par_fld_lst);
-
-        // add the name field if it is missing and the object should be excluded
-        if (!$par_lst_out->has_name($this->name_field())) {
-            $table_id = $sc->table_id($this::class);
-            $par_lst_out->add_field(
-                sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                $sys->typ_lst->cng_fld->id($table_id . $this->name_field()),
-                change::FLD_FIELD_ID_SQL_TYP
-            );
-            $par_lst_out->add_field(
-                $this->name_field() . change::FLD_OLD_EXT,
-                $this->name(),
-                sandbox_named::FLD_NAME_SQL_TYP
-            );
-        }
-
         // update the fields excluding the unique id
-        $fld_lst_chg = $fld_lst_log;
-        if ($sc_par_lst->is_insert()) {
-            $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
-            unset($fld_lst_chg[$key_fld_pos]);
-        }
         $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
             $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
@@ -886,62 +844,6 @@ class db_object_seq_id extends db_object
 
         // create the call sql statement
         return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
-    }
-
-    /**
-     * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_par $qp
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_insert_key_field(
-        sql_creator        $sc,
-        sql_par            $qp,
-        sql_par_field_list $fvt_lst,
-        string             $id_fld_new,
-        user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list()
-    ): sql_par
-    {
-        // set some var names to shorten the code lines
-        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
-
-        // list of parameters actually used in order of the function usage
-        $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
-
-        // create the sql to insert the row
-        $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        if ($sc->db_type == sql_db::MYSQL) {
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
-        }
-        $qp_insert->sql = $sc_insert->create_sql_insert(
-            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
-
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_insert->sql . '; ';
-
-        // get the new row id for MySQL db
-        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
-        }
-
-        $qp->sql = $sql;
-        $qp->par_fld = $fvt_insert;
-
-        return $qp;
     }
 
 

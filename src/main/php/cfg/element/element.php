@@ -492,7 +492,7 @@ class element extends db_object_seq_id_user
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
         $elm_empty = new element($this->get_user()->clone_reset());
-        $fvt_lst = $this->db_fields_changed($elm_empty);
+        $fvt_lst = $this->db_fields_changed($elm_empty, $usr_msg);
 
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst_used);
@@ -525,7 +525,7 @@ class element extends db_object_seq_id_user
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fvt_lst = $this->db_fields_changed($db_row);
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
         $this->db_fields_all();
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst);
@@ -559,22 +559,22 @@ class element extends db_object_seq_id_user
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param element|db_object_seq_id $sbx the compare value to detect the changed fields
+     * @param element|db_object_seq_id $obj the compare value to detect the changed fields
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        element|db_object_seq_id $sbx,
-        user_message          $usr_msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        element|db_object_seq_id $obj,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        if ($sbx->trm_id() !== $this->trm_id()) {
+        if ($obj->trm_id() !== $this->trm_id()) {
             $lst->add_field(
                 term::FLD_ID,
                 $this->trm_id(),
                 term::FLD_ID_SQL_TYP,
-                $sbx->trm_id()
+                $obj->trm_id()
             );
         }
         return $lst;

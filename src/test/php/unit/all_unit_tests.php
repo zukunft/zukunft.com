@@ -211,6 +211,7 @@ class all_unit_tests extends test_cleanup
 
         $t_usr = new test_users();
         $this->usr_dev = $t_usr->user_dev();
+        $this->usr_normal = $t_usr->user_filled();
 
     }
 

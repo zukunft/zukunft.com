@@ -2675,7 +2675,7 @@ class sandbox extends db_object_seq_id_user
         // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
         if ($this->id() == 0) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
+            $similar = $this->get_similar($usr_msg);
             if ($similar->id() <> 0) {
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
@@ -4182,13 +4182,13 @@ class sandbox extends db_object_seq_id_user
      * get a list of database field names, values and types that have been updated
      * dummy function overwritten by the child object
      *
-     * @param sandbox|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|db_object_seq_id $sbx,
+        sandbox|db_object_seq_id $obj,
         user_message             $usr_msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list

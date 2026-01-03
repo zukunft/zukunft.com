@@ -3768,7 +3768,7 @@ class sandbox_multi extends db_object_multi_user
     function db_fields_changed(
         sandbox_multi $sbx,
         user_message  $usr_msg,
-        sql_type_list $sc_par_lst
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [

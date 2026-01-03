@@ -1343,60 +1343,6 @@ class verb extends type_object
      * sql write
      */
 
-    /*
-     * sql write
-     */
-
-    /**
-     * TODO Prio 1 move to db_object_seq_id class
-     * create the sql statement to add a new value or result to the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_insert(
-        sql_creator   $sc,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::INSERT);
-        // get the fields and values that are filled and should be written to the db
-        $vrb_empty = new verb();
-        $vrb_empty->usr = $this->usr;
-        return $this->sql_write($sc, $vrb_empty, $usr_msg, $sc_par_lst_used);
-    }
-
-    /**
-     * create the sql statement to update a value or result in the database
-     * TODO move the code to an object used by sandbox and sandbox_value
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param type_object $db_row the sandbox object with the database values before the update
-     * @param user_message $usr_msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_update(
-        sql_creator      $sc,
-        db_object_seq_id $db_row,
-        user_message     $usr_msg,
-        sql_type_list    $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::UPDATE);
-        return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
-    }
-
-
     /**
      * create the sql statement to add a verb to the database
      * always all fields are included in the query to be able to remove overwrites with a null value

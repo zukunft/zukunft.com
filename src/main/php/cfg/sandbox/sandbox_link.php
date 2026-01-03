@@ -1361,13 +1361,13 @@ class sandbox_link extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox_link|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox_link|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_link|db_object_seq_id $sbx,
+        sandbox_link|db_object_seq_id $obj,
         user_message                  $usr_msg,
         sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -1386,7 +1386,7 @@ class sandbox_link extends sandbox
         if ($usr_tbl and $is_insert) {
             $lst->add_id_and_user($this);
         } else {
-            $lst->add_user($this, $sbx, $do_log, $table_id);
+            $lst->add_user($this, $obj, $do_log, $table_id);
         }
         // the user cannot change the link type, because this would be another link
         if (!$usr_tbl) {
@@ -1398,7 +1398,7 @@ class sandbox_link extends sandbox
                     $this->message_from_invalid($usr_msg);
                 }
             }
-            if ($sbx->from_id() !== $this->from_id()) {
+            if ($obj->from_id() !== $this->from_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1411,7 +1411,7 @@ class sandbox_link extends sandbox
                     $this->from_field(),
                     'from_' . $this->fob()?->name_field(),
                     $this->fob(),
-                    $sbx->fob()
+                    $obj->fob()
                 );
             }
             if ($this:: class != ref::class) {
@@ -1424,7 +1424,7 @@ class sandbox_link extends sandbox
                     }
                 }
             }
-            if ($sbx->to_id() !== $this->to_id()) {
+            if ($obj->to_id() !== $this->to_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
@@ -1433,12 +1433,12 @@ class sandbox_link extends sandbox
                     );
                 }
                 // e.g. for external references
-                if ($this->tob == null and $sbx->tob == null) {
+                if ($this->tob == null and $obj->tob == null) {
                     $lst->add_field(
                         $this->to_field(),
                         $this->to_value(),
                         sql_field_type::TEXT,
-                        $sbx->to_value()
+                        $obj->to_value()
                     );
                 } else {
                     // TODO Prio 2: move "to_" to a const and or function
@@ -1446,7 +1446,7 @@ class sandbox_link extends sandbox
                         $this->to_field(),
                         'to_' . $this->tob()?->name_field(),
                         $this->tob(),
-                        $sbx->tob()
+                        $obj->tob()
                     );
                 }
             }
@@ -1469,16 +1469,16 @@ class sandbox_link extends sandbox
                 }
             }
             if ($is_delete) {
-                $from_fld = $sbx->fob()?->name_field();
-                if ($sbx->tob() == null) {
+                $from_fld = $obj->fob()?->name_field();
+                if ($obj->tob() == null) {
                     // e.g. for references the external key
-                    $to_fld = $sbx->to_field();
+                    $to_fld = $obj->to_field();
                 } else {
-                    if (is_string($sbx->tob())) {
+                    if (is_string($obj->tob())) {
                         // e.g. for references the external key
-                        $to_fld = $sbx->to_field();
+                        $to_fld = $obj->to_field();
                     } else {
-                        $to_fld = $sbx->tob()->name_field();
+                        $to_fld = $obj->tob()->name_field();
                     }
                 }
             }
@@ -1488,7 +1488,7 @@ class sandbox_link extends sandbox
                     $to_fld = sql::TO_FLD_PREFIX . $to_fld;
                 }
                 // TODO check how to handle if the standard
-                if ($this->is_excluded() and !$sbx->is_excluded() or $is_delete) {
+                if ($this->is_excluded() and !$obj->is_excluded() or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1500,7 +1500,7 @@ class sandbox_link extends sandbox
                         $this->from_field(),
                         $from_fld,
                         null,
-                        $sbx->fob()
+                        $obj->fob()
                     );
                     if ($do_log) {
                         $lst->add_field(
@@ -1514,7 +1514,7 @@ class sandbox_link extends sandbox
                             $this->to_field(),
                             null,
                             sandbox_named::FLD_NAME_SQL_TYP,
-                            $sbx->to_value(),
+                            $obj->to_value(),
                             $to_fld,
                             null,
                             null,
@@ -1525,10 +1525,10 @@ class sandbox_link extends sandbox
                             $this->to_field(),
                             $to_fld,
                             null,
-                            $sbx->tob()
+                            $obj->tob()
                         );
                     }
-                } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                } elseif (!$this->is_excluded() and $obj->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),

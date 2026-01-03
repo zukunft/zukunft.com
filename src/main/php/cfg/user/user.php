@@ -2208,6 +2208,7 @@ class user extends db_id_object_non_sandbox
 
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
+        $usr_msg->usr = $usr_req;
 
         // use the signup system user for standard accounts if no requesting user is given
         if ($usr_req->id == 0) {
@@ -2652,13 +2653,13 @@ class user extends db_id_object_non_sandbox
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param user|db_object_seq_id $db_usr the compare value to detect the changed fields
+     * @param user|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        user|db_object_seq_id $db_usr,
+        user|db_object_seq_id $obj,
         user_message          $usr_msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -2675,7 +2676,7 @@ class user extends db_id_object_non_sandbox
         // the user database fields in order of user_db::FLD_NAMES and user_db::FLD_LST_ALL
 
         // the username must be unique
-        if ($db_usr->name_or_null() !== $this->name()) {
+        if ($obj->name_or_null() !== $this->name()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_NAME,
@@ -2687,12 +2688,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_NAME,
                 $this->name(),
                 sandbox_named::FLD_NAME_SQL_TYP,
-                $db_usr->name_or_null()
+                $obj->name_or_null()
             );
         }
 
         // the ip address should always be included
-        if ($db_usr->ip_addr !== $this->ip_addr) {
+        if ($obj->ip_addr !== $this->ip_addr) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_IP_ADDR,
@@ -2704,14 +2705,14 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_IP_ADDR,
                 $this->ip_addr,
                 sql_field_type::CODE_ID,
-                $db_usr->ip_addr
+                $obj->ip_addr
             );
         }
 
         // the password is not part of the standard update process
 
         // the description is mainly used for system users
-        if ($db_usr->get_description() !== $this->get_description()) {
+        if ($obj->get_description() !== $this->get_description()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -2723,12 +2724,12 @@ class user extends db_id_object_non_sandbox
                 sql_db::FLD_DESCRIPTION,
                 $this->get_description(),
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $db_usr->get_description()
+                $obj->get_description()
             );
         }
 
         // the code_id to select users with predefined assigned functionality that can change their username
-        if ($db_usr->code_id !== $this->code_id) {
+        if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
@@ -2740,12 +2741,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
-                $db_usr->code_id
+                $obj->code_id
             );
         }
 
         // TODO a profile with more permissions can only be set by a user that has the permission to do so
-        if ($db_usr->profile_id() !== $this->profile_id()) {
+        if ($obj->profile_id() !== $this->profile_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PROFILE,
@@ -2766,7 +2767,7 @@ class user extends db_id_object_non_sandbox
                     user_db::FLD_PROFILE,
                     type_object::FLD_NAME,
                     $this->profile_id(),
-                    $db_usr->profile_id(),
+                    $obj->profile_id(),
                     $sys->typ_lst->usr_pro);
             }
         }
@@ -2793,7 +2794,7 @@ class user extends db_id_object_non_sandbox
 
         // TODO add user_db::FLD_LEVEL
 
-        if ($db_usr->excluded !== $this->excluded) {
+        if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -2805,12 +2806,12 @@ class user extends db_id_object_non_sandbox
                 sql_db::FLD_EXCLUDED,
                 $this->excluded,
                 sql_db::FLD_EXCLUDED_SQL_TYP,
-                $db_usr->excluded
+                $obj->excluded
             );
         }
 
         // the is used as the name if no name is given
-        if ($db_usr->email !== $this->email) {
+        if ($obj->email !== $this->email) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
@@ -2822,12 +2823,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_EMAIL,
                 $this->email,
                 sql_field_type::CODE_ID,
-                $db_usr->email
+                $obj->email
             );
         }
 
         // in may be useful to move the name and other non-critical user parameters to a value_list
-        if ($db_usr->first_name !== $this->first_name) {
+        if ($obj->first_name !== $this->first_name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_FIRST_NAME,
@@ -2839,12 +2840,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_FIRST_NAME,
                 $this->first_name,
                 sql_field_type::NAME,
-                $db_usr->first_name
+                $obj->first_name
             );
         }
 
         // in may be useful to move the last name and other non-critical user parameters to a value_list
-        if ($db_usr->last_name !== $this->last_name) {
+        if ($obj->last_name !== $this->last_name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_NAME,
@@ -2856,12 +2857,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_LAST_NAME,
                 $this->last_name,
                 sql_field_type::NAME,
-                $db_usr->last_name
+                $obj->last_name
             );
         }
 
         // for the last used term additional the name is written to the log
-        if ($db_usr->term_id() !== $this->term_id()) {
+        if ($obj->term_id() !== $this->term_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TERM,
@@ -2873,12 +2874,12 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_TERM,
                 term::FLD_NAME,
                 $this->trm,
-                $db_usr->trm
+                $obj->trm
             );
         }
 
         // for the source id additional the source name is written to the log
-        if ($db_usr->source_id() !== $this->source_id()) {
+        if ($obj->source_id() !== $this->source_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_SOURCE,
@@ -2890,27 +2891,27 @@ class user extends db_id_object_non_sandbox
                 user_db::FLD_SOURCE,
                 source_db::FLD_NAME,
                 $this->source,
-                $db_usr->source
+                $obj->source
             );
         }
 
         // the activation_key is used during the signup process and is not logged
-        if ($db_usr->activation_key <> $this->activation_key) {
+        if ($obj->activation_key <> $this->activation_key) {
             $lst->add_field(
                 user_db::FLD_ACTIVATION_KEY,
                 $this->activation_key,
                 sql_field_type::NAME,
-                $db_usr->activation_key
+                $obj->activation_key
             );
         }
 
         // the activation_timeout is used during the signup process and is not logged
-        if ($db_usr->activation_timeout <> $this->activation_timeout) {
+        if ($obj->activation_timeout <> $this->activation_timeout) {
             $lst->add_field(
                 user_db::FLD_ACTIVATION_TIMEOUT,
                 $this->activation_timeout,
                 sql_field_type::TIME,
-                $db_usr->activation_timeout
+                $obj->activation_timeout
             );
         }
 

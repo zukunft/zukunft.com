@@ -719,13 +719,13 @@ class term_view extends sandbox_link
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param term_view|db_object_seq_id $sbx the compare value to detect the changed fields
+     * @param term_view|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        term_view|db_object_seq_id $sbx,
+        term_view|db_object_seq_id $obj,
         user_message               $usr_msg,
         sql_type_list              $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -736,9 +736,9 @@ class term_view extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
 
-        if ($sbx->description !== $this->description) {
+        if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -750,11 +750,11 @@ class term_view extends sandbox_link
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $sbx->description
+                $obj->description
             );
         }
 
-        if ($sbx->predicate_id() !== $this->predicate_id()) {
+        if ($obj->predicate_id() !== $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
@@ -772,10 +772,10 @@ class term_view extends sandbox_link
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
+                $obj->predicate_id(),
                 $sys->typ_lst->phr_typ);
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

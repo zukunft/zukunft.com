@@ -1097,13 +1097,13 @@ class formula_link extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param formula_link|db_object_seq_id $sbx the compare value to detect the changed fields
+     * @param formula_link|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        formula_link|db_object_seq_id $sbx,
+        formula_link|db_object_seq_id $obj,
         user_message                  $usr_msg,
         sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
@@ -1115,9 +1115,9 @@ class formula_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($obj->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
@@ -1136,11 +1136,11 @@ class formula_link extends sandbox_link
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
+                $obj->predicate_id(),
                 $sys->typ_lst->frm_lnk_typ
             );
         }
-        if ($sbx->pos() !== $this->pos()) {
+        if ($obj->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
@@ -1152,10 +1152,10 @@ class formula_link extends sandbox_link
                 self::FLD_ORDER,
                 $this->pos(),
                 self::FLD_ORDER_SQL_TYP,
-                $sbx->pos()
+                $obj->pos()
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

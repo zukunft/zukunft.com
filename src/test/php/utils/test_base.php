@@ -1410,7 +1410,7 @@ class test_base
             $usr_msg->usr = $this->usr_admin;
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
+            $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
         } else {
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
@@ -1423,7 +1423,7 @@ class test_base
                 $usr_msg->usr = $this->usr_admin;
                 $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-                $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+                $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
             } else {
                 $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             }
@@ -1479,20 +1479,18 @@ class test_base
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
-        } else {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+            $usr_msg->usr = $this->usr_admin;
         }
+        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
-            } else {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
+                $usr_msg->usr = $this->usr_admin;
             }
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;

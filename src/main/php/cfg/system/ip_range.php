@@ -609,7 +609,7 @@ class ip_range extends db_object_seq_id
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
+            $similar = $this->get_similar($usr_msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();

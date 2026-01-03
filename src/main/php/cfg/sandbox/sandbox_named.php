@@ -1355,15 +1355,15 @@ class sandbox_named extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox|db_object_seq_id $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|db_object_seq_id $sbx,
-        user_message          $usr_msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        sandbox|db_object_seq_id $obj,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1379,10 +1379,10 @@ class sandbox_named extends sandbox
         if ($is_insert and $usr_tbl) {
             $lst->add_id_and_user($this);
         } else {
-            $lst->add_user($this, $sbx, $do_log, $table_id);
+            $lst->add_user($this, $obj, $do_log, $table_id);
         }
-        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
-        if ($sbx->get_usage() !== $this->get_usage()) {
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
+        if ($obj->get_usage() !== $this->get_usage()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1394,7 +1394,7 @@ class sandbox_named extends sandbox
                 sql_db::FLD_USAGE,
                 $this->get_usage(),
                 sql_db::FLD_USAGE_SQL_TYP,
-                $sbx->get_usage()
+                $obj->get_usage()
             );
         }
         return $lst;
