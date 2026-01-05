@@ -66,7 +66,7 @@ the object structure is:
     \-- user_profile_list - a list of possible user profiles with the database id
     \-- verb_list - al list of verb objects
     \-- view_link_type_list - to defined how a term is linked to a view
-    \-- view_relation_type_list - to defined how a term is relationed to a view
+    \-- view_relation_type_list - to defined how a term is related to a view
     \-- view_sys_list - list of predefined system views
     \-- view_type_list - to link coded functionality to a view
 +-- type_lists - helper class to combine all preloaded types in one class for the API

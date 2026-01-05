@@ -75,7 +75,7 @@ class group_list extends sandbox_list
      */
 
     /**
-     * fill the grou list based on a database records
+     * fill the group list based on a database records
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one formula link has been added

@@ -110,3 +110,4 @@ change_table_id, change_table_name, description, code_id
 109,'view_relation_types',,'view_relation_types'
 110,'user_view_relations',,'user_view_relations'
 111,'results',,'results'
+112,'phrase_types',,'phrase_types'

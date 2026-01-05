@@ -827,6 +827,12 @@
         "code_id": "results",
         "description": "",
         "id": 111
+      },
+      {
+        "name": "phrase_types",
+        "code_id": "phrase_types",
+        "description": "",
+        "id": 112
       }
     ],
     "change_field_list": [
@@ -5827,6 +5833,30 @@
         "code_id": "111numeric_value",
         "description": "",
         "id": 833
+      },
+      {
+        "name": "112phrase_type_id",
+        "code_id": "112phrase_type_id",
+        "description": "",
+        "id": 834
+      },
+      {
+        "name": "112type_name",
+        "code_id": "112type_name",
+        "description": "",
+        "id": 835
+      },
+      {
+        "name": "112code_id",
+        "code_id": "112code_id",
+        "description": "",
+        "id": 836
+      },
+      {
+        "name": "112description",
+        "code_id": "112description",
+        "description": "",
+        "id": 837
       }
     ],
     "job_types": [

@@ -3363,11 +3363,11 @@
     \-- set_id_field_usr_dummy
         \-- sql_creator - set a dummy id field for a union query
     \-- set_par_list
-        \-- sql_creator - set the complete par list e.g. for unition queries to get the parameters from the previous union part
+        \-- sql_creator - set the complete par list e.g. for union queries to get the parameters from the previous union part
     \-- par_list
-        \-- sql_creator - set the complete par list e.g. for unition queries to get the parameters from the previous union part
+        \-- sql_creator - set the complete par list e.g. for union queries to get the parameters from the previous union part
     \-- par_values
-        \-- sql_creator - set the complete par list e.g. for unition queries to get the parameters from the previous union part
+        \-- sql_creator - set the complete par list e.g. for union queries to get the parameters from the previous union part
     \-- table_id
         \-- sql_creator - get the preloaded table id for change log entries
     \-- 3

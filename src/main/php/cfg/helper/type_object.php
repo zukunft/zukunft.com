@@ -623,15 +623,15 @@ class type_object extends db_object_seq_id
         // add the user to the field list so that the id can be used for the log
         $fvt_lst->add_field(
             user_db::FLD_ID,
-            $this->get_user()->id(),
+            $usr_msg->usr->id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
         // create the query parameters for the log entries for the single fields
         if ($sc_par_lst->is_insert()) {
-            $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
         } else {
-            $qp_log = $sc->sql_func_log_update($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id);
+            $qp_log = $sc->sql_func_log_update($this::class, $usr_msg->usr, $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id);
         }
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);

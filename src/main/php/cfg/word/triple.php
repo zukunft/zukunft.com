@@ -384,7 +384,7 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the inclded user is a system user the import can also set the code_id
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the included user is a system user the import can also set the code_id
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */

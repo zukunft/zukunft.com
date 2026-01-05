@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class type_tests
@@ -58,6 +60,8 @@ class type_tests
     {
 
         // init
+        $sc = new sql_creator();
+        $t_typ = new test_types($t);
         $t->name = 'type->';
         $t->resource_path = 'db/type/';
 
@@ -151,6 +155,10 @@ class type_tests
         $dsp_lnk_typ = new view_relation_type('');
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
+
+        $t->subheader($ts . 'sql write insert e.g. for system setup');
+        $typ = $t_typ->phrase_type();
+        $t->assert_sql_insert($sc, $typ);
     }
 
 }

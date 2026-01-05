@@ -1586,7 +1586,7 @@ class sandbox_link extends sandbox
      * because that some triples are reserved for system testing and should never be used by a user
      *
      * @param user_message $usr_msg the message object why the link is reserved and which alternative names can be used
-     *                              of the internal error that an overwrite is missing to interupt the workflow
+     *                              of the internal error that an overwrite is missing to interrupt the workflow
      * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
     protected function check_save(user_message $usr_msg): bool

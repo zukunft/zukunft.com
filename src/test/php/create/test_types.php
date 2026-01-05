@@ -45,10 +45,12 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -63,10 +65,12 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -83,6 +87,19 @@ class test_types
 
     function __construct(test_cleanup $env) {
         $this->env = $env;
+    }
+
+
+    /*
+     * unit
+     */
+
+    /**
+     * @return phrase_type "mathematics" as the main word for unit testing
+     */
+    function phrase_type(): phrase_type
+    {
+        return new phrase_type(phrase_types::NORMAL, 1, phrase_types::NORMAL_NAME);
     }
 
 

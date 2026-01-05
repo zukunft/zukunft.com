@@ -510,7 +510,7 @@ class element extends db_object_seq_id_user
      * create the sql statement to update a word in the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param element $db_row the word with the database values before the update
+     * @param element|db_object_seq_id $db_row the word with the database values before the update
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list

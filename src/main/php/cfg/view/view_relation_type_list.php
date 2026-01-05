@@ -2,7 +2,7 @@
 
 /*
 
-    model/view/view_relation_type_list.php - to defined how a term is relationed to a view
+    model/view/view_relation_type_list.php - to defined how a term is related to a view
     ----------------------------------
 
 

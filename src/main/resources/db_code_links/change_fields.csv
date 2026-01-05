@@ -832,3 +832,7 @@ change_field_id,change_field_name,table_id,description
 831,share_type_id,110,
 832,protect_id,110,
 833,numeric_value,111,
+834,phrase_type_id,112,
+835,type_name,112,
+836,code_id,112,
+837,description,112,

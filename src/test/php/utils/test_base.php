@@ -1412,6 +1412,7 @@ class test_base
         } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
             $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
         } else {
+            $usr_msg->usr = $this->usr_admin;
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);

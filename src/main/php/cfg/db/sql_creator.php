@@ -534,7 +534,7 @@ class sql_creator
     }
 
     /**
-     * set the complete par list e.g. for unition queries to get the parameters from the previous union part
+     * set the complete par list e.g. for union queries to get the parameters from the previous union part
      * @param sql_field_list $fvt_lst list of parameters already set
      * @return void
      */
@@ -2637,7 +2637,7 @@ class sql_creator
      * @param int|string|array $id the id or list of ids to select the row
      * @param int $offset for the par number e.g. 4 for $4
      * @param string $id_field_par with the parameter name for a single field e.g. "$4" or "new_word_id"
-     * @param bool $is_named true if named paremeters like "_word_name" should be used
+     * @param bool $is_named true if named parameters like "_word_name" should be used
      * @return string with the where statement
      */
     private function sql_where_no_par(
