@@ -5071,6 +5071,9 @@ class sql_creator
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
+        if ($result == 'api_typess') {
+            $result = 'api_types';
+        }
         if ($result == 'phrase_table_statuss') {
             $result = 'phrase_table_status';
         }
@@ -5102,6 +5105,12 @@ class sql_creator
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
+        if ($result == 'share_typess') {
+            $result = 'share_types';
+        }
+        if ($result == 'protection_typess') {
+            $result = 'protection_types';
+        }
         if ($result == 'component_typess') {
             $result = 'component_types';
         }
@@ -5111,8 +5120,14 @@ class sql_creator
         if ($result == 'verbss') {
             $result = 'verbs';
         }
+        if ($result == 'phrase_typess') {
+            $result = 'phrase_types';
+        }
         if ($result == 'viewss') {
             $result = 'views';
+        }
+        if ($result == 'views_typess') {
+            $result = 'views_types';
         }
         /*
         if ($this->db_type == self::MYSQL) {

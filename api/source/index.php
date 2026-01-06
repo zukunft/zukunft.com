@@ -34,13 +34,13 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_REF . 'source.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -70,13 +70,13 @@ if ($db_con->is_open()) {
         $src = new source($usr);
         if ($src_id > 0) {
             $src->load_by_id($src_id);
-            $result = $src->api_json([api_type::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $usr);
         } elseif ($src_name != '') {
             $src->load_by_name($src_name);
-            $result = $src->api_json([api_type::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $usr);
         } elseif ($src_code_id != '') {
             $src->load_by_code_id($src_code_id);
-            $result = $src->api_json([api_type::HEADER], $usr);
+            $result = $src->api_json([api_types::HEADER], $usr);
         } else {
             $msg = 'Cannot load source because id, name and code id is missing';
         }

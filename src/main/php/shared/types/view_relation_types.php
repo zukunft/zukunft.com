@@ -3,7 +3,7 @@
 /*
 
     shared/types/view_relation_types.php - db based ENUM of the view relation types
-    --------------------------
+    ------------------------------------
 
     This file is part of zukunft.com - calc with words
 

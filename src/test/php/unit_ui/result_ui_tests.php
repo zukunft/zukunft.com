@@ -34,11 +34,11 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -53,7 +53,7 @@ class result_ui_tests
         $ts = 'unit ui html result ';
         $t->header($ts);
 
-        $api_json = $t_res->result_simple()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]);
+        $api_json = $t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
         $res = new result($api_json);
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';

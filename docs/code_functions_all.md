@@ -5816,7 +5816,7 @@
     \-- default_id
         \-- component_type_list - create the HTML code to select a component type
         \-- formula_type_list - create the HTML code to select a formula type
-        \-- phrase_types - create the HTML code to select a phrase type
+        \-- phrase_type_list - create the HTML code to select a phrase type
         \-- protection - create the HTML code to select a protection type
         \-- share - create the HTML code to select a share type
         \-- source_type_list - create the HTML code to select a source type
@@ -6300,7 +6300,7 @@
         \-- job_type_list - create the HTML code to select a job type
         \-- language_forms - create the HTML code to select a language form
         \-- languages - create the HTML code to select a language
-        \-- phrase_types - create the HTML code to select a phrase type
+        \-- phrase_type_list - create the HTML code to select a phrase type
         \-- position_type_list - create the HTML code to select a position type
         \-- protection - create the HTML code to select a protection type
         \-- share - create the HTML code to select a share type

@@ -34,8 +34,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'view_type.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -48,8 +48,8 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type as view_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types as view_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 

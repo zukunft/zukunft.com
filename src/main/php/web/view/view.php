@@ -59,7 +59,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
@@ -81,7 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 
 class view extends view_exe
 {
@@ -386,7 +386,7 @@ class view extends view_exe
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($sys->typ_lst->msk_typ->id(view_type::DEFAULT));
+            $this->set_type_id($sys->typ_lst->msk_typ->id(view_types::DEFAULT));
         }
 
         // the header to add or change a view

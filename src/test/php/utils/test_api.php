@@ -81,7 +81,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -114,7 +114,7 @@ class test_api extends test_base
         $lib = new library();
         $usr_msg_ui = new user_message_ui();
         $class = $this->class_to_api($usr_obj::class);
-        $api_types[] = api_type::TEST_MODE;
+        $api_types[] = api_types::TEST_MODE;
         $msg_to_frontend = $usr_obj->api_json($api_types);
         $dsp_obj->set_from_json($msg_to_frontend, $usr_msg_ui);
         $array_to_backend = $dsp_obj->api_array($api_types);
@@ -160,7 +160,7 @@ class test_api extends test_base
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        $typ_lst->add(api_type::TEST_MODE);
+        $typ_lst->add(api_types::TEST_MODE);
         $class = $this->class_to_api($usr_obj::class);
 
         // create the json api message and revert it to an array for better compare
@@ -187,13 +187,13 @@ class test_api extends test_base
         $test_name = $class_api . ' excluded json is empty';
         $usr_obj->exclude();
         $json_excluded = $usr_obj->api_json();
-        $json_excluded_full = $usr_obj->api_json([api_type::WITH_EXCLUDED]);
+        $json_excluded_full = $usr_obj->api_json([api_types::WITH_EXCLUDED]);
         $target = test_api::JSON_ARRAY_ONLY;
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
         // is excluded api json only the id if requested?
         if ($result) {
             $test_name = $class_api . ' excluded json can be only id';
-            $json_excluded_id = $usr_obj->api_json([api_type::WITH_EXCLUDED_ID]);
+            $json_excluded_id = $usr_obj->api_json([api_types::WITH_EXCLUDED_ID]);
             $target = '"id":1,"excluded":true';
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
@@ -421,7 +421,7 @@ class test_api extends test_base
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        $api_msg = $usr_obj->api_json([api_type::HEADER], $this->usr1);
+        $api_msg = $usr_obj->api_json([api_types::HEADER], $this->usr1);
         $actual = json_decode($api_msg, true);
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }

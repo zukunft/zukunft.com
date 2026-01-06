@@ -47,9 +47,9 @@ include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once test_paths::CREATE . 'test_const.php';
@@ -72,9 +72,9 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_li
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
@@ -162,8 +162,8 @@ class test_formulas extends test_objects
         $frm->set_usage(test_const::DUMMY_USAGE_FORMULA);
         $frm->set_impact(test_const::DUMMY_IMPACT);
         $frm->exclude();
-        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 
@@ -289,8 +289,8 @@ class test_formulas extends test_objects
         global $sys;
         $lnk = $this->formula_link();
         $lnk->exclude();
-        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $lnk->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $lnk->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $lnk;
     }
 
@@ -316,7 +316,7 @@ class test_formulas extends test_objects
     {
         $tl = new test_lib();
         $lnk_lst = $this->formula_link_list();
-        return $tl->list_to_ui($lnk_lst, [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($lnk_lst, [api_types::INCL_PHRASES]);
     }
 
     /**

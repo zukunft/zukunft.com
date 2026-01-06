@@ -51,7 +51,7 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class controller
@@ -113,7 +113,7 @@ class controller
                 $id = $dbo->id();
             }
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_type::HEADER], $usr);
+            $result = $dbo->api_json([api_types::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
             $msg .= $usr_msg->all_message_text();
@@ -158,7 +158,7 @@ class controller
         // if update was fine ...
         if ($usr_msg->is_ok()) {
             // TODO Prio 1 return only the id of the added word?
-            $result = $dbo->api_json([api_type::HEADER], $usr);
+            $result = $dbo->api_json([api_types::HEADER], $usr);
         } else {
             // ... or in case of a problem prepare to show the message
             $msg .= $usr_msg->all_message_text();
@@ -198,7 +198,7 @@ class controller
             $dbo->del($usr_msg);
 
             if ($usr_msg->is_ok()) {
-                $result = $dbo->api_json([api_type::HEADER], $usr);
+                $result = $dbo->api_json([api_types::HEADER], $usr);
             } else {
                 // ... or in case of a problem prepare to show the message
                 $msg .= $usr_msg->all_message_text();

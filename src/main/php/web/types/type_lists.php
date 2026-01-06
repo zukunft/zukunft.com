@@ -52,7 +52,7 @@ include_once html_paths::TYPES . 'language_forms.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'source_type_list.php';
@@ -90,7 +90,7 @@ class type_lists
      */
 
     public ?user_profile $html_user_profiles = null;
-    public ?phrase_types $html_phrase_types = null;
+    public ?phrase_type_list $html_phrase_types = null;
     public ?formula_type_list $html_formula_types = null;
     public ?formula_link_type_list $html_formula_link_types = null;
     public ?view_type_list $html_view_types = null;
@@ -322,7 +322,7 @@ class type_lists
 
     function set_phrase_types(?array $json_array = null): void
     {
-        $this->html_phrase_types = new phrase_types();
+        $this->html_phrase_types = new phrase_type_list();
         $this->html_phrase_types->set_from_json_array($json_array);
     }
 

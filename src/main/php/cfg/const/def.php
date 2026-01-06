@@ -107,8 +107,8 @@ namespace Zukunft\ZukunftCom\main\php\cfg\const;
 //include_once paths::MODEL_WORD . 'triple_list.php';
 //include_once paths::MODEL_WORD . 'word.php';
 //include_once paths::MODEL_WORD . 'word_list.php';
-//include_once paths::SHARED_TYPES . 'protection_type.php';
-//include_once paths::SHARED_TYPES . 'share_type.php';
+//include_once paths::SHARED_TYPES . 'protection_types.php';
+//include_once paths::SHARED_TYPES . 'share_types.php';
 //include_once paths::SHARED_TYPES . 'view_relation_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
@@ -185,8 +185,8 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 
@@ -345,9 +345,9 @@ class def
         formula_type::class,
         language::class,
         language_form::class,
-        protection_type::class,
+        protection_types::class,
         ref_type::class,
-        share_type::class,
+        share_types::class,
         source_type::class,
         system_time_type::class,
         user_official_type::class,

@@ -2,8 +2,8 @@
 
 /*
 
-    shared/types/phrase_type.php - the phrase code_ids used in back- and frontend
-    ----------------------------
+    shared/types/phrase_types.php - the phrase code_ids used in back- and frontend
+    -----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,12 +31,13 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-class phrase_type
+class phrase_types
 {
 
     // list of the phrase types that have a coded functionality
     // TODO add the missing functionality and unit tests
     const string NORMAL = "default";
+    const int NORMAL_ID = 1;
     const string NORMAL_NAME = "standard";
     const string MATH_CONST = "constant"; // TODO add usage sample
     const string MATH_CONST_NAME = "math constant";

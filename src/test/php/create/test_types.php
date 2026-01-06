@@ -48,9 +48,9 @@ include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -68,9 +68,9 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -99,7 +99,7 @@ class test_types
      */
     function phrase_type(): phrase_type
     {
-        return new phrase_type(phrase_types::NORMAL, 1, phrase_types::NORMAL_NAME);
+        return new phrase_type(phrase_types::NORMAL, phrase_types::NORMAL_ID, phrase_types::NORMAL_NAME);
     }
 
 
@@ -132,13 +132,13 @@ class test_types
             // add views
             $t_msk = new test_views($this->env);
             $sys_msk_cac = $t_msk->view_list();
-            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([api_type::INCL_COMPONENTS]));
+            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([api_types::INCL_COMPONENTS]));
         }
 
         global $db_con;
         $api_msg = new api_message();
         $pod_name = $api_msg->api_site_name($db_con);
-        return $api_msg->api_json($pod_name, 'type_lists', $vars, [api_type::HEADER], $usr);
+        return $api_msg->api_json($pod_name, 'type_lists', $vars, [api_types::HEADER], $usr);
     }
 
     /**

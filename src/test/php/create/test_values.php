@@ -45,9 +45,9 @@ include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'values.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -60,9 +60,9 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -181,7 +181,7 @@ class test_values
     {
         global $sys;
         $val_upd = clone $val;
-        $val_upd->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
+        $val_upd->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         return $val_upd;
     }
 
@@ -211,8 +211,8 @@ class test_values
         $val = new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
         $val->set_source($t_src->source());
         $val->exclude();
-        $val->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $val;
     }
 
@@ -352,25 +352,25 @@ class test_values
     function value_list_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list(), [api_types::INCL_PHRASES]);
     }
 
     function value_list_zh_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_zh(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_zh(), [api_types::INCL_PHRASES]);
     }
 
     function value_list_math_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_math(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_math(), [api_types::INCL_PHRASES]);
     }
 
     function list_all_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_all(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_all(), [api_types::INCL_PHRASES]);
     }
 
     /**

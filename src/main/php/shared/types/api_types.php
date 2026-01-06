@@ -2,8 +2,8 @@
 
 /*
 
-    shared/types/api_type.php - options of the api messages
-    -------------------------
+    shared/types/api_types.php - options of the api messages
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +32,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-enum api_type: string
+enum api_types: string
 {
 
     // include the phrases in the value list api message

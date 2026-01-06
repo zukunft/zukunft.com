@@ -46,7 +46,7 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
@@ -61,7 +61,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 class element_group extends ListBase
 {
@@ -152,7 +152,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_dsp = new figure();
             $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);
@@ -317,7 +317,7 @@ class element_group extends ListBase
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $api_json = $fig->api_json([api_types::INCL_PHRASES]);
             $fig_dsp = new figure();
             $fig_dsp->set_from_json($api_json, $usr_msg);
             $result .= $fig_dsp->display_linked($back);

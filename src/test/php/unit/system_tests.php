@@ -88,7 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -544,7 +544,7 @@ class system_tests
 
         $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
-        $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
+        $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));

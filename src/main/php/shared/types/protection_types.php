@@ -2,7 +2,7 @@
 
 /*
 
-    shared/types/protection_type.php - to define if and how an object can changed
+    shared/types/protection_types.php - to define if and how an object can changed
     ---------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,7 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-class protection_type
+class protection_types
 {
 
     // list of the protection types that have a coded functionality

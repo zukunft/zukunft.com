@@ -133,7 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -174,10 +174,10 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once test_paths::CONST . 'paths.php';
 include_once test_paths::CONST . 'files.php';
@@ -956,7 +956,7 @@ class test_base
         }
 
         // create the api message that send to the frontend
-        $api_msg = $msk->api_json([api_type::INCL_COMPONENTS]);
+        $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the database object json to the api message
             // to send only one message to the frontend
@@ -1035,13 +1035,13 @@ class test_base
     function assert_ex_and_import(object $obj, user $usr_req): bool
     {
         $usr_msg = new user_message($usr_req);
-        $json_before = $obj->api_json([api_type::TEST_MODE]);
+        $json_before = $obj->api_json([api_types::TEST_MODE]);
         $json_ex = $obj->export_json([], false);
         $new_obj = $obj->clone_all();
         $new_obj->reset();
         $dto = new data_object($usr_req);
         $new_obj->import_obj($json_ex, $usr_msg, $dto);
-        $json_after = $obj->api_json([api_type::TEST_MODE]);
+        $json_after = $obj->api_json([api_types::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);
     }
@@ -3813,7 +3813,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' reset creates empty api json';
         $sbx->reset();
-        $api_json = $sbx->api_json([api_type::TEST_MODE]);
+        $api_json = $sbx->api_json([api_types::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
     }
 
@@ -3865,9 +3865,9 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($empty::class);
         $test_name = $class . ' fill empty object and test via api json';
-        $original_json = $filled->api_json([api_type::TEST_MODE], $usr_sys);
+        $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
-        $filled_json = $empty->api_json([api_type::TEST_MODE], $usr_sys);
+        $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
         return $this->assert_json_string($test_name, $filled_json, $original_json);
     }
 

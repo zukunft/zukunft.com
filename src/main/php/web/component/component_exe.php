@@ -58,7 +58,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
@@ -75,7 +75,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 
 class component_exe extends component
 {
@@ -162,250 +162,250 @@ class component_exe extends component
         $result .= match ($tc_id) {
 
             // start page - components used for the start page
-            component_type::PHRASE_NAME => $base->phrase_name($dbo),
+            component_types::PHRASE_NAME => $base->phrase_name($dbo),
             // TODO Prio 2 use the spreadsheet for the start view
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_type::CALC_SHEET => $list->start_list($cfg),
+            component_types::CALC_SHEET => $list->start_list($cfg),
 
             // system form - components that can only be used for internal system forms
             // general form fields
-            component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_type::FORM_FIELD_NAME => $form->form_name($dbo, $style),
-            component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
+            component_types::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
+            component_types::FORM_FIELD_NAME => $form->form_name($dbo, $style),
+            component_types::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
 
             // select object fields
-            component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->src_lst, $pattern),
-            component_type::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
-            component_type::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
-            component_type::FORM_SELECT_FORMULAS => $form->form_formulas($dbo, $form_name, $cfg->formula_list()),
-            component_type::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_type::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
-            component_type::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
-            component_type::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
+            component_types::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_types::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_types::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->src_lst, $pattern),
+            component_types::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
+            component_types::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
+            component_types::FORM_SELECT_FORMULAS => $form->form_formulas($dbo, $form_name, $cfg->formula_list()),
+            component_types::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_types::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id, $phr_lst, $test_mode),
+            component_types::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_PARENT_VIEW => $form->form_parent_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_CHILD_VIEW => $form->form_child_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
+            component_types::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
 
             // select access and protection
-            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
 
             // select object types
-            component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_COMPONENT_STYLE => $form->form_component_style($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VIEW_RELATION_TYPE => $form->form_view_relation_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_FIELD_VIEW_RELATION_START_POS => $form->form_view_relation_pos($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_COMPONENT_STYLE => $form->form_component_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VIEW_RELATION_TYPE => $form->form_view_relation_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_FIELD_VIEW_RELATION_START_POS => $form->form_view_relation_pos($dbo, $form_name, $cfg->typ_lst_cache),
 
             // select link types and priority
-            component_type::FORM_SELECT_FORMULA_LINK_TYPE => $form->form_formula_link_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_FORMULA_LINK_PRIORITY => $form->form_field_formula_link_priority($dbo),
-            component_type::FORM_SELECT_VIEW_LINK_TYPE => $form->form_view_link_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VIEW_LINK_PRIORITY => $form->form_field_view_link_priority($dbo),
-            component_type::FORM_SELECT_COMPONENT_LINK_TYPE => $form->form_component_link_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_COMPONENT_POS_TYPE => $form->form_component_pos_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
+            component_types::FORM_SELECT_FORMULA_LINK_TYPE => $form->form_formula_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_FORMULA_LINK_PRIORITY => $form->form_field_formula_link_priority($dbo),
+            component_types::FORM_SELECT_VIEW_LINK_TYPE => $form->form_view_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_VIEW_LINK_PRIORITY => $form->form_field_view_link_priority($dbo),
+            component_types::FORM_SELECT_COMPONENT_LINK_TYPE => $form->form_component_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_SELECT_COMPONENT_POS_TYPE => $form->form_component_pos_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_types::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
 
             // other select fields
-            component_type::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
-            component_type::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
+            component_types::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
+            component_types::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
 
             // verb only fields
-            component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $style),
-            component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $style),
-            component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $style),
-            component_type::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $style),
+            component_types::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $style),
+            component_types::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $style),
+            component_types::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $style),
+            component_types::FORM_FIELD_NAME_IN_FORMULAS => $form->form_field_name_in_formulas($dbo, $style),
 
             // ref only fields
-            component_type::SYSTEM_SHOW_REF_TYPE => $form->show_ref_type($dbo),
-            component_type::SYSTEM_SHOW_REF_KEY => $form->show_ref_key($dbo),
-            component_type::SYSTEM_SHOW_REF_SOURCE => $form->show_ref_source($dbo),
-            component_type::SYSTEM_SHOW_REF_URL => $form->show_ref_url($dbo),
-            component_type::FORM_FIELD_EXTERNAL_KEY => $form->form_field_ref_key($dbo, $style),
+            component_types::SYSTEM_SHOW_REF_TYPE => $form->show_ref_type($dbo),
+            component_types::SYSTEM_SHOW_REF_KEY => $form->show_ref_key($dbo),
+            component_types::SYSTEM_SHOW_REF_SOURCE => $form->show_ref_source($dbo),
+            component_types::SYSTEM_SHOW_REF_URL => $form->show_ref_url($dbo),
+            component_types::FORM_FIELD_EXTERNAL_KEY => $form->form_field_ref_key($dbo, $style),
 
             // triple only fields
-            component_type::FORM_FIELD_WEIGHT => $form->form_field_weight($dbo),
+            component_types::FORM_FIELD_WEIGHT => $form->form_field_weight($dbo),
 
             // value only fields
-            component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $style),
-            component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
-            component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
+            component_types::FORM_FIELD_VALUE => $form->form_num_value($dbo, $style),
+            component_types::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
+            component_types::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
 
             // result only fields
-            component_type::FORM_FIELD_SOURCE_GROUP => $form->form_field_source_group_name($dbo),
-            component_type::FORM_FIELD_SOURCE_GROUP_OR_PHRASES => $form->form_field_source_group_or_phrases($dbo),
+            component_types::FORM_FIELD_SOURCE_GROUP => $form->form_field_source_group_name($dbo),
+            component_types::FORM_FIELD_SOURCE_GROUP_OR_PHRASES => $form->form_field_source_group_or_phrases($dbo),
 
             // formulas only fields
-            component_type::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
-            component_type::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
+            component_types::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
+            component_types::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
 
             // for export
-            component_type::FORM_FIELD_SELECTION_NAME => $form->form_field_selection_name($dbo),
-            component_type::FORM_FIELD_SELECTION_DESCRIPTION => $form->form_field_selection_description($dbo),
-            component_type::FORM_FIELD_SELECTION_TEXT => $form->form_field_selection_text($dbo),
+            component_types::FORM_FIELD_SELECTION_NAME => $form->form_field_selection_name($dbo),
+            component_types::FORM_FIELD_SELECTION_DESCRIPTION => $form->form_field_selection_description($dbo),
+            component_types::FORM_FIELD_SELECTION_TEXT => $form->form_field_selection_text($dbo),
 
             // for external links
-            component_type::FORM_FIELD_URL => $form->form_field_url($dbo, $style),
+            component_types::FORM_FIELD_URL => $form->form_field_url($dbo, $style),
 
             // preview of the changes if confirmed
-            component_type::FORM_PREVIEW => $page->preview(),
+            component_types::FORM_PREVIEW => $page->preview(),
 
             // hidden - only used for formatting without functional behaviour
-            component_type::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
-            component_type::FORM_HIDDEN_STEP => $form->form_confirm(),
+            component_types::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
+            component_types::FORM_HIDDEN_STEP => $form->form_confirm(),
 
             // admin - components that only admin user can use
-            component_type::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
-            component_type::ADMIN_FORM_FIELD_USER_EMAIL => $form->admin_form_user_email($dbo),
-            component_type::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
-            component_type::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
-            component_type::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
+            component_types::ADMIN_FORM_FIELD_USER_NAME => $form->admin_form_username($dbo),
+            component_types::ADMIN_FORM_FIELD_USER_EMAIL => $form->admin_form_user_email($dbo),
+            component_types::ADMIN_FORM_FIELD_USER_PASSWORD => $form->admin_form_user_password($dbo),
+            component_types::ADMIN_FORM_FIELD_LANGUAGE_SYMBOL => $form->admin_form_language_symbol($dbo),
+            component_types::FIELD_LANGUAGE_SYMBOL => $form->show_language_symbol($dbo),
 
             // buttons
-            component_type::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
-            component_type::FORM_BUTTON_SAVE => $form->button_save(),
-            component_type::FORM_BUTTON_DEL => $form->button_del(),
-            component_type::FORM_BUTTON_IMPORT => $form->button_import(),
-            component_type::FORM_BUTTON_EXPORT => $form->button_export(),
+            component_types::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
+            component_types::FORM_BUTTON_SAVE => $form->button_save(),
+            component_types::FORM_BUTTON_DEL => $form->button_del(),
+            component_types::FORM_BUTTON_IMPORT => $form->button_import(),
+            component_types::FORM_BUTTON_EXPORT => $form->button_export(),
 
             // simple close the form section
-            component_type::FORM_END => $form->form_end(),
+            component_types::FORM_END => $form->form_end(),
 
             // show changes due to a pending user change
-            component_type::SYSTEM_SHOW_RESULT_DIFF => $list->result_changes($dbo),
+            component_types::SYSTEM_SHOW_RESULT_DIFF => $list->result_changes($dbo),
 
-            component_type::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
-            component_type::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
-            component_type::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
-            component_type::SYSTEM_POPUP_TITLE => $preview->popup_title(),
-            component_type::FORM_CLASS => $preview->popup_class(),
-            component_type::FORM_CHANGES => $preview->popup_changes(),
-            component_type::FORM_IMPACT => $preview->popup_impact(),
-            component_type::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
+            component_types::SYSTEM_PASTE_TABLE_CONTEXT => $preview->paste_table(),
+            component_types::SYSTEM_PASTE_TABLE_BODY => $preview->table_body(),
+            component_types::SYSTEM_SELECTION_TEXT => $preview->selection_text(),
+            component_types::SYSTEM_POPUP_TITLE => $preview->popup_title(),
+            component_types::FORM_CLASS => $preview->popup_class(),
+            component_types::FORM_CHANGES => $preview->popup_changes(),
+            component_types::FORM_IMPACT => $preview->popup_impact(),
+            component_types::SYSTEM_SHOW_VIEW_DIFF => $preview->view_diff(),
 
             // fixed system pages - usage only allowed for fixed internal system pages
-            component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
-            component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
-            component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
-            component_type::SYSTEM_BODY_LOGIN => $page->login_body(),
-            component_type::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
-            component_type::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
-            component_type::SYSTEM_BODY_LOGOUT => $page->logout_body(),
-            component_type::SYSTEM_BODY_SEARCH => $page->body_search(),
-            component_type::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
-            component_type::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
-            component_type::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
-            component_type::SYSTEM_BODY_FORMULA_TEST => $page->formula_test(),
-            component_type::SYSTEM_BODY_SANDBOX => $page->sandbox(),
-            component_type::SYSTEM_BODY_UNDO => $page->undo(),
-            component_type::SYSTEM_BODY_USER_SETTINGS => $page->user_setting(),
-            component_type::SYSTEM_BODY_PROCESS => $page->process(),
-            component_type::SYSTEM_BODY_PROCESS_LIST => $page->process_list(),
-            component_type::SYSTEM_BODY_PROCESS_PROGRESS => $page->process_progress(),
-            component_type::SYSTEM_BODY_ERROR_LOG => $page->error_log(),
-            component_type::SYSTEM_BODY_ERROR_UPDATE => $page->error_update(),
+            component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
+            component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
+            component_types::SYSTEM_BODY_SIGNUP => $page->signup_body(),
+            component_types::SYSTEM_BODY_LOGIN => $page->login_body(),
+            component_types::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
+            component_types::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
+            component_types::SYSTEM_BODY_LOGOUT => $page->logout_body(),
+            component_types::SYSTEM_BODY_SEARCH => $page->body_search(),
+            component_types::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
+            component_types::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
+            component_types::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
+            component_types::SYSTEM_BODY_FORMULA_TEST => $page->formula_test(),
+            component_types::SYSTEM_BODY_SANDBOX => $page->sandbox(),
+            component_types::SYSTEM_BODY_UNDO => $page->undo(),
+            component_types::SYSTEM_BODY_USER_SETTINGS => $page->user_setting(),
+            component_types::SYSTEM_BODY_PROCESS => $page->process(),
+            component_types::SYSTEM_BODY_PROCESS_LIST => $page->process_list(),
+            component_types::SYSTEM_BODY_PROCESS_PROGRESS => $page->process_progress(),
+            component_types::SYSTEM_BODY_ERROR_LOG => $page->error_log(),
+            component_types::SYSTEM_BODY_ERROR_UPDATE => $page->error_update(),
 
             // internal and hidden components used for formatting
-            component_type::ROW_START => $form->row_start(),
-            component_type::ROW_RIGHT => $form->row_right(),
-            component_type::ROW_END => $form->row_end(),
+            component_types::ROW_START => $form->row_start(),
+            component_types::ROW_RIGHT => $form->row_right(),
+            component_types::ROW_END => $form->row_end(),
 
             // components for user views
 
             // select
-            component_type::SELECT_PHRASE => $select->phrase_select($dbo, $form_name, $phr_lst),
-            component_type::SELECT_VIEW => $select->view_select($dbo, $form_name, $cfg),
+            component_types::SELECT_PHRASE => $select->phrase_select($dbo, $form_name, $phr_lst),
+            component_types::SELECT_VIEW => $select->view_select($dbo, $form_name, $cfg),
 
             // related
-            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->get_usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
-            component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
-            component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
-            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
-            component_type::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
-            component_type::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
-            component_type::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
-            component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $cfg),
+            component_types::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->get_usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
+            component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $cfg->phr_lst),
+            component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $cfg->phr_lst),
+            component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $cfg),
+            component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $cfg),
+            component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $cfg),
+            component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $cfg),
+            component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $cfg),
 
             // TODO Prio 1 review the components below
 
             // verb only -
-            component_type::VERB_NAME => $base->verb_name($dbo),
+            component_types::VERB_NAME => $base->verb_name($dbo),
 
 
             // value only -
-            component_type::VALUE_NAME => $base->value_name($dbo),
-            component_type::GROUP_NAME => $base->group_name($dbo),
-            component_type::VALUE_NUMERIC => $base->num_value($dbo),
+            component_types::VALUE_NAME => $base->value_name($dbo),
+            component_types::GROUP_NAME => $base->group_name($dbo),
+            component_types::VALUE_NUMERIC => $base->num_value($dbo),
 
             // other
-            component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
+            component_types::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
 
 
             // view only -
-            component_type::SHOW_NAME => $form->show_name($dbo, $this->code_id),
-            component_type::SHOW_DESCRIPTION => $form->show_description($dbo),
-            component_type::SHOW_FIELD_USAGE => $form->show_usage($dbo),
-            component_type::WORD_RESULTS => $form->result($dbo),
-            component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
-            component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
-            component_type::RANK_PHRASE => $rank->system_phrases($dbo),
-            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
+            component_types::SHOW_NAME => $form->show_name($dbo, $this->code_id),
+            component_types::SHOW_DESCRIPTION => $form->show_description($dbo),
+            component_types::SHOW_FIELD_USAGE => $form->show_usage($dbo),
+            component_types::WORD_RESULTS => $form->result($dbo),
+            component_types::USED_IN_AS_TEXT => $form->used_as_text($dbo),
+            component_types::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
+            component_types::RANK_PHRASE => $rank->system_phrases($dbo),
+            component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst),
 
             // view relation only -
-            component_type::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),
-            component_type::SYSTEM_FIELD_CHILD_VIEW => $form->show_child_view($dbo),
-            component_type::SHOW_FIELD_RELATION_TYPE => $form->show_relation_type($dbo),
-            component_type::SHOW_FIELD_START_POS => $form->show_start_pos($dbo),
+            component_types::SYSTEM_FIELD_PARENT_VIEW => $form->show_parent_view($dbo),
+            component_types::SYSTEM_FIELD_CHILD_VIEW => $form->show_child_view($dbo),
+            component_types::SHOW_FIELD_RELATION_TYPE => $form->show_relation_type($dbo),
+            component_types::SHOW_FIELD_START_POS => $form->show_start_pos($dbo),
 
             // base
-            component_type::PHRASE => $this->name_tip(),
-            component_type::LINK => $link->phrase_link($dbo, $form_name, $cfg->phr_lst),
+            component_types::PHRASE => $this->name_tip(),
+            component_types::LINK => $link->phrase_link($dbo, $form_name, $cfg->phr_lst),
 
             // table
-            component_type::VALUES_ALL => $base->all($dbo, $back),
-            component_type::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
-            component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
+            component_types::VALUES_ALL => $base->all($dbo, $back),
+            component_types::VALUES_RELATED => $list->values_by_word($dbo, $cfg, $style_id),
+            component_types::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related
-            component_type::LIST_REF => $list->ref_list_word($dbo, $cfg),
-            component_type::LIST_RESULTS => $list->result_list($dbo, $cfg),
-            component_type::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
-            component_type::FORMULAS => $list->formulas($dbo),
+            component_types::LIST_REF => $list->ref_list_word($dbo, $cfg),
+            component_types::LIST_RESULTS => $list->result_list($dbo, $cfg),
+            component_types::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
+            component_types::FORMULAS => $list->formulas($dbo),
             //component_type::FORMULA_RESULTS => $list->results($dbo),
-            component_type::WORDS_DOWN => $foaf->word_children($dbo),
-            component_type::WORDS_UP => $foaf->word_parents($dbo),
+            component_types::WORDS_DOWN => $foaf->word_children($dbo),
+            component_types::WORDS_UP => $foaf->word_parents($dbo),
 
             // preview
-            component_type::VIEW_AFTER_CHANGE => $preview->view_after($dbo),
-            component_type::VIEW_BEFORE_CHANGE => $preview->view_before($dbo),
+            component_types::VIEW_AFTER_CHANGE => $preview->view_after($dbo),
+            component_types::VIEW_BEFORE_CHANGE => $preview->view_before($dbo),
 
             // export
-            component_type::JSON_EXPORT => $port->json_export($dbo, $back),
-            component_type::XML_EXPORT => $port->xml_export($dbo, $back),
-            component_type::CSV_EXPORT => $port->csv_export($dbo, $back),
-            component_type::ODS_EXPORT => $port->ods_export($dbo, $back),
+            component_types::JSON_EXPORT => $port->json_export($dbo, $back),
+            component_types::XML_EXPORT => $port->xml_export($dbo, $back),
+            component_types::CSV_EXPORT => $port->csv_export($dbo, $back),
+            component_types::ODS_EXPORT => $port->ods_export($dbo, $back),
 
-            component_type::TEXT => $base->text(),
+            component_types::TEXT => $base->text(),
 
             default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ') missing<br>'
         };

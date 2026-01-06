@@ -40,9 +40,9 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::SHARED_CONST . 'refs.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -51,9 +51,9 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -177,8 +177,8 @@ class test_refs
         $ref->set_source($t_src->source());
         $ref->set_url(refs::PI_URL);
         $ref->include();
-        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $ref;
     }
 
@@ -195,8 +195,8 @@ class test_refs
         $ref->set_source($t_src->source());
         $ref->description = refs::PI_COM;
         $ref->exclude();
-        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_type::GROUP));
-        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_type::USER));
+        $ref->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
+        $ref->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $ref;
     }
 
@@ -221,7 +221,7 @@ class test_refs
     function ref_list_math_ui(): ref_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->ref_list_math(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->ref_list_math(), [api_types::INCL_PHRASES]);
     }
 
 }

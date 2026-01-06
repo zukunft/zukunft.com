@@ -2,8 +2,8 @@
 
 /*
 
-    shared/types/view_type.php - db based ENUM of the view types
-    --------------------------
+    shared/types/view_types.php - db based ENUM of the view types
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,7 +31,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-class view_type
+class view_types
 {
 
     // list of the view types that have a coded functionality

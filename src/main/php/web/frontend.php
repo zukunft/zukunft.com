@@ -73,7 +73,7 @@ include_once html_paths::TYPES . 'language_forms.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'source_type_list.php';

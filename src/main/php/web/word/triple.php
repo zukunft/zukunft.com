@@ -62,7 +62,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -82,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -372,7 +372,7 @@ class triple extends sandbox_code_id
 
     /**
      * TODO use ENUM instead of string in php version 8.1
-     * @return phrase_type|null the phrase type of this word
+     * @return phrase_types|null the phrase type of this word
      */
     function type(): ?object
     {
@@ -469,7 +469,7 @@ class triple extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        return $this->is_type(phrase_type::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN);
     }
 
 
@@ -584,12 +584,12 @@ class triple extends sandbox_code_id
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_types::PERCENT);
     }
 
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_types::MEASURE);
     }
 
     /**
@@ -598,7 +598,7 @@ class triple extends sandbox_code_id
      */
     function is_info(): bool
     {
-        return $this->is_type(phrase_type::INFO);
+        return $this->is_type(phrase_types::INFO);
     }
 
 

@@ -34,7 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 
@@ -55,7 +55,7 @@ class api_type_list
     public function set(array $lst): void
     {
         foreach ($lst as $typ) {
-            if (!($typ instanceof api_type)) {
+            if (!($typ instanceof api_types)) {
                 log_err($typ . ' is expected to be an api type');
             }
         }
@@ -69,10 +69,10 @@ class api_type_list
 
     /**
      * add a type to the list
-     * @param api_type $type the sql creation type that should be added
+     * @param api_types $type the sql creation type that should be added
      * @return void
      */
-    function add(api_type $type): void
+    function add(api_types $type): void
     {
         if (!in_array($type, $this->lst)) {
             $this->lst[] = $type;
@@ -81,10 +81,10 @@ class api_type_list
 
     /**
      * remove a type from the list if it has been in the list
-     * @param api_type $type_to_remove the sql creation type that should be removed
+     * @param api_types $type_to_remove the sql creation type that should be removed
      * @return bool true if the type has been in the list and has been removed
      */
-    function remove(api_type $type_to_remove): bool
+    function remove(api_types $type_to_remove): bool
     {
         $result = false;
         if (($key = array_search($type_to_remove, $this->lst)) !== false) {
@@ -99,7 +99,7 @@ class api_type_list
      */
     public function include_phrases(): bool
     {
-        return in_array(api_type::INCL_PHRASES, $this->lst);
+        return in_array(api_types::INCL_PHRASES, $this->lst);
     }
 
     /**
@@ -107,7 +107,7 @@ class api_type_list
      */
     public function include_components(): bool
     {
-        return in_array(api_type::INCL_COMPONENTS, $this->lst);
+        return in_array(api_types::INCL_COMPONENTS, $this->lst);
     }
 
     /**
@@ -121,7 +121,7 @@ class api_type_list
      */
     public function link_details(): bool
     {
-        return in_array(api_type::LINK_DETAILS, $this->lst);
+        return in_array(api_types::LINK_DETAILS, $this->lst);
     }
 
     /**
@@ -129,7 +129,7 @@ class api_type_list
      */
     public function phrase_names(): bool
     {
-        return in_array(api_type::PHRASE_NAMES, $this->lst);
+        return in_array(api_types::PHRASE_NAMES, $this->lst);
     }
 
     /**
@@ -138,7 +138,7 @@ class api_type_list
      */
     public function include_views(): bool
     {
-        return in_array(api_type::INCL_VIEWS, $this->lst);
+        return in_array(api_types::INCL_VIEWS, $this->lst);
     }
 
     /**
@@ -146,7 +146,7 @@ class api_type_list
      */
     public function with_excluded(): bool
     {
-        return in_array(api_type::WITH_EXCLUDED, $this->lst);
+        return in_array(api_types::WITH_EXCLUDED, $this->lst);
     }
 
     /**
@@ -154,7 +154,7 @@ class api_type_list
      */
     public function with_excluded_id(): bool
     {
-        return in_array(api_type::WITH_EXCLUDED_ID, $this->lst);
+        return in_array(api_types::WITH_EXCLUDED_ID, $this->lst);
     }
 
     /**
@@ -162,7 +162,7 @@ class api_type_list
      */
     public function no_key_fill(): bool
     {
-        return in_array(api_type::NO_KEY_FILL, $this->lst);
+        return in_array(api_types::NO_KEY_FILL, $this->lst);
     }
 
     /**
@@ -170,7 +170,7 @@ class api_type_list
      */
     public function test_mode(): bool
     {
-        return in_array(api_type::TEST_MODE, $this->lst);
+        return in_array(api_types::TEST_MODE, $this->lst);
     }
 
     /**
@@ -178,7 +178,7 @@ class api_type_list
      */
     public function use_header(): bool
     {
-        return in_array(api_type::HEADER, $this->lst);
+        return in_array(api_types::HEADER, $this->lst);
     }
 
 }
