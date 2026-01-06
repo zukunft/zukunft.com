@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
@@ -158,7 +159,12 @@ class type_tests
 
         $t->subheader($ts . 'sql write insert e.g. for system setup');
         $typ = $t_typ->phrase_type();
-        $t->assert_sql_insert($sc, $typ);
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write update for admin use only');
+        $typ_db = $typ->clone_all();
+        $typ_db->description = 'changed description';
+        $t->assert_sql_update($sc, $typ, $typ_db, [sql_type::LOG]);
     }
 
 }

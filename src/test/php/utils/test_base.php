@@ -1403,16 +1403,17 @@ class test_base
     function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         $usr_msg = new user_message();
+        if ($usr_obj::class == user::class) {
+            $usr_msg->usr = $this->usr_admin;
+        } else {
+            $usr_msg->usr = $this->usr1;
+        }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $usr_msg->usr = $this->usr_admin;
-            $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
-        } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
+        if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
             $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
         } else {
-            $usr_msg->usr = $this->usr_admin;
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
         $result = $this->assert_qp($qp, $sc->db_type);
@@ -1420,10 +1421,7 @@ class test_base
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $usr_msg->usr = $this->usr_admin;
-                $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
-            } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
+            if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
                 $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
             } else {
                 $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
@@ -1476,21 +1474,20 @@ class test_base
     ): bool
     {
         $usr_msg = new user_message();
+        if ($usr_obj::class == user::class) {
+            $usr_msg->usr = $this->usr_admin;
+        } else {
+            $usr_msg->usr = $this->usr1;
+        }
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $usr_msg->usr = $this->usr_admin;
-        }
         $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $usr_msg->usr = $this->usr_admin;
-            }
             $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }

@@ -189,8 +189,6 @@
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /user/user.php
     \-- log_name_field - section for function log_name_field is expected to be log in /user/user.php
     \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset
-\-- verb
-    \-- sql_write - section for function sql_write not yet defined that it should be sql write in /verb/verb.php
 \-- term_view
     \-- term - section for function term is expected to be cast in /view/term_view.php
     \-- from_field - section for function from_field is expected to be sql fields in /view/term_view.php
@@ -810,11 +808,6 @@
         \-- verb - @returns bool true if no one has used this verb
     \-- can_change
         \-- verb - @returns bool true if no one has used this verb
-\-- sql write
-    \-- sql_write
-        \-- verb - create the sql statement to add a verb to the database
-    \-- sql_insert_key_field
-        \-- verb - create the sql statement to add a new named sandbox object e.g. word to the database
 \-- fields
     \-- from_field
         \-- view_relation - @return string with the field name for the parent view as an overwrite function

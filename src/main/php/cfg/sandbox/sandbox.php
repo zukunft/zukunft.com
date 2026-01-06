@@ -3709,7 +3709,6 @@ class sandbox extends db_object_seq_id_user
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
         // add the change action field to the field list for the log entries
-        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $sys->typ_lst->cng_act->id(change_actions::ADD),

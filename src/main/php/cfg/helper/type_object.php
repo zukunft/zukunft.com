@@ -566,16 +566,21 @@ class type_object extends db_object_seq_id
 
         // get a list of all fields that could potentially be updated
         $fld_lst_all = $this->db_fields_all();
+
         // get the list of all fields that can be changed by the user
         $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+
         // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
         // make the query name unique based on the changed fields
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
         // log functions must always use named parameters
         $sc_par_lst->add(sql_type::NAMED_PAR);
+
         // set some var names to shorten the code lines
         $id_fld = $sc->id_field_name();
         if ($sc_par_lst->is_insert()) {
@@ -973,9 +978,9 @@ class type_object extends db_object_seq_id
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        type_object|db_object_seq_id   $obj,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        type_object|db_object_seq_id $obj,
+        user_message                 $usr_msg,
+        sql_type_list                $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
