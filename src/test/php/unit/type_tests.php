@@ -165,6 +165,9 @@ class type_tests
         $typ_db = $typ->clone_all();
         $typ_db->description = 'changed description';
         $t->assert_sql_update($sc, $typ, $typ_db, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql delete update for admin use only');
+        $t->assert_sql_delete($sc, $typ, [sql_type::LOG]);
     }
 
 }
