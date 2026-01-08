@@ -39,6 +39,7 @@ use ReflectionException;
 
 class sys_log_level extends BasicEnum
 {
+    // TODO Prio 2 use shared sys_log_types
     const int UNDEFINED = 0;
     const int INFO = 1;
     const int REJECT = 2;

@@ -836,3 +836,7 @@ change_field_id,change_field_name,table_id,description
 835,type_name,112,
 836,code_id,112,
 837,description,112,
+838,sys_log_type_id,113,
+839,type_name,113,
+840,code_id,113,
+841,description,113,

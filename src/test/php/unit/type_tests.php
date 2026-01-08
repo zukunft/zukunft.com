@@ -158,6 +158,10 @@ class type_tests
         $t->assert_sql_index_create($dsp_lnk_typ);
 
         $t->subheader($ts . 'sql write insert e.g. for system setup');
+        $typ = $t_typ->sys_log_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write insert e.g. for system setup');
         $typ = $t_typ->phrase_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
 

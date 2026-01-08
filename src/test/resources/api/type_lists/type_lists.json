@@ -833,6 +833,12 @@
         "code_id": "phrase_types",
         "description": "",
         "id": 112
+      },
+      {
+        "name": "sys_log_types",
+        "code_id": "sys_log_types",
+        "description": "",
+        "id": 113
       }
     ],
     "change_field_list": [
@@ -5857,6 +5863,30 @@
         "code_id": "112description",
         "description": "",
         "id": 837
+      },
+      {
+        "name": "113sys_log_type_id",
+        "code_id": "113sys_log_type_id",
+        "description": "",
+        "id": 838
+      },
+      {
+        "name": "113type_name",
+        "code_id": "113type_name",
+        "description": "",
+        "id": 839
+      },
+      {
+        "name": "113code_id",
+        "code_id": "113code_id",
+        "description": "",
+        "id": 840
+      },
+      {
+        "name": "113description",
+        "code_id": "113description",
+        "description": "",
+        "id": 841
       }
     ],
     "job_types": [

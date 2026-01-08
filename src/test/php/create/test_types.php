@@ -46,8 +46,10 @@ include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'sys_log_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -66,8 +68,10 @@ use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
@@ -93,6 +97,14 @@ class test_types
     /*
      * unit
      */
+
+    /**
+     * @return sys_log_type "mathematics" as the main word for unit testing
+     */
+    function sys_log_type(): sys_log_type
+    {
+        return new sys_log_type(sys_log_types::INFO, sys_log_types::INFO_NAME, sys_log_types::INFO_COM, sys_log_types::INFO_ID);
+    }
 
     /**
      * @return phrase_type "mathematics" as the main word for unit testing

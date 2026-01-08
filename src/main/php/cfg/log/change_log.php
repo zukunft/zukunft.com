@@ -774,6 +774,7 @@ class change_log extends db_object_seq_id_user
 
         // add new table name if needed
         if ($table_id <= 0) {
+            log_err('table name ' . $table_name . ' missing in main/resources/db_code_links/change_tables.csv');
             $table_id = $db_con->add_id($table_name);
             // save also the code_id
             if ($table_id > 0) {
