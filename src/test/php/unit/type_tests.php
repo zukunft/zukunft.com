@@ -160,8 +160,22 @@ class type_tests
         $t->subheader($ts . 'sql write insert e.g. for system setup');
         $typ = $t_typ->sys_log_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
-
-        $t->subheader($ts . 'sql write insert e.g. for system setup');
+        $typ = $t_typ->sys_log_status();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->sys_log_function();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->job_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_profile();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->user_official_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->protection_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->share_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->phrase_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
 

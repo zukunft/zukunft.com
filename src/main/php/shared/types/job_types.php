@@ -2,9 +2,8 @@
 
 /*
 
-    shared/enum/sys_log_statuus.php - enum of all possible log statuus
-    -------------------------------
-
+    shared/types/job_types.php - ENUM of the used job types
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -23,25 +22,25 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace Zukunft\ZukunftCom\main\php\shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-enum sys_log_statuus: string
+class job_types
 {
 
-    // list of all possible log statuus
-    const string OPEN = "new";
-    const int OPEN_ID = 1;
-    const string OPEN_NAME = "new";
-    const string OPEN_COM = "the error has just being logged and no one has yet looked at it";
-    const string ASSIGNED = "assigned";
-    const string RESOLVED = "resolved";
-    const string CLOSED = "closed";
+    // list of the job types that have a coded functionality
+    // TODO Prio 2 add for all job types at least one unit test
+    const string VALUE_UPDATE = "value_update";
+    const int VALUE_UPDATE_ID = 1;
+    const string VALUE_UPDATE_NAME = "update value";
+    const string VALUE_UPDATE_COM = "if a value is updated all the depending results should be calculated again";
+    const string WORD_DELETE = "word_delete";
+    const string TRIPLE_DELETE = "triple_delete";
 
 }

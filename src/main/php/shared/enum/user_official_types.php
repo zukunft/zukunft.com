@@ -2,8 +2,8 @@
 
 /*
 
-    shared/enum/sys_log_statuus.php - enum of all possible log statuus
-    -------------------------------
+    shared/enum/user_official_types.php - a shared database based enum for the external user types
+    -----------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,16 +32,16 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-enum sys_log_statuus: string
+enum user_official_types: string
 {
 
-    // list of all possible log statuus
-    const string OPEN = "new";
-    const int OPEN_ID = 1;
-    const string OPEN_NAME = "new";
-    const string OPEN_COM = "the error has just being logged and no one has yet looked at it";
-    const string ASSIGNED = "assigned";
-    const string RESOLVED = "resolved";
-    const string CLOSED = "closed";
+    // list of official user identification types
+    const string PASSPORT_EU = "passport_eu";
+    const int PASSPORT_EU_ID = 1;
+    const string PASSPORT_EU_NAME = "EU passport";
+    const string PASSPORT_EU_COM = "";
+    const string PASSPORT_US = "passport_us";
+    const string PASSPORT_US_FAKE = "passport_us_fake"; // if the passport is faked not by an official source
+    const string PASSPORT_US_FAKE_BY_STATE = "passport_us_fake_by_state"; // if the passport is faked by an official source
 
 }

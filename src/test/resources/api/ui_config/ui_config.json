@@ -839,6 +839,54 @@
         "code_id": "sys_log_types",
         "description": "",
         "id": 113
+      },
+      {
+        "name": "sys_log_status",
+        "code_id": "sys_log_status",
+        "description": "",
+        "id": 114
+      },
+      {
+        "name": "sys_log_functions",
+        "code_id": "sys_log_functions",
+        "description": "",
+        "id": 115
+      },
+      {
+        "name": "job_types",
+        "code_id": "job_types",
+        "description": "",
+        "id": 116
+      },
+      {
+        "name": "user_types",
+        "code_id": "user_types",
+        "description": "",
+        "id": 117
+      },
+      {
+        "name": "user_profiles",
+        "code_id": "user_profiles",
+        "description": "",
+        "id": 118
+      },
+      {
+        "name": "user_official_types",
+        "code_id": "user_official_types",
+        "description": "",
+        "id": 119
+      },
+      {
+        "name": "protection_types",
+        "code_id": "protection_types",
+        "description": "",
+        "id": 120
+      },
+      {
+        "name": "share_types",
+        "code_id": "share_types",
+        "description": "",
+        "id": 121
       }
     ],
     "change_field_list": [
@@ -5887,6 +5935,204 @@
         "code_id": "113description",
         "description": "",
         "id": 841
+      },
+      {
+        "name": "114sys_log_status_id",
+        "code_id": "114sys_log_status_id",
+        "description": "",
+        "id": 842
+      },
+      {
+        "name": "114type_name",
+        "code_id": "114type_name",
+        "description": "",
+        "id": 843
+      },
+      {
+        "name": "114code_id",
+        "code_id": "114code_id",
+        "description": "",
+        "id": 844
+      },
+      {
+        "name": "114description",
+        "code_id": "114description",
+        "description": "",
+        "id": 845
+      },
+      {
+        "name": "115sys_log_function_id",
+        "code_id": "115sys_log_function_id",
+        "description": "",
+        "id": 846
+      },
+      {
+        "name": "115type_name",
+        "code_id": "115type_name",
+        "description": "",
+        "id": 847
+      },
+      {
+        "name": "115code_id",
+        "code_id": "115code_id",
+        "description": "",
+        "id": 848
+      },
+      {
+        "name": "115description",
+        "code_id": "115description",
+        "description": "",
+        "id": 849
+      },
+      {
+        "name": "116job_type_id",
+        "code_id": "116job_type_id",
+        "description": "",
+        "id": 850
+      },
+      {
+        "name": "116type_name",
+        "code_id": "116type_name",
+        "description": "",
+        "id": 851
+      },
+      {
+        "name": "116code_id",
+        "code_id": "116code_id",
+        "description": "",
+        "id": 852
+      },
+      {
+        "name": "116description",
+        "code_id": "116description",
+        "description": "",
+        "id": 853
+      },
+      {
+        "name": "117user_type_id",
+        "code_id": "117user_type_id",
+        "description": "",
+        "id": 854
+      },
+      {
+        "name": "117type_name",
+        "code_id": "117type_name",
+        "description": "",
+        "id": 855
+      },
+      {
+        "name": "117code_id",
+        "code_id": "117code_id",
+        "description": "",
+        "id": 856
+      },
+      {
+        "name": "117description",
+        "code_id": "117description",
+        "description": "",
+        "id": 857
+      },
+      {
+        "name": "118user_profile_id",
+        "code_id": "118user_profile_id",
+        "description": "",
+        "id": 858
+      },
+      {
+        "name": "118type_name",
+        "code_id": "118type_name",
+        "description": "",
+        "id": 859
+      },
+      {
+        "name": "118code_id",
+        "code_id": "118code_id",
+        "description": "",
+        "id": 860
+      },
+      {
+        "name": "118description",
+        "code_id": "118description",
+        "description": "",
+        "id": 861
+      },
+      {
+        "name": "119user_official_type_id",
+        "code_id": "119user_official_type_id",
+        "description": "",
+        "id": 862
+      },
+      {
+        "name": "119type_name",
+        "code_id": "119type_name",
+        "description": "",
+        "id": 863
+      },
+      {
+        "name": "119code_id",
+        "code_id": "119code_id",
+        "description": "",
+        "id": 864
+      },
+      {
+        "name": "119description",
+        "code_id": "119description",
+        "description": "",
+        "id": 865
+      },
+      {
+        "name": "120protection_type_id",
+        "code_id": "120protection_type_id",
+        "description": "",
+        "id": 866
+      },
+      {
+        "name": "120type_name",
+        "code_id": "120type_name",
+        "description": "",
+        "id": 867
+      },
+      {
+        "name": "120code_id",
+        "code_id": "120code_id",
+        "description": "",
+        "id": 868
+      },
+      {
+        "name": "120description",
+        "code_id": "120description",
+        "description": "",
+        "id": 869
+      },
+      {
+        "name": "121share_type_id",
+        "code_id": "121share_type_id",
+        "description": "",
+        "id": 870
+      },
+      {
+        "name": "121type_name",
+        "code_id": "121type_name",
+        "description": "",
+        "id": 871
+      },
+      {
+        "name": "121code_id",
+        "code_id": "121code_id",
+        "description": "",
+        "id": 872
+      },
+      {
+        "name": "121description",
+        "code_id": "121description",
+        "description": "",
+        "id": 873
+      },
+      {
+        "name": "118right_level",
+        "code_id": "118right_level",
+        "description": "",
+        "id": 874
       }
     ],
     "job_types": [

@@ -328,6 +328,7 @@ the object structure is:
 +-- component_typesShared - db based ENUM of the component types
 +-- file_typesShared - ENUM of the used file types
 +-- formula_typesShared - db based ENUM of the formula types
++-- job_typesShared - ENUM of the used job types
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user
 +-- protection_typesShared - to define if and how an object can changed

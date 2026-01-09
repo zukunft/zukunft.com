@@ -37,6 +37,8 @@ class share_types
     // list of the ref types that have a coded functionality
     const string PUBLIC = "public";
     const int PUBLIC_ID = 1;
+    const string PUBLIC_NAME = "public";
+    const string PUBLIC_COM = "value can be seen and used by everyone (default)";
     const string PERSONAL = "personal";
     const string GROUP = "group";
     const string PRIVATE = "private";

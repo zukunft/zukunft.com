@@ -5,6 +5,11 @@
     shared/enum/user_profiles.php - a shared database based enum for the user profiles
     -----------------------------
 
+    the user profile is used to define the coded functionality of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Table
+
+    the user type is the basic thrust level of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Registered_user_accounts
+    the official type is used for the external thrust level of a user
+
 
     This file is part of zukunft.com - calc with words
 
@@ -36,8 +41,13 @@ enum user_profiles: string
 {
 
     // list of the user profiles that have a coded functionality
+    // TODO Prio 2 add for all user profiles at least one unit test
+    // TODO Prio 2 add the usefully cases from https://en.wikipedia.org/wiki/Wikipedia:User_groups#Table
     const string IP_ONLY = "ip";         // if only the ip of the request is known
     const string NORMAL = self::IP_ONLY; // the default profile for new users
+    const int NORMAL_ID = 1;             // fixed id used as default for new users
+    const string NORMAL_NAME = 'ip only';
+    const string NORMAL_COM = 'if only the ip of the request is known';
     const string NAME_ONLY = "name";     // the user has selected and reserved a unique username
     const string EMAIL = "email";        // the email of the account has been confirmed
     const string HUMAN = "human";        // it is confirmed that this user is a human
@@ -47,6 +57,5 @@ enum user_profiles: string
     const string TEST = "test";          // reserved for the system test user e.g. for internal unit and integration tests
     const string SYSTEM = "system";      // reserved for the system user which is executing cleanup tasks
     const int SYSTEM_ID = 18;         // only used for the initial setup
-    const int NORMAL_ID = 1;          // fixed id used as default for new users
 
 }

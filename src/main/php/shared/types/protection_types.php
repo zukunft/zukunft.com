@@ -36,6 +36,9 @@ class protection_types
 
     // list of the protection types that have a coded functionality
     const string NO_PROTECT = "no_protection";
+    const int NO_PROTECT_ID = 1;
+    const string NO_PROTECT_NAME = "no protection";
+    const string NO_PROTECT_COM = "anyone can take the ownership";
     const string USER = "user_protection";
     const string ADMIN = "admin_protection";
     const int ADMIN_ID = 3;

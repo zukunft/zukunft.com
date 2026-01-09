@@ -46,13 +46,29 @@ include_once paths::MODEL_LANGUAGE . 'language_form.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_SANDBOX . 'protection_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_ENUM . 'sys_log_types.php';
+include_once paths::SHARED_ENUM . 'user_official_types.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -68,13 +84,29 @@ use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_official_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -99,19 +131,122 @@ class test_types
      */
 
     /**
-     * @return sys_log_type "mathematics" as the main word for unit testing
+     * @return sys_log_type "info" as the main system log type for unit testing
      */
     function sys_log_type(): sys_log_type
     {
-        return new sys_log_type(sys_log_types::INFO, sys_log_types::INFO_NAME, sys_log_types::INFO_COM, sys_log_types::INFO_ID);
+        return new sys_log_type(
+            sys_log_types::INFO,
+            sys_log_types::INFO_NAME,
+            sys_log_types::INFO_COM,
+            sys_log_types::INFO_ID);
     }
 
     /**
-     * @return phrase_type "mathematics" as the main word for unit testing
+     * @return sys_log_status "open" as the main system log status for unit testing
+     */
+    function sys_log_status(): sys_log_status
+    {
+        return new sys_log_status(
+            sys_log_statuus::OPEN,
+            sys_log_statuus::OPEN_NAME,
+            sys_log_statuus::OPEN_COM,
+            sys_log_statuus::OPEN_ID);
+    }
+
+    /**
+     * @return sys_log_function "import_base_config" as the main system log function for unit testing
+     */
+    function sys_log_function(): sys_log_function
+    {
+        return new sys_log_function(
+            sys_log_functions::IMPORT_BASE_CONFIG,
+            sys_log_functions::IMPORT_BASE_CONFIG_NAME,
+            sys_log_functions::IMPORT_BASE_CONFIG_COM,
+            sys_log_functions::IMPORT_BASE_CONFIG_ID);
+    }
+
+    /**
+     * @return job_type "open" as the main system log status for unit testing
+     */
+    function job_type(): job_type
+    {
+        return new job_type(
+            job_types::VALUE_UPDATE,
+            job_types::VALUE_UPDATE_NAME,
+            job_types::VALUE_UPDATE_COM,
+            job_types::VALUE_UPDATE_ID);
+    }
+
+    /**
+     * @return user_type "open" as the main system log status for unit testing
+     */
+    function user_type(): user_type
+    {
+        return new user_type(
+            user_types::VERIFIED,
+            user_types::VERIFIED_NAME,
+            user_types::VERIFIED_COM,
+            user_types::VERIFIED_ID);
+    }
+
+    /**
+     * @return user_profile "open" as the main system log status for unit testing
+     */
+    function user_profile(): user_profile
+    {
+        return new user_profile(
+            user_profiles::NORMAL,
+            user_profiles::NORMAL_NAME,
+            user_profiles::NORMAL_COM,
+            user_profiles::NORMAL_ID);
+    }
+
+    /**
+     * @return user_official_type "open" as the main system log status for unit testing
+     */
+    function user_official_type(): user_official_type
+    {
+        return new user_official_type(
+            user_official_types::PASSPORT_EU,
+            user_official_types::PASSPORT_EU_NAME,
+            user_official_types::PASSPORT_EU_COM,
+            user_official_types::PASSPORT_EU_ID);
+    }
+
+    /**
+     * @return protection_type "open" as the main system log status for unit testing
+     */
+    function protection_type(): protection_type
+    {
+        return new protection_type(
+            protection_types::NO_PROTECT,
+            protection_types::NO_PROTECT_NAME,
+            protection_types::NO_PROTECT_COM,
+            protection_types::NO_PROTECT_ID);
+    }
+
+    /**
+     * @return share_type "public" as the default share type for unit testing
+     */
+    function share_type(): share_type
+    {
+        return new share_type(
+            share_types::PUBLIC,
+            share_types::PUBLIC_NAME,
+            share_types::PUBLIC_COM,
+            share_types::PUBLIC_ID);
+    }
+
+    /**
+     * @return phrase_type "normal" as the main phrase type for unit testing
      */
     function phrase_type(): phrase_type
     {
-        return new phrase_type(phrase_types::NORMAL, phrase_types::NORMAL_ID, phrase_types::NORMAL_NAME);
+        return new phrase_type(
+            phrase_types::NORMAL,
+            phrase_types::NORMAL_ID,
+            phrase_types::NORMAL_NAME);
     }
 
 

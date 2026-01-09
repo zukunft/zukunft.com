@@ -2,8 +2,8 @@
 
 /*
 
-    shared/enum/sys_log_statuus.php - enum of all possible log statuus
-    -------------------------------
+    shared/enum/sys_log_functions.php - enum of system log functions used for unit testing
+    -----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,16 +32,13 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-enum sys_log_statuus: string
+enum sys_log_functions: string
 {
 
-    // list of all possible log statuus
-    const string OPEN = "new";
-    const int OPEN_ID = 1;
-    const string OPEN_NAME = "new";
-    const string OPEN_COM = "the error has just being logged and no one has yet looked at it";
-    const string ASSIGNED = "assigned";
-    const string RESOLVED = "resolved";
-    const string CLOSED = "closed";
+    // list of system log functions used for unit testing
+    const string IMPORT_BASE_CONFIG = "import_base_config";
+    const int IMPORT_BASE_CONFIG_ID = 1;
+    const string IMPORT_BASE_CONFIG_NAME = "import_base_config";
+    const string IMPORT_BASE_CONFIG_COM = "import all zukunft.com base configuration json files";
 
 }
