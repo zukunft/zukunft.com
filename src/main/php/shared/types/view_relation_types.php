@@ -37,6 +37,9 @@ class view_relation_types
     // list of the view relation types that have a coded functionality
     const string DEFAULT = self::ADD;
     const string ADD = "add_components";
+    const int ADD_ID = 1;
+    const string ADD_NAME = "add components";
+    const string ADD_COM = "add the components of the child view to the parent view at the start position";
     const string REMOVE = "del_components";
 
 }

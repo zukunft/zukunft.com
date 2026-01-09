@@ -887,6 +887,54 @@
         "code_id": "share_types",
         "description": "",
         "id": 121
+      },
+      {
+        "name": "source_types",
+        "code_id": "source_types",
+        "description": "",
+        "id": 122
+      },
+      {
+        "name": "ref_types",
+        "code_id": "ref_types",
+        "description": "",
+        "id": 123
+      },
+      {
+        "name": "formula_types",
+        "code_id": "formula_types",
+        "description": "",
+        "id": 124
+      },
+      {
+        "name": "view_types",
+        "code_id": "view_types",
+        "description": "",
+        "id": 125
+      },
+      {
+        "name": "view_styles",
+        "code_id": "view_styles",
+        "description": "",
+        "id": 126
+      },
+      {
+        "name": "view_link_types",
+        "code_id": "view_link_types",
+        "description": "",
+        "id": 127
+      },
+      {
+        "name": "view_relation_types",
+        "code_id": "view_relation_types",
+        "description": "",
+        "id": 128
+      },
+      {
+        "name": "component_link_types",
+        "code_id": "component_link_types",
+        "description": "",
+        "id": 129
       }
     ],
     "change_field_list": [
@@ -6133,6 +6181,210 @@
         "code_id": "118right_level",
         "description": "",
         "id": 874
+      },
+      {
+        "name": "122source_type_id",
+        "code_id": "122source_type_id",
+        "description": "",
+        "id": 875
+      },
+      {
+        "name": "122type_name",
+        "code_id": "122type_name",
+        "description": "",
+        "id": 876
+      },
+      {
+        "name": "122code_id",
+        "code_id": "122code_id",
+        "description": "",
+        "id": 877
+      },
+      {
+        "name": "122description",
+        "code_id": "122description",
+        "description": "",
+        "id": 878
+      },
+      {
+        "name": "123ref_type_id",
+        "code_id": "123ref_type_id",
+        "description": "",
+        "id": 879
+      },
+      {
+        "name": "123type_name",
+        "code_id": "123type_name",
+        "description": "",
+        "id": 880
+      },
+      {
+        "name": "123code_id",
+        "code_id": "123code_id",
+        "description": "",
+        "id": 881
+      },
+      {
+        "name": "123description",
+        "code_id": "123description",
+        "description": "",
+        "id": 882
+      },
+      {
+        "name": "124formula_type_id",
+        "code_id": "124formula_type_id",
+        "description": "",
+        "id": 883
+      },
+      {
+        "name": "124type_name",
+        "code_id": "124type_name",
+        "description": "",
+        "id": 884
+      },
+      {
+        "name": "124code_id",
+        "code_id": "124code_id",
+        "description": "",
+        "id": 885
+      },
+      {
+        "name": "124description",
+        "code_id": "124description",
+        "description": "",
+        "id": 886
+      },
+      {
+        "name": "125view_type_id",
+        "code_id": "125view_type_id",
+        "description": "",
+        "id": 887
+      },
+      {
+        "name": "125type_name",
+        "code_id": "125type_name",
+        "description": "",
+        "id": 888
+      },
+      {
+        "name": "125code_id",
+        "code_id": "125code_id",
+        "description": "",
+        "id": 889
+      },
+      {
+        "name": "125description",
+        "code_id": "125description",
+        "description": "",
+        "id": 890
+      },
+      {
+        "name": "126view_style_id",
+        "code_id": "126view_style_id",
+        "description": "",
+        "id": 891
+      },
+      {
+        "name": "126type_name",
+        "code_id": "126type_name",
+        "description": "",
+        "id": 892
+      },
+      {
+        "name": "126code_id",
+        "code_id": "126code_id",
+        "description": "",
+        "id": 893
+      },
+      {
+        "name": "126description",
+        "code_id": "126description",
+        "description": "",
+        "id": 894
+      },
+      {
+        "name": "127view_link_type_id",
+        "code_id": "127view_link_type_id",
+        "description": "",
+        "id": 895
+      },
+      {
+        "name": "127type_name",
+        "code_id": "127type_name",
+        "description": "",
+        "id": 896
+      },
+      {
+        "name": "127code_id",
+        "code_id": "127code_id",
+        "description": "",
+        "id": 897
+      },
+      {
+        "name": "127description",
+        "code_id": "127description",
+        "description": "",
+        "id": 898
+      },
+      {
+        "name": "128view_relation_type_id",
+        "code_id": "128view_relation_type_id",
+        "description": "",
+        "id": 899
+      },
+      {
+        "name": "128type_name",
+        "code_id": "128type_name",
+        "description": "",
+        "id": 900
+      },
+      {
+        "name": "128code_id",
+        "code_id": "128code_id",
+        "description": "",
+        "id": 901
+      },
+      {
+        "name": "128description",
+        "code_id": "128description",
+        "description": "",
+        "id": 902
+      },
+      {
+        "name": "129component_link_type_id",
+        "code_id": "129component_link_type_id",
+        "description": "",
+        "id": 903
+      },
+      {
+        "name": "129type_name",
+        "code_id": "129type_name",
+        "description": "",
+        "id": 904
+      },
+      {
+        "name": "129code_id",
+        "code_id": "129code_id",
+        "description": "",
+        "id": 905
+      },
+      {
+        "name": "129description",
+        "code_id": "129description",
+        "description": "",
+        "id": 906
+      },
+      {
+        "name": "123base_url",
+        "code_id": "123base_url",
+        "description": "",
+        "id": 907
+      },
+      {
+        "name": "126view_style_name",
+        "code_id": "126view_style_name",
+        "description": "",
+        "id": 908
       }
     ],
     "job_types": [
@@ -6992,7 +7244,7 @@
       {
         "name": "XBRL",
         "code_id": "xbrl",
-        "description": "",
+        "description": "eXtensible Business Reporting Language is a freely available global framework for exchanging business information",
         "id": 2
       },
       {
@@ -7012,6 +7264,12 @@
         "code_id": "api",
         "description": "",
         "id": 5
+      },
+      {
+        "name": "JSON",
+        "code_id": "json",
+        "description": "",
+        "id": 6
       }
     ],
     "formula_types": [

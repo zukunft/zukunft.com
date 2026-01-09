@@ -43,6 +43,8 @@ class view_styles
     // just to display a fixed text
     const string COL_SM_4_COM = 'use 1/3 of the width (col-md-4)';
     const string COL_SM_4 = 'col-md-4';
+    const string COL_SM_4_NAME = '1/3 width';
+    const int COL_SM_4_ID = 1;
     const string COL_SM_5 = 'col-md-5';
     const string COL_SM_6_COM = 'use half of the width (col-md-6)';
     const string COL_SM_6 = 'col-md-6';

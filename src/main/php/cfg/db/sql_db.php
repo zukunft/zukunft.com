@@ -160,6 +160,7 @@ include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
 
@@ -279,6 +280,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -1224,7 +1226,7 @@ class sql_db
             $msk->set(views::START_ID, views::START_NAME);
             $msk->description = views::START_COM;
             $msk_lnk->set_term($wrd->term());
-            $msk_lnk->set_predicate(view_link_type::DEFAULT);
+            $msk_lnk->set_predicate(view_link_types::DEFAULT);
             $msk_lnk->set_view($msk);
             $msk_lnk->description = 'add usage and log of a word';
             $msk_lnk->id = 0;

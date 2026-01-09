@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
@@ -157,6 +158,11 @@ class type_tests
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
 
+        $t->subheader($ts . 'component link type sql setup');
+        $dsp_lnk_typ = new component_link_type('');
+        $t->assert_sql_table_create($dsp_lnk_typ);
+        $t->assert_sql_index_create($dsp_lnk_typ);
+
         $t->subheader($ts . 'sql write insert e.g. for system setup');
         $typ = $t_typ->sys_log_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
@@ -178,8 +184,25 @@ class type_tests
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->phrase_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->source_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->ref_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->formula_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_style();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->view_relation_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->component_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update for admin use only');
+        $typ = $t_typ->phrase_type();
         $typ_db = $typ->clone_all();
         $typ_db->description = 'changed description';
         $t->assert_sql_update($sc, $typ, $typ_db, [sql_type::LOG]);

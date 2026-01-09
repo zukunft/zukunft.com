@@ -2,9 +2,8 @@
 
 /*
 
-    model/view/view_link_type.php - to define the behaviour of the link between a term and a view
-    ---------------------------
-
+    shared/types/component_link_types.php - db based ENUM of the component link types
+    -------------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -23,30 +22,24 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\view;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-include_once paths::MODEL_HELPER . 'type_object.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-
-class view_link_type extends type_object
+class component_link_types
 {
 
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const string TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
-    const string FLD_ID = 'view_link_type_id';
+    // list of the component link types that have a coded functionality
+    const string ALWAYS = "always"; // the component is always shown as it is
+    const int ALWAYS_ID = 1;
+    const string ALWAYS_NAME = "always";
+    const string ALWAYS_COM = "the component is always shown as it is";
+    const string EXPRESSION = "expression"; // the component is only shown if an expression is true
+    const string DEFAULT = self::ALWAYS;
 
 }

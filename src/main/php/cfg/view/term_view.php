@@ -68,6 +68,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 
 class term_view extends sandbox_link
 {
@@ -164,7 +166,7 @@ class term_view extends sandbox_link
     {
         parent::__construct($usr);
         $this->reset();
-        $this->set_predicate(view_link_type::DEFAULT);
+        $this->set_predicate(view_link_types::DEFAULT);
     }
 
     function reset(bool $keep_user = false): void
@@ -683,7 +685,7 @@ class term_view extends sandbox_link
         }
 
         global $sys;
-        if ($this->predicate_id == $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+        if ($this->predicate_id == $sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT)) {
             unset($vars[json_fields::PREDICATE]);
         }
         if ($this->description != null) {

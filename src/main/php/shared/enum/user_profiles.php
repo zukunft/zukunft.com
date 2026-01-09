@@ -46,6 +46,7 @@ enum user_profiles: string
     const string IP_ONLY = "ip";         // if only the ip of the request is known
     const string NORMAL = self::IP_ONLY; // the default profile for new users
     const int NORMAL_ID = 1;             // fixed id used as default for new users
+    const int NORMAL_LEVEL = 1;             // fixed id used as default for new users
     const string NORMAL_NAME = 'ip only';
     const string NORMAL_COM = 'if only the ip of the request is known';
     const string NAME_ONLY = "name";     // the user has selected and reserved a unique username

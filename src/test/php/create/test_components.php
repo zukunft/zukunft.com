@@ -50,6 +50,7 @@ include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -126,7 +128,7 @@ class test_components
         $t_msk = new test_views($this->env);
         $lnk = new term_view($this->env->usr1);
         $lnk->set(1, $t_msk->view(), $t_wrd->word()->term());
-        $lnk->set_predicate_id($sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT));
+        $lnk->set_predicate_id($sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }

@@ -36,6 +36,9 @@ class view_types
 
     // list of the view types that have a coded functionality
     const string DEFAULT = "default";
+    const int DEFAULT_ID = 1;
+    const string DEFAULT_NAME = "standard";
+    const string DEFAULT_COM = "the base display mask without additional functionalities";
     const string ENTRY = "entry";
     const string MASK_DEFAULT = "mask_default";
     const string PRESENT = "presentation";

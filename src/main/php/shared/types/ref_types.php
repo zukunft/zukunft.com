@@ -2,9 +2,8 @@
 
 /*
 
-    model/view/view_link_type.php - to define the behaviour of the link between a term and a view
-    ---------------------------
-
+    shared/types/ref_types.php - ENUM of the used reference types
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -23,30 +22,24 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\view;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-include_once paths::MODEL_HELPER . 'type_object.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-
-class view_link_type extends type_object
+class ref_types
 {
 
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const string TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
-    const string FLD_ID = 'view_link_type_id';
+    // list of the ref types that have a coded functionality
+    // TODO Prio 1 add at least one unit test for each ref type
+    const string WIKIDATA = "wikidata";
+    const int WIKIDATA_ID = 2;
+    const string WIKIDATA_NAME = "wikidata";
+    const string WIKIDATA_COM = "wikidata";
+    const string WIKIPEDIA = "wikipedia";
 
 }

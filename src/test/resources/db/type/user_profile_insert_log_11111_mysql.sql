@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS user_profile_insert_log_1111;
-CREATE PROCEDURE user_profile_insert_log_1111
+DROP PROCEDURE IF EXISTS user_profile_insert_log_11111;
+CREATE PROCEDURE user_profile_insert_log_11111
     (_type_name               text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -7,7 +7,9 @@ CREATE PROCEDURE user_profile_insert_log_1111
      _field_id_code_id        smallint,
      _code_id                 text,
      _field_id_description    smallint,
-     _description             text)
+     _description             text,
+     _field_id_right_level    smallint,
+     _right_level             smallint)
 BEGIN
 
     INSERT INTO user_profiles ( type_name)
@@ -25,17 +27,21 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_user_profile_id ;
 
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_right_level,_right_level,@new_user_profile_id ;
+
         UPDATE user_profiles
            SET code_id     = _code_id,
-               description = _description
+               description = _description,
+               right_level = _right_level
          WHERE user_profiles.user_profile_id = @new_user_profile_id;
 
 END;
 
-PREPARE user_profile_insert_log_1111_call
-    FROM 'SELECT user_profile_insert_log_1111 (?,?,?,?,?,?,?,?)';
+PREPARE user_profile_insert_log_11111_call
+    FROM 'SELECT user_profile_insert_log_11111 (?,?,?,?,?,?,?,?,?,?)';
 
-SELECT user_profile_insert_log_1111
+SELECT user_profile_insert_log_11111
     ('ip only',
      1,
      1,
@@ -43,4 +49,6 @@ SELECT user_profile_insert_log_1111
      860,
      'ip',
      861,
-     'if only the ip of the request is known');
+     'if only the ip of the request is known',
+     874,
+     1);

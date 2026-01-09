@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types as view_type_shared;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -114,8 +115,8 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT);
-        $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
+        $result = $sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT);
+        $t->assert('check type' . view_link_types::DEFAULT, $result, 1);
 
 
         $t->subheader($ts . 'api creation');

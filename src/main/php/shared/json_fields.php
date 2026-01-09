@@ -118,6 +118,9 @@ class json_fields
     const string USAGE = 'usage';
     const string IMPACT = 'impact';
 
+    // user profiles
+    const string RIGHT_LEVEL = 'right_level';
+
 
     /*
      * api - fields used only for the api json messages

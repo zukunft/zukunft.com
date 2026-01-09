@@ -38,10 +38,10 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
-include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'ref_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once html_paths::REF . 'ref_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -49,10 +49,10 @@ include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -86,7 +86,7 @@ class test_refs
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(refs::PI_ID,
-            $t_wrd->word_pi()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::PI_KEY);
+            $t_wrd->word_pi()->phrase(), $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::PI_KEY);
         $ref->description = refs::PI_COM;
         return $ref;
     }
@@ -110,7 +110,7 @@ class test_refs
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(1,
-            $t_wrd->word()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::PI_KEY);
+            $t_wrd->word()->phrase(), $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::PI_KEY);
         $ref->description = refs::PI_COM;
         return $ref;
     }
@@ -124,7 +124,7 @@ class test_refs
         $t_wrd = new test_words($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(refs::MATH_ID,
-            $t_wrd->word_math()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::MATH_KEY);
+            $t_wrd->word_math()->phrase(), $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::MATH_KEY);
         $ref->description = refs::MATH_COM;
         return $ref;
     }
@@ -161,7 +161,7 @@ class test_refs
         $t_trp = new test_triples($this->env);
         $ref = new ref($this->env->usr1);
         $ref->set(12,
-            $t_trp->triple_gwp()->phrase(), $sys->typ_lst->ref_typ->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
+            $t_trp->triple_gwp()->phrase(), $sys->typ_lst->ref_typ->id(ref_types::WIKIDATA), refs::CHANGE_NEW_KEY);
         $ref->description = refs::CHANGE_OLD_KEY;
         return $ref;
     }

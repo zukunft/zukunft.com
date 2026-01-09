@@ -2470,6 +2470,9 @@
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php
     \-- has_row - section for function has_row not yet defined that it should be get in /user/user_message.php
     \-- order error - order of section api has difference at api_json should be before api_array of api_array,api_json,api_mapper does not match 1,api_json_array,api_json,api_array,save,order of section api has difference at api_json should be before api_array of api_array,api_json,api_mapper does not match 1,api_json_array,api_json,api_array,save,order of section api has difference at api_json should be before api_array of api_array,api_json,api_mapper does not match 1,api_json_array,api_json,api_array,save
+\-- user_profile
+    \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /user/user_profile.php
+    \-- order error - order of section construct and map has difference at api_mapper should be before reset, row_mapper should be before import_mapper of reset,api_mapper,import_mapper,row_mapper does not match __construct,row_mapper_sandbox,api_mapper,reset,row_mapper,import_mapper,get_code_id,load_dummy,default_id,order of section construct and map has difference at api_mapper should be before reset, row_mapper should be before import_mapper of reset,api_mapper,import_mapper,row_mapper does not match __construct,row_mapper_sandbox,api_mapper,reset,row_mapper,import_mapper,get_code_id,load_dummy,default_id,order of section construct and map has difference at api_mapper should be before reset, row_mapper should be before import_mapper of reset,api_mapper,import_mapper,row_mapper does not match __construct,row_mapper_sandbox,api_mapper,reset,row_mapper,import_mapper,get_code_id,load_dummy,default_id,order of section construct and map has difference at api_mapper should be before reset, row_mapper should be before import_mapper of reset,api_mapper,import_mapper,row_mapper does not match __construct,row_mapper_sandbox,api_mapper,reset,row_mapper,import_mapper,get_code_id,load_dummy,default_id
 \-- value_base
     \-- row_mapper_sandbox_multi - section for function row_mapper_sandbox_multi not yet defined that it should be construct and map in /value/value_base.php
     \-- id - section for function id not yet defined that it should be set and get in /value/value_base.php
@@ -3261,8 +3264,6 @@
         \-- phrase_list - the old long form to encode
     \-- loaded
         \-- phrase_list - @returns bool true if all phrases of the list have a name and an id
-    \-- is_system
-        \-- user_profile - 
 \-- save
     \-- 2
         \-- ip_range_exp - get a similar or overlapping ip range

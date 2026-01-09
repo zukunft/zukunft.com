@@ -325,6 +325,7 @@ the object structure is:
 +-- json_fieldsShared - list of json field names used for the api and im- and export
 +-- libraryShared - some useful function e.g. for string handling
 +-- api_type_listShared - a list of parameters to configure the api message
++-- component_link_typesShared - db based ENUM of the component link types
 +-- component_typesShared - db based ENUM of the component types
 +-- file_typesShared - ENUM of the used file types
 +-- formula_typesShared - db based ENUM of the formula types
@@ -332,8 +333,10 @@ the object structure is:
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user
 +-- protection_typesShared - to define if and how an object can changed
++-- ref_typesShared - ENUM of the used reference types
 +-- share_typesShared - to define if an object can be shared between the users
 +-- verbsShared - to use the same verb code_id in frontend and backend
++-- view_link_typesShared - db based ENUM of the view link types
 +-- view_relation_typesShared - db based ENUM of the view relation types
 +-- view_stylesShared - db based ENUM of the view and component styles
 +-- view_typesShared - db based ENUM of the view types

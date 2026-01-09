@@ -40,12 +40,12 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
-include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once test_paths::CREATE . 'test_const.php';
@@ -55,13 +55,13 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
-use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -398,7 +398,7 @@ class test_views
         $t_wrd = new test_words($this->env);
         $trm_msk->id = 1;
         $trm_msk->set_term($t_wrd->word()->term());
-        $trm_msk->set_predicate(view_link_type::DEFAULT);
+        $trm_msk->set_predicate(view_link_types::DEFAULT);
         $trm_msk->set_view($this->view());
         return $trm_msk;
     }

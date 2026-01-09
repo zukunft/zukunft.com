@@ -2,9 +2,8 @@
 
 /*
 
-    model/view/view_link_type.php - to define the behaviour of the link between a term and a view
-    ---------------------------
-
+    shared/types/view_link_types.php - db based ENUM of the view link types
+    --------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -23,30 +22,24 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\view;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-
-include_once paths::MODEL_HELPER . 'type_object.php';
-
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-
-class view_link_type extends type_object
+class view_link_types
 {
 
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const string TBL_COMMENT = 'to define the behaviour of the link between a term and a view';
-    const string FLD_ID = 'view_link_type_id';
+    // list of selection types for a view starting from a word, triple or formula
+    const string DEFAULT = self::MAIN_WORD; // use the main word as start for the view
+    const string MAIN_WORD = "main_word"; // use the main word to select the view
+    const int MAIN_WORD_ID = 1;
+    const string MAIN_WORD_NAME = "main word";
+    const string MAIN_WORD_COM = "use the main word as start for the view";
+    const string SELECTED_WORD = "main_word"; // use the main word as start for the view
 
 }
