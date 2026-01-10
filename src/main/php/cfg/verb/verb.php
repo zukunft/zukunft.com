@@ -1144,11 +1144,11 @@ class verb extends type_object
     /**
      * create a new verb
      */
-    private function add(sql_db $db_con): user_message
+    private function add(user_message $usr_msg): bool
     {
         log_debug('verb->add the verb ' . $this->dsp_id());
 
-        $usr_msg = new user_message();
+        global $db_con;
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1176,7 +1176,7 @@ class verb extends type_object
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1245,7 +1245,10 @@ class verb extends type_object
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
-                $usr_msg->add($this->add($db_con));
+                if (!$this->add($usr_msg)) {
+                    $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
+                }
+
             } else {
                 log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,

@@ -2656,17 +2656,11 @@ class triple extends sandbox_link_named
             $log = $this->log_link_add();
             if ($log->id() > 0) {
                 // insert the new triple
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    $msg = 'add ' . $this->dsp_id();
-                    if ($db_con->insert($qp, $msg, $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $db_con->set_class(triple::class);
-                    $this->id = $db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user_db::FLD_ID),
-                        array($this->from_id(), $this->get_verb_id(), $this->to_id(), $this->get_user()->id));
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                $msg = 'add ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
                 // TODO make sure on all add functions that the database object is always set
                 //array($this->from_id(), $this->verb_id() , $this->to_id(), $this->get_user()->id()));

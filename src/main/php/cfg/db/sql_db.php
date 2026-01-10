@@ -5813,10 +5813,14 @@ class sql_db
                 $mtr = new Translator(language_codes::SYS);
 
                 // prepare logging of the import
-                // TODO Prio 1 maybe not used?
+                // TODO Prio 1 use sql_insert without log
                 $this->db_log_code_links();
+
+                // load the types needed for logging into the system environment $sys
+                global $sys;
                 $sys_typ_lst = new type_lists($usr);
                 $sys_typ_lst->load_log($this);
+                $sys->typ_lst = $sys_typ_lst;
 
                 // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();

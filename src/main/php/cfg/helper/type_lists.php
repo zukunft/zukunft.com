@@ -324,6 +324,9 @@ class type_lists
         if ($result) {
             $result = $this->cng_fld->load($db_con);
         }
+        if ($result) {
+            $result = $this->usr_pro->load($db_con);
+        }
 
         return $result;
     }
