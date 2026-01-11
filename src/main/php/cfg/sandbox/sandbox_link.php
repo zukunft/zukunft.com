@@ -869,19 +869,6 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * create a new link object
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID),
-            array($this->fob()->id(), $this->tob()->id(), $this->get_user()->id()));
-    }
-
-    /**
      * create a new link object and log the change
      * TODO do a rollback in case of an error
      * @param user_message $usr_msg with status ok
@@ -914,16 +901,10 @@ class sandbox_link extends sandbox
 
                 // insert the new object and save the object key
                 // TODO check that always before a db action is called the db type is set correctly
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $this->id = $this->add_insert();
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
 
                 // save the object fields if saving the key was successful

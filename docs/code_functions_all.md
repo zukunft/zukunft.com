@@ -1611,7 +1611,6 @@
     \-- load_sql_by_vars - section for function load_sql_by_vars is expected to be load sql in /log/change_link.php
     \-- load_last_by_user - section for function load_last_by_user is expected to be load in /log/change_link.php
     \-- add_link_ref - section for function add_link_ref not yet defined that it should be database link in /log/change_link.php
-    \-- add_link - section for function add_link not yet defined that it should be database link in /log/change_link.php
     \-- dsp_last - section for function dsp_last not yet defined that it should be database link in /log/change_link.php
     \-- add - section for function add not yet defined that it should be database link in /log/change_link.php
     \-- add_ref - section for function add_ref not yet defined that it should be database link in /log/change_link.php
@@ -3932,8 +3931,6 @@
     \-- load_last_by_user
         \-- change_link - get the last link changed by a user
     \-- add_link_ref
-        \-- change_link - get the last link changed by a user
-    \-- add_link
         \-- change_link - get the last link changed by a user
     \-- dsp_last
         \-- change_link - display the last change related to one object (word, formula, value, verb, ...)

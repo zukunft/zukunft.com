@@ -4462,7 +4462,7 @@ class sql_db
      * and return a message to the user if something has gone wrong
      * and a suggested solution to fix the issue
      * and alternative solution if possible
-     * or the true if successful
+     * or true if successful
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement

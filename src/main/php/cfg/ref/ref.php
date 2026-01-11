@@ -1275,49 +1275,11 @@ class ref extends sandbox_link
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-            // log the insert attempt first
-            $log = $this->log_link_add();
-            if ($log->id() > 0) {
-                // insert the new reference
-                $db_con->set_class(ref::class);
-                $db_con->set_usr($this->get_user()->id);
-
-                $this->id = $db_con->insert_old(
-                    array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
-                    array($this->phrase_id(), $this->get_external_key(), $this->predicate_id));
-                if ($this->id() > 0) {
-                    // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
-                            msg_id::VAR_ID => $this->dsp_id()
-                        ]);
-                        log_err($usr_msg->get_message(), 'ref->add');
-                    } else {
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->set_fob($this->fob());
-                        $db_rec->set_tob($this->tob());
-                        $db_rec->set_user($this->get_user());
-                        $std_rec = clone $db_rec;
-                        // save the object fields
-                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                    }
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                    log_err($usr_msg->get_message(), 'ref->add');
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
