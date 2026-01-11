@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -202,8 +202,8 @@ function log_err(string $msg_text,
 }
 
 /**
- * if still possible write the fatal error message to the database and stop the execution
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
+ * if still possible, write the fatal error message to the database and stop the execution
+ * @param string $msg_text is a short description used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
  * @param string $function_name is the function name which has most likely caused the error
  * @param string $function_trace is the complete system trace to get more details

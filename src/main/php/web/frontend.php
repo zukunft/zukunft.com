@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -68,8 +68,8 @@ include_once html_paths::TYPES . 'change_table_list.php';
 include_once html_paths::TYPES . 'change_field_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'job_type_list.php';
-include_once html_paths::TYPES . 'languages.php';
-include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'language_list.php';
+include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';

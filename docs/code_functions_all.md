@@ -1159,6 +1159,8 @@
     \-- __construct - section for function __construct is expected to be construct and map in /db/sql_type_list.php
     \-- add - section for function add not yet defined that it should be modify in /db/sql_type_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /db/sql_type_list.php
+    \-- do_log - section for function do_log not yet defined that it should be info sql type in /db/sql_type_list.php
+    \-- no_id_field - section for function no_id_field not yet defined that it should be info sql type in /db/sql_type_list.php
     \-- is_call_only - section for function is_call_only is expected to be info in /db/sql_type_list.php
     \-- is_insert - section for function is_insert is expected to be info in /db/sql_type_list.php
     \-- is_update - section for function is_update is expected to be info in /db/sql_type_list.php
@@ -1500,6 +1502,7 @@
     \-- del - section for function del is expected to be del in /helper/db_object_seq_id.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- sql_write - section for function sql_write not yet defined that it should be sql write in /helper/db_object_seq_id.php
+    \-- sql_write_no_log - section for function sql_write_no_log not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- has_db_id - section for function has_db_id not yet defined that it should be db helper in /helper/db_object_seq_id.php
     \-- can_be_added_by - section for function can_be_added_by not yet defined that it should be db helper in /helper/db_object_seq_id.php
     \-- can_be_changed_by - section for function can_be_changed_by not yet defined that it should be db helper in /helper/db_object_seq_id.php
@@ -2812,7 +2815,7 @@
     \-- log_err
         \--  - log an info message to the text log and the log table depending on the log settings
     \-- log_fatal_db
-        \--  - if still possible write the fatal error message to the database and stop the execution
+        \--  - if still possible, write the fatal error message to the database and stop the execution
     \-- log_fatal
         \--  - try to write the error message to any possible out device if database connection is lost
     \-- log_msg
@@ -3680,6 +3683,10 @@
     \-- get_types
         \-- sql_creator - @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
 \-- info sql type
+    \-- do_log
+        \-- sql_type_list - @return bool true if the changes should be added to the change log
+    \-- no_id_field
+        \-- sql_type_list - @return bool true if the field list should not include the id field e.g. because the field list is used for a pure insert statement
     \-- is_call_only
         \-- sql_type_list - @return bool true if only the sql function name should be created
     \-- is_insert
@@ -4105,6 +4112,13 @@
         \-- import_file - import the default pod base configuration json files
     \-- echo
         \-- import_file - display a message immediately to the user
+\-- sql fields
+    \-- name_field
+        \-- language - load a language object by database id
+        \-- language_form - load a language form object by database id
+        \-- change_action - 
+        \-- change_field - 
+        \-- change_table - 
 \-- format
     \-- dsp
         \-- change - @return string the current change as a human-readable text
@@ -6292,8 +6306,8 @@
         \-- formula_link_type_list - create the HTML code to select a formula link type
         \-- formula_type_list - create the HTML code to select a formula type
         \-- job_type_list - create the HTML code to select a job type
-        \-- language_forms - create the HTML code to select a language form
-        \-- languages - create the HTML code to select a language
+        \-- language_form_list - create the HTML code to select a language form
+        \-- language_list - create the HTML code to select a language
         \-- phrase_type_list - create the HTML code to select a phrase type
         \-- position_type_list - create the HTML code to select a position type
         \-- protection - create the HTML code to select a protection type

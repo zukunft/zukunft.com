@@ -128,3 +128,4 @@ change_table_id, change_table_name, description, code_id
 127,'view_link_types',,'view_link_types'
 128,'view_relation_types',,'view_relation_types'
 129,'component_link_types',,'component_link_types'
+130,'change_actions',,'change_actions'

@@ -713,7 +713,12 @@ class db_object_seq_id extends db_object
         // get the fields and values that are filled and should be written to the db
         $row_empty = $this->clone_all();
         $row_empty->reset(true);
-        return $this->sql_write($sc, $row_empty, $usr_msg, $sc_par_lst_used);
+        if ($sc_par_lst_used->do_log()) {
+            return $this->sql_write($sc, $row_empty, $usr_msg, $sc_par_lst_used);
+        } else {
+            $sc_par_lst_used->add(sql_type::NO_ID_FIELD);
+            return $this->sql_write_no_log($sc, $row_empty, $usr_msg, $sc_par_lst_used);
+        }
     }
 
     /**
@@ -736,7 +741,11 @@ class db_object_seq_id extends db_object
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::UPDATE);
-        return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
+        if ($sc_par_lst_used->do_log()) {
+            return $this->sql_write($sc, $db_row, $usr_msg, $sc_par_lst_used);
+        } else {
+            return $this->sql_write_no_log($sc, $db_row, $usr_msg, $sc_par_lst_used);
+        }
     }
 
 
@@ -846,6 +855,45 @@ class db_object_seq_id extends db_object
         return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
     }
 
+    /**
+     * create the sql statement to add or update an object in the database without logging the changes
+     * all fields are always included in the query to be able to remove overwriting with a null value
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_write_no_log(
+        sql_creator      $sc,
+        db_object_seq_id $db_row,
+        user_message     $usr_msg,
+        sql_type_list    $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // get a list of all fields that could potentially be updated
+        $fld_lst_all = $this->db_fields_all();
+        // get the list of all fields that can be changed by the user
+        $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
+        // add the child object specific fields and values
+        if ($sc_par_lst->is_insert()) {
+            $qp->sql = $sc->create_sql_insert($fvt_lst);
+        } else {
+            $qp->sql = $sc->create_sql_update(
+                $this->id_field(), $this->id(), $fvt_lst);
+        }
+        $qp->par = $fvt_lst->db_values();
+
+        return $qp;
+    }
 
     /*
      * sql write fields
@@ -861,9 +909,13 @@ class db_object_seq_id extends db_object
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return [
-            $this->id_field(),
-        ];
+        if ($sc_par_lst->no_id_field()) {
+            return [];
+        } else {
+            return [
+                $this->id_field(),
+            ];
+        }
     }
 
     /**
@@ -881,11 +933,13 @@ class db_object_seq_id extends db_object
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        $lst->add_field(
-            $this->id_field(),
-            $obj->id(),
-            db_object_seq_id::FLD_ID_SQL_TYP
-        );
+        if (!$sc_par_lst->no_id_field()) {
+            $lst->add_field(
+                $this->id_field(),
+                $obj->id(),
+                db_object_seq_id::FLD_ID_SQL_TYP
+            );
+        }
         return $lst;
     }
 

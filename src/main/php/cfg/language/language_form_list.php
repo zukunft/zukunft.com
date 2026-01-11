@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -35,10 +35,10 @@ namespace Zukunft\ZukunftCom\main\php\cfg\language;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::DB . 'sql_db.php';
-include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::SHARED_ENUM . 'language_forms.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 
 class language_form_list extends type_list
 {
@@ -58,7 +58,7 @@ class language_form_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(language_form::DEFAULT);
+        return parent::id(language_forms::DEFAULT);
     }
 
 }

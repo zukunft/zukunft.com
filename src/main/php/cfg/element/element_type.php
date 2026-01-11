@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -38,14 +38,6 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class element_type extends type_object
 {
-
-    /*
-     * code links
-     */
-
-    // list of the element types that have a coded functionality
-    const string WORD_SELECTOR = "word_selector";
-
 
     /*
      * database link

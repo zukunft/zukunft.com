@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -43,6 +43,9 @@ enum change_tables: string
     // TODO should only contain the table names of past program versions
     //      to combine the log in case of a renamed class
     const string USER = 'users';
+    const int USER_ID = 1;
+    const string USER_NAME = 'users';
+    const string USER_COM = '';
     const string WORD = 'words';
     const string WORD_USR = 'user_words';
     const string VERB = 'verbs';

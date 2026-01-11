@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -36,16 +36,22 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
 include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
 include_once paths::MODEL_COMPONENT . 'view_style.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
 include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
@@ -65,6 +71,11 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'languages.php';
+include_once paths::SHARED_ENUM . 'language_forms.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
@@ -74,9 +85,13 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'component_link_types.php';
+include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'ref_types.php';
@@ -90,16 +105,22 @@ include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
@@ -119,6 +140,11 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
@@ -128,9 +154,13 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
@@ -161,6 +191,42 @@ class test_types
     /*
      * unit
      */
+
+    /**
+     * @return change_action "add" as the main change action for unit testing without logging
+     */
+    function change_action(): change_action
+    {
+        return new change_action(
+            change_actions::ADD,
+            change_actions::ADD_NAME,
+            change_actions::ADD_COM,
+            change_actions::ADD_ID);
+    }
+
+    /**
+     * @return change_table "users" as the main change log table for unit testing without logging
+     */
+    function change_table(): change_table
+    {
+        return new change_table(
+            change_tables::USER,
+            change_tables::USER_NAME,
+            change_tables::USER_COM,
+            change_tables::USER_ID);
+    }
+
+    /**
+     * @return change_field "word_name" as the main change log field for unit testing without logging
+     */
+    function change_field(): change_field
+    {
+        return new change_field(
+            change_fields::FLD_WORD_NAME,
+            change_fields::FLD_WORD_NAME,
+            change_fields::FLD_WORD_NAME_COM,
+            change_fields::FLD_WORD_NAME_ID);
+    }
 
     /**
      * @return sys_log_type "info" as the main system log type for unit testing
@@ -320,6 +386,30 @@ class test_types
     }
 
     /**
+     * @return formula_link_type "default" as the default formula link type for unit testing
+     */
+    function formula_link_type(): formula_link_type
+    {
+        return new formula_link_type(
+            formula_link_types::DEFAULT,
+            formula_link_types::DEFAULT_NAME,
+            formula_link_types::DEFAULT_COM,
+            formula_link_types::DEFAULT_ID);
+    }
+
+    /**
+     * @return element_type "word" as the default element type for unit testing
+     */
+    function element_type(): element_type
+    {
+        return new element_type(
+            element_types::WORD_SELECTOR,
+            element_types::WORD_SELECTOR_NAME,
+            element_types::WORD_SELECTOR_COM,
+            element_types::WORD_SELECTOR_ID);
+    }
+
+    /**
      * @return view_type "standard" as the base view type for unit testing
      */
     function view_type(): view_type
@@ -368,6 +458,18 @@ class test_types
     }
 
     /**
+     * @return component_type "calc_sheet" as the main component type for unit testing
+     */
+    function component_type(): component_type
+    {
+        return new component_type(
+            component_types::CALC_SHEET,
+            component_types::CALC_SHEET_NAME,
+            component_types::CALC_SHEET_COM,
+            component_types::CALC_SHEET_ID);
+    }
+
+    /**
      * @return component_link_type "always" as the main component link type for unit testing
      */
     function component_link_type(): component_link_type
@@ -377,6 +479,42 @@ class test_types
             component_link_types::ALWAYS_NAME,
             component_link_types::ALWAYS_COM,
             component_link_types::ALWAYS_ID);
+    }
+
+    /**
+     * @return position_type "always" as the main component link type for unit testing
+     */
+    function position_type(): position_type
+    {
+        return new position_type(
+            position_types::BELOW,
+            position_types::BELOW_NAME,
+            position_types::BELOW_COM,
+            position_types::BELOW_ID);
+    }
+
+    /**
+     * @return language "always" as the main component link type for unit testing
+     */
+    function language(): language
+    {
+        return new language(
+            languages::DEFAULT,
+            languages::DEFAULT_NAME,
+            languages::DEFAULT_COM,
+            languages::DEFAULT_ID);
+    }
+
+    /**
+     * @return language_form "always" as the main component link type for unit testing
+     */
+    function language_form(): language_form
+    {
+        return new language_form(
+            language_forms::DEFAULT,
+            language_forms::PLURAL_NAME,
+            language_forms::PLURAL_COM,
+            language_forms::PLURAL_ID);
     }
 
 

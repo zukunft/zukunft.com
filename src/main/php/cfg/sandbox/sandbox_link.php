@@ -48,7 +48,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -92,6 +92,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -129,6 +130,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Exception;
@@ -231,7 +233,7 @@ class sandbox_link extends sandbox
                 // TODO Prio 3 review and check what is the best solution for the overwrites e.g. where is the PREDICATE really used
                 if ($this::class == formula_link::class) {
                     global $sys;
-                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT)) {
                         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                     }
                 } elseif ($this::class == view_relation::class) {

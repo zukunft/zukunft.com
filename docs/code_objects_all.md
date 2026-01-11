@@ -327,7 +327,9 @@ the object structure is:
 +-- api_type_listShared - a list of parameters to configure the api message
 +-- component_link_typesShared - db based ENUM of the component link types
 +-- component_typesShared - db based ENUM of the component types
++-- element_typesShared - db based ENUM of the formula link types
 +-- file_typesShared - ENUM of the used file types
++-- formula_link_typesShared - db based ENUM of the formula link types
 +-- formula_typesShared - db based ENUM of the formula types
 +-- job_typesShared - ENUM of the used job types
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
@@ -380,8 +382,8 @@ the object structure is:
     \-- formula_link_type_listUi - the preloaded data formula link types used for the html frontend
     \-- formula_type_listUi - the preloaded data formula types used for the html frontend
     \-- job_type_listUi - the preloaded data job types used for the html frontend
-    \-- language_formsUi - the preloaded data language_forms used for the html frontend
-    \-- languagesUi - the preloaded data languages used for the html frontend
+    \-- language_form_listUi - the preloaded data language_forms used for the html frontend
+    \-- language_listUi - the preloaded data languages used for the html frontend
     \-- phrase_type_listUi - the preloaded data phrase types used for the html frontend
     \-- position_type_listUi - the preloaded data component position types used for the html frontend
     \-- protectionUi - the preloaded data protection types used for the html frontend

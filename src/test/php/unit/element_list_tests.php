@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -68,7 +69,7 @@ class element_list_tests
         $t->assert_sql_by_frm_id($sc, $elm_lst, $frm->id(), $test_name);
 
         $test_name = 'sql to load one type of elements related in one formula';
-        $elm_type_id = $sys->typ_lst->elm_typ->id(element_type::WORD_SELECTOR);
+        $elm_type_id = $sys->typ_lst->elm_typ->id(element_types::WORD_SELECTOR);
         $this->assert_sql_by_frm_and_type_id($t, $sc, $elm_lst, $frm->id(), $elm_type_id, $test_name);
 
         $test_name = 'sql to delete a list of elements';

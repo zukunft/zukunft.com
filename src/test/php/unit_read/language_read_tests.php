@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -34,6 +34,8 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_read_tests
@@ -54,24 +56,24 @@ class language_read_tests
 
         $t->subheader($ts . 'by');
 
-        $test_name = 'load language ' . language::DEFAULT . ' by name and id';
-        $lan = new language(language::DEFAULT);
-        $lan->load_by_name(language::TN_READ);
-        $lan_by_id = new language(language::DEFAULT);
+        $test_name = 'load language ' . languages::DEFAULT . ' by name and id';
+        $lan = new language(languages::DEFAULT);
+        $lan->load_by_name(languages::TN_READ);
+        $lan_by_id = new language(languages::DEFAULT);
         $lan_by_id->load_by_id($lan->id(), language::class);
-        $t->assert($test_name, $lan_by_id->name(), language::TN_READ);
+        $t->assert($test_name, $lan_by_id->name(), languages::TN_READ);
         
 
         $t->subheader($ts . 'type');
 
         // test reading a language form via API that is not yet included in the preloaded language form
         // e.g. because it has been just added by the user to request e new language form
-        $test_name = 'load language form ' . language_form::PLURAL . ' by id';
+        $test_name = 'load language form ' . language_forms::PLURAL . ' by id';
         global $sys;
-        $lan_typ_id = $sys->typ_lst->lan_for->id(language_form::PLURAL);
-        $lan_typ = new language_form(language_form::PLURAL);
+        $lan_typ_id = $sys->typ_lst->lan_for->id(language_forms::PLURAL);
+        $lan_typ = new language_form(language_forms::PLURAL);
         $lan_typ->load_by_id($lan_typ_id);
-        $t->assert($test_name, $lan_typ->get_code_id(), language_form::PLURAL);
+        $t->assert($test_name, $lan_typ->get_code_id(), language_forms::PLURAL);
 
     }
 

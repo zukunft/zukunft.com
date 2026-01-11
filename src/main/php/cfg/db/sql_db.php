@@ -26,7 +26,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2018 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -1406,7 +1406,7 @@ class sql_db
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name);
+            $this->load_db_code_link_file($csv_file_name, [sql_type::LOG]);
         }
 
         // set the seq number if needed
@@ -1437,13 +1437,14 @@ class sql_db
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $class): bool
+    function load_db_code_link_file(string $class, array $sc_par_lst_in = []): bool
     {
         global $debug;
 
         $result = false;
         $lib = new library();
         $table_name = $lib->class_to_table($class);
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
 
         // load the csv
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;

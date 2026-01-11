@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/language_form.php - the preloaded data language_forms used for the html frontend
-    ---------------------------
+    web/types/language_form_list.php - the preloaded data language_forms used for the html frontend
+    --------------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -44,7 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class language_forms extends type_list
+class language_form_list extends type_list
 {
 
     const string NAME = url_var::LANGUAGE_FORM;

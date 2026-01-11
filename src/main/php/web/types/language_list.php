@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/language.php - the preloaded data languages used for the html frontend
-    ------------------------
+    web/types/language_list.php - the preloaded data languages used for the html frontend
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -42,7 +42,7 @@ include_once paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
-class languages extends type_list
+class language_list extends type_list
 {
 
     const string NAME = url_var::LANGUAGE;

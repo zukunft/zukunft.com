@@ -27,7 +27,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -55,6 +55,7 @@ class component_types
     const string PHRASE_NAME_COM = "show the name of a phrase fixed when designing the view";
 
     const string CALC_SHEET = "calc_sheet";
+    const string CALC_SHEET_NAME = "spreadsheet";
     const int CALC_SHEET_ID = 35;
     const string CALC_SHEET_COM = "changeable spreadsheet with words, number and formulas that allow changes";
 

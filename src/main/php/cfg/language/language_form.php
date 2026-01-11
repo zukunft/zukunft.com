@@ -96,4 +96,14 @@ class language_form extends type_object
         return $this->load_typ_obj($qp, $this::class);
     }
 
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
+    }
+
 }

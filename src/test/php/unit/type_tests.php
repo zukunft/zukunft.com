@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -163,7 +163,21 @@ class type_tests
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);
 
-        $t->subheader($ts . 'sql write insert e.g. for system setup');
+        $t->subheader($ts . 'sql write insert of base change log types without log e.g. for system setup');
+        $typ = $t_typ->change_action();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->change_table();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->change_field();
+        $t->assert_sql_insert($sc, $typ);
+        $typ = $t_typ->user_profile();
+        $t->assert_sql_insert($sc, $typ);
+
+        // TODO Prio 0 add language
+        // TODO Prio 0 add  position_types, system_time_types
+        // TODO Prio 3 revert [sql_type::LOG] to [sql_type::NO_LOG]
+
+        $t->subheader($ts . 'sql write insert with log e.g. for system setup');
         $typ = $t_typ->sys_log_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->sys_log_status();
@@ -190,6 +204,10 @@ class type_tests
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->formula_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->formula_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->element_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->view_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->view_style();
@@ -198,7 +216,15 @@ class type_tests
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->view_relation_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->component_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->component_link_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->position_type();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->language();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->language_form();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update for admin use only');

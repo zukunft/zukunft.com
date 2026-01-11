@@ -101,6 +101,22 @@ class sql_type_list
      */
 
     /**
+     * @return bool true if the changes should be added to the change log
+     */
+    function do_log(): bool
+    {
+        return in_array(sql_type::LOG, $this->lst);
+    }
+
+    /**
+     * @return bool true if the field list should not include the id field e.g. because the field list is used for a pure insert statement
+     */
+    function no_id_field(): bool
+    {
+        return in_array(sql_type::NO_ID_FIELD, $this->lst);
+    }
+
+    /**
      * @return bool true if only the sql function name should be created
      */
     function is_call_only(): bool
