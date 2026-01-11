@@ -1738,12 +1738,11 @@ class value_base extends sandbox_value
     }
 
     /**
-     * create a database record to save a user specific value
+     * create a database record to save a user-specific value
      */
-    protected function add_usr_cfg(string $class = self::class): bool
+    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
 
         if (!$this->has_usr_cfg()) {
             log_debug('value->add_usr_cfg for "' . $this->id() . ' und user ' . $this->get_user()->name);

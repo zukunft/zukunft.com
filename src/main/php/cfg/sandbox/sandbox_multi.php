@@ -1614,7 +1614,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    protected function add_usr_cfg(string $class = self::class): bool
+    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
     {
         global $db_con;
         $result = true;
@@ -1655,12 +1655,14 @@ class sandbox_multi extends db_object_multi_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->get_user()->id);
+                $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
+                $db_con->insert($qp, 'add user specific value', $usr_msg);
                 $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
-                if ($log_id <= 0) {
+                if (!$usr_msg->is_ok()) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
                 } else {
-                    $this->usr_cfg_id = $log_id;
+                    $this->usr_cfg_id = $usr_msg->get_row_id();
                 }
             }
         }
@@ -1770,6 +1772,36 @@ class sandbox_multi extends db_object_multi_user
 
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new value or result to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
+        $db_row = $this->cloned(null);
+        // get a list of all fields that could potentially be updated
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
 
@@ -2147,7 +2179,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $result = 'creation of user sandbox for ' . $log->field() . ' failed';
                     }
                 }
@@ -2525,7 +2557,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $usr_msg->add_message_text('creation of user sandbox to exclude failed');
                     }
                 }
@@ -2585,7 +2617,7 @@ class sandbox_multi extends db_object_multi_user
             }
             if ($log->add($usr_msg)) {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $result = 'creation of user sandbox for share type failed';
                     }
                 }

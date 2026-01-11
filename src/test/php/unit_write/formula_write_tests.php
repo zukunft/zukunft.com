@@ -85,8 +85,6 @@ class formula_write_tests
         $t_frm->cleanup($ts);
 
         $t->subheader($ts . 'formula prepared write');
-        $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_sql(), false);
         $test_name = 'add formula ' . formulas::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_func(), true);
 
