@@ -1587,21 +1587,13 @@ class sandbox extends db_object_seq_id_user
 
             if ($this->still_has_no_usr_cfg()) {
                 $log_id = 0;
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::USER]));
-                    if ($usr_msg->is_ok()) {
-                        $msg = 'add ' . $this->dsp_id() . ' for user ' . $this->get_user()->dsp_id();
-                        if ($db_con->insert($qp, $msg, $usr_msg)) {
-                            $log_id = $usr_msg->get_row_id();
-                        }
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::USER]));
+                if ($usr_msg->is_ok()) {
+                    $msg = 'add ' . $this->dsp_id() . ' for user ' . $this->get_user()->dsp_id();
+                    if ($db_con->insert($qp, $msg, $usr_msg)) {
+                        $log_id = $usr_msg->get_row_id();
                     }
-                } else {
-                    // create an entry in the user sandbox
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    $log_id = $db_con->insert_old(
-                        array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
                 }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');

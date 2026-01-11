@@ -1449,20 +1449,6 @@ class component_link extends sandbox_link
         return $usr_msg;
     }
 
-    /**
-     * create a new link object including the order number
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $lib = new library();
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->get_view()->id(), $this->get_component()->id(), $this->get_user()->id(), $this->order_nbr));
-    }
-
 
     /*
      * sql write fields

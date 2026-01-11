@@ -849,21 +849,11 @@ class sandbox_named extends sandbox
             if ($log->id() > 0) {
 
                 // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    $msg = 'add ' . $this->dsp_id();
-                    if ($db_con->insert($qp, $msg, $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $lib = new library();
-                    $class_name = $lib->class_to_name($this::class);
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id());
-                    $this->id = $db_con->insert_old(
-                        array($class_name . '_name', user_db::FLD_ID), array($this->name, $this->get_user()->id));
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                $msg = 'add ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
 
                 // save the object fields if saving the key was successful
@@ -1063,9 +1053,9 @@ class sandbox_named extends sandbox
      * @throws Exception
      */
     function save_id_fields(
-        sql_db $db_con,
-        sandbox $db_rec,
-        sandbox $std_rec,
+        sql_db       $db_con,
+        sandbox      $db_rec,
+        sandbox      $std_rec,
         user_message $usr_msg
     ): bool
     {

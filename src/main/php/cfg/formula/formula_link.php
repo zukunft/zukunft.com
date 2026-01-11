@@ -943,19 +943,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * create a new link object including the order number
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->formula_id(), $this->phrase_id(), $this->get_user()->id, $this->order_nbr));
-    }
-
-    /**
      * update a formula_link in the database or create a user formula_link
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param bool $use_func if true, a predefined function is used that also creates the log entries
