@@ -1146,7 +1146,7 @@ class verb extends type_object
      */
     private function add(user_message $usr_msg): bool
     {
-        log_debug('verb->add the verb ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
         global $db_con;
 

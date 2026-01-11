@@ -3296,7 +3296,7 @@
 \-- construct and map
     \-- __construct
         \-- sql_creator - set the default sql_creator configuration
-        \-- element - always set the user because a formula element is always user specific
+        \-- element - always set the user because a formula element is always user-specific
         \-- expression - 
         \-- combine_object - a combine object always covers an existing object
         \-- data_object - always set the user because always someone must have requested to create the list
@@ -3317,7 +3317,7 @@
         \-- value_time - set the user, which is needed in all cases and the main vars with the object creation
         \-- value_time_series - set the user sandbox type for a value time series object and set the user, which is needed in all cases
     \-- row_mapper_sandbox
-        \-- element - map the formula element database fields for later load of the object
+        \-- element - map the formula element database fields for a later load of the object
     \-- api_mapper
         \-- element - map an element api json to this model element object
         \-- db_id_object_non_sandbox - fill the vars with this db id object based on the given api json array
@@ -3776,7 +3776,7 @@
         \-- change_log - dummy function overwritten by the child object
 \-- sql write fields
     \-- db_fields_all
-        \-- element - get a list of all database fields that might be changed
+        \-- element - to get a list of all database fields that might be changed,
     \-- db_fields_changed
         \-- element - get a list of database field names, values and types that have been updated
     \-- db_field_values_types

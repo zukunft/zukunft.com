@@ -105,7 +105,7 @@ class element extends db_object_seq_id_user
     // a triple is used for an AND selection of values
     // a verb is used for dynamic usage of linked words for an AND selection
     // a formula is used to include formula results of another formula
-    const ELM_CLASSES = [
+    const array ELM_CLASSES = [
         word::class,
         triple::class,
         verb::class,
@@ -169,7 +169,7 @@ class element extends db_object_seq_id_user
      */
 
     /**
-     * always set the user because a formula element is always user specific
+     * always set the user because a formula element is always user-specific
      * @param user $usr the user who requested to use this formula element
      */
     function __construct(user $usr)
@@ -179,7 +179,7 @@ class element extends db_object_seq_id_user
     }
 
     /**
-     * map the formula element database fields for later load of the object
+     * map the formula element database fields for a later load of the object
      *
      * @param array|null $db_row with the data directly from the database
      * @return bool true if the triple is loaded and valid
@@ -199,9 +199,9 @@ class element extends db_object_seq_id_user
     /**
      * map an element api json to this model element object
      * @param array $api_json the api array with the element values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
      *                              including the user who has requested the mapping e.g. to check permissions to set code id or profiles
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -384,7 +384,7 @@ class element extends db_object_seq_id_user
 
     /**
      * create an SQL statement to retrieve a formula element by id from the database
-     * just set the class formula element for the parent function
+     * set the class formula element for the parent function
      *
      * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
@@ -473,7 +473,7 @@ class element extends db_object_seq_id_user
 
     /**
      * create the sql statement to add an element to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
+     * all fields are always included in the query to be able to remove by overwriting with a null value
      *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user
@@ -542,8 +542,8 @@ class element extends db_object_seq_id_user
      */
 
     /**
-     * get a list of all database fields that might be changed
-     * field list must be corresponding to the db_fields_changed fields
+     * to get a list of all database fields that might be changed,
+     * a field list must be corresponding to the db_fields_changed fields
      *
      * @return array list of all database field names that might have been updated
      */

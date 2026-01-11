@@ -38,6 +38,7 @@ include_once paths::MODEL_ELEMENT . 'element_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
