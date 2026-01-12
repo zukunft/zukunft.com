@@ -118,7 +118,6 @@ class element extends db_object_seq_id_user
 
     public formula $frm;                              // the repeated formula object for direct access when saving to the database
     public word|verb|triple|formula|null $obj = null; // the word, verb, triple or formula object
-    public string $type = '';                         // the word, verb or formula class name to direct the links
     public ?string $symbol = null;                    // the database reference symbol for formula expressions
 
 
@@ -176,8 +175,6 @@ class element extends db_object_seq_id_user
         $this->id = 0;
         $result = parent::row_mapper($db_row, element_db::FLD_ID);
         if ($result) {
-            $par_typ = new parameter_type();
-            $this->type = $par_typ->class_name($db_row[element_db::FLD_TYPE]);
             $this->load_obj_by_id($db_row[element_db::FLD_REF_ID]);
         }
         return $result;
@@ -294,6 +291,15 @@ class element extends db_object_seq_id_user
         return $this->obj?->term();
     }
 
+    function type(): string
+    {
+        if ($this->obj != null) {
+            return $this->obj::class;
+        } else {
+            return '';
+        }
+    }
+
     // TODO Prio 1 review and get from $sys and add the class to the code_id db col
     function type_id(): int
     {
@@ -301,16 +307,16 @@ class element extends db_object_seq_id_user
 
         $id = 0;
         if ($this->obj != null) {
-            if ($this->obj::class == word::class) {
+            if ($this->type() == word::class) {
                 $id = 1;
-            } elseif ($this->type == verb::class) {
+            } elseif ($this->type() == verb::class) {
                 $id = 2;
-            } elseif ($this->type == triple::class) {
+            } elseif ($this->type() == triple::class) {
                 $id = 3;
-            } elseif ($this->type == formula::class) {
+            } elseif ($this->type() == formula::class) {
                 $id = 4;
             } else {
-                log_err('id of type ' . $this->type . ' is not expected');
+                log_err('id of type ' . $this->type() . ' is not expected');
             }
 
         }
@@ -349,23 +355,23 @@ class element extends db_object_seq_id_user
     function load_obj_by_id(int $id): int
     {
         if ($id != 0 and $this->get_user()->is_set()) {
-            if ($this->type == word::class) {
+            if ($this->type() == word::class) {
                 $wrd = new word($this->get_user());
                 $wrd->load_by_id($id);
                 $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
-            } elseif ($this->type == triple::class) {
+            } elseif ($this->type() == triple::class) {
                 $trp = new triple($this->get_user());
                 $trp->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
-            } elseif ($this->type == verb::class) {
+            } elseif ($this->type() == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->get_user());
                 $vrb->load_by_id($id);
                 $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
-            } elseif ($this->type == formula::class) {
+            } elseif ($this->type() == formula::class) {
                 $frm = new formula($this->get_user());
                 $frm->load_by_id($id);
                 $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
@@ -378,9 +384,9 @@ class element extends db_object_seq_id_user
                 */
                 //
             } else {
-                log_err('id of type ' . $this->type . ' is not expected');
+                log_err('id of type ' . $this->type() . ' is not expected');
             }
-            log_debug("element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
+            log_debug("element->load got " . $this->dsp_id());
         }
         return $id;
     }
@@ -656,8 +662,8 @@ class element extends db_object_seq_id_user
     {
         $lib = new library();
         $result = '';
-        if ($this->type <> '') {
-            $class_name = $lib->class_to_name($this->type);
+        if ($this->type() <> '') {
+            $class_name = $lib->class_to_name($this->type());
             $result .= $class_name . ' ';
         }
         $name = $this->name();

@@ -212,7 +212,7 @@ class element_group extends ListBase
             log_debug('use element ' . $frm_elm->dsp_id() . ' also for value selection');
 
             // get the element word to be able to add it later to the value selection (differs for the element type)
-            if ($frm_elm->type == word::class) {
+            if ($frm_elm->type() == word::class) {
                 if ($frm_elm->id() > 0) {
                     $val_phr_lst->add($frm_elm->obj->phrase());
                     log_debug('include ' . $frm_elm->dsp_id() . ' in value selection');
@@ -221,7 +221,7 @@ class element_group extends ListBase
 
             // get the formula related word to be able to add it later to the value selection (differs for the element type)
             // e.g. 1: setting the $val_time_phr to 2020
-            if ($frm_elm->type == formula::class) {
+            if ($frm_elm->type() == formula::class) {
                 // at the moment the special formulas only change the time word, this is why val_wrd_id is not set here
                 if ($frm_elm->obj->is_predefined()) {
                     $val_time_phr = $this->set_formula_time_phrase($frm_elm, $val_phr_lst);

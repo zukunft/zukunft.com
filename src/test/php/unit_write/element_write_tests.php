@@ -82,7 +82,7 @@ class element_write_tests
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    $elm->load_obj_by_id($elm->obj->id, $elm->type);
+                    $elm->load_obj_by_id($elm->obj->id, $elm->type());
                 }
 
                 $result = $elm->dsp_id();
