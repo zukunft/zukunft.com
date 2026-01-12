@@ -519,31 +519,17 @@ class element extends db_object_seq_id_user
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::INSERT);
         // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
         $db_row = $this->clone_reset();
+
+        // get the field names, values and parameter types that have been changed
         $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
 
-        // get the list of all fields that can be changed by the user
-        $fld_lst_all = $this->db_fields_all();
+        // prepare the sql statement
+        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::INSERT, $sc_par_lst);
 
-        // make the query name unique based on the changed fields
-        $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
-
-        // create the sql and get the sql parameters used
-        $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
-        $sc->set_class($this::class, $sc_par_lst);
-        $sc->set_name($qp->name);
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
-
-        // update the sql creator settings
-        $sc->set_class($this::class, $sc_par_lst_used);
-        $sc->set_name($qp->name);
 
         return $qp;
     }
@@ -568,13 +554,44 @@ class element extends db_object_seq_id_user
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
         $fvt_lst = $this->db_fields_changed($db_row, $usr_msg);
-        $this->db_fields_all();
-        // create the sql and get the sql parameters used
-        $qp = new sql_par($this::class, $sc_par_lst);
+
+        // prepare the sql statement
+        $qp = $this->sql_prepare($sc, $fvt_lst, $usr_msg, sql_type::UPDATE, $sc_par_lst);
+
         $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
         $qp->par = $fvt_lst->db_values();
 
         // unlike the db_* function the sql_update_* parent function is called directly
+
+        return $qp;
+    }
+
+    function sql_prepare(
+        sql_creator        $sc,
+        sql_par_field_list $fvt_lst,
+        user_message       $usr_msg,
+        sql_type           $sql_type,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add($sql_type);
+
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
+        // create the sql and get the sql parameters used
+        $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
+        $sc->set_class($this::class, $sc_par_lst_used);
+        $sc->set_name($qp->name);
+
         return $qp;
     }
 

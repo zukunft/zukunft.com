@@ -79,8 +79,8 @@ class element_tests
         $t->assert_sql_insert($sc, $elm);
         $elm_db = $elm->clone_all();
         $elm_db->obj = $t_frm->formula_prior();
+        $t->assert_sql_update($sc, $elm, $elm_db);
         // TODO Prio 0 activate
-        //$t->assert_sql_update($sc, $elm, $elm_db);
         //$t->assert_sql_delete($sc, $elm);
 
 

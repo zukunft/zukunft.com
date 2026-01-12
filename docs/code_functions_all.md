@@ -1193,6 +1193,7 @@
     \-- is_formula - section for function is_formula is expected to be info in /element/element.php
     \-- db_ready - section for function db_ready is expected to be check in /element/element.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /element/element.php
+    \-- sql_prepare - section for function sql_prepare not yet defined that it should be sql write in /element/element.php
 \-- element_group
     \-- name - section for function name is expected to be debug in /element/element_group.php
     \-- id - section for function id not yet defined that it should be display in /element/element_group.php
@@ -3776,6 +3777,8 @@
     \-- sql_insert
         \-- element - create the sql statement to add an element to the database
     \-- sql_update
+        \-- element - create the sql statement to update a word in the database
+    \-- sql_prepare
         \-- element - create the sql statement to update a word in the database
     \-- 1
         \-- change_log - create the sql statement to add a log entry to the database
