@@ -1348,7 +1348,7 @@ class component extends sandbox_code_id
     function link(view $msk, int $order_nbr, user_message $usr_msg): bool
     {
         $cmp_lnk = new component_link($this->get_user());
-        $cmp_lnk->reset();
+        $cmp_lnk->reset(true);
         $cmp_lnk->set_view($msk);
         $cmp_lnk->set_component($this);
         $cmp_lnk->order_nbr = $order_nbr;

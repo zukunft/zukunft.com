@@ -39,6 +39,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -66,6 +67,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_db;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
@@ -304,8 +306,8 @@ class formula_list extends sandbox_list_named
                 formula_db::FLD_ID,
                 formula_db::FLD_ID
             );
-            $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
-            $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
+            $sc->add_where(element_db::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
+            $sc->add_where(element_db::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

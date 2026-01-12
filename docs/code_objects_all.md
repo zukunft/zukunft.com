@@ -27,6 +27,7 @@ the object structure is:
 +-- sql_type_list - a list of parameters to define which sql statement should be created
 +-- sql_where - structure for one where parameter for a sql statement
 +-- sql_where_list - list to create the sql where condition
++-- element_db - the database const for the element table
 +-- export - create an object to export data - the object can be converted to a json, yaml or XML message
 +-- export_type_list - a list of parameters to configure the export message
 +-- xml_serializer - turning an array or object into XML using PHP

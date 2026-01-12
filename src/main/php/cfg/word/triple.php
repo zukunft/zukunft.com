@@ -233,7 +233,7 @@ class triple extends sandbox_link_named
 
         $this->rename_can_switch = def::UI_CAN_CHANGE_triple_NAME;
 
-        $this->reset();
+        $this->reset(true);
 
         // also create the link objects because there is now case where they are supposed to be null
         $this->create_objects();

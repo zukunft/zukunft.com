@@ -288,9 +288,10 @@ class user extends db_id_object_non_sandbox
     /**
      * create a clone and empty all fields
      *
+     * @param bool $keep_user set to true to keep the original user
      * @return $this a clone with the name changed
      */
-    function clone_reset(): user
+    function clone_reset(bool $keep_user = false): user
     {
         $obj_cpy = clone $this;
         $obj_cpy->reset();

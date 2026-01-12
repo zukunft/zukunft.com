@@ -93,8 +93,7 @@ class term_view_tests
 
         $t->subheader($ts . 'term_view sql write update');
         $lnk = $t_lnk->term_view();
-        $lnk->description = views::LINK_COM;
-        $lnk_described = $lnk->cloned();
+        $lnk_described = $lnk->clone_all();
         $lnk_described->description = views::LINK_COM;
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);

@@ -82,6 +82,32 @@ class db_object_seq_id_user extends db_object_seq_id
         $this->set_user($usr);
     }
 
+    /**
+     * reset the vars of this element
+     * @param bool $keep_user set to true to keep the original user for sandbox objects
+     */
+    function reset(bool $keep_user = false): void
+    {
+        if ($keep_user) {
+            $usr = $this->usr;
+        } else {
+            $usr = new user();
+        }
+        parent::reset();
+        $this->usr = $usr;
+    }
+
+    /**
+     * clone this object and all linked objects
+     * @return $this a complete clone including a clone of all child objects
+     */
+    function clone_all(): db_object_seq_id_user
+    {
+        $obj = parent::clone_all();
+        $obj->usr = $this->usr->clone_all();
+        return $obj;
+    }
+
 
     /*
      * set and get

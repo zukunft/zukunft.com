@@ -93,6 +93,19 @@ class IdObject
     }
 
     /**
+     * create an almost empty clone of the object
+     * if the object has an owner, keep the owner upon request
+     *
+     * @return $this a clone with all vars empty except the user if requested
+     */
+    function clone_reset(bool $keep_user = false): IdObject
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset($keep_user);
+        return $obj_cpy;
+    }
+
+    /**
      * just the reset the modified field
      * to be overwritten and called by the child object
      *

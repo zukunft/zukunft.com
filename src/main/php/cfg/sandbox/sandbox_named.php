@@ -444,7 +444,7 @@ class sandbox_named extends sandbox
      */
     function cloned(string $name): sandbox_named
     {
-        $obj_cpy = $this->clone_reset();
+        $obj_cpy = $this->clone_reset(true);
         $obj_cpy->id = $this->id();
         $obj_cpy->set_name($name);
         return $obj_cpy;

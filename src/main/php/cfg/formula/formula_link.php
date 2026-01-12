@@ -191,14 +191,19 @@ class formula_link extends sandbox_link
         $this->from_name = $lib->class_to_name(formula::class);
         $this->to_name = $lib->class_to_name(phrase::class);
 
-        $this->reset();
+        $this->reset(true);
     }
 
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
 
-        $this->reset_objects($this->get_user());
+        $this->reset_objects($usr);
 
         $this->order_nbr = null;
         global $sys;

@@ -174,10 +174,11 @@ class formula_calc_tests
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
         $trm_lst = new term_list($usr);
-        $frm = $t_wrd->word_one();
-        $target->add($frm->phrase());
-        $trm_lst->add($frm->term());
-        $exp = new expression($usr);
+        $frm->set_user($usr);
+        $frm_wrd = $t_wrd->word_one();
+        $target->add($frm_wrd->phrase());
+        $trm_lst->add($frm_wrd->term());
+        $exp = new expression($frm);
         $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t_trm->term_list_scale());
         $result = $exp->result_phrases($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());

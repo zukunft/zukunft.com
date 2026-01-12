@@ -177,17 +177,6 @@ class type_object extends db_object_seq_id
     }
 
     /**
-     * create an almost empty clone of the object
-     * if the object e.g. the verb has an owner, keep the owner upon request
-     */
-    function clone_reset(bool $keep_user = false): type_object
-    {
-        $obj_cpy = clone $this;
-        $obj_cpy->reset($keep_user);
-        return $obj_cpy;
-    }
-
-    /**
      * fill the type object vars based on an array of fields from the database
      * @param array $db_row with the data from the database
      * @param string $class the type class name that should be filled

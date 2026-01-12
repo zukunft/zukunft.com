@@ -106,7 +106,7 @@ class horizontal_ui_tests
             $ui_obj->url_mapper($url_array, $usr_msg_ui);
             $api_msg = $ui_obj->api_array();
             $refilled_obj = clone $filled_obj;
-            $refilled_obj->reset();
+            $refilled_obj->reset(true);
             $refilled_obj->api_mapper($api_msg, $usr_msg);
             // fill the id that is not set by the add url
             $refilled_obj->id = $filled_obj->id();

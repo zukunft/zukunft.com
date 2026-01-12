@@ -68,11 +68,11 @@ class element_list extends sandbox_list
 
     /**
      * add the element object
-     * to the parent function that fills the element list based on a database records
+     * to the parent function that fills the element list based on a database record
      *
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
-     * @return bool true if at least one component has been loaded
+     * @return bool true if at least one element has been loaded
      */
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
@@ -131,7 +131,7 @@ class element_list extends sandbox_list
         $sc->set_class(element::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->get_user()->id);
-        $sc->set_fields(element::FLD_NAMES);
+        $sc->set_fields(element_db::FLD_NAMES);
         return $qp;
     }
 
@@ -167,7 +167,7 @@ class element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
-            $sc->add_where(element::FLD_TYPE, $elm_type_id);
+            $sc->add_where(element_db::FLD_TYPE, $elm_type_id);
             $sc->add_where(user_db::FLD_ID, $this->get_user()->id);
             $qp->sql = $sc->sql();
         } else {
@@ -175,6 +175,37 @@ class element_list extends sandbox_list
         }
         $qp->par = $sc->get_par();
         return $qp;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * get the first ids from the list e.g. to show it to humans
+     *
+     * @param ?int $limit the max number of ids to show
+     * @return array with the database ids of all objects of this list
+     */
+    function ids(?int $limit = null): array
+    {
+        if ($limit == null and !$this->is_dirty()) {
+            $result = array_keys($this->id_pos_lst());
+        } else {
+            $result = array();
+            $pos = 0;
+            foreach ($this->lst() as $sbx_obj) {
+                if ($pos <= $limit or $limit == null) {
+                    // use only valid ids
+                    if ($sbx_obj->type_id() <> 0) {
+                        $result[] = $sbx_obj->type_id();
+                        $pos++;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -188,7 +219,7 @@ class element_list extends sandbox_list
      */
     function add(?element $elm_to_add): bool
     {
-        $this->add_obj($elm_to_add, true);
+        parent::add_direct($elm_to_add);
         $this->set_lst_dirty();
         return true;
     }
@@ -219,7 +250,7 @@ class element_list extends sandbox_list
     function del_sql_without_log(sql_creator $sc): sql_par
     {
         return $sc->del_sql_list_without_log(
-            element::class, (new element($this->get_user()))->id_field(), $this->ids());
+            element::class, new element($this->get_user())->id_field(), $this->ids());
     }
 
 }

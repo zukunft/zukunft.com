@@ -132,7 +132,7 @@ class view_relation extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
+        $this->reset(true);
         $this->set_predicate(view_relation_type::DEFAULT);
     }
 

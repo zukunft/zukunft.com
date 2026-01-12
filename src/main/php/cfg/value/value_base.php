@@ -1260,7 +1260,7 @@ class value_base extends sandbox_value
                                 if ($formula_text <> "") {
                                     $l_part = $lib->str_left_of($formula_text, chars::CHAR_CALC);
                                     $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
-                                    $exp = new expression($this->get_user());
+                                    $exp = new expression($frm);
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->result_phrases();
                                     $phr_lst = $exp->phr_lst();

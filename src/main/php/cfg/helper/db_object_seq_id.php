@@ -133,7 +133,7 @@ class db_object_seq_id extends db_object
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 // TODO check that $this->reset() is removed from all load function and only this reset is used
-                $this->reset();
+                $this->reset(true);
                 if ($db_row[$id_fld] != 0) {
                     $this->id = $db_row[$id_fld];
                     $result = true;
@@ -218,7 +218,7 @@ class db_object_seq_id extends db_object
 
     /**
      * the sql statements to create all foreign keys
-     * is e.g. overwritten for the user sandbox objects
+     * the function is e.g. overwritten for the user sandbox objects
      *
      * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys

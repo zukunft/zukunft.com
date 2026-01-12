@@ -101,12 +101,16 @@ class test_api extends test_base
     const string JSON_NAME_ONLY = '{"name":""}';
     // an export json message for an empty array object e.g.
     const string JSON_ARRAY_ONLY = '[]';
+    // part of a json if the object with id 1 is excluded
+    const string JSON_PART_ID_EXCLUDED = '"id":1,"excluded":true';
+    // part of a json if the object is excluded
+    const string JSON_PART_EXCLUDED = '"excluded":true,';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
      * @param object $usr_obj the user sandbox object that should be tested
      * @param object $dsp_obj the display object used to create the api message to the backend
-     * @param array $api_types to check the different message type e.g.to test if excluded object can be reactivated
+     * @param array $api_types to check the different message type e.g.to test if an excluded object can be reactivated
      * @return bool true if the test has been successful
      */
     function assert_api_to_ui(object $usr_obj, object $dsp_obj, array $api_types = []): bool
@@ -194,17 +198,13 @@ class test_api extends test_base
         if ($result) {
             $test_name = $class_api . ' excluded json can be only id';
             $json_excluded_id = $usr_obj->api_json([api_types::WITH_EXCLUDED_ID]);
-            $target = '"id":1,"excluded":true';
-            // TODO Prio 2 deprecate this exception
-            if ($class == element::class) {
-                $target = '"id":104,"excluded":true';
-            }
+            $target = self::JSON_PART_ID_EXCLUDED;
             $result = $this->assert_text_contains($test_name, $json_excluded_id, $target);
         }
         // is excluded api json filled if requested?
         if ($result) {
             $test_name = $class_api . ' excluded json can be complete';
-            $target = '"excluded":true,';
+            $target = self::JSON_PART_EXCLUDED;
             $result = $this->assert_text_contains($test_name, $json_excluded_full, $target);
             $json_excluded_full = str_replace($target, '', $json_excluded_full);
         }
@@ -213,18 +213,17 @@ class test_api extends test_base
             $usr_obj->include();
             // check that the excluded object returns a json with just the id and the excluded flag
             $json_api = $usr_obj->api_json();
+            $target = self::JSON_ID_ONLY;
             if ($usr_obj::class == value::class) {
+                $clone_obj = $usr_obj->clone_all();
+            } elseif ($usr_obj::class == element::class) {
+                $target = self::JSON_ARRAY_ONLY;
                 $clone_obj = $usr_obj->clone_all();
             } else {
                 $clone_obj = clone $usr_obj;
             }
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
-            $target = self::JSON_ID_ONLY;
-            // TODO Prio 2 deprecate this exception
-            if ($class == element::class) {
-                $target = '{"id":104,"name":"minute","class":"word"}';
-            }
             $result = $this->assert($test_name, $json_empty, $target);
         }
 

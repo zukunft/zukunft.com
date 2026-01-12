@@ -165,7 +165,7 @@ class term_view extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
+        $this->reset(true);
         $this->set_predicate(view_link_types::DEFAULT);
     }
 

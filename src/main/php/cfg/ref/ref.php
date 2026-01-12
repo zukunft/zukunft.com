@@ -200,7 +200,7 @@ class ref extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
+        $this->reset(true);
     }
 
     /**
@@ -210,8 +210,13 @@ class ref extends sandbox_link
      */
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
-        $this->create_objects($this->get_user());
+        $this->create_objects($usr);
         $this->external_key = '';
         $this->source = null;
         $this->url = null;
@@ -729,7 +734,7 @@ class ref extends sandbox_link
     function cloned_linked(string $external_key): ref
     {
 
-        $obj_cpy = parent::cloned();
+        $obj_cpy = $this->clone_all();
         $obj_cpy->set_predicate_id($this->predicate_id());
         $obj_cpy->set_external_key($external_key);
         return $obj_cpy;

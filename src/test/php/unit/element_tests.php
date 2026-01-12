@@ -76,9 +76,7 @@ class element_tests
         $t->assert_sql_by_id($sc, $elm);
 
         $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_insert($sc, $elm);
-        //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $elm);
         // TODO Prio 2 activate db write
         //$t->assert_sql_update($sc, $elm);
         //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
@@ -89,6 +87,7 @@ class element_tests
 
         $t->subheader($ts . 'element api');
         $elm = $t_frm->element();
+        $elm->id = 1;
         $t->assert_api_json($elm);
 
         // JSON export list

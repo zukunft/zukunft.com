@@ -298,7 +298,7 @@ class sandbox_link_named extends sandbox_link
      */
     function cloned_named(string $name): sandbox_link_named
     {
-        $obj_cpy = parent::cloned();
+        $obj_cpy = parent::clone_reset(true);
         $obj_cpy->id = $this->id;
         $obj_cpy->set_fob($this->fob());
         $obj_cpy->set_tob($this->tob());

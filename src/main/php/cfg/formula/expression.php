@@ -182,6 +182,7 @@ class expression extends shared_expression
      * object vars
      */
 
+    public ?formula $frm = null; // the repeated formula object for database saving of the elements
     public user $usr; // to get the user settings for the conversion
 
 
@@ -189,10 +190,11 @@ class expression extends shared_expression
      * construct and map
      */
 
-    function __construct(user $usr)
+    function __construct(?formula $frm)
     {
         $this->reset();
-        $this->usr = $usr;
+        $this->frm = $frm;
+        $this->usr = $frm->get_user();
     }
 
 
@@ -297,6 +299,7 @@ class expression extends shared_expression
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
             $elm = $this->element_by_symbol($obj_sym, $trm_lst);
+            $elm->frm = $this->frm;
             $elm_lst->add($elm);
             $work = $lib->str_right_of($work, chars::TERM_END);
             $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
@@ -671,7 +674,7 @@ class expression extends shared_expression
 
                         // group the references if needed
                         if ($group_it) {
-                            $elm_grp->add_obj($elm);
+                            $elm_grp->add_obj($elm, true);
                             log_debug('new group element "' . $elm->name() . '"');
 
                             // find the next term reference

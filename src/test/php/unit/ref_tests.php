@@ -101,6 +101,7 @@ class ref_tests
         $t->subheader($ts . 'sql write update');
         $ref = $t_ref->reference_change();
         $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
+        $ref_changed->description = null;
         $t->assert_sql_update($sc, $ref_changed, $ref);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);

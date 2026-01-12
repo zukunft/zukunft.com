@@ -300,7 +300,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * reset all object vars of this object to the null or default value
-     * used e.g. the cleanup the object before the import mapping
+     * used e.g. the clean up the object before the import mapping
      * @param bool $keep_user set to true to keep the original user
      */
     function reset(bool $keep_user = false): void
@@ -319,19 +319,6 @@ class sandbox extends db_object_seq_id_user
         if ($keep_user) {
             $this->set_user($usr);
         }
-    }
-
-    /**
-     * create a clone including the child objects like the group of values
-     * and empty all fields
-     *
-     * @return $this a clone with the name changed
-     */
-    function clone_reset(bool $keep_user = false): sandbox
-    {
-        $obj_cpy = $this->clone_all();
-        $obj_cpy->reset($keep_user);
-        return $obj_cpy;
     }
 
     /**

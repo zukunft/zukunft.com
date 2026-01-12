@@ -103,7 +103,7 @@ class test_formulas extends test_objects
      */
 
     /**
-     * @return formula for testing e.g. the expression calculation
+     * @return formula for testing of e.g. the expression calculation
      */
     function formula(): formula
     {

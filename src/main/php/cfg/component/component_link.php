@@ -231,9 +231,14 @@ class component_link extends sandbox_link
      */
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
 
-        $this->reset_objects($this->get_user());
+        $this->reset_objects($usr);
 
         // set the default values
         $this->set_predicate(component_link_type::ALWAYS);
@@ -569,7 +574,7 @@ class component_link extends sandbox_link
      */
     function set(int $id, view $msk, component $cmp, int $pos): void
     {
-        $this->reset();
+        $this->reset(true);
         $this->id = $id;
         $this->set_view($msk);
         $this->set_component($cmp);

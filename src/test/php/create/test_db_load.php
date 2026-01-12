@@ -1123,7 +1123,7 @@ class test_db_load
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->env->usr1);
-        $lnk->reset();
+        $lnk->reset(true);
         $lnk->set_view($msk);
         $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;

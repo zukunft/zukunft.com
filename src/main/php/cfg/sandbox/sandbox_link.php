@@ -177,7 +177,7 @@ class sandbox_link extends sandbox
 
     /**
      * reset all object vars of this object to the null or default value
-     * used e.g. the cleanup the object before the import mapping
+     * used e.g. the clean up the object before the import mapping
      * @param bool $keep_user set to true to keep the original user
      */
     function reset(bool $keep_user = false): void
