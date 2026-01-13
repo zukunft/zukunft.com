@@ -80,8 +80,7 @@ class element_tests
         $elm_db = $elm->clone_all();
         $elm_db->obj = $t_frm->formula_prior();
         $t->assert_sql_update($sc, $elm, $elm_db);
-        // TODO Prio 0 activate
-        //$t->assert_sql_delete($sc, $elm);
+        $t->assert_sql_delete($sc, $elm);
 
 
         $t->subheader($ts . 'element api');

@@ -132,7 +132,7 @@ class element extends db_object_seq_id_user
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        db_object_seq_id_user::__construct($usr);
+        $this->frm = new formula($usr);
     }
 
     /**
@@ -591,6 +591,38 @@ class element extends db_object_seq_id_user
         $qp = new sql_par($this::class, $sc_par_lst_used, $ext);
         $sc->set_class($this::class, $sc_par_lst_used);
         $sc->set_name($qp->name);
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_delete(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+
+        // set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used);
+        $sc->set_name($qp->name);
+
+        // delete element
+        $par_lst = [$this->id()];
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
+        $qp->par = $par_lst;
 
         return $qp;
     }

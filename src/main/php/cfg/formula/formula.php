@@ -992,7 +992,7 @@ class formula extends formula_map
         $elm_db_ids = array();
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $elm_db_ids[] = $db_row['ref_id'];
+                $elm_db_ids[] = $db_row[element_db::FLD_REF_ID];
             }
         }
         $lib = new library();
