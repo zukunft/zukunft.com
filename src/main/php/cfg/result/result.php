@@ -1409,10 +1409,9 @@ class result extends sandbox_value
      * for the word selection the id list is the lead, not the object list and not the group
      *
      * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
 
         global $db_con;

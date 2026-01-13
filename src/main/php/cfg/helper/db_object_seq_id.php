@@ -573,13 +573,11 @@ class db_object_seq_id extends db_object
 
     /**
      * add or update a row in the database
-     * TODO Prio 2 dismiss $use_func
      *
      * @param user_message $usr_msg to collect the problem messages and solution for the requesting user
-     * @param bool|null $use_func false if the prepared SQL statement cannot yet be used
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = true): bool
+    function save(user_message $usr_msg): bool
     {
         global $db_con;
 

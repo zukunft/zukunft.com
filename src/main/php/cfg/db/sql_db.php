@@ -512,25 +512,6 @@ class sql_db
         user_profile::class
     ];
 
-    // classes which use by default the "with log" function for saving data
-    const array CLASSES_THAT_USE_SQL_FUNC = [
-        word::class,
-        triple::class,
-        source::class,
-        ref::class,
-        group::class,
-        value::class,
-        value_text::class,
-        value_time::class,
-        value_geo::class,
-        formula::class,
-        formula_link::class,
-        view::class,
-        term_view::class,
-        component::class,
-        component_link::class
-    ];
-
     // classes that use the prepared sql write statement
     const array DB_WRITE_PREPARED = [
         word::class,

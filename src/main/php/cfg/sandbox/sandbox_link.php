@@ -878,65 +878,20 @@ class sandbox_link extends sandbox
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                $msg = 'add and log ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_link_add();
-            if ($log->id() > 0) {
-
-                // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-
-                // save the object fields if saving the key was successful
-                if ($this->id > 0) {
-                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        // TODO do rollback or retry?
-                    } else {
-                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
-
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->fob = $this->fob;
-                        $db_rec->tob = $this->tob;
-                        $db_rec->set_user($this->get_user());
-                        $std_rec = clone $db_rec;
-                        // save the object fields
-                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_LOGGING_ERROR, [
-                        msg_id::VAR_CLASS_NAME => $this::class,
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 

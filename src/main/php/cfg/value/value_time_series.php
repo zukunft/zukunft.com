@@ -315,10 +315,9 @@ class value_time_series extends sandbox_value
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, ?bool $use_func = null): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('->add');
 
@@ -378,12 +377,11 @@ class value_time_series extends sandbox_value
      */
 
     /**
-     * insert or update a time series in the database or save user specific time series numbers
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * insert or update a time series in the database or save user-specific time series numbers
      * @param user_message the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug('->save');
 

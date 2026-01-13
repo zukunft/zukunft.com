@@ -1076,12 +1076,11 @@ class view extends sandbox_code_id
      * overwrite the _sandbox function to save also the related component links
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
-        if (parent::save($usr_msg, $use_func)) {
+        if (parent::save($usr_msg)) {
             if ($this->has_components()) {
                 $this->save_component_links($usr_msg);
             }

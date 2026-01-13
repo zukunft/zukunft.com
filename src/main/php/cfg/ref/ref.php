@@ -1277,10 +1277,9 @@ class ref extends sandbox_link
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('ref->add ' . $this->dsp_id());
 
@@ -1322,19 +1321,13 @@ class ref extends sandbox_link
      * TODO review by comparing with sandbox function
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug();
 
         global $db_con;
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // build the database object because the is anyway needed
         if ($this->get_user() != null) {
@@ -1357,7 +1350,7 @@ class ref extends sandbox_link
         // create a new object or update an existing
         if ($this->id() <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $this->add($usr_msg, $use_func);
+            $this->add($usr_msg);
         } else {
             log_debug('update ' . $this->dsp_id());
 

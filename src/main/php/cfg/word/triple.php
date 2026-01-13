@@ -2555,16 +2555,14 @@ class triple extends sandbox_link_named
      * @param sql_db $db_con the active database connection
      * @param triple|sandbox $db_rec the database record before the saving
      * @param triple|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @param user_message $usr_msg a messages for the user what should be changed if something failed
+     * @param user_message $usr_msg a message for the user what should be changed if something failed
      * @return bool true if everything has been fine
      */
     function save_id_if_updated(
         sql_db         $db_con,
         triple|sandbox $db_rec,
         triple|sandbox $std_rec,
-        user_message   $usr_msg,
-        bool           $use_func
+        user_message   $usr_msg
     ): bool
     {
         if ($db_rec->from_id() <> $this->from_id()
@@ -2630,10 +2628,9 @@ class triple extends sandbox_link_named
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug('triple->add new triple for "' . $this->get_from()->name() . '" ' . $this->get_verb_name() . ' "' . $this->get_to()->name() . '"');
 
@@ -2694,10 +2691,9 @@ class triple extends sandbox_link_named
      * overwrite the sandbox save because for triple the reverse order should be checked
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -2706,11 +2702,6 @@ class triple extends sandbox_link_named
         // init
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // check the preserved names
         if ($this->check_save($usr_msg)) {
@@ -2772,7 +2763,7 @@ class triple extends sandbox_link_named
             if ($this->id() == 0) {
                 $usr_msg->add($this->is_name_used_msg($this->name()));
                 if ($usr_msg->is_ok()) {
-                    $this->add($usr_msg, $use_func);
+                    $this->add($usr_msg);
                     if (!$usr_msg->is_ok()) {
                         log_info($usr_msg->get_last_message());
                     }
@@ -2806,7 +2797,7 @@ class triple extends sandbox_link_named
 
                 // check if the id parameters are supposed to be changed
                 if ($usr_msg->is_ok()) {
-                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
+                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }

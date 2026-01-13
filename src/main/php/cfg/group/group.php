@@ -1468,52 +1468,22 @@ class group extends sandbox_multi
     /**
      * add a new group to the database
      *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message $usr_msg with status ok
-     *                               or if something went wrong
-     *                               the message that should be shown to the user
-     *                               including suggested solutions
+     * @param user_message $usr_msg with status OK
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_add();
-            if ($log->id() > 0) {
-
-                // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                    $this->set_saved();
-                }
-
-                // save the object fields if saving the key was successful
-                if ($this->is_saved()) {
-                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_GROUP, [msg_id::VAR_ID => $this->dsp_id()]);
-                }
-            }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+            $this->id = $usr_msg->get_row_id();
         }
 
         return $usr_msg->is_ok();
@@ -1719,33 +1689,15 @@ class group extends sandbox_multi
      * TODO maybe move this to del_exe
      *
      * @param user_message $usr_msg
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool
      */
-    function del(user_message $usr_msg, ?bool $use_func = null): bool
+    function del(user_message $usr_msg): bool
     {
         global $db_con;
         $sc = $db_con->sql_creator();
 
-        if ($use_func) {
-            $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        } else {
-
-            // log the delete attempt first
-            if ($this->is_prime()) {
-                $log = $this->log_del_prime();
-            } elseif ($this->is_big()) {
-                $log = $this->log_del_big();
-            } else {
-                $log = $this->log_del();
-            }
-            if ($log->id() > 0) {
-                $db_con->set_class(group::class);
-                $qp = $this->sql_delete($sc, $usr_msg);
-                $db_con->delete($qp, 'del ' . $this->dsp_id(), $usr_msg);
-            }
-        }
+        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
 
         return $usr_msg->is_ok();
     }

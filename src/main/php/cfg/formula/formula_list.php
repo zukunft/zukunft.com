@@ -855,7 +855,7 @@ class formula_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->add($add_lst->insert($trm_lst, true, $imp, formula::class));
+                    $lst_usr_msg->add($add_lst->insert($trm_lst, $imp, formula::class));
                     if ($add_lst->count() > 0) {
                         $lst_usr_msg->set_added_depending();
                         $frm_added = true;
@@ -886,7 +886,7 @@ class formula_list extends sandbox_list_named
 
 
             // create any missing sql update functions and update the formulas
-            $usr_msg->add($this->update($db_lst_all, true, $imp, formula::class, $upd_per_sec));
+            $usr_msg->add($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -899,7 +899,7 @@ class formula_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, true, $imp, formula::class, $del_per_sec));
+            $usr_msg->add($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
 
         }
 

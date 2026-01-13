@@ -225,7 +225,6 @@ class group_write_tests
      *
      * @param word $wrd the word object that makes the phrase list unique
      * @param string $grp_name the name of the group
-     * @param bool $use_func true if the sql function with log should be used
      * @param phrase_list $phr_lst the prase list either for a prime main or big group id
      * @param string $test_name the unique description of the test for the developer
      * @param test_cleanup $t the test object with the test settings
@@ -234,7 +233,6 @@ class group_write_tests
     function group_add(
         word         $wrd,
         string       $grp_name,
-        bool         $use_func,
         phrase_list  $phr_lst,
         string       $test_name,
         test_cleanup $t
@@ -247,7 +245,7 @@ class group_write_tests
             $phr_lst->add($wrd->phrase());
             $grp->set_phrase_list($phr_lst);
             $grp->set_name($grp_name);
-            $grp->save($usr_msg, $use_func);
+            $grp->save($usr_msg);
             $grp->reset();
             $grp->load_by_name($grp_name);
             $t->assert_true($test_name, $grp->isset());
@@ -259,7 +257,6 @@ class group_write_tests
      *
      * @param string $old_name used to select the group to rename
      * @param string $new_name the target name of the group
-     * @param bool $use_func true if the sql function with log should be used
      * @param int $test_case indicator to select the user
      * @param string $test_name the unique description of the test for the developer
      * @param test_cleanup $t the test object with the test settings
@@ -268,7 +265,6 @@ class group_write_tests
     function group_rename(
         string       $old_name,
         string       $new_name,
-        bool         $use_func,
         int          $test_case,
         string       $test_name,
         test_cleanup $t
@@ -285,7 +281,7 @@ class group_write_tests
                 $grp->set_user($t->usr1);
             }
             $grp->set_name($new_name);
-            $grp->save($usr_msg, $use_func);
+            $grp->save($usr_msg);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $new_name);
@@ -296,14 +292,12 @@ class group_write_tests
      * test deleting a group name and switch back to the generated name
      *
      * @param string $grp_name the name of the group
-     * @param bool $use_func true if the sql function with log should be used
      * @param string $test_name the unique description of the test for the developer
      * @param test_cleanup $t the test object with the test settings
      * @return void
      */
     function group_del(
         string       $grp_name,
-        bool         $use_func,
         string       $test_name,
         test_cleanup $t
     ): void
@@ -313,7 +307,7 @@ class group_write_tests
         $grp->load_by_name($grp_name);
         if ($grp->is_saved()) {
             $id = $grp->id();
-            $grp->del($usr_msg, $use_func);
+            $grp->del($usr_msg);
             $grp->reset();
             $grp->load_by_id($id);
             $t->assert($test_name, $grp->name(), $grp->name_generated());

@@ -820,73 +820,24 @@ class sandbox_named extends sandbox
      * TODO use optional sql insert with log
      * TODO use prepared sql insert
      *
-     * @param user_message $usr_msg with status ok
+     * @param user_message $usr_msg with status OK
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                $msg = 'add and log ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_add();
-            if ($log->id() > 0) {
-
-                // insert the new object and save the object key
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                $msg = 'add ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-
-                // save the object fields if saving the key was successful
-                if ($this->id() > 0) {
-                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        // TODO do rollback or retry?
-                    } else {
-                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
-
-                        // TODO all all objects to the potential used of the prepared sql function with log
-                        if (!$this->sql_write_prepared()) {
-                            // create an empty db_rec element to force saving of all set fields
-                            $db_rec = clone $this;
-                            $db_rec->reset();
-                            $db_rec->name = $this->name();
-                            $db_rec->set_user($this->get_user());
-                            $std_rec = clone $db_rec;
-                            // save the object fields
-                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                        }
-                    }
-
-                } else {
-                    $lib = new library();
-                    $class_name = $lib->class_to_name($this::class);
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_LOGGING_ERROR, [
-                        msg_id::VAR_CLASS_NAME => $class_name,
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
@@ -899,7 +850,7 @@ class sandbox_named extends sandbox
      */
 
     /**
-     * preform the pre save checks which means
+     * preform the pre save checks which mean
      * for these named objects check if the user has requested to use a preserved name
      * and if yes return a message and a suggested solution to the user
      *

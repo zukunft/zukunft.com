@@ -592,10 +592,9 @@ class ip_range extends db_object_seq_id
      * update an ip range in the database or update the existing
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = true): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug('ip_range->save ' . $this->dsp_id());
 

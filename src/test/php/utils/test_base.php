@@ -2564,15 +2564,14 @@ class test_base
      *
      * @param string $test_name the description of the test
      * @param sandbox_named|sandbox_link_named $sbx the sandbox object with the vars set for the test
-     * @param bool $use_func true if the complex function including the logging should be used
      * @return bool true if the test has been successful
      */
-    function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
+    function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx): bool
     {
         $usr_msg = new user_message($this->usr1);
         // add the named object and remember the name
         $name = $sbx->name();
-        $sbx->save($usr_msg, $use_func);
+        $sbx->save($usr_msg);
         // reset the user_message because we don't care if the object already existed before saving it,
         $usr_msg = new user_message($this->usr1);
         $sbx->reset(true);
@@ -2582,19 +2581,17 @@ class test_base
         // check the log
         if ($result) {
             $id = $sbx->id();
-            if ($use_func) {
                 $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
                 $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
                 if ($result) {
                     $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
                 }
-            }
         }
 
         // update the name
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
-            $sbx->save($usr_msg, $use_func);
+            $sbx->save($usr_msg);
             $sbx->reset(true);
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
@@ -2602,7 +2599,7 @@ class test_base
         }
 
         // check the log
-        if ($result and $use_func) {
+        if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
             if ($result) {
@@ -2612,11 +2609,11 @@ class test_base
 
         if ($result) {
             // delete the name
-            $sbx->del($usr_msg, $use_func);
+            $sbx->del($usr_msg);
         }
 
         // check the log
-        if ($result and $use_func) {
+        if ($result) {
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
             if ($result) {

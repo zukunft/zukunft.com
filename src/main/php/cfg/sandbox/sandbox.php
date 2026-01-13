@@ -2298,15 +2298,13 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @param user_message $usr_msg a messages for the user what should be changed if something failed
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
     function save_id_if_updated(
         sql_db       $db_con,
         sandbox      $db_rec,
         sandbox      $std_rec,
-        user_message $usr_msg,
-        bool         $use_func
+        user_message $usr_msg
     ): bool
     {
         log_debug($this->dsp_id());
@@ -2323,7 +2321,7 @@ class sandbox extends db_object_seq_id_user
                     if ($this->rename_can_switch) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
-                        if (!$to_del->del($usr_msg, $use_func)) {
+                        if (!$to_del->del($usr_msg)) {
                             $usr_msg->add_id_with_vars(msg_id::FAILED_TO_DELETE_UNUSED, [msg_id::VAR_CLASS_NAME => $class_name]);
                         }
                         if ($usr_msg->is_ok()) {
@@ -2335,11 +2333,7 @@ class sandbox extends db_object_seq_id_user
                             // force the include again
                             $this->include();
                             $db_rec->exclude();
-                            if ($use_func) {
-                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                            } else {
-                                $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
-                            }
+                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                             if ($usr_msg->is_ok()) {
                                 log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                             } else {
@@ -2372,7 +2366,7 @@ class sandbox extends db_object_seq_id_user
                         // if the target link has not yet been created
                         // ... request to delete the old
                         $to_del = clone $db_rec;
-                        if (!$to_del->del($usr_msg, $use_func)) {
+                        if (!$to_del->del($usr_msg)) {
                             $usr_msg->add_id_with_vars(msg_id::FAILED_TO_DELETE_UNUSED, [
                                 msg_id::VAR_CLASS_NAME => $this::class
                             ]);
@@ -2565,14 +2559,13 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @param user_message $usr_msg with status ok
+     * @param user_message $usr_msg with status OK
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
@@ -2618,11 +2611,10 @@ class sandbox extends db_object_seq_id_user
      * TODO return a user_message with a suggested solution instead of a string
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
 
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -2631,11 +2623,6 @@ class sandbox extends db_object_seq_id_user
         // init
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // check the preserved names
         if ($this->check_save($usr_msg)) {
@@ -2692,7 +2679,7 @@ class sandbox extends db_object_seq_id_user
             if ($this->id() == 0) {
 
                 log_debug('add ' . $this->dsp_id());
-                $this->add($usr_msg, $use_func);
+                $this->add($usr_msg);
 
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
@@ -2762,17 +2749,13 @@ class sandbox extends db_object_seq_id_user
 
                     // check if the id parameters are supposed to be changed
                     if ($usr_msg->is_ok()) {
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
+                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($usr_msg->is_ok()) {
-                        if ($use_func) {
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                        } else {
-                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                        }
+                        $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                     }
                 }
             }
@@ -2791,10 +2774,9 @@ class sandbox extends db_object_seq_id_user
      * TODO Prio 0 use it for import
      *
      * @param user_message $usr_msg to enrich with warnings, problems and solutions
-     * @param bool|null $use_func true if the predefined sql function should be used
      * @return bool true if everything has been successful
      */
-    function save_related(user_message $usr_msg, ?bool $use_func = null): bool
+    function save_related(user_message $usr_msg): bool
     {
         return true;
     }
@@ -2808,7 +2790,7 @@ class sandbox extends db_object_seq_id_user
      * delete the complete object (the calling function del must have checked that no one uses this object)
      * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(user_message $usr_msg, ?bool $use_func = null): bool
+    private function del_exe(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2816,67 +2798,14 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
 
-        if ($use_func) {
+        // if this object has related objects delete the related object before deleting this
+        $this->del_links($usr_msg);
 
-            // if this object has related objects delete the related object before deleting this
-            $this->del_links($usr_msg);
-
-            // actually delete to object
-            $sc = $db_con->sql_creator();
-            // TODO include deleting of user excludes in the sql function
-            $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        } else {
-
-            // log the deletion request
-            if ($this->is_link_obj()) {
-                $log = $this->log_del_link();
-            } else {
-                $log = $this->log_del();
-            }
-            if ($log->id() > 0) {
-                $db_con->usr_id = $this->get_user()->id;
-
-                // if this object has related objects delete the related object before deleting this
-                $this->del_links($usr_msg);
-
-                // delete first all user configuration that have also been excluded
-                if ($usr_msg->is_ok()) {
-                    if ($this->sql_write_prepared()) {
-                        $sc = $db_con->sql_creator();
-                        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
-                        $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
-                    } else {
-                        $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->get_user()->id);
-                        $msg = $db_con->delete_old(
-                            array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
-                            array($this->id(), '1'));
-                        $usr_msg->add_message_text($msg);
-                    }
-                }
-                if ($usr_msg->is_ok()) {
-                    // finally, delete the object
-                    if ($this->sql_write_prepared()) {
-                        $sc = $db_con->sql_creator();
-                        $qp = $this->sql_delete($sc, $usr_msg);
-                        $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
-                    } else {
-                        $db_con->set_class($this::class);
-                        $db_con->set_usr($this->get_user()->id);
-                        $msg = $db_con->delete_old($this->id_field(), $this->id());
-                        $usr_msg->add_message_text($msg);
-                    }
-                    log_debug('of ' . $this->dsp_id() . ' done');
-                } else {
-                    log_err('Delete failed for ' . $class_name,
-                        $this::class . '->del_exe',
-                        'Delete failed, because removing the user settings for '
-                        . $class_name . ' ' . $this->dsp_id() . ' returns '
-                        . $usr_msg->all_message_text(), (new Exception)->getTraceAsString(), $this->get_user());
-                }
-            }
-        }
+        // actually delete to object
+        $sc = $db_con->sql_creator();
+        // TODO include deleting of user excludes in the sql function
+        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
 
         return $usr_msg->is_ok();
     }
@@ -2894,7 +2823,7 @@ class sandbox extends db_object_seq_id_user
      * @return bool true if everything has been fine
      *
      */
-    function del(user_message $usr_msg, ?bool $use_func = null): bool
+    function del(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2902,11 +2831,6 @@ class sandbox extends db_object_seq_id_user
 
         global $db_con;
         $msg = '';
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
@@ -2932,7 +2856,7 @@ class sandbox extends db_object_seq_id_user
                 }
                 // check if the object simply can be deleted because it has never been used
                 if (!$this->used_by_someone_else()) {
-                    $this->del_exe($usr_msg, $use_func);
+                    $this->del_exe($usr_msg);
                 } else {
                     // if the owner deletes the object, find a new owner or delete the object completely
                     if ($this->owner_id() == $this->get_user()->id) {
@@ -2967,7 +2891,7 @@ class sandbox extends db_object_seq_id_user
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug('can delete ' . $this->dsp_id() . ' after owner change');
-                        $this->del_exe($usr_msg, $use_func);
+                        $this->del_exe($usr_msg);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
                         $this->exclude();
@@ -2996,11 +2920,7 @@ class sandbox extends db_object_seq_id_user
                         }
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
-                            if ($use_func) {
-                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                            } else {
-                                $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
-                            }
+                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                         }
                     }
                 }
@@ -3451,16 +3371,6 @@ class sandbox extends db_object_seq_id_user
         $qp->call_sql .= $call_val_str . ');';
 
         return $qp;
-    }
-
-    /**
-     * @return bool true if for this database and class
-     *              a prepared script including writing to the log
-     *              for db write should be used by default
-     */
-    function sql_default_script_usage(): bool
-    {
-        return in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC);
     }
 
     /**

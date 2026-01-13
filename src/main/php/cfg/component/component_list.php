@@ -399,7 +399,7 @@ class component_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, component::class, $add_lst->count(), $step_time);
-                    $usr_msg->add($add_lst->insert($db_lst_all, true, $imp, component::class));
+                    $usr_msg->add($add_lst->insert($db_lst_all, $imp, component::class));
                     if ($add_lst->count() > 0) {
                         $usr_msg->set_added_depending();
                         $frm_added = true;
@@ -422,7 +422,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql update functions and update the components
-            $usr_msg->add($this->update($db_lst_all, true, $imp, component::class, $upd_per_sec));
+            $usr_msg->add($this->update($db_lst_all, $imp, component::class, $upd_per_sec));
 
 
             // fill up the main list with the components to check if anything is missing
@@ -430,7 +430,7 @@ class component_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, true, $imp, component::class, $del_per_sec));
+            $usr_msg->add($this->delete($db_lst_all, $imp, component::class, $del_per_sec));
 
         }
 

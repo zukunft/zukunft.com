@@ -2033,7 +2033,6 @@
     \-- update - section for function update not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /sandbox/sandbox.php
-    \-- sql_default_script_usage - section for function sql_default_script_usage not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- sql_write_prepared - section for function sql_write_prepared not yet defined that it should be sql write in /sandbox/sandbox.php
     \-- db_fields_all_sandbox - section for function db_fields_all_sandbox not yet defined that it should be sql write fields in /sandbox/sandbox.php
     \-- db_changed_sandbox_list - section for function db_changed_sandbox_list not yet defined that it should be sql write fields in /sandbox/sandbox.php
@@ -2245,7 +2244,6 @@
     \-- id_lst - section for function id_lst not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- id_or_lst - section for function id_or_lst not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- del_links - section for function del_links is expected to be del in /sandbox/sandbox_multi.php
-    \-- sql_default_script_usage - section for function sql_default_script_usage not yet defined that it should be delete in /sandbox/sandbox_multi.php
     \-- db_changed_sandbox_list - section for function db_changed_sandbox_list not yet defined that it should be sql write fields in /sandbox/sandbox_multi.php
     \-- save_field_type - section for function save_field_type is expected to be save in /sandbox/sandbox_multi.php
     \-- type_name - section for function type_name is expected to be preloaded in /sandbox/sandbox_multi.php
@@ -4272,7 +4270,7 @@
         \-- value_time_series - add a new time series
 \-- write
     \-- save
-        \-- value_time_series - insert or update a time series in the database or save user specific time series numbers
+        \-- value_time_series - insert or update a time series in the database or save user-specific time series numbers
 ```
 
 ### frontend errors

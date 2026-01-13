@@ -1452,15 +1452,13 @@ class formula_map extends sandbox_code_id
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
      * @param user_message $usr_msg a messages for the user what should be changed if something failed
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
     function save_id_if_updated(
         sql_db       $db_con,
         sandbox      $db_rec,
         sandbox      $std_rec,
-        user_message $usr_msg,
-        bool         $use_func
+        user_message $usr_msg
     ): bool
     {
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());
@@ -1535,10 +1533,9 @@ class formula_map extends sandbox_code_id
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -1564,11 +1561,7 @@ class formula_map extends sandbox_code_id
                 $db_rec->set_name($this->name());
                 $std_rec = clone $db_rec;
                 // save the formula fields
-                if ($use_func) {
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                } else {
-                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                }
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
             }
         } else {
             $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
@@ -1581,22 +1574,16 @@ class formula_map extends sandbox_code_id
      * add or update a formula in the database or create a user formula
      * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
-     * @param bool $use_func if true, a predefined function is used that also creates the log entries
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
         global $mtr;
         global $sys;
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // check the preserved names
         if ($this->check_save($usr_msg)) {
@@ -1673,7 +1660,7 @@ class formula_map extends sandbox_code_id
                 if ($usr_msg->is_ok()) {
 
                     log_debug('add');
-                    $this->add($usr_msg, $use_func);
+                    $this->add($usr_msg);
                 }
             } else {
                 // if the similar object is different from $this object, suggest renaming $this object
@@ -1717,16 +1704,12 @@ class formula_map extends sandbox_code_id
                     if ($usr_msg->is_ok()) {
 
                         // check if the id parameters are supposed to be changed
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
+                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
 
                         // if a problem has appeared up to here, don't try to save the values
                         // the problem is shown to the user by the calling interactive script
                         if ($usr_msg->is_ok()) {
-                            if ($use_func) {
-                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                            } else {
-                                $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                            }
+                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                         }
                     }
                 }

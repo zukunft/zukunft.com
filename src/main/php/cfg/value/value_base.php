@@ -2112,10 +2112,10 @@ class value_base extends sandbox_value
      * @return bool true if the id fields have been saved
      */
     function save_id_fields(
-        sql_db $db_con,
+        sql_db                   $db_con,
         value_base|sandbox_multi $db_rec,
         value_base|sandbox_multi $std_rec,
-        user_message $usr_msg
+        user_message             $usr_msg
     ): bool
     {
         log_debug('value->save_id_fields');
@@ -2182,8 +2182,7 @@ class value_base extends sandbox_value
         sql_db                   $db_con,
         sandbox_multi|value_base $db_rec,
         sandbox_multi|value_base $std_rec,
-        user_message             $usr_msg,
-        ?bool                    $use_func = null
+        user_message             $usr_msg
     ): bool
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
@@ -2224,7 +2223,7 @@ class value_base extends sandbox_value
                     // ... and create a new display component link
                     $this->set_id(0);
                     $this->set_owner_id($this->get_user()->id());
-                    $this->add($usr_msg, $use_func);
+                    $this->add($usr_msg);
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
@@ -2238,88 +2237,33 @@ class value_base extends sandbox_value
 
     /**
      * add a new value
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @param user_message $usr_msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, ?bool $use_func = null): bool
+    function add(user_message $usr_msg): bool
     {
         log_debug();
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_add();
-            if ($log->id() > 0) {
-                // insert the value
-                $db_con->insert($this->sql_insert($db_con->sql_creator(), $usr_msg), 'add value', $usr_msg);
-                // the id of value is the given group id not a sequence
-                //if ($ins_result->has_row()) {
-                //    $this->set_id($ins_result->get_row_id());
-                //}
-                //$db_con->set_type(self::class);
-                //$this->set_id($db_con->insert(array(group::FLD_ID, user_db::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->get_user()->id, $this->number, sql::NOW)));
-                if ($this->is_id_set()) {
-                    // update the reference in the log
-                    if ($this->grp()->is_prime()) {
-                        if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_id(msg_id::VALUE_REFERENCE_LOG_REF_FAILED);
-                        }
-                    } else {
-                        // TODO: save in the value or value big change log
-                        $log = $this->log_add_value();
-                    }
-
-                    // update the phrase links for fast searching
-                    /*
-                    $upd_result = $this->upd_phr_links();
-                    if ($upd_result != '') {
-                        $result->add_message_text('Adding the phrase links of the value failed because ' . $upd_result);
-                        $this->set_id(0);
-                    }
-                    */
-
-                    if ($this->is_id_set()) {
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_val = $this->clone_all();
-                        $db_val->reset();
-                        $db_val->set_user($this->get_user());
-                        $db_val->set_id($this->id());
-                        $db_val->set_value($this->get_value()); // ... but not the field saved already with the insert
-                        $std_val = $db_val->clone_all();
-                        // save the value fields
-                        $usr_msg->add_message_text($this->save_fields($db_con, $db_val, $std_val));
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_VALUE, [
-                        msg_id::VAR_ID => $this->id()
-                    ]);
-                }
-            }
-        }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg, false, true);
 
         return $usr_msg->is_ok();
     }
 
     /**
-     * insert or update a value in the database or save a user specific number
+     * insert or update a value in the database or save a user-specific number
      * similar to sandbox->save but does not return the id because the id is predefined by the group id
      *
-     * @param user_message $usr_msg in case of a problem the message that should be shown to the user
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @param user_message $usr_msg in case of a problem, the message that should be shown to the user
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -2331,11 +2275,6 @@ class value_base extends sandbox_value
         $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // check if a new value is supposed to be added or updated
         // TODO combine this db call with the add or update to one SQL sequence with one commit at the end
@@ -2356,7 +2295,7 @@ class value_base extends sandbox_value
             if (!$this->is_saved()) {
 
                 log_debug('add ' . $this->dsp_id());
-                $this->add($usr_msg, $use_func);
+                $this->add($usr_msg);
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value
@@ -2393,18 +2332,14 @@ class value_base extends sandbox_value
 
                 // check if the id parameters are supposed to be changed
                 if ($usr_msg->is_ok()) {
-                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
+                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                    if ($use_func) {
-                        $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                    } else {
-                        $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
-                    }
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                 } else {
                     log_warning('value ' . $this->dsp_id() . ' not saved');
                 }

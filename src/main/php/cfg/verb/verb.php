@@ -1213,10 +1213,9 @@ class verb extends type_object
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 

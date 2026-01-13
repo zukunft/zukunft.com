@@ -955,10 +955,9 @@ class formula_link extends sandbox_link
     /**
      * update a formula_link in the database or create a user formula_link
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true, a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
 
         global $db_con;
@@ -970,11 +969,6 @@ class formula_link extends sandbox_link
             log_debug('id ' . $this->id() . ' for user ' . $this->get_user()->name);
         } else {
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
-        }
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
         }
 
         // load the objects if needed
@@ -1000,7 +994,7 @@ class formula_link extends sandbox_link
         if ($this->id() <= 0) {
             if ($this->db_ready($usr_msg)) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $this->add($usr_msg, $use_func);
+                $this->add($usr_msg);
             }
         } else {
             log_debug('update "' . $this->id() . '"');
@@ -1040,7 +1034,7 @@ class formula_link extends sandbox_link
             // check if the id parameters are supposed to be changed
             $this->reload_objects();
             if ($usr_msg->is_ok()) {
-                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg, $use_func);
+                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
             }
 
             // if a problem has appeared up to here, don't try to save the values

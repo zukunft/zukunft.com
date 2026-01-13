@@ -2967,14 +2967,13 @@ class sandbox_multi extends db_object_multi_user
     /**
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
      *
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @param user_message $usr_msg with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg, bool $use_func = false): bool
+    function add(user_message $usr_msg): bool
     {
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'add',
@@ -2989,7 +2988,7 @@ class sandbox_multi extends db_object_multi_user
      *
      */
 
-    function save(user_message $usr_msg, ?bool $use_func = null): bool
+    function save(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -2998,11 +2997,6 @@ class sandbox_multi extends db_object_multi_user
         // init
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // check the preserved names (only used for group names)
         if ($this->check_preserved($usr_msg)) {
@@ -3054,7 +3048,7 @@ class sandbox_multi extends db_object_multi_user
         if ($usr_msg->is_ok()) {
             if (!$this->is_saved()) {
                 log_debug('add');
-                $this->add($usr_msg, $use_func);
+                $this->add($usr_msg);
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {
@@ -3130,11 +3124,7 @@ class sandbox_multi extends db_object_multi_user
                     // the problem is shown to the user by the calling interactive script
                     // TODO add function based saving
                     if ($usr_msg->is_ok()) {
-                        if ($use_func) {
-                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                        } else {
-                            $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
-                        }
+                        $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                     }
                 }
             }
@@ -3270,17 +3260,17 @@ class sandbox_multi extends db_object_multi_user
      * exclude or delete an object
      * similar to the sandbox del function but for more than one table
      *
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message with status ok
-     *                      or if something went wrong
-     *                      the message that should be shown to the user
-     *                      including suggested solutions
+     * @param user_message with status ok
+     *                     or if something went wrong
+     *                     the message that should be shown to the user
+     *                     including suggested solutions
+     * @return bool true if the value has been deleted without issues
      *
      * TODO if the owner deletes it, change the owner to the new median user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(user_message $usr_msg, ?bool $use_func = null): bool
+    function del(user_message $usr_msg): bool
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -3288,11 +3278,6 @@ class sandbox_multi extends db_object_multi_user
 
         global $db_con;
         $msg = '';
-
-        // decide which db write method should be used
-        if ($use_func === null) {
-            $use_func = $this->sql_default_script_usage();
-        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
@@ -3377,11 +3362,7 @@ class sandbox_multi extends db_object_multi_user
                         }
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
-                            if ($use_func) {
-                                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                            } else {
-                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec, $usr_msg);
-                            }
+                            $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                         }
                     }
                 }
@@ -4358,16 +4339,6 @@ class sandbox_multi extends db_object_multi_user
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return $usr_msg;
-    }
-
-    /**
-     * @return bool true if for this database and class
-     *              a prepared script including writing to the log
-     *              for db write should be used by default
-     */
-    function sql_default_script_usage(): bool
-    {
-        return in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC);
     }
 
 
