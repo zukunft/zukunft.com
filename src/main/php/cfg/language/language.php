@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -75,16 +75,6 @@ class language extends type_object
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
     );
-
-
-    /*
-     * code link
-     */
-
-    // list of the languages that have a coded functionality
-    const string DEFAULT = "english";
-    const int DEFAULT_ID = 1;
-    const string TN_READ = "English";
 
 
     /*
@@ -143,6 +133,16 @@ class language extends type_object
         $dp_type = $lib->class_to_name($this::class);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $dp_type);
         return $this->load_typ_obj($qp, $this::class);
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
 }

@@ -246,7 +246,7 @@ class config extends db_object_seq_id
      * @param string $description text that explains the config value to the user or admin
      * @param sql_db $db_con the open database connection that should be used
      */
-    function check(string $code_id, string $target_value, sql_db $db_con, string $description = ''): bool
+    function check_cfg(string $code_id, string $target_value, sql_db $db_con, string $description = ''): bool
     {
         $result = false;
 

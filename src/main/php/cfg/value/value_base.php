@@ -142,8 +142,8 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -182,7 +182,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
@@ -204,7 +204,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use DateTime;
 use Exception;
 
@@ -1260,7 +1260,7 @@ class value_base extends sandbox_value
                                 if ($formula_text <> "") {
                                     $l_part = $lib->str_left_of($formula_text, chars::CHAR_CALC);
                                     $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
-                                    $exp = new expression($this->get_user());
+                                    $exp = new expression($frm);
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->result_phrases();
                                     $phr_lst = $exp->phr_lst();
@@ -1738,12 +1738,11 @@ class value_base extends sandbox_value
     }
 
     /**
-     * create a database record to save a user specific value
+     * create a database record to save a user-specific value
      */
-    protected function add_usr_cfg(string $class = self::class): bool
+    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
     {
         global $db_con;
-        $usr_msg = new user_message();
 
         if (!$this->has_usr_cfg()) {
             log_debug('value->add_usr_cfg for "' . $this->id() . ' und user ' . $this->get_user()->name);

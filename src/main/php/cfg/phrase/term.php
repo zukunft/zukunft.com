@@ -71,9 +71,9 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -100,9 +100,9 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 

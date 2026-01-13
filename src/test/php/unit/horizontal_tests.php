@@ -59,7 +59,7 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_mappers.php';
@@ -80,7 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -116,7 +116,7 @@ class horizontal_tests
             $test_name = 'reset ' . $lib->class_to_name($class) . ' lead to an empty api_json';
             $filled_obj = $t_map->class_to_filled_object($class);
             $filled_obj->reset();
-            $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
             $t->assert_json_string($test_name, $api_json, test_api::JSON_ID_ONLY);
         }
 
@@ -133,7 +133,6 @@ class horizontal_tests
             $test_name = 'sql creation for ' . $lib->class_to_name($class);
             $t->resource_path = $lib->class_to_resource_path($class);
             $obj = $t_map->class_to_base_object($class);
-            $obj_changed = $obj->clone_reset();
             $t->assert_sql_table_create($obj);
             $t->assert_sql_index_create($obj);
             if (!in_array($class, def::NO_FOREIGN_DB_KEY_CLASSES)) {
@@ -145,7 +144,11 @@ class horizontal_tests
                 $sql_typ_lst[] = sql_type::LOG;
             }
             $t->assert_sql_insert($sc, $obj, $sql_typ_lst);
-            //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
+            $id = $obj->id();
+            $obj_changed = $obj->clone_reset(true);
+            $obj_changed = $t_map->change_base_object($obj_changed);
+            $obj_changed->id = $id;
+            $t->assert_sql_update($sc, $obj_changed, $obj, $sql_typ_lst);
             $t->assert_sql_delete($sc, $obj, $sql_typ_lst);
 
         }
@@ -163,7 +166,7 @@ class horizontal_tests
             $check_obj = $filled_obj->clone_all();
             // create the api message to the frontend
             // for link objects like the component_link the default setting is to include the child and reduce the json array levels
-            $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
             // get the empty frontend object
             $ui_obj = $tl->obj_to_ui_obj($filled_obj);
             // set the vars of the frontend object based on the api
@@ -226,7 +229,7 @@ class horizontal_tests
                 $dto->add_component($filled_obj->get_component());
             }
             $ex_json = $filled_obj->export_json([], false);
-            $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $api_json = $filled_obj->api_json([api_types::TEST_MODE]);
             $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
@@ -241,7 +244,7 @@ class horizontal_tests
             $filled_obj->import_mapper($ex_json, $usr_msg, $dto);
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->id = $id;
-            $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $final_json = $filled_obj->api_json([api_types::TEST_MODE]);
             $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }

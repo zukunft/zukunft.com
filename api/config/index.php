@@ -50,7 +50,7 @@ include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_CONST . 'users.php';
 
@@ -61,7 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -104,9 +104,9 @@ if ($db_con->is_open()) {
         }
         $sys->times->switch(system_time_type::MAP_JSON);
         if ($with_phr == url_var::TRUE) {
-            $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
+            $result = $cfg_lst->api_json([api_types::INCL_PHRASES]);
         } else {
-            $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
+            $result = $cfg_lst->api_json([api_types::NO_KEY_FILL]);
         }
     }
 

@@ -97,8 +97,8 @@ include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_VIEW . 'view_relation_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -167,8 +167,8 @@ use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 
 class type_list
 {
@@ -387,8 +387,8 @@ class type_list
             change_action_list::class => change_action::class,
             change_table_list::class => change_table::class,
             change_field_list::class => change_table_field::class,
-            share_type_list::class => share_type::class,
-            protection_type_list::class => protection_type::class,
+            share_type_list::class => share_types::class,
+            protection_type_list::class => protection_types::class,
             job_type_list::class => job_type::class,
             language_form_list::class => language_form::class,
             language_list::class => language::class,

@@ -39,7 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
@@ -70,7 +70,7 @@ if ($db_con->is_open()) {
             $val->load_by_id($val_id);
             $val->load_objects();
             if ($with_phr == url_var::TRUE) {
-                $result = $val->api_json([api_type::INCL_PHRASES]);
+                $result = $val->api_json([api_types::INCL_PHRASES]);
             } else {
                 $result = $val->api_json();
 

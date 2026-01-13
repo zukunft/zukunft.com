@@ -71,9 +71,9 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
@@ -115,9 +115,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
@@ -1123,7 +1123,7 @@ class test_db_load
         $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->env->usr1);
-        $lnk->reset();
+        $lnk->reset(true);
         $lnk->set_view($msk);
         $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;
@@ -1234,7 +1234,7 @@ class test_db_load
 
         $ui_cfg = new ui_config();
         $ui_cfg->reload($usr);
-        $t->assert_api($ui_cfg, '', [api_type::HEADER, api_type::INCL_COMPONENTS]);
+        $t->assert_api($ui_cfg, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
 
     }
 

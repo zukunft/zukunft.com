@@ -1100,6 +1100,9 @@ class data_object
             foreach ($frm_lst->lst() as $frm) {
                 if ($usr_msg->is_ok() and !$frm->is_excluded()) {
                     $frm->generate_ref_text($cache);
+                    if ($frm->id() <= 0) {
+                        log_err('formula ' . $frm->dsp_id() . ' not saved because ' . $usr_msg->all_message_text());
+                    }
                     if ($frm->ref_text != null) {
                         if (!$frm->element_refresh($frm->ref_text)) {
                             $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);

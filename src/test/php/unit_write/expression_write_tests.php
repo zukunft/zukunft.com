@@ -78,13 +78,13 @@ class expression_write_tests
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
-        $exp = new expression($usr);
+        $exp = new expression($frm);
         $exp->set_user_text($frm->usr_text);
 
-        $exp_pe = new expression($usr);
+        $exp_pe = new expression($frm);
         $exp_pe->set_user_text($frm_pe->usr_text);
 
-        $exp_sector = new expression($usr);
+        $exp_sector = new expression($frm);
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
@@ -107,7 +107,7 @@ class expression_write_tests
         $t->assert('get_ref_text for "' . $frm->usr_text . '"', $result, $target);
 
         // test the expression processing of the database reference
-        $exp_db = new expression($usr);
+        $exp_db = new expression($frm);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
         $target = '"' . words::PERCENT . '"=( is.numeric( "' . formulas::THIS_NAME . '" ) & is.numeric( "' . formulas::PRIOR . '" ) ) ( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
         $result = $exp_db->user_text();

@@ -60,7 +60,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -84,7 +84,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -370,7 +370,7 @@ class component extends sandbox_code_id
      */
     function is_button(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_type::BUTTON_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_types::BUTTON_TYPES)) {
             return true;
         } else {
             return false;
@@ -382,7 +382,7 @@ class component extends sandbox_code_id
      */
     function is_hidden(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_type::HIDDEN_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_types::HIDDEN_TYPES)) {
             return true;
         } else {
             return false;
@@ -395,7 +395,7 @@ class component extends sandbox_code_id
      */
     function is_list_group(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id($typ_lst), component_type::LIST_GROUP)) {
+        if (in_array($this->type_code_id($typ_lst), component_types::LIST_GROUP)) {
             return true;
         } else {
             return false;
@@ -407,7 +407,7 @@ class component extends sandbox_code_id
      */
     function no_row_style(string $typ_code_id): bool
     {
-        if (in_array($typ_code_id, component_type::LIST_HAS_STYLE)) {
+        if (in_array($typ_code_id, component_types::LIST_HAS_STYLE)) {
             return true;
         } else {
             return false;
@@ -683,9 +683,9 @@ class component extends sandbox_code_id
         global $sys;
         $base = new ui_base();
         return match ($sys->typ_lst->cmp_typ->code_id($this->type_id())) {
-            component_type::TEXT => $this->text(),
-            component_type::PHRASE_NAME => $this->word_name($phr),
-            component_type::VALUES_RELATED => $base->table($dbo, $cfg),
+            component_types::TEXT => $this->text(),
+            component_types::PHRASE_NAME => $this->word_name($phr),
+            component_types::VALUES_RELATED => $base->table($dbo, $cfg),
             default => 'ERROR: unknown type ',
         };
     }
@@ -704,7 +704,7 @@ class component extends sandbox_code_id
     function word_name(phrase $phr): string
     {
         global $sys;
-        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        if ($sys->typ_lst->cmp_typ->code_id($this->type_id()) == component_types::PHRASE_NAME) {
             return $phr->name();
         } else {
             return 'Missing component type';

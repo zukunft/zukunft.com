@@ -89,6 +89,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -183,8 +184,12 @@ class verb extends type_object
      */
     function reset(bool $keep_user = false): void
     {
+        $usr = null;
+        if ($keep_user) {
+            $usr = $this->usr;
+        }
         parent::reset();
-        $this->set_user(null);
+        $this->set_user($usr);
         $this->plural = null;
         $this->reverse = null;
         $this->rev_plural = null;
@@ -197,7 +202,7 @@ class verb extends type_object
      * map a verb api json to this model verb object
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -1139,11 +1144,11 @@ class verb extends type_object
     /**
      * create a new verb
      */
-    private function add(sql_db $db_con): user_message
+    private function add(user_message $usr_msg): bool
     {
-        log_debug('verb->add the verb ' . $this->dsp_id());
+        log_debug($this->dsp_id());
 
-        $usr_msg = new user_message();
+        global $db_con;
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -1171,7 +1176,7 @@ class verb extends type_object
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -1240,7 +1245,10 @@ class verb extends type_object
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
-                $usr_msg->add($this->add($db_con));
+                if (!$this->add($usr_msg)) {
+                    $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
+                }
+
             } else {
                 log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,
@@ -1335,184 +1343,6 @@ class verb extends type_object
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a verb to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_insert(
-        sql_creator   $sc,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        global $sys;
-
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::INSERT);
-        // get the fields and values that are filled and should be written to the db
-        $vrb_empty = new verb();
-        $vrb_empty->usr = $this->usr;
-        $fvt_lst = $this->db_fields_changed($vrb_empty, $usr_msg, $sc_par_lst_used);
-        // get the list of all fields that can be changed by the user
-        $fld_lst_all = $this->db_fields_all();
-        // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
-        // make the query name unique based on the changed fields
-        $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
-        // create the main query parameter object and set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
-        // log functions must always use named parameters
-        $sc_par_lst_used->add(sql_type::NAMED_PAR);
-        // list of parameters actually used in order of the function usage
-        $par_lst_out = new sql_par_field_list();
-        // set some var names to shorten the code lines
-        $id_field = $sc->id_field_name();
-        $var_name_row_id = $sc->var_name_row_id($sc_par_lst_used);
-        // add the change action field to the field list for the log entries
-        $fvt_lst->add_field(
-            change_action::FLD_ID,
-            $sys->typ_lst->cng_act->id(change_actions::ADD),
-            type_object::FLD_ID_SQL_TYP
-        );
-        // init the function body
-        $id_fld_new = $sc->var_name_new_id($sc_par_lst_used);
-        $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst_used);
-        // don't use the log parameter for the sub queries
-        $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
-        $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_log = clone $sc_par_lst_sub;
-        $sc_par_lst_log->add(sql_type::INSERT_PART);
-        // create sql to set the prime key upfront to get the sequence id
-        $qp_id = clone $qp;
-        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
-        $par_lst_out->add($qp_id->par_fld);
-        $sql .= $qp_id->sql;
-        // get the data fields and move the unique db key field to the first entry
-        $fld_lst_log = array_intersect($fvt_lst->names(), $fld_lst_all);
-        $key_fld_pos = array_search($this->id_field(), $fld_lst_log);
-        unset($fld_lst_log[$key_fld_pos]);
-
-        // add the user to the field list so that the id can be used for the log
-        $fvt_lst->add_field(
-            user_db::FLD_ID,
-            $this->get_user()->id(),
-            db_object_seq_id::FLD_ID_SQL_TYP
-        );
-
-        // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $this->get_user(), $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
-        $sql .= ' ' . $qp_log->sql;
-        $par_lst_out->add_list($qp_log->par_fld_lst);
-
-        // update the fields excluding the unique id
-        $fld_lst_chg = $fld_lst_log;
-        $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
-        unset($fld_lst_chg[$key_fld_pos]);
-        $update_fvt_lst = new sql_par_field_list();
-        foreach ($fld_lst_chg as $fld) {
-            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
-        }
-        $sc_update = clone $sc;
-        $sc_par_lst_upd = $sc_par_lst_used;
-        $sc_par_lst_upd->add(sql_type::UPDATE);
-        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-        $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
-
-        $qp_update->sql = $sc_update->create_sql_update(
-            $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_update->sql . ' ';
-
-        if ($sc->db_type == sql_db::POSTGRES) {
-            if ($id_fld_new != '') {
-                $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
-            }
-        }
-
-        // create the query parameters for the actual change
-        $qp_chg = clone $qp;
-
-        $sql .= $sc->sql_func_end();
-
-        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst_used);
-
-        // merge all together and create the function
-        $qp->sql = $qp_chg->sql . $sql . ';';
-        $qp->par = $par_lst_out->values();
-
-        // create the call sql statement
-        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
-    }
-
-    /**
-     * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_par $qp
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param string $id_fld_new
-     * @param user_message $usr_msg collect the messages for the user
-     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_insert_key_field(
-        sql_creator        $sc,
-        sql_par            $qp,
-        sql_par_field_list $fvt_lst,
-        string             $id_fld_new,
-        user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list()
-    ): sql_par
-    {
-        // set some var names to shorten the code lines
-        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
-
-        // list of parameters actually used in order of the function usage
-        $sql = '';
-        $fvt_insert = $fvt_lst->get($this->name_field(), $usr_msg);
-
-        // create the sql to insert the row
-        $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert);
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        if ($sc->db_type == sql_db::MYSQL) {
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
-        }
-        $qp_insert->sql = $sc_insert->create_sql_insert(
-            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert->value];
-
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_insert->sql . '; ';
-
-        // get the new row id for MySQL db
-        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
-            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
-        }
-
-        $qp->sql = $sql;
-        $qp->par_fld = $fvt_insert;
-
-        return $qp;
-    }
-
-
-    /*
      * sql write fields
      */
 
@@ -1542,15 +1372,15 @@ class verb extends type_object
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param verb|type_object $typ the compare value to detect the changed fields
+     * @param verb|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        verb|type_object $typ,
-        user_message     $usr_msg,
-        sql_type_list    $sc_par_lst = new sql_type_list()
+        verb|db_object_seq_id $obj,
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1559,9 +1389,9 @@ class verb extends type_object
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($typ, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // TODO move to language forms
-        if ($typ->plural !== $this->plural) {
+        if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL,
@@ -1573,10 +1403,10 @@ class verb extends type_object
                 verb_db::FLD_PLURAL,
                 $this->plural,
                 sql_field_type::NAME,
-                $typ->plural
+                $obj->plural
             );
         }
-        if ($typ->reverse !== $this->reverse) {
+        if ($obj->reverse !== $this->reverse) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_REVERSE,
@@ -1588,10 +1418,10 @@ class verb extends type_object
                 verb_db::FLD_REVERSE,
                 $this->reverse,
                 sql_field_type::NAME,
-                $typ->reverse
+                $obj->reverse
             );
         }
-        if ($typ->rev_plural !== $this->rev_plural) {
+        if ($obj->rev_plural !== $this->rev_plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_PLURAL_REVERSE,
@@ -1603,10 +1433,10 @@ class verb extends type_object
                 verb_db::FLD_PLURAL_REVERSE,
                 $this->rev_plural,
                 sql_field_type::NAME,
-                $typ->rev_plural
+                $obj->rev_plural
             );
         }
-        if ($typ->usage !== $this->usage) {
+        if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1618,10 +1448,10 @@ class verb extends type_object
                 sql_db::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
-                $typ->usage
+                $obj->usage
             );
         }
-        if ($typ->impact !== $this->impact) {
+        if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -1633,7 +1463,7 @@ class verb extends type_object
                 sql_db::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $typ->impact
+                $obj->impact
             );
         }
         return $lst;

@@ -138,9 +138,8 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_USER . 'user.php';
-include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
@@ -157,10 +156,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
-use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Exception;
 
 class expression extends shared_expression
@@ -182,6 +180,7 @@ class expression extends shared_expression
      * object vars
      */
 
+    public ?formula $frm = null; // the repeated formula object for database saving of the elements
     public user $usr; // to get the user settings for the conversion
 
 
@@ -189,10 +188,11 @@ class expression extends shared_expression
      * construct and map
      */
 
-    function __construct(user $usr)
+    function __construct(?formula $frm)
     {
         $this->reset();
-        $this->usr = $usr;
+        $this->frm = $frm;
+        $this->usr = $frm->get_user();
     }
 
 
@@ -297,6 +297,7 @@ class expression extends shared_expression
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
             $elm = $this->element_by_symbol($obj_sym, $trm_lst);
+            $elm->frm = $this->frm;
             $elm_lst->add($elm);
             $work = $lib->str_right_of($work, chars::TERM_END);
             $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
@@ -319,7 +320,7 @@ class expression extends shared_expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula::class) {
+                if ($elm->type() == formula::class) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -330,7 +331,7 @@ class expression extends shared_expression
                         }
                     }
                 }
-                if ($elm->type == word::class or $elm->type == triple::class) {
+                if ($elm->type() == word::class or $elm->type() == triple::class) {
                     if ($elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::THIS)
                         or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::NEXT)
                         or $elm->obj->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::PRIOR)) {
@@ -357,7 +358,7 @@ class expression extends shared_expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == formula::class) {
+                if ($elm->type() == formula::class) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -566,24 +567,25 @@ class expression extends shared_expression
     private function element_by_symbol(string $obj_sym, ?term_list $trm_lst = null): element
     {
         $elm = new element($this->usr);
-        $elm->type = match ($obj_sym[0]) {
-            chars::WORD_SYMBOL => parameter_type::WORD_CLASS,
-            chars::TRIPLE_SYMBOL => parameter_type::TRIPLE_CLASS,
-            chars::FORMULA_SYMBOL => parameter_type::FORMULA_CLASS,
-            chars::VERB_SYMBOL => parameter_type::VERB_CLASS,
+        $class = match ($obj_sym[0]) {
+            chars::WORD_SYMBOL => word::class,
+            chars::TRIPLE_SYMBOL => triple::class,
+            chars::FORMULA_SYMBOL => formula::class,
+            chars::VERB_SYMBOL => verb::class,
+            default => ''
         };
         $id = substr($obj_sym, 1);
-        $trm = $trm_lst?->term_by_obj_id($id, $elm->type);
+        $trm = $trm_lst?->term_by_obj_id($id, $class);
         if ($trm == null) {
             $trm = new term($this->usr);
-            $trm->load_by_obj_id($id, $elm->type);
+            $trm->load_by_obj_id($id, $class);
         }
         if ($trm != null) {
             if ($trm->id() != 0) {
                 $elm->obj = $trm->obj();
                 $elm->symbol = $this->get_db_sym($trm);
             } else {
-                log_warning($elm->type . ' with id ' . $id . ' not found');
+                log_warning($class . ' with id ' . $id . ' not found');
             }
         }
 
@@ -641,22 +643,22 @@ class expression extends shared_expression
 
                     // filter the elements if requested
                     if ($type == self::SELECT_PHRASE) {
-                        if ($elm->type != word::class and $elm->type != triple::class) {
+                        if ($elm->type() != word::class and $elm->type() != triple::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_FORMULA) {
-                        if ($elm->type != formula::class) {
+                        if ($elm->type() != formula::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB) {
-                        if ($elm->type != verb::class) {
+                        if ($elm->type() != verb::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB_WORD) {
-                        if ($elm->type != word::class and $elm->type != verb::class) {
+                        if ($elm->type() != word::class and $elm->type() != verb::class) {
                             $elm->obj = null;
                         }
                     }
@@ -671,7 +673,7 @@ class expression extends shared_expression
 
                         // group the references if needed
                         if ($group_it) {
-                            $elm_grp->add_obj($elm);
+                            $elm_grp->add_obj($elm, true);
                             log_debug('new group element "' . $elm->name() . '"');
 
                             // find the next term reference
@@ -727,21 +729,21 @@ class expression extends shared_expression
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {
             log_debug('check elements ' . $elm->name());
-            if ($elm->type == formula::class) {
+            if ($elm->type() == formula::class) {
                 if (isset($elm->wrd_obj)) {
                     $phr = $elm->wrd_obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == word::class) {
+            } elseif ($elm->type() == word::class) {
                 if (isset($elm->obj)) {
                     $phr = $elm->obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == verb::class) {
+            } elseif ($elm->type() == verb::class) {
                 log_warning('Use Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
             } else {
                 log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');

@@ -35,7 +35,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -59,6 +59,7 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
@@ -74,6 +75,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -90,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -103,6 +106,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -187,18 +191,23 @@ class formula_link extends sandbox_link
         $this->from_name = $lib->class_to_name(formula::class);
         $this->to_name = $lib->class_to_name(phrase::class);
 
-        $this->reset();
+        $this->reset(true);
     }
 
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
 
-        $this->reset_objects($this->get_user());
+        $this->reset_objects($usr);
 
         $this->order_nbr = null;
         global $sys;
-        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT));
+        $this->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
     }
 
     /**
@@ -846,7 +855,7 @@ class formula_link extends sandbox_link
 
         // do not include the default link type in the export
         global $sys;
-        if ($this->predicate_id == $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+        if ($this->predicate_id == $sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT)) {
             unset($vars[json_fields::PREDICATE]);
         }
         if ($this->order_nbr != null) {
@@ -939,22 +948,9 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * create a new link object including the order number
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->formula_id(), $this->phrase_id(), $this->get_user()->id, $this->order_nbr));
-    }
-
-    /**
      * update a formula_link in the database or create a user formula_link
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
-     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @param bool $use_func if true, a predefined function is used that also creates the log entries
      * @return bool true if everything has been fine
      */
     function save(user_message $usr_msg, ?bool $use_func = null): bool
@@ -1095,15 +1091,15 @@ class formula_link extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|formula_link $sbx the compare value to detect the changed fields
+     * @param formula_link|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|formula_link $sbx,
-        user_message         $usr_msg,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        formula_link|db_object_seq_id $obj,
+        user_message                  $usr_msg,
+        sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1113,9 +1109,9 @@ class formula_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($obj->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
@@ -1134,11 +1130,11 @@ class formula_link extends sandbox_link
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
+                $obj->predicate_id(),
                 $sys->typ_lst->frm_lnk_typ
             );
         }
-        if ($sbx->pos() !== $this->pos()) {
+        if ($obj->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
@@ -1150,10 +1146,10 @@ class formula_link extends sandbox_link
                 self::FLD_ORDER,
                 $this->pos(),
                 self::FLD_ORDER_SQL_TYP,
-                $sbx->pos()
+                $obj->pos()
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

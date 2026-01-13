@@ -57,6 +57,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
@@ -70,12 +71,13 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -431,7 +433,7 @@ class formula extends formula_map
         // check
         $pre_trm_lst = $pre_phr_lst?->term_list();
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression($this->get_user());
+            $exp = new expression($this);
             $exp->set_ref_text($this->ref_text, $pre_trm_lst);
             $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
         }
@@ -697,7 +699,7 @@ class formula extends formula_map
             }
 
             // build the formula expression for calculating the result
-            $exp = new expression($this->get_user());
+            $exp = new expression($this);
             $exp->set_ref_text($this->ref_text);
 
             // the phrase left of the equation sign should be added to the result
@@ -821,7 +823,7 @@ class formula extends formula_map
      */
     function expression(?term_list $trm_lst = null): expression
     {
-        $exp = new expression($this->get_user());
+        $exp = new expression($this);
         $exp->set_ref_text($this->ref_text, $trm_lst);
         $exp->set_user_text($this->usr_text, $trm_lst);
         log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
@@ -990,7 +992,7 @@ class formula extends formula_map
         $elm_db_ids = array();
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $elm_db_ids[] = $db_row['ref_id'];
+                $elm_db_ids[] = $db_row[element_db::FLD_REF_ID];
             }
         }
         $lib = new library();
@@ -1013,11 +1015,11 @@ class formula extends formula_map
             } else {
                 $field_values[] = $this->get_user()->id();
             }
-            $field_names[] = element::FLD_TYPE;
+            $field_names[] = element_db::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = element::FLD_REF_ID;
+            $field_names[] = element_db::FLD_REF_ID;
             $field_values[] = $elm_add_id;
-            $field_names[] = element::FLD_ORDER;
+            $field_names[] = element_db::FLD_ORDER;
             $field_values[] = $elm_order_nbr;
             $db_con->set_class(element::class);
             $add_result = $db_con->insert_old($field_names, $field_values);
@@ -1041,9 +1043,9 @@ class formula extends formula_map
                 $field_names[] = user_db::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
-            $field_names[] = element::FLD_TYPE;
+            $field_names[] = element_db::FLD_TYPE;
             $field_values[] = $elm_type_id;
-            $field_names[] = element::FLD_REF_ID;
+            $field_names[] = element_db::FLD_REF_ID;
             $field_values[] = $elm_del_id;
             $db_con->set_class(element::class);
             $del_result = $db_con->delete_old($field_names, $field_values);
@@ -1139,7 +1141,7 @@ class formula extends formula_map
     {
         if ($this->usr_text != null) {
             if ($this->ref_text == '' or !$this->ref_text_dirty) {
-                $exp = new expression($this->get_user());
+                $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
                 $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
                 if ($usr_msg->is_ok()) {
@@ -1159,7 +1161,7 @@ class formula extends formula_map
     function generate_usr_text(?term_list $trm_lst = null): string
     {
         $result = '';
-        $exp = new expression($this->get_user());
+        $exp = new expression($this);
         $exp->set_user_text($this->usr_text);
         $this->ref_text = $exp->ref_text($trm_lst);
         $this->ref_text_dirty = false;

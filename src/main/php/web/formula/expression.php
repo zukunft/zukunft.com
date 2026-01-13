@@ -102,24 +102,24 @@ class expression extends shared_expression
     private function element_by_symbol(string $obj_sym, ?term_list $trm_lst = null): element
     {
         $elm = new element();
-        $elm->type = match ($obj_sym[0]) {
+        $class = match ($obj_sym[0]) {
             chars::WORD_SYMBOL => parameter_type::WORD_WEB_CLASS,
             chars::TRIPLE_SYMBOL => parameter_type::TRIPLE_WEB_CLASS,
             chars::FORMULA_SYMBOL => parameter_type::FORMULA_WEB_CLASS,
             chars::VERB_SYMBOL => parameter_type::VERB_WEB_CLASS,
         };
         $id = substr($obj_sym, 1);
-        $trm = $trm_lst?->term_by_obj_id($id, $elm->type);
+        $trm = $trm_lst?->term_by_obj_id($id, $class);
         if ($trm == null) {
             $trm = new term();
-            $trm->load_by_obj_id($id, $elm->type);
+            $trm->load_by_obj_id($id, $class);
         }
         if ($trm != null) {
             if ($trm->id() != 0) {
                 $elm->obj = $trm->obj();
                 $elm->symbol = $this->get_db_sym($trm);
             } else {
-                log_warning($elm->type . ' with id ' . $id . ' not found');
+                log_warning($class . ' with id ' . $id . ' not found');
             }
         }
 

@@ -122,9 +122,9 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -189,9 +189,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Exception;
@@ -604,6 +604,12 @@ class sandbox_multi extends db_object_multi_user
     function set_protection_id(?int $id): void
     {
         $this->protection_id = $id;
+    }
+
+    function set_protection_by_code_id(?string $code_id): void
+    {
+        global $sys;
+        $this->set_protection_id($sys->typ_lst->ptc_typ->id($code_id));
     }
 
     function protection_id(): ?int
@@ -1608,7 +1614,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    protected function add_usr_cfg(string $class = self::class): bool
+    protected function add_usr_cfg(user_message $usr_msg, string $class = self::class): bool
     {
         global $db_con;
         $result = true;
@@ -1649,12 +1655,14 @@ class sandbox_multi extends db_object_multi_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->get_user()->id);
+                $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
+                $db_con->insert($qp, 'add user specific value', $usr_msg);
                 $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
-                if ($log_id <= 0) {
+                if (!$usr_msg->is_ok()) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
                 } else {
-                    $this->usr_cfg_id = $log_id;
+                    $this->usr_cfg_id = $usr_msg->get_row_id();
                 }
             }
         }
@@ -1764,6 +1772,36 @@ class sandbox_multi extends db_object_multi_user
 
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new value or result to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert(
+        sql_creator   $sc,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
+        $db_row = $this->cloned(null);
+        // get a list of all fields that could potentially be updated
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $db_row, $all_fields, $usr_msg, $sc_par_lst_used);
     }
 
 
@@ -2141,7 +2179,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $result = 'creation of user sandbox for ' . $log->field() . ' failed';
                     }
                 }
@@ -2308,10 +2346,10 @@ class sandbox_multi extends db_object_multi_user
         $sc_log = clone $sc;
         // TODO replace dummy value table with an enum value
         if ($this->is_named_obj()) {
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
         } else {
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst_log, $ext, '', '', $id_val);
         }
 
@@ -2519,7 +2557,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $usr_msg->add_message_text('creation of user sandbox to exclude failed');
                     }
                 }
@@ -2579,7 +2617,7 @@ class sandbox_multi extends db_object_multi_user
             }
             if ($log->add($usr_msg)) {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $result = 'creation of user sandbox for share type failed';
                     }
                 }
@@ -3762,7 +3800,7 @@ class sandbox_multi extends db_object_multi_user
     function db_fields_changed(
         sandbox_multi $sbx,
         user_message  $usr_msg,
-        sql_type_list $sc_par_lst
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
@@ -4104,7 +4142,7 @@ class sandbox_multi extends db_object_multi_user
                 $log->set_field($this->name_field());
                 $log->old_value = $this->name();
                 $log->new_value = null;
-                $qp_log = $log->sql_insert(
+                $qp_log = $log->sql_insert_log(
                     $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {

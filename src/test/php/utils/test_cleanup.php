@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\utils;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\types\ref_types;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once test_paths::UTILS . 'test_api.php';
@@ -293,8 +294,8 @@ class test_cleanup extends test_api
             }
         }
 
-        $test_name = 'request to delete the added test reference "' . words::TEST_ADD . '" to "' . ref_type::WIKIDATA . '"';
-        $ref = $t_db->load_ref(words::TEST_ADD, ref_type::WIKIDATA);
+        $test_name = 'request to delete the added test reference "' . words::TEST_ADD . '" to "' . ref_types::WIKIDATA . '"';
+        $ref = $t_db->load_ref(words::TEST_ADD, ref_types::WIKIDATA);
         if ($ref->id() > 0) {
             $this->assert_true($test_name, $ref->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
@@ -309,7 +310,7 @@ class test_cleanup extends test_api
         }
 
         $test_name_loop = 'request to delete the added test phrases';
-        foreach (triples::TEST_TRIPLE_STANDARD as $phr_name) {
+        foreach (triples::TEST_TRIPLES as $phr_name) {
             $test_name = $test_name_loop . ' "' . $phr_name . '"';
             $phr = $t_db->load_phrase($phr_name);
             if ($phr->id() <> 0) {

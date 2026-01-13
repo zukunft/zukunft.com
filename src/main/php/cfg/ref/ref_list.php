@@ -202,7 +202,7 @@ class ref_list extends type_list
         return $qp;
     }
 
-    // TODO Prio 1 acivate
+    // TODO Prio 1 activate
     function load_sql_by_source(): sql_db
     {
         $qp = new sql_db();

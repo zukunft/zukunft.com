@@ -114,7 +114,7 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -158,8 +158,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class word extends sandbox_code_id
@@ -891,7 +891,7 @@ class word extends sandbox_code_id
      */
     function is_info(): bool
     {
-        return $this->is_type(phrase_type::INFO);
+        return $this->is_type(phrase_types::INFO);
     }
 
     /**
@@ -1688,15 +1688,15 @@ class word extends sandbox_code_id
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param word|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|word  $sbx,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        word|db_object_seq_id $obj,
+        user_message          $usr_msg,
+        sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1705,8 +1705,8 @@ class word extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
-        if ($sbx->type_id() !== $this->type_id()) {
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
@@ -1725,10 +1725,10 @@ class word extends sandbox_code_id
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
-                $sbx->type_id(),
+                $obj->type_id(),
                 $sys->typ_lst->phr_typ);
         }
-        if ($sbx->get_view_id() !== $this->get_view_id()) {
+        if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VIEW,
@@ -1740,11 +1740,11 @@ class word extends sandbox_code_id
                 word_db::FLD_VIEW,
                 view_db::FLD_NAME,
                 $this->view,
-                $sbx->view
+                $obj->view
             );
         }
         // TODO move to language forms
-        if ($sbx->plural !== $this->plural) {
+        if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
@@ -1756,10 +1756,10 @@ class word extends sandbox_code_id
                 word_db::FLD_PLURAL,
                 $this->plural,
                 word_db::FLD_PLURAL_SQL_TYP,
-                $sbx->plural
+                $obj->plural
             );
         }
-        if ($sbx->impact !== $this->impact) {
+        if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -1771,10 +1771,10 @@ class word extends sandbox_code_id
                 sql_db::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $sbx->impact
+                $obj->impact
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

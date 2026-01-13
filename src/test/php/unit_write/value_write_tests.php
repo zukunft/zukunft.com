@@ -55,7 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -179,7 +179,7 @@ class value_write_tests
             words::INHABITANTS,
             words::PCT,
             words::YEAR_2020));
-        $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
+        $api_msg = $pct_val->api_json([api_types::INCL_PHRASES]);
         $val_dsp = new value_ui($api_msg);
         $result = $val_dsp->value(0);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
@@ -200,7 +200,7 @@ class value_write_tests
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_ui();
-        $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]), $usr_msg_ui);
+        $mio_val_dsp->set_from_json($mio_val->api_json([api_types::INCL_PHRASES]), $usr_msg_ui);
         $fig = $mio_val->figure();
         $fig_dsp = $tl->ui_obj($fig, new figure_ui());
         $result = $fig_dsp->display_linked('1');

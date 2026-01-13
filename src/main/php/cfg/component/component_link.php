@@ -231,9 +231,14 @@ class component_link extends sandbox_link
      */
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
 
-        $this->reset_objects($this->get_user());
+        $this->reset_objects($usr);
 
         // set the default values
         $this->set_predicate(component_link_type::ALWAYS);
@@ -569,7 +574,7 @@ class component_link extends sandbox_link
      */
     function set(int $id, view $msk, component $cmp, int $pos): void
     {
-        $this->reset();
+        $this->reset(true);
         $this->id = $id;
         $this->set_view($msk);
         $this->set_component($cmp);
@@ -1391,8 +1396,9 @@ class component_link extends sandbox_link
 
     /**
      * get a similar reference
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(): component_link
+    function get_similar(user_message $usr_msg): component_link
     {
         $result = new component_link($this->get_user());
 
@@ -1448,20 +1454,6 @@ class component_link extends sandbox_link
         return $usr_msg;
     }
 
-    /**
-     * create a new link object including the order number
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $lib = new library();
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->get_view()->id(), $this->get_component()->id(), $this->get_user()->id(), $this->order_nbr));
-    }
-
 
     /*
      * sql write fields
@@ -1492,15 +1484,15 @@ class component_link extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|component_link $sbx the compare value to detect the changed fields
+     * @param component_link|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|component_link $sbx,
-        user_message           $usr_msg,
-        sql_type_list          $sc_par_lst = new sql_type_list()
+        component_link|db_object_seq_id $obj,
+        user_message                    $usr_msg,
+        sql_type_list                   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1510,9 +1502,9 @@ class component_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($obj->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
@@ -1530,11 +1522,11 @@ class component_link extends sandbox_link
                 component_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
-                $sbx->predicate_id(),
+                $obj->predicate_id(),
                 $sys->typ_lst->cmp_lnk_typ
             );
         }
-        if ($sbx->get_pos() !== $this->get_pos()) {
+        if ($obj->get_pos() !== $this->get_pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
@@ -1546,10 +1538,10 @@ class component_link extends sandbox_link
                 self::FLD_ORDER_NBR,
                 $this->get_pos(),
                 self::FLD_ORDER_NBR_SQL_TYP,
-                $sbx->get_pos()
+                $obj->get_pos()
             );
         }
-        if ($sbx->get_pos_type_id() !== $this->get_pos_type_id()) {
+        if ($obj->get_pos_type_id() !== $this->get_pos_type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
@@ -1567,11 +1559,11 @@ class component_link extends sandbox_link
                 self::FLD_POS_TYPE,
                 self::FLD_POS_TYPE_NAME,
                 $this->get_pos_type_id(),
-                $sbx->get_pos_type_id(),
+                $obj->get_pos_type_id(),
                 $sys->typ_lst->pos_typ
             );
         }
-        if ($sbx->get_style_id() !== $this->get_style_id()) {
+        if ($obj->get_style_id() !== $this->get_style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
@@ -1590,11 +1582,11 @@ class component_link extends sandbox_link
                 self::FLD_STYLE,
                 view_style::FLD_NAME,
                 $this->get_style_id(),
-                $sbx->get_style_id(),
+                $obj->get_style_id(),
                 $sys->typ_lst->msk_sty
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

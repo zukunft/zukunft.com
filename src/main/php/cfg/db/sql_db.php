@@ -26,7 +26,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2018 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -157,9 +157,10 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'library.php';
 
@@ -276,9 +277,10 @@ use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Exception;
 use mysqli;
 use mysqli_result;
@@ -1224,7 +1226,7 @@ class sql_db
             $msk->set(views::START_ID, views::START_NAME);
             $msk->description = views::START_COM;
             $msk_lnk->set_term($wrd->term());
-            $msk_lnk->set_predicate(view_link_type::DEFAULT);
+            $msk_lnk->set_predicate(view_link_types::DEFAULT);
             $msk_lnk->set_view($msk);
             $msk_lnk->description = 'add usage and log of a word';
             $msk_lnk->id = 0;
@@ -1400,11 +1402,11 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name);
+            $this->load_db_code_link_file($csv_file_name, [sql_type::LOG]);
         }
 
         // set the seq number if needed
@@ -1421,7 +1423,7 @@ class sql_db
     {
         // first of all set the database version if not yet done
         $cfg = new config();
-        $cfg->check(config::VERSION_DB, def::PRG_VERSION, $this);
+        $cfg->check_cfg(config::VERSION_DB, def::PRG_VERSION, $this);
 
         // get the list of CSV and loop
         foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
@@ -1435,13 +1437,14 @@ class sql_db
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $class): bool
+    function load_db_code_link_file(string $class, array $sc_par_lst_in = []): bool
     {
         global $debug;
 
         $result = false;
         $lib = new library();
         $table_name = $lib->class_to_table($class);
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
 
         // load the csv
         $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
@@ -4459,7 +4462,7 @@ class sql_db
      * and return a message to the user if something has gone wrong
      * and a suggested solution to fix the issue
      * and alternative solution if possible
-     * or the true if successful
+     * or true if successful
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
@@ -5811,10 +5814,14 @@ class sql_db
                 $mtr = new Translator(language_codes::SYS);
 
                 // prepare logging of the import
-                // TODO Prio 1 maybe not used?
+                // TODO Prio 1 use sql_insert without log
                 $this->db_log_code_links();
+
+                // load the types needed for logging into the system environment $sys
+                global $sys;
                 $sys_typ_lst = new type_lists($usr);
                 $sys_typ_lst->load_log($this);
+                $sys->typ_lst = $sys_typ_lst;
 
                 // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();

@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -34,6 +34,8 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_forms;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_tests
@@ -65,7 +67,7 @@ class language_tests
         $t->subheader($ts . 'api');
 
         global $sys;
-        $lan = $sys->typ_lst->lan->get_by_code_id(language::DEFAULT);
+        $lan = $sys->typ_lst->lan->get_by_code_id(languages::DEFAULT);
         $t->assert_api($lan, 'language');
 
 
@@ -76,7 +78,7 @@ class language_tests
         $t->subheader($ts . 'api');
 
         global $sys;
-        $lan_typ = $sys->typ_lst->lan_for->get_by_code_id(language_form::PLURAL);
+        $lan_typ = $sys->typ_lst->lan_for->get_by_code_id(language_forms::PLURAL);
         $t->assert_api($lan_typ, 'language_form');
 
     }

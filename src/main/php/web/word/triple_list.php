@@ -44,7 +44,7 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -56,7 +56,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class triple_list extends ListBase

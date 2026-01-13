@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
@@ -99,7 +100,9 @@ class source_tests
         $src_renamed = $src->cloned(sources::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
-        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG]);
+        $src_renamed_admin = $src->cloned(sources::SYSTEM_TEST_RENAMED);
+        $src_renamed_admin->set_protection_by_code_id(protection_types::ADMIN);
+        $t->assert_sql_update($sc, $src_renamed_admin, $src, [sql_type::LOG]);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::USER]);
         $src_renamed->exclude();
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::EXCLUDE]);

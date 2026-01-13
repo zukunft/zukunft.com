@@ -73,7 +73,7 @@ include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::API_OBJECT . 'api_message.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -110,7 +110,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
@@ -417,7 +417,7 @@ class word extends sandbox_code_id
     {
         global $sys;
         $result = '';
-        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+        if ($sys->typ_lst->phr_typ->code_id($this->type_id()) == phrase_types::FORMULA_LINK) {
             $result .= ' type: ' . $sys->typ_lst->phr_typ->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form, $typ_lst);
@@ -548,7 +548,7 @@ class word extends sandbox_code_id
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type::TIME);
+        return $this->is_type(phrase_types::TIME);
     }
 
     /**
@@ -556,7 +556,7 @@ class word extends sandbox_code_id
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type::TIME_JUMP);
+        return $this->is_type(phrase_types::TIME_JUMP);
     }
 
     /**
@@ -566,7 +566,7 @@ class word extends sandbox_code_id
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_types::MEASURE);
     }
 
     /**
@@ -575,7 +575,7 @@ class word extends sandbox_code_id
      */
     function is_info(): bool
     {
-        return $this->is_type(phrase_type::INFO);
+        return $this->is_type(phrase_types::INFO);
     }
 
     /**
@@ -584,8 +584,8 @@ class word extends sandbox_code_id
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_types::SCALING)
+            or $this->is_type(phrase_types::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -596,7 +596,7 @@ class word extends sandbox_code_id
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_types::PERCENT);
     }
 
     /**
@@ -604,7 +604,7 @@ class word extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        return $this->is_type(phrase_type::SCALING_HIDDEN);
+        return $this->is_type(phrase_types::SCALING_HIDDEN);
     }
 
     /*

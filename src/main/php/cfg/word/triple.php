@@ -104,7 +104,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -150,8 +150,8 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 
@@ -233,7 +233,7 @@ class triple extends sandbox_link_named
 
         $this->rename_can_switch = def::UI_CAN_CHANGE_triple_NAME;
 
-        $this->reset();
+        $this->reset(true);
 
         // also create the link objects because there is now case where they are supposed to be null
         $this->create_objects();
@@ -384,7 +384,7 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the inclded user is a system user the import can also set the code_id
+     * @param user_message $usr_msg to enrich with warnings, problems and solutions and if the included user is a system user the import can also set the code_id
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
@@ -1268,7 +1268,7 @@ class triple extends sandbox_link_named
      */
     function is_info(): bool
     {
-        return $this->is_type(phrase_type::INFO);
+        return $this->is_type(phrase_types::INFO);
     }
 
     /**
@@ -1991,12 +1991,11 @@ class triple extends sandbox_link_named
     /**
      * check if the object can be added to the database
      * e.g. if from and to are valid
-     * @return user_message if not valid the message for the user what needs to be changed
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
      */
-    function check(): user_message
+    function check(user_message $usr_msg): bool
     {
-        $usr_msg = new user_message();
-
         if ($this->needs_from()) {
             if ($this->get_from() == null) {
                 $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
@@ -2021,7 +2020,7 @@ class triple extends sandbox_link_named
                 }
             }
         }
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -2054,7 +2053,7 @@ class triple extends sandbox_link_named
     function can_be_ready(user_message $usr_msg): bool
     {
         parent::can_be_ready($usr_msg);
-        $usr_msg->add($this->check());
+        $this->check($usr_msg);
         return $usr_msg->is_ok();
     }
 
@@ -2066,7 +2065,7 @@ class triple extends sandbox_link_named
     function db_ready(user_message $usr_msg): bool
     {
         parent::db_ready($usr_msg);
-        $usr_msg->add($this->check());
+        $this->check($usr_msg);
         return $usr_msg->is_ok();
     }
 
@@ -2657,17 +2656,11 @@ class triple extends sandbox_link_named
             $log = $this->log_link_add();
             if ($log->id() > 0) {
                 // insert the new triple
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    $msg = 'add ' . $this->dsp_id();
-                    if ($db_con->insert($qp, $msg, $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $db_con->set_class(triple::class);
-                    $this->id = $db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user_db::FLD_ID),
-                        array($this->from_id(), $this->get_verb_id(), $this->to_id(), $this->get_user()->id));
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                $msg = 'add ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
                 // TODO make sure on all add functions that the database object is always set
                 //array($this->from_id(), $this->verb_id() , $this->to_id(), $this->get_user()->id()));
@@ -2925,15 +2918,15 @@ class triple extends sandbox_link_named
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|triple $sbx the compare value to detect the changed fields
+     * @param triple|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|triple $sbx,
-        user_message   $usr_msg,
-        sql_type_list  $sc_par_lst = new sql_type_list()
+        triple|db_object_seq_id $obj,
+        user_message            $usr_msg,
+        sql_type_list           $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2945,11 +2938,11 @@ class triple extends sandbox_link_named
         $table_id = $sc->table_id($this::class);
 
         // should be corresponding with the list of triple object vars
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
 
         // for triple the type is the phrase type
         // the type is object-specific that why it is not part of sandbox_link_types
-        if ($sbx->type_id() !== $this->type_id()) {
+        if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
@@ -2968,13 +2961,13 @@ class triple extends sandbox_link_named
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
-                $sbx->type_id(),
+                $obj->type_id(),
                 $sys->typ_lst->phr_typ);
         }
 
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
-            if ($sbx->get_verb_id() !== $this->get_verb_id()) {
+            if ($obj->get_verb_id() !== $this->get_verb_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
@@ -2993,7 +2986,7 @@ class triple extends sandbox_link_named
                     verb_db::FLD_ID,
                     verb_db::FLD_NAME,
                     $this->get_verb_id(),
-                    $sbx->get_verb_id(),
+                    $obj->get_verb_id(),
                     $sys->typ_lst->vrb
                 );
             }
@@ -3002,7 +2995,7 @@ class triple extends sandbox_link_named
             if ($is_insert) {
                 // TODO check how to handle if the standard
                 // $sbx can in this case be e.g. the standard object and $this is the object updated by the user
-                if ($this->is_excluded() and !$sbx->is_excluded()) {
+                if ($this->is_excluded() and !$obj->is_excluded()) {
                     // the verb field is added for triple exclude insert statements
                     if ($do_log) {
                         $lst->add_field(
@@ -3012,17 +3005,17 @@ class triple extends sandbox_link_named
                         );
                     }
                     global $sys;
-                    if ($sbx->get_verb_id() < 0) {
+                    if ($obj->get_verb_id() < 0) {
                         $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
-                            msg_id::VAR_TYPE => $sbx->get_verb_name(),
-                            msg_id::VAR_NAME => $sbx->dsp_id()
+                            msg_id::VAR_TYPE => $obj->get_verb_name(),
+                            msg_id::VAR_NAME => $obj->dsp_id()
                         ]);
                     }
                     $lst->add_type_field(
                         verb_db::FLD_ID,
                         verb_db::FLD_NAME,
                         null,
-                        $sbx->get_verb_id(),
+                        $obj->get_verb_id(),
                         $sys->typ_lst->vrb
                     );
                     // TODO check if the excluded field is not already added by the sandbox function
@@ -3038,7 +3031,7 @@ class triple extends sandbox_link_named
                         1,
                         sql_db::FLD_EXCLUDED_SQL_TYP
                     );
-                } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                } elseif (!$this->is_excluded() and $obj->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
@@ -3064,7 +3057,7 @@ class triple extends sandbox_link_named
             }
         }
         // TODO check if the excluded field is not already added by the sandbox function
-        if ($sbx->is_excluded() !== $this->is_excluded()) {
+        if ($obj->is_excluded() !== $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -3083,7 +3076,7 @@ class triple extends sandbox_link_named
                 sql_db::FLD_EXCLUDED_SQL_TYP
             );
         }
-        if ($sbx->name_given() !== $this->name_given()) {
+        if ($obj->name_given() !== $this->name_given()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_GIVEN,
@@ -3095,13 +3088,13 @@ class triple extends sandbox_link_named
                 triple_db::FLD_NAME_GIVEN,
                 $this->name_given(),
                 triple_db::FLD_NAME_GIVEN_SQL_TYP,
-                $sbx->name_given()
+                $obj->name_given()
             );
         }
         // TODO add test case
         // if the user has not changed the name or the give name the generated name does not need to be taken into account
-        if (!$usr_tbl and ($sbx->name != '' or $sbx->name_given() != '')) {
-            if ($sbx->name_generated() !== $this->name_generated()) {
+        if (!$usr_tbl and ($obj->name != '' or $obj->name_given() != '')) {
+            if ($obj->name_generated() !== $this->name_generated()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_AUTO,
@@ -3113,11 +3106,11 @@ class triple extends sandbox_link_named
                     triple_db::FLD_NAME_AUTO,
                     $this->name_generated(),
                     triple_db::FLD_NAME_AUTO_SQL_TYP,
-                    $sbx->name_generated()
+                    $obj->name_generated()
                 );
             }
         }
-        if ($sbx->weight !== $this->weight) {
+        if ($obj->weight !== $this->weight) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_WIGHT,
@@ -3129,10 +3122,10 @@ class triple extends sandbox_link_named
                 triple_db::FLD_WIGHT,
                 $this->weight,
                 triple_db::FLD_WEIGHT_SQL_TYP,
-                $sbx->weight
+                $obj->weight
             );
         }
-        if ($sbx->usage !== $this->usage) {
+        if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -3144,10 +3137,10 @@ class triple extends sandbox_link_named
                 sql_db::FLD_USAGE,
                 $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
-                $sbx->usage
+                $obj->usage
             );
         }
-        if ($sbx->impact !== $this->impact) {
+        if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -3159,10 +3152,10 @@ class triple extends sandbox_link_named
                 sql_db::FLD_IMPACT,
                 $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $sbx->impact
+                $obj->impact
             );
         }
-        if ($sbx->get_view_id() !== $this->get_view_id()) {
+        if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,
@@ -3174,11 +3167,11 @@ class triple extends sandbox_link_named
                 triple_db::FLD_VIEW,
                 view_db::FLD_NAME,
                 $this->view,
-                $sbx->view
+                $obj->view
             );
         }
         // TODO add ref list
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 

@@ -200,7 +200,7 @@ class ref extends sandbox_link
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->reset();
+        $this->reset(true);
     }
 
     /**
@@ -210,8 +210,13 @@ class ref extends sandbox_link
      */
     function reset(bool $keep_user = false): void
     {
+        if ($keep_user) {
+            $usr = $this->get_user();
+        } else {
+            $usr = new user();
+        }
         parent::reset($keep_user);
-        $this->create_objects($this->get_user());
+        $this->create_objects($usr);
         $this->external_key = '';
         $this->source = null;
         $this->url = null;
@@ -301,7 +306,7 @@ class ref extends sandbox_link
      * @return bool true if everything was fine
      */
     function import_mapper(
-        array $in_ex_json,
+        array        $in_ex_json,
         user_message $usr_msg,
         ?data_object $dto = null
     ): bool
@@ -729,7 +734,7 @@ class ref extends sandbox_link
     function cloned_linked(string $external_key): ref
     {
 
-        $obj_cpy = parent::cloned();
+        $obj_cpy = $this->clone_all();
         $obj_cpy->set_predicate_id($this->predicate_id());
         $obj_cpy->set_external_key($external_key);
         return $obj_cpy;
@@ -1275,49 +1280,11 @@ class ref extends sandbox_link
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-            // log the insert attempt first
-            $log = $this->log_link_add();
-            if ($log->id() > 0) {
-                // insert the new reference
-                $db_con->set_class(ref::class);
-                $db_con->set_usr($this->get_user()->id);
-
-                $this->id = $db_con->insert_old(
-                    array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
-                    array($this->phrase_id(), $this->get_external_key(), $this->predicate_id));
-                if ($this->id() > 0) {
-                    // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
-                            msg_id::VAR_ID => $this->dsp_id()
-                        ]);
-                        log_err($usr_msg->get_message(), 'ref->add');
-                    } else {
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = clone $this;
-                        $db_rec->reset();
-                        $db_rec->set_fob($this->fob());
-                        $db_rec->set_tob($this->tob());
-                        $db_rec->set_user($this->get_user());
-                        $std_rec = clone $db_rec;
-                        // save the object fields
-                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                    }
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                    log_err($usr_msg->get_message(), 'ref->add');
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
@@ -1326,8 +1293,9 @@ class ref extends sandbox_link
 
     /**
      * get a similar reference
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(): ref
+    function get_similar(user_message $usr_msg): ref
     {
         $result = new ref($this->get_user());
         log_debug('ref->get_similar ' . $this->dsp_id());
@@ -1372,7 +1340,7 @@ class ref extends sandbox_link
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
+            $similar = $this->get_similar($usr_msg);
             if (isset($similar)) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
@@ -1455,15 +1423,15 @@ class ref extends sandbox_link
     /**
      * get a list of database field names, values and types that have been updated
      *
-     * @param sandbox|ref $sbx the compare value to detect the changed fields
+     * @param ref|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|ref   $sbx,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        ref|db_object_seq_id $obj,
+        user_message         $usr_msg,
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1473,12 +1441,12 @@ class ref extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
             // because it is part of the prime index
-            if ($sbx->predicate_id() !== $this->predicate_id() or $sc_par_lst->is_insert()) {
+            if ($obj->predicate_id() !== $this->predicate_id() or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
@@ -1497,13 +1465,13 @@ class ref extends sandbox_link
                     ref_type::FLD_ID,
                     type_object::FLD_NAME,
                     $this->predicate_id(),
-                    $sbx->predicate_id(),
+                    $obj->predicate_id(),
                     $sys->typ_lst->ref_typ
                 );
             }
         }
         if ($sc_par_lst->is_insert()) {
-            if ($sbx->phrase_id() !== $this->phrase_id()) {
+            if ($obj->phrase_id() !== $this->phrase_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
@@ -1515,11 +1483,11 @@ class ref extends sandbox_link
                     phrase::FLD_ID,
                     phrase::FLD_NAME,
                     $this->phrase(),
-                    $sbx->phrase()
+                    $obj->phrase()
                 );
             }
         }
-        if ($sbx->get_external_key() !== $this->get_external_key()) {
+        if ($obj->get_external_key() !== $this->get_external_key()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
@@ -1527,7 +1495,7 @@ class ref extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            $old_key = $sbx->get_external_key();
+            $old_key = $obj->get_external_key();
             if ($sc_par_lst->is_insert() and $old_key == '') {
                 $old_key = null;
             }
@@ -1538,7 +1506,7 @@ class ref extends sandbox_link
                 $old_key
             );
         }
-        if ($sbx->get_url() !== $this->get_url()) {
+        if ($obj->get_url() !== $this->get_url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
@@ -1550,10 +1518,10 @@ class ref extends sandbox_link
                 ref_db::FLD_URL,
                 $this->get_url(),
                 ref_db::FLD_URL_SQL_TYP,
-                $sbx->get_url()
+                $obj->get_url()
             );
         }
-        if ($sbx->get_source()?->id() !== $this->get_source()?->id()) {
+        if ($obj->get_source()?->id() !== $this->get_source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
@@ -1565,10 +1533,10 @@ class ref extends sandbox_link
                 source_db::FLD_ID,
                 source_db::FLD_NAME,
                 $this->get_source(),
-                $sbx->get_source()
+                $obj->get_source()
             );
         }
-        if ($sbx->description !== $this->description) {
+        if ($obj->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -1580,10 +1548,10 @@ class ref extends sandbox_link
                 sql_db::FLD_DESCRIPTION,
                 $this->description,
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $sbx->description
+                $obj->description
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
     /*

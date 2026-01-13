@@ -4412,4 +4412,4 @@ trace
 #14 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(230): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
 #15 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
 #16 {main}
-by user 
+by user

@@ -47,6 +47,7 @@ class sys_log_type extends type_object
      */
 
     // list of all possible log types
+    // TODO Prio 2 use shared sys_log_types
     const string UNDEFINED = 'undefined';
     const string INFO = 'info';
     const string WARNING = 'warning';

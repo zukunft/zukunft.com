@@ -5,11 +5,10 @@
     model/user/user_type.php - the superclass for word, formula and view types
     ------------------------
 
-    types are used to assign coded functionality to a word, formula or view
-    a user can create a new type to group words, formulas or views and request new functionality for the group
-    types can be renamed by a user and the user change the comment
-    it should be possible to translate types on the fly
-    on each program start the types are loaded once into an array, because they are not supposed to change during execution
+    the user type is the basic thrust level of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Registered_user_accounts
+
+    the official type is used for the external thrust level of a user
+    the user profile is used to define the coded functionality of a user similar to https://en.wikipedia.org/wiki/Wikipedia:User_groups#Table
 
 
     This file is part of zukunft.com - calc with words
@@ -46,12 +45,6 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class user_type extends type_object
 {
-
-    // list of the user types that have a coded functionality
-    const string GUEST = "Guest"; // a read only access
-    const string IP_ADDR = "IP address"; // identified only by IP address
-    const string VERIFIED = "Verified"; // verified by email or mobile
-    const string SECURED = "Secured"; // verified with a high security e.g. via passport of a trusted country
 
     /*
      * database link

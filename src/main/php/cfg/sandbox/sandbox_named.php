@@ -444,7 +444,7 @@ class sandbox_named extends sandbox
      */
     function cloned(string $name): sandbox_named
     {
-        $obj_cpy = $this->clone_reset();
+        $obj_cpy = $this->clone_reset(true);
         $obj_cpy->id = $this->id();
         $obj_cpy->set_name($name);
         return $obj_cpy;
@@ -849,21 +849,11 @@ class sandbox_named extends sandbox
             if ($log->id() > 0) {
 
                 // insert the new object and save the object key
-                // TODO check that always before a db action is called the db type is set correctly
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    $msg = 'add ' . $this->dsp_id();
-                    if ($db_con->insert($qp, $msg, $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $lib = new library();
-                    $class_name = $lib->class_to_name($this::class);
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id());
-                    $this->id = $db_con->insert_old(
-                        array($class_name . '_name', user_db::FLD_ID), array($this->name, $this->get_user()->id));
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                $msg = 'add ' . $this->dsp_id();
+                if ($db_con->insert($qp, $msg, $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
 
                 // save the object fields if saving the key was successful
@@ -1063,9 +1053,9 @@ class sandbox_named extends sandbox
      * @throws Exception
      */
     function save_id_fields(
-        sql_db $db_con,
-        sandbox $db_rec,
-        sandbox $std_rec,
+        sql_db       $db_con,
+        sandbox      $db_rec,
+        sandbox      $std_rec,
         user_message $usr_msg
     ): bool
     {
@@ -1158,7 +1148,7 @@ class sandbox_named extends sandbox
      * @return sandbox a filled object that has the same name
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox
+    function get_similar(user_message $usr_msg): sandbox
     {
         $result = new sandbox_named($this->get_user());
 
@@ -1287,7 +1277,7 @@ class sandbox_named extends sandbox
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1355,15 +1345,15 @@ class sandbox_named extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox_named|sandbox $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_named|sandbox $sbx,
-        user_message          $usr_msg,
-        sql_type_list         $sc_par_lst = new sql_type_list()
+        sandbox|db_object_seq_id $obj,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1379,10 +1369,10 @@ class sandbox_named extends sandbox
         if ($is_insert and $usr_tbl) {
             $lst->add_id_and_user($this);
         } else {
-            $lst->add_user($this, $sbx, $do_log, $table_id);
+            $lst->add_user($this, $obj, $do_log, $table_id);
         }
-        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
-        if ($sbx->get_usage() !== $this->get_usage()) {
+        $lst->add_name_and_description($this, $obj, $do_log, $table_id);
+        if ($obj->get_usage() !== $this->get_usage()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1394,7 +1384,7 @@ class sandbox_named extends sandbox
                 sql_db::FLD_USAGE,
                 $this->get_usage(),
                 sql_db::FLD_USAGE_SQL_TYP,
-                $sbx->get_usage()
+                $obj->get_usage()
             );
         }
         return $lst;

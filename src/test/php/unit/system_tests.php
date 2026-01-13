@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -88,7 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -202,7 +202,7 @@ class system_tests
         $t->assert_dsp_id($t_frm->formula_list_short(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->formula_link(), 'from "scale minute to sec" (formula_id 1) to "minute" (word_id 104) as phrase as (formula_link_id 1)');
         $t->assert_dsp_id($t_frm->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t_frm->element_list(), '"minute" (element_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_frm->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t_res->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_res->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / ' . words::PCT_ID . ',,,) for user 1 (zukunft.com system test)');
@@ -214,7 +214,7 @@ class system_tests
         $t->assert_dsp_id($t_cmp->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_cmp->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
         $t->assert_dsp_id($t_cmp->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t_lan->language(), 'English/english (language_id 1)');
+        $t->assert_dsp_id($t_lan->language(), 'English/en (language_id 1)');
         $t->assert_dsp_id($t_log->log_word_add(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t_log->log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
@@ -544,7 +544,7 @@ class system_tests
 
         $log_lst_dsp = new sys_log_list_ui($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
-        $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
+        $created = $log_lst_dsp->api_json([api_types::HEADER], $usr1_dsp);
         $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));

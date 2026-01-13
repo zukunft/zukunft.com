@@ -90,9 +90,10 @@ include_once paths::MODEL_CONST . 'def.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
@@ -120,9 +121,9 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -147,6 +148,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
@@ -175,9 +177,9 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
-use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -298,7 +300,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * reset all object vars of this object to the null or default value
-     * used e.g. the cleanup the object before the import mapping
+     * used e.g. the clean up the object before the import mapping
      * @param bool $keep_user set to true to keep the original user
      */
     function reset(bool $keep_user = false): void
@@ -317,19 +319,6 @@ class sandbox extends db_object_seq_id_user
         if ($keep_user) {
             $this->set_user($usr);
         }
-    }
-
-    /**
-     * create a clone including the child objects like the group of values
-     * and empty all fields
-     *
-     * @return $this a clone with the name changed
-     */
-    function clone_reset(): sandbox
-    {
-        $obj_cpy = $this->clone_all();
-        $obj_cpy->reset();
-        return $obj_cpy;
     }
 
     /**
@@ -582,6 +571,12 @@ class sandbox extends db_object_seq_id_user
             global $sys;
             $this->protection_id = $sys->typ_lst->ptc_typ->id($code_id);
         }
+    }
+
+    function set_protection_by_code_id(?string $code_id): void
+    {
+        global $sys;
+        $this->set_protection_id($sys->typ_lst->ptc_typ->id($code_id));
     }
 
     /**
@@ -1579,21 +1574,13 @@ class sandbox extends db_object_seq_id_user
 
             if ($this->still_has_no_usr_cfg()) {
                 $log_id = 0;
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::USER]));
-                    if ($usr_msg->is_ok()) {
-                        $msg = 'add ' . $this->dsp_id() . ' for user ' . $this->get_user()->dsp_id();
-                        if ($db_con->insert($qp, $msg, $usr_msg)) {
-                            $log_id = $usr_msg->get_row_id();
-                        }
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::USER]));
+                if ($usr_msg->is_ok()) {
+                    $msg = 'add ' . $this->dsp_id() . ' for user ' . $this->get_user()->dsp_id();
+                    if ($db_con->insert($qp, $msg, $usr_msg)) {
+                        $log_id = $usr_msg->get_row_id();
                     }
-                } else {
-                    // create an entry in the user sandbox
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->get_user()->id);
-                    $log_id = $db_con->insert_old(
-                        array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
                 }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');
@@ -2549,10 +2536,10 @@ class sandbox extends db_object_seq_id_user
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @returns sandbox a filled object that has the same name or links the same objects
+     * @returns sandbox|db_object|null a filled object that has the same name or links the same objects
      *                  or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox
+    function get_similar(user_message $usr_msg): sandbox|db_object|null
     {
         $usr_msg = new user_message();
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
@@ -2667,7 +2654,7 @@ class sandbox extends db_object_seq_id_user
         // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
         if ($this->id() == 0) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
+            $similar = $this->get_similar($usr_msg);
             if ($similar->id() <> 0) {
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
@@ -3224,16 +3211,16 @@ class sandbox extends db_object_seq_id_user
      * create the sql statement to update a sandbox object in the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox $db_row the sandbox object with the database values before the update
+     * @param sandbox|db_object_seq_id $db_row the sandbox object with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
-        sql_creator   $sc,
-        sandbox       $db_row,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_creator              $sc,
+        sandbox|db_object_seq_id $db_row,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -3381,7 +3368,7 @@ class sandbox extends db_object_seq_id_user
             $log->set_field($name_fld);
             $log->old_value = $this->name();
             $log->new_value = null;
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
         } elseif ($this->is_link_obj()) {
             $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $fvt_lst_out, $sc_par_lst_log);
@@ -3701,7 +3688,6 @@ class sandbox extends db_object_seq_id_user
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
         // add the change action field to the field list for the log entries
-        global $sys;
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $sys->typ_lst->cng_act->id(change_actions::ADD),
@@ -3898,7 +3884,7 @@ class sandbox extends db_object_seq_id_user
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         $usr_msg = new user_message();
@@ -4068,7 +4054,7 @@ class sandbox extends db_object_seq_id_user
                 $log->set_field($this->name_field());
                 $log->old_value = $this->name();
                 $log->new_value = null;
-                $qp_log = $log->sql_insert(
+                $qp_log = $log->sql_insert_log(
                     $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
@@ -4174,15 +4160,15 @@ class sandbox extends db_object_seq_id_user
      * get a list of database field names, values and types that have been updated
      * dummy function overwritten by the child object
      *
-     * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox       $sbx,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sandbox|db_object_seq_id $obj,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [

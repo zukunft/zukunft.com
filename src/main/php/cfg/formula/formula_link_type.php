@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -51,10 +51,6 @@ class formula_link_type extends type_object
     /*
      * code links
      */
-
-    // list of the formula link types that have a coded functionality
-    const string DEFAULT = "default";               // a simple link between a formula and a phrase
-    const string TIME_PERIOD = "time_period_based"; // for time based links
 
     // the database and JSON object field names used only for formula links
     const string FLD_ID = 'formula_link_type_id';

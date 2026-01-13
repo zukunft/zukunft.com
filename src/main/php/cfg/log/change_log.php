@@ -757,7 +757,7 @@ class change_log extends db_object_seq_id_user
      */
 
     /**
-     * to save database space the table name is saved as a reference id in the log table
+     * to save database space, the table name is saved as a reference id in the log table
      */
     protected function add_table(sql_db $db_con, string $table_name = ''): int
     {
@@ -774,6 +774,7 @@ class change_log extends db_object_seq_id_user
 
         // add new table name if needed
         if ($table_id <= 0) {
+            log_err('table name ' . $table_name . ' missing in main/resources/db_code_links/change_tables.csv');
             $table_id = $db_con->add_id($table_name);
             // save also the code_id
             if ($table_id > 0) {
@@ -890,7 +891,7 @@ class change_log extends db_object_seq_id_user
      * @param string $par_name name of the database name parameter field
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
-    function sql_insert(
+    function sql_insert_log(
         sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
@@ -1071,11 +1072,11 @@ class change_log extends db_object_seq_id_user
 
         $db_type = $db_con->get_class();
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc);
+        $qp = $this->sql_insert_log($sc);
         if ($qp->name == 'change_values_prime_insert') {
             if (count($qp->par) > 5) {
                 log_debug('');
-                $qp = $this->sql_insert($sc);
+                $qp = $this->sql_insert_log($sc);
             }
         }
         $log_id = 0;

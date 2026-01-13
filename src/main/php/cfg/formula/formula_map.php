@@ -58,8 +58,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
@@ -97,13 +97,13 @@ include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -141,7 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -1544,38 +1544,14 @@ class formula_map extends sandbox_code_id
 
         global $db_con;
 
-        if ($use_func) {
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_add();
-            if ($log->id() > 0) {
-                // insert the new formula
-                $db_con->set_class(formula::class);
-                // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
-                $this->id = $db_con->insert_old(
-                    array(formula_db::FLD_NAME, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
-                    array($this->name(), $this->get_user()->id(), sql::NOW, $this->ref_text, $this->usr_text));
-                if ($this->id() > 0) {
-                    log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
-                    // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        $this->id = 0;
-                        // TODO do rollback or retry?
-                    }
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
-                }
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            if ($db_con->insert($qp, 'add and log ' . $this->dsp_id(), $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
+
         if ($this->id() > 0) {
             // create the related formula word
             // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
@@ -1659,7 +1635,7 @@ class formula_map extends sandbox_code_id
         // if a new object is supposed to be added, check upfront for a similar object to prevent adding duplicates
         if ($this->id() == 0) {
             log_debug('check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar();
+            $similar = $this->get_similar($usr_msg);
             if ($similar->id() <> 0) {
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
@@ -1986,15 +1962,15 @@ class formula_map extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      * the last_update field is excluded here because this is an internal only field
      *
-     * @param sandbox|formula $sbx the compare value to detect the changed fields
+     * @param formula|db_object_seq_id $obj the compare value to detect the changed fields
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|formula $sbx,
-        user_message        $usr_msg,
-        sql_type_list       $sc_par_lst = new sql_type_list()
+        formula|db_object_seq_id $obj,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -2003,8 +1979,8 @@ class formula_map extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $usr_msg, $sc_par_lst);
-        if ($sbx->type_id() !== $this->type_id()) {
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
@@ -2016,7 +1992,7 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_TYPE,
                 $this->type_id(),
                 formula_db::FLD_TYPE_SQL_TYP,
-                $sbx->type_id()
+                $obj->type_id()
             );
         }
         // TODO Prio 2 check why reserving the formula name without expression is a useful feature
@@ -2025,7 +2001,7 @@ class formula_map extends sandbox_code_id
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
         }
-        if ($sbx->ref_text !== $this->ref_text) {
+        if ($obj->ref_text !== $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
@@ -2037,10 +2013,10 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_FORMULA_TEXT,
                 $this->ref_text,
                 formula_db::FLD_FORMULA_TEXT_SQL_TYP,
-                $sbx->ref_text
+                $obj->ref_text
             );
         }
-        if ($sbx->usr_text !== $this->usr_text) {
+        if ($obj->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
@@ -2052,10 +2028,10 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_FORMULA_USER_TEXT,
                 $this->usr_text,
                 formula_db::FLD_FORMULA_USER_TEXT_SQL_TYP,
-                $sbx->usr_text
+                $obj->usr_text
             );
         }
-        if ($sbx->need_all_val !== $this->need_all_val) {
+        if ($obj->need_all_val !== $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
@@ -2067,12 +2043,12 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_ALL_NEEDED,
                 $this->need_all_val,
                 formula_db::FLD_ALL_NEEDED_SQL_TYP,
-                $sbx->need_all_val
+                $obj->need_all_val
             );
         }
-        if ($sbx->ref_text !== $this->ref_text
-            or $sbx->type_id() <> $this->type_id()
-            or $sbx->need_all_val <> $this->need_all_val
+        if ($obj->ref_text !== $this->ref_text
+            or $obj->type_id() <> $this->type_id()
+            or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
             $lst->add_field(
                 formula_db::FLD_LAST_UPDATE,
@@ -2080,7 +2056,7 @@ class formula_map extends sandbox_code_id
                 sql_field_type::TIME
             );
         }
-        if ($sbx->get_view_id() !== $this->get_view_id()) {
+        if ($obj->get_view_id() !== $this->get_view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
@@ -2092,10 +2068,10 @@ class formula_map extends sandbox_code_id
                 formula_db::FLD_VIEW,
                 view_db::FLD_NAME,
                 $this->view,
-                $sbx->view
+                $obj->view
             );
         }
-        if ($sbx->get_impact() !== $this->get_impact()) {
+        if ($obj->get_impact() !== $this->get_impact()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -2107,10 +2083,10 @@ class formula_map extends sandbox_code_id
                 sql_db::FLD_IMPACT,
                 $this->get_impact(),
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $sbx->get_impact()
+                $obj->get_impact()
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
 }

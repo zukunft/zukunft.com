@@ -133,7 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -174,10 +174,10 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
-include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
+include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once test_paths::CONST . 'paths.php';
 include_once test_paths::CONST . 'files.php';
@@ -875,7 +875,7 @@ class test_base
         $lib = new library();
         $original_json = $usr_obj->export_json([]);
         $db_obj = $usr_obj->clone_all();
-        $db_obj->reset();
+        $db_obj->reset(true);
         $db_obj->load_by_id($usr_obj->id());
         $recreated_json = $db_obj->export_json([]);
         $result = $lib->json_is_similar($original_json, $recreated_json);
@@ -956,7 +956,7 @@ class test_base
         }
 
         // create the api message that send to the frontend
-        $api_msg = $msk->api_json([api_type::INCL_COMPONENTS]);
+        $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         if ($id != 0) {
             // add the database object json to the api message
             // to send only one message to the frontend
@@ -1035,13 +1035,13 @@ class test_base
     function assert_ex_and_import(object $obj, user $usr_req): bool
     {
         $usr_msg = new user_message($usr_req);
-        $json_before = $obj->api_json([api_type::TEST_MODE]);
+        $json_before = $obj->api_json([api_types::TEST_MODE]);
         $json_ex = $obj->export_json([], false);
         $new_obj = $obj->clone_all();
-        $new_obj->reset();
+        $new_obj->reset(true);
         $dto = new data_object($usr_req);
         $new_obj->import_obj($json_ex, $usr_msg, $dto);
-        $json_after = $obj->api_json([api_type::TEST_MODE]);
+        $json_after = $obj->api_json([api_types::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);
     }
@@ -1403,13 +1403,16 @@ class test_base
     function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         $usr_msg = new user_message();
+        if ($usr_obj::class == user::class) {
+            $usr_msg->usr = $this->usr_admin;
+        } else {
+            $usr_msg->usr = $this->usr1;
+        }
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-        } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
+            $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
         } else {
             $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
         }
@@ -1418,10 +1421,8 @@ class test_base
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-            } elseif (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
-                $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            if (in_array($usr_obj::class, def::CLASSES_CHANGE_LOG)) {
+                $qp = $usr_obj->sql_insert_log($sc, $sc_par_lst);
             } else {
                 $qp = $usr_obj->sql_insert($sc, $usr_msg, $sc_par_lst);
             }
@@ -1473,24 +1474,21 @@ class test_base
     ): bool
     {
         $usr_msg = new user_message();
+        if ($usr_obj::class == user::class) {
+            $usr_msg->usr = $this->usr_admin;
+        } else {
+            $usr_msg->usr = $this->usr1;
+        }
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
-        } else {
-            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
-        }
+        $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $usr_msg, $sc_par_lst);
-            } else {
-                $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
-            }
+            $qp = $usr_obj->sql_update($sc, $db_obj, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2371,7 +2369,7 @@ class test_base
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->id = 0;
         // TODO Prio 0 add test view relation
         //      but first finish the dto based import
@@ -2397,7 +2395,7 @@ class test_base
         // check the loading via name
         $test_name = 'check the loading of a ' . $lib->class_to_name($usr_obj::class) . ' by name ' . $name
             . ' and check if the name has been mapped';
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->id = 0;
         $usr_obj->set_name('');
         $usr_obj->load_by_name($name);
@@ -2416,14 +2414,14 @@ class test_base
     {
         // check the loading via name and check the id
         $test_name = 'load ' . $usr_obj::class . ' by name ' . $name;
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->load_by_name($name);
         $result = $this->assert($test_name, $usr_obj->id(), $id);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
-            $usr_obj->reset();
+            $usr_obj->reset(true);
             $usr_obj->load_by_id($id);
             $result = $this->assert($test_name, $usr_obj->name(), $name);
         }
@@ -2433,7 +2431,7 @@ class test_base
     function assert_load_by_code_id(sandbox_named $usr_obj, string $code_id = '', int $id = 1): bool
     {
         $test_name = 'load ' . $usr_obj::class . ' by code_id ' . $code_id;
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->load_by_code_id($code_id);
         return $this->assert($test_name, $usr_obj->id(), $id);
     }
@@ -2452,14 +2450,14 @@ class test_base
         // check the loading via name and check the id
         $lnk_id = $fid . '/' . $typ . '/' . $tid;
         $test_name = 'load ' . $usr_obj::class . ' by ' . $lnk_id;
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->load_by_link_id($fid, $typ, $tid);
         $result = $this->assert($test_name, $usr_obj->id(), $id);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
-            $usr_obj->reset();
+            $usr_obj->reset(true);
             $usr_obj->load_by_id($id);
             $result = $this->assert($test_name, $usr_obj->link_id(), $lnk_id);
         }
@@ -2481,7 +2479,7 @@ class test_base
 
         // ... and check the loading via name and check the id
         if ($result) {
-            $usr_obj->reset();
+            $usr_obj->reset(true);
             $usr_obj->load_by_name($name);
             $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
         }
@@ -2500,14 +2498,14 @@ class test_base
     {
         // check the loading via name and check the id
         $test_name = 'load ' . $usr_obj::class . ' by name ' . $name . ' returns zero';
-        $usr_obj->reset();
+        $usr_obj->reset(true);
         $usr_obj->load_by_name($name);
         $result = $this->assert($test_name, $usr_obj->id(), 0);
 
         // ... and check the loading via id and check the name
         if ($result) {
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id . ' returns an empty string';
-            $usr_obj->reset();
+            $usr_obj->reset(true);
             $usr_obj->load_by_id($id);
             $result = $this->assert($test_name, $usr_obj->name(), '');
         }
@@ -2577,7 +2575,7 @@ class test_base
         $sbx->save($usr_msg, $use_func);
         // reset the user_message because we don't care if the object already existed before saving it,
         $usr_msg = new user_message($this->usr1);
-        $sbx->reset();
+        $sbx->reset(true);
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->is_loaded());
 
@@ -2597,7 +2595,7 @@ class test_base
         if ($result) {
             $sbx->set_name($name . self::EXT_RENAME);
             $sbx->save($usr_msg, $use_func);
-            $sbx->reset();
+            $sbx->reset(true);
             $sbx->load_by_id($id);
             $result = $this->assert_true($test_name, $sbx->is_loaded());
 
@@ -3514,7 +3512,7 @@ class test_base
         $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
         $sbx->set_name($new_name);
         if ($this->assert_true($test_name, $sbx->save($usr_msg), $this::TIMEOUT_LIMIT_DB)) {
-            $sbx->reset();
+            $sbx->reset(true);
             $sbx->load_by_name($new_name);
             if ($sbx->id() == $id) {
                 if ($this->assert_load($sbx, $new_name, $id)) {
@@ -3811,8 +3809,8 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' reset creates empty api json';
-        $sbx->reset();
-        $api_json = $sbx->api_json([api_type::TEST_MODE]);
+        $sbx->reset(true);
+        $api_json = $sbx->api_json([api_types::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
     }
 
@@ -3864,9 +3862,9 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($empty::class);
         $test_name = $class . ' fill empty object and test via api json';
-        $original_json = $filled->api_json([api_type::TEST_MODE], $usr_sys);
+        $original_json = $filled->api_json([api_types::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
-        $filled_json = $empty->api_json([api_type::TEST_MODE], $usr_sys);
+        $filled_json = $empty->api_json([api_types::TEST_MODE], $usr_sys);
         return $this->assert_json_string($test_name, $filled_json, $original_json);
     }
 

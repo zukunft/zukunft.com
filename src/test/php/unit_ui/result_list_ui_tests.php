@@ -34,11 +34,11 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -55,7 +55,7 @@ class result_list_ui_tests
         $t->header($ts);
 
         // test the result list display functions
-        $lst = new result_list($t_res->result_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));
+        $lst = new result_list($t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]));
         $test_page = $html->text_h2('result list display test');
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';

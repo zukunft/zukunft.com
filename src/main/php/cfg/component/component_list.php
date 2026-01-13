@@ -67,7 +67,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'component_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -88,7 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 
 class component_list extends sandbox_list_named
 {

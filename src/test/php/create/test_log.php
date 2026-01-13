@@ -73,8 +73,8 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED . 'library.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once test_paths::CREATE . 'test_const.php';
@@ -118,8 +118,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -222,8 +222,8 @@ class test_log
         global $sys;
         $chg = $this->log_word_add();
         $chg->set_field(change_fields::FLD_PHRASE_TYPE);
-        $chg->new_value = phrase_type::TIME;
-        $chg->new_id = $sys->typ_lst->phr_typ->id(phrase_type::TIME);
+        $chg->new_value = phrase_types::TIME;
+        $chg->new_id = $sys->typ_lst->phr_typ->id(phrase_types::TIME);
         return $chg;
     }
 
@@ -236,8 +236,8 @@ class test_log
         global $sys;
         $chg = $this->log_word_add_type();
         $chg->set_action(change_actions::UPDATE);
-        $chg->old_value = phrase_type::MEASURE;
-        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
+        $chg->old_value = phrase_types::MEASURE;
+        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
     }
 
@@ -314,8 +314,8 @@ class test_log
         global $sys;
         $chg = $this->log_ref_add();
         $chg->set_action(change_actions::UPDATE);
-        $chg->old_value = phrase_type::MEASURE;
-        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_type::MEASURE);
+        $chg->old_value = phrase_types::MEASURE;
+        $chg->old_id = $sys->typ_lst->phr_typ->id(phrase_types::MEASURE);
         return $chg;
     }
 
@@ -663,7 +663,7 @@ class test_log
     function log_list_named_ui(): change_log_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->log_list_named(), [api_type::INCL_PHRASES]);
+        return $tl->list_to_ui($this->log_list_named(), [api_types::INCL_PHRASES]);
     }
 
     /**

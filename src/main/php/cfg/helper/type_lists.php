@@ -40,7 +40,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
@@ -323,6 +323,9 @@ class type_lists
         }
         if ($result) {
             $result = $this->cng_fld->load($db_con);
+        }
+        if ($result) {
+            $result = $this->usr_pro->load($db_con);
         }
 
         return $result;

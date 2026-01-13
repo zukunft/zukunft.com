@@ -43,7 +43,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
-use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -76,8 +76,8 @@ class value_read_tests
         if ($phr_lst->count() > 0) {
             $phr = $phr_lst->lst()[0];
             $t->assert($ts . $test_name, $phr->description(), triples::PI_COM);
-            $test_name = words::PI . ' phrase code id ' . phrase_type::TRIPLE_HIDDEN;
-            $t->assert($ts . $test_name, $phr->type_code_id(), phrase_type::TRIPLE_HIDDEN);
+            $test_name = words::PI . ' phrase code id ' . phrase_types::TRIPLE_HIDDEN;
+            $t->assert($ts . $test_name, $phr->type_code_id(), phrase_types::TRIPLE_HIDDEN);
         } else {
             log_err($ts . $test_name . ' has no phrases');
         }

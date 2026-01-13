@@ -38,13 +38,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -360,7 +360,7 @@ class test_phrases
 
     function phrase_list_start_view_ui(): phrase_list_ui
     {
-        return new phrase_list_ui($this->phrase_list_start_view()->api_json([api_type::INCL_PHRASES]));
+        return new phrase_list_ui($this->phrase_list_start_view()->api_json([api_types::INCL_PHRASES]));
     }
 
     /**

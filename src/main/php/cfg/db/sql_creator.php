@@ -534,7 +534,7 @@ class sql_creator
     }
 
     /**
-     * set the complete par list e.g. for unition queries to get the parameters from the previous union part
+     * set the complete par list e.g. for union queries to get the parameters from the previous union part
      * @param sql_field_list $fvt_lst list of parameters already set
      * @return void
      */
@@ -1781,7 +1781,7 @@ class sql_creator
             }
 
             // create the sql for the log entry
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
@@ -1942,7 +1942,7 @@ class sql_creator
             }
 
             // TODO replace dummy value table with an enum value
-            $qp_log = $log->sql_insert(
+            $qp_log = $log->sql_insert_log(
                 $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
 
             // TODO get the fields used in the change log sql from the sql
@@ -2229,7 +2229,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', $num_fld);
+        $qp = $log->sql_insert_log($sc_log, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
@@ -2637,7 +2637,7 @@ class sql_creator
      * @param int|string|array $id the id or list of ids to select the row
      * @param int $offset for the par number e.g. 4 for $4
      * @param string $id_field_par with the parameter name for a single field e.g. "$4" or "new_word_id"
-     * @param bool $is_named true if named paremeters like "_word_name" should be used
+     * @param bool $is_named true if named parameters like "_word_name" should be used
      * @return string with the where statement
      */
     private function sql_where_no_par(
@@ -5071,6 +5071,9 @@ class sql_creator
         if ($result == 'pod_statuss') {
             $result = 'pod_status';
         }
+        if ($result == 'api_typess') {
+            $result = 'api_types';
+        }
         if ($result == 'phrase_table_statuss') {
             $result = 'phrase_table_status';
         }
@@ -5102,6 +5105,12 @@ class sql_creator
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
+        if ($result == 'share_typess') {
+            $result = 'share_types';
+        }
+        if ($result == 'protection_typess') {
+            $result = 'protection_types';
+        }
         if ($result == 'component_typess') {
             $result = 'component_types';
         }
@@ -5111,8 +5120,14 @@ class sql_creator
         if ($result == 'verbss') {
             $result = 'verbs';
         }
+        if ($result == 'phrase_typess') {
+            $result = 'phrase_types';
+        }
         if ($result == 'viewss') {
             $result = 'views';
+        }
+        if ($result == 'views_typess') {
+            $result = 'views_types';
         }
         /*
         if ($this->db_type == self::MYSQL) {

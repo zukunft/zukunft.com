@@ -1752,7 +1752,7 @@ class sandbox_value extends sandbox_multi
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
-                    if (!$this->add_usr_cfg()) {
+                    if (!$this->add_usr_cfg($usr_msg)) {
                         $result = 'creation of user sandbox for ' . $log->field() . ' failed';
                     }
                 }

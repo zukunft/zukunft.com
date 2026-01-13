@@ -38,6 +38,7 @@ include_once paths::MODEL_ELEMENT . 'element_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -75,19 +76,16 @@ class element_tests
         $t->assert_sql_by_id($sc, $elm);
 
         $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_insert($sc, $elm);
-        //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_update($sc, $elm);
-        //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
-        // TODO Prio 2 activate db write
-        //$t->assert_sql_delete($sc, $elm);
-        //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $elm);
+        $elm_db = $elm->clone_all();
+        $elm_db->obj = $t_frm->formula_prior();
+        $t->assert_sql_update($sc, $elm, $elm_db);
+        $t->assert_sql_delete($sc, $elm);
 
 
         $t->subheader($ts . 'element api');
         $elm = $t_frm->element();
+        $elm->id = 1;
         $t->assert_api_json($elm);
 
         // JSON export list

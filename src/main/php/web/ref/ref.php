@@ -53,7 +53,7 @@ include_once html_paths::REF . 'source.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -71,7 +71,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -504,7 +504,7 @@ class ref extends sandbox
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        $msk_lst = $msk_lst->only_type(view_type::REF);
+        $msk_lst = $msk_lst->only_type(view_types::REF);
         return $msk_lst->selector($form, $view_id, $name, $msg_id);
     }
 

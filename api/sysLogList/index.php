@@ -34,13 +34,13 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
-include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\api\controller;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 // open database
 $app = new application();
@@ -63,7 +63,7 @@ if ($db_con->is_open()) {
         $lst->page = 0;
         $lst->size = 20;
         $lst->load_all();
-        $result = $lst->api_json([api_type::HEADER], $usr);
+        $result = $lst->api_json([api_types::HEADER], $usr);
     }
 
     $ctrl = new controller();

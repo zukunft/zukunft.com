@@ -27,6 +27,7 @@ the object structure is:
 +-- sql_type_list - a list of parameters to define which sql statement should be created
 +-- sql_where - structure for one where parameter for a sql statement
 +-- sql_where_list - list to create the sql where condition
++-- element_db - the database const for the element table
 +-- export - create an object to export data - the object can be converted to a json, yaml or XML message
 +-- export_type_list - a list of parameters to configure the export message
 +-- xml_serializer - turning an array or object into XML using PHP
@@ -66,7 +67,7 @@ the object structure is:
     \-- user_profile_list - a list of possible user profiles with the database id
     \-- verb_list - al list of verb objects
     \-- view_link_type_list - to defined how a term is linked to a view
-    \-- view_relation_type_list - to defined how a term is relationed to a view
+    \-- view_relation_type_list - to defined how a term is related to a view
     \-- view_sys_list - list of predefined system views
     \-- view_type_list - to link coded functionality to a view
 +-- type_lists - helper class to combine all preloaded types in one class for the API
@@ -325,17 +326,23 @@ the object structure is:
 +-- json_fieldsShared - list of json field names used for the api and im- and export
 +-- libraryShared - some useful function e.g. for string handling
 +-- api_type_listShared - a list of parameters to configure the api message
-+-- component_typeShared - db based ENUM of the component types
++-- component_link_typesShared - db based ENUM of the component link types
++-- component_typesShared - db based ENUM of the component types
++-- element_typesShared - db based ENUM of the formula link types
 +-- file_typesShared - ENUM of the used file types
++-- formula_link_typesShared - db based ENUM of the formula link types
 +-- formula_typesShared - db based ENUM of the formula types
-+-- phrase_typeShared - the phrase code_ids used in back- and frontend
++-- job_typesShared - ENUM of the used job types
++-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user
-+-- protection_typeShared - to define if and how an object can changed
-+-- share_typeShared - to define if an object can be shared between the users
++-- protection_typesShared - to define if and how an object can changed
++-- ref_typesShared - ENUM of the used reference types
++-- share_typesShared - to define if an object can be shared between the users
 +-- verbsShared - to use the same verb code_id in frontend and backend
++-- view_link_typesShared - db based ENUM of the view link types
 +-- view_relation_typesShared - db based ENUM of the view relation types
 +-- view_stylesShared - db based ENUM of the view and component styles
-+-- view_typeShared - db based ENUM of the view types
++-- view_typesShared - db based ENUM of the view types
 +-- url_varShared - all names used for the url and the form field names
 \-- ui_baseUi
     \-- ui_im_exportUi - html user interface components for im- and export
@@ -376,9 +383,9 @@ the object structure is:
     \-- formula_link_type_listUi - the preloaded data formula link types used for the html frontend
     \-- formula_type_listUi - the preloaded data formula types used for the html frontend
     \-- job_type_listUi - the preloaded data job types used for the html frontend
-    \-- language_formsUi - the preloaded data language_forms used for the html frontend
-    \-- languagesUi - the preloaded data languages used for the html frontend
-    \-- phrase_typesUi - the preloaded data phrase types used for the html frontend
+    \-- language_form_listUi - the preloaded data language_forms used for the html frontend
+    \-- language_listUi - the preloaded data languages used for the html frontend
+    \-- phrase_type_listUi - the preloaded data phrase types used for the html frontend
     \-- position_type_listUi - the preloaded data component position types used for the html frontend
     \-- protectionUi - the preloaded data protection types used for the html frontend
     \-- ref_type_listUi - the preloaded data ref types used for the html frontend

@@ -119,7 +119,7 @@ use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -145,7 +145,7 @@ class test_lib
 
     function ui_value(value $val): value_ui
     {
-        $api_msg = $val->api_json([api_type::INCL_PHRASES]);
+        $api_msg = $val->api_json([api_types::INCL_PHRASES]);
         return new value_ui($api_msg);
     }
 

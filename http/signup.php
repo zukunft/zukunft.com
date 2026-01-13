@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -45,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 $app = new frontend();
 $db_con = $app->start("signup", "center_form");
 $html = new html_base();
+$usr_msg = new user_message();
 
 if ($db_con->is_open()) {
 
@@ -53,6 +55,7 @@ if ($db_con->is_open()) {
     // load the session user parameters
     $usr = new user;
     $result .= $usr->get();
+    $usr_msg->usr = $usr;
 
     // get the parameters
     if (isset($_POST['submit'])) {
@@ -98,7 +101,12 @@ if ($db_con->is_open()) {
             $db_con->set_class(user::class);
             $db_con->set_usr(users::SYSTEM_ID);
             // TODO use user object and prepared query
-            $log_id = $db_con->insert_old(array('user_name', 'email', 'password'), array($usr_name, $usr_email, $pw_hash));
+            $new_usr = new user();
+            $new_usr->set_name($usr_name);
+            $new_usr->set_email($usr_email);
+            $new_usr->password = $pw_hash;
+            $new_usr->save($usr_msg);
+            $log_id = $new_usr->id();
             if ($log_id <= 0) {
                 log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.', 'signup');
             }

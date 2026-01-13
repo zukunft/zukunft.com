@@ -58,7 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -257,7 +257,7 @@ class value_tests
         $t->assert_api_to_ui($val, new value_ui());
 
         // TODO move to ui tests
-        $val_dsp = new value_ui($val->api_json([api_type::INCL_PHRASES]));
+        $val_dsp = new value_ui($val->api_json([api_types::INCL_PHRASES]));
         $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
@@ -266,16 +266,16 @@ class value_tests
         $grp = $t_grp->group();
         $val = new value($usr, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->time_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->text_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
         $val = $t_val->geo_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
+        $t->assert_api($val, 'value_with_phrases', [api_types::INCL_PHRASES]);
 
         // casting figure
         $val = new value($usr);

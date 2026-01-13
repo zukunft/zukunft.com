@@ -50,9 +50,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class ref_type extends type_object
 {
-    // list of the ref types that have a coded functionality
-    const string WIKIDATA = "wikidata";
-    const string WIKIPEDIA = "wikipedia";
 
     // the url that can be used to receive data if the external key is added
     public ?string $url = null;

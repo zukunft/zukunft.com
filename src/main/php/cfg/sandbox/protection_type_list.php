@@ -35,11 +35,11 @@ namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::MODEL_SANDBOX . 'protection_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
-use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 
 class protection_type_list extends type_list
 {

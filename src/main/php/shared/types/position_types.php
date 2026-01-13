@@ -22,7 +22,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -38,6 +38,9 @@ class position_types
 
     // place the component in a new row
     const string BELOW = "below";
+    const int BELOW_ID = 1;
+    const string BELOW_NAME = "below";
+    const string BELOW_COM = "below the previous entry";
 
     // place the component right or left of the previous component depending on the language write order e.g for arabic it will be left
     const string SIDE = "side";

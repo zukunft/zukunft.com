@@ -27,7 +27,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -47,12 +47,12 @@ include_once html_paths::TYPES . 'change_field_list.php';
 include_once html_paths::TYPES . 'sys_log_status_list.php';
 include_once html_paths::TYPES . 'user_profile.php';
 include_once html_paths::TYPES . 'job_type_list.php';
-include_once html_paths::TYPES . 'languages.php';
-include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'language_list.php';
+include_once html_paths::TYPES . 'language_form_list.php';
 include_once html_paths::TYPES . 'share.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::TYPES . 'verbs.php';
-include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'phrase_type_list.php';
 include_once html_paths::TYPES . 'formula_type_list.php';
 include_once html_paths::TYPES . 'formula_link_type_list.php';
 include_once html_paths::TYPES . 'source_type_list.php';
@@ -90,7 +90,7 @@ class type_lists
      */
 
     public ?user_profile $html_user_profiles = null;
-    public ?phrase_types $html_phrase_types = null;
+    public ?phrase_type_list $html_phrase_types = null;
     public ?formula_type_list $html_formula_types = null;
     public ?formula_link_type_list $html_formula_link_types = null;
     public ?view_type_list $html_view_types = null;
@@ -104,8 +104,8 @@ class type_lists
     public ?ref_type_list $html_ref_types = null;
     public ?share $html_share_types = null;
     public ?protection $html_protection_types = null;
-    public ?languages $html_languages = null;
-    public ?language_forms $html_language_forms = null;
+    public ?language_list $html_languages = null;
+    public ?language_form_list $html_language_forms = null;
     public ?verbs $html_verbs = null;
     public ?sys_log_status_list $html_sys_log_statuus = null;
     public ?job_type_list $html_job_types = null;
@@ -322,7 +322,7 @@ class type_lists
 
     function set_phrase_types(?array $json_array = null): void
     {
-        $this->html_phrase_types = new phrase_types();
+        $this->html_phrase_types = new phrase_type_list();
         $this->html_phrase_types->set_from_json_array($json_array);
     }
 
@@ -406,13 +406,13 @@ class type_lists
 
     function set_languages(?array $json_array = null): void
     {
-        $this->html_languages = new languages();
+        $this->html_languages = new language_list();
         $this->html_languages->set_from_json_array($json_array);
     }
 
     function set_language_forms(?array $json_array = null): void
     {
-        $this->html_language_forms = new language_forms();
+        $this->html_language_forms = new language_form_list();
         $this->html_language_forms->set_from_json_array($json_array);
     }
 

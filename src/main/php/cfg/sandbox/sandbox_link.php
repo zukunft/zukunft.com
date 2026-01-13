@@ -48,7 +48,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -81,7 +81,6 @@ include_once paths::MODEL_LOG . 'change_link.php';
 include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_VIEW . 'term_view.php';
-//include_once paths::MODEL_VIEW . 'view_link_type.php';
 //include_once paths::MODEL_VIEW . 'view_relation.php';
 //include_once paths::MODEL_VIEW . 'view_relation_type.php';
 //include_once paths::MODEL_WORD . 'triple.php';
@@ -93,6 +92,8 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -117,7 +118,6 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
@@ -130,6 +130,8 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Exception;
 
@@ -175,7 +177,7 @@ class sandbox_link extends sandbox
 
     /**
      * reset all object vars of this object to the null or default value
-     * used e.g. the cleanup the object before the import mapping
+     * used e.g. the clean up the object before the import mapping
      * @param bool $keep_user set to true to keep the original user
      */
     function reset(bool $keep_user = false): void
@@ -231,7 +233,7 @@ class sandbox_link extends sandbox
                 // TODO Prio 3 review and check what is the best solution for the overwrites e.g. where is the PREDICATE really used
                 if ($this::class == formula_link::class) {
                     global $sys;
-                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_type::DEFAULT)) {
+                    if ($this->predicate_id() != $sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT)) {
                         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                     }
                 } elseif ($this::class == view_relation::class) {
@@ -241,7 +243,7 @@ class sandbox_link extends sandbox
                     }
                 } elseif ($this::class == term_view::class) {
                     global $sys;
-                    if ($this->predicate_id() != $sys->typ_lst->msk_lnk_typ->id(view_link_type::DEFAULT)) {
+                    if ($this->predicate_id() != $sys->typ_lst->msk_lnk_typ->id(view_link_types::DEFAULT)) {
                         $vars[json_fields::PREDICATE_ID] = $this->predicate_id();
                     }
                 } elseif ($this::class == component_link::class) {
@@ -867,19 +869,6 @@ class sandbox_link extends sandbox
      */
 
     /**
-     * create a new link object
-     * @returns int the id of the creates object
-     */
-    function add_insert(): int
-    {
-        global $db_con;
-        $db_con->set_class(self::class);
-        return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID),
-            array($this->fob()->id(), $this->tob()->id(), $this->get_user()->id()));
-    }
-
-    /**
      * create a new link object and log the change
      * TODO do a rollback in case of an error
      * @param user_message $usr_msg with status ok
@@ -912,16 +901,10 @@ class sandbox_link extends sandbox
 
                 // insert the new object and save the object key
                 // TODO check that always before a db action is called the db type is set correctly
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, $usr_msg);
-                    if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
-                        $this->id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $this->id = $this->add_insert();
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc, $usr_msg);
+                if ($db_con->insert($qp, 'add ' . $this->dsp_id(), $usr_msg)) {
+                    $this->id = $usr_msg->get_row_id();
                 }
 
                 // save the object fields if saving the key was successful
@@ -1070,10 +1053,11 @@ class sandbox_link extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
+     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
      * @returns string a filled object that links the same objects
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(): sandbox
+    function get_similar(user_message $usr_msg): sandbox
     {
         $result = new sandbox($this->get_user());
 
@@ -1129,7 +1113,7 @@ class sandbox_link extends sandbox
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
         user_message       $usr_msg,
-        sql_type_list      $sc_par_lst_sub
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1360,15 +1344,15 @@ class sandbox_link extends sandbox
      * get a list of database field names, values and types that have been updated
      * of the object to combine the list with the list of the child object e.g. word
      *
-     * @param sandbox|sandbox_link $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sandbox_link|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|sandbox_link $sbx,
-        user_message         $usr_msg,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        sandbox_link|db_object_seq_id $obj,
+        user_message                  $usr_msg,
+        sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1385,7 +1369,7 @@ class sandbox_link extends sandbox
         if ($usr_tbl and $is_insert) {
             $lst->add_id_and_user($this);
         } else {
-            $lst->add_user($this, $sbx, $do_log, $table_id);
+            $lst->add_user($this, $obj, $do_log, $table_id);
         }
         // the user cannot change the link type, because this would be another link
         if (!$usr_tbl) {
@@ -1397,7 +1381,7 @@ class sandbox_link extends sandbox
                     $this->message_from_invalid($usr_msg);
                 }
             }
-            if ($sbx->from_id() !== $this->from_id()) {
+            if ($obj->from_id() !== $this->from_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1410,7 +1394,7 @@ class sandbox_link extends sandbox
                     $this->from_field(),
                     'from_' . $this->fob()?->name_field(),
                     $this->fob(),
-                    $sbx->fob()
+                    $obj->fob()
                 );
             }
             if ($this:: class != ref::class) {
@@ -1423,7 +1407,7 @@ class sandbox_link extends sandbox
                     }
                 }
             }
-            if ($sbx->to_id() !== $this->to_id()) {
+            if ($obj->to_id() !== $this->to_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
@@ -1432,12 +1416,12 @@ class sandbox_link extends sandbox
                     );
                 }
                 // e.g. for external references
-                if ($this->tob == null and $sbx->tob == null) {
+                if ($this->tob == null and $obj->tob == null) {
                     $lst->add_field(
                         $this->to_field(),
                         $this->to_value(),
                         sql_field_type::TEXT,
-                        $sbx->to_value()
+                        $obj->to_value()
                     );
                 } else {
                     // TODO Prio 2: move "to_" to a const and or function
@@ -1445,7 +1429,7 @@ class sandbox_link extends sandbox
                         $this->to_field(),
                         'to_' . $this->tob()?->name_field(),
                         $this->tob(),
-                        $sbx->tob()
+                        $obj->tob()
                     );
                 }
             }
@@ -1468,16 +1452,16 @@ class sandbox_link extends sandbox
                 }
             }
             if ($is_delete) {
-                $from_fld = $sbx->fob()?->name_field();
-                if ($sbx->tob() == null) {
+                $from_fld = $obj->fob()?->name_field();
+                if ($obj->tob() == null) {
                     // e.g. for references the external key
-                    $to_fld = $sbx->to_field();
+                    $to_fld = $obj->to_field();
                 } else {
-                    if (is_string($sbx->tob())) {
+                    if (is_string($obj->tob())) {
                         // e.g. for references the external key
-                        $to_fld = $sbx->to_field();
+                        $to_fld = $obj->to_field();
                     } else {
-                        $to_fld = $sbx->tob()->name_field();
+                        $to_fld = $obj->tob()->name_field();
                     }
                 }
             }
@@ -1487,7 +1471,7 @@ class sandbox_link extends sandbox
                     $to_fld = sql::TO_FLD_PREFIX . $to_fld;
                 }
                 // TODO check how to handle if the standard
-                if ($this->is_excluded() and !$sbx->is_excluded() or $is_delete) {
+                if ($this->is_excluded() and !$obj->is_excluded() or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1499,7 +1483,7 @@ class sandbox_link extends sandbox
                         $this->from_field(),
                         $from_fld,
                         null,
-                        $sbx->fob()
+                        $obj->fob()
                     );
                     if ($do_log) {
                         $lst->add_field(
@@ -1513,7 +1497,7 @@ class sandbox_link extends sandbox
                             $this->to_field(),
                             null,
                             sandbox_named::FLD_NAME_SQL_TYP,
-                            $sbx->to_value(),
+                            $obj->to_value(),
                             $to_fld,
                             null,
                             null,
@@ -1524,10 +1508,10 @@ class sandbox_link extends sandbox
                             $this->to_field(),
                             $to_fld,
                             null,
-                            $sbx->tob()
+                            $obj->tob()
                         );
                     }
-                } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                } elseif (!$this->is_excluded() and $obj->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1585,7 +1569,7 @@ class sandbox_link extends sandbox
      * because that some triples are reserved for system testing and should never be used by a user
      *
      * @param user_message $usr_msg the message object why the link is reserved and which alternative names can be used
-     *                              of the internal error that an overwrite is missing to interupt the workflow
+     *                              of the internal error that an overwrite is missing to interrupt the workflow
      * @return bool true if no preserved link of link name is used and the link can be saved to the database
      */
     protected function check_save(user_message $usr_msg): bool
@@ -1655,16 +1639,16 @@ class sandbox_link extends sandbox
      * create the sql statement to update a sandbox link object in the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox $db_row the word with the database values before the update
+     * @param sandbox|db_object_seq_id $db_row the word with the database values before the update
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_update(
-        sql_creator   $sc,
-        sandbox       $db_row,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_creator              $sc,
+        sandbox|db_object_seq_id $db_row,
+        user_message             $usr_msg,
+        sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list

@@ -36,11 +36,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_VIEW . 'term_view.php';
-include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_links
@@ -68,7 +68,7 @@ class test_links
         $t_msk = new test_views($this->env);
         $lnk = new term_view($this->env->usr1);
         $lnk->set_view($t_msk->view());
-        $lnk->set_predicate(view_link_type::DEFAULT);
+        $lnk->set_predicate(view_link_types::DEFAULT);
         $lnk->set_term($t_trm->term());
         return $lnk;
     }
