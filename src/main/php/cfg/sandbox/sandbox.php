@@ -1866,12 +1866,14 @@ class sandbox extends db_object_seq_id_user
         // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
 
+        $sc_par_lst = new sql_type_list([sql_type::USER]);
+
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
             // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $usr_msg)) {
+            if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER]));
+                    $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
                 }
                 // check if some user overwrites can be removed
@@ -1889,14 +1891,14 @@ class sandbox extends db_object_seq_id_user
                 }
             }
             if ($usr_msg->is_ok()) {
-                if ($this->no_diff($norm_obj, $usr_msg)) {
+                if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
                     if ($this->has_usr_cfg()) {
-                        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER]));
+                        $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
                         $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
                     }
                 } else {
                     // apply the changes directly to the norm db record
-                    $qp = $this->sql_update($sc, $norm_obj, $usr_msg, new sql_type_list([sql_type::USER]));
+                    $qp = $this->sql_update($sc, $norm_obj, $usr_msg, $sc_par_lst);
                     $db_con->update($qp, 'update user row for ' . $this->dsp_id(), $usr_msg);
                 }
                 // check if some user overwrites can be removed
@@ -1936,7 +1938,7 @@ class sandbox extends db_object_seq_id_user
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
             // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $usr_msg)) {
+            if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
                 if ($this->has_usr_cfg()) {
                     $sc_par_lst->add(sql_type::USER);
                     $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
@@ -1992,10 +1994,12 @@ class sandbox extends db_object_seq_id_user
             }
             // TODO check why $this seems to be here updated but not in the sandbox multi object
             if ($this->has_usr_cfg()) {
-                if ($this->no_diff($norm_obj, $usr_msg)) {
-                    $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::USER]));
+                if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
+                    // remove the user sandbox row because it is not needed any more
+                    $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
                 } else {
+                    // update the user sandbox row with the changes
                     $sc_par_lst->add(sql_type::UPDATE);
                     // force logging the deletion
                     if ($this->is_excluded()) {
@@ -2007,7 +2011,8 @@ class sandbox extends db_object_seq_id_user
                     $db_con->update($qp, 'update user ' . $obj_name, $usr_msg);
                 }
             } else {
-                if (!$this->no_diff($norm_obj, $usr_msg)) {
+                if (!$this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
+                    // create a new user sandbox row with the changes
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
@@ -2136,9 +2141,12 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox|sandbox_named|sandbox_link $db_obj the user database or standard record for compare
      * @return bool true if any of the fields does not match
      */
-    function no_diff(sandbox|sandbox_named|sandbox_link $db_obj): bool
+    function no_diff(
+        sandbox|sandbox_named|sandbox_link $db_obj,
+        user_message                       $usr_msg,
+        sql_type_list                      $sc_par_lst = new sql_type_list()
+    ): bool
     {
-        $usr_msg = new user_message();
         // for the check it is not relevant if only the user differs
         $chk_obj = clone $this;
         $chk_obj->set_user($db_obj->get_user());
@@ -2146,7 +2154,8 @@ class sandbox extends db_object_seq_id_user
         if ($chk_obj->id() == 0) {
             $chk_obj->id = $db_obj->id();
         }
-        return $chk_obj->db_fields_changed($db_obj, $usr_msg)->is_empty_except_internal_fields();
+        $fvt_lst = $chk_obj->db_fields_changed($db_obj, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_internal_fields();
     }
 
     /**
@@ -2618,11 +2627,8 @@ class sandbox extends db_object_seq_id_user
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $mtr;
 
         // init
-        $msg_reload = $mtr->txt(msg_id::RELOAD);
-        $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -2701,7 +2707,7 @@ class sandbox extends db_object_seq_id_user
 
                 // update the existing object
                 if ($usr_msg->is_ok()) {
-                    log_debug('update');
+                    log_debug('update ' . $this->dsp_id());
 
                     // read the database values to be able to check if something has been changed;
                     // done first, because it needs to be done for user and general object values

@@ -220,7 +220,7 @@ class a_selected_test extends test_cleanup
             //new word_read_tests()->run($this);
             //new triple_read_tests()->run($this);
             //new source_read_tests()->run($this);
-            new value_read_tests()->run($this);
+            //new value_read_tests()->run($this);
             //new formula_read_tests()->run($this);
             //new view_read_tests()->run($this);
             //new component_read_tests()->run($this);
@@ -243,12 +243,12 @@ class a_selected_test extends test_cleanup
             //new user_write_tests()->run($this);
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
-            //new triple_write_tests()->run($this);
+            new triple_write_tests()->run($this);
             //new group_write_tests()->run($this);
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
-            new formula_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
             //new formula_link_write_tests()->run($this);
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);

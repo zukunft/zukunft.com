@@ -163,6 +163,12 @@ class ref extends sandbox_link
     const array FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
     const array FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
 
+    // overwrite the parent link const
+    const string FLD_FROM = phrase::FLD_ID;
+    const string FLD_PREDICATE = ref_db::FLD_TYPE;
+    const string FLD_TO = ref_db::FLD_EX_KEY;
+
+
     // char used to create one unique key string for the reference
     private const string SEP = '|';
     private const string ESC_CHR = '|';

@@ -2639,57 +2639,55 @@ class triple extends sandbox_link_named
 
         global $db_con;
 
-        if ($use_func) {
-            // TODO review: do not set the generated name if it matches the name
-            $this->set_names();
-            $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            if ($usr_msg->is_ok()) {
-                $msg = 'add and log ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            }
-        } else {
-
-            // log the insert attempt first
-            $log = $this->log_link_add();
-            if ($log->id() > 0) {
-                // insert the new triple
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc, $usr_msg);
-                $msg = 'add ' . $this->dsp_id();
-                if ($db_con->insert($qp, $msg, $usr_msg)) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-                // TODO make sure on all add functions that the database object is always set
-                //array($this->from_id(), $this->verb_id() , $this->to_id(), $this->get_user()->id()));
-                if ($this->id() > 0) {
-                    // update the id in the log
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        // TODO do rollback or retry?
-                    } else {
-
-                        // create an empty db_rec element to force saving of all set fields
-                        $db_rec = new triple($this->get_user());
-                        $db_rec->set_from($this->get_from());
-                        $db_rec->set_verb($this->get_verb());
-                        $db_rec->set_to($this->get_to());
-                        $std_rec = clone $db_rec;
-                        // save the triple fields
-                        $usr_msg->add($this->save_name_fields($db_con, $db_rec, $std_rec));
-                        $usr_msg->add($this->save_triple_fields($db_con, $db_rec, $std_rec));
-                    }
-
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_TRIPLE, [msg_id::VAR_NAME => $this->name]);
-                }
+        // TODO review: do not set the generated name if it matches the name
+        $this->set_names();
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
         return $usr_msg->is_ok();
     }
+
+    /**
+     * check additional if the opposite triple already exists and if yes, ask for confirmation
+     *
+     * @returns triple|sandbox a filled object that has the same name, links or reverse links
+     */
+    function get_similar(user_message $usr_msg): triple|sandbox
+    {
+        $sim = parent::get_similar($usr_msg);
+
+        // check if the opposite triple already exists and if yes, ask for confirmation
+        if ($this->id() == 0) {
+            log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
+            // check if the reverse triple is already in the database
+            $db_chk_rev = clone $this;
+            $db_chk_rev->set_from($this->get_to());
+            $db_chk_rev->get_from()->id = $this->to_id();
+            $db_chk_rev->set_to($this->get_from());
+            $db_chk_rev->get_to()->id = $this->from_id();
+            // remove the name in the object to prevent loading by name
+            $db_chk_rev->name = '';
+            $db_chk_rev->load_standard();
+            if ($db_chk_rev->id() > 0) {
+                $sim = $db_chk_rev;
+
+                $usr_msg->add_id_with_vars(msg_id::REVERSE_ALREADY_EXISTS, [
+                    msg_id::VAR_SOURCE_NAME => $this->get_from()->name(),
+                    msg_id::VAR_VERB_NAME => $this->get_verb_name(),
+                    msg_id::VAR_NAME => $this->get_to()->name(),
+                ]);
+            }
+        }
+
+        return $sim;
+    }
+
 
     /**
      * add or update a triple in the database or create a user triple
@@ -2704,7 +2702,6 @@ class triple extends sandbox_link_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $mtr;
 
         // init
         $lib = new library();
@@ -2822,7 +2819,7 @@ class triple extends sandbox_link_named
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }
@@ -2832,6 +2829,7 @@ class triple extends sandbox_link_named
 
         return $usr_msg->is_ok();
     }
+
 
     /*
      * save helper

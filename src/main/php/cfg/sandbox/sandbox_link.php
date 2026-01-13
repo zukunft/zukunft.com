@@ -74,7 +74,6 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_link.php';
-//include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_LOG . 'change_link.php';
@@ -102,7 +101,6 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -151,6 +149,11 @@ class sandbox_link extends sandbox
     const string KEY_SEP = '/';
     // to allow the usage of the name key separator within an object name
     const string KEY_SEP_ESC = '//';
+
+    // the fields names of the link that are supposed to be overwritten by the child objects
+    const string FLD_FROM = 'from_id';
+    const string FLD_PREDICATE = 'predicate_id';
+    const string FLD_TO = 'to_id';
 
 
     /*

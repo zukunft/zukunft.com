@@ -183,6 +183,11 @@ class component_link extends sandbox_link
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
 
+    // overwrite the parent link const
+    const string FLD_FROM = view_db::FLD_ID;
+    const string FLD_PREDICATE = component_link_type::FLD_ID;
+    const string FLD_TO = component::FLD_ID;
+
 
     // default const
     const int START_ORDER_NBR = 1;

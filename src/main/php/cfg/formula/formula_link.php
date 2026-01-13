@@ -168,6 +168,11 @@ class formula_link extends sandbox_link
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
 
+    // overwrite the parent link const
+    const string FLD_FROM = formula_db::FLD_ID;
+    const string FLD_PREDICATE = formula_link_type::FLD_ID;
+    const string FLD_TO = phrase::FLD_ID;
+
 
     /*
      * object vars

@@ -113,6 +113,12 @@ class view_relation extends sandbox_link
     const array FLD_NAMES_USR = view_relation_db::FLD_NAMES_USR;
     const array ALL_SANDBOX_FLD_NAMES = view_relation_db::ALL_SANDBOX_FLD_NAMES;
 
+    // overwrite the parent link const
+    const string FLD_FROM = view_relation_db::FLD_PARENT;
+    const string FLD_PREDICATE = view_relation_type::FLD_ID;
+    const string FLD_TO = view_relation_db::FLD_CHILD;
+
+
 
     /*
      * object vars

@@ -75,6 +75,7 @@ class triple_db
     const string FLD_ID = 'triple_id';
     const string FLD_FROM_COM = 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)';
     const string FLD_FROM = 'from_phrase_id';
+    const string FLD_PREDICATE = verb_db::FLD_ID;
     const string FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
     const string FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
     const string FLD_TO = 'to_phrase_id';
@@ -103,7 +104,7 @@ class triple_db
     // list of fields that MUST be set by one user
     const array FLD_LST_LINK = array(
         [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NULL, sql::INDEX, '', self::FLD_FROM_COM],
-        [verb_db::FLD_ID, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
+        [self::FLD_PREDICATE, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
     );
     // list of must fields that CAN be changed by the user

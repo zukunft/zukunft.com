@@ -46,12 +46,12 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -62,12 +62,12 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -294,6 +294,42 @@ class sql_par_field_list
         $this->add_field(
             user_db::FLD_ID,
             $sbx->get_user_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+
+    }
+
+    /**
+     * add the id, the ids of the link and the user field to this list
+     * *
+     * @param sandbox_link $sbx the sandbox object that has been updated
+     * @return void
+     */
+    function add_id_link_and_user(sandbox_link $sbx): void
+    {
+        $this->add_field(
+            $sbx::FLD_ID,
+            $sbx->id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            user_db::FLD_ID,
+            $sbx->get_user_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_FROM,
+            $sbx->from_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_PREDICATE,
+            $sbx->predicate_id(),
+            db_object_seq_id::FLD_ID_SQL_TYP
+        );
+        $this->add_field(
+            $sbx::FLD_TO,
+            $sbx->to_id(),
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 

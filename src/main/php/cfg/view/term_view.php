@@ -147,6 +147,11 @@ class term_view extends sandbox_link
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
+    // overwrite the parent link const
+    const string FLD_FROM = term::FLD_ID;
+    const string FLD_PREDICATE = view_link_type::FLD_ID;
+    const string FLD_TO = view_db::FLD_ID;
+
 
     /*
      * object vars
