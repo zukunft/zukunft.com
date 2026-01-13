@@ -93,7 +93,7 @@ class group_write_tests
             } else {
                 $phr_lst = $t_phr->phrase_list_17_plus();
             }
-            $this->group_add($wrd_add_lst[$i], $grp_name, $grp_add[1], $phr_lst, $test_name, $t);
+            $this->group_add($wrd_add_lst[$i], $grp_name, $phr_lst, $test_name, $t);
             $i++;
         }
 
@@ -111,7 +111,7 @@ class group_write_tests
         foreach ($grp_add_lst as $grp_add) {
             $grp_name = $grp_add[0];
             $test_name = 'del prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
-            $this->group_del($grp_name, $grp_add[1], $test_name, $t);
+            $this->group_del($grp_name, $test_name, $t);
         }
 
 
