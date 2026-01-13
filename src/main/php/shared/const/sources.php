@@ -63,7 +63,6 @@ class sources
     const string SYSTEM_TEST_ADD_COM = 'System Test Source Description';
     const string SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Source added via sql function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Source added via sql insert';
     const string SYSTEM_TEST_RENAMED = 'System Test Source Renamed';
 
     // must be the same as in /resource/api/source/source_put.json

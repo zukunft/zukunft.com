@@ -92,7 +92,6 @@ class formulas
     // persevered formula names for unit and integration tests
     const string SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Formula via SQL function';
-    const string SYSTEM_TEST_ADD_VIA_SQL = 'System Test Formula via SQL insert';
     const string SYSTEM_TEST_ADD_COM = 'System Test Formula Description';
     const string SYSTEM_TEST_RENAMED = 'System Test Formula Renamed';
     const string SYSTEM_TEST_EXCLUDED = 'System Test Formula Excluded';
@@ -121,7 +120,6 @@ class formulas
         self::SCALE_TO_SEC,
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,
         self::SYSTEM_TEST_THIS,
@@ -144,7 +142,6 @@ class formulas
     const array TEST_FORMULAS = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
-        self::SYSTEM_TEST_ADD_VIA_SQL,
         self::SYSTEM_TEST_RENAMED,
         self::SYSTEM_TEST_EXCLUDED,
         self::SYSTEM_TEST_THIS,

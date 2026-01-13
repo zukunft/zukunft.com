@@ -330,20 +330,6 @@ class test_formulas extends test_objects
         return $frm;
     }
 
-    /**
-     * based on the phrase list by intention to test what happens if the formulas are missing
-     * @return formula to test the sql insert without use of function
-     */
-    function formula_add_by_sql(): formula
-    {
-        $t_phr = new test_phrases($this->env);
-        $frm = new formula($this->env->usr1);
-        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_SQL);
-        $frm->set_user_text(formulas::INCREASE_EXP, $t_phr->phrase_list_increase()->term_list());
-        $frm->set_type(formula_type::CALC, $this->env->usr1);
-        return $frm;
-    }
-
     function expression(): expression
     {
         $t_trm = new test_terms($this->env);

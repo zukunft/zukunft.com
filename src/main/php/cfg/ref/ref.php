@@ -1380,11 +1380,7 @@ class ref extends sandbox_link
             // if everything has been fine until here
             // update the
             if ($usr_msg->is_ok()) {
-                if ($use_func) {
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                } else {
-                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                }
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
             }
         }
 

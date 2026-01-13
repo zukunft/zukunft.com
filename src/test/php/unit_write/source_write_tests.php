@@ -57,8 +57,6 @@ class source_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'prepared');
-        $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_sql(), false);
         $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_src->source_add_by_func(), true);
 

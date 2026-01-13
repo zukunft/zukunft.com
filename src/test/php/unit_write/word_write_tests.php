@@ -88,8 +88,6 @@ class word_write_tests
         $t_wrd->cleanup($ts);
 
         $t->subheader($ts . 'prepared');
-        $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_sql(), false);
         $test_name = 'add word ' . words::TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_wrd->word_add_by_func(), true);
 

@@ -456,23 +456,6 @@ class test_triples extends test_objects
     }
 
     /**
-     * @return triple to test the sql insert without use of a function
-     */
-    function triple_add_by_sql(): triple
-    {
-        $t_vrb = new test_verbs($this->env);
-        $t_db = new test_db_load($this->env);
-        $trp = new triple($this->env->usr1);
-        $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_SQL);
-        $wrd_add_func = $t_db->load_word(words::TEST_ADD_VIA_SQL);
-        $wrd_math = $t_db->load_word(words::MATH);
-        $trp->set_from($wrd_add_func->phrase());
-        $trp->set_verb($t_vrb->verb_is());
-        $trp->set_to($wrd_math->phrase());
-        return $trp;
-    }
-
-    /**
      * @return triple "Zurich (City)" used for unit testing
      */
     function zh_city(): triple

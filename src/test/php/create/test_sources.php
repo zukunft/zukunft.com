@@ -162,16 +162,6 @@ class test_sources
         return $msk;
     }
 
-    /**
-     * @return source to test the sql insert without use of function
-     */
-    function source_add_by_sql(): source
-    {
-        $msk = new source($this->env->usr1);
-        $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_SQL);
-        return $msk;
-    }
-
     function source_list(): source_list
     {
         $lst = new source_list($this->env->usr1);

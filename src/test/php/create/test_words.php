@@ -201,16 +201,6 @@ class test_words extends test_objects
     }
 
     /**
-     * @return word to test the sql insert without use of function
-     */
-    function word_add_by_sql(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set_name(words::TEST_ADD_VIA_SQL);
-        return $wrd;
-    }
-
-    /**
      * @return word to test the api insert call
      */
     function word_add_via_api(): word

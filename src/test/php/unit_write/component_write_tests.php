@@ -66,8 +66,6 @@ class component_write_tests
         $t->header($ts);
 
         $t->subheader($ts . 'component prepared write');
-        $test_name = 'add component ' . components::TEST_ADD_VIA_SQL_NAME . ' via sql insert';
-        $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_sql(), false);
         $test_name = 'add component ' . components::TEST_ADD_VIA_FUNC_NAME . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_cmp->component_add_by_func(), true);
 

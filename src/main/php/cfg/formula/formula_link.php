@@ -1041,11 +1041,7 @@ class formula_link extends sandbox_link
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($usr_msg->is_ok()) {
-                if ($use_func) {
-                    $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
-                } else {
-                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
-                }
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
             }
         }
 
