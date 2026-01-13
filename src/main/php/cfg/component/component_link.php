@@ -1418,47 +1418,6 @@ class component_link extends sandbox_link
         return $result;
     }
 
-    /**
-     * set the update parameters for the view component order_nbr
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component_link $db_rec the view component link as saved in the database before the update
-     * @param component_link $std_rec the default parameter used for this view component link
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private
-    function save_field_order_nbr(sql_db $db_con, component_link $db_rec, component_link $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->order_nbr <> $this->order_nbr) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->order_nbr;
-            $log->new_value = $this->order_nbr;
-            $log->std_value = $std_rec->order_nbr;
-            $log->row_id = $this->id();
-            $log->set_field(self::FLD_ORDER_NBR);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated component_link fields excluding the name, because already done when adding a component_link
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component_link|sandbox $db_obj the view component link as saved in the database before the update
-     * @param component_link|sandbox $norm_obj the default parameter used for this view component link
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, component_link|sandbox $db_obj, component_link|sandbox $norm_obj): user_message
-    {
-        $usr_msg = $this->save_field_order_nbr($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_type($db_con, $db_obj, $norm_obj));
-        $usr_msg->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
-    }
-
 
     /*
      * sql write fields

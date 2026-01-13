@@ -1118,21 +1118,6 @@ class view extends sandbox_code_id
         return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
 
-    /**
-     * save all updated view fields excluding the name, because already done when adding a view
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param view|sandbox $db_obj the database record before the saving
-     * @param view|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, view|sandbox $db_obj, view|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        //$usr_msg->add($this->save_field_code_id($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
-    }
-
 
     /*
      * save helper

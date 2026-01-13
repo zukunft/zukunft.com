@@ -937,22 +937,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * save all updated formula_link fields excluding the name, because already done when adding a formula_link
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param formula_link|sandbox $db_obj the database record before the saving
-     * @param formula_link|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, formula_link|sandbox $db_obj, formula_link|sandbox $norm_obj): user_message
-    {
-        // link type not used at the moment
-        $usr_msg = $this->save_field_type($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" has been saved');
-        return $usr_msg;
-    }
-
-    /**
      * update a formula_link in the database or create a user formula_link
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine

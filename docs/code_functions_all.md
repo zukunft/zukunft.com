@@ -61,11 +61,6 @@
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /formula/formula_map.php
     \-- del_usr_cfg_exe - section for function del_usr_cfg_exe is expected to be del in /formula/formula_map.php
     \-- save_field_trigger_update - section for function save_field_trigger_update is expected to be save in /formula/formula_map.php
-    \-- save_field_usr_text - section for function save_field_usr_text is expected to be save in /formula/formula_map.php
-    \-- save_field_ref_text - section for function save_field_ref_text is expected to be save in /formula/formula_map.php
-    \-- save_field_need_all - section for function save_field_need_all is expected to be save in /formula/formula_map.php
-    \-- save_all_fields - section for function save_all_fields is expected to be save in /formula/formula_map.php
-    \-- save_field_name - section for function save_field_name is expected to be save in /formula/formula_map.php
     \-- save_id_fields - section for function save_id_fields is expected to be save in /formula/formula_map.php
     \-- is_term_the_same - section for function is_term_the_same is expected to be info in /formula/formula_map.php
     \-- save_id_if_updated - section for function save_id_if_updated is expected to be save in /formula/formula_map.php
@@ -218,7 +213,7 @@
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /view/view.php
     \-- del_links - section for function del_links is expected to be del in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
-    \-- order error - order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos,order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos,order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos,order of section save has difference at save_all_fields should be before save of save,save_component_links,load_sql_user_changes,save_all_fields does not match save_field_ui_msg_id,save_field_ui_msg_id_vars,save_field_ui_msg_id_exception,save_field_ui_msg_val_exception,save_field_wrd_row,save_field_wrd_col,save_field_wrd_col2,save_field_formula,2,save_all_fields,generate_ref_text,generate_usr_text,is_std,is_used,not_used,add,get_similar,save,order of section save has difference at save_all_fields should be before save of save,save_component_links,load_sql_user_changes,save_all_fields does not match save_field_ui_msg_id,save_field_ui_msg_id_vars,save_field_ui_msg_id_exception,save_field_ui_msg_val_exception,save_field_wrd_row,save_field_wrd_col,save_field_wrd_col2,save_field_formula,2,save_all_fields,generate_ref_text,generate_usr_text,is_std,is_used,not_used,add,get_similar,save,order of section save has difference at save_all_fields should be before save of save,save_component_links,load_sql_user_changes,save_all_fields does not match save_field_ui_msg_id,save_field_ui_msg_id_vars,save_field_ui_msg_id_exception,save_field_ui_msg_val_exception,save_field_wrd_row,save_field_wrd_col,save_field_wrd_col2,save_field_formula,2,save_all_fields,generate_ref_text,generate_usr_text,is_std,is_used,not_used,add,get_similar,save,order of section save has difference at save_all_fields should be before save of save,save_component_links,load_sql_user_changes,save_all_fields does not match save_field_ui_msg_id,save_field_ui_msg_id_vars,save_field_ui_msg_id_exception,save_field_ui_msg_val_exception,save_field_wrd_row,save_field_wrd_col,save_field_wrd_col2,save_field_formula,2,save_all_fields,generate_ref_text,generate_usr_text,is_std,is_used,not_used,add,get_similar,save
+    \-- order error - order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos,order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos,order of section load sql has difference at load_sql_standard should be before load_sql of load_sql_by_term,load_sql,load_sql_standard does not match load_sql_standard,3,load_sql,load_sql_user_changes,load_sql_by_link_and_type,load_sql_by_link_and_pos,load_sql_max_pos
 \-- view_relation
     \-- parent - section for function parent not yet defined that it should be set and get in /view/view_relation.php
     \-- child - section for function child not yet defined that it should be set and get in /view/view_relation.php
@@ -606,47 +601,6 @@
         \-- formula_map - unlink this formula from a word or triple
     \-- assign_phrases
         \-- formula_map - assign the formula to the words and triple
-\-- save
-    \-- save_field_ui_msg_id
-        \-- component - set the update parameters for the component user interface message id
-    \-- save_field_ui_msg_id_vars
-        \-- component - set the update parameters for the component user interface after message id
-    \-- save_field_ui_msg_id_exception
-        \-- component - set the update parameters for the component user interface exception message id
-    \-- save_field_ui_msg_val_exception
-        \-- component - set the update parameters for the component user interface exception message value
-    \-- save_field_wrd_row
-        \-- component - set the update parameters for the word row
-    \-- save_field_wrd_col
-        \-- component - set the update parameters for the word col
-    \-- save_field_wrd_col2
-        \-- component - set the update parameters for the word col2
-    \-- save_field_formula
-        \-- component - set the update parameters for the formula
-    \-- 2
-        \-- component_link - set the update parameters for the view component order_nbr
-    \-- save_all_fields
-        \-- component - save all updated component fields excluding the name, because already done when adding a component
-        \-- component_link - save all updated component_link fields excluding the name, because already done when adding a component_link
-        \-- ref - save all updated reference fields
-        \-- source - save all updated source fields excluding the name, because already done when adding a source
-    \-- generate_ref_text
-        \-- formula - update the database reference text based on the user text
-    \-- generate_usr_text
-        \-- formula - update the user text based on the database reference text
-    \-- is_std
-        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
-    \-- is_used
-        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
-    \-- not_used
-        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
-    \-- add
-        \-- ref - update a ref in the database or update the existing
-    \-- get_similar
-        \-- ref - get a similar reference
-    \-- save
-        \-- ref - update a ref in the database or update the existing
-        \-- verb - TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
 \-- del
     \-- del_links
         \-- component - delete the view component links of linked to this view component
@@ -682,6 +636,25 @@
         \-- ref - @return string with the unique name
         \-- verb - @return string display the unique id fields (used also for debugging)
         \-- view_relation - @return string the html code to display the link name
+\-- save
+    \-- 1
+        \-- ref - update a ref in the database or update the existing
+    \-- get_similar
+        \-- component_link - get a similar reference
+        \-- ref - get a similar reference
+    \-- generate_ref_text
+        \-- formula - update the database reference text based on the user text
+    \-- generate_usr_text
+        \-- formula - update the user text based on the database reference text
+    \-- is_std
+        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
+    \-- is_used
+        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
+    \-- not_used
+        \-- formula_map - @return bool true if the formula or formula assignment has not been overwritten by the user
+    \-- save
+        \-- ref - update a ref in the database or update the existing
+        \-- verb - TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
 \-- message
     \-- message_from_invalid
         \-- component_link - get a list of database field names, values and types that have been updated
@@ -763,17 +736,7 @@
     \-- del_usr_cfg_exe
         \-- formula_map - overwrite of the user sandbox function to remove also the related elements
     \-- save_field_trigger_update
-        \-- formula_map - update the time stamp to trigger an update of the depending on results
-    \-- save_field_usr_text
-        \-- formula_map - set the update parameters for the formula text as written by the user if needed
-    \-- save_field_ref_text
-        \-- formula_map - set the update parameters for the formula in the database reference format
-    \-- save_field_need_all
-        \-- formula_map - set the update parameters that define if all results are needed to calculate a result
-    \-- save_all_fields
-        \-- formula_map - save all updated formula fields
-    \-- save_field_name
-        \-- formula_map - set the update parameters for the formula text as written by the user if needed
+        \-- formula_map - TODO Prio 0 add
     \-- save_id_fields
         \-- formula_map - updated the view component name (which is the id field)
     \-- is_term_the_same
@@ -2005,7 +1968,6 @@
     \-- del_usr_cfg - section for function del_usr_cfg is expected to be del in /sandbox/sandbox.php
     \-- load_sql_user_changes - section for function load_sql_user_changes is expected to be load sql in /sandbox/sandbox.php
     \-- db_ready - section for function db_ready is expected to be check in /sandbox/sandbox.php
-    \-- save_all_fields - section for function save_all_fields is expected to be save in /sandbox/sandbox.php
     \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox.php
     \-- db_fields_all - section for function db_fields_all is expected to be sql write fields in /sandbox/sandbox.php
     \-- save_field_user - section for function save_field_user is expected to be save in /sandbox/sandbox.php

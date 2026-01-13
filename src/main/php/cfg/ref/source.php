@@ -511,48 +511,6 @@ class source extends sandbox_code_id
 
 
     /*
-     * save
-     */
-
-    /**
-     * set the update parameters for the source url
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source $db_rec the database record before the saving
-     * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
-    {
-        $usr_msg = new user_message;
-        if ($db_rec->url <> $this->url) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->url;
-            $log->new_value = $this->url;
-            $log->std_value = $std_rec->url;
-            $log->row_id = $this->id();
-            $log->set_field(source_db::FLD_URL);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source|sandbox $db_obj the database record before the saving
-     * @param source|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, source|sandbox $db_obj, source|sandbox $norm_obj): user_message
-    {
-        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
-    }
-
-
-    /*
      * save helper
      */
 

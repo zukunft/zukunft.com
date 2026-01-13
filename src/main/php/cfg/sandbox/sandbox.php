@@ -1851,64 +1851,6 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * update all fields and create or delete the user overwrite database row if needed
-     * TODO activate and use it
-     *
-     * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
-     * @param sandbox $norm_obj this object with the variables of the norm set as in the database before the update
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_all_fields(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): user_message
-    {
-        // always return a user message and if everything is fine, it is just empty
-        $usr_msg = new user_message();
-        // the sql creator is used more than once, so create it upfront
-        $sc = $db_con->sql_creator();
-
-        $sc_par_lst = new sql_type_list([sql_type::USER]);
-
-        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
-        if ($this->can_change()) {
-            // if there is no difference between the user row and the norm row remove all fields from the user row
-            if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
-                if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
-                    $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
-                }
-                // check if some user overwrites can be removed
-                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-            } else {
-                // apply the changes directly to the norm db record
-                $qp = $this->sql_update($sc, $db_obj, $usr_msg);
-                $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
-            }
-        } else {
-            // if the norm row should not be changed by the user, create a user sandbox row if needed
-            if (!$this->has_usr_cfg()) {
-                if (!$this->add_usr_cfg()) {
-                    $usr_msg->add_id_with_vars(msg_id::USER_SANDBOX_CREATION_FAILED, [msg_id::VAR_ID => $this->dsp_id()]);
-                }
-            }
-            if ($usr_msg->is_ok()) {
-                if ($this->no_diff($norm_obj, $usr_msg, $sc_par_lst)) {
-                    if ($this->has_usr_cfg()) {
-                        $qp = $this->sql_delete($sc, $usr_msg, $sc_par_lst);
-                        $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $usr_msg);
-                    }
-                } else {
-                    // apply the changes directly to the norm db record
-                    $qp = $this->sql_update($sc, $norm_obj, $usr_msg, $sc_par_lst);
-                    $db_con->update($qp, 'update user row for ' . $this->dsp_id(), $usr_msg);
-                }
-                // check if some user overwrites can be removed
-                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
      * save all updated fields with one sql function
      * similar to the sandbox_multi save_fields_func function but for only one table
      *
