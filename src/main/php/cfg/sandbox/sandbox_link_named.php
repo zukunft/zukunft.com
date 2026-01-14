@@ -525,36 +525,6 @@ class sandbox_link_named extends sandbox_link
 
 
     /*
-     * save function
-     */
-
-    /**
-     * set the update parameters for the link object description
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_link_named $db_rec the database record before the saving
-     * @param sandbox_link_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_field_description(sql_db $db_con, sandbox_link_named $db_rec, sandbox_link_named $std_rec): string
-    {
-        $result = '';
-        // if the description is not set, don't overwrite any db entry
-        if ($this->description <> Null) {
-            if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->description;
-                $log->new_value = $this->description;
-                $log->std_value = $std_rec->description;
-                $log->row_id = $this->id();
-                $log->set_field(sql_db::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
-            }
-        }
-        return $result;
-    }
-
-
-    /*
      * sql write
      */
 

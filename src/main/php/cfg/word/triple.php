@@ -2460,38 +2460,6 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * set the update parameters for the triple description
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_triple_description(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->description <> $this->description) {
-            $log = $this->log_upd_field();
-            $log->old_value = $db_rec->description;
-            $log->new_value = $this->description;
-            $log->std_value = $std_rec->description;
-            $log->row_id = $this->id();
-            $log->set_field(sql_db::FLD_DESCRIPTION);
-            $usr_msg->add($this->save_field_user($db_con, $log));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_triple_fields(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
-    {
-        $usr_msg = $this->save_field_triple_description($db_con, $db_rec, $std_rec);
-        $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
-        $usr_msg->add($this->save_field_type($db_con, $db_rec, $std_rec));
-        log_debug('triple->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
-    }
-
-    /**
      * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
      * @return user_message the message that should be shown to the user in case something went wrong
      */

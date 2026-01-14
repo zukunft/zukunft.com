@@ -454,23 +454,4 @@ class sandbox_typed extends sandbox_named
         return $usr_msg;
     }
 
-
-    /*
-     * save - write to database
-     */
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source $db_rec the database record before the saving
-     * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_fields_typed(sql_db $db_con, sandbox_typed $db_rec, sandbox_typed $std_rec): user_message
-    {
-        $usr_msg = parent::save_fields_named($db_con, $db_rec, $std_rec);
-        $usr_msg->add($this->save_field_type($db_con, $db_rec, $std_rec));
-        return $usr_msg;
-    }
-
 }

@@ -952,48 +952,6 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * set the update parameters for the named object description
-     * similar to the function with the same name in sandbox_link_named,
-     * but because php 8.1 does not yet allow extends parent_class_a, parent_class_b needs to be repeated
-     *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_named $db_rec the database record before the saving
-     * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
-    {
-        $usr_msg = new user_message();
-        // if the description is not set, don't overwrite any db entry
-        if ($this->description <> Null) {
-            if ($this->description <> $db_rec->description) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->description;
-                $log->new_value = $this->description;
-                $log->std_value = $std_rec->description;
-                $log->row_id = $this->id();
-                $log->set_field(sql_db::FLD_DESCRIPTION);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * save all updated source fields excluding the name, because already done when adding a source
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_named $db_rec the database record before the saving
-     * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
-    {
-        $usr_msg = $this->save_field_description($db_con, $db_rec, $std_rec);
-        $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
-        return $usr_msg;
-    }
-
-    /**
      * updated the object id fields (e.g. for a word or formula the name, and for a link the linked ids)
      * should only be called if the user is the owner and nobody has used the display component link
      * @param sql_db $db_con the active database connection

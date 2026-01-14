@@ -2920,56 +2920,6 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * set the update parameters for the word, triple, formula, view or component type
-     * TODO review
-     * TODO: log the ref
-     * TODO: save the reference also in the log
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_type(
-        sql_db  $db_con,
-        sandbox $db_rec,
-        sandbox $std_rec
-    ): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->type_id <> $this->type_id) {
-            if ($this::class == triple::class) {
-                $log = $this->log_upd_field();
-            } else {
-                $log = $this->log_upd();
-            }
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id();
-            // special case just to shorten the field name
-            // TODO use a function overwritten by the child objects
-            if ($this::class == formula_link::class) {
-                $log->set_field(formula_link_type::FLD_ID);
-            } elseif ($this::class == word::class) {
-                $log->set_field(phrase::FLD_TYPE);
-            } elseif ($this::class == triple::class) {
-                $log->set_field(phrase::FLD_TYPE);
-            } elseif ($this::class == component_link::class) {
-                $log->set_field(component_link_type::FLD_ID);
-            } else {
-                $lib = new library();
-                $log->set_field($lib->class_to_name($this::class) . sql_db::FLD_EXT_TYPE_ID);
-            }
-            $usr_msg->add($this->save_field_user($db_con, $log));
-            log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');
-        }
-        return $usr_msg;
-    }
-
-    /**
      * dummy function that should be overwritten by the child object
      * @return string the name of the object type
      */

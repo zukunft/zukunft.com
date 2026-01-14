@@ -4428,54 +4428,6 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * set the update parameters for the word, triple, formula, view or component type
-     * TODO: log the ref
-     * TODO: save the reference also in the log
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox_multi $db_rec the database record before the saving
-     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_field_type(
-        sql_db        $db_con,
-        sandbox_multi $db_rec,
-        sandbox_multi $std_rec
-    ): string
-    {
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-
-        $result = '';
-        if ($db_rec->type_id <> $this->type_id) {
-            if ($this::class == triple::class) {
-                $log = $this->log_upd_field();
-            } else {
-                $log = $this->log_upd();
-            }
-            $log->old_value = $db_rec->type_name();
-            $log->old_id = $db_rec->type_id;
-            $log->new_value = $this->type_name();
-            $log->new_id = $this->type_id;
-            $log->std_value = $std_rec->type_name();
-            $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id();
-            // special case just to shorten the field name
-            if ($this::class == formula_link::class) {
-                $log->set_field(formula_link_type::FLD_ID);
-            } elseif ($this::class == word::class) {
-                $log->set_field(phrase::FLD_TYPE);
-            } elseif ($this::class == triple::class) {
-                $log->set_field(phrase::FLD_TYPE);
-            } else {
-                $log->set_field($class_name . sql_db::FLD_EXT_TYPE_ID);
-            }
-            $result .= $this->save_field_user($db_con, $log);
-            log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');
-        }
-        return $result;
-    }
-
-    /**
      * dummy function that should be overwritten by the child object
      * @return string the name of the object type
      */
