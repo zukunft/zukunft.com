@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION phrase_type_update_log_1002
      _description          text,
      _phrase_type_id       bigint,
      _field_id_type_name   smallint,
-     _type_name_old        text) RETURNS bigint AS
+     _type_name_old        text) RETURNS void AS
 $$
 BEGIN
 

@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION verb_update_log_1111111111
      _usage                        bigint,
      _field_id_impact              smallint,
      _impact_old                   numeric,
-     _impact                       numeric) RETURNS bigint AS
+     _impact                       numeric) RETURNS void AS
 $$
 BEGIN
 

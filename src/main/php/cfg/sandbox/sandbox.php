@@ -2553,10 +2553,14 @@ class sandbox extends db_object_seq_id_user
      * TODO return a user_message with a suggested solution instead of a string
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
 
-    function save(user_message $usr_msg): bool
+    function save(
+        user_message $usr_msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         log_debug($this->dsp_id());
 

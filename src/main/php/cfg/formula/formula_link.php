@@ -939,12 +939,25 @@ class formula_link extends sandbox_link
     /**
      * update a formula_link in the database or create a user formula_link
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(
+        user_message $usr_msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
 
         global $db_con;
+
+        // by default all changes are logged
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
+            }
+        }
 
         // check if the required parameters are set
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {

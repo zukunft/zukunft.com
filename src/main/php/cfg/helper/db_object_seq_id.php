@@ -62,12 +62,10 @@ include_once paths::DB . 'sql_field_type.php';
 //include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-//include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
-//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -87,10 +85,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
-use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -575,13 +571,26 @@ class db_object_seq_id extends db_object
      * add or update a row in the database
      *
      * @param user_message $usr_msg to collect the problem messages and solution for the requesting user
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(
+        user_message        $usr_msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         global $db_con;
 
         log_debug($this->dsp_id());
+
+        // by default all changes are logged
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
+            }
+        }
 
         // check e.g. if another unique key is already exists or a preserved name is used
         $this->check($usr_msg);
@@ -589,23 +598,27 @@ class db_object_seq_id extends db_object
         // create a new database row or update an existing
         if ($usr_msg->is_ok()) {
             if (!$this->has_db_id()) {
-                $this->db_add($usr_msg, $db_con);
+                $this->db_add($usr_msg, $db_con, $sc_par_lst);
             } else {
-                $this->db_update($usr_msg, $db_con);
+                $this->db_update($usr_msg, $db_con, $sc_par_lst);
             }
         }
 
         return $usr_msg->is_ok();
     }
 
-    protected function db_add(user_message $usr_msg, sql_db $db_con): bool
+    protected function db_add(
+        user_message  $usr_msg,
+        sql_db        $db_con,
+        sql_type_list $sc_par_lst
+    ): bool
     {
         log_debug('add ' . $this->dsp_id());
         // if the user has the right to change the database row ...
         if ($this->can_be_added_by($usr_msg)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([]));
+            $qp = $this->sql_insert($sc, $usr_msg, $sc_par_lst);
 
             // ... and update the database row
             $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
@@ -633,9 +646,14 @@ class db_object_seq_id extends db_object
      *
      * @param user_message $usr_msg to collect the problem messages and solution for the requesting user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return bool true is the database row has been updated
      */
-    protected function db_update(user_message $usr_msg, sql_db $db_con): bool
+    protected function db_update(
+        user_message  $usr_msg,
+        sql_db        $db_con,
+        sql_type_list $sc_par_lst
+    ): bool
     {
         log_debug('update ' . $this->dsp_id());
 
@@ -649,7 +667,7 @@ class db_object_seq_id extends db_object
         if ($this->can_be_changed_by($usr_msg, $db_rec)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_update($sc, $db_rec, $usr_msg, new sql_type_list([]));
+            $qp = $this->sql_update($sc, $db_rec, $usr_msg, $sc_par_lst);
 
             // ... and update the database row
             $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);

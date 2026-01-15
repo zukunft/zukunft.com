@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION verb_update_log_1222000000
      _code_id              text,
      _field_id_description smallint,
      _description_old      text,
-     _description          text) RETURNS bigint AS
+     _description          text) RETURNS void AS
 $$
 BEGIN
 

@@ -1440,9 +1440,13 @@ class formula_map extends sandbox_code_id
      * overwrite the _sandbox function to create the formula ref text; maybe combine later
      *
      * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
-    function save(user_message $usr_msg): bool
+    function save(
+        user_message $usr_msg,
+        sql_type_list|array $sc_par_lst = []
+    ): bool
     {
         log_debug($this->dsp_id());
 

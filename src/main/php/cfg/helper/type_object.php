@@ -691,6 +691,9 @@ class type_object extends db_object_seq_id
 
         $sql .= $sc->sql_func_end();
 
+        if (!$sc_par_lst->is_insert()) {
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
+        }
         $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
 
         // merge all together and create the function
