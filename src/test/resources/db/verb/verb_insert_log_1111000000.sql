@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION verb_insert_log_111100000
+CREATE OR REPLACE FUNCTION verb_insert_log_1111000000
     (_verb_name            text,
      _user_id              bigint,
      _change_action_id     smallint,
@@ -34,12 +34,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE verb_insert_log_111100000_call
+PREPARE verb_insert_log_1111000000_call
     (text, bigint, smallint, smallint, smallint, text, smallint, text) AS
-SELECT verb_insert_log_111100000
+SELECT verb_insert_log_1111000000
     ($1,$2, $3, $4, $5, $6, $7, $8);
 
-SELECT verb_insert_log_111100000
+SELECT verb_insert_log_1111000000
         ('not set'::text,
          3::bigint,
          1::smallint,

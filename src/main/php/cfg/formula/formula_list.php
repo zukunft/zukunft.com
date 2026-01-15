@@ -780,8 +780,11 @@ class formula_list extends sandbox_list_named
             $db_lst_all = new formula_list($this->get_user());
             $add_lst = new formula_list($this->get_user());
 
-            // create a new user message object for each try to get only the user messages of the last try to get only the remaining messages
+            // create a new user message object for each try
+            // to get only the user messages of the last try
+            // to get only the remaining messages
             $lst_usr_msg = new user_message();
+            $ref_usr_msg = new user_message();
 
             while ($frm_added and $level < $max_frm_levels) {
 
@@ -873,6 +876,7 @@ class formula_list extends sandbox_list_named
 
             // add the user_messages to the last try
             $usr_msg->add($lst_usr_msg);
+            $usr_msg->add($ref_usr_msg);
 
             // reload the id of the formulas added with the last run
             // TODO use the insert message instead to increase speed
@@ -895,7 +899,7 @@ class formula_list extends sandbox_list_named
             $this->fill_by_name($db_lst_all, true);
 
             // report missing formulas
-            $this->report_missing($usr_msg, $trm_lst);
+            $this->report_missing($usr_msg, $trm_lst, $imp->file_name);
 
 
             // create any missing sql delete functions and delete unused sandbox objects
@@ -1062,9 +1066,15 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    private function report_missing(user_message $usr_msg, term_list $cache): void
+    private function report_missing(user_message $usr_msg, term_list $cache, string $file_name): void
     {
         foreach ($this->lst() as $frm) {
+            if ($frm->id() == 0) {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_FAILED, [
+                    msg_id::VAR_FORMULA => $frm->name(),
+                    msg_id::VAR_FILE_NAME => $file_name
+                ]);
+            }
             $exp = $frm->expression($cache);
             $frm_trm_lst = $exp->terms($cache);
             foreach ($frm_trm_lst->lst() as $trm) {

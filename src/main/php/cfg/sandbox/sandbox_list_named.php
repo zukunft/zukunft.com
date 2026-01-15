@@ -1216,7 +1216,9 @@ class sandbox_list_named extends sandbox_list
                     $sql_list->add($qp);
                 } else {
                     // TODO Prio 0 create error because this case should neven happen
-                    $usr_msg->add($ins_usr_msg);
+                    // to not add the $ins_usr_msg to the $usr_msg because each add should be possible even if the previous add failed
+                    // $usr_msg->add($ins_usr_msg);
+                    log_warning('Internal import error: ' . $usr_msg->all_message_text());
                     //log_err('Internal import error: ' . $usr_msg->all_message_text());
                 }
             }

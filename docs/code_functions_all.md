@@ -184,6 +184,9 @@
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /user/user.php
     \-- log_name_field - section for function log_name_field is expected to be log in /user/user.php
     \-- order error - order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset,order of section construct and map has difference at api_mapper should be before clone_reset, import_mapper should be before clone_reset of __construct,reset,clone_reset,cloned,row_mapper,api_mapper,import_mapper does not match __construct,reset,row_mapper_sandbox,api_mapper,import_mapper,clone_reset
+\-- verb
+    \-- common_mapper - section for function common_mapper not yet defined that it should be construct and map in /verb/verb.php
+    \-- is_valid - section for function is_valid is expected to be check in /verb/verb.php
 \-- term_view
     \-- term - section for function term is expected to be cast in /view/term_view.php
     \-- from_field - section for function from_field is expected to be sql fields in /view/term_view.php
@@ -298,6 +301,8 @@
         \-- source - set the object vars of this source object based on the import json array
         \-- verb - function to import the core user sandbox object values from a json string
         \-- view_relation - set the vars of this named link object based on the given json without writing to the database
+    \-- common_mapper
+        \-- verb - function to import the core user sandbox object values from a json string
     \-- row_mapper_verb
         \-- verb - set the class vars based on a database record
 \-- api
@@ -417,13 +422,13 @@
     \-- get_ref_text
         \-- formula_map - update the expression by setting the human-readable format and try to update the database reference format
     \-- 16
-        \-- verb - @return int a higher number indicates a higher usage
+        \-- verb - @return int|null a higher number indicates a higher usage
     \-- set_impact
         \-- formula_map - set the cache value to sort this sandbox object by relevance
         \-- verb - set the cache value to sort this verb by relevance
     \-- get_impact
         \-- formula_map - @return float|null a higher number indicates a higher relevance
-        \-- verb - @return float a higher number indicates a higher impact
+        \-- verb - @return float|null a higher number indicates a higher impact
     \-- set_value
         \-- value - overwrite the sandbox_value set_value() function to set the numeric value
     \-- get_value
@@ -639,6 +644,7 @@
 \-- save
     \-- 1
         \-- ref - update a ref in the database or update the existing
+        \-- verb - @return bool true if the verb object probably has been added to the database
     \-- get_similar
         \-- component_link - get a similar reference
         \-- ref - get a similar reference
@@ -1509,6 +1515,7 @@
     \-- code_id - section for function code_id not yet defined that it should be im- and export in /helper/type_list.php
     \-- count - section for function count not yet defined that it should be im- and export in /helper/type_list.php
     \-- is_empty - section for function is_empty is expected to be info in /helper/type_list.php
+    \-- merge - section for function merge not yet defined that it should be modify in /helper/type_list.php
     \-- load_dummy - section for function load_dummy is expected to be load in /helper/type_list.php
     \-- view_id_list - section for function view_id_list not yet defined that it should be unit test support functions in /helper/type_list.php
     \-- component_id_list - section for function component_id_list not yet defined that it should be unit test support functions in /helper/type_list.php

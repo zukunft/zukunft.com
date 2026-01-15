@@ -787,6 +787,13 @@ enum messages: string
         . '" should be assigned to formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" but it is not defined.';
+
+    case IMPORT_FORMULA_FAILED = 'import of formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" failed when importing "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '"';
+
     case IMPORT_VALUE_COUNT_VALIDATED = 'import from "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" validated by counting '

@@ -875,6 +875,7 @@ class data_object
     function save(user_message $usr_msg, import $imp): bool
     {
         global $cfg;
+        global $sys;
 
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -965,6 +966,9 @@ class data_object
         // without removing the fine words, triples, verbs and formulas from the original lists
         $trm_lst = clone $phr_lst->term_list();
         $trm_lst->merge($this->vrb_lst->term_list());
+
+        // always add the preloaded verbs to the term list
+        $trm_lst->merge($sys->typ_lst->vrb->term_list());
 
         // import the formulas
         $this->save_formulas($usr_msg, $imp, $trm_lst);

@@ -77,6 +77,16 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb with only the name set
+     */
+    function verb_name_only(): verb
+    {
+        $vrb = new verb(0, verbs::TEST_ADD_NAME);
+        $vrb->set_user($this->env->usr1);
+        return $vrb;
+    }
+
+    /**
      * @return verb the default verb with all vars set
      */
     function verb_filled(): verb

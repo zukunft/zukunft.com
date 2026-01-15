@@ -92,10 +92,11 @@ class import_file
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
-     * @param bool $direct true if each object should be saved separate in the database
+     * @param bool $direct true if each object should be saved separately in the database
+     * @param bool $ignore_errors true if the import should continue even if some objects cannot be saved
      * @return user_message
      */
-    function json_file(string $filename, user $usr, bool $direct = true): user_message
+    function json_file(string $filename, user $usr, bool $direct = true, bool $ignore_errors = false): user_message
     {
         global $cfg;
 
@@ -172,11 +173,14 @@ class import_file
                     }
                 } else {
 
-                    // TODO Prio 0 activate
                     // TODO Prio 1 move to calling function and include save
-                    //if (!$usr_msg->is_ok()) {
-                    //    log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
-                    //}
+                    if (!$ignore_errors) {
+                        if (!$usr_msg->is_ok()) {
+                            // TODO Prio 0 activate
+                            //log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                            log_warning('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                        }
+                    }
                     $usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
@@ -190,7 +194,7 @@ class import_file
      *
      * @param string $filename the file name including the local path of the file that should be imported
      * @param user $usr the user who has triggered the import
-     * @return user_message the result of the import with suggested solution in case of a problem
+     * @return user_message the result of the import with a suggested solution in case of a problem
      */
     function yaml_file(string $filename, user $usr): user_message
     {

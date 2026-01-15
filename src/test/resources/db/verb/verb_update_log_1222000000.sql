@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION verb_update_log_122200000
+CREATE OR REPLACE FUNCTION verb_update_log_1222000000
     (_user_id              bigint,
      _change_action_id     smallint,
      _field_id_verb_name   smallint,
@@ -32,12 +32,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE verb_update_log_122200000_call
+PREPARE verb_update_log_1222000000_call
     (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, text) AS
-SELECT verb_update_log_122200000
+SELECT verb_update_log_1222000000
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 
-SELECT verb_update_log_122200000
+SELECT verb_update_log_1222000000
         (3::bigint,
          1::smallint,
          23::smallint,

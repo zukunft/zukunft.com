@@ -87,7 +87,7 @@ class expression
     // true if the human-readable text has been updated and not yet converted
     private bool $ref_text_dirty = false;
     // the formula name only for better user messages
-    private string $frm_name = '';
+    public string $frm_name = '';
 
 
     /*

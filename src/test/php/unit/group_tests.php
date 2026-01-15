@@ -212,7 +212,7 @@ class group_tests
         $t->assert_sql_insert($sc, $grp);
         $grp->set_phrase_list($t_phr->phrase_list_17_plus());
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
-        // TODO Prio 2 activate db write
+        // TODO Prio 0 activate db write
         $grp->set_phrase_list($t_phr->phrase_list_prime());
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
         $grp->set_phrase_list($t_phr->phrase_list_16());

@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS verb_update_log_122200000;
-CREATE PROCEDURE verb_update_log_122200000
+DROP PROCEDURE IF EXISTS verb_update_log_1222000000;
+CREATE PROCEDURE verb_update_log_1222000000
     (_user_id              bigint,
      _change_action_id     smallint,
      _field_id_verb_name   smallint,
@@ -31,10 +31,10 @@ BEGIN
 
 END;
 
-PREPARE verb_update_log_122200000_call FROM
-    'SELECT verb_update_log_122200000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE verb_update_log_1222000000_call FROM
+    'SELECT verb_update_log_1222000000 (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT verb_update_log_122200000
+SELECT verb_update_log_1222000000
     (3,
      1,
      23,

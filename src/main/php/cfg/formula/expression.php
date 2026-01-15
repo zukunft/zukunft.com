@@ -193,6 +193,7 @@ class expression extends shared_expression
         $this->reset();
         $this->frm = $frm;
         $this->usr = $frm->get_user();
+        $this->frm_name = $frm->name();
     }
 
 

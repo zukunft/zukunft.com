@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS verb_insert_log_111100000;
-CREATE PROCEDURE verb_insert_log_111100000
+DROP PROCEDURE IF EXISTS verb_insert_log_1111000000;
+CREATE PROCEDURE verb_insert_log_1111000000
     (_verb_name            text,
      _user_id              bigint,
      _change_action_id     smallint,
@@ -31,10 +31,10 @@ BEGIN
 
 END;
 
-PREPARE verb_insert_log_111100000_call FROM
-    'SELECT verb_insert_log_111100000 (?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE verb_insert_log_1111000000_call FROM
+    'SELECT verb_insert_log_1111000000 (?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT verb_insert_log_111100000
+SELECT verb_insert_log_1111000000
     ('not set',
      3,
      1,

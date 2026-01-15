@@ -210,22 +210,7 @@ class verb extends type_object
 
         // TODO add user to request new verbs via api
 
-        // TODO move plural to language forms
-        if (array_key_exists(json_fields::PLURAL, $api_json)) {
-            if ($api_json[json_fields::PLURAL] <> '') {
-                $this->set_plural($api_json[json_fields::PLURAL]);
-            }
-        }
-        if (array_key_exists(json_fields::REVERSE, $api_json)) {
-            if ($api_json[json_fields::REVERSE] <> '') {
-                $this->set_reverse($api_json[json_fields::REVERSE]);
-            }
-        }
-        if (array_key_exists(json_fields::REV_PLURAL, $api_json)) {
-            if ($api_json[json_fields::REV_PLURAL] <> '') {
-                $this->set_reverse_plural($api_json[json_fields::REV_PLURAL]);
-            }
-        }
+        $this->common_mapper($api_json, $usr_msg);
 
         // the usage and impact var is not expected to be changed via api
 
@@ -249,22 +234,45 @@ class verb extends type_object
     {
         parent::import_mapper($in_ex_json, $usr_msg, $dto);
 
-        if (key_exists(json_fields::NAME, $in_ex_json)) {
-            $this->set_name($in_ex_json[json_fields::NAME]);
-        }
-        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
-            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
-                $this->description = $in_ex_json[json_fields::DESCRIPTION];
-            }
-        }
+        $this->common_mapper($in_ex_json, $usr_msg);
+
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+            if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                if ($in_ex_json[json_fields::CODE_ID] <> '') {
+                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+                }
             }
         }
 
         // the usage and impact var is not expected to be changed via import
 
+        return $usr_msg->is_ok();
+    }
+
+    function common_mapper(array $json, user_message $usr_msg): bool
+    {
+        // TODO move plural to language forms
+
+        if (array_key_exists(json_fields::PLURAL, $json)) {
+            if ($json[json_fields::PLURAL] <> '') {
+                $this->set_plural($json[json_fields::PLURAL]);
+            }
+        }
+        if (array_key_exists(json_fields::REVERSE, $json)) {
+            if ($json[json_fields::REVERSE] <> '') {
+                $this->set_reverse($json[json_fields::REVERSE]);
+            }
+        }
+        if (array_key_exists(json_fields::REV_PLURAL, $json)) {
+            if ($json[json_fields::REV_PLURAL] <> '') {
+                $this->set_reverse_plural($json[json_fields::REV_PLURAL]);
+            }
+        }
+        if (array_key_exists(json_fields::FRM_NAME, $json)) {
+            if ($json[json_fields::FRM_NAME] <> '') {
+                $this->frm_name = $json[json_fields::FRM_NAME];
+            }
+        }
         return $usr_msg->is_ok();
     }
 
@@ -441,7 +449,7 @@ class verb extends type_object
     }
 
     /**
-     * @return int a higher number indicates a higher usage
+     * @return int|null a higher number indicates a higher usage
      */
     function get_usage(): ?int
     {
@@ -462,7 +470,7 @@ class verb extends type_object
     }
 
     /**
-     * @return float a higher number indicates a higher impact
+     * @return float|null a higher number indicates a higher impact
      */
     function get_impact(): ?float
     {
@@ -669,11 +677,11 @@ class verb extends type_object
             if ($key == verb_db::FLD_PLURAL) {
                 $this->set_plural($value);
             }
-            if ($key == verb_db::FLD_NAME_FORMULA) {
-                $this->set_formula_name($value);
-            }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
                 $this->set_reverse_plural($value);
+            }
+            if ($key == verb_db::FLD_NAME_FORMULA) {
+                $this->set_formula_name($value);
             }
         }
 
@@ -714,6 +722,9 @@ class verb extends type_object
         }
         if ($this->get_reverse_plural() <> '') {
             $vars[json_fields::NAME_PLURAL_REVERSE] = $this->get_reverse_plural();
+        }
+        if ($this->get_formula_name() <> '') {
+            $vars[json_fields::NAME_IN_FORMULA] = $this->get_formula_name();
         }
 
         // TODO add the protection type
@@ -1150,30 +1161,22 @@ class verb extends type_object
 
         global $db_con;
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            // insert the new verb
-            $db_con->set_class(verb::class);
-            $this->id = $db_con->insert_old(verb_db::FLD_NAME, $this->name);
-            if ($this->id() > 0) {
-                // update the id in the log
-                if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                    // TODO do rollback or retry?
-                } else {
-
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = new verb;
-                    $db_rec->name = $this->name;
-                    $db_rec->usr = $this->usr;
-                    // save the verb fields
-                    $usr_msg->add($this->save_fields($db_con, $db_rec));
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
+                if ($this->id() <= 0) {
+                    $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [
+                        msg_id::VAR_NAME => $this->name]
+                    );
                 }
-
-            } else {
-                $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
             }
+        }
+
+        if (!$usr_msg->is_ok()) {
+            log_err('verb not saved');
         }
 
         return $usr_msg->is_ok();
@@ -1206,6 +1209,19 @@ class verb extends type_object
             }
         }
         return $usr_msg->is_ok();
+    }
+
+    /**
+     * @return bool true if the verb object probably has been added to the database
+     *              false e.g. if some parameters ar missing
+     */
+    function is_valid(): bool
+    {
+        if ($this->id != 0 and $this->name() != '') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1362,6 +1378,7 @@ class verb extends type_object
                 verb_db::FLD_PLURAL,
                 verb_db::FLD_REVERSE,
                 verb_db::FLD_PLURAL_REVERSE,
+                verb_db::FLD_NAME_FORMULA,
                 sql_db::FLD_USAGE,
                 sql_db::FLD_IMPACT
             ]
@@ -1433,6 +1450,21 @@ class verb extends type_object
                 $this->rev_plural,
                 sql_field_type::NAME,
                 $obj->rev_plural
+            );
+        }
+        if ($obj->frm_name !== $this->frm_name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_NAME_FORMULA,
+                    $sys->typ_lst->cng_fld->id($table_id . verb_db::FLD_NAME_FORMULA),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                verb_db::FLD_NAME_FORMULA,
+                $this->frm_name,
+                sql_field_type::NAME,
+                $obj->frm_name
             );
         }
         if ($obj->usage !== $this->usage) {

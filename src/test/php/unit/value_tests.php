@@ -137,7 +137,7 @@ class value_tests
         $t->assert_sql_standard($sc, $val_17);
         $t->assert_sql_standard($sc, $val_txt);
 
-        // TODO Prio 2 activate db write
+        // TODO Prio 0 activate db write
         $t->subheader($ts . 'sql write insert');
         $val = $t_val->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);

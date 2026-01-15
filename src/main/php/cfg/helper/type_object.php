@@ -248,6 +248,17 @@ class type_object extends db_object_seq_id
         ?data_object $dto = null
     ): bool
     {
+        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
+            }
+        }
+
         return $usr_msg->is_ok();
     }
 
@@ -655,17 +666,19 @@ class type_object extends db_object_seq_id
         foreach ($fld_lst_chg as $fld) {
             $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
         }
-        $sc_update = clone $sc;
-        $sc_par_lst_upd = $sc_par_lst;
-        $sc_par_lst_upd->add(sql_type::UPDATE);
-        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-        $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+        if (!$update_fvt_lst->is_empty()) {
+            $sc_update = clone $sc;
+            $sc_par_lst_upd = $sc_par_lst;
+            $sc_par_lst_upd->add(sql_type::UPDATE);
+            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+            $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
 
-        $qp_update->sql = $sc_update->create_sql_update(
-            $id_fld, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_update->sql . ' ';
+            $qp_update->sql = $sc_update->create_sql_update(
+                $id_fld, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+            // add the insert row to the function body
+            $sql .= ' ' . $qp_update->sql . ' ';
+        }
 
         if ($sc->db_type == sql_db::POSTGRES) {
             if ($id_fld_new != '') {
