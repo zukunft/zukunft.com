@@ -1072,7 +1072,7 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * load the user specific data that is not supposed to be changed very rarely user
+     * load the user-specific data that is not supposed to be changed very rarely user
      * so if changed all data is reloaded once
      */
     function load_usr_data(): void

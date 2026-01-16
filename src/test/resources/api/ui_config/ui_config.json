@@ -7564,7 +7564,7 @@
       {
         "name": "fixed word",
         "code_id": "phrase",
-        "description": "show the user specific name of a word or a triple as a text",
+        "description": "show the user-specific name of a word or a triple as a text",
         "id": 4
       },
       {

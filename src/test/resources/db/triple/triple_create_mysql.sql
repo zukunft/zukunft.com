@@ -39,7 +39,7 @@ ALTER TABLE triples
     MODIFY triple_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes to link one word or triple with a verb to another word or triple
+-- table structure to save user-specific changes to link one word or triple with a verb to another word or triple
 --
 
 CREATE TABLE IF NOT EXISTS user_triples

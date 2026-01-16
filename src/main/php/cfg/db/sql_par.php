@@ -108,7 +108,7 @@ class sql_par
         // add extension that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
         $name .= $ext;
 
-        // add "_user" to queries the handle user specific values
+        // add "_user" to queries the handle user-specific values
         if ($sc_par_lst->is_usr_tbl()) {
             $name .= sql::NAME_EXT_USER;
         }

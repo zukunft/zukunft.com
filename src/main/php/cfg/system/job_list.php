@@ -72,7 +72,7 @@ class job_list extends base_list
      */
 
     /**
-     * always set the user because a job list either user specific or linked to the system user
+     * always set the user because a job list either user-specific or linked to the system user
      * @param user $usr the user who requested to see the formulas
      */
     function __construct(user $usr)
@@ -117,7 +117,7 @@ class job_list extends base_list
         $type_id = $sys->typ_lst->job_typ->id($type_code_id);
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
-        $sc->add_where(job::FLD_TYPE, $type_id);
+        $sc->add_where(job_db::FLD_TYPE, $type_id);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

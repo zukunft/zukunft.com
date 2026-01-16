@@ -2,10 +2,10 @@
 
 /*
 
-    model/sandbox/sandbox_multi.php - the superclass for handling user specific objects including the database saving
+    model/sandbox/sandbox_multi.php - the superclass for handling user-specific objects including the database saving
     -------------------------------
 
-    This superclass is used by the classes values and results to enable user specific changes
+    This superclass is used by the classes values and results to enable user-specific changes
     similar to sandbox.php but for database objects that have custom prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
@@ -226,7 +226,7 @@ class sandbox_multi extends db_object_multi_user
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
-    // all database sandbox field names used to identify if there are some user specific changes so excluding the id fields
+    // all database sandbox field names used to identify if there are some user-specific changes so excluding the id fields
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
@@ -265,7 +265,7 @@ class sandbox_multi extends db_object_multi_user
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
-    public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
+    public ?int $usr_cfg_id = null;    // the database id if there is already some user-specific configuration for this object
     private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
@@ -296,7 +296,7 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * all user sandbox object are user specific, that's why the user is always set
+     * all user sandbox object are user-specific, that's why the user is always set
      * and most user sandbox objects are named object
      * but this is in many cases be overwritten by the child object
      * @param user $usr the user how has requested to see his view on the object
@@ -370,7 +370,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * map the standard user sandbox database fields to this user specific object
+     * map the standard user sandbox database fields to this user-specific object
      *
      * @param array $db_row with the data loaded from the database
      * @return void
@@ -785,7 +785,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * prepare the SQL parameter to load a single user specific value
+     * prepare the SQL parameter to load a single user-specific value
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -812,7 +812,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * create the SQL to load a sandbox object with numeric user specific fields
+     * create the SQL to load a sandbox object with numeric user-specific fields
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_multi $sbx the name of the child class from where the call has been triggered
@@ -837,7 +837,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * create the SQL to load a single user specific value
+     * create the SQL to load a single user-specific value
      * TODO replace by load_sql_usr or load_sql_usr_num
      *
      * @param sql_creator $sc with the target db_type set
@@ -1535,7 +1535,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return bool true if a record for a user specific configuration already exists in the database
+     * @return bool true if a record for a user-specific configuration already exists in the database
      */
     function has_usr_cfg(): bool
     {
@@ -1603,14 +1603,14 @@ class sandbox_multi extends db_object_multi_user
             }
 
         } else {
-            log_err('The database ID and the user must be set to remove a user specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
+            log_err('The database ID and the user must be set to remove a user-specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
 
         return $result;
     }
 
     /**
-     * create a database record to save user specific settings for a user sandbox object
+     * create a database record to save user-specific settings for a user sandbox object
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
@@ -1656,7 +1656,7 @@ class sandbox_multi extends db_object_multi_user
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->get_user()->id);
                 $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
-                $db_con->insert($qp, 'add user specific value', $usr_msg);
+                $db_con->insert($qp, 'add user-specific value', $usr_msg);
                 $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->get_user()->id));
                 if (!$usr_msg->is_ok()) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
@@ -1695,7 +1695,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * check if the database record for the user specific settings can be removed
+     * check if the database record for the user-specific settings can be removed
      * TODO separate the query parameter creation and add a unit test
      * @return bool false if the deletion has failed and true if it was successful or not needed
      */
@@ -1737,9 +1737,9 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * check if the database row with the user specific data is still needed
+     * check if the database row with the user-specific data is still needed
      *
-     * @param array $fld_lst all potential user specific fields of the object
+     * @param array $fld_lst all potential user-specific fields of the object
      * @param array $db_row the database record of the user table
      * @return bool true if no field contain any user overwrite
      */
@@ -2241,7 +2241,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the sql statement to delete a value in the database
      * similar to sandbox/sql_delete, but additional for prime or big tables
-     * TODO check if user specific overwrites can be deleted
+     * TODO check if user-specific overwrites can be deleted
      * TODO check if can be moved to sandbox_value object
      *
      * @param sql_creator $sc with the target db_type set
@@ -2533,7 +2533,7 @@ class sandbox_multi extends db_object_multi_user
      * set the update parameters for the value excluded
      * @param sql_db $db_con the active database connection that should be used
      * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user specific changes
+     * @param sandbox_multi $std_rec the default object without user-specific changes
      * @param user_message $usr_msg a messages for the user what should be changed if something failed
      * returns false if something has gone wrong
      */
@@ -2586,7 +2586,7 @@ class sandbox_multi extends db_object_multi_user
      * save the share level in the database if allowed
      * @param sql_db $db_con the active database connection that should be used
      * @param sandbox_multi $db_rec the object as saved in the database before this field is updated
-     * @param sandbox_multi $std_rec the default object without user specific changes
+     * @param sandbox_multi $std_rec the default object without user-specific changes
      * @return string the message that should be shown to the user
      */
     function save_field_share(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
@@ -2710,7 +2710,7 @@ class sandbox_multi extends db_object_multi_user
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
         $db_chk->set_id(0); // to force the load by the id fields
-        $db_chk->load_standard(); // TODO should not ADDITIONAL the user specific load be called
+        $db_chk->load_standard(); // TODO should not ADDITIONAL the user-specific load be called
         return $db_chk;
     }
 

@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/sandbox_link.php - the superclass for handling user specific link objects including the database saving
+    model/sandbox/sandbox_link.php - the superclass for handling user-specific link objects including the database saving
     ------------------------------
 
     This superclass should be used by the class word links, formula links and view link

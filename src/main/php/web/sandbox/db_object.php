@@ -5,7 +5,7 @@
     web/sandbox/db_object.php - the superclass for the html frontend of database objects
     -------------------------
 
-    This superclass should be used by the classes word_ui, formula_ui, ... to enable user specific values and links
+    This superclass should be used by the classes word_ui, formula_ui, ... to enable user-specific values and links
 
 
     This file is part of zukunft.com - calc with words

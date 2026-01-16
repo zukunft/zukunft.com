@@ -28,7 +28,7 @@ COMMENT ON COLUMN view_relations.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN view_relations.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
+-- table structure to save user-specific changes to define the relation between two views to another view e.g. to extend the change word view with the word usage and log components shared with the exclude word view
 --
 
 CREATE TABLE IF NOT EXISTS user_view_relations

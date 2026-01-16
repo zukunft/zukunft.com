@@ -424,7 +424,7 @@ class triple_list extends sandbox_list_named
         $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
         $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
-        // also load the linked user specific phrase with the same SQL statement (word until now)
+        // also load the linked user-specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,

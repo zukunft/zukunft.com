@@ -41,7 +41,7 @@ COMMENT ON COLUMN formulas.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN formulas.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes the mathematical expression to calculate results based on values and results
+-- table structure to save user-specific changes the mathematical expression to calculate results based on values and results
 --
 
 CREATE TABLE IF NOT EXISTS user_formulas

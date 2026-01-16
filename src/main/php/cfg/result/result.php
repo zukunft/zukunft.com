@@ -127,7 +127,7 @@ class result extends sandbox_value
     const string TBL_COMMENT = 'to cache the formula ';
     const string TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
     const string TBL_COMMENT_STD = 'to cache the formula public unprotected ';
-    const string TBL_COMMENT_USER = 'to cache the user specific changes of ';
+    const string TBL_COMMENT_USER = 'to cache the user-specific changes of ';
 
     // forward the const to enable usage of $this::CONST_NAME
     const array FLD_NAMES = result_db::FLD_NAMES;
@@ -158,7 +158,7 @@ class result extends sandbox_value
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                // the formula object used to calculate this result
     // TODO use the is_std of the sandbox_value object
-    public ?bool $is_std = True;        // true as long as no user specific value, formula or assignment is used for this result
+    public ?bool $is_std = True;        // true as long as no user-specific value, formula or assignment is used for this result
 
     // database related variables
     private ?float $number = null;
@@ -1405,7 +1405,7 @@ class result extends sandbox_value
 
     /**
      * save the formula result to the database
-     * TODO check if user specific result needs to be added
+     * TODO check if user-specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
      * @param user_message $usr_msg the message that should be shown to the user in case something went wrong

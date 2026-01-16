@@ -43,7 +43,7 @@ class words
 
     // words used in the frontend and backend for the system configuration
     // code_id and name of a words used by the system for its own configuration
-    // e.g. the number of decimal places related to the user specific words
+    // e.g. the number of decimal places related to the user-specific words
     // system configuration that are core for the database setup and update check are using the flat cfg methods
     // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing

@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_object_seq_id_user.php - a base object for all user specific database id objects
+    model/helper/db_object_seq_id_user.php - a base object for all user-specific database id objects
     --------------------------------------
 
     same as db_object_user but for database objects that have an auto sequence prime id

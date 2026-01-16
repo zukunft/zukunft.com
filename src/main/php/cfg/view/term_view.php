@@ -121,7 +121,7 @@ class term_view extends sandbox_link
     const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
     );
-    // all database field names, excluding the id, used to identify if there are some user specific changes
+    // all database field names, excluding the id, used to identify if there are some user-specific changes
     // TODO check if this is used in all relevant objects
     // TODO Prio 2 maybe add a priority
     const array ALL_SANDBOX_FLD_NAMES = array(

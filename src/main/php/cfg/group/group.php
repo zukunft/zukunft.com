@@ -133,7 +133,7 @@ class group extends sandbox_multi
     const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
     const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
     const string FLD_ID = 'group_id';
-    const string FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+    const string FLD_NAME_COM = 'the user-specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const string FLD_NAME = 'group_name';
     const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
 
@@ -1496,7 +1496,7 @@ class group extends sandbox_multi
 
     /**
      * return the first value related to the word lst
-     * or an array with the value and the user_id if the result is user specific
+     * or an array with the value and the user_id if the result is user-specific
      */
     function value(): value
     {
@@ -1538,7 +1538,7 @@ class group extends sandbox_multi
         $res = new result($this->get_user());
         $result = $res->load_by_grp($this);
 
-        // if no user specific result is found, get the standard result
+        // if no user-specific result is found, get the standard result
         if ($result === false) {
             $result = $res->load_std_by_grp($this);
 

@@ -21,7 +21,7 @@
     - calc:              manage the formula calculation
     - im- and export:    create an export object and set the vars from an import object
     - expression:        handel to single parts of a formula
-    - link:              add or remove a link to a word (this is user specific, so use the user sandbox)
+    - link:              add or remove a link to a word (this is user-specific, so use the user sandbox)
     - save:              to update the formula in the database and for the user sandbox
     - del:               manage to remove from the database
     - sql write:         sql statement creation to write to the database
@@ -305,7 +305,7 @@ class formula extends formula_map
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst_direct(): ?phrase_list
@@ -360,7 +360,7 @@ class formula extends formula_map
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
      */
     function assign_phr_ulst(): phrase_list
@@ -515,7 +515,7 @@ class formula extends formula_map
 
                                         // if the result has been the standard result utils now
                                         if ($res->is_std()) {
-                                            // ... and the value is user specific
+                                            // ... and the value is user-specific
                                             if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
@@ -527,7 +527,7 @@ class formula extends formula_map
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
-                                                // ... and split into a user specific part
+                                                // ... and split into a user-specific part
                                                 $res->is_std = false;
                                             }
                                         }
@@ -540,7 +540,7 @@ class formula extends formula_map
                                     } else {
                                         // if the result has been the standard result utils now
                                         if ($res_master->is_std()) {
-                                            // ... and the value is user specific
+                                            // ... and the value is user-specific
                                             if (!$fig->is_std()) {
                                                 // split the result into a standard
                                                 // get the standard value
@@ -552,7 +552,7 @@ class formula extends formula_map
                                                 }
                                                 log_debug('one figure "' . $fig->number() . '" for "' . $fig->get_symbol() . '" in "' . $res->num_text . '"');
                                                 $res_lst->add_obj($res_std);
-                                                // ... and split into a user specific part
+                                                // ... and split into a user-specific part
                                                 $res_master->is_std = false;
                                             }
                                         }
@@ -618,7 +618,7 @@ class formula extends formula_map
                                 if ($res->is_std) {
                                     log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text);
                                 } else {
-                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user specific)');
+                                    log_debug('got all numbers for ' . $this->dsp_id() . ' and ' . $res->name_linked() . ': ' . $res->num_text . ' (user-specific)');
                                 }
                                 $can_calc = true;
                             }
@@ -1090,7 +1090,7 @@ class formula extends formula_map
             $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->get_user()->id);
         }
 
-        // refresh the links for the user specific formula
+        // refresh the links for the user-specific formula
         $qp = $this->load_sql_user_changes_frm($db_con);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {

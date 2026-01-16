@@ -5,7 +5,7 @@
     web/helper/config.php - to cache and manage the user config in the frontend
     ---------------------
 
-    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
+    This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user-specific values and links
 
 
     This file is part of zukunft.com - calc with words
@@ -101,7 +101,7 @@ class config extends value_list
      */
 
     /**
-     * request the user specific frontend configuration from the backend
+     * request the user-specific frontend configuration from the backend
      * @return user_message if it fails the reason why
      */
     function load(string $part = api::CONFIG_FRONTEND): user_message
@@ -134,7 +134,7 @@ class config extends value_list
      *
      * @param array $names with the phrase names to select the config value
      * @param bool $no_zero if true a non-zero number is returned to avoid decision by zero
-     * @return int|float|string|null with the user specific config value
+     * @return int|float|string|null with the user-specific config value
      */
     function get_by(array $names, bool $no_zero = false): int|float|string|null
     {

@@ -8,7 +8,7 @@
     target is to reduce the traffic between the frontend and the backend
     this object combines all objects used for the initial response to the frontend
     so the steps are:
-    1. the frontend ask for the user specific frontend configuration and data cache
+    1. the frontend ask for the user-specific frontend configuration and data cache
     2. the backend returns one "big" message created by this object as json or if stable as compressed yaml
     3. the backend remembers what the frontend might have cached and sends push messages in case of updates
        until the frontend confirms the cache dismiss or a connection reset
@@ -58,7 +58,7 @@ class ui_config
 {
 
     /**
-     * create a user specific api json message string of this combine object for the frontend
+     * create a user-specific api json message string of this combine object for the frontend
      * that contains at the moment the preloaded types and the system views
      * target is to include the data cache with the objects most often used by the user
      * the final message should be cached in the backend for faster response

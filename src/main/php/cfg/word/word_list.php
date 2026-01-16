@@ -1264,7 +1264,7 @@ class word_list extends sandbox_list_named
 
     /**
      * @return value the first (or later "best") value related to the word lst
-     * or an array with the value and the user_id if the result is user specific
+     * or an array with the value and the user_id if the result is user-specific
      */
     function value(): value
     {

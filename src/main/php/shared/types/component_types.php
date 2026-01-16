@@ -405,7 +405,7 @@ class component_types
     const string VALUE_NUMERIC = "value_numeric";
     const int VALUE_NUMERIC_ID = 142;
 
-    // show the user specific name of a word or triple with the description on mouseover without allowing to change it
+    // show the user-specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
     const int PHRASE_ID = 4;
     const string VERB_NAME = "verb_name";

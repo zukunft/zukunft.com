@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/sandbox/user_service.php - that parent object for user specific services
+    cfg/sandbox/user_service.php - that parent object for user-specific services
     ----------------------------
 
     e.g. used for the im- and export processes

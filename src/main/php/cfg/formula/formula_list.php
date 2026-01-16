@@ -95,7 +95,7 @@ class formula_list extends sandbox_list_named
     const int UPDATE_BLOCK_SIZE = 100;
 
     // array $lst are the loaded formula objects
-    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user-specific formulas
 
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
@@ -645,7 +645,7 @@ class formula_list extends sandbox_list_named
 
     /**
      * @param sql_db $db_con the active database connection
-     * @return int|null the total number of formulas (without user specific changes)
+     * @return int|null the total number of formulas (without user-specific changes)
      */
     function count_db(sql_db $db_con): ?int
     {

@@ -2,12 +2,12 @@
 
 /*
 
-    model/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
+    model/sandbox/sandbox.php - the superclass for handling user-specific objects including the database saving
     -----------------------
 
     TODO check if all function overwrite are really needed
 
-    This superclass should be used by the classes words, formula, ... to enable user specific values and links
+    This superclass should be used by the classes words, formula, ... to enable user-specific values and links
     similar to sandbox.php but for database objects that have an auto sequence prime id
     For value objects the sandbox_multi object is used as a base because values are based on more than one db table
 
@@ -219,14 +219,14 @@ class sandbox extends db_object_seq_id_user
         [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     // dummy arrays that should be overwritten by the child object
     const array FLD_NAMES = array();
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array();
     // database fields that should only be taken from the user sandbox table
     const array FLD_NAMES_USR_ONLY = array();
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
@@ -257,7 +257,7 @@ class sandbox extends db_object_seq_id_user
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
     // database fields that are used in all objects and that have a specific behavior
-    public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
+    public ?int $usr_cfg_id = null;    // the database id if there is already some user-specific configuration for this object
     private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
@@ -288,7 +288,7 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * all user sandbox object are user specific, that's why the user is always set
+     * all user sandbox object are user-specific, that's why the user is always set
      * and most user sandbox objects are named object
      * but this is in many cases be overwritten by the child object
      * @param user $usr the user how has requested to see his view on the object
@@ -364,7 +364,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * map the standard user sandbox database fields to this user specific object
+     * map the standard user sandbox database fields to this user-specific object
      *
      * @param array $db_row with the data loaded from the database
      * @return void
@@ -1045,7 +1045,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * create the SQL to load a sandbox object with numeric user specific fields
+     * create the SQL to load a sandbox object with numeric user-specific fields
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
@@ -1069,7 +1069,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * prepare the SQL parameter to load a single user specific value
+     * prepare the SQL parameter to load a single user-specific value
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
@@ -1467,7 +1467,7 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * @return bool true if a record for a user specific configuration already exists in the database
+     * @return bool true if a record for a user-specific configuration already exists in the database
      */
     function has_usr_cfg(): bool
     {
@@ -1539,14 +1539,14 @@ class sandbox extends db_object_seq_id_user
             }
 
         } else {
-            log_err('The database ID and the user must be set to remove a user specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
+            log_err('The database ID and the user must be set to remove a user-specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
 
         return $result;
     }
 
     /**
-     * create a database record to save user specific settings for a user sandbox object
+     * create a database record to save user-specific settings for a user sandbox object
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
      * TODO create an overwrite for the link log message to be able to remove the placeholder functions fob and tob
      * @return bool false if the creation has failed and true if it was successful or not needed
@@ -1642,7 +1642,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * check if the database record for the user specific settings can be removed
+     * check if the database record for the user-specific settings can be removed
      * TODO separate the query parameter creation and add a unit test
      * @return bool false if the deletion has failed and true if it was successful or not needed
      */
@@ -1678,9 +1678,9 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * check if the database row with the user specific data is still needed
+     * check if the database row with the user-specific data is still needed
      *
-     * @param array $fld_lst all potential user specific fields of the object
+     * @param array $fld_lst all potential user-specific fields of the object
      * @param array $db_row the database record of the user table
      * @return bool true if no field contain any user overwrite
      */
@@ -2130,7 +2130,7 @@ class sandbox extends db_object_seq_id_user
      * set the update parameters for the value excluded
      * @param sql_db $db_con the active database connection that should be used
      * @param sandbox $db_rec the object as saved in the database before this field is updated
-     * @param sandbox $std_rec the default object without user specific changes
+     * @param sandbox $std_rec the default object without user-specific changes
      * @return user_message the message that should be shown to the user in case something went wrong
      */
     function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
@@ -2211,7 +2211,7 @@ class sandbox extends db_object_seq_id_user
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
         $db_chk->id = 0; // to force the load by the id fields
-        $db_chk->load_standard(); // TODO should not ADDITIONAL the user specific load be called
+        $db_chk->load_standard(); // TODO should not ADDITIONAL the user-specific load be called
         return $db_chk;
     }
 
@@ -2525,7 +2525,7 @@ class sandbox extends db_object_seq_id_user
      * a word can have a formula linked
      * values and formulas can be linked to a word, a triple or a word group
      * verbs needs a confirmation for creation (but the name can be reserved)
-     * all other parameters beside the word/verb name can be user specific
+     * all other parameters beside the word/verb name can be user-specific
      *
      * time words are separated from the word groups to reduce the number of word groups
      * for daily data or shorter a normal date or time field is used

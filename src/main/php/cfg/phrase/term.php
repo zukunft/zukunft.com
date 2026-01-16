@@ -122,11 +122,11 @@ class term extends combine_named
     const string FLD_IMPACT = 'impact';
     const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
-    // the common term database field names excluding the id and excluding the user specific fields
+    // the common term database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         self::FLD_TYPE
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     // some fields like the formula expression are only used for one term class e.g. formula
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
@@ -135,7 +135,7 @@ class term extends combine_named
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_USAGE,
         sql_db::FLD_IMPACT,
@@ -232,7 +232,7 @@ class term extends combine_named
      */
 
     /**
-     * always set the user because a term is always user specific
+     * always set the user because a term is always user-specific
      * @param user|word|triple|formula|verb|null $obj the user who requested to see this term
      */
     function __construct(user|word|triple|formula|verb|null $obj)

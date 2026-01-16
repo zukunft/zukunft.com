@@ -30,7 +30,7 @@ ALTER TABLE component_links
     MODIFY component_link_id bigint NOT NULL AUTO_INCREMENT;
 
 --
--- table structure to save user specific changes to link components to views with an n:m relation
+-- table structure to save user-specific changes to link components to views with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_component_links

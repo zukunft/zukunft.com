@@ -89,13 +89,13 @@ class value_time_series extends sandbox_value
     const string FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
     const string FLD_LAST_UPDATE = 'last_update';
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         user_db::FLD_ID,
         group::FLD_ID
     );
 
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,

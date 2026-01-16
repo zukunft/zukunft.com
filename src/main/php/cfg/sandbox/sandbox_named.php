@@ -2,10 +2,10 @@
 
 /*
 
-    model/sandbox/sandbox_named.php - the superclass for handling user specific named objects including the database saving
+    model/sandbox/sandbox_named.php - the superclass for handling user-specific named objects including the database saving
     -------------------------------
 
-    This superclass should be used by the classes words, formula, ... to enable user specific values and links
+    This superclass should be used by the classes words, formula, ... to enable user-specific values and links
 
     The main sections of this object are
     - db const:          const for the database link

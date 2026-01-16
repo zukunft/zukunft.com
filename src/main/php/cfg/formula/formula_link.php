@@ -149,7 +149,7 @@ class formula_link extends sandbox_link
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
@@ -659,7 +659,7 @@ class formula_link extends sandbox_link
      */
 
     /**
-     * create an SQL statement to retrieve the user specific formula link from the database
+     * create an SQL statement to retrieve the user-specific formula link from the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results

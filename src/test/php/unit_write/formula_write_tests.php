@@ -456,7 +456,7 @@ class formula_write_tests
         $target = users::SYSTEM_TEST_NAME . ' changed "0" to "1"';
         $t->assert('formula->load all_values_needed for "' . formulas::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
 
-        // check if a user specific formula is created if another user changes the formula
+        // check if a user-specific formula is created if another user changes the formula
         $frm_usr2 = new formula($t->usr2);
         $frm_usr2->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
         $frm_usr2->usr_text = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
@@ -468,7 +468,7 @@ class formula_write_tests
         $target = '';
         $t->assert('formula->save all formula fields for user 2 beside the name for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... and if a user specific formula changes have been saved
+        // ... and if a user-specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
         $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
@@ -517,7 +517,7 @@ class formula_write_tests
         $target = '';
         $t->assert('formula->save undo the user formula fields beside the name for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... and if a user specific formula changes have been saved
+        // ... and if a user-specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
         $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
@@ -536,8 +536,8 @@ class formula_write_tests
         $target = True;
         $t->assert('formula->load need_all_val for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
 
-        // redo the user specific formula changes
-        // check if the user specific changes can be removed with one click
+        // redo the user-specific formula changes
+        // check if the user-specific changes can be removed with one click
 
         // check for formulas also that
 

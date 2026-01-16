@@ -72,7 +72,7 @@ class verb_db
     const string FLD_PLURAL_REVERSE = 'name_plural_reverse';
     const string FLD_USAGE_COM = 'used for how many phrases or formulas';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION,

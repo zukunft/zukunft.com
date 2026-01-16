@@ -741,7 +741,7 @@ class type_list
     }
 
     /**
-     * return user specific type name based on the database row id
+     * return user-specific type name based on the database row id
      *
      * @param int|null $id
      * @return string|null

@@ -77,7 +77,7 @@ class source_write_tests
         $target = '';
         $t->assert('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific source changes have been saved
+        // check if a user-specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
         $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
         $result = $src_usr2_reloaded->url();

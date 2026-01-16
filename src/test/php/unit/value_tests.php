@@ -180,7 +180,7 @@ class value_tests
 
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
-        // TODO add test to change owner of the normal (not user specific) value
+        // TODO add test to change owner of the normal (not user-specific) value
         // TODO add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
         $val = $t_val->value();
@@ -217,7 +217,7 @@ class value_tests
 
         $t->subheader($ts . 'database query creation');
 
-        // sql to load a user specific value by phrase group id
+        // sql to load a user-specific value by phrase group id
         $val->reset(true);
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
@@ -289,7 +289,7 @@ class value_tests
 
         $t->subheader($ts . 'database query creation');
 
-        // sql to load a user specific time series by id
+        // sql to load a user-specific time series by id
         $vts = new value_time_series($usr);
         $vts->set_grp($t_grp->group_16());
         $t->assert_sql_by_id($sc, $vts);
@@ -298,7 +298,7 @@ class value_tests
         // TODO Prio 2 activate
         //$t->assert_sql_standard($sc, $vts);
 
-        // sql to load a user specific time series by phrase group id
+        // sql to load a user-specific time series by phrase group id
         $vts->reset(true);
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());

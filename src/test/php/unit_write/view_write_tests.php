@@ -190,21 +190,21 @@ class view_write_tests
         $target = users::SYSTEM_TEST_NAME . ' added "word default"';
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'check if a user specific view is created if another user changes the view to ' . views::TEST_RENAMED_NAME;
+        $test_name = 'check if a user-specific view is created if another user changes the view to ' . views::TEST_RENAMED_NAME;
         $msk_usr2 = new view($t->usr2);
         $msk_usr2->load_by_name(views::TEST_RENAMED_NAME);
         $msk_usr2->description = 'Just changed for testing the user sandbox';
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
         $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        $test_name = 'check if a user specific view comment have been saved for ' . views::TEST_RENAMED_NAME;
+        $test_name = 'check if a user-specific view comment have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
         $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME);
         $result = $msk_usr2_reloaded->description;
         $target = 'Just changed for testing the user sandbox';
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'check if a user specific view type_id have been saved for ' . views::TEST_RENAMED_NAME;
+        $test_name = 'check if a user-specific view type_id have been saved for ' . views::TEST_RENAMED_NAME;
         $result = $msk_usr2_reloaded->type_id;
         $target = $sys->typ_lst->msk_typ->id(view_type::ENTRY);
         $t->assert($test_name, $result, $target);
@@ -228,20 +228,20 @@ class view_write_tests
         $msk_usr2->type_id = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $t->assert_true($test_name, $msk_usr2->save($usr_msg), $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        $test_name = 'check if a user specific view comment changes have been saved for ' . views::TEST_RENAMED_NAME;
+        $test_name = 'check if a user-specific view comment changes have been saved for ' . views::TEST_RENAMED_NAME;
         $msk_usr2_reloaded = new view($t->usr2);
         $msk_usr2_reloaded->load_by_name(views::TEST_RENAMED_NAME);
         $result = $msk_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'check if a user specific view type_id changes have been saved for ' . views::TEST_RENAMED_NAME;
+        $test_name = 'check if a user-specific view type_id changes have been saved for ' . views::TEST_RENAMED_NAME;
         $result = $msk_usr2_reloaded->type_id;
         $target = $sys->typ_lst->msk_typ->id(view_type::WORD_DEFAULT);
         $t->assert($test_name, $result, $target);
 
-        // redo the user specific view changes
-        // check if the user specific changes can be removed with one click
+        // redo the user-specific view changes
+        // check if the user-specific changes can be removed with one click
 
         $this->delete_test_views($t);
 

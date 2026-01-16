@@ -85,6 +85,7 @@ the object structure is:
 \-- user_service
     \-- xml - to im- and export xml files
 +-- ip_range_exp - a base object for a list of database IDs
++-- job_db - the database const for jon tables
 +-- log - the simple log interface object
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
@@ -320,7 +321,7 @@ the object structure is:
                 \-- valueUi - create the html code to show a value to the user
         \-- jobUi - the extension of the batch task API objects to create job base html code
         \-- userUi
-            \-- user_display_oldUi - to display the user specific settings
+            \-- user_display_oldUi - to display the user-specific settings
 +-- TranslatorShared - translates a message for the user into the user language
 +-- WorkflowShared - defines which view to show next
 +-- json_fieldsShared - list of json field names used for the api and im- and export
@@ -332,6 +333,7 @@ the object structure is:
 +-- file_typesShared - ENUM of the used file types
 +-- formula_link_typesShared - db based ENUM of the formula link types
 +-- formula_typesShared - db based ENUM of the formula types
++-- job_statuusShared - ENUM of the used job statuus
 +-- job_typesShared - ENUM of the used job types
 +-- phrase_typesShared - the phrase code_ids used in back- and frontend
 +-- position_typesShared - how view components can be placed for the user
@@ -398,7 +400,7 @@ the object structure is:
     \-- view_relation_type_listUi - the preloaded data of view relation types used for the html frontend
     \-- view_style_listUi - the preloaded view styles used for the html frontend
     \-- view_type_listUi - the preloaded data view types used for the html frontend
-    \-- user_type_listUi - the display extension of the user specific api type list object
+    \-- user_type_listUi - the display extension of the user-specific api type list object
     \-- verb_listUi - al list of verb objects
 +-- type_listsUi - parent object for all preloaded types used in the html frontend
 \-- type_objectUi

@@ -477,7 +477,7 @@ class import
         $lib = new library();
         $this->last_display_time = microtime(true);
 
-        // get the user first to allow user specific validation
+        // get the user first to allow user-specific validation
         $usr_import = null;
         foreach ($json_array as $key => $json_obj) {
             if ($usr_import == null) {

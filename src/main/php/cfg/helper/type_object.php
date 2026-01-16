@@ -125,7 +125,7 @@ class type_object extends db_object_seq_id
     const string FLD_TABLE = 'change_table_name';
     const string FLD_FIELD = 'change_table_field_name';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION

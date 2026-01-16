@@ -191,7 +191,7 @@ class config_numbers extends value_list
      * @param array $names with the phrase names to select the config value
      * @param int|float|string|null $fallback if not null the fallback value that should be used
      *                                        if the configuration value is not found
-     * @return int|float|string|null with the user specific config value
+     * @return int|float|string|null with the user-specific config value
      */
     function get_by(array $names, int|float|string|null $fallback = null): int|float|string|null
     {

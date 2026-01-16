@@ -344,12 +344,12 @@ class sql_db
     const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const sql_field_type FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const string FLD_DESCRIPTION = 'description';
-    const string FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const string FLD_DESCRIPTION_COM = 'the user-specific description for mouse over helps';
     const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const string FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
     const sql_field_type FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
     const string FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const string FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const string FLD_TYPE_NAME = 'type_name'; // field name for the user-specific name of a type; types are used to assign code to a db row
     const string FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
     const string FLD_USAGE = 'usage';
@@ -358,7 +358,7 @@ class sql_db
     const string FLD_IMPACT = 'impact';
     const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
-    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
+    // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
@@ -628,9 +628,9 @@ class sql_db
     private ?array $par_use_link = [];              // array of bool, true if the parameter should be used on the linked table
     private array $par_named = [];                  // array of bool, true if the parameter placeholder is already used in the SQL statement
     private ?array $field_lst = [];                 // list of fields that should be returned to the next select query
-    private ?array $usr_field_lst = [];             // list of user specific fields that should be returned to the next select query
-    private ?array $usr_num_field_lst = [];         // list of user specific numeric fields that should be returned to the next select query
-    private ?array $usr_bool_field_lst = [];        // list of user specific boolean / tinyint fields that should be returned to the next select query
+    private ?array $usr_field_lst = [];             // list of user-specific fields that should be returned to the next select query
+    private ?array $usr_num_field_lst = [];         // list of user-specific numeric fields that should be returned to the next select query
+    private ?array $usr_bool_field_lst = [];        // list of user-specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst = [];        // list of fields that are only in the user sandbox
     private ?array $join_field_lst = [];            // list of fields that should be returned to the next select query that are taken from a joined table
     private ?array $join2_field_lst = [];           // same as $join_field_lst but for the second join
@@ -670,14 +670,14 @@ class sql_db
     private ?string $join2_type = '';               // the type name of the second table to join (maybe later switch to join n tables)
     private ?string $join3_type = '';               // the type name of the third table to join (maybe later switch to join n tables)
     private ?string $join4_type = '';               // the type name of the fourth table to join (maybe later switch to join n tables)
-    private bool $all_query = false;                // true, if the query is expected to retrieve the standard and the user specific data
-    private bool $usr_query = false;                // true, if the query is expected to retrieve user specific data
-    private bool $join_usr_query = false;           // true, if the joined query is also expected to retrieve user specific data
+    private bool $all_query = false;                // true, if the query is expected to retrieve the standard and the user-specific data
+    private bool $usr_query = false;                // true, if the query is expected to retrieve user-specific data
+    private bool $join_usr_query = false;           // true, if the joined query is also expected to retrieve user-specific data
     private bool $join2_usr_query = false;          // same as $usr_join_query but for the second join
     private bool $join3_usr_query = false;          // same as $usr_join_query but for the third join
     private bool $join4_usr_query = false;          // same as $usr_join_query but for the fourth join
     private bool $join_usr_added = false;           // true, if the user join statement has been created
-    private bool $usr_only_query = false;           // true, if the query is expected to retrieve ONLY the user specific data without the standard values
+    private bool $usr_only_query = false;           // true, if the query is expected to retrieve ONLY the user-specific data without the standard values
 
     private ?string $fields = '';                   // the fields                SQL statement that is used for the next select query
     private ?string $from = '';                     // the FROM                  SQL statement that is used for the next select query
@@ -1726,7 +1726,7 @@ class sql_db
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field or $join_field == '')
                 and ($this->join_to_field == $join_to_field or $join_to_field == ''))) {
@@ -1776,7 +1776,7 @@ class sql_db
     {
         $join_type = $this->class_to_name($join_type);
         // fill up the join field places or add settings to a matching join link
-        // e.g. add the user fields to an existing not user specific join
+        // e.g. add the user fields to an existing not user-specific join
         if ($this->join_type == ''
             or (($this->join_field == $join_field and $join_field != '')
                 and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
@@ -1838,7 +1838,7 @@ class sql_db
     }
 
     /**
-     * define that the SQL statement should return the standard value and the user specific changes of all users
+     * define that the SQL statement should return the standard value and the user-specific changes of all users
      */
     function set_all(): void
     {
@@ -1846,7 +1846,7 @@ class sql_db
     }
 
     /**
-     * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user specific
+     * set the SQL statement for the user sandbox fields that should be returned in a select query which can be user-specific
      */
     function set_usr_fields($usr_field_lst): void
     {
@@ -1897,11 +1897,11 @@ class sql_db
 
     /**
      * interface function for sql_usr_field
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     function get_usr_field(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL,
@@ -1912,10 +1912,10 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and text fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_text(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
@@ -1925,10 +1925,10 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_num(
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): void
@@ -1938,9 +1938,9 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_count(
         string $field, string $stb_tbl = sql_db::LNK_TBL, string $as = ''): void
@@ -1950,8 +1950,8 @@ class sql_db
 
     /**
      * internal interface function for sql_usr_field using the class db type settings and boolean / tinyint fields
-     * @param string $field the field name of the user specific field
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $field the field name of the user-specific field
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      */
     private function set_field_usr_bool(
         string $field, string $as = ''): void
@@ -1961,13 +1961,13 @@ class sql_db
     }
 
     /**
-     * create the sql statement to get the user specific value if it is set or the value for all users
+     * create the sql statement to get the user-specific value if it is set or the value for all users
      * uses $db_type is the SQL database type which is in this case independent of the class setting to be able to use it anywhere
-     * @param string $field the field name of the user specific field
+     * @param string $field the field name of the user-specific field
      * @param string $field_format the enum of the sql field type e.g. INT
      * @param string $stb_tbl the table prefix for the table with the default values for all users
-     * @param string $usr_tbl the table prefix for the table with the user specific values
-     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @param string $usr_tbl the table prefix for the table with the user-specific values
+     * @param string $as to overwrite the field name than contains the user-specific value or the default value
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
      */
     private function sql_usr_field(
@@ -2193,28 +2193,28 @@ class sql_db
             }
         }
 
-        // add user specific fields
+        // add user-specific fields
         foreach ($this->usr_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field);
         }
 
-        // add user specific numeric fields
+        // add user-specific numeric fields
         foreach ($this->usr_num_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field);
         }
 
-        // add user specific boolean fields
+        // add user-specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_bool($field);
         }
 
-        // add user specific join fields
+        // add user-specific join fields
         foreach ($this->join_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
@@ -2225,7 +2225,7 @@ class sql_db
             }
         }
 
-        // add user specific numeric join fields
+        // add user-specific numeric join fields
         foreach ($this->join_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
@@ -2236,49 +2236,49 @@ class sql_db
             }
         }
 
-        // add user specific second join fields
+        // add user-specific second join fields
         foreach ($this->join2_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific numeric second join fields
+        // add user-specific numeric second join fields
         foreach ($this->join2_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK2_TBL, sql_db::ULK2_TBL, $this->name_sql_esc($field . '2'));
         }
 
-        // add user specific third join fields
+        // add user-specific third join fields
         foreach ($this->join3_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific numeric third join fields
+        // add user-specific numeric third join fields
         foreach ($this->join3_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK3_TBL, sql_db::ULK3_TBL, $this->name_sql_esc($field . '3'));
         }
 
-        // add user specific fourth join fields
+        // add user-specific fourth join fields
         foreach ($this->join4_usr_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_text($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific numeric fourth join fields
+        // add user-specific numeric fourth join fields
         foreach ($this->join4_usr_num_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_sep();
             $this->set_field_usr_num($field_esc, sql_db::LNK4_TBL, sql_db::ULK4_TBL, $this->name_sql_esc($field . '4'));
         }
 
-        // add user specific count join fields
+        // add user-specific count join fields
         foreach ($this->join_usr_count_field_lst as $field) {
             $field_esc = $this->name_sql_esc($field);
             $this->set_field_usr_count($field_esc, sql_db::LNK_TBL, $this->name_sql_esc($field . '_count'));
@@ -3413,9 +3413,9 @@ class sql_db
 
         if ($name <> '' and !is_null($this->usr_id)) {
             /*
-             * because the object name can be user specific,
+             * because the object name can be user-specific,
              * don't use the standard name for the selection e.g. s.view_name
-             * use instead the user specific name e.g. view_name
+             * use instead the user-specific name e.g. view_name
              */
             $this->add_par(sql_par_type::TEXT, $name);
             if ($this->usr_query or $this->join <> '') {
@@ -3453,7 +3453,7 @@ class sql_db
      * if $id_from or $id_to is null all links to the other side are selected
      *    e.g. if for formula_links just the phrase id is set, all formulas linked to the given phrase are returned
      * TODO allow also to retrieve a list of linked objects
-     * TODO get the user specific list of linked objects
+     * TODO get the user-specific list of linked objects
      * TODO use always parameterized values
      */
     function set_where_link_no_fld(int $id = 0, int $id_from = 0, int $id_to = 0, int $id_type = 0): string
@@ -4099,7 +4099,7 @@ class sql_db
     }
 
     /**
-     * @return string the SQL statement to for the user specific data
+     * @return string the SQL statement to for the user-specific data
      */
     function select_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {
@@ -4130,7 +4130,7 @@ class sql_db
      * init the sql statement to get the users that has changed to value or result object
      * replaces the standard sql db function
      *
-     * @return string the SQL statement to for the user specific data
+     * @return string the SQL statement to for the user-specific data
      */
     function select_value_by_id_not_owner(int $id, ?int $owner_id = 0): string
     {

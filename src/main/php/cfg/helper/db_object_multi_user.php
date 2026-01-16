@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_object_multi_user.php - a base object for all user specific database objects
+    model/helper/db_object_multi_user.php - a base object for all user-specific database objects
     -------------------------------------
 
     same as db_id_object_user but for database object that have custom prime id

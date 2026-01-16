@@ -616,7 +616,7 @@ class value extends sandbox_value
         return $result;
     }
 
-    // same as dsp_tbl_std, but in the user specific color
+    // same as dsp_tbl_std, but in the user-specific color
     function dsp_tbl_usr($back): string
     {
         log_debug('value->dsp_tbl_usr');

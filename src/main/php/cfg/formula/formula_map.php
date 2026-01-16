@@ -21,7 +21,7 @@
     - calc:              manage the formula calculation
     - im- and export:    create an export object and set the vars from an import object
     - expression:        handel to single parts of a formula
-    - link:              add or remove a link to a word (this is user specific, so use the user sandbox)
+    - link:              add or remove a link to a word (this is user-specific, so use the user sandbox)
     - save:              to update the formula in the database and for the user sandbox
     - del:               manage to remove from the database
     - sql write:         sql statement creation to write to the database
@@ -1133,7 +1133,7 @@ class formula_map extends sandbox_code_id
     }
 
     /**
-     * create an SQL statement to retrieve all user specific changes of this formula
+     * create an SQL statement to retrieve all user-specific changes of this formula
      * TODO combine with load_sql_user_changes ?
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -1731,7 +1731,7 @@ class formula_map extends sandbox_code_id
     /**
      * remove depending on objects
      * needs to be overwritten by the child class if needed
-     * TODO make sure that only user specific data is deleted
+     * TODO make sure that only user-specific data is deleted
      *
      * @param user_message $usr_msg the message for the user why deleting the formula links has failed and a suggested solution
      * @return bool true if the formula links has been deleted

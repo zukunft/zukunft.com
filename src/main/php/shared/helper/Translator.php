@@ -65,7 +65,7 @@ class Translator
      *
      * @param msg_id $msg_id the id const of the message that should be shown
      * @param string $lan the code id of the target language
-     * @return string the message text in the user specific language that should be shown to the user
+     * @return string the message text in the user-specific language that should be shown to the user
      */
     function txt(msg_id $msg_id, string $lan = ''): string
     {

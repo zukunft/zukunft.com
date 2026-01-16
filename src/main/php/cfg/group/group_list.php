@@ -387,7 +387,7 @@ class group_list extends sandbox_list
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
     the function is should be based on the group table which is supposed to be always up to date
-    including the user specific exceptions based on the formula expression
+    including the user-specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group
     e.g. the formula is assigned to "company" ($frm_linked) and the "operating income" formula result should be calculated

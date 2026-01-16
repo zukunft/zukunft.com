@@ -72,9 +72,9 @@ A proper issue ticket should be created for these TODOs notes:
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
     TODO use only these global vars:
          - $sys to cache execution times, types and system configuration that change rarely
-                and is not user specific and for easy check how many times the code writes
+                and is not user-specific and for easy check how many times the code writes
          - $db_con for the database connection
-         - $cac for the backend cache of user specific data_object and the user configuration
+         - $cac for the backend cache of user-specific data_object and the user configuration
          - $ui_cac for the frontend cache including the session user
          - $mtr for the message translation use as the last step in the frontend
          - $t for the base test object with the functions for assert and cleanup
@@ -114,7 +114,7 @@ A proper issue ticket should be created for these TODOs notes:
             - created (if null the cache is invalid)
             - last_used (timestamp of the last use, so that old unused cache can be cleaned up)
             - json (the message e.g. in the json format)
-         Only write user specific system views if really needed
+         Only write user-specific system views if really needed
          do not write a combined cache because reading 3 rows from the is fast if done with one request
     TODO add a frontend db cache table (until it is known how e.g. a cockie can be used as a cache)
          the fields of the table "cache_ui" are the same as for the backend but without user and backend config: 
@@ -212,7 +212,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make it possible to change the parent view and while changing either keep the view or keep the chances or a combination of both
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO add import fail test to check the error message creation
-    TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user specific word and rename the formula)
+    TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user-specific word and rename the formula)
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
@@ -366,7 +366,7 @@ A proper issue ticket should be created for these TODOs notes:
          and the small object contains basically e.g. the id and the name
     TODO add a simple UI API JSON to text frontend for the view validation
     TODO exclude any search objects from list objects e.g. remove the phrase from the value list which implies to split the list loading into single functions such as load_by_phr
-    TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
+    TODO use a key-value table without a phrase group if a value is not user-specific and none of the default settings has been changed
          for the key-value table without a phrase group encode the key, so that automatically a virtual phrase group can be created
          e.g. convert -12,3,67 to something like 4c48d5685a7e with the possibility to reverse
     TODO create db id sync tables (with this_pod_db_id, foreign_pod, foreign_db_id)
@@ -498,7 +498,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a alternative backend based on Rust for better speed
     TODO all pods write change requests first to its own database
     TODO if the local pod is not the master pod for the phrase, the change is transferred to the master pod
-    TODO in case of a conflict, that later change wins and because all changes are user specific the probability of a ultimate conflict is nearly zero
+    TODO in case of a conflict, that later change wins and because all changes are user-specific the probability of a ultimate conflict is nearly zero
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
@@ -533,7 +533,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a related table with the phrase, the context as a group, the weight and the related phrase
          for fast selection of phrases related to a given phrase within a given context
          this related table should be automatically filled by a batch job based e.g. on the number and usage
-    TODO create different related tables for prime and big context and user specific
+    TODO create different related tables for prime and big context and user-specific
     TODO move code id const to a code_id.yaml file for better sharing between the different code languages
     TODO add a test case to check missing or invalid code id const e.g. in php, java, JavaScript, python
     TODO check if all backend api calls are actually called from the frontend
@@ -726,7 +726,7 @@ features
 - each user can define uo to 100 users as "preferred trust"
 - for each user show all values, formulas, words where the user has different settings than the other users and allow to move back to the standard
 - it should be possible to link an existing formula to a word/phrase (plus on formula should allow also to link an existing formula)
-- make the phrase to value links for fast searching user specific
+- make the phrase to value links for fast searching user-specific
 - allow to undo just von change or to revert all changes (of these formulas or all formulas, words, values) up to this point of time
 - display in the formula (value, word) the values of other users
 - check the correct usage of verbs (see definition)

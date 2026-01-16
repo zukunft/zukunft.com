@@ -725,7 +725,7 @@ class formula extends sandbox_code_id
     }
 
     /**
-     * the user specific list of a phrases assigned to a formula
+     * the user-specific list of a phrases assigned to a formula
      */
     function direct_assigned_phrases(): ?phrase_list
     {

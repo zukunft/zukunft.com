@@ -160,24 +160,24 @@ class phrase extends combine_named
     const string FLD_USAGE = 'usage';
     const string FLD_IMPACT = 'impact';
 
-    // the common phrase database field names excluding the id and excluding the user specific fields
+    // the common phrase database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         phrase::FLD_TYPE
     );
-    // list of the common user specific database field names of phrases excluding the standard name field
+    // list of the common user-specific database field names of phrases excluding the standard name field
     const array FLD_NAMES_USR_EX = array(
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific database field names of phrases
+    // list of the common user-specific database field names of phrases
     const array FLD_NAMES_USR = array(
         phrase::FLD_NAME,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific database field names of phrases
+    // list of the common user-specific database field names of phrases
     const array FLD_NAMES_USR_NO_NAME = array(
         sql_db::FLD_DESCRIPTION
     );
-    // list of the common user specific numeric database field names of phrases
+    // list of the common user-specific numeric database field names of phrases
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
         self::FLD_IMPACT,
@@ -231,7 +231,7 @@ class phrase extends combine_named
      */
 
     /**
-     * always set the user because a phrase is always user specific
+     * always set the user because a phrase is always user-specific
      * @param user|word|triple|null $obj the word or triple that should be covered by the phrase
      * @param int|null $id the database id of the phrase (not the object!)
      */
@@ -996,7 +996,7 @@ class phrase extends combine_named
      * if there is just one formula linked to the phrase, get it
      * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
-     * TODO get the user specific list of formulas
+     * TODO get the user-specific list of formulas
      */
     function formula(): formula
     {

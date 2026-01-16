@@ -130,7 +130,7 @@ class triple_db
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_USAGE,
@@ -143,14 +143,14 @@ class triple_db
         verb_db::FLD_ID,
         self::FLD_TO
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_USR = array(
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
         sql_db::FLD_DESCRIPTION
     );
-    // list of the user specific numeric database field names
+    // list of the user-specific numeric database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_WIGHT,
         phrase::FLD_TYPE,
@@ -160,7 +160,7 @@ class triple_db
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,

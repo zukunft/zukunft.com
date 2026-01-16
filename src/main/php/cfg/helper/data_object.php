@@ -168,7 +168,7 @@ class data_object
     // all preloaded types
     public type_lists $typ_lst;
 
-    // all preloaded views which can be user specific
+    // all preloaded views which can be user-specific
     public view_sys_list $sys_msk;
 
 

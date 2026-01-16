@@ -343,7 +343,7 @@ class value_write_tests
         $target = self::NUMBER_ADD;
         $t->assert(', value->load the value previous updated for "' . words::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if a user specific value is created if another user changes the value
+        // check if a user-specific value is created if another user changes the value
         // TODO check loaded value matches the value for usr1
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);

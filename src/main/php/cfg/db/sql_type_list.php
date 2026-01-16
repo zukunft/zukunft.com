@@ -261,7 +261,7 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if sql should return the normal values and not the user specific
+     * @return bool true if sql should return the normal values and not the user-specific
      */
     function is_norm(): bool
     {

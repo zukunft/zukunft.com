@@ -662,13 +662,13 @@
     \-- assign_phr_lst_direct
         \-- formula - the complete list of a phrases assigned to a formula
     \-- assign_phr_ulst_direct
-        \-- formula - the user specific list of a phrases assigned to a formula
+        \-- formula - the user-specific list of a phrases assigned to a formula
     \-- assign_phr_glst
         \-- formula - returns a list of all words that the formula is assigned to
     \-- assign_phr_lst
         \-- formula - the complete list of a phrases assigned to a formula
     \-- assign_phr_ulst
-        \-- formula - the user specific list of a phrases assigned to a formula
+        \-- formula - the user-specific list of a phrases assigned to a formula
 \-- result
     \-- res_del
         \-- formula - delete all results for this formula
@@ -719,7 +719,7 @@
     \-- not_changed_sql
         \-- formula_map - @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
     \-- load_sql_user_changes_frm
-        \-- formula_map - create an SQL statement to retrieve all user specific changes of this formula
+        \-- formula_map - create an SQL statement to retrieve all user-specific changes of this formula
     \-- load_sql_user_changes
         \-- formula_map - create an SQL statement to retrieve the user changes of the current formula
     \-- del_usr_cfg_exe
@@ -941,30 +941,30 @@
     \-- set_user_join - section for function set_user_join is expected to be set and get in /db/sql_db.php
     \-- set_from - section for function set_from is expected to be set and get in /db/sql_db.php
     \-- get_par - section for function get_par is expected to be set and get in /db/sql_db.php
-    \-- select_all - section for function select_all not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by_set_id - section for function select_by_set_id not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by_code_id - section for function select_by_code_id not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by_field - section for function select_by_field not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by_field_list - section for function select_by_field_list not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by_id_not_owner - section for function select_by_id_not_owner not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_value_by_id_not_owner - section for function select_value_by_id_not_owner not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_union - section for function select_union not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- count - section for function count not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- par_types_to_postgres - section for function par_types_to_postgres not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- prepare_sql - section for function prepare_sql not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- end_sql - section for function end_sql not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- select_by - section for function select_by not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- missing_owner_sql - section for function missing_owner_sql not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- missing_owner - section for function missing_owner not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
+    \-- select_all - section for function select_all not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by_set_id - section for function select_by_set_id not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by_code_id - section for function select_by_code_id not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by_field - section for function select_by_field not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by_field_list - section for function select_by_field_list not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by_id_not_owner - section for function select_by_id_not_owner not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_value_by_id_not_owner - section for function select_value_by_id_not_owner not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_union - section for function select_union not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- count - section for function count not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- par_types_to_postgres - section for function par_types_to_postgres not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- prepare_sql - section for function prepare_sql not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- end_sql - section for function end_sql not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- select_by - section for function select_by not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- missing_owner_sql - section for function missing_owner_sql not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- missing_owner - section for function missing_owner not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- set_default_owner - section for function set_default_owner is expected to be set and get in /db/sql_db.php
-    \-- insert - section for function insert not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- update - section for function update not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
+    \-- insert - section for function insert not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- update - section for function update not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete - section for function delete is expected to be del in /db/sql_db.php
-    \-- insert_old - section for function insert_old not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- add_id - section for function add_id not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- add_id_2key - section for function add_id_2key not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- update_old - section for function update_old not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
-    \-- update_name - section for function update_name not yet defined that it should be because the object name can be user specific, in /db/sql_db.php
+    \-- insert_old - section for function insert_old not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- add_id - section for function add_id not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- add_id_2key - section for function add_id_2key not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- update_old - section for function update_old not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
+    \-- update_name - section for function update_name not yet defined that it should be because the object name can be user-specific, in /db/sql_db.php
     \-- delete_old - section for function delete_old is expected to be del in /db/sql_db.php
     \-- name_sql_esc - section for function name_sql_esc not yet defined that it should be private supporting functions in /db/sql_db.php
     \-- sf - section for function sf not yet defined that it should be private supporting functions in /db/sql_db.php
@@ -3256,15 +3256,15 @@
         \-- db_object_multi_user - @param user $usr the user how has requested to see his view on the object
         \-- db_object_seq_id_user - @param user $usr the user how has requested to see his view on the object
         \-- system_object - always set the user because always someone must have requested to create the list
-        \-- change_log - always set the user because a change log list is always user specific
+        \-- change_log - always set the user because a change log list is always user-specific
         \-- text_log - 
         \-- phrase_type - 
         \-- phrase_types - @param bool $usr_can_add true by default to allow searching by name for new added phrase types
         \-- ref_list - define the settings for this ref list object
         \-- sandbox_link_list - 
-        \-- sandbox_list - always set the user because a link list is always user specific
+        \-- sandbox_list - always set the user because a link list is always user-specific
         \-- sandbox_value_list - 
-        \-- job_list - always set the user because a job list either user specific or linked to the system user
+        \-- job_list - always set the user because a job list either user-specific or linked to the system user
         \-- value_geo - set the user, which is needed in all cases and the main vars with the object creation
         \-- value_text - set the user, which is needed in all cases and the main vars with the object creation
         \-- value_time - set the user, which is needed in all cases and the main vars with the object creation
@@ -3577,7 +3577,7 @@
     \-- move_where_to_sub
         \-- sql_creator - remove the where condition at the given position $pos
     \-- select_by_id_not_owner
-        \-- sql_creator - @return string the SQL statement to for the user specific data
+        \-- sql_creator - @return string the SQL statement to for the user-specific data
 \-- public sql helpers
     \-- name_sql_esc
         \-- sql_creator - escape or reformat the reserved SQL names
@@ -3660,7 +3660,7 @@
     \-- is_usr_tbl_and_select
         \-- sql_type_list - @return bool true if sql should point to the user sandbox table and only the values for the given user should be selected
     \-- is_norm
-        \-- sql_type_list - @return bool true if sql should return the normal values and not the user specific
+        \-- sql_type_list - @return bool true if sql should return the normal values and not the user-specific
     \-- is_standard
         \-- sql_type_list - @return bool true if only the value without the sandbox parameters like share and protection should be saved
     \-- get_all
@@ -5835,7 +5835,7 @@
     \-- load_by_formula_id
         \-- formula_link_list - get the formula link that use this formula from the backend via api
     \-- load
-        \-- config - request the user specific frontend configuration from the backend
+        \-- config - request the user-specific frontend configuration from the backend
     \-- get_by
         \-- config - get a frontend config value selected by the phrase names
     \-- load_by_object_field

@@ -454,8 +454,8 @@ class test_base
     {
 
         // create the system test user to simulate the user sandbox
-        // e.g. a value owned by the first user cannot be adjusted by the second user instead a user specific value is created
-        // instead a user specific value is created
+        // e.g. a value owned by the first user cannot be adjusted by the second user instead a user-specific value is created
+        // instead a user-specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user();
         $this->usr1->load_by_name(users::SYSTEM_TEST_NAME);
@@ -4228,7 +4228,7 @@ class test_base
      * @param string $fld the name if the field that should be used to filter the changes
      * @param int|string|null $id the field value if the given field name
      * @param bool $ex_time true if the change time should not be included in the text
-     * @param bool $usr_only true if only user specific changes should be shown
+     * @param bool $usr_only true if only user-specific changes should be shown
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_field(

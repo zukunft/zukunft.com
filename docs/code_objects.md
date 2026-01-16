@@ -35,7 +35,7 @@ the target model object structure is:
 
     db_object - all database objects with the sql_table_create function
         db_object_seq_id - all database objects that have a unique id
-            db_object_seq_id_user - all objects that are user specific
+            db_object_seq_id_user - all objects that are user-specific
                 sandbox - a user sandbox object
                     sandbox_named - user sandbox objects that have a given name
                         sandbox_typed - named sandbox object that have a type and a predefined behavior
@@ -52,7 +52,7 @@ the target model object structure is:
                         term_view - link a view to a term
                         component_link - to assign a component to a view
                         ref - to link a value to an external source
-                    sandbox_value - to save a user specific numbers
+                    sandbox_value - to save a user-specific numbers
                         value - a single number added by the user
                         result - one calculated numeric result
                         value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
@@ -72,7 +72,7 @@ the target model object structure is:
         sys_log_list - to forward the system log entries to the UI
         job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
-        sandbox_list - a user specific paged list
+        sandbox_list - a user-specific paged list
             value_list - a list of values
             formula_list - a list of formulas
             element_list - a list of formula elements
@@ -149,10 +149,10 @@ Admin edit: for triples (verbs), phrase_types, link_types, formula_types there i
 Sources: every user can change it, but there is only one valid row
 
 Saving: there are several methods to save user data
-- not user specific data like verbs, which are saved with the standard process
-- user specific data like formulas, which are saved base on the user sandbox functions
-- user specific data, which change very rarely and has code functionality linked like view types
-- not user specific data, which change only with a program update like the view component position type
+- not user-specific data like verbs, which are saved with the standard process
+- user-specific data like formulas, which are saved base on the user sandbox functions
+- user-specific data, which change very rarely and has code functionality linked like view types
+- not user-specific data, which change only with a program update like the view component position type
 
 
 Fixed server splitting (if not hadoop is used as the backend)

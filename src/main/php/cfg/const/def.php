@@ -292,7 +292,7 @@ class def
         component::class,
     ];
 
-    // classes that have a frontend and backend object but are not user specific
+    // classes that have a frontend and backend object but are not user-specific
     const array SYSTEM_UI_CLASSES = [
         language::class,
         pod::class,

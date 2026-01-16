@@ -180,7 +180,7 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * @return bool false if the loaded value is user specific
+     * @return bool false if the loaded value is user-specific
      */
     function is_std(): bool
     {

@@ -135,7 +135,7 @@ class component_link extends sandbox_link
     const string FLD_STYLE_COM = 'the display style for this component link';
     const string FLD_STYLE = 'view_style_id';
 
-    // all database field names excluding the user specific fields and the id
+    // all database field names excluding the user-specific fields and the id
     const array FLD_NAMES = array(
         view_db::FLD_ID,
         component::FLD_ID
@@ -145,7 +145,7 @@ class component_link extends sandbox_link
         view_db::FLD_ID,
         component::FLD_ID
     );
-    // list of the user specific database field names
+    // list of the user-specific database field names
     const array FLD_NAMES_NUM_USR = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
@@ -154,7 +154,7 @@ class component_link extends sandbox_link
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // all database field names excluding the id used to identify if there are some user-specific changes
     const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
@@ -1397,7 +1397,7 @@ class component_link extends sandbox_link
      * save
      */
 
-    // check if the database record for the user specific settings can be removed
+    // check if the database record for the user-specific settings can be removed
 
     /**
      * get a similar reference

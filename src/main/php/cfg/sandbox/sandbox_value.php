@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/sandbox_value.php - the superclass for handling user specific link objects including the database saving
+    model/sandbox/sandbox_value.php - the superclass for handling user-specific link objects including the database saving
     -------------------------------
 
     This superclass should be used by the class word links, formula links and view link
@@ -146,17 +146,17 @@ class sandbox_value extends sandbox_multi
     const string TBL_COMMENT_STD_CONT = 's that have never changed the owner, does not have a description and are rarely updated';
     const string TBL_COMMENT = 'for ';
     const string TBL_COMMENT_CONT = 's related to up to 16 phrases';
-    const string TBL_COMMENT_USER = 'for user specific changes of ';
+    const string TBL_COMMENT_USER = 'for user-specific changes of ';
     const string TBL_COMMENT_PRIME = 'for the most often requested ';
     const string TBL_COMMENT_PRIME_CONT = 's related up to four prime phrase';
-    const string TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested ';
+    const string TBL_COMMENT_PRIME_USER = 'to store the user-specific changes for the most often requested ';
     const string TBL_COMMENT_PRIME_USER_CONT = 's related up to four prime phrase';
     const string TBL_COMMENT_MAIN = 'to cache the formula second most often requested ';
     const string TBL_COMMENT_MAIN_CONT = 's related up to eight prime phrase';
-    const string TBL_COMMENT_MAIN_USER = 'to store the user specific changes to cache the formula second most often requested ';
+    const string TBL_COMMENT_MAIN_USER = 'to store the user-specific changes to cache the formula second most often requested ';
     const string TBL_COMMENT_MAIN_USER_CONT = 's related up to eight prime phrase';
     const string TBL_COMMENT_BIG_CONT = 's related to more than 16 phrases';
-    const string TBL_COMMENT_BIG_USER = 'to store the user specific changes of ';
+    const string TBL_COMMENT_BIG_USER = 'to store the user-specific changes of ';
     const string TBL_COMMENT_BIG_USER_CONT = 's related to more than 16 phrases';
     // TODO review the time series comments
     const string TBL_COMMENT_TS = 'for the common parameters for a list of numbers that differ only by the timestamp';
@@ -206,10 +206,10 @@ class sandbox_value extends sandbox_multi
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
     );
     const array FLD_ALL_VALUE_USER = array(
-        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user-specific numeric value change'],
     );
     const array FLD_ALL_VALUE_NUM_USER = array(
-        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user-specific numeric value change'],
     );
     const array FLD_ALL_VALUE_TEXT = array(
         [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
@@ -221,13 +221,13 @@ class sandbox_value extends sandbox_multi
         [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
     const array FLD_ALL_VALUE_TEXT_USER = array(
-        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
+        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user-specific text value change'],
     );
     const array FLD_ALL_VALUE_TIME_USER = array(
-        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
+        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user-specific timestamp change'],
     );
     const array FLD_ALL_VALUE_GEO_USER = array(
-        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
+        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user-specific geolocation change'],
     );
     const array FLD_ALL_SOURCE = array(
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
@@ -279,7 +279,7 @@ class sandbox_value extends sandbox_multi
      */
 
     /**
-     * all value user specific, that's why the user is always set
+     * all value user-specific, that's why the user is always set
      */
     function __construct(user $usr)
     {
@@ -753,7 +753,7 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc
      * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
-     * @param array $fld_par_usr the user specific parameters for the value field
+     * @param array $fld_par_usr the user-specific parameters for the value field
      * @param string $ext_type the additional table extension for the field type
      * @param string $type_name the name of the value type
      * @param string $comment_overwrite
@@ -775,7 +775,7 @@ class sandbox_value extends sandbox_multi
         $sql_foreign = $sc->sql_separator();
 
         if ($type_name != $this::TYPE_TIME_SERIES) {
-            // standard prime: for values or results without user specific changes and for up to four prime phrases
+            // standard prime: for values or results without user-specific changes and for up to four prime phrases
             $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::PRIME->extension());
             $fields = array_merge($this::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
             $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_PRIME_CONT;
@@ -783,7 +783,7 @@ class sandbox_value extends sandbox_multi
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
 
-            // standard main: for results without user specific changes and for up to e prime phrases
+            // standard main: for results without user-specific changes and for up to e prime phrases
             if ($this::class == result::class) {
                 $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
                 $fields = array_merge(result_db::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
@@ -793,7 +793,7 @@ class sandbox_value extends sandbox_multi
                 $sql_foreign .= $sc->foreign_key_create($fields);
             }
 
-            // standard: for values or results without user specific changes and for up to 16 phrases
+            // standard: for values or results without user-specific changes and for up to 16 phrases
             $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD);
             $fields = array_merge(self::FLD_KEY, $fld_par, $this::FLD_ALL_SOURCE);
             $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_CONT;
@@ -1875,7 +1875,7 @@ class sandbox_value extends sandbox_multi
         $id_fields = $this->sql_id_fields();
         // get the db key values related to the db prime key
         $id_lst = $this->sql_id_val($id_fields);
-        // add the user id if a user specific value should be saved
+        // add the user id if a user-specific value should be saved
         if ($sc_par_lst->is_usr_tbl()) {
             if (!is_array($id_fields)) {
                 $id_fields = [$id_fields];
@@ -1895,7 +1895,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create the sql statement to delete a value in the database
-     * TODO check if user specific overwrites can be deleted
+     * TODO check if user-specific overwrites can be deleted
      *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg the user message object that collects any issues during the sql creation

@@ -128,9 +128,9 @@ class verb extends type_object
      */
 
     // the user is used only to allow adding the code id on import
-    // but there should not be any user specific verbs
+    // but there should not be any user-specific verbs
     // otherwise if id is 0 (not NULL) the standard word link type,
-    // otherwise the user specific verb
+    // otherwise the user-specific verb
     private ?user $usr = null;
     // name used if more than one word is shown
     // e.g. instead of "ABB" "is a" "company"
@@ -719,7 +719,7 @@ class verb extends type_object
      */
 
     /**
-     * get the term corresponding to this verb name
+     * get the term corresponding to this verb name,
      * so in this case, if a word or formula with the same name already exists, get it
      */
     private function reload_term(): term

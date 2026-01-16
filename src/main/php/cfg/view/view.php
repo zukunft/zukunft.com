@@ -792,7 +792,7 @@ class view extends sandbox_code_id
     /**
      * create an SQL statement to retrieve all view components of a view
      * TODO check if it can be combined with load_sql from component_link_list
-     * TODO make the order user specific
+     * TODO make the order user-specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list

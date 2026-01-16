@@ -851,7 +851,7 @@ class result_list extends sandbox_value_list
 
     /**
      * add all formula results to the list that may needs to be updated if a formula is updated for one user
-     * TODO: only request the user specific calculation if needed
+     * TODO: only request the user-specific calculation if needed
      */
     function frm_upd_lst_usr(
         formula $frm,
@@ -1096,7 +1096,7 @@ class result_list extends sandbox_value_list
         $phr_grp_lst_val->get_by_res_special($phr_lst_frm_assigned, $phr_lst_preset, $phr_frm, $phr_lst_res); // ... such as "this"
         $phr_grp_lst_used = clone $phr_grp_lst_val;
 
-        // first calculate the standard results for all user and then the user specific results
+        // first calculate the standard results for all user and then the user-specific results
         // than loop over the users and check if the user has changed any value, formula or formula assignment
         $usr_lst = new user_list($this->get_user());
         $usr_lst->load_active();

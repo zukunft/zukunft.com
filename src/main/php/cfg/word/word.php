@@ -765,7 +765,7 @@ class word extends sandbox_code_id
      * if there is just one formula linked to the word, get it
      * TODO separate the query parameter creation and add a unit test
      * TODO allow also to retrieve a list of formulas
-     * TODO get the user specific list of formulas
+     * TODO get the user-specific list of formulas
      */
     function reload_formula(): formula
     {
@@ -1475,7 +1475,7 @@ class word extends sandbox_code_id
 
     /**
      * remember the word view, which means to save the view id for this word
-     * each user can define set the view individually, so this is user specific
+     * each user can define set the view individually, so this is user-specific
      */
     function save_view(int $view_id): user_message
     {

@@ -221,7 +221,7 @@ class value_base extends sandbox_value
     const string FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
     const string FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
 
-    // all database field names excluding the id and excluding the user specific fields
+    // all database field names excluding the id and excluding the user-specific fields
     const array FLD_NAMES = value_db::FLD_NAMES;
     const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
     const array FLD_NAMES_USR = value_db::FLD_NAMES_USR;
@@ -368,7 +368,7 @@ class value_base extends sandbox_value
             } else {
                 log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
             }
-            // TODO check if phrase_group_id and time_word_id are user specific or time series specific
+            // TODO check if phrase_group_id and time_word_id are user-specific or time series specific
             $this->set_source_id($db_row[source_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
         }
@@ -949,7 +949,7 @@ class value_base extends sandbox_value
         // if the group object is missing
         if ($this->grp()->is_id_set()) {
             // ... load the group related objects means the word and triple list
-            $grp = new group($this->get_user()); // in case the word names and word links can be user specific maybe the owner should be used here
+            $grp = new group($this->get_user()); // in case the word names and word links can be user-specific maybe the owner should be used here
             $grp->load_by_id($this->grp()->id()); // to make sure that the word and triple object lists are loaded
             if ($grp->is_id_set()) {
                 $this->set_grp($grp);
@@ -1609,10 +1609,10 @@ class value_base extends sandbox_value
     log_add      - set the log object for adding a new record
     log_upd      - set the log object for changing this record
     log_del      - set the log object for excluding this record
-    need_usr_cfg - true if at least one field differs between the standard record and the user specific record
-    has_usr_cfg  - true if a record for user specific setting exists
-    add_usr_cfg  - to create a record for user specific settings
-    del_usr_cfg  - to delete the record for user specific settings, because it is not needed any more
+    need_usr_cfg - true if at least one field differs between the standard record and the user-specific record
+    has_usr_cfg  - true if a record for user-specific setting exists
+    add_usr_cfg  - to create a record for user-specific settings
+    del_usr_cfg  - to delete the record for user-specific settings, because it is not needed any more
 
     Default steps to save a value
     1. if the id is not set
@@ -1627,10 +1627,10 @@ class value_base extends sandbox_value
     1) user A creates a value -> he can change it
     2) user B changes the value -> the change is saved only for this user
     3a) user A changes the original value -> the change is saved in the original record -> user is still the owner
-    3b) user A changes the original value to the same value as b -> the user specific record is removed -> user is still the owner
-    3c) user B changes the value -> the user specific record is updated
-    3d) user B changes the value to the same value as a -> the user specific record is removed
-    3e) user A excludes the value -> b gets the owner and a user specific exclusion for A is created
+    3b) user A changes the original value to the same value as b -> the user-specific record is removed -> user is still the owner
+    3c) user B changes the value -> the user-specific record is updated
+    3d) user B changes the value to the same value as a -> the user-specific record is removed
+    3e) user A excludes the value -> b gets the owner and a user-specific exclusion for A is created
 
     */
 
@@ -1708,7 +1708,7 @@ class value_base extends sandbox_value
     }
 
     /**
-     * true if the loaded value is not user specific
+     * true if the loaded value is not user-specific
      * TODO: check the difference between is_std and can_change
      */
     function is_std(): bool
@@ -1724,7 +1724,7 @@ class value_base extends sandbox_value
     }
 
     /**
-     * true if a record for a user specific configuration already exists in the database
+     * true if a record for a user-specific configuration already exists in the database
      * TODO for the user config it is relevant which user has the user config
      *      so the target user id must be added (or not?)
      */
@@ -1759,7 +1759,7 @@ class value_base extends sandbox_value
                 $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
                 $qp = $this->sql_insert($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
-                $db_con->insert($qp, 'add user specific value', $usr_msg);
+                $db_con->insert($qp, 'add user-specific value', $usr_msg);
             }
         }
         return $usr_msg->is_ok();

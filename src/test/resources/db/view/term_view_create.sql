@@ -26,7 +26,7 @@ COMMENT ON COLUMN term_views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN term_views.protect_id IS 'to protect against unwanted changes';
 
 --
--- table structure to save user specific changes to link view to a word, triple, verb or formula with an n:m relation
+-- table structure to save user-specific changes to link view to a word, triple, verb or formula with an n:m relation
 --
 
 CREATE TABLE IF NOT EXISTS user_term_views
