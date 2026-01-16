@@ -203,9 +203,41 @@ class triple extends sandbox_link_named
 
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
-    private ?int $usage;
+    public ?int $usage {
+        /**
+         * @return int|null a higher number indicates a higher usage
+         */
+        get {
+            // TODO Prio 2 calculate usage from criteria if useful or requested
+            return $this->usage;
+        }
+        /**
+         * set the value to rank the triple by usage
+         * @param int|null $usage the new value for the usage
+         */
+        set(int|null $usage) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->usage = $usage;
+        }
+    }
     // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
-    private ?float $impact;
+    public ?float $impact {
+        get {
+            // TODO Prio 2 calculate impact from criteria if useful or requested
+            return $this->impact;
+        }
+        /**
+         * set the cache value to sort this triple by relevance
+         * the impact is calculated based on the formula assigned to the object
+         * by the system triple "impact phrase"
+         *
+         * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+         */
+        set(?float $impact) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->impact = $impact;
+        }
+    }
 
     // only used for the export object
     // name of the default view for this word
@@ -576,8 +608,8 @@ class triple extends sandbox_link_named
                 } elseif ($vars[json_fields::NAME] == '') {
                     $vars[json_fields::NAME] = $this->generate_name();
                 }
-                $vars[json_fields::USAGE] = $this->get_usage();
-                $vars[json_fields::IMPACT] = $this->get_impact();
+                $vars[json_fields::USAGE] = $this->usage;
+                $vars[json_fields::IMPACT] = $this->impact;
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
@@ -774,11 +806,11 @@ class triple extends sandbox_link_named
             $vars[json_fields::REFS] = $ref_lst;
         }
         // the impact is only included in the export as an indication to validate the consistency
-        if ($this->get_usage() != null) {
-            $vars[json_fields::USAGE] = $this->get_usage();
+        if ($this->usage != null) {
+            $vars[json_fields::USAGE] = $this->usage;
         }
-        if ($this->get_impact() != null) {
-            $vars[json_fields::IMPACT] = $this->get_impact();
+        if ($this->impact != null) {
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;
@@ -1394,11 +1426,39 @@ class triple extends sandbox_link_named
                 $this->name_generated = $trp->name_generated;
             }
         }
-        if ($obj->get_usage() != null) {
-            $this->set_usage($obj->get_usage());
+        if ($obj::class == phrase::class) {
+            if ($obj->get_usage() != null) {
+                if ($this::class == phrase::class) {
+                    $this->set_usage($obj->get_usage());
+                } else {
+                    $this->usage = $obj->get_usage();
+                }
+            }
+        } else {
+            if ($obj->usage != null) {
+                if ($this::class == phrase::class) {
+                    $this->set_usage($obj->usage);
+                } else {
+                    $this->usage = $obj->usage;
+                }
+            }
         }
-        if ($obj->get_impact() != null) {
-            $this->set_impact($obj->get_impact());
+        if ($obj::class == phrase::class) {
+            if ($obj->get_impact() != null) {
+                if ($this::class == phrase::class) {
+                    $this->set_impact($obj->get_impact());
+                } else {
+                    $this->impact = $obj->get_impact();
+                }
+            }
+        } else {
+            if ($obj->impact != null) {
+                if ($this::class == phrase::class) {
+                    $this->set_impact($obj->impact);
+                } else {
+                    $this->impact = $obj->impact;
+                }
+            }
         }
         return $usr_msg;
     }
@@ -2663,7 +2723,7 @@ class triple extends sandbox_link_named
      * @return bool true if everything has been fine
      */
     function save(
-        user_message $usr_msg,
+        user_message        $usr_msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {

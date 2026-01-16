@@ -149,7 +149,23 @@ class sandbox_named extends sandbox
     public ?string $description = null;
     // cache value of the number of objects that use this object
     // also used as a fallback value for sorting if the impact is missing or incomplete
-    private ?int $usage = null;
+    public ?int $usage = null {
+        /**
+         * @return int|null a higher number indicates a higher usage
+         */
+        get {
+            // TODO Prio 2 calculate usage from criteria if useful or requested
+            return $this->usage;
+        }
+        /**
+         * set the value to rank the named sandbox object by usage
+         * @param int|null $usage the new value for the usage
+         */
+        set(int|null $usage) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->usage = $usage;
+        }
+    }
 
 
     /*
@@ -288,8 +304,8 @@ class sandbox_named extends sandbox
         } else {
             $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
-        if ($this->get_usage() != null) {
-            $vars[json_fields::USAGE] = $this->get_usage();
+        if ($this->usage != null) {
+            $vars[json_fields::USAGE] = $this->usage;
         }
 
         return $vars;
@@ -314,8 +330,8 @@ class sandbox_named extends sandbox
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
         // the usage is only included in the export as an indication to validate the consistency
-        if ($this->get_usage() != null) {
-            $vars[json_fields::USAGE] = $this->get_usage();
+        if ($this->usage != null) {
+            $vars[json_fields::USAGE] = $this->usage;
         }
         return $vars;
     }
@@ -473,8 +489,8 @@ class sandbox_named extends sandbox
         if ($obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
-        if ($obj->get_usage() != null) {
-            $this->usage = $obj->get_usage();
+        if ($obj->usage != null) {
+            $this->usage = $obj->usage;
         }
         return $usr_msg;
     }
@@ -1260,9 +1276,9 @@ class sandbox_named extends sandbox
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|db_object_seq_id $obj,
-        user_message             $usr_msg,
-        sql_type_list            $sc_par_lst = new sql_type_list()
+        sandbox|sandbox_named|db_object_seq_id $obj,
+        user_message                           $usr_msg,
+        sql_type_list                          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
@@ -1281,7 +1297,7 @@ class sandbox_named extends sandbox
             $lst->add_user($this, $obj, $do_log, $table_id);
         }
         $lst->add_name_and_description($this, $obj, $do_log, $table_id);
-        if ($obj->get_usage() !== $this->get_usage()) {
+        if ($obj->usage !== $this->usage) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_USAGE,
@@ -1291,9 +1307,9 @@ class sandbox_named extends sandbox
             }
             $lst->add_field(
                 sql_db::FLD_USAGE,
-                $this->get_usage(),
+                $this->usage,
                 sql_db::FLD_USAGE_SQL_TYP,
-                $obj->get_usage()
+                $obj->usage
             );
         }
         return $lst;

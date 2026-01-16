@@ -112,13 +112,13 @@ class test_verbs extends test_objects
     {
         $vrb = $this->verb_is();
         $vrb->set_description(verbs::IS_COM);
-        $vrb->set_plural(verbs::IS_PLURAL);
-        $vrb->set_reverse(verbs::IS_REVERSE);
-        $vrb->set_reverse_plural(verbs::IS_REV_PLURAL);
-        $vrb->set_formula_name(verbs::IS_NAME_FORMULA);
+        $vrb->plural = verbs::IS_PLURAL;
+        $vrb->reverse = verbs::IS_REVERSE;
+        $vrb->rev_plural = verbs::IS_REV_PLURAL;
+        $vrb->frm_name = verbs::IS_NAME_FORMULA;
         $vrb->set_user($this->env->usr1);
-        $vrb->set_usage(test_const::DUMMY_USAGE_VERB);
-        $vrb->set_impact(test_const::DUMMY_IMPACT_VERB);
+        $vrb->usage = test_const::DUMMY_USAGE_VERB;
+        $vrb->impact = test_const::DUMMY_IMPACT_VERB;
         return $vrb;
     }
 
@@ -137,13 +137,13 @@ class test_verbs extends test_objects
     {
         $vrb = $this->verb_measure();
         $vrb->set_description(verbs::MEASURE_COM);
-        $vrb->set_plural(verbs::MEASURE_PLURAL);
-        $vrb->set_reverse(verbs::MEASURE_REVERSE);
-        $vrb->set_reverse_plural(verbs::MEASURE_REV_PLURAL);
-        $vrb->set_formula_name(verbs::MEASURE_NAME_FORMULA);
+        $vrb->plural = verbs::MEASURE_PLURAL;
+        $vrb->reverse = verbs::MEASURE_REVERSE;
+        $vrb->rev_plural = verbs::MEASURE_REV_PLURAL;
+        $vrb->frm_name = verbs::MEASURE_NAME_FORMULA;
         $vrb->set_user($this->env->usr1);
-        $vrb->set_usage(test_const::DUMMY_USAGE_VERB);
-        $vrb->set_impact(test_const::DUMMY_IMPACT_VERB);
+        $vrb->usage = test_const::DUMMY_USAGE_VERB;
+        $vrb->impact = test_const::DUMMY_IMPACT_VERB;
         return $vrb;
     }
 

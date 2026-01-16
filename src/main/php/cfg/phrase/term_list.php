@@ -110,17 +110,17 @@ class term_list extends sandbox_list_named
                     }
                 }
                 if ($obj::class == verb::class) {
-                    if ($obj->get_plural() != '') {
-                        $result[$obj->get_plural()] = $key;
+                    if ($obj->plural != '') {
+                        $result[$obj->plural] = $key;
                     }
-                    if ($obj->get_reverse() != '') {
-                        $result[$obj->get_reverse()] = $key;
+                    if ($obj->reverse != '') {
+                        $result[$obj->reverse] = $key;
                     }
-                    if ($obj->get_reverse_plural() != '') {
-                        $result[$obj->get_reverse_plural()] = $key;
+                    if ($obj->rev_plural != '') {
+                        $result[$obj->rev_plural] = $key;
                     }
-                    if ($obj->get_formula_name() != '') {
-                        $result[$obj->get_formula_name()] = $key;
+                    if ($obj->frm_name != '') {
+                        $result[$obj->frm_name] = $key;
                     }
                 }
             }

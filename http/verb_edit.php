@@ -64,6 +64,7 @@ $usr_msg = new user_message(); // to collect all messages that should be shown t
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
+$msg = '';
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -92,16 +93,16 @@ if ($usr->id() > 0) {
                 $vrb->set_name($_GET[url_var::NAME]);
             }
             if (isset($_GET[url_var::PLURAL])) {
-                $vrb->set_plural($_GET[url_var::PLURAL]);
+                $vrb->plural = $_GET[url_var::PLURAL];
             }
             if (isset($_GET[url_var::REVERSE])) {
-                $vrb->set_reverse($_GET[url_var::REVERSE]);
+                $vrb->reverse = $_GET[url_var::REVERSE];
             }
             if (isset($_GET[url_var::REVERSE_PLURAL])) {
-                $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
+                $vrb->rev_plural = $_GET[url_var::REVERSE_PLURAL];
             }
             if (isset($_GET[url_var::NAME_IN_FORMULA])) {
-                $vrb->set_formula_name($_GET[url_var::NAME_IN_FORMULA]);
+                $vrb->frm_name = $_GET[url_var::NAME_IN_FORMULA];
             }
 
             // save the changes

@@ -507,7 +507,7 @@ class phrase extends combine_named
      */
     function set_usage(?int $usage): void
     {
-        $this->obj()->set_usage($usage);
+        $this->obj()->usage = $usage;
     }
 
     /**
@@ -518,7 +518,7 @@ class phrase extends combine_named
      */
     function set_impact(?float $impact): void
     {
-        $this->obj()->set_impact($impact);
+        $this->obj()->impact = $impact;
     }
 
     /**
@@ -574,7 +574,7 @@ class phrase extends combine_named
      */
     function get_usage(): ?int
     {
-        return $this->obj()->get_usage();
+        return $this->obj()->usage;
     }
 
     /**
@@ -582,7 +582,7 @@ class phrase extends combine_named
      */
     function get_impact(): ?float
     {
-        return $this->obj()->get_impact();
+        return $this->obj()->impact;
     }
 
     /**

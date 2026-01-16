@@ -182,7 +182,23 @@ class formula_map extends sandbox_code_id
     public ?DateTime $last_update = null;  // the time of the last update of fields that may influence the calculated results
     private ?view $view;                   // name of the default view for this formula
     // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
-    private ?float $impact = null;
+    public ?float $impact = null {
+        get {
+            // TODO Prio 2 calculate impact from criteria if useful or requested
+            return $this->impact;
+        }
+        /**
+         * set the cache value to sort this formula by relevance
+         * the impact is calculated based on the formula assigned to the object
+         * by the system triple "impact phrase"
+         *
+         * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+         */
+        set(?float $impact) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->impact = $impact;
+        }
+    }
 
     // in memory only fields
     // list of phrase that link to this formula
@@ -420,11 +436,11 @@ class formula_map extends sandbox_code_id
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::USR_TEXT] = $this->usr_text;
             $vars[json_fields::REF_TEXT] = $this->ref_text;
-            $vars[json_fields::IMPACT] = $this->get_impact();
+            $vars[json_fields::IMPACT] = $this->impact;
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
-            $vars[json_fields::IMPACT] = $this->get_impact();
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;
@@ -515,27 +531,6 @@ class formula_map extends sandbox_code_id
             $this->generate_ref_text($trm_lst, $usr_msg);
         }
         return $this->ref_text;
-    }
-
-    /**
-     * set the cache value to sort this sandbox object by relevance
-     * the impact is calculated based on the formula assigned to the object
-     * by the system triple "impact phrase"
-     *
-     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        $this->impact = $impact;
-    }
-
-    /**
-     * @return float|null a higher number indicates a higher relevance
-     */
-    function get_impact(): ?float
-    {
-        return $this->impact;
     }
 
 
@@ -717,8 +712,8 @@ class formula_map extends sandbox_code_id
                 $this->last_update = $used_obj->last_update;
             }
         }
-        if ($obj->get_impact() != null) {
-            $this->set_impact($obj->get_impact());
+        if ($obj->impact != null) {
+            $this->impact = $obj->impact;
         }
 
         return $usr_msg;
@@ -910,7 +905,7 @@ class formula_map extends sandbox_code_id
             }
         }
         // the impact is only included in the export as an indication to validate the consistency
-        $vars[json_fields::IMPACT] = $this->get_impact();
+        $vars[json_fields::IMPACT] = $this->impact;
 
         return $vars;
     }
@@ -1923,7 +1918,7 @@ class formula_map extends sandbox_code_id
                 $obj->view
             );
         }
-        if ($obj->get_impact() !== $this->get_impact()) {
+        if ($obj->impact !== $this->impact) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_IMPACT,
@@ -1933,9 +1928,9 @@ class formula_map extends sandbox_code_id
             }
             $lst->add_field(
                 sql_db::FLD_IMPACT,
-                $this->get_impact(),
+                $this->impact,
                 sql_db::FLD_IMPACT_SQL_TYP,
-                $obj->get_impact()
+                $obj->impact
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));

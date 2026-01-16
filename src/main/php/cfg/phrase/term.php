@@ -506,24 +506,9 @@ class term extends combine_named
     function set_usage(?int $usage): void
     {
         if ($usage == null) {
-            $this->obj()->set_usage(0);
+            $this->obj()->usage = 0;
         } else {
-            $this->obj()->set_usage($usage);
-        }
-    }
-
-    /**
-     * set the value to rank the terms by impact
-     *
-     * @param float|null $impact a higher value moves the term to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        if ($impact == null) {
-            $this->obj()->set_impact(0);
-        } else {
-            $this->obj()->set_impact($impact);
+            $this->obj()->usage = $usage;
         }
     }
 
@@ -603,12 +588,12 @@ class term extends combine_named
 
     function get_usage(): ?int
     {
-        return $this->obj()->get_usage();
+        return $this->obj()->usage;
     }
 
     function get_impact(): ?float
     {
-        return $this->obj()->get_impact();
+        return $this->obj()->impact;
     }
 
 
@@ -1215,20 +1200,20 @@ class term extends combine_named
         $this->reset(true);
 
         if (array_key_exists(json_fields::OBJECT_CLASS, $in_ex_json)) {
-            $class =  $in_ex_json[json_fields::OBJECT_CLASS];
-            if ($class == json_fields::CLASS_WORD)  {
+            $class = $in_ex_json[json_fields::OBJECT_CLASS];
+            if ($class == json_fields::CLASS_WORD) {
                 $wrd = new word($this->get_user());
                 $wrd->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($wrd);
-            } elseif ($class == json_fields::CLASS_VERB)  {
+            } elseif ($class == json_fields::CLASS_VERB) {
                 $vrb = new verb();
                 $vrb->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($vrb);
-            } elseif ($class == json_fields::CLASS_TRIPLE)  {
+            } elseif ($class == json_fields::CLASS_TRIPLE) {
                 $trp = new triple($this->get_user());
                 $trp->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($trp);
-            } elseif ($class == json_fields::CLASS_FORMULA)  {
+            } elseif ($class == json_fields::CLASS_FORMULA) {
                 $frm = new formula($this->get_user());
                 $frm->import_mapper($in_ex_json, $usr_msg, $dto);
                 $this->set_obj($frm);

@@ -81,7 +81,7 @@ class sandbox_named extends sandbox
     public ?string $description = null;
 
     // the number of objects where word is used
-    private int $usage = 0;
+    public int $usage = 0;
 
 
     /*

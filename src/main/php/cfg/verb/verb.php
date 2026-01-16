@@ -136,21 +136,46 @@ class verb extends type_object
     // e.g. instead of "ABB" "is a" "company"
     // use "ABB", Nestlé" "are" "companies"
     // TODO move to language forms
-    private ?string $plural = null;
+    public ?string $plural = null;
     // name used if displayed the other way round
     // e.g. for "Country" "has a" "Human Development Index"
     // the reverse would be "Human Development Index" "is used for" "Country"
-    private ?string $reverse = null;
+    public ?string $reverse = null;
     // the reverse name for many words
-    private ?string $rev_plural = null;
+    public ?string $rev_plural = null;
     // short name of the verb for the use in formulas
     // because there both sides are combined
-    private ?string $frm_name = null;
+    public ?string $frm_name = null;
     // how often this current used has used the verb
     // (until now just the usage of all users)
-    private ?int $usage = null;
+    public ?int $usage = null {
+        /**
+         * @return int|null a higher number indicates a higher usage
+         */
+        get {
+            // TODO Prio 2 calculate usage from criteria if useful or requested
+            return $this->usage;
+        }
+        /**
+         * set the value to rank the verbs by usage
+         * @param int|null $usage the new value for the usage
+         */
+        set(int|null $usage) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->usage = $usage;
+        }
+    }
     // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
-    private ?float $impact = null;
+    public ?float $impact = null {
+        get {
+            // TODO Prio 2 calculate impact from criteria if useful or requested
+            return $this->impact;
+        }
+        set {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->impact = $value;
+        }
+    }
 
 
     /*
@@ -255,17 +280,17 @@ class verb extends type_object
 
         if (array_key_exists(json_fields::PLURAL, $json)) {
             if ($json[json_fields::PLURAL] <> '') {
-                $this->set_plural($json[json_fields::PLURAL]);
+                $this->plural = $json[json_fields::PLURAL];
             }
         }
         if (array_key_exists(json_fields::REVERSE, $json)) {
             if ($json[json_fields::REVERSE] <> '') {
-                $this->set_reverse($json[json_fields::REVERSE]);
+                $this->reverse = $json[json_fields::REVERSE];
             }
         }
         if (array_key_exists(json_fields::REV_PLURAL, $json)) {
             if ($json[json_fields::REV_PLURAL] <> '') {
-                $this->set_reverse_plural($json[json_fields::REV_PLURAL]);
+                $this->rev_plural = $json[json_fields::REV_PLURAL];
             }
         }
         if (array_key_exists(json_fields::FRM_NAME, $json)) {
@@ -298,16 +323,16 @@ class verb extends type_object
             }
             $this->set_name($db_row[$name_fld]);
             if (array_key_exists(verb_db::FLD_PLURAL, $db_row)) {
-                $this->set_plural($db_row[verb_db::FLD_PLURAL]);
+                $this->plural = $db_row[verb_db::FLD_PLURAL];
             }
             if (array_key_exists(verb_db::FLD_REVERSE, $db_row)) {
-                $this->set_reverse($db_row[verb_db::FLD_REVERSE]);
+                $this->reverse = $db_row[verb_db::FLD_REVERSE];
             }
             if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
-                $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
+                $this->rev_plural = $db_row[verb_db::FLD_PLURAL_REVERSE];
             }
             if (array_key_exists(verb_db::FLD_NAME_FORMULA, $db_row)) {
-                $this->set_formula_name($db_row[verb_db::FLD_NAME_FORMULA]);
+                $this->frm_name = $db_row[verb_db::FLD_NAME_FORMULA];
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
@@ -365,46 +390,6 @@ class verb extends type_object
         $this->usr = $usr;
     }
 
-    function set_plural(?string $plural): void
-    {
-        $this->plural = $plural;
-    }
-
-    function get_plural(): ?string
-    {
-        return $this->plural;
-    }
-
-    function set_reverse(?string $reverse): void
-    {
-        $this->reverse = $reverse;
-    }
-
-    function get_reverse(): ?string
-    {
-        return $this->reverse;
-    }
-
-    function set_reverse_plural(?string $reverse_plural): void
-    {
-        $this->rev_plural = $reverse_plural;
-    }
-
-    function get_reverse_plural(): ?string
-    {
-        return $this->rev_plural;
-    }
-
-    function set_formula_name(?string $formula_name): void
-    {
-        $this->frm_name = $formula_name;
-    }
-
-    function get_formula_name(): ?string
-    {
-        return $this->frm_name;
-    }
-
     /**
      * @return string a unique name for the verb that is also used in the code
      */
@@ -435,46 +420,6 @@ class verb extends type_object
     function get_user(): ?user
     {
         return $this->usr;
-    }
-
-    /**
-     * set the value to rank the verbs by usage
-     *
-     * @param int $usage a higher value moves the verb to the top of the selection list
-     * @return void
-     */
-    function set_usage(int $usage): void
-    {
-        $this->usage = $usage;
-    }
-
-    /**
-     * @return int|null a higher number indicates a higher usage
-     */
-    function get_usage(): ?int
-    {
-        return $this->usage;
-    }
-
-    /**
-     * set the cache value to sort this verb by relevance
-     * the impact is calculated based on the formula assigned to the object
-     * by the system triple "impact phrase"
-     *
-     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        $this->impact = $impact;
-    }
-
-    /**
-     * @return float|null a higher number indicates a higher impact
-     */
-    function get_impact(): ?float
-    {
-        return $this->impact;
     }
 
 
@@ -617,12 +562,12 @@ class verb extends type_object
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::CODE_ID] = $this->get_code_id();
         $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::PLURAL] = $this->get_plural();
-        $vars[json_fields::REVERSE] = $this->get_reverse();
-        $vars[json_fields::REV_PLURAL] = $this->get_reverse_plural();
-        $vars[json_fields::FRM_NAME] = $this->get_formula_name();
-        $vars[json_fields::USAGE] = $this->get_usage();
-        $vars[json_fields::IMPACT] = $this->get_impact();
+        $vars[json_fields::PLURAL] = $this->plural;
+        $vars[json_fields::REVERSE] = $this->reverse;
+        $vars[json_fields::REV_PLURAL] = $this->rev_plural;
+        $vars[json_fields::FRM_NAME] = $this->frm_name;
+        $vars[json_fields::USAGE] = $this->usage;
+        $vars[json_fields::IMPACT] = $this->impact;
         $vars[json_fields::ID] = $this->id();
 
         return $vars;
@@ -672,16 +617,16 @@ class verb extends type_object
                 $this->description = $value;
             }
             if ($key == verb_db::FLD_REVERSE) {
-                $this->set_reverse($value);
+                $this->reverse = $value;
             }
             if ($key == verb_db::FLD_PLURAL) {
-                $this->set_plural($value);
+                $this->plural = $value;
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
-                $this->set_reverse_plural($value);
+                $this->rev_plural =$value;
             }
             if ($key == verb_db::FLD_NAME_FORMULA) {
-                $this->set_formula_name($value);
+                $this->frm_name = $value;
             }
         }
 
@@ -714,17 +659,17 @@ class verb extends type_object
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
-        if ($this->get_plural() <> '') {
-            $vars[json_fields::NAME_PLURAL] = $this->get_plural();
+        if ($this->plural <> '') {
+            $vars[json_fields::NAME_PLURAL] = $this->plural;
         }
-        if ($this->get_reverse() <> '') {
-            $vars[json_fields::NAME_REVERSE] = $this->get_reverse();
+        if ($this->reverse <> '') {
+            $vars[json_fields::NAME_REVERSE] = $this->reverse;
         }
-        if ($this->get_reverse_plural() <> '') {
-            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->get_reverse_plural();
+        if ($this->rev_plural <> '') {
+            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->rev_plural;
         }
-        if ($this->get_formula_name() <> '') {
-            $vars[json_fields::NAME_IN_FORMULA] = $this->get_formula_name();
+        if ($this->frm_name <> '') {
+            $vars[json_fields::NAME_IN_FORMULA] = $this->frm_name;
         }
 
         // TODO add the protection type

@@ -144,7 +144,7 @@ class word extends sandbox_code_id
     private ?phrase $parent = null;
 
     // the impact used to sort the words
-    private float $impact = 0.0;
+    public float $impact = 0.0;
 
 
     /*
@@ -268,11 +268,6 @@ class word extends sandbox_code_id
     function parent(): ?phrase
     {
         return $this->parent;
-    }
-
-    function get_impact(): float
-    {
-        return $this->impact;
     }
 
     function set_view_id(?int $view_id): void

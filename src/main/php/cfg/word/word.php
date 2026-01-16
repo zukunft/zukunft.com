@@ -196,8 +196,26 @@ class word extends sandbox_code_id
         }
     }
 
-    // the importance of the word based on the value defined for each word by the words "impact" and "criteria"
-    private ?float $impact;
+    // the importance of the word; a higher number indicates a higher relevance
+    // based on the value defined for each word by the words "impact" and "criteria".
+    // set the cache value to sort this word by relevance
+    public ?float $impact {
+        get {
+            // TODO Prio 2 calculate impact from criteria if useful or requested
+            return $this->impact;
+        }
+        /**
+         * set the cache value to sort this word by relevance
+         * the impact is calculated based on the formula assigned to the object
+         * by the system triple "impact phrase"
+         *
+         * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
+         */
+        set(?float $impact) {
+            // TODO Prio 2 remember refresh timestamp to avoid too many updates
+            $this->impact = $impact;
+        }
+    }
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -413,12 +431,12 @@ class word extends sandbox_code_id
             } else {
                 $vars = parent::api_json_array($typ_lst, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
-                $vars[json_fields::IMPACT] = $this->get_impact();
+                $vars[json_fields::IMPACT] = $this->impact;
             }
         } elseif ($this->is_excluded() and $typ_lst->with_excluded_id()) {
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
-            $vars[json_fields::IMPACT] = $this->get_impact();
+            $vars[json_fields::IMPACT] = $this->impact;
         }
 
         return $vars;
@@ -521,27 +539,6 @@ class word extends sandbox_code_id
         } else {
             return $this->view->id();
         }
-    }
-
-    /**
-     * set the cache value to sort this word by relevance
-     * the impact is calculated based on the formula assigned to the object
-     * by the system triple "impact phrase"
-     *
-     * @param float|null $impact a higher value moves the sandbox object to the top of the selection list
-     * @return void
-     */
-    function set_impact(?float $impact): void
-    {
-        $this->impact = $impact;
-    }
-
-    /**
-     * @return float|null a higher number indicates a higher relevance
-     */
-    function get_impact(): ?float
-    {
-        return $this->impact;
     }
 
 

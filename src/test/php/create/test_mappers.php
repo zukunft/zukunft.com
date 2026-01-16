@@ -1012,8 +1012,8 @@ class test_mappers
         $url_array[] = [url_var::SHARE, $wrd->share_id()];
         $url_array[] = [url_var::PROTECTION, $wrd->protection_id()];
         $url_array[] = [url_var::VIEW, $wrd->get_view_id()];
-        $url_array[] = [url_var::USAGE, $wrd->get_usage()];
-        $url_array[] = [url_var::IMPACT, $wrd->get_impact()];
+        $url_array[] = [url_var::USAGE, $wrd->usage];
+        $url_array[] = [url_var::IMPACT, $wrd->impact];
         return $url_array;
     }
 
@@ -1022,12 +1022,12 @@ class test_mappers
         $url_array = [];
         $url_array[] = [url_var::NAME, $vrb->name()];
         $url_array[] = [url_var::DESCRIPTION, $vrb->get_description()];
-        $url_array[] = [url_var::PLURAL, $vrb->get_plural()];
-        $url_array[] = [url_var::REVERSE, $vrb->get_reverse()];
-        $url_array[] = [url_var::REVERSE_PLURAL, $vrb->get_reverse_plural()];
-        $url_array[] = [url_var::FORMULA, $vrb->get_formula_name()];
-        $url_array[] = [url_var::USAGE, $vrb->get_usage()];
-        $url_array[] = [url_var::IMPACT, $vrb->get_impact()];
+        $url_array[] = [url_var::PLURAL, $vrb->plural];
+        $url_array[] = [url_var::REVERSE, $vrb->reverse];
+        $url_array[] = [url_var::REVERSE_PLURAL, $vrb->rev_plural];
+        $url_array[] = [url_var::FORMULA, $vrb->frm_name];
+        $url_array[] = [url_var::USAGE, $vrb->usage];
+        $url_array[] = [url_var::IMPACT, $vrb->impact];
         return $url_array;
     }
 
@@ -1043,8 +1043,8 @@ class test_mappers
         $url_array[] = [url_var::SHARE, $trp->share_id()];
         $url_array[] = [url_var::PROTECTION, $trp->protection_id()];
         $url_array[] = [url_var::VIEW, $trp->get_view_id()];
-        $url_array[] = [url_var::USAGE, $trp->get_usage()];
-        $url_array[] = [url_var::IMPACT, $trp->get_impact()];
+        $url_array[] = [url_var::USAGE, $trp->usage];
+        $url_array[] = [url_var::IMPACT, $trp->impact];
         return $url_array;
     }
 
@@ -1059,7 +1059,7 @@ class test_mappers
         // $url_array[] = [url_var::VIEW, $src->get_view_id()];
         $url_array[] = [url_var::SHARE, $src->share_id()];
         $url_array[] = [url_var::PROTECTION, $src->protection_id()];
-        $url_array[] = [url_var::USAGE, $src->get_usage()];
+        $url_array[] = [url_var::USAGE, $src->usage];
         return $url_array;
     }
 
@@ -1114,8 +1114,8 @@ class test_mappers
         $url_array[] = [url_var::VIEW, $frm->get_view_id()];
         $url_array[] = [url_var::SHARE, $frm->share_id()];
         $url_array[] = [url_var::PROTECTION, $frm->protection_id()];
-        $url_array[] = [url_var::USAGE, $frm->get_usage()];
-        $url_array[] = [url_var::IMPACT, $frm->get_impact()];
+        $url_array[] = [url_var::USAGE, $frm->usage];
+        $url_array[] = [url_var::IMPACT, $frm->impact];
         return $url_array;
     }
 

@@ -157,8 +157,8 @@ class test_formulas extends test_objects
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
-        $frm->set_usage(test_const::DUMMY_USAGE_FORMULA);
-        $frm->set_impact(test_const::DUMMY_IMPACT);
+        $frm->usage = test_const::DUMMY_USAGE_FORMULA;
+        $frm->impact = test_const::DUMMY_IMPACT;
         $frm->exclude();
         $frm->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
