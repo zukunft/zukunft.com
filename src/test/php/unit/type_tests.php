@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
@@ -87,6 +88,11 @@ class type_tests
         $log_fuc = new sys_log_function('');
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
+
+        $t->subheader($ts . 'job status sql setup');
+        $job_typ = new job_status('');
+        $t->assert_sql_table_create($job_typ);
+        $t->assert_sql_index_create($job_typ);
 
         $t->subheader($ts . 'job type sql setup');
         $job_typ = new job_type('');
@@ -183,6 +189,8 @@ class type_tests
         $typ = $t_typ->sys_log_status();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->sys_log_function();
+        $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
+        $typ = $t_typ->job_status();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);
         $typ = $t_typ->job_type();
         $t->assert_sql_insert($sc, $typ, [sql_type::LOG]);

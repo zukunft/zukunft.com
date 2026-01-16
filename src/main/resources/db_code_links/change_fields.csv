@@ -911,3 +911,8 @@ change_field_id,change_field_name,table_id,description
 910,type_name,130,
 911,code_id,130,
 912,description,130,
+913,job_status_id,131,
+914,type_name,131,
+915,code_id,131,
+916,description,131,
+917,priority,131,

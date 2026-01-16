@@ -2,8 +2,8 @@
 
 /*
 
-    model/ref/ref_type.php - the base object for links between a phrase and another system such as wikidata
-    ----------------------
+    model/system/job_status.php - predefined status of batch task as a database table e.g. so that admin can change the description
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,14 +23,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
    
 */
 
-namespace Zukunft\ZukunftCom\main\php\cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
@@ -48,33 +48,39 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
-class ref_type extends type_object
+class job_status extends type_object
 {
-
-    // the url that can be used to receive data if the external key is added
-    public ?string $url = null;
 
     /*
      * database link
      */
 
     // comments used for the database creation
-    const string TBL_COMMENT = 'to link code functionality to a list of references';
-    const string FLD_ID = 'ref_type_id'; // name of the id field as const for other const
-    const string FLD_URL_COM = 'the base url to create the urls for the assigned references';
-    const string FLD_URL = 'base_url';
+    const string TBL_COMMENT = 'predefined status of batch task as a database table e.g. so that admin can change the description';
+    const string FLD_ID = 'job_status_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
+
+    const string FLD_PRIO_COM = 'execution priority offset based on the job status';
+    const string FLD_PRIO = 'priority';
 
     // list of fields that are additional to the standard type fields used for the reference type
     const array FLD_LST_EXTRA = array(
-        [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_PRIO, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_PRIO_COM],
     );
+
+
+    /*
+     * object vars
+     */
+
+    // presets for the jobs execution order
+    public ?int $prio = 0;
+
 
     /*
      * api
      */
 
     /**
-     * TODO use parent function for setting the name, ...
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
@@ -83,14 +89,9 @@ class ref_type extends type_object
      */
     function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
     {
-        $vars = [];
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::CODE_ID] = $this->get_code_id();
-        $vars[json_fields::DESCRIPTION] = $this->get_description();
-        $vars[json_fields::URL] = $this->url;
-        $vars[json_fields::ID] = $this->id();
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::PRIORITY] = $this->prio;
         return $vars;
     }
-
 
 }

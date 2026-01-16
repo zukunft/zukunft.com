@@ -60,6 +60,8 @@ include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_LANGUAGE . 'language.php';
@@ -127,6 +129,8 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
@@ -389,6 +393,7 @@ class type_list
             change_field_list::class => change_table_field::class,
             share_type_list::class => share_types::class,
             protection_type_list::class => protection_types::class,
+            job_status_list::class => job_status::class,
             job_type_list::class => job_type::class,
             language_form_list::class => language_form::class,
             language_list::class => language::class,

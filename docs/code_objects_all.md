@@ -61,6 +61,7 @@ the object structure is:
     \-- source_type_list - to link coded functionality to a source
     \-- protection_type_list - a database based enum list for the data protection types
     \-- share_type_list - a database based enum list for the data share types
+    \-- job_status_list - list of predefined system batch jobs
     \-- job_type_list - list of predefined system batch jobs
     \-- sys_log_function_list - to group the system log entries by function
     \-- sys_log_status_list - list of the system log statuus
@@ -194,6 +195,7 @@ the object structure is:
                 \-- source_type - the base object for external source type such as pubmed
                 \-- protection_type - to define if and how an object can changed
                 \-- share_type - to define if an object can be shared between the users
+                \-- job_status - predefined status of batch task as a database table e.g. so that admin can change the description
                 \-- job_type - a predefined batch task that can be triggered by a user action or a scheduler
                 \-- pod - the technical details of the mash network pods
                 \-- pod_status - the status of a pod

@@ -87,6 +87,8 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';

@@ -941,6 +941,12 @@
         "code_id": "change_actions",
         "description": "",
         "id": 130
+      },
+      {
+        "name": "job_statuus",
+        "code_id": "job_statuus",
+        "description": "",
+        "id": 131
       }
     ],
     "change_field_list": [
@@ -6415,6 +6421,36 @@
         "code_id": "130description",
         "description": "",
         "id": 912
+      },
+      {
+        "name": "131job_status_id",
+        "code_id": "131job_status_id",
+        "description": "",
+        "id": 913
+      },
+      {
+        "name": "131type_name",
+        "code_id": "131type_name",
+        "description": "",
+        "id": 914
+      },
+      {
+        "name": "131code_id",
+        "code_id": "131code_id",
+        "description": "",
+        "id": 915
+      },
+      {
+        "name": "131description",
+        "code_id": "131description",
+        "description": "",
+        "id": 916
+      },
+      {
+        "name": "131priority",
+        "code_id": "131priority",
+        "description": "",
+        "id": 917
       }
     ],
     "job_types": [

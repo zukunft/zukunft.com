@@ -36,14 +36,20 @@ class job_statuus
 
     // list of the job statuus that have a coded functionality
     const string STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
+    const int STATUS_NEW_ID = 1; // id of the job status used for unit testing
+    const string STATUS_NEW_NAME = 'created'; // name of the job status used for unit testing
+    const string STATUS_NEW_COM = 'the job is not yet assigned to any calc engine'; // description of the job status used for unit testing
     const string STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
+    const string STATUS_FORCED = 'forced'; // the priority of the job has been increased
+    const string STATUS_DELAYED = 'delayed'; // the priority of the job has been reduced
     const string STATUS_WORKING = 'working'; // the calc engine is reporting the progress
     const string STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
     const string STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
     const string STATUS_DONE = 'done'; // the task has been completed successfully
     const string STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
+    const string STATUS_RETRY = 'retry'; // an admin has forced to retry the execution
 
-    const int PRIO_HIGHEST = 1;
-    const int PRIO_LOWEST = 10;
+    const int PRIO_HIGHEST = 10;
+    const int PRIO_LOWEST = 1;
 
 }

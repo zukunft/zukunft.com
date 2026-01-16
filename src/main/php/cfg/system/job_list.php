@@ -43,6 +43,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -103,6 +104,26 @@ class job_list extends base_list
     /*
      * load internals
      */
+
+    /**
+     * prepare sql to get all open job of one type
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $type_code_id the code id of the job type that should be loaded
+     * @return sql_par
+     */
+    function load_sql_by_status(sql_creator $sc, string $type_code_id = ''): sql_par
+    {
+        global $sys;
+        $type_id = $sys->typ_lst->job_typ->id($type_code_id);
+        $job = new job($this->usr);
+        $qp = $job->load_sql($sc, 'job_status', self::class);
+        $sc->add_where(job_db::FLD_STATUS, $type_id);
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
 
     /**
      * prepare sql to get all open job of one type

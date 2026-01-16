@@ -66,6 +66,8 @@ include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
+include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
@@ -200,6 +202,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
@@ -369,6 +373,7 @@ class sql_db
         sys_log::class,
         system_time_type::class,
         system_time::class,
+        job_status::class,
         job_type::class,
         job_time::class,
         job::class,
@@ -483,6 +488,7 @@ class sql_db
         change_table::class,
         config::class,
         job::class,
+        job_status::class,
         job_type::class,
         //sql_db::TBL_SYS_SCRIPT,
         sys_log::class,
@@ -2341,6 +2347,9 @@ class sql_db
             $result = 'user_values';
         }
         // for the database upgrade process only
+        if ($result == 'job_statuss') {
+            $result = 'job_statuus';
+        }
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
@@ -2511,6 +2520,9 @@ class sql_db
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'job_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {

@@ -941,6 +941,12 @@
         "code_id": "change_actions",
         "description": "",
         "id": 130
+      },
+      {
+        "name": "job_statuus",
+        "code_id": "job_statuus",
+        "description": "",
+        "id": 131
       }
     ],
     "change_field_list": [
@@ -6415,6 +6421,36 @@
         "code_id": "130description",
         "description": "",
         "id": 912
+      },
+      {
+        "name": "131job_status_id",
+        "code_id": "131job_status_id",
+        "description": "",
+        "id": 913
+      },
+      {
+        "name": "131type_name",
+        "code_id": "131type_name",
+        "description": "",
+        "id": 914
+      },
+      {
+        "name": "131code_id",
+        "code_id": "131code_id",
+        "description": "",
+        "id": 915
+      },
+      {
+        "name": "131description",
+        "code_id": "131description",
+        "description": "",
+        "id": 916
+      },
+      {
+        "name": "131priority",
+        "code_id": "131priority",
+        "description": "",
+        "id": 917
       }
     ],
     "job_types": [
@@ -6733,8 +6769,8 @@
         "code_id": "with",
         "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
         "plural": "with",
-        "reverse": null,
-        "rev_plural": null,
+        "reverse": "",
+        "rev_plural": "",
         "frm_name": null,
         "usage": null,
         "impact": null,
@@ -6973,8 +7009,8 @@
         "code_id": "per",
         "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
         "plural": "per",
-        "reverse": null,
-        "rev_plural": null,
+        "reverse": "",
+        "rev_plural": "",
         "frm_name": null,
         "usage": null,
         "impact": null,
@@ -7045,8 +7081,8 @@
         "code_id": "in",
         "description": "to specify the measure unit",
         "plural": "in",
-        "reverse": null,
-        "rev_plural": null,
+        "reverse": "",
+        "rev_plural": "",
         "frm_name": null,
         "usage": null,
         "impact": null,
@@ -7057,8 +7093,8 @@
         "code_id": "to",
         "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
         "plural": "to",
-        "reverse": null,
-        "rev_plural": null,
+        "reverse": "",
+        "rev_plural": "",
         "frm_name": null,
         "usage": null,
         "impact": null,
@@ -17865,22 +17901,22 @@
             "position_type": 2
           },
           {
-            "link_id": 817,
-            "id": 214,
-            "name": "system formatter row right",
-            "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
-            "type_id": 33,
-            "code_id": "row_right",
-            "position": 6,
-            "position_type": 1
-          },
-          {
             "link_id": 816,
             "id": 187,
             "name": "system show field description",
             "description": "the object description as read only",
             "type_id": 147,
             "code_id": "show_field_description",
+            "position": 6,
+            "position_type": 1
+          },
+          {
+            "link_id": 817,
+            "id": 214,
+            "name": "system formatter row right",
+            "description": "to start a new row and fill from right the following components in one row until the row end is triggered",
+            "type_id": 33,
+            "code_id": "row_right",
             "position": 6,
             "position_type": 1
           },
@@ -19245,17 +19281,6 @@
             "position_type": 1
           },
           {
-            "link_id": 927,
-            "id": 206,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 925,
             "id": 203,
             "name": "system form button save",
@@ -19263,6 +19288,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 927,
+            "id": 206,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },
@@ -19371,17 +19407,6 @@
             "position_type": 1
           },
           {
-            "link_id": 938,
-            "id": 206,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 936,
             "id": 203,
             "name": "system form button save",
@@ -19389,6 +19414,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 938,
+            "id": 206,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },
@@ -19623,17 +19659,6 @@
             "position_type": 1
           },
           {
-            "link_id": 960,
-            "id": 206,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 958,
             "id": 203,
             "name": "system form button save",
@@ -19641,6 +19666,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 960,
+            "id": 206,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },

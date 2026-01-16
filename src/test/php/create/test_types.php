@@ -62,6 +62,7 @@ include_once paths::MODEL_SANDBOX . 'share_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_USER . 'user_official_type.php';
 include_once paths::MODEL_USER . 'user_profile.php';
@@ -90,6 +91,7 @@ include_once paths::SHARED_TYPES . 'component_link_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -128,6 +130,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
@@ -159,6 +162,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_types;
@@ -262,6 +266,18 @@ class test_types
             sys_log_functions::IMPORT_BASE_CONFIG_NAME,
             sys_log_functions::IMPORT_BASE_CONFIG_COM,
             sys_log_functions::IMPORT_BASE_CONFIG_ID);
+    }
+
+    /**
+     * @return job_status "update value" as the main job type
+     */
+    function job_status(): job_status
+    {
+        return new job_status(
+            job_statuus::STATUS_NEW,
+            job_statuus::STATUS_NEW_NAME,
+            job_statuus::STATUS_NEW_COM,
+            job_statuus::STATUS_NEW_ID);
     }
 
     /**

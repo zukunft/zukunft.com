@@ -2334,6 +2334,7 @@
     \-- order error - order of section modify has difference at del should be before exe_val_upd of add,exe_val_upd,exe,del does not match add_by_name,1,add,remove,add_word,add_verb,add_triple,add_triple_without_ready_check,add_phrase,add_source,add_reference,add_formula,add_formula_without_ready_check,add_term,add_view,add_component,add_term_view,add_user,add_ip_range,add_value,add_message,get_component_by_name,get_value_by_names,expected_word_import_time,expected_triple_import_time,expected_value_import_time,expected_total_import_time,count,save,diff_msg,fill,query_extension,dsp_last,add_ref,use_type_id,add_wrd_lst,add_trp_lst,add_id,add_name,2,del,merge_by_name,del_list,filter_by_ids,filter_valid,get_diff,diff,not_in,diff_by_ids,keep_only_specific,has_time,has_measure,has_scaling,has_percent,time_lst_old,time_word_list,time_list,get_by_type,get_names_by_type,time_useful,assume_time,measure_lst,scaling_lst,ex_time,ex_measure,ex_scaling,name_sort,sort_by_id,sort_rev_by_id,max_time,get_grp_id,common,concat_unique,add_link,add_link_by_key,add_obj,exe_val_upd,order of section modify has difference at del should be before exe_val_upd of add,exe_val_upd,exe,del does not match add_by_name,1,add,remove,add_word,add_verb,add_triple,add_triple_without_ready_check,add_phrase,add_source,add_reference,add_formula,add_formula_without_ready_check,add_term,add_view,add_component,add_term_view,add_user,add_ip_range,add_value,add_message,get_component_by_name,get_value_by_names,expected_word_import_time,expected_triple_import_time,expected_value_import_time,expected_total_import_time,count,save,diff_msg,fill,query_extension,dsp_last,add_ref,use_type_id,add_wrd_lst,add_trp_lst,add_id,add_name,2,del,merge_by_name,del_list,filter_by_ids,filter_valid,get_diff,diff,not_in,diff_by_ids,keep_only_specific,has_time,has_measure,has_scaling,has_percent,time_lst_old,time_word_list,time_list,get_by_type,get_names_by_type,time_useful,assume_time,measure_lst,scaling_lst,ex_time,ex_measure,ex_scaling,name_sort,sort_by_id,sort_rev_by_id,max_time,get_grp_id,common,concat_unique,add_link,add_link_by_key,add_obj,exe_val_upd
 \-- job_list
     \-- load_by_type - section for function load_by_type is expected to be load in /system/job_list.php
+    \-- load_sql_by_status - section for function load_sql_by_status is expected to be load sql in /system/job_list.php
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /system/job_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/job_list.php
     \-- merge - section for function merge not yet defined that it should be modify in /system/job_list.php
@@ -2634,6 +2635,7 @@
         \-- change_table_list - adding the system log statuus used for unit tests to the dummy list
         \-- protection_type_list - create dummy type list for the unit tests without database connection
         \-- share_type_list - create dummy type list for the unit tests without database connection
+        \-- job_status_list - adding the job type used for unit tests to a dummy list
         \-- job_type_list - adding the job type used for unit tests to a dummy list
         \-- sys_log_function_list - adding the system log functions used for unit tests to the dummy list
         \-- sys_log_status_list - adding the system log statuus used for unit tests to the dummy list
@@ -2655,6 +2657,7 @@
         \-- change_table_list - return the database id of the default log type
         \-- protection_type_list - return the database id of the default protection type
         \-- share_type_list - return the database id of the default share type
+        \-- job_status_list - return the database id of the default job type
         \-- job_type_list - return the database id of the default job type
         \-- sys_log_function_list - return the database id of the default system log function
         \-- sys_log_status_list - return the database id of the default system log status
@@ -3683,6 +3686,7 @@
         \-- ref_type - TODO use parent function for setting the name, ...
         \-- sandbox_code_id - create an array for the api json creation
         \-- sandbox_typed - create an array for the api json creation
+        \-- job_status - create an array for the api json creation
         \-- sys_log - create the array for the api message
         \-- value_geo - create an array for the api json creation
         \-- value_text - create an array for the api json creation
@@ -4079,6 +4083,8 @@
         \-- change_log_list - prepare sql to get the changes of one field of one user sandbox object
     \-- load_sql_obj_last
         \-- change_log_list - prepare sql to get the last changes of a user sandbox object
+    \-- load_sql_by_status
+        \-- job_list - prepare sql to get all open job of one type
     \-- load_sql_by_type
         \-- job_list - prepare sql to get all open job of one type
 \-- SQL creation

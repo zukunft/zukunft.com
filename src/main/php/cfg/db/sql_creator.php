@@ -5102,6 +5102,9 @@ class sql_creator
             $result = 'user_values';
         }
         // for the database upgrade process only
+        if ($result == 'job_statuss') {
+            $result = 'job_statuus';
+        }
         if ($result == 'job_typess') {
             $result = 'job_types';
         }
@@ -5251,6 +5254,9 @@ class sql_creator
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'job_status_name') {
             $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
