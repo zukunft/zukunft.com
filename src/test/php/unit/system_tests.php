@@ -180,7 +180,7 @@ class system_tests
         $t_lan = new test_languages();
         $t_log = new test_log($t);
         $t_sys = new test_sys_log();
-        $t_job = new test_jobs();
+        $t_job = new test_jobs($t);
         $t->assert_dsp_id($t_wrd->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_wrd->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t_vrb->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');

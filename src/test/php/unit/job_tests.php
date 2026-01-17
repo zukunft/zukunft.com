@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_SYSTEM . 'job_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
@@ -55,6 +56,7 @@ class job_tests
 
         // init
         $sc = new sql_creator();
+        $t_job = new test_jobs($t);
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
@@ -74,7 +76,7 @@ class job_tests
         $t->assert_sql_foreign_key_create($job);
 
 
-        $t->subheader($ts . 'sql query');
+        $t->subheader($ts . 'sql read');
 
         // sql to load one batch job
         $job = new job($usr);
@@ -86,10 +88,17 @@ class job_tests
         $job_lst = new job_list($sys_usr);
         $t->assert_sql_list_by_type($sc, $job_lst, job_type_list::BASE_IMPORT);
 
+        $t->subheader($ts . 'sql write');
+        $job = $t_job->job();
+        // for job a log is not needed because the table rows are never expected to be deleted
+        $t->assert_sql_insert($sc, $job);
+        $job = $t_job->job_filled();
+        $job_db = $job->clone_reset();
+        $t->assert_sql_update($sc, $job, $job_db);
 
         $t->subheader($ts . 'api');
 
-        $t_job = new test_jobs();
+        $t_job = new test_jobs($t);
         $job = $t_job->job();
         $t->assert_api($job);
 

@@ -194,6 +194,27 @@ class job extends db_object_seq_id_user
     }
 
     /**
+     * clear all job object values e.g. to detect the changed fields
+     * @param bool $keep_user set to true to keep the original user
+     * @return void
+     */
+    function reset(bool $keep_user = false): void
+    {
+        parent::reset($keep_user);
+        $this->type_id = null;
+        $this->status_id = null;
+        $this->request_time = null;
+        $this->start_time = null;
+        $this->end_time = null;
+        $this->parameter = null;
+        $this->change_field = null;
+        $this->row_id = null;
+        $this->src = null;
+        $this->ref = null;
+        $this->priority = null;
+    }
+
+    /**
      * map the database fields to one change log entry to this log object
      *
      * @param array|null $db_row with the data directly from the database
@@ -269,6 +290,35 @@ class job extends db_object_seq_id_user
         return $usr_msg;
     }
 
+    /**
+     * set the database id of the status
+     *
+     * @param int|null $sta_id the database id of the status
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_status_id(?int $sta_id = null, user $usr_req = new user()): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $sta_id;
+        } else {
+            // the type of a job can be set once if not defined already
+            if ($sta_id === null) {
+                $this->status_id = $sta_id;
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $usr_msg;
+    }
+
     function type_id(): ?int
     {
         return $this->type_id;
@@ -283,6 +333,12 @@ class job extends db_object_seq_id_user
     {
         global $sys;
         $this->set_type_id($sys->typ_lst->job_typ->id($code_id), $usr_req);
+    }
+
+    function set_status(string $code_id, user $usr_req): void
+    {
+        global $sys;
+        $this->set_status_id($sys->typ_lst->job_sta->id($code_id), $usr_req);
     }
 
     function type_code_id(): string
