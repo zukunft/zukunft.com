@@ -1190,7 +1190,9 @@ class sql_db
             $this->check_sequences();
 
             // reload the base configuration
+            // TODO Prio 0 review
             $job = new job($usr);
+            $job->priority = 1;
             $job_id = $job->add(job_type_list::BASE_IMPORT);
 
             $import = new import_file();

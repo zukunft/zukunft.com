@@ -82,10 +82,15 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
-include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_db.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
 include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_status_list.php';
@@ -109,11 +114,16 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -146,13 +156,17 @@ class job extends db_object_seq_id_user
      */
 
     // database fields
+    private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
+    public ?int $status_id;                 // id of the job status e.g. "new", "running", "done", ...
     public ?DateTime $request_time = null;  // time when the job has been requested
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
-    private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
+    public ?string $parameter = null;       // id of the phrase with the snapped parameter set for this job start
+    public ?int $change_field = null;       // if of e.g. for undo jobs the id of the field that should be changed
     public int|string|null $row_id = null;  // the id of the related object e.g. if a value has been updated the group_id
-    public string $status;
-    public string $priority;
+    public source|null $src = null;         // used for import to link the source
+    public ref|null $ref = null;            // used for import to link the reference
+    public int|null $priority = 0;
 
     // in memory only fields
     public ?object $obj = null;             // the updated object
@@ -174,9 +188,9 @@ class job extends db_object_seq_id_user
     {
         parent::__construct($usr);
         $this->request_time = $request_time;
-        $this->status = job_statuus::STATUS_NEW;
+        $this->status_id = job_statuus::STATUS_NEW_ID;
         $this->priority = job_statuus::PRIO_LOWEST;
-        $this->type_id = 0;
+        $this->type_id = null;
     }
 
     /**
@@ -188,10 +202,15 @@ class job extends db_object_seq_id_user
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        global $sys;
         $lib = new library();
         $result = parent::row_mapper($db_row, job_db::FLD_ID);
         if ($result) {
+            if (array_key_exists(job_db::FLD_TYPE, $db_row)) {
+                $this->type_id = $db_row[job_db::FLD_TYPE];
+            }
+            if (array_key_exists(job_db::FLD_STATUS, $db_row)) {
+                $this->status_id = $db_row[job_db::FLD_STATUS];
+            }
             if (array_key_exists(job_db::FLD_TIME_REQUEST, $db_row)) {
                 $this->request_time = $lib->get_datetime($db_row[job_db::FLD_TIME_REQUEST], $this->dsp_id());
             }
@@ -201,11 +220,16 @@ class job extends db_object_seq_id_user
             if (array_key_exists(job_db::FLD_TIME_END, $db_row)) {
                 $this->end_time = $lib->get_datetime($db_row[job_db::FLD_TIME_END], $this->dsp_id());
             }
-            $this->type_id = $db_row[job_db::FLD_TYPE];
+            $this->parameter = $db_row[job_db::FLD_PARAMETER];
+            $this->change_field = $db_row[job_db::FLD_CHANGE_FIELD];
             $this->row_id = $db_row[job_db::FLD_ROW];
-            // TODO Prio 0
-            //$this->status = $db_row[job_db::FLD_ID];
-            //$this->priority = $db_row[job_db::FLD_ID];
+            if (array_key_exists(source_db::FLD_ID, $db_row)) {
+                $this->set_source_id($db_row[source_db::FLD_ID]);
+            }
+            if (array_key_exists(ref_db::FLD_ID, $db_row)) {
+                $this->set_ref_id($db_row[ref_db::FLD_ID]);
+            }
+            $this->priority = $db_row[job_db::FLD_PRIO];
             log_debug('Batch job ' . $this->id() . ' loaded');
         }
         return $result;
@@ -250,6 +274,11 @@ class job extends db_object_seq_id_user
         return $this->type_id;
     }
 
+    function status_id(): ?int
+    {
+        return $this->status_id;
+    }
+
     function set_type(string $code_id, user $usr_req): void
     {
         global $sys;
@@ -268,6 +297,61 @@ class job extends db_object_seq_id_user
         }
         return $result;
     }
+
+    /**
+     * @param int|null $id the id of the source use by the job
+     */
+    function set_source_id(int|null $id): void
+    {
+        if ($id == null) {
+            $this->src = null;
+        } else {
+            if ($this->src == null) {
+                $this->src = new source($this->get_user());
+            }
+            $this->src->id = $id;
+        }
+    }
+
+    /**
+     * @return int the id of the source for this job or zero if no source is defined
+     */
+    function get_source_id(): int
+    {
+        if ($this->src == null) {
+            return 0;
+        } else {
+            return $this->src->id();
+        }
+    }
+
+    /**
+     * @param int|null $id the id of the reference use by the job
+     */
+    function set_ref_id(int|null $id): void
+    {
+        if ($id == null) {
+            $this->ref = null;
+        } else {
+            if ($this->ref == null) {
+                $this->ref = new ref($this->get_user());
+            }
+            $this->ref->id = $id;
+        }
+    }
+
+    /**
+     * @return int the id of the reference for this job or zero if no reference is defined
+     */
+    function get_ref_id(): int
+    {
+        if ($this->ref == null) {
+            return 0;
+        } else {
+            return $this->ref->id();
+        }
+    }
+
 
     /*
      * load
@@ -346,6 +430,8 @@ class job extends db_object_seq_id_user
 
         $vars[json_fields::ID] = $this->id();
         $vars[json_fields::USER_NAME] = $this->get_user()->name();
+        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::STATUS] = $this->status_id();
         // TODO use time zone?
         $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
@@ -354,8 +440,11 @@ class job extends db_object_seq_id_user
         if ($this->end_time != null) {
             $vars[json_fields::TIME_END] = $this->end_time->format(DateTimeInterface::ATOM);
         }
-        $vars[json_fields::TYPE] = $this->type_id();
-        $vars[json_fields::STATUS] = $this->status;
+        $vars[json_fields::JOB_PARAMETER] = $this->parameter;
+        $vars[json_fields::FIELD_ID] = $this->change_field;
+        $vars[json_fields::ROW_ID] = $this->row_id;
+        $vars[json_fields::SOURCE] = $this->src?->id();
+        $vars[json_fields::REFERENCE] = $this->ref?->id();
         $vars[json_fields::PRIORITY] = $this->priority;
 
         return $vars;
@@ -408,8 +497,8 @@ class job extends db_object_seq_id_user
                     $db_type = $db_con->get_class();
                     $db_con->set_class(job::class);
                     $db_con->set_usr($this->get_user()->id);
-                    $job_id = $db_con->insert_old(array(user_db::FLD_ID, job_db::FLD_TIME_REQUEST, job_db::FLD_TYPE, job_db::FLD_ROW),
-                        array($this->get_user()->id, sql::NOW, $this->type_id(), $this->row_id));
+                    $job_id = $db_con->insert_old(array(user_db::FLD_ID, job_db::FLD_TIME_REQUEST, job_db::FLD_TYPE, job_db::FLD_ROW, job_db::FLD_PRIO),
+                        array($this->get_user()->id, sql::NOW, $this->type_id(), $this->row_id, $this->priority));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
@@ -510,10 +599,16 @@ class job extends db_object_seq_id_user
             parent::db_fields_all(),
             [
                 job_db::FLD_TYPE,
+                job_db::FLD_STATUS,
                 job_db::FLD_TIME_REQUEST,
                 job_db::FLD_TIME_START,
                 job_db::FLD_TIME_END,
+                job_db::FLD_PARAMETER,
+                job_db::FLD_CHANGE_FIELD,
                 job_db::FLD_ROW,
+                source_db::FLD_ID,
+                ref_db::FLD_ID,
+                job_db::FLD_PRIO,
             ]
         );
     }
@@ -539,6 +634,50 @@ class job extends db_object_seq_id_user
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($obj->type_id() !== $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $sys;
+            if ($this->type_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::JOB_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+            $lst->add_type_field(
+                job_db::FLD_TYPE,
+                type_object::FLD_NAME,
+                $this->type_id(),
+                $obj->type_id(),
+                $sys->typ_lst->job_typ);
+        }
+        if ($obj->status_id() !== $this->status_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $sys;
+            if ($this->status_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::JOB_STATUS_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
+            $lst->add_type_field(
+                job_db::FLD_STATUS,
+                type_object::FLD_NAME,
+                $this->status_id(),
+                $obj->status_id(),
+                $sys->typ_lst->job_sta);
+        }
         if ($obj->request_time !== $this->request_time) {
             if ($do_log) {
                 $lst->add_field(
@@ -584,19 +723,34 @@ class job extends db_object_seq_id_user
                 $obj->end_time
             );
         }
-        if ($obj->type_id() !== $this->type_id()) {
+        if ($obj->parameter !== $this->parameter) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_TYPE,
-                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_PARAMETER,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_PARAMETER),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                job_db::FLD_TYPE,
-                $this->type_id(),
-                sql_field_type::INT_SMALL,
-                $obj->type_id()
+                job_db::FLD_PARAMETER,
+                $this->parameter,
+                sql_field_type::INT,
+                $obj->parameter
+            );
+        }
+        if ($obj->change_field !== $this->change_field) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_CHANGE_FIELD,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_CHANGE_FIELD),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_CHANGE_FIELD,
+                $this->change_field,
+                sql_field_type::INT,
+                $obj->change_field
             );
         }
         if ($obj->row_id !== $this->row_id) {
@@ -612,6 +766,36 @@ class job extends db_object_seq_id_user
                 $this->row_id,
                 sql_field_type::INT,
                 $obj->row_id
+            );
+        }
+        if ($obj->get_source_id() !== $this->get_source_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . source_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                source_db::FLD_ID,
+                source_db::FLD_NAME,
+                $this->src,
+                $obj->src
+            );
+        }
+        if ($obj->get_ref_id() !== $this->get_ref_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . ref_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                ref_db::FLD_ID,
+                ref_db::FLD_EX_KEY,
+                $this->ref,
+                $obj->ref
             );
         }
         return $lst;

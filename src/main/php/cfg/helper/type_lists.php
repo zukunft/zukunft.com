@@ -135,7 +135,7 @@ class type_lists
     public change_field_list $cng_fld;
 
     // language and system jobs
-    public job_status_list $job_status;
+    public job_status_list $job_sta;
     public job_type_list $job_typ;
     public language_list $lan;
     public language_form_list $lan_for;
@@ -182,7 +182,7 @@ class type_lists
         $this->cng_fld = new change_field_list();
 
         // language and system jobs
-        $this->job_status = new job_status_list();
+        $this->job_sta = new job_status_list();
         $this->job_typ = new job_type_list();
         $this->lan = new language_list();
         $this->lan_for = new language_form_list();

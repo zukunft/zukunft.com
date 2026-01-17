@@ -49,6 +49,7 @@ include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
 
 class job_db
 {
@@ -81,6 +83,8 @@ class job_db
     const string FLD_TIME_END = 'end_time';
     const string FLD_TYPE_COM = 'the id of the job type that should be started';
     const string FLD_TYPE = 'job_type_id';
+    const string FLD_STATUS_COM = 'the id of the job status at the moment';
+    const string FLD_STATUS = 'job_status_id';
     const string FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
     const string FLD_PARAMETER = 'parameter';
     const string FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
@@ -89,22 +93,30 @@ class job_db
     const string FLD_ROW = 'row_id';
     const string FLD_SOURCE_COM = 'used for import to link the source';
     const string FLD_REF_COM = 'used for import to link the reference';
+    const string FLD_PRIO_COM = 'the base priority of the job';
+    const string FLD_PRIO = 'priority';
 
     // all database field names excluding the id used to identify if there are some user-specific changes
     const array FLD_NAMES = array(
         self::FLD_ID,
+        self::FLD_TYPE,
+        self::FLD_STATUS,
         self::FLD_TIME_REQUEST,
         self::FLD_TIME_START,
         self::FLD_TIME_END,
-        self::FLD_TYPE,
+        self::FLD_PARAMETER,
+        self::FLD_CHANGE_FIELD,
         self::FLD_ROW,
-        self::FLD_CHANGE_FIELD
+        source_db::FLD_ID,
+        ref_db::FLD_ID,
+        self::FLD_PRIO
     );
 
     // field lists for the table creation
     const array FLD_LST_ALL = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
+        [job_status::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, job_status::class, self::FLD_STATUS_COM],
         [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
         [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
@@ -113,6 +125,7 @@ class job_db
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
+        [self::FLD_PRIO, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_PRIO_COM],
     );
 
 }

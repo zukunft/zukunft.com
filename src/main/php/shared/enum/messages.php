@@ -968,6 +968,16 @@ enum messages: string
         . ' for '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not found';
+    case JOB_STATUS_MISSING = 'job status '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case JOB_TYPE_MISSING = 'job type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
 
     case NO_UPDATE_PRIVILEGES =
         self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END

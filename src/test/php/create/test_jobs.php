@@ -61,7 +61,6 @@ class test_jobs
         $job->id = 1;
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
         $job->set_type(job_type_list::BASE_IMPORT, $sys_usr);
-        $job->row_id = 1;
         return $job;
     }
 

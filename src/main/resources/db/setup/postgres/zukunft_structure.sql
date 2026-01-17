@@ -237,6 +237,7 @@ CREATE TABLE IF NOT EXISTS jobs
     job_id BIGSERIAL PRIMARY KEY,
     user_id         bigint        NOT NULL,
     job_type_id     smallint      NOT NULL,
+    job_status_id   smallint      NOT NULL DEFAULT 1,
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
@@ -244,13 +245,15 @@ CREATE TABLE IF NOT EXISTS jobs
     change_field_id smallint  DEFAULT NULL,
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
-    ref_id          bigint    DEFAULT NULL
+    ref_id          bigint    DEFAULT NULL,
+    priority        bigint    DEFAULT NULL
 );
 
 COMMENT ON TABLE jobs IS 'for each concrete job run';
 COMMENT ON COLUMN jobs.job_id IS 'the internal unique primary index';
 COMMENT ON COLUMN jobs.user_id IS 'the id of the user who has requested the job by editing the scheduler the last time';
 COMMENT ON COLUMN jobs.job_type_id IS 'the id of the job type that should be started';
+COMMENT ON COLUMN jobs.job_status_id IS 'the id of the job status at the moment';
 COMMENT ON COLUMN jobs.request_time IS 'timestamp of the request for the job execution';
 COMMENT ON COLUMN jobs.start_time IS 'timestamp when the system has started the execution';
 COMMENT ON COLUMN jobs.end_time IS 'timestamp when the job has been completed or canceled';
@@ -259,6 +262,7 @@ COMMENT ON COLUMN jobs.change_field_id IS 'e.g. for undo jobs the id of the fiel
 COMMENT ON COLUMN jobs.row_id IS 'e.g. for undo jobs the id of the row that should be changed';
 COMMENT ON COLUMN jobs.source_id IS 'used for import to link the source';
 COMMENT ON COLUMN jobs.ref_id IS 'used for import to link the reference';
+COMMENT ON COLUMN jobs.priority IS 'the base priority of the job';
 
 -- --------------------------------------------------------
 
@@ -5365,6 +5369,7 @@ CREATE INDEX job_times_parameter_idx ON job_times (parameter);
 
 CREATE INDEX jobs_user_idx ON jobs (user_id);
 CREATE INDEX jobs_job_type_idx ON jobs (job_type_id);
+CREATE INDEX jobs_job_status_idx ON jobs (job_status_id);
 CREATE INDEX jobs_request_time_idx ON jobs (request_time);
 CREATE INDEX jobs_start_time_idx ON jobs (start_time);
 CREATE INDEX jobs_end_time_idx ON jobs (end_time);
@@ -6990,6 +6995,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuus (job_status_id),
     ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 

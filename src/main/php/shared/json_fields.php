@@ -258,6 +258,7 @@ class json_fields
 
     // to review
     const string USER_NAME = 'user';
+    const string JOB_PARAMETER = 'job_parameter';
 
 
     /*

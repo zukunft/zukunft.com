@@ -274,6 +274,7 @@ CREATE TABLE IF NOT EXISTS jobs
     job_id          bigint        NOT NULL COMMENT 'the internal unique primary index',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the job by editing the scheduler the last time',
     job_type_id     smallint      NOT NULL COMMENT 'the id of the job type that should be started',
+    job_status_id   smallint      NOT NULL DEFAULT 1 COMMENT 'the id of the job status at the moment',
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the request for the job execution',
     start_time      timestamp DEFAULT NULL COMMENT 'timestamp when the system has started the execution',
     end_time        timestamp DEFAULT NULL COMMENT 'timestamp when the job has been completed or canceled',
@@ -282,6 +283,7 @@ CREATE TABLE IF NOT EXISTS jobs
     row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
     source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
     ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference',
+    priority        bigint    DEFAULT NULL COMMENT 'the base priority of the job',
     PRIMARY KEY (job_id)
 )
     ENGINE = InnoDB
@@ -4563,6 +4565,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD KEY jobs_user_idx (user_id),
     ADD KEY jobs_job_type_idx (job_type_id),
+    ADD KEY jobs_job_status_idx (job_status_id),
     ADD KEY jobs_request_time_idx (request_time),
     ADD KEY jobs_start_time_idx (start_time),
     ADD KEY jobs_end_time_idx (end_time),
@@ -6271,6 +6274,7 @@ ALTER TABLE job_times
 ALTER TABLE jobs
     ADD CONSTRAINT jobs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT jobs_job_type_fk FOREIGN KEY (job_type_id) REFERENCES job_types (job_type_id),
+    ADD CONSTRAINT jobs_job_status_fk FOREIGN KEY (job_status_id) REFERENCES job_statuus (job_status_id),
     ADD CONSTRAINT jobs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
     ADD CONSTRAINT jobs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id);
 

@@ -224,7 +224,7 @@ class system_tests
         $t->assert_dsp_id($t_log->log_value_prime(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t_log->log_value_big(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t_sys->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
-        $t->assert_dsp_id($t_job->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
+        $t->assert_dsp_id($t_job->job(), 'base_import (1) for user 1 (zukunft.com system)');
 
 
         $ts = 'unit translation ';

@@ -2323,6 +2323,7 @@
 \-- job
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /system/job.php
     \-- type_id - section for function type_id not yet defined that it should be set and get in /system/job.php
+    \-- status_id - section for function status_id not yet defined that it should be set and get in /system/job.php
     \-- type_code_id - section for function type_code_id is expected to be preloaded in /system/job.php
     \-- load_sql - section for function load_sql is expected to be load sql in /system/job.php
     \-- load_sql_by_id - section for function load_sql_by_id is expected to be load sql in /system/job.php
