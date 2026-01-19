@@ -41,12 +41,13 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -270,6 +271,7 @@ class all_unit_write_tests extends all_unit_read_tests
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
+        $usr_msg = new user_message($sys_usr);
 
         // run reset the main database tables
         $db_con->run_db_truncate($sys_usr);
@@ -298,7 +300,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reload the base configuration
         $job = new job($sys_usr);
-        $job->add(job_type_list::BASE_IMPORT);
+        $job->set_type(job_types::BASE_IMPORT, $sys_usr);
+        $job->save($usr_msg);
 
         $import = new import_file();
         $import->import_base_config($sys_usr);

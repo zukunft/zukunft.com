@@ -32,14 +32,19 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'job_types.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -53,6 +58,7 @@ class job_write_tests
 
         // init
         $t_db = new test_db_load($t);
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write job ';
@@ -80,9 +86,9 @@ class job_write_tests
 
         // test adding a batch job
         $job = new job($usr);
-        $job->obj = $val;
-        $job->set_type(job_type_list::VALUE_UPDATE, $usr);
-        $result = $job->add();
+        $job->row_id = $val->id();
+        $job->set_type(job_types::VALUE_UPDATE, $usr);
+        $result = $job->save($usr_msg);
         if ($result > 0) {
             $target = $result;
         }

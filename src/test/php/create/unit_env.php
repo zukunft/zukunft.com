@@ -404,22 +404,22 @@ class unit_env
     }
 
     /**
-     * create the job status array for the unit tests without database connection
-     */
-    private function init_job_statuus(): void
-    {
-        global $sys;
-        $sys->typ_lst->job_sta->load_dummy();
-
-    }
-
-    /**
      * create the job types array for the unit tests without database connection
      */
     private function init_job_types(): void
     {
         global $sys;
         $sys->typ_lst->job_typ->load_dummy();
+
+    }
+
+    /**
+     * create the job status array for the unit tests without database connection
+     */
+    private function init_job_statuus(): void
+    {
+        global $sys;
+        $sys->typ_lst->job_sta->load_dummy();
 
     }
 

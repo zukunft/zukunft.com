@@ -37,14 +37,14 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
-use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
-use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_read_tests
@@ -82,8 +82,8 @@ class system_read_tests
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys->typ_lst->job_typ->id(job_type_list::VALUE_UPDATE);
-        $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
+        $result = $sys->typ_lst->job_typ->id(job_types::VALUE_UPDATE);
+        $t->assert('check batch job ' . job_types::VALUE_UPDATE, $result, 1);
 
         /*
          * SQL database read unit tests

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS jobs
     row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
     source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
     ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference',
-    priority        bigint    DEFAULT NULL COMMENT 'the base priority of the job',
+    priority        smallint  DEFAULT NULL COMMENT 'the base priority of the job',
     PRIMARY KEY (job_id)
 )
     ENGINE = InnoDB

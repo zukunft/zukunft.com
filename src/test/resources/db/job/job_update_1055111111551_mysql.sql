@@ -1,4 +1,4 @@
-PREPARE job_update_155111111550 FROM
+PREPARE job_update_1055111111551 FROM
     'UPDATE jobs
         SET job_id = ?,
             job_type_id = ?,
@@ -10,5 +10,6 @@ PREPARE job_update_155111111550 FROM
             change_field_id = ?,
             row_id = ?,
             source_id = ?,
-            ref_id = ?
+            ref_id = ?,
+            priority = ?
       WHERE job_id = ?';

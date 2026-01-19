@@ -143,6 +143,7 @@ include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -183,6 +184,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -1947,6 +1949,7 @@ class value_base extends sandbox_value
         global $usr;
 
         $result = '';
+        $usr_msg = new user_message($usr);
 
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
@@ -1967,9 +1970,9 @@ class value_base extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp()->id() . '" for user ' . $this->get_user()->name . '');
         if ($this->is_id_set()) {
             $job = new job($this->get_user());
-            $job->set_type(job_type_list::VALUE_UPDATE, $usr);
-            $job->obj = $this;
-            $job->add();
+            $job->set_type(job_types::VALUE_UPDATE, $usr);
+            $job->row_id = $this->id();
+            $job->save($usr_msg);
         } else {
             $result = 'initiating of value update job failed';
         }

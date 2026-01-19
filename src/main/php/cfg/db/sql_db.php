@@ -67,9 +67,7 @@ include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_time.php';
 include_once paths::MODEL_SYSTEM . 'job_status.php';
-include_once paths::MODEL_SYSTEM . 'job_status_list.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
-include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
@@ -101,18 +99,15 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_table.php';
 include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
-include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_SYSTEM . 'pod_status.php';
 include_once paths::MODEL_SYSTEM . 'pod_type.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_type.php';
-include_once paths::MODEL_REF . 'ref_type_list.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_type.php';
-include_once paths::MODEL_REF . 'source_type_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
@@ -140,13 +135,10 @@ include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_link_type.php';
-include_once paths::MODEL_VIEW . 'view_link_type_list.php';
 include_once paths::MODEL_VIEW . 'view_sys_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
-include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VIEW . 'view_relation_type.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -159,6 +151,8 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -203,9 +197,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
 use Zukunft\ZukunftCom\main\php\cfg\system\log;
@@ -224,26 +216,24 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
-use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -251,7 +241,6 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -266,11 +255,9 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
-use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\service\config;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
@@ -363,6 +350,10 @@ class sql_db
     const string FLD_IMPACT_COM = 'a cached number used for default sorting of objects and an indication of the importance as defined by the formula specified in the user config by the words "impact calculation" e.g. for math const the time of discovery is used or for currencies the average daily turnover  and is used as fallback value for sorting';
     const sql_field_type FLD_IMPACT_SQL_TYP = sql_field_type::NUMERIC_FLOAT;
     // TODO MAYBE convert the impact to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user-specific system settings
+
+    // the formatting used to convert a php DateTime var to a SQL string (maybe add "c" for time zone)
+    const string DATE_FORMAT = 'Y-m-d H:i:s';
+    const string DATE_FORMAT_MYSQL = 'Y-m-d H:i:s';
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const array DB_TABLE_CLASSES = [
@@ -1179,8 +1170,9 @@ class sql_db
             global $usr;
             $usr = new user;
             $usr->load_by_id(users::SYSTEM_ID);
+            $usr_msg->usr = $usr;
 
-            // recreate the code link database rows
+                // recreate the code link database rows
             $log_txt->echo_log('Create the code links');
             $this->db_fill_code_links();
             $cac = new data_object($usr);
@@ -1190,10 +1182,11 @@ class sql_db
             $this->check_sequences();
 
             // reload the base configuration
-            // TODO Prio 0 review
+            // TODO Prio 3 review
             $job = new job($usr);
-            $job->priority = 1;
-            $job_id = $job->add(job_type_list::BASE_IMPORT);
+            $job->set_type(job_types::BASE_IMPORT, $usr);
+            $job->priority = job_statuus::PRIO_HIGHEST;
+            $job->save($usr_msg);
 
             $import = new import_file();
             $this->import_verbs($usr);

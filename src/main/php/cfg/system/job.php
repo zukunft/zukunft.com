@@ -103,6 +103,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -132,6 +133,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use DateTime;
 use DateTimeInterface;
 
@@ -181,8 +183,9 @@ class job extends db_object_seq_id_user
      */
 
     /**
-     * always set the user because a term is always user-specific
+     * always set the type and the user
      * @param user $usr the user who requested to see this term
+     * @param DateTime $request_time the time when the job has been requested
      */
     function __construct(user $usr, DateTime $request_time = new DateTime())
     {
@@ -512,72 +515,11 @@ class job extends db_object_seq_id_user
      */
 
     /**
-     * request a new calculation
-     * @return int the id of the added batch job
-     */
-    function add(string $code_id = ''): int
-    {
-
-        global $db_con;
-        global $usr;
-
-        $result = 0;
-        log_debug();
-
-        // create first the database entry to make sure the update is done
-        if ($this->type_id() <= 0) {
-            if ($code_id == '') {
-                log_debug('invalid batch job type');
-            } else {
-                $this->set_type($code_id, $usr);
-            }
-        }
-
-        if ($this->type_id() > 0) {
-            log_debug('ok');
-            if ($this->row_id <= 0) {
-                if (isset($this->obj)) {
-                    $this->row_id = $this->obj->id();
-                }
-            }
-            if ($this->row_id <= 0 and $code_id != job_type_list::BASE_IMPORT) {
-                log_debug('row id missing?');
-            } else {
-                log_debug('row_id ok');
-                if (isset($this->obj) or $code_id == job_type_list::BASE_IMPORT) {
-                    if (isset($this->obj)) {
-                        $this->row_id = $this->obj->id();
-                    }
-                    log_debug('connect');
-                    //$db_con = New mysql;
-                    $db_type = $db_con->get_class();
-                    $db_con->set_class(job::class);
-                    $db_con->set_usr($this->get_user()->id);
-                    $job_id = $db_con->insert_old(array(user_db::FLD_ID, job_db::FLD_TIME_REQUEST, job_db::FLD_TYPE, job_db::FLD_ROW, job_db::FLD_PRIO),
-                        array($this->get_user()->id, sql::NOW, $this->type_id(), $this->row_id, $this->priority));
-                    $this->request_time = new DateTime();
-
-                    // execute the job if possible
-                    if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->id = $job_id;
-                        $this->exe();
-                        $result = $job_id;
-                    }
-                    $db_con->set_class($db_type);
-                }
-            }
-        }
-        log_debug('done');
-        return $result;
-    }
-
-    /**
      * update all result depending on one value
      */
-    function exe_val_upd(): void
+    function exe_val_upd(user_message $usr_msg): bool
     {
         log_debug();
-        global $db_con;
 
         // load all depending formula results
         if (isset($this->obj)) {
@@ -595,14 +537,11 @@ class job extends db_object_seq_id_user
             }
         }
 
-        //$db_con = New mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(job::class);
-        $db_con->usr_id = $this->get_user()->id;
-        $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
-        $db_con->set_class($db_type);
+        $this->end_time = new DateTime();
+        $this->save($usr_msg);
 
-        log_debug('done with ' . $result);
+        log_debug('done with ' . $usr_msg->all_message_text());
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -611,19 +550,17 @@ class job extends db_object_seq_id_user
     function exe(): void
     {
         global $db_con;
-        //$db_con = New mysql;
-        $db_type = $db_con->get_class();
-        $db_con->usr_id = $this->get_user()->id;
-        $db_con->set_class(job::class);
-        $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 
-        log_debug($this->type_code_id() . ' with ' . $result);
-        if ($this->type_code_id() == job_type_list::VALUE_UPDATE) {
-            $this->exe_val_upd();
+        $usr_msg = new user_message();
+
+        $this->start_time = new DateTime();
+        $this->save($usr_msg);
+
+        if ($this->type_code_id() == job_types::VALUE_UPDATE) {
+            $this->exe_val_upd($usr_msg);
         } else {
             log_err('Job type "' . $this->type_code_id() . '" not defined.', 'job->exe');
         }
-        $db_con->set_class($db_type);
     }
 
     /**
@@ -734,6 +671,7 @@ class job extends db_object_seq_id_user
                 $obj->status_id(),
                 $sys->typ_lst->job_sta);
         }
+        // TODO Prio 2 maybe add the time zone to the formatting and move the format to a SQL const
         if ($obj->request_time !== $this->request_time) {
             if ($do_log) {
                 $lst->add_field(
@@ -744,9 +682,9 @@ class job extends db_object_seq_id_user
             }
             $lst->add_field(
                 job_db::FLD_TIME_REQUEST,
-                $this->request_time,
+                $this->request_time?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
-                $obj->request_time
+                $obj->request_time?->format(sql_db::DATE_FORMAT)
             );
         }
         if ($obj->start_time !== $this->start_time) {
@@ -759,9 +697,9 @@ class job extends db_object_seq_id_user
             }
             $lst->add_field(
                 job_db::FLD_TIME_START,
-                $this->start_time,
+                $this->start_time?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
-                $obj->start_time
+                $obj->start_time?->format(sql_db::DATE_FORMAT)
             );
         }
         if ($obj->end_time !== $this->end_time) {
@@ -774,9 +712,9 @@ class job extends db_object_seq_id_user
             }
             $lst->add_field(
                 job_db::FLD_TIME_END,
-                $this->end_time,
+                $this->end_time?->format(sql_db::DATE_FORMAT),
                 sql_field_type::TIME,
-                $obj->end_time
+                $obj->end_time?->format(sql_db::DATE_FORMAT)
             );
         }
         if ($obj->parameter !== $this->parameter) {
@@ -854,9 +792,53 @@ class job extends db_object_seq_id_user
                 $obj->ref
             );
         }
+        if ($obj->priority !== $this->priority) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . job_db::FLD_PRIO,
+                    $sys->typ_lst->cng_fld->id($table_id . job_db::FLD_PRIO),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                job_db::FLD_PRIO,
+                $this->priority,
+                sql_field_type::INT_SMALL,
+                $obj->priority
+            );
+        }
         return $lst;
     }
 
+
+    /*
+     * db helper
+     */
+
+    /**
+     * check if the user can add this object to the database
+     * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
+     * to be overwritten by the child objects
+     *
+     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @return bool true if everything has been fine
+     */
+    protected function check(user_message $usr_msg): bool
+    {
+        // the job type must be valid
+        if ($this->type_id() <= 0) {
+            $usr_msg->add_err_with_vars(msg_id::JOB_TYPE_INVALID, [
+                msg_id::VAR_FUNCTION_NAME => $this->dsp_id()
+            ]);
+        } elseif ($this->type_code_id() != job_types::BASE_IMPORT) {
+            if ($this->row_id <= 0) {
+                $usr_msg->add_err_with_vars(msg_id::JOB_ROW_MISSING, [
+                    msg_id::VAR_FUNCTION_NAME => $this->dsp_id()
+                ]);
+            }
+        }
+        return $usr_msg->is_ok();
+    }
 
     /*
      * debug

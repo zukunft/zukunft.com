@@ -768,14 +768,20 @@ class type_list
     function get(int $id): type_object|view|null
     {
         $result = null;
-        if ($id > 0) {
-            if (array_key_exists($id, $this->lst)) {
-                $result = $this->lst[$id];
-            } else {
-                log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
-            }
+        if ($this->is_empty()) {
+            $lib = new library();
+            $class = $lib->class_to_name($this::class);
+            log_err($class . ' is empty');
         } else {
-            log_debug('Type id not set');
+            if ($id > 0) {
+                if (array_key_exists($id, $this->lst)) {
+                    $result = $this->lst[$id];
+                } else {
+                    log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
+                }
+            } else {
+                log_debug('Type id not set');
+            }
         }
         return $result;
     }

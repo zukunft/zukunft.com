@@ -285,6 +285,7 @@ class json_fields
     const string LIST_LANGUAGES = 'languages';
     const string LIST_LANGUAGE_FORMS = 'language_forms';
     const string LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
+    const string LIST_JOB_STATUUS = 'job_statuus';
     const string LIST_JOB_TYPES = 'job_types';
     const string LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const string LIST_CHANGE_LOG_TABLES = 'change_table_list';

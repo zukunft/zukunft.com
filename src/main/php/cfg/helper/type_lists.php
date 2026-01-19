@@ -248,6 +248,9 @@ class type_lists
         if ($result) {
             $result = $this->job_typ->load($db_con);
         }
+        if ($result) {
+            $result = $this->job_sta->load($db_con);
+        }
 
         // sandbox
         if ($result) {
@@ -307,6 +310,14 @@ class type_lists
 
         // preload the little more complex objects
         $this->vrb->load($db_con);
+
+        // fallback to avoid getting stuck in load process
+        if ($this->vrb->is_empty()) {
+            log_warning('Verb list is empty, fallback to dummy data');
+            $this->vrb->load_dummy();
+        }
+
+
         // TODO move the a separate loader on the data_object level
         //$sys_msk_cac = new view_sys_list($usr);
         //$sys_msk_cac->load($db_con);
@@ -405,6 +416,7 @@ class type_lists
         $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $this->cng_fld->api_json_array();
 
         $vars[json_fields::LIST_JOB_TYPES] = $this->job_typ->api_json_array();
+        $vars[json_fields::LIST_JOB_STATUUS] = $this->job_sta->api_json_array();
         $vars[json_fields::LIST_LANGUAGES] = $this->lan->api_json_array();
         $vars[json_fields::LIST_LANGUAGE_FORMS] = $this->lan_for->api_json_array();
 

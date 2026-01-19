@@ -1329,7 +1329,7 @@ class sql_creator
                                 if (($par_name == change::FLD_OLD_ID or $par_name == change::FLD_NEW_ID) and $par_name != '') {
                                     $par_name = sql::PAR_PREFIX . $chg_add_fld;
                                 } else {
-                                    if ($par_name == change::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
+                                    if ($par_name == change_log::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
                                         $par_name = sql::PAR_PREFIX . $chg_row_fld;
                                     } else {
                                         $par_name = sql::PAR_PREFIX . $par_name;

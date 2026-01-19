@@ -586,7 +586,11 @@ class db_object_seq_id extends db_object
         // by default all changes are logged
         if (is_array($sc_par_lst)) {
             if ($sc_par_lst == []) {
-                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+                if (in_array($this::class, def::CLASSES_NO_LOG)) {
+                    $sc_par_lst = new sql_type_list([sql_type::NO_LOG]);
+                } else {
+                    $sc_par_lst = new sql_type_list([sql_type::LOG]);
+                }
             } else {
                 $sc_par_lst = new sql_type_list($sc_par_lst);
             }
@@ -620,8 +624,8 @@ class db_object_seq_id extends db_object
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, $usr_msg, $sc_par_lst);
 
-            // ... and update the database row
-            $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
+            // ... and add the database row
+            $db_con->insert($qp, 'insert ' . $this->dsp_id(), $usr_msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
@@ -633,10 +637,13 @@ class db_object_seq_id extends db_object
             ]);
         }
 
+        // TODO Prio 1 review
+        /*
         $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'db_add',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
+        */
         return $usr_msg->is_ok();
     }
 
@@ -728,7 +735,12 @@ class db_object_seq_id extends db_object
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
         $row_empty = $this->clone_all();
-        $row_empty->reset(true);
+        if ($sc_par_lst_used->no_log()) {
+            // if the changes are not added to the change log that user must be part of the changed fields
+            $row_empty->reset();
+        } else {
+            $row_empty->reset(true);
+        }
         if ($sc_par_lst_used->do_log()) {
             return $this->sql_write($sc, $row_empty, $usr_msg, $sc_par_lst_used);
         } else {
@@ -785,16 +797,21 @@ class db_object_seq_id extends db_object
 
         // get a list of all fields that could potentially be updated
         $fld_lst_all = $this->db_fields_all();
+
         // get the list of all fields that can be changed by the user
         $fvt_lst = $this->db_fields_changed($db_row, $usr_msg, $sc_par_lst);
+
         // TODO Prio 1 move the line from here to the end to a sql_write function and move it to the parent object
         // make the query name unique based on the changed fields
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $usr_msg);
+
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
         // log functions must always use named parameters
         $sc_par_lst->add(sql_type::NAMED_PAR);
+
         // set some var names to shorten the code lines
         $id_fld = $sc->id_field_name();
         if ($sc_par_lst->is_insert()) {
@@ -838,6 +855,8 @@ class db_object_seq_id extends db_object
         foreach ($fld_lst_chg as $fld) {
             $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
         }
+        $par_lst_out->add_list($update_fvt_lst);
+
         $sc_update = clone $sc;
         $sc_par_lst_upd = $sc_par_lst;
         $sc_par_lst_upd->add(sql_type::UPDATE);

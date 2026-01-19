@@ -35,14 +35,15 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'job_list.php';
+include_once paths::SHARED_TYPES . 'job_statuus.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
-use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -86,7 +87,7 @@ class job_tests
         $t_usr = new test_users();
         $sys_usr = $t_usr->system_user();
         $job_lst = new job_list($sys_usr);
-        $t->assert_sql_list_by_type($sc, $job_lst, job_type_list::BASE_IMPORT);
+        $t->assert_sql_list_by_type($sc, $job_lst, job_types::BASE_IMPORT);
 
         $t->subheader($ts . 'sql write');
         $job = $t_job->job();
@@ -100,6 +101,7 @@ class job_tests
 
         $t_job = new test_jobs($t);
         $job = $t_job->job();
+        $job->priority = job_statuus::PRIO_HIGHEST;
         $t->assert_api($job);
 
         $job_lst = $t_job->job_list();

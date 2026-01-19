@@ -246,7 +246,7 @@ CREATE TABLE IF NOT EXISTS jobs
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
     ref_id          bigint    DEFAULT NULL,
-    priority        bigint    DEFAULT NULL
+    priority        smallint  DEFAULT NULL
 );
 
 COMMENT ON TABLE jobs IS 'for each concrete job run';

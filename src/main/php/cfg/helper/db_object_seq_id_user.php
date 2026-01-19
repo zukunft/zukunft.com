@@ -45,15 +45,27 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
@@ -196,6 +208,72 @@ class db_object_seq_id_user extends db_object_seq_id
             $this->set_user($obj->get_user());
         }
         return $usr_msg;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                user_db::FLD_ID,
+            ]
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param db_object_seq_id_user|db_object_seq_id $obj the compare value to detect the changed fields
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        db_object_seq_id_user|db_object_seq_id $obj,
+        user_message                           $usr_msg,
+        sql_type_list                          $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $sys;
+
+        $sc = new sql_creator();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        if ($sc_par_lst->is_insert()) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+                    $sys->typ_lst->cng_fld->id($table_id . user_db::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            if ($obj->get_user_id() == 0) {
+                $old_user_id = null;
+            } else {
+                $old_user_id = $obj->get_user_id();
+            }
+            $lst->add_field(
+                user_db::FLD_ID,
+                $this->get_user_id(),
+                db_object_seq_id::FLD_ID_SQL_TYP,
+                $old_user_id
+            );
+        }
+        return $lst;
     }
 
 

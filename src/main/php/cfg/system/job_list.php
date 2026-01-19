@@ -48,6 +48,7 @@ include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'job_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 
 class job_list extends base_list
 {
@@ -100,33 +102,25 @@ class job_list extends base_list
         return $this->load($qp);
     }
 
+    /**
+     * load a list of batch jobs of the given status
+     * @param string $status_code_id the code id of the job status that should be loaded
+     * @return bool true if at least one open job found
+     */
+    function load_by_status(string $status_code_id = ''): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_status($db_con->sql_creator(), $status_code_id);
+        return $this->load($qp);
+    }
+
 
     /*
      * load internals
      */
 
     /**
-     * prepare sql to get all open job of one type
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $type_code_id the code id of the job type that should be loaded
-     * @return sql_par
-     */
-    function load_sql_by_status(sql_creator $sc, string $type_code_id = ''): sql_par
-    {
-        global $sys;
-        $type_id = $sys->typ_lst->job_typ->id($type_code_id);
-        $job = new job($this->usr);
-        $qp = $job->load_sql($sc, 'job_status', self::class);
-        $sc->add_where(job_db::FLD_STATUS, $type_id);
-        $sc->set_page($this->limit, $this->offset());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * prepare sql to get all open job of one type
+     * prepare sql to get all open jobs of one type
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $type_code_id the code id of the job type that should be loaded
@@ -139,6 +133,26 @@ class job_list extends base_list
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
         $sc->add_where(job_db::FLD_TYPE, $type_id);
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * prepare sql to get all open jobs of one status
+     *
+     * @param sql_creator $sc with the target db_status set
+     * @param string $status_code_id the code id of the job status that should be loaded
+     * @return sql_par
+     */
+    function load_sql_by_status(sql_creator $sc, string $status_code_id = ''): sql_par
+    {
+        global $sys;
+        $status_id = $sys->typ_lst->job_sta->id($status_code_id);
+        $job = new job($this->usr);
+        $qp = $job->load_sql($sc, 'job_status', self::class);
+        $sc->add_where(job_db::FLD_STATUS, $status_id);
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -188,7 +202,7 @@ class job_list extends base_list
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
-        if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
+        if ($job->type_code_id() != job_types::BASE_IMPORT) {
             if (!isset($job->frm)) {
                 $usr_msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             } elseif (!isset($job->phr_lst)) {

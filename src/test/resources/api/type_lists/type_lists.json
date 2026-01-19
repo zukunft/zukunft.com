@@ -6599,6 +6599,68 @@
         "id": 24
       }
     ],
+    "job_statuus": [
+      {
+        "name": "created",
+        "code_id": "new",
+        "description": "the job is not yet assigned to any calc engine",
+        "id": 1
+      },
+      {
+        "name": "assigned",
+        "code_id": "assigned",
+        "description": "the job has been assigned to a calc engine",
+        "id": 2
+      },
+      {
+        "name": "forced",
+        "code_id": "forced",
+        "description": "the priority of the job has been increased",
+        "id": 3
+      },
+      {
+        "name": "delayed",
+        "code_id": "delayed",
+        "description": "the priority of the job has been reduced",
+        "id": 4
+      },
+      {
+        "name": "working",
+        "code_id": "working",
+        "description": "the calc engine is reporting the progress",
+        "id": 5
+      },
+      {
+        "name": "not responding",
+        "code_id": "not_responding",
+        "description": "the calc engine is not reporting the progress",
+        "id": 6
+      },
+      {
+        "name": "waiting",
+        "code_id": "waiting",
+        "description": "the task is waiting for user input of other jobs",
+        "id": 7
+      },
+      {
+        "name": "done",
+        "code_id": "done",
+        "description": "the task has been completed successfully",
+        "id": 8
+      },
+      {
+        "name": "failed",
+        "code_id": "failed",
+        "description": "the task has been completed unsuccessful",
+        "id": 9
+      },
+      {
+        "name": "retry",
+        "code_id": "retry",
+        "description": "an admin has forced to retry the execution",
+        "id": 10
+      }
+    ],
     "languages": [
       {
         "name": "English",

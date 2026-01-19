@@ -195,6 +195,12 @@ class db_cl
         return $sys->typ_lst->job_typ->id($code_id);
     }
 
+    function job_status_id(string $code_id): int
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->id($code_id);
+    }
+
     function log_action_id(string $code_id): int
     {
         global $sys;
@@ -307,6 +313,12 @@ class db_cl
     {
         global $sys;
         return $sys->typ_lst->job_typ->get_by_id($id);
+    }
+
+    function job_status(int $id)
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->get_by_id($id);
     }
 
     function log_action(int $id)
@@ -451,6 +463,12 @@ class db_cl
     {
         global $sys;
         return $sys->typ_lst->job_typ->name($id);
+    }
+
+    function job_status_name(int $id): string
+    {
+        global $sys;
+        return $sys->typ_lst->job_sta->name($id);
     }
 
     function log_action_name(int $id): string

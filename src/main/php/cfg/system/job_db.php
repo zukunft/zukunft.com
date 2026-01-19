@@ -125,7 +125,7 @@ class job_db
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
-        [self::FLD_PRIO, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_PRIO_COM],
+        [self::FLD_PRIO, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_PRIO_COM],
     );
 
 }

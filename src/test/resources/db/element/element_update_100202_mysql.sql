@@ -1,4 +1,4 @@
-PREPARE element_update_10202 FROM
+PREPARE element_update_100202 FROM
    'UPDATE elements
        SET element_id      = ?,
            element_type_id = ?,

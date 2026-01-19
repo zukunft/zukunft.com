@@ -1052,6 +1052,14 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' name.';
 
+    case JOB_TYPE_INVALID = 'the job type for job '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case JOB_ROW_MISSING = 'the database id for job '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing';
+
     case VERB_UPDATE_FAILED = 'updating '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' to '

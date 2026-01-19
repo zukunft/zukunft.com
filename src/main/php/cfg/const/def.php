@@ -434,6 +434,12 @@ class def
         change_link::class,
     ];
 
+    // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
+    // list of classes that use a database table but where the changes never needs to be added to the change log
+    const array CLASSES_NO_LOG = [
+        job::class,
+    ];
+
     // list of classes that use a database table but where the changes do not need to be logged
     const array CLASSES_NO_CHANGE_LOG = [
         sys_log_status::class,
