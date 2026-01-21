@@ -35,8 +35,6 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SERVICE . 'config.php';
-include_once paths::MODEL_SYSTEM . 'ip_range.php';
-include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -69,9 +67,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
-use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
@@ -147,11 +142,6 @@ class system_tests
         $cfg = new config();
         $t->assert_sql_table_create($cfg);
         $t->assert_sql_index_create($cfg);
-
-        $t->subheader($ts . 'ip range SQL setup');
-        $ipr = new ip_range();
-        $t->assert_sql_table_create($ipr);
-        $t->assert_sql_index_create($ipr);
 
         $t->subheader($ts . 'session SQL setup');
         $ses = new session();
@@ -255,43 +245,10 @@ class system_tests
 
         $t->subheader($ts . 'IP filter');
 
+
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
          */
-
-        $ip_range = new ip_range();
-        $t->assert_sql_by_id($sc, $ip_range);
-
-        // sql to load by ip range
-        $db_con->db_type = sql_db::POSTGRES;
-        $ip_range->reset();
-        $ip_range->from = '66.249.64.95';
-        $ip_range->to = '66.249.64.95';
-        $ip_range->set_user($usr);
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range.sql');
-        $t->assert('ip_range->load_sql by ip range', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $ip_range->load_sql_by_vars($db_con)->name;
-        if (!in_array($sql_name, $t->unique_sql_names)) {
-            $result = true;
-            $t->unique_sql_names[] = $sql_name;
-        }
-        $t->assert_true('ip_range->load_sql by id range', $result);
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-
-        $t->subheader($ts . 'ip list sql');
-
-        $ip_lst = new ip_range_list();
-        $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
 
         $t->subheader($ts . 'user list loading sql');
@@ -365,65 +322,13 @@ class system_tests
         $t->assert_sql_all($db_con, $cng_fld_cac);
          */
 
-        /*
-         * im- and export tests
-         */
-
-        $t->subheader($ts . 'im- and export');
-
-        $usr_msg = new user_message($t->usr1);
-
-        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
-        $ip_range = new ip_range();
-        $ip_range->set_user($usr);
-        // switch to system user for import
-        $usr_tmp = $usr;
-        $usr = $usr_sys;
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
-        // switch back to original user
-        $usr = $usr_tmp;
-        $json_ex = $ip_range->export_json([]);
-        $result = $lib->json_is_similar($json_in, $json_ex);
-        $t->assert_true('ip_range->import check', $result);
-
-
-        /*
-         * ip range tests
-         */
-
-        $t->subheader($ts . 'ip range');
-
-
-        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
-        $ip_range = new ip_range();
-        $ip_range->set_user($usr);
-        // switch to system user for import
-        $usr_tmp = $usr;
-        $usr = $usr_sys;
-        $ip_range->import_obj($json_in, $usr_msg, new data_object($usr), $t);
-        // switch back to original user
-        $usr = $usr_tmp;
-        $test_ip = '66.249.64.95';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_true('ip_range->includes check', $result);
-
-
-        // negative case before
-        $test_ip = '66.249.64.94';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_false('ip_range->includes check', $result);
-
-        // negative case after
-        $test_ip = '66.249.65.95';
-        $result = $ip_range->includes($test_ip);
-        $t->assert_false('ip_range->includes check', $result);
-
 
         /*
          * system consistency SQL creation tests
          */
 
         $t->subheader($ts . 'system consistency');
+
 
         // sql to check the system consistency
         $db_con->set_class(formula::class);
@@ -433,6 +338,8 @@ class system_tests
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         // ... and check if the prepared sql name is unique
+        $result = false;
+        $sql_name = 'missing_owner_by_formula.sql';
         if (!in_array($qp->name, $t->unique_sql_names)) {
             $result = true;
             $t->unique_sql_names[] = $sql_name;

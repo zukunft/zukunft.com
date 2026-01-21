@@ -1060,6 +1060,14 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is missing';
 
+    case IP_RANGE_FROM_MISSING = 'the from value of the ip range '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
+    case IP_RANGE_TO_MISSING = 'the to value of the ip range '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid';
+
     case VERB_UPDATE_FAILED = 'updating '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' to '

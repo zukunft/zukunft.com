@@ -202,6 +202,7 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UNIT . 'lib_tests.php';
 include_once test_paths::UNIT . 'math_tests.php';
 include_once test_paths::UNIT . 'system_tests.php';
+include_once test_paths::UNIT . 'ip_range_tests.php';
 include_once test_paths::UNIT . 'sql_tests.php';
 include_once test_paths::UNIT . 'pod_tests.php';
 include_once test_paths::UNIT . 'user_tests.php';

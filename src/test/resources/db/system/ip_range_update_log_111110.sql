@@ -1,0 +1,52 @@
+CREATE OR REPLACE FUNCTION ip_range_update_log_111110
+    (_user_id               bigint,
+     _change_action_id      smallint,
+     _field_id_ip_range_key smallint,
+     _ip_range_key          text,
+     _field_id_ip_from      smallint,
+     _ip_from               text,
+     _field_id_ip_to        smallint,
+     _ip_to                 text,
+     _field_id_reason       smallint,
+     _reason                text) RETURNS void AS
+$$
+BEGIN
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,       old_value,        new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_range_key,_ip_range_key_old,_ip_range_key,new_ip_range_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,  old_value,   new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_from,_ip_from_old,_ip_from,   new_ip_range_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,old_value, new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ip_to,_ip_to_old,_ip_to,     new_ip_range_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id, old_value,  new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_reason,_reason_old,_reason,    new_ip_range_id ;
+
+         UPDATE ip_ranges
+            SET ip_range_key = _ip_range_key,
+                ip_from      = _ip_from,
+                ip_to        = _ip_to,
+                reason       = _reason
+          WHERE ip_range_id = _ip_range_id;
+
+END
+$$ LANGUAGE plpgsql;
+
+PREPARE ip_range_update_log_111110_call
+    (bigint, smallint, smallint, text, smallint, text, smallint, text, smallint, text) AS
+SELECT ip_range_update_log_111110
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+
+SELECT ip_range_update_log_111110
+        (1::bigint,
+         1::smallint,
+         918::smallint,
+         '66.249.64.95-66.249.64.95'::text,
+         185::smallint,
+         '66.249.64.95'::text,
+         186::smallint,
+         '66.249.64.95'::text,
+         187::smallint,
+         'too much damage from this IP'::text);

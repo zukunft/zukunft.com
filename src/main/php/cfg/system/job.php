@@ -126,7 +126,6 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -177,6 +176,7 @@ class job extends db_object_seq_id_user
     // not phrase groups and time because the phrase group and time splitting should only be used to save to the database
     public ?formula $frm = null;           // the formula object that should be used for updating the result
     public ?phrase_list $phr_lst = null;   //
+
 
     /*
      * construct and map
@@ -464,7 +464,7 @@ class job extends db_object_seq_id_user
 
     /**
      * TODO align the field name with the object
-     * @return string job_id instead of job object
+     * @return string job_id instead of a job object
      */
     function id_field(): string
     {
@@ -549,8 +549,6 @@ class job extends db_object_seq_id_user
      */
     function exe(): void
     {
-        global $db_con;
-
         $usr_msg = new user_message();
 
         $this->start_time = new DateTime();
@@ -828,17 +826,18 @@ class job extends db_object_seq_id_user
         // the job type must be valid
         if ($this->type_id() <= 0) {
             $usr_msg->add_err_with_vars(msg_id::JOB_TYPE_INVALID, [
-                msg_id::VAR_FUNCTION_NAME => $this->dsp_id()
+                msg_id::VAR_NAME => $this->dsp_id()
             ]);
         } elseif ($this->type_code_id() != job_types::BASE_IMPORT) {
             if ($this->row_id <= 0) {
                 $usr_msg->add_err_with_vars(msg_id::JOB_ROW_MISSING, [
-                    msg_id::VAR_FUNCTION_NAME => $this->dsp_id()
+                    msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
         }
         return $usr_msg->is_ok();
     }
+
 
     /*
      * debug

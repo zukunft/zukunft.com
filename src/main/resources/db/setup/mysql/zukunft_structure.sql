@@ -429,11 +429,12 @@ ALTER TABLE users
 
 CREATE TABLE IF NOT EXISTS ip_ranges
 (
-    ip_range_id bigint      NOT NULL COMMENT 'the internal unique primary index',
-    ip_from     varchar(46) NOT NULL,
-    ip_to       varchar(46) NOT NULL,
-    reason      text        NOT NULL,
-    is_active   smallint    NOT NULL DEFAULT 1,
+    ip_range_id  bigint      NOT NULL COMMENT 'the internal unique primary index',
+    ip_range_key text        NOT NULL COMMENT 'combines the from and to ip address to one key',
+    ip_from      varchar(46) NOT NULL,
+    ip_to        varchar(46) NOT NULL,
+    reason       text        NOT NULL,
+    is_active    smallint    NOT NULL DEFAULT 1,
     PRIMARY KEY (ip_range_id)
 )
     ENGINE = InnoDB
@@ -4622,6 +4623,7 @@ ALTER TABLE users
 --
 
 ALTER TABLE ip_ranges
+    ADD KEY ip_ranges_ip_range_key_idx (ip_range_key),
     ADD KEY ip_ranges_ip_from_idx (ip_from),
     ADD KEY ip_ranges_ip_to_idx (ip_to);
 

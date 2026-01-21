@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/job_db.php - the database const for jon tables
+    model/system/job_db.php - the database const for job tables
     -----------------------
 
     The main sections of this object are

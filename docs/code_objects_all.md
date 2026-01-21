@@ -85,8 +85,8 @@ the object structure is:
 +-- result_db - the database const for triple tables
 \-- user_service
     \-- xml - to im- and export xml files
-+-- ip_range_exp - a base object for a list of database IDs
-+-- job_db - the database const for jon tables
++-- ip_range_db - the database const for ip_range tables
++-- job_db - the database const for job tables
 +-- log - the simple log interface object
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
@@ -105,6 +105,7 @@ the object structure is:
 +-- filesShared - resource file names used in backend and frontend
 +-- formulasShared - predefined formulas used in the backend and frontend as code id
 +-- groupsShared - phrase group or value names used by the system for testing
++-- ip_rangesShared - ip ranges used for system testing
 +-- refsShared - references used by the system for testing
 +-- rest_ctrlShared - constants used for the backend to frontend api of zukunft.com
 +-- resultsShared - results used by the system for testing only in the backend

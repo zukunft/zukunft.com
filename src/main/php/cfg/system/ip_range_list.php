@@ -39,6 +39,7 @@ include_once paths::MODEL_SYSTEM . 'ip_range.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -87,8 +88,8 @@ class ip_range_list extends base_list
 
         $db_con->set_class(ip_range::class);
         $db_con->set_name($qp->name);
-        $db_con->set_fields(ip_range::FLD_NAMES);
-        $db_con->set_where_id(ip_range::FLD_ACTIVE, sql_db::VAL_BOOL_TRUE);
+        $db_con->set_fields(ip_range_db::FLD_NAMES);
+        $db_con->set_where_id(ip_range_db::FLD_ACTIVE, sql_db::VAL_BOOL_TRUE);
         $qp->sql = $db_con->select_all();
         $qp->par = $db_con->get_par();
 

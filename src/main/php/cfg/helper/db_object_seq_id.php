@@ -781,6 +781,14 @@ class db_object_seq_id extends db_object
      * create the sql statement to add or update an object in the database
      * all fields are always included in the query to be able to remove overwriting with a null value
      *
+     * TODO Prio 1
+     * split
+     * sql_write_add_key - create the sql to add the db row and add the main sql_write_add_key
+     * sql_write_log - create the sql to log the changes
+     * sql_write_update - create the sql to change the non prime key fields
+     *
+     * review check($usr_msg) - create an error if a mandatory field is missing
+     *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $usr_msg collect the messages for the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -838,6 +846,26 @@ class db_object_seq_id extends db_object
         }
         $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst);
 
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst_log->add(sql_type::INSERT_PART);
+        } else {
+            $sc_par_lst_log->add(sql_type::UPDATE_PART);
+        }
+
+        // create sql to set the prime key upfront to get the sequence id
+        $qp_id = clone $qp;
+        if ($sc_par_lst->is_insert()) {
+            $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $usr_msg, $sc_par_lst_sub);
+            if ($usr_msg->is_ok()) {
+                $par_lst_out->add($qp_id->par_fld);
+                $sql .= $qp_id->sql;
+            }
+        }
+
         // get the data fields and move the unique db key field to the first entry
         $fld_lst_chg = array_intersect($fvt_lst->names(), $fld_lst_all);
         $key_fld_pos = array_search($this->id_field(), $fld_lst_chg);
@@ -850,8 +878,19 @@ class db_object_seq_id extends db_object
             db_object_seq_id::FLD_ID_SQL_TYP
         );
 
+        // create the query parameters for the log entries for the single fields
+        if ($usr_msg->is_ok()) {
+            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $usr_msg, $sc_par_lst_log);
+            $sql .= ' ' . $qp_log->sql;
+            $par_lst_out->add_list($qp_log->par_fld_lst);
+        }
+
         // update the fields excluding the unique id
         $update_fvt_lst = new sql_par_field_list();
+        if ($sc_par_lst->is_insert()) {
+            $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
+            unset($fld_lst_chg[$key_fld_pos]);
+        }
         foreach ($fld_lst_chg as $fld) {
             $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
         }
@@ -869,6 +908,31 @@ class db_object_seq_id extends db_object
         // add the insert row to the function body
         $sql .= ' ' . $qp_update->sql . ' ';
 
+        // create the call sql statement
+        return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);
+    }
+
+    /**
+     * combine the sql parts and
+     * create the sql call statement to add or update an object in the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp the query parameter with the table name set
+     * @param string $sql the inner part of sql statement
+     * @param string $id_fld_new the name of the id field
+     * @param sql_par_field_list $par_lst_out fields with parameters in order of usage in the query function
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_write_call(
+        sql_creator   $sc,
+        sql_par       $qp,
+        string        $sql,
+        string        $id_fld_new,
+        sql_par_field_list $par_lst_out,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
         if ($sc->db_type == sql_db::POSTGRES) {
             if ($id_fld_new != '') {
                 $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
@@ -880,6 +944,9 @@ class db_object_seq_id extends db_object
 
         $sql .= $sc->sql_func_end();
 
+        if (!$sc_par_lst->is_insert()) {
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
+        }
         $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
 
         // merge all together and create the function
@@ -929,6 +996,34 @@ class db_object_seq_id extends db_object
 
         return $qp;
     }
+
+    /**
+     * create the sql statement to add a object e.g. word to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param user_message $usr_msg collect the messages for the user
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
+     */
+    function sql_insert_key_field(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        user_message       $usr_msg,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+    ): sql_par
+    {
+        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+            msg_id::VAR_FUNCTION_NAME => 'sql_insert_key_field',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $qp;
+    }
+
 
     /*
      * sql write fields
@@ -1051,6 +1146,16 @@ class db_object_seq_id extends db_object
         }
 
         return $can_change;
+    }
+
+
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return '';
     }
 
 

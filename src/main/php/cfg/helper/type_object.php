@@ -680,28 +680,8 @@ class type_object extends db_object_seq_id
             $sql .= ' ' . $qp_update->sql . ' ';
         }
 
-        if ($sc->db_type == sql_db::POSTGRES) {
-            if ($id_fld_new != '') {
-                $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
-            }
-        }
-
-        // create the query parameters for the actual change
-        $qp_chg = clone $qp;
-
-        $sql .= $sc->sql_func_end();
-
-        if (!$sc_par_lst->is_insert()) {
-            $sc_par_lst->add(sql_type::NO_ID_RETURN);
-        }
-        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
-
-        // merge all together and create the function
-        $qp->sql = $qp_chg->sql . $sql . ';';
-        $qp->par = $par_lst_out->values();
-
         // create the call sql statement
-        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+        return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);
     }
 
     /**
