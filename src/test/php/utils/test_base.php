@@ -1512,21 +1512,13 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        if ($usr_obj::class == user::class) {
-            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-        } else {
-            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
-        }
+        $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            if ($usr_obj::class == user::class) {
-                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $usr_msg, $sc_par_lst);
-            } else {
-                $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
-            }
+            $qp = $usr_obj->sql_delete($sc, $usr_msg, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2582,11 +2574,11 @@ class test_base
         // check the log
         if ($result) {
             $id = $sbx->id();
-                $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
-                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
-                if ($result) {
-                    $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
-                }
+            $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
+            $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+            if ($result) {
+                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, msg_id::LOG_ADD->value);
+            }
         }
 
         // update the name

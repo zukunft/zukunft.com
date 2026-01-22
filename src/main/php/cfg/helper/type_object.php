@@ -51,7 +51,6 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
-include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 // TODO avoid include loops
@@ -80,7 +79,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
@@ -740,172 +738,6 @@ class type_object extends db_object_seq_id
         return $qp;
     }
 
-
-    /**
-     * create the sql statement to delete type object e.g. a verb
-     * but only if it does not have a code_id and is never used
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par|null the SQL update statement, the name of the SQL statement, and the parameter list
-     */
-    function sql_delete(
-        sql_creator   $sc,
-        user_message  $usr_msg,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par|null
-    {
-        $qp = null;
-        if ($this->can_delete($usr_msg)) {
-            // clone the sql parameter list to avoid changing the given list
-            $sc_par_lst_used = clone $sc_par_lst;
-            // set the sql query type
-            $sc_par_lst_used->add(sql_type::DELETE);
-            // set the query name
-            $qp = $this->sql_common($sc, $sc_par_lst_used);
-            $sc->set_name($qp->name);
-            // fields and values that the word has additional to the standard named user sandbox object
-            // for a new sandbox object the owner should be set, so remove the user id to force writing the user
-            $sbx_empty = $this->clone_reset(true);
-            // to get the list of the changed fields,
-            // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-            $fvt_lst = $sbx_empty->db_fields_changed($this, $usr_msg, $sc_par_lst_used);
-            // actual create the sql statement to delete the type object
-            // and log who has deleted it and when
-            $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $usr_msg, $sc_par_lst_used);
-        }
-
-        return $qp;
-    }
-
-    /**
-     * @param sql_creator $sc the sql creator object with the db type set
-     * @param sql_par $qp the query parameter with the name already set
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
-     * @param sql_type_list $sc_par_lst
-     * @return sql_par
-     */
-    private function sql_delete_and_log(
-        sql_creator        $sc,
-        sql_par            $qp,
-        sql_par_field_list $fvt_lst,
-        user_message       $usr_msg,
-        sql_type_list      $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        global $sys;
-        $table_id = $sc->table_id($this::class);
-
-        // set some var names to shorten the code lines
-        $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
-        $id_fld = $sc->id_field_name();
-        $id_val = '_' . $id_fld;
-        $name_fld = $this->name_field();
-
-        // list of parameters actually used in order of the function usage
-        $fvt_lst_out = new sql_par_field_list();
-
-        // init the function body
-        $sql = $sc->sql_func_start('', $sc_par_lst);
-
-        // don't use the log parameter for the sub queries
-        $sc_par_lst_sub = clone $sc_par_lst;
-        $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_sub->add(sql_type::NAMED_PAR);
-        $sc_par_lst_sub->add(sql_type::DELETE_PART);
-        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::LOG);
-        $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
-
-        // create the queries for the log entries
-        $func_body_change = '';
-
-        // add the user_id to log who requested the deletion
-        $fvt_lst_out->add_field(
-            user_db::FLD_ID,
-            $usr_msg->usr->id(),
-            sql_par_type::INT);
-
-        // add the change_action_id if needed
-        $fvt_lst_out->add_field(
-            change_action::FLD_ID,
-            $sys->typ_lst->cng_act->id(change_actions::DELETE),
-            sql_par_type::INT_SMALL);
-
-        // add the field_id of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            sql::FLD_LOG_FIELD_PREFIX . $name_fld,
-            $sys->typ_lst->cng_fld->id($table_id . $name_fld),
-            sql_par_type::INT_SMALL);
-
-        // add the db field value of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            $name_fld,
-            $this->name(),
-            sql_par_type::TEXT);
-
-        // create the insert log statement
-        $sc_log = clone $sc;
-        $log = new change($usr_msg->usr);
-        $log->set_class($this::class);
-        $log->set_field($name_fld);
-        $log->old_value = $this->name();
-        $log->new_value = null;
-        $qp_log = $log->sql_insert_log(
-            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
-
-        // TODO get the fields used in the change log sql from the sql
-        $func_body_change .= ' ' . $qp_log->sql . ';';
-
-        // add the row id of the standard table for user overwrites
-        $fvt_lst_out->add_field(
-            $this->id_field(),
-            $this->id(),
-            sql_par_type::INT);
-
-        $sql .= ' ' . $func_body_change;
-
-        // create the actual delete or exclude statement
-        $sc_delete = clone $sc;
-        $sc_par_lst_del = clone $sc_par_lst;
-        $sc_par_lst_del->add(sql_type::DELETE);
-        $sc_par_lst_del->add(sql_type::NAMED_PAR);
-        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);
-        $qp_delete->sql = $sc_delete->create_sql_delete(
-            $id_fld, $id_val, $sc_par_lst_sub);
-        // add the delete statement to the function body
-        $sql .= ' ' . $qp_delete->sql . ' ';
-
-        $sql .= $sc->sql_func_end();
-
-        // create the query parameters for the call
-        $sc_par_lst_func = clone $sc_par_lst;
-        $sc_par_lst_func->add(sql_type::FUNCTION);
-        $sc_par_lst_func->add(sql_type::DELETE);
-        $sc_par_lst_func->add(sql_type::NO_ID_RETURN);
-        if ($sc_par_lst->exclude_sql()) {
-            $sc_par_lst_func->add(sql_type::EXCLUDE);
-        }
-        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func);
-        $qp_func->sql = $sc->create_sql_delete(
-            $id_fld, $id_val, $sc_par_lst_func, $fvt_lst_out);
-        $qp_func->par = $fvt_lst_out->values();
-
-        // merge all together and create the function
-        $qp->sql = $qp_func->sql . ' ' . $sql . ';';
-        $qp->par = $fvt_lst_out->values();
-
-        // create the function call
-        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
-
-        $call_val_str = $fvt_lst_out->par_sql($sc);
-
-        $qp->call_sql .= $call_val_str . ');';
-
-        return $qp;
-    }
 
     protected function can_delete(user_message $usr_msg): bool
     {

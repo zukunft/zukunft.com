@@ -234,7 +234,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $usr_msg->usr = $usr_req;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_delete($sc, $usr_req, $usr_msg, new sql_type_list([sql_type::LOG]));
+        $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
         $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
         $usr_msg->add($del_msg);
 
@@ -250,14 +250,12 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param user $usr_req the user who has requested the deletion
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $usr_msg collect the messages for the user with the user set who has requested the deletion
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement, and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        user          $usr_req,
         user_message  $usr_msg,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
@@ -279,7 +277,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $usr_req, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $usr_msg->usr, $sc_par_lst_used);
         } else {
             $par_lst = [$this->id()];
             $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
