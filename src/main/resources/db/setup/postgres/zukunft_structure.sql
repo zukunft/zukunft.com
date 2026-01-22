@@ -400,9 +400,9 @@ CREATE TABLE IF NOT EXISTS ip_ranges
 (
     ip_range_id  BIGSERIAL PRIMARY KEY,
     ip_range_key text        NOT NULL,
-    ip_from      varchar(46) NOT NULL,
-    ip_to        varchar(46) NOT NULL,
-    reason       text        NOT NULL,
+    ip_from      varchar(46)          DEFAULT NULL,
+    ip_to        varchar(46)          DEFAULT NULL,
+    reason       text                 DEFAULT NULL,
     is_active    smallint    NOT NULL DEFAULT 1
 );
 

@@ -41,7 +41,6 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
-include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::EXPORT . 'export_type_list.php';
@@ -52,8 +51,8 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_LOG . 'change_action.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -63,7 +62,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
@@ -73,8 +71,8 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -99,8 +97,8 @@ class ip_range extends db_object_seq_id
      */
 
     // database fields
-    public string $from = '';
-    public string $to = '';
+    public ?string $from = null;
+    public ?string $to = null;
     public ?string $reason = null;
     public bool $active = false;
 
@@ -115,8 +113,8 @@ class ip_range extends db_object_seq_id
     function reset(bool $keep_user = false): void
     {
         parent::reset($keep_user);
-        $this->from = '';
-        $this->to = '';
+        $this->from = null;
+        $this->to = null;
         $this->reason = null;
         $this->active = false;
     }
@@ -403,163 +401,30 @@ class ip_range extends db_object_seq_id
      */
 
     /**
-     * actually update a formula field in the main database record
-     * @param sql_db $db_con the active database connection
-     * @param change $log with the action and table already set
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_do(sql_db $db_con, change $log): user_message
-    {
-        $usr_msg = new user_message();
-        if ($log->add($usr_msg)) {
-            $db_con->set_class(self::class);
-            if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
-                $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
-                    msg_id::VAR_NAME => $log->field(),
-                    msg_id::VAR_VALUE => $log->new_value,
-                    msg_id::VAR_CLASS_NAME => $this::class,
-                    msg_id::VAR_ID => $this->dsp_id()
-                ]);
-            }
-
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the block reason
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range reason as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_reason(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->reason <> $this->reason) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->reason;
-            $log->new_value = $this->reason;
-            $log->std_value = $db_rec->reason;
-            $log->row_id = $this->id();
-            $log->set_field(ip_range_db::FLD_REASON);
-            $usr_msg = $this->save_field_do($db_con, $log);
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the update parameters for the block reason
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range active flag as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($db_rec->active <> $this->active) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->active;
-            $log->new_value = $this->active;
-            $log->std_value = $db_rec->active;
-            $log->row_id = $this->id();
-            $log->set_field(ip_range_db::FLD_ACTIVE);
-            $usr_msg = $this->save_field_do($db_con, $log);
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the log entry parameter for a new ip range
-     * @return change with the action set to add
-     */
-    function log_add(): change
-    {
-        log_debug('->log_add ' . $this->dsp_id());
-        $lib = new library();
-        $usr_msg = new user_message();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::ADD);
-        $log->set_table($tbl_name);
-        $log->set_field(ip_range_db::FLD_FROM . '_' . ip_range_db::FLD_TO);
-        $log->new_value = $this->name();
-        $log->row_id = 0;
-        $log->add($usr_msg);
-
-        return $log;
-    }
-
-    /**
-     * set the main log entry parameters for updating one verb field
-     * @return change with the action set to update
-     */
-    private function log_upd(): change
-    {
-        log_debug('->log_upd ' . $this->dsp_id());
-        $lib = new library();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::UPDATE);
-        $log->set_table($tbl_name);
-
-        return $log;
-    }
-
-    /**
-     * save all updated verb fields excluding the name, because already done when adding a verb
-     * @param sql_db $db_con the active database connection
-     * @param ip_range $db_rec the ip range entry as saved in the database before the change
-     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
-     */
-    private function save_fields(sql_db $db_con, ip_range $db_rec): user_message
-    {
-        $usr_msg = $this->save_field_reason($db_con, $db_rec);
-        $result = $this->save_field_active($db_con, $db_rec);
-        if ($result) {
-            $usr_msg = $result;
-        }
-        return $usr_msg;
-    }
-
-    /**
      * add an ip range to the database
      *
-     * @return user_message the database id of the created reference or 0 if not successful
+     * @param user_message $usr_msg with status OK
+     *                              or if something went wrong
+     *                              the message that should be shown to the user
+     *                              including suggested solutions
+     * @return bool true if everything has been fine
      */
-    private function add(): user_message
+    private function add(user_message $usr_msg): bool
     {
+        log_debug($this->dsp_id());
+
         global $db_con;
-        $usr_msg = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            // insert the new ip range
-            $db_con->set_class($this::class);
-            $db_con->set_usr($this->get_user()->id);
-
-            $this->id = $db_con->insert_old(
-                array(ip_range_db::FLD_KEY, ip_range_db::FLD_FROM, ip_range_db::FLD_TO, ip_range_db::FLD_REASON, ip_range_db::FLD_ACTIVE),
-                array($this->key(), $this->from, $this->to, $this->reason, $this->active));
-            if ($this->id() > 0) {
-                // update the id in the log for the correct reference
-                if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                    log_err('Adding reference for ' . $this->dsp_id() . ' in the log failed.', self::class . '->add');
-                }
-            } else {
-                $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
-                    msg_id::VAR_ID => $this->dsp_id()
-                ]);
-                log_err('Adding reference ' . $this->dsp_id() . ' failed.', self::class . '->add');
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
+        if ($usr_msg->is_ok()) {
+            $msg = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg, $usr_msg)) {
+                $this->id = $usr_msg->get_row_id();
             }
         }
 
-        return $usr_msg;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -599,6 +464,15 @@ class ip_range extends db_object_seq_id
 
         global $db_con;
 
+        // by default all verb changes are logged
+        if (is_array($sc_par_lst)) {
+            if ($sc_par_lst == []) {
+                $sc_par_lst = new sql_type_list([sql_type::LOG]);
+            } else {
+                $sc_par_lst = new sql_type_list($sc_par_lst);
+            }
+        }
+
         // build the database object because this is needed anyway
         $db_con->set_usr($this->get_user()->id);
         $db_con->set_class($this::class);
@@ -617,7 +491,9 @@ class ip_range extends db_object_seq_id
 
         // create a new object or update an existing
         if ($this->id() <= 0) {
-            $usr_msg->add($this->add());
+            if (!$this->add($usr_msg)) {
+                log_warning('ip range add failed');
+            }
         } else {
             log_debug('->save update');
 
@@ -628,7 +504,14 @@ class ip_range extends db_object_seq_id
             $db_rec->set_user($this->get_user());
             $db_rec->load_by_id($this->id());
             if ($db_rec->id() > 0) {
-                $usr_msg->add($this->save_fields($db_con, $db_rec));
+                if ($this->needs_db_update($db_rec)) {
+                    // ... create the prepared sql function ...
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_update($sc, $db_rec, $usr_msg, $sc_par_lst);
+
+                    // ... and update the database row
+                    $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
+                }
             }
         }
         return $usr_msg->is_ok();
@@ -702,6 +585,40 @@ class ip_range extends db_object_seq_id
         }
 
         return $qp;
+    }
+
+
+    /*
+     * sql helper
+     */
+
+    /**
+     * check if the named object in the database needs to be updated
+     * is expected to be similar to the diff_msg function
+     *
+     * @param ip_range|IdObject $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(ip_range|IdObject $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        // TODO Prio 3 review
+        if ($db_obj->id() == $this->id()) {
+            $result = false;
+        }
+        if ($db_obj->from !== $this->from) {
+            $result = true;
+        }
+        if ($db_obj->to !== $this->to) {
+            $result = true;
+        }
+        if ($db_obj->reason !== $this->reason) {
+            $result = true;
+        }
+        if ($db_obj->active !== $this->active) {
+            $result = true;
+        }
+        return $result;
     }
 
 
@@ -820,11 +737,16 @@ class ip_range extends db_object_seq_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
+            // TODO Prio 2 review and remove exception if possible
+            $old_val = $obj->active;
+            if ($obj->active === false) {
+                $old_val = null;
+            }
             $lst->add_field(
                 ip_range_db::FLD_ACTIVE,
                 $this->active,
                 sql_field_type::BOOL,
-                $obj->active
+                $old_val
             );
         }
         return $lst;

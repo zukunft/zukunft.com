@@ -2314,8 +2314,8 @@
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /system/ip_range.php
     \-- key - section for function key not yet defined that it should be set and get in /system/ip_range.php
     \-- includes - section for function includes not yet defined that it should be check in /system/ip_range.php
-    \-- log_add - section for function log_add is expected to be log in /system/ip_range.php
     \-- id_field - section for function id_field not yet defined that it should be save in /system/ip_range.php
+    \-- needs_db_update - section for function needs_db_update is expected to be info in /system/ip_range.php
 \-- ip_range_list
     \-- add - section for function add not yet defined that it should be modify in /system/ip_range_list.php
     \-- load_sql_obj_vars - section for function load_sql_obj_vars is expected to be load sql in /system/ip_range_list.php
@@ -3233,7 +3233,7 @@
         \-- sandbox_code_id - check if the named object in the database needs to be updated
         \-- sandbox_typed - check if the typed object in the database needs to be updated
 \-- save
-    \-- 2
+    \-- 1
         \-- ip_range - get a similar or overlapping ip range
     \-- save
         \-- component_link_list - simple but slow function to add of update all list items in the database
@@ -4207,6 +4207,9 @@
 \-- object vars
     \-- __construct
         \-- user_service - set the user that has requested service process
+\-- sql helper
+    \-- needs_db_update
+        \-- ip_range - check if the named object in the database needs to be updated
 \-- loading
     \-- load_sql_obj_vars
         \-- ip_range_list - create an SQL statement to retrieve the all active ip ranges from the database

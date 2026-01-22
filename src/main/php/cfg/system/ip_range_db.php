@@ -74,9 +74,9 @@ class ip_range_db
     // field lists for the table creation
     const array FLD_LST_ALL = array(
         [self::FLD_KEY, sql_field_type::TEXT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_KEY_COM],
-        [self::FLD_FROM, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [self::FLD_TO, sql_field_type::IP_ADDR, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [self::FLD_REASON, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_FROM, sql_field_type::IP_ADDR, sql_field_default::NULL, sql::INDEX, '', ''],
+        [self::FLD_TO, sql_field_type::IP_ADDR, sql_field_default::NULL, sql::INDEX, '', ''],
+        [self::FLD_REASON, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
         [self::FLD_ACTIVE, sql_field_type::INT_SMALL, sql_field_default::ONE, '', '', ''],
     );
 
