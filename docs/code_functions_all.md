@@ -1452,6 +1452,8 @@
     \-- sql_update - section for function sql_update not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- sql_write - section for function sql_write not yet defined that it should be sql write in /helper/db_object_seq_id.php
+    \-- sql_write_log - section for function sql_write_log not yet defined that it should be sql write in /helper/db_object_seq_id.php
+    \-- sql_write_update - section for function sql_write_update not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- sql_write_call - section for function sql_write_call not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- sql_write_no_log - section for function sql_write_no_log not yet defined that it should be sql write in /helper/db_object_seq_id.php
     \-- has_db_id - section for function has_db_id not yet defined that it should be db helper in /helper/db_object_seq_id.php

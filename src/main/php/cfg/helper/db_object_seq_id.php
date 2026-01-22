@@ -962,8 +962,6 @@ class db_object_seq_id extends db_object
      * TODO Prio 1
      * split
      * sql_write_add_key - create the sql to add the db row and add the main sql_write_add_key
-     * sql_write_log - create the sql to log the changes
-     * sql_write_update - create the sql to change the non prime key fields
      *
      * review check($usr_msg) - create an error if a mandatory field is missing
      *
@@ -1027,12 +1025,6 @@ class db_object_seq_id extends db_object
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_log = clone $sc_par_lst_sub;
-        if ($sc_par_lst->is_insert()) {
-            $sc_par_lst_log->add(sql_type::INSERT_PART);
-        } else {
-            $sc_par_lst_log->add(sql_type::UPDATE_PART);
-        }
 
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
@@ -1058,36 +1050,106 @@ class db_object_seq_id extends db_object
 
         // create the query parameters for the log entries for the single fields
         if ($usr_msg->is_ok()) {
-            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $usr_msg, $sc_par_lst_log);
+            $qp_log = $this->sql_write_log($sc, $usr_msg, $fvt_lst, $fld_lst_chg, $sc_par_lst_sub);
             $sql .= ' ' . $qp_log->sql;
             $par_lst_out->add_list($qp_log->par_fld_lst);
         }
 
-        // update the fields excluding the unique id
-        $update_fvt_lst = new sql_par_field_list();
+        // add the update row SQL to the function body
+        if ($usr_msg->is_ok()) {
+            $sql_upd = $this->sql_write_update(
+                $sc, $usr_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_chg, $sc_par_lst);
+            if ($sql_upd != '') {
+                $sql .= ' ' . $sql_upd . ' ';
+            }
+        }
+
+        // create the call sql statement
+        return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);
+    }
+
+    function sql_write_log(
+        sql_creator        $sc,
+        user_message       $usr_msg,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_chg,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_log = clone $sc_par_lst;
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst_log->add(sql_type::INSERT_PART);
+        } else {
+            $sc_par_lst_log->add(sql_type::UPDATE_PART);
+        }
+
+        // create the query parameters for the log entries for the single fields
+        if ($sc_par_lst->is_insert()) {
+            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $usr_msg, $sc_par_lst_log);
+        } else {
+            $qp_log = $sc->sql_func_log_update($this::class, $usr_msg->usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
+        }
+        return $qp_log;
+    }
+
+    /**
+     * create SQL statement to update a list of fields in a table.
+     * the list of fields should bot include the unique id field,
+     * and the created statement does not include the logging of the changes.
+     * the SQL statement is used to update a db row but also as part of the insert SQL statement
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $usr_msg collect the messages for the user
+     * @param string $id_fld the inner part of sql statement
+     * @param string $var_name_row_id the name of the id field
+     * @param sql_par_field_list $fvt_lst fields with parameters in order of usage in the query function
+     * @param array $fld_lst_chg list of field names that have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string the SQL update statement
+     */
+    function sql_write_update(
+        sql_creator        $sc,
+        user_message       $usr_msg,
+        string             $id_fld,
+        string             $var_name_row_id,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_chg,
+        sql_type_list      $sc_par_lst = new sql_type_list()
+    ): string
+    {
+        // exclude the main unique index field from the list of updated the fields
+        // but only for insert statements where the main unique index field (e.g. the name)
+        // has been used to get the new db row id
         if ($sc_par_lst->is_insert()) {
             $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
             unset($fld_lst_chg[$key_fld_pos]);
         }
+
+        // collect the field values and types for the update statement
+        $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
             $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
         }
-        $par_lst_out->add_list($update_fvt_lst);
 
-        $sc_update = clone $sc;
-        $sc_par_lst_upd = $sc_par_lst;
-        $sc_par_lst_upd->add(sql_type::UPDATE);
-        $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-        $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+        if (!$update_fvt_lst->is_empty()) {
 
-        $qp_update->sql = $sc_update->create_sql_update(
-            $id_fld, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_update->sql . ' ';
+            // prepare the update query parameter object
+            $sc_update = clone $sc;
+            $sc_par_lst_upd = $sc_par_lst;
+            $sc_par_lst_upd->add(sql_type::UPDATE);
+            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+            $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
 
-        // create the call sql statement
-        return $this->sql_write_call($sc, $qp, $sql, $id_fld_new, $par_lst_out, $sc_par_lst);
+            // create the SQL update statement
+            $qp_update->sql = $sc_update->create_sql_update(
+                $id_fld, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+
+            return $qp_update->sql;
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -1103,12 +1165,12 @@ class db_object_seq_id extends db_object
      * @return sql_par the SQL insert statement, the name of the SQL statement, and the parameter list
      */
     function sql_write_call(
-        sql_creator   $sc,
-        sql_par       $qp,
-        string        $sql,
-        string        $id_fld_new,
+        sql_creator        $sc,
+        sql_par            $qp,
+        string             $sql,
+        string             $id_fld_new,
         sql_par_field_list $par_lst_out,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         if ($sc->db_type == sql_db::POSTGRES) {

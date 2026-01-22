@@ -94,8 +94,7 @@ class ip_range_tests
         $t->assert_sql_insert($sc, $ip_range, [sql_type::LOG]);
         $ip_range = $t_ip_range->ip_range_filled();
         $ip_range_db = $ip_range->clone_reset();
-        // TODO Prio 0 activate
-        //$t->assert_sql_update($sc, $ip_range, $ip_range_db, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $ip_range, $ip_range_db, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $ip_range, [sql_type::LOG]);
 
         $t->subheader($ts . 'api');

@@ -608,8 +608,7 @@ class type_object extends db_object_seq_id
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
-        $sc_par_lst_log = clone $sc_par_lst_sub;
-        $sc_par_lst_log->add(sql_type::INSERT_PART);
+
         if ($sc_par_lst->is_insert()) {
             // create sql to set the prime key upfront to get the sequence id
             $qp_id = clone $qp;
@@ -631,11 +630,7 @@ class type_object extends db_object_seq_id
         );
 
         // create the query parameters for the log entries for the single fields
-        if ($sc_par_lst->is_insert()) {
-            $qp_log = $sc->sql_func_log($this::class, $usr_msg->usr, $fld_lst_log, $fvt_lst, $usr_msg, $sc_par_lst_log);
-        } else {
-            $qp_log = $sc->sql_func_log_update($this::class, $usr_msg->usr, $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id);
-        }
+        $qp_log = $this->sql_write_log($sc, $usr_msg, $fvt_lst, $fld_lst_log, $sc_par_lst_sub);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -654,28 +649,11 @@ class type_object extends db_object_seq_id
             );
         }
 
-        // update the fields excluding the unique id
-        $fld_lst_chg = $fld_lst_log;
-        if ($sc_par_lst->is_insert()) {
-            $key_fld_pos = array_search($this->name_field(), $fld_lst_chg);
-            unset($fld_lst_chg[$key_fld_pos]);
-        }
-        $update_fvt_lst = new sql_par_field_list();
-        foreach ($fld_lst_chg as $fld) {
-            $update_fvt_lst->add($fvt_lst->get($fld, $usr_msg));
-        }
-        if (!$update_fvt_lst->is_empty()) {
-            $sc_update = clone $sc;
-            $sc_par_lst_upd = $sc_par_lst;
-            $sc_par_lst_upd->add(sql_type::UPDATE);
-            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-            $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
-
-            $qp_update->sql = $sc_update->create_sql_update(
-                $id_fld, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-            // add the insert row to the function body
-            $sql .= ' ' . $qp_update->sql . ' ';
+        // add the update row SQL to the function body
+        $sql_upd = $this->sql_write_update(
+            $sc, $usr_msg, $id_fld, $var_name_row_id, $fvt_lst, $fld_lst_log, $sc_par_lst);
+        if ($sql_upd != '') {
+            $sql .= ' ' . $sql_upd . ' ';
         }
 
         // create the call sql statement
