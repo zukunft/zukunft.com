@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -220,7 +220,41 @@ class ip_range extends db_object_seq_id
 
 
     /*
-     * loading
+     * load
+     */
+
+    /**
+     * load an ip range from the database selected by id
+     * @param int $id the id of an ip range
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        $this->reset();
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load an ip range from the database selected by the start and end ip address
+     * @param string $ip_from the start ip address that should be used for the query
+     * @param string $ip_to the end ip address that should be used for the query
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_ip_addresses(string $ip_from, string $ip_to): int
+    {
+        global $db_con;
+
+        $this->reset();
+        $qp = $this->load_sql_by_ip_addresses($db_con->sql_creator(), $ip_from, $ip_to);
+        return $this->load($qp);
+    }
+
+
+    /*
+     * load sql
      */
 
     /**
@@ -245,59 +279,20 @@ class ip_range extends db_object_seq_id
     /**
      * create an SQL statement to retrieve the ip range from the database
      *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
+     * @param string $ip_from the start ip address that should be used for the query
+     * @param string $ip_to the end ip address that should be used for the query
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_sql_by_vars(sql_db $db_con): sql_par
+    function load_sql_by_ip_addresses(sql_creator $sc, string $ip_from, string $ip_to): sql_par
     {
-        $db_con->set_class($this::class);
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($class_name);
-        $qp->name = $class_name . '_by_';
-        $sql_where = '';
-        if ($this->id() != 0) {
-            $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_par_type::INT, $this->id());
-            $sql_where .= ip_range_db::FLD_ID . ' = ' . $db_con->par_name();
-        } elseif ($this->from != '' and $this->to != '') {
-            $qp->name .= 'range';
-            $db_con->add_par(sql_par_type::TEXT, $this->from);
-            $sql_where .= ip_range_db::FLD_FROM . " = " . $db_con->par_name();
-            $db_con->add_par(sql_par_type::TEXT, $this->to);
-            $sql_where .= " and " . ip_range_db::FLD_TO . " = " . $db_con->par_name();
-        } else {
-            $qp->name = '';
-            log_err("Either the database ID (" . $this->id() .
-                ") or the ip range (" . $this->dsp_id() .
-                ") must be set to load an ip range.", $class_name . '->load_sql');
-        }
-
-        if ($qp->name != '') {
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->get_user()->id);
-            $db_con->set_fields(ip_range_db::FLD_NAMES);
-            $db_con->set_where_text($sql_where);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-        }
+        $qp = $this->load_sql($sc, 'ip_addresses');
+        $sc->add_where(ip_range_db::FLD_FROM, $ip_from);
+        $sc->add_where(ip_range_db::FLD_TO, $ip_to);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load an ip range from the database selected by id
-     * @param int $id the id of an ip range
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id): int
-    {
-        global $db_con;
-
-        $this->reset();
-        $this->id = $id;
-        $qp = $this->load_sql_by_vars($db_con);
-        return $this->load($qp);
     }
 
 
@@ -565,17 +560,12 @@ class ip_range extends db_object_seq_id
      */
     function get_similar(user_message $usr_msg): ip_range|db_object|null
     {
-        global $db_con;
         $result = null;
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->id = $this->id();
-        $db_chk->from = $this->from;
-        $db_chk->to = $this->to;
         $db_chk->set_user($this->get_user());
-        $qp = $this->load_sql_by_vars($db_con);
-        $db_chk->load($qp);
+        $db_chk->load_by_ip_addresses($this->from, $this->to);
         if ($db_chk->id() > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -626,10 +616,9 @@ class ip_range extends db_object_seq_id
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->id = $this->id();
             $db_rec->set_user($this->get_user());
-            $qp = $this->load_sql_by_vars($db_con);
-            if ($db_rec->load($qp) > 0) {
+            $db_rec->load_by_id($this->id());
+            if ($db_rec->id() > 0) {
                 $usr_msg->add($this->save_fields($db_con, $db_rec));
             }
         }

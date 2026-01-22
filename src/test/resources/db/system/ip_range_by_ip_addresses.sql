@@ -1,4 +1,4 @@
-PREPARE ip_range_by_range (text, text) AS
+PREPARE ip_range_by_ip_addresses (text, text) AS
     SELECT ip_range_id,
            ip_range_key,
            ip_from,
@@ -7,4 +7,4 @@ PREPARE ip_range_by_range (text, text) AS
            is_active
     FROM ip_ranges
     WHERE ip_from = $1
-      and ip_to = $2;
+      AND ip_to = $2;

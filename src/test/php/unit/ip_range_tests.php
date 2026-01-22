@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2026 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -84,8 +84,9 @@ class ip_range_tests
         $t->subheader($ts . 'sql read');
 
         // sql to load one batch ip_range
-        $ip_range = new ip_range($usr);
+        $ip_range = new ip_range();
         $t->assert_sql_by_id($sc, $ip_range);
+        $this->assert_sql_ip_addresses($t, $sc, $ip_range);
 
         $t->subheader($ts . 'sql write');
         $ip_range = $t_ip_range->ip_range();
@@ -105,6 +106,7 @@ class ip_range_tests
 
         $ip_range_lst = $t_ip_range->ip_range_list();
         $t->assert_api($ip_range_lst);
+
 
         /*
          * im- and export tests
@@ -128,37 +130,38 @@ class ip_range_tests
         $t->assert_true('ip_range->import check', $result);
 
 
-        // sql to load by ip range
-        $db_con->db_type = sql_db::POSTGRES;
-        $ip_range->reset();
-        $ip_range->from = ip_ranges::TEST_START;
-        $ip_range->to = ip_ranges::TEST_END;
-        $ip_range->set_user($usr);
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range.sql');
-        $t->assert('ip_range->load_sql by ip range', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-        // ... and check if the prepared sql name is unique
-        $result = false;
-        $sql_name = $ip_range->load_sql_by_vars($db_con)->name;
-        if (!in_array($sql_name, $t->unique_sql_names)) {
-            $result = true;
-            $t->unique_sql_names[] = $sql_name;
-        }
-        $t->assert_true('ip_range->load_sql by id range', $result);
-
-        // ... and the same for MySQL by replication the SQL builder statements
-        $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $ip_range->load_sql_by_vars($db_con)->sql;
-        $expected_sql = $t->file('db/system/ip_range_mysql.sql');
-        $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
-
-
         $t->subheader($ts . 'ip list sql');
 
         $ip_lst = new ip_range_list();
         $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
+    }
+
+    /**
+     * test the SQL statement creation to get an ip range by the ip addresses
+     * and check if the statement name is unique
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_creator $sc the test database connection
+     * @param ip_range $ipr the ip range object for which the load-by-address sql statement creation should be tested
+     * @return void
+     */
+    private function assert_sql_ip_addresses(
+        test_cleanup $t,
+        sql_creator  $sc,
+        ip_range     $ipr): void
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $ipr->load_sql_by_ip_addresses($sc, ip_ranges::TEST_START, ip_ranges::TEST_END);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $ipr->load_sql_by_ip_addresses($sc, ip_ranges::TEST_START, ip_ranges::TEST_END);
+            $t->assert_qp($qp, $sc->db_type);
+        }
     }
 
 }
