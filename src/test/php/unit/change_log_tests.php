@@ -295,13 +295,13 @@ class change_log_tests
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $log->load_sql_by_vars($db_con, 1);
+        $qp = $log->load_sql_by_table($db_con, 1);
         $result = $t->assert_qp($qp, $db_con->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $db_con->db_type = sql_db::MYSQL;
-            $qp = $log->load_sql_by_vars($db_con, 1);
+            $qp = $log->load_sql_by_table($db_con, 1);
             $t->assert_qp($qp, $db_con->db_type);
         }
     }

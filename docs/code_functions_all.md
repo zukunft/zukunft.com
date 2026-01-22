@@ -1561,7 +1561,7 @@
 \-- change_link
     \-- row_mapper - section for function row_mapper not yet defined that it should be database link in /log/change_link.php
     \-- load_sql_by_user - section for function load_sql_by_user is expected to be load sql in /log/change_link.php
-    \-- load_sql_by_vars - section for function load_sql_by_vars is expected to be load sql in /log/change_link.php
+    \-- load_sql_by_table - section for function load_sql_by_table is expected to be load sql in /log/change_link.php
     \-- load_last_by_user - section for function load_last_by_user is expected to be load in /log/change_link.php
     \-- add_link_ref - section for function add_link_ref not yet defined that it should be database link in /log/change_link.php
     \-- dsp_last - section for function dsp_last not yet defined that it should be database link in /log/change_link.php
@@ -3935,7 +3935,7 @@
         \-- change_link - map the database fields to one change log entry to this log object
     \-- load_sql_by_user
         \-- change_link - TODO make sure that always a order is defined to allow page views
-    \-- load_sql_by_vars
+    \-- load_sql_by_table
         \-- change_link - TODO make sure that always a order is defined to allow page views
     \-- load_last_by_user
         \-- change_link - get the last link changed by a user
