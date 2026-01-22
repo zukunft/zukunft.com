@@ -388,6 +388,15 @@ class ip_range extends db_object_seq_id
         return $result;
     }
 
+    protected function can_delete(user_message $usr_msg): bool
+    {
+        $can_del = false;
+        if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+            $can_del = true;
+        }
+        return $can_del;
+    }
+
 
     /*
      * save
@@ -732,8 +741,8 @@ class ip_range extends db_object_seq_id
      */
     function db_fields_changed(
         ip_range|db_object_seq_id $obj,
-        user_message         $usr_msg,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        user_message              $usr_msg,
+        sql_type_list             $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $sys;
