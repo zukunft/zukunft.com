@@ -624,7 +624,7 @@ class formula_list extends sandbox_list_named
      *
      * @param formula_list $del_lst is the list of phrases that should be removed from this list object
      */
-    private function diff(formula_list $del_lst): void
+    function remove(formula_list $del_lst): void
     {
         if (!$this->is_empty()) {
             $result = array();

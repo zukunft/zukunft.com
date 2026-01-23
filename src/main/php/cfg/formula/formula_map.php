@@ -1583,7 +1583,7 @@ class formula_map extends sandbox_code_id
             // update the reference table for fast calculation
             // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
             if ($usr_msg->is_ok()) {
-                if (!$this->element_refresh($this->ref_text)) {
+                if (!$this->element_refresh_old($this->ref_text)) {
                     $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                 }
             }

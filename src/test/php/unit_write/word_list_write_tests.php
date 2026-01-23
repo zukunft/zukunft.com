@@ -410,7 +410,7 @@ class word_list_write_tests
             "Juli",
             "August"
         ));
-        $wrd_lst->diff($del_wrd_lst);
+        $wrd_lst->remove($del_wrd_lst);
         $result = $wrd_lst->names();
         $target = array("April", "December", "February", "January", "March", "November", "October", "September");
         $t->assert('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);

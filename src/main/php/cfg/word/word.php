@@ -1162,7 +1162,7 @@ class word extends sandbox_code_id
         $phr_lst = $this->phrase_list();
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
-        $added_lst->diff($this->phrase_list());
+        $added_lst->remove($this->phrase_list());
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
@@ -1171,7 +1171,7 @@ class word extends sandbox_code_id
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
-                $added_lst->diff($phr_lst);
+                $added_lst->remove($phr_lst);
                 if (!$added_lst->is_empty()) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->dsp_id());
                 }

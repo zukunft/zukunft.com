@@ -60,6 +60,7 @@ include_once paths::MODEL_ELEMENT . 'element.php';
 include_once paths::MODEL_ELEMENT . 'element_db.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'formula_map.php';
+include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
@@ -79,6 +80,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -1065,7 +1067,7 @@ class formula extends formula_map
      * @param string $frm_text the reference text that should be used for the update
      * @return bool true if the update has been fine
      */
-    function element_refresh(string $frm_text): bool
+    function element_refresh_old(string $frm_text): bool
     {
         log_debug('->element_refresh (f' . $this->id() . $frm_text . ',u' . $this->get_user()->id() . ')');
 
@@ -1118,6 +1120,52 @@ class formula extends formula_map
         return $result;
     }
 
+    /**
+     * update the database references to the formula elements
+     * to be able to use the sql statements to find all formulas depending on a word. triple, verb or formula
+     *
+     * @param user_message $usr_msg
+     * @return bool true if the update has been fine
+     */
+    function element_refresh(user_message $usr_msg): bool
+    {
+        $imp = new import();
+
+        // get the target list of elements that should be linked to the formula
+        $elm_lst = $this->element_list();
+
+        // read the existing elements from the database
+        $db_lst = new element_list($this->get_user());
+        $db_lst->load_by_frm($this->id());
+
+        // add the missing links
+        $add_lst = $elm_lst->diff($db_lst);
+        $add_lst->db_insert($usr_msg, $imp);
+
+        // delete links not needed any more
+        $del_lst = $db_lst->diff($elm_lst);
+        $del_lst->db_delete($usr_msg, $imp);
+
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * get the list of elements used in this formula
+     * @return element_list the list of elements used in this formula
+     */
+    function element_list(): element_list
+    {
+        $elm_lst = new element_list($this->get_user());
+        $exp = $this->expression();
+        $exp_trm_lst = $exp->terms();
+        foreach ($exp_trm_lst->lst() as $trm) {
+            $elm = new element($this->get_user());
+            $elm->frm = $this;
+            $elm->obj = $trm->obj();
+            $elm_lst->add($elm);
+        }
+        return $elm_lst;
+    }
 
 
 

@@ -477,7 +477,7 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * without checking if the object is db ready
+     * without checking if the object is db ready.
      * used e.g. for the triple import to update triple fields
      * without repeating the links in the import json message
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
@@ -952,7 +952,7 @@ class sandbox_list_named extends sandbox_list
 
             // get the sql call to add the missing objects
             // TODO use sql_insert ?
-            $ins_calls = $add_lst->sql_insert_call_with_par($sc);
+            $ins_calls = $add_lst->sql_insert_call_with_par($sc, $usr_msg);
             $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
             // get the functions that are already in the database
@@ -975,7 +975,7 @@ class sandbox_list_named extends sandbox_list
             $step_time = $this->count() / $save_per_sec;
             $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
             $add_lst = $add_lst->filter_by_name($func_create_obj_names);
-            $ins_calls = $add_lst->sql_insert_call_with_par($sc);
+            $ins_calls = $add_lst->sql_insert_call_with_par($sc, $usr_msg);
             $usr_msg->add($ins_calls->exe($class));
 
             // TODO create a loop to add depending triples
@@ -1191,39 +1191,6 @@ class sandbox_list_named extends sandbox_list
     protected function delete_depending(user_message $usr_msg): void
     {
         $usr_msg->add_info_text('no depending defined for ' . $this::class);
-    }
-
-    /**
-     * get a list of all sql function names that are needed to add all loaded of this list to the database
-     * @return sql_par_list with the sql function names
-     */
-    function sql_insert_call_with_par(sql_creator $sc): sql_par_list
-    {
-        // TODO Prio 1 add $usr_msg as parameter
-        $usr_msg = new user_message();
-
-        $sql_list = new sql_par_list();
-        foreach ($this->lst() as $sbx) {
-            // another validation check as a second line of defence
-            if ($sbx->db_ready($usr_msg)) {
-                // check always user sandbox and normal name, because reading from database for check would take longer
-                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-                $sc_par_lst->add(sql_type::LOG);
-                $ins_usr_msg = new user_message();
-                $qp = $sbx->sql_insert($sc, $ins_usr_msg, $sc_par_lst);
-                if ($ins_usr_msg->is_ok()) {
-                    $qp->obj_name = $sbx->name();
-                    $sql_list->add($qp);
-                } else {
-                    // TODO Prio 0 create error because this case should neven happen
-                    // to not add the $ins_usr_msg to the $usr_msg because each add should be possible even if the previous add failed
-                    // $usr_msg->add($ins_usr_msg);
-                    log_warning('Internal import error: ' . $usr_msg->all_message_text());
-                    //log_err('Internal import error: ' . $usr_msg->all_message_text());
-                }
-            }
-        }
-        return $sql_list;
     }
 
     /**

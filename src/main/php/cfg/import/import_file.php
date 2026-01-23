@@ -288,7 +288,7 @@ class import_file
                         } else {
 
                             // report al least the missing config values
-                            $val_diff = $dto->value_list()->diff($cfg);
+                            $val_diff = $dto->value_list()->remove_list($cfg);
                             if ($val_diff->is_empty()) {
 
                                 // confirm the validation by counting the values

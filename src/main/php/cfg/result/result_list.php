@@ -1043,7 +1043,7 @@ class result_list extends sandbox_value_list
         }
 
         // exclude the special elements from the phrase list to avoid double usage
-        $phr_lst_frm_used->diff($phr_lst_preset);
+        $phr_lst_frm_used->remove($phr_lst_preset);
         if ($phr_lst_preset->dsp_name() <> '""') {
             log_debug('Excluding the predefined phrases ' . $phr_lst_preset->dsp_name() . ' the formula uses ' . $phr_lst_frm_used->dsp_name());
         }

@@ -342,7 +342,7 @@ class formula_write_tests
 
         // test formula refresh functions
 
-        $result = $frm->element_refresh($frm->ref_text);
+        $result = $frm->element_refresh_old($frm->ref_text);
         $target = true;
         $t->assert('formula->element_refresh for ' . $frm->dsp_id(), $result, $target);
 

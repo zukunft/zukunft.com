@@ -774,7 +774,7 @@ class phrase_list extends sandbox_list_named
                     // load the linking triples but only if the verb suggest it
                     $additional_added_triples = $accumulated_list->load_linking_triples($vrb, $direction);
                     // get the phrases not added before
-                    $additional_added_triples->diff($added_phr_lst);
+                    $additional_added_triples->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_triples);
                 }
@@ -783,21 +783,21 @@ class phrase_list extends sandbox_list_named
                     // load all linked up phrases
                     $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::UP);
                     // get the phrases not added before
-                    $additional_added_phrases->diff($added_phr_lst);
+                    $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_phrases);
 
                     // load all linked down phrases
                     $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, foaf_direction::DOWN);
                     // get the phrases not added before
-                    $additional_added_phrases->diff($added_phr_lst);
+                    $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_phrases);
                 } else {
                     // load all linked phrases
                     $additional_added_phrases = $accumulated_list->load_linked_phrases($vrb, $direction);
                     // get the phrases not added before
-                    $additional_added_phrases->diff($added_phr_lst);
+                    $additional_added_phrases->remove($added_phr_lst);
                     // remember the added phrases
                     $added_phr_lst->merge($additional_added_phrases);
                 }
@@ -1249,7 +1249,7 @@ class phrase_list extends sandbox_list_named
         $phr_lst = $phr_lst->are();
         $phr_lst = $phr_lst->contains();
         $added_lst = clone $phr_lst;
-        $added_lst->diff($this);
+        $added_lst->remove($this);
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
@@ -1258,7 +1258,7 @@ class phrase_list extends sandbox_list_named
                 $next_lst = clone $added_lst;
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
-                $added_lst->diff($phr_lst);
+                $added_lst->remove($phr_lst);
                 if ($added_lst->count() > 0) {
                     log_debug('add ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
                 }
@@ -1295,7 +1295,7 @@ class phrase_list extends sandbox_list_named
         $phr_lst = $this->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
-        $added_lst->diff($this);
+        $added_lst->remove($this);
         // ... and after that get only for the new
         if ($added_lst->count() > 0) {
             $loops = 0;
@@ -1304,7 +1304,7 @@ class phrase_list extends sandbox_list_named
                 $next_lst = $added_lst->all_children($sys->typ_lst->vrb->get_verb(verbs::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
-                $added_lst->diff($phr_lst);
+                $added_lst->remove($phr_lst);
                 if ($added_lst->count() > 0) {
                     log_debug('add ' . $added_lst->name() . ' to ' . $phr_lst->name());
                 }
@@ -1632,7 +1632,7 @@ class phrase_list extends sandbox_list_named
      *
      * @param phrase_list $del_lst is the list of phrases that should be removed from this list object
      */
-    function diff(phrase_list $del_lst): void
+    function remove(phrase_list $del_lst): void
     {
         log_debug('phrase_list->diff of ' . $del_lst->dsp_id() . ' and ' . $this->dsp_id());
 
@@ -1656,7 +1656,7 @@ class phrase_list extends sandbox_list_named
     function not_in(phrase_list $del_phr_lst): void
     {
         log_debug('phrase_list->not_in get out of ' . $this->dsp_name() . ' not in ' . $del_phr_lst->name() . ')');
-        $this->diff($del_phr_lst);
+        $this->remove($del_phr_lst);
     }
     /*
     // keep only those phrases in the list that are not in the list to delete
@@ -2003,7 +2003,7 @@ class phrase_list extends sandbox_list_named
         log_debug($this->dsp_id());
         $del_wrd_lst = $this->time_word_list();
         $del_phr_lst = $del_wrd_lst->phrase_list();
-        $this->diff($del_phr_lst);
+        $this->remove($del_phr_lst);
     }
 
     /**
@@ -2012,7 +2012,7 @@ class phrase_list extends sandbox_list_named
     function ex_measure(): void
     {
         $del_phr_lst = $this->measure_lst();
-        $this->diff($del_phr_lst);
+        $this->remove($del_phr_lst);
         log_debug($this->dsp_name() . ' (exclude measure ' . $del_phr_lst->dsp_name() . ')');
     }
 
@@ -2022,7 +2022,7 @@ class phrase_list extends sandbox_list_named
     function ex_scaling(): void
     {
         $del_phr_lst = $this->scaling_lst();
-        $this->diff($del_phr_lst);
+        $this->remove($del_phr_lst);
         log_debug($this->dsp_name() . ' (exclude scaling ' . $del_phr_lst->dsp_name() . ')');
     }
 

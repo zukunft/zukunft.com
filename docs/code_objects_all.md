@@ -222,34 +222,35 @@ the object structure is:
 \-- ListOfShared
     \-- value_type_list - a list of value types e.g. to create the query extension
     \-- ListOfIdObjectsShared
-        \-- base_list
-            \-- element_group - a group of formula elements that, in combination, return a value or a list of values
+        \-- list_db_read
             \-- change_log_list - read the changes from the database and forward them to the API
-            \-- sandbox_list
-                \-- element_group_list - simply a list of formula element groups to place the name function
-                \-- element_list - a list of formula elements to place the name function
-                \-- figure_list - a list of figures, so either a value of a formula result object
-                \-- group_list - a list of word and triple groups
-                \-- sandbox_link_list
-                    \-- component_link_list - a list of links between a view and a component
-                    \-- formula_link_list - a list of formula word links
-                    \-- term_view_list - a list of assignments from terms to views
-                    \-- view_relation_list - a list of view to view relations
-                \-- sandbox_list_named
-                    \-- component_list - list of predefined system components
-                    \-- formula_list - a simple list of formulas
-                    \-- phrase_list - a list of phrase (word or triple) objects
-                    \-- term_list - a list of word, triple, verb or formula objects
-                    \-- source_list - al list of source objects
-                    \-- view_list - list of predefined system views
-                    \-- triple_list - a list of word links, mainly used to build a RDF graph
-                    \-- word_list - a list of word objects
-                \-- sandbox_value_list
-                    \-- result_list - a list of formula results
-                    \-- value_list
-                        \-- config_numbers - additional behavior for the system and user config graph value tree
-            \-- ip_range_list - a list of internet protocol address ranges
-            \-- job_list - a list of calculation request
+            \-- list_db_write
+                \-- element_group - a group of formula elements that, in combination, return a value or a list of values
+                \-- sandbox_list
+                    \-- element_group_list - simply a list of formula element groups to place the name function
+                    \-- element_list - a list of formula elements to place the name function
+                    \-- figure_list - a list of figures, so either a value of a formula result object
+                    \-- group_list - a list of word and triple groups
+                    \-- sandbox_link_list
+                        \-- component_link_list - a list of links between a view and a component
+                        \-- formula_link_list - a list of formula word links
+                        \-- term_view_list - a list of assignments from terms to views
+                        \-- view_relation_list - a list of view to view relations
+                    \-- sandbox_list_named
+                        \-- component_list - list of predefined system components
+                        \-- formula_list - a simple list of formulas
+                        \-- phrase_list - a list of phrase (word or triple) objects
+                        \-- term_list - a list of word, triple, verb or formula objects
+                        \-- source_list - al list of source objects
+                        \-- view_list - list of predefined system views
+                        \-- triple_list - a list of word links, mainly used to build a RDF graph
+                        \-- word_list - a list of word objects
+                    \-- sandbox_value_list
+                        \-- result_list - a list of formula results
+                        \-- value_list
+                            \-- config_numbers - additional behavior for the system and user config graph value tree
+                \-- ip_range_list - a list of internet protocol address ranges
+                \-- job_list - a list of calculation request
             \-- sys_log_list - a list of system error objects
         \-- ListBaseUi
             \-- element_groupUi - a group of formula elements that, in combination, return a value or a list of values

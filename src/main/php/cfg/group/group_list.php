@@ -547,7 +547,7 @@ class group_list extends sandbox_list
                 // exclude the result phrases
                 $phr_lst_res_name = '';
                 if (isset($phr_lst_res)) {
-                    $used_phr_lst->diff($phr_lst_res);
+                    $used_phr_lst->remove($phr_lst_res);
                     log_debug('removed result phrases ' . $phr_lst_res->dsp_id() . ' from used_phr_lst ' . $used_phr_lst->dsp_id());
                     $phr_lst_res_name = $phr_lst_res->dsp_id();
                 }

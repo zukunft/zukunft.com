@@ -1361,7 +1361,7 @@ class value_list extends sandbox_value_list
      * @param value_list $val_lst
      * @return value_list
      */
-    function diff(value_list $val_lst): value_list
+    function remove_list(value_list $val_lst): value_list
     {
         $result = new value_list($this->get_user());
         foreach ($this->lst() as $val) {
