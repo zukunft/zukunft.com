@@ -7,7 +7,10 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
+    TODO finish the frontend component tests
+    TODO create the frontend page reaction flow tests
     TODO review and create missing formula unit, read and write tests
     TODO m2 should be the formula meter * meter in unit.jsom import message
     TODO document why there is a hidden word for each formula: the reason is that 

@@ -286,7 +286,6 @@ class change_value extends change_log
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
-     * TODO deprecate
      *
      * @return array list of the database field names
      */

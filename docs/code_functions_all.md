@@ -1591,9 +1591,9 @@
     \-- sql_sub_type - section for function sql_sub_type not yet defined that it should be sql write in /log/change_log.php
     \-- sql_insert_link - section for function sql_insert_link not yet defined that it should be sql write in /log/change_log.php
     \-- db_field_values_types - section for function db_field_values_types not yet defined that it should be sql write fields in /log/change_log.php
+    \-- add - section for function add not yet defined that it should be save in /log/change_log.php
     \-- db_fields - section for function db_fields not yet defined that it should be sql write fields in /log/change_log.php
     \-- db_values - section for function db_values not yet defined that it should be sql write fields in /log/change_log.php
-    \-- add - section for function add not yet defined that it should be save in /log/change_log.php
 \-- change_log_list
     \-- load_sql_obj_fld - section for function load_sql_obj_fld is expected to be load sql in /log/change_log_list.php
     \-- load_sql_obj_last - section for function load_sql_obj_last is expected to be load sql in /log/change_log_list.php
