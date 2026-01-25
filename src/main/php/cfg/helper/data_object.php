@@ -962,13 +962,20 @@ class data_object
             log_debug('values not imported because ' . $usr_msg->all_message_text());
         }
 
+        // temp solution to get a valid user
+        // TODO Prio 2 deprecate
+        $vrb_usr = $usr_msg->usr;
+        if ($vrb_usr == null) {
+            $vrb_usr = $this->get_user();
+        }
+
         // clone the term list as cache to filter the terms already fine
         // without removing the fine words, triples, verbs and formulas from the original lists
         $trm_lst = clone $phr_lst->term_list();
-        $trm_lst->merge($this->vrb_lst->term_list());
+        $trm_lst->merge($this->vrb_lst->term_list($vrb_usr));
 
         // always add the preloaded verbs to the term list
-        $trm_lst->merge($sys->typ_lst->vrb->term_list());
+        $trm_lst->merge($sys->typ_lst->vrb->term_list($vrb_usr));
 
         // import the formulas
         $this->save_formulas($usr_msg, $imp, $trm_lst);

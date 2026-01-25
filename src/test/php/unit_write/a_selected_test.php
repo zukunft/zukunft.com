@@ -243,7 +243,7 @@ class a_selected_test extends test_cleanup
             //new user_write_tests()->run($this);
             //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
-            new triple_write_tests()->run($this);
+            //new triple_write_tests()->run($this);
             //new group_write_tests()->run($this);
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
@@ -257,6 +257,7 @@ class a_selected_test extends test_cleanup
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
+            new import_write_tests()->run($this);
 
 
             //$import = new import_file();
@@ -266,7 +267,7 @@ class a_selected_test extends test_cleanup
              * url
              */
 
-            new word_url_tests()->run($this);
+            //new word_url_tests()->run($this);
 
         }
 

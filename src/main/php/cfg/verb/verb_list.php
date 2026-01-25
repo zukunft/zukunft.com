@@ -415,9 +415,9 @@ class verb_list extends type_list
      * cast
      */
 
-    function term_list(): term_list
+    function term_list(user $usr): term_list
     {
-        $trm_lst = new term_list($this->usr);
+        $trm_lst = new term_list($usr);
         foreach ($this->lst() as $vrb) {
             $trm_lst->add($vrb->term());
         }

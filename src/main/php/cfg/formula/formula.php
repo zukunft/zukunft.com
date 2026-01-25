@@ -1185,7 +1185,7 @@ class formula extends formula_map
     ): bool
     {
         if ($this->usr_text != null) {
-            if ($this->ref_text == '' or !$this->ref_text_dirty) {
+            if ($this->ref_text == '' or $this->ref_text_dirty) {
                 $exp = new expression($this);
                 $exp->set_user_text($this->usr_text, $trm_lst);
                 $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
