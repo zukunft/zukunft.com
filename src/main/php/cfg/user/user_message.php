@@ -109,15 +109,22 @@ class user_message
      */
     function __construct(?user $usr = null, string $msg_text = '')
     {
+        $this->reset();
         $this->usr = $usr;
-        $this->info_text = [];
-        $this->msg_text = [];
         if ($msg_text == '') {
             $this->msg_status = msg_id::OK;
         } else {
             $this->msg_text[] = $msg_text;
             $this->msg_status = msg_id::NOK;
         }
+    }
+
+    function reset(): void
+    {
+        $this->usr = new user();
+        $this->info_text = [];
+        $this->msg_text = [];
+        $this->msg_status = msg_id::OK;
         $this->start_time = null;
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
@@ -289,7 +296,7 @@ class user_message
         if (array_key_exists(json_fields::USER, $api_json)) {
             $usr = new user();
             $usr_msg = new user_message();
-            $usr->api_mapper($api_json[json_fields::USER],$usr_msg);
+            $usr->api_mapper($api_json[json_fields::USER], $usr_msg);
             if ($usr_msg->is_ok()) {
                 $this->usr = $usr;
             }

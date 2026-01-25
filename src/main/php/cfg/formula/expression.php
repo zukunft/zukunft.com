@@ -5,6 +5,15 @@
     model/formula/expression.php - a text that implies a data selection and can calculate a number
     ----------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this expression object
+    - construct and map: set the vars of this expression object to the initial value
+    - id lists:          database id list of the terms used in the expression
+    - extract:           get the object from the expression without database access
+    - retrieve:          get the objects from the expression and load missing objects from the database
+    - extract helper:    internal function to support the extract functions
+    - review:            function that might be deprecated
+
     the formula expression with
     the right part of the equation sign which for calculation the result
     and the left part which contains phrases to be added to the result
@@ -131,6 +140,7 @@ include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_ELEMENT . 'element_group_list.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
@@ -138,7 +148,9 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'library.php';
 
@@ -148,15 +160,18 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Exception;
@@ -198,7 +213,107 @@ class expression extends shared_expression
 
 
     /*
-     * interface
+     * id lists
+     */
+
+    /**
+     * get a term list with all term ids used in the formula expression
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @return term_list with all term ids used in the formula expression
+     */
+    function term_id_list(user_message $usr_msg): term_list
+    {
+        $lib = new library();
+        $trm_lst = new term_list($this->usr);
+        $exp_part = $this->r_part();
+        $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        while ($obj_sym != '' and $usr_msg->is_ok()) {
+            $trm = $this->term_from_symbol($obj_sym, $usr_msg);
+            $trm_lst->add($trm);
+            $exp_part = $lib->str_right_of($exp_part, chars::TERM_END);
+            $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        }
+
+        return $trm_lst;
+    }
+
+    /**
+     * get a phrase list with all phrase ids used for the formula result
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @return phrase_list with all phrase ids used for the formula result
+     */
+    function phrase_id_list(user_message $usr_msg): phrase_list
+    {
+        $lib = new library();
+        $phr_lst = new phrase_list($this->usr);
+        $exp_part = $this->res_part();
+        $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        while ($obj_sym != '' and $usr_msg->is_ok()) {
+            $phr = $this->phrase_from_symbol($obj_sym, $usr_msg);
+            $phr_lst->add($phr);
+            $exp_part = $lib->str_right_of($exp_part, chars::TERM_END);
+            $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        }
+
+        return $phr_lst;
+    }
+
+
+    /*
+     * objects
+     */
+
+    /**
+     * get a list with all formula elements used for the calculation of the expression result
+     * and report any missing terms
+     * the list does not include the result phrases.
+     * don't use it for number retrieval, use element_grp_lst instead,
+     * to separate expression processing from data retrieval
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return element_list a list of all formula elements
+     */
+    function element_list(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    {
+        $elm_lst = new element_list($this->usr);
+        $this->element_part_list($this->r_part(), $elm_lst, $usr_msg, $trm_lst);
+        return $elm_lst;
+    }
+
+    /**
+     * get a list of the phrases that should be added to the result
+     * and report any missing phrases
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. missing terms
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return element_list a list of all formula elements
+     */
+    function result_phrases(user_message $usr_msg, ?term_list $trm_lst = null): element_list
+    {
+        $elm_lst = new element_list($this->usr);
+        $this->element_part_list($this->res_part(), $elm_lst, $usr_msg, $trm_lst);
+        return $elm_lst;
+    }
+
+    /**
+     * get all terms used for this formula expression
+     *
+     * @param term_list|null $cac_trm_lst cache of the terns to avoid multiple db loading
+     * @return term_list with all terms used in this expression
+     */
+    function terms(user_message $usr_msg, ?term_list $cac_trm_lst = null): term_list
+    {
+        $trm_lst = $this->element_list($usr_msg, $cac_trm_lst)->term_list();
+        $trm_lst->merge($this->result_phrases($usr_msg, $cac_trm_lst)->term_list());
+        return $trm_lst;
+    }
+
+
+    /*
+     * retrieve
      */
 
     /**
@@ -222,26 +337,13 @@ class expression extends shared_expression
     }
 
     /**
-     * get all terms used for this formula expression
-     *
-     * @param term_list|null $cac_trm_lst cache of the terns to avoid multiple db loading
-     * @return term_list with all terms used in this expression
-     */
-    function terms(?term_list $cac_trm_lst = null): term_list
-    {
-        $trm_lst = $this->element_list($cac_trm_lst)->term_list();
-        $trm_lst->merge($this->result_phrases($cac_trm_lst)->term_list());
-        return $trm_lst;
-    }
-
-    /**
      * get the phrases that should be added to the result of a formula
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @returns phrase_list with the phrases that should be added to the result of a formula
      * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
      */
-    function result_phrases(?term_list $trm_lst = null): phrase_list
+    function load_result_phrases(?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->res_part());
@@ -258,53 +360,11 @@ class expression extends shared_expression
         return $phr_lst;
     }
 
-    function is_valid(): bool
-    {
-        $is_valid = true;
-        if (($this->ref_text() == null or $this->ref_text() == '')
-        and ($this->user_text() == null or $this->user_text() == '')) {
-            $is_valid = false;
-        }
-        return $is_valid;
-    }
 
-    /**
-     * a formula element group is a group of words, verbs, phrases or formula
-     * that retrieve a value or a list of values
-     * e.g. with "sector" "differentiator" all
-     *
-     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return element_list|element_group_list with the formula element groups used in the expression
+    /*
+     * filter elements
+     * TODO to move to element list
      */
-    function element_grp_lst(?term_list $trm_lst = null): element_list|element_group_list
-    {
-        return $this->element_lst_all(expression::SELECT_ALL, TRUE, $trm_lst);
-    }
-
-    /**
-     * get a list of all formula elements
-     *
-     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return element_list a list of all formula elements
-     * (don't use for number retrieval, use element_grp_lst instead, because )
-     */
-    function element_list(?term_list $trm_lst = null): element_list
-    {
-        $lib = new library();
-
-        $elm_lst = new element_list($this->usr);
-        $work = $this->r_part();
-
-        $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
-        while ($obj_sym != '') {
-            $elm = $this->element_by_symbol($obj_sym, $trm_lst);
-            $elm->frm = $this->frm;
-            $elm_lst->add($elm);
-            $work = $lib->str_right_of($work, chars::TERM_END);
-            $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
-        }
-        return $elm_lst;
-    }
 
     /**
      * list of elements (in this case only formulas) that are of the predefined type "following"
@@ -312,13 +372,13 @@ class expression extends shared_expression
      * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return phrase_list a list of all formulas words that are using hardcoded functions
      */
-    function element_special_following(?term_list $trm_lst = null): phrase_list
+    function element_special_following(user_message $usr_msg, ?term_list $trm_lst = null): phrase_list
     {
         global $sys;
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_list($trm_lst);
+        $elm_lst = $this->element_list($usr_msg, $trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {
@@ -348,15 +408,20 @@ class expression extends shared_expression
 
     /**
      * similar to element_special_following, but returns the formula and not the word
+     *
+     * @param user_message $usr_msg to collect the error messages e.g. missing terms
      * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return formula_list a list of all formulas that are using hardcoded functions
      */
-    function element_special_following_frm(?term_list $trm_lst = null): formula_list
+    function element_special_following_frm(
+        user_message $usr_msg,
+        ?term_list   $trm_lst = null
+    ): formula_list
     {
         $lib = new library();
 
         $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_list($trm_lst);
+        $elm_lst = $this->element_list($usr_msg, $trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {
@@ -373,6 +438,41 @@ class expression extends shared_expression
 
         log_debug($lib->dsp_count($frm_lst->lst()));
         return $frm_lst;
+    }
+
+
+    /*
+     * info
+     */
+
+    function is_valid(): bool
+    {
+        $is_valid = true;
+        if (($this->ref_text() == null or $this->ref_text() == '')
+            and ($this->user_text() == null or $this->user_text() == '')) {
+            $is_valid = false;
+        }
+        return $is_valid;
+    }
+
+    /**
+     * @returns bool true if the formula contains a word, verb or formula link
+     */
+    function has_ref(): bool
+    {
+        log_debug($this->dsp_id());
+        $result = false;
+
+        $lib = new library();
+        if ($this->get_word_id($this->ref_text()) > 0
+            or $this->get_triple_id($this->ref_text()) > 0
+            or $this->get_formula_id($this->ref_text()) > 0
+            or $this->get_verb_id($this->ref_text()) > 0) {
+            $result = true;
+        }
+
+        log_debug('done ' . $lib->dsp_bool($result));
+        return $result;
     }
 
 
@@ -430,26 +530,6 @@ class expression extends shared_expression
     }
 
     /**
-     * @returns bool true if the formula contains a word, verb or formula link
-     */
-    function has_ref(): bool
-    {
-        log_debug($this->dsp_id());
-        $result = false;
-
-        $lib = new library();
-        if ($this->get_word_id($this->ref_text()) > 0
-            or $this->get_triple_id($this->ref_text()) > 0
-            or $this->get_formula_id($this->ref_text()) > 0
-            or $this->get_verb_id($this->ref_text()) > 0) {
-            $result = true;
-        }
-
-        log_debug('done ' . $lib->dsp_bool($result));
-        return $result;
-    }
-
-    /**
      * @return array of the term names used in the expression based on the user text
      * e.g. converts "'sales' 'differentiator' / 'Total sales'" to "sales, differentiator, Total sales"
      */
@@ -486,6 +566,30 @@ class expression extends shared_expression
 
 
     /*
+     * extract helper
+     */
+
+    private function element_part_list(
+        string       $exp_part,
+        element_list $elm_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst = null
+    ): bool
+    {
+        $lib = new library();
+        $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        while ($obj_sym != '') {
+            $elm = $this->element_by_symbol($obj_sym, $trm_lst);
+            $elm->frm = $this->frm;
+            $elm_lst->add($elm);
+            $exp_part = $lib->str_right_of($exp_part, chars::TERM_END);
+            $obj_sym = $lib->str_between($exp_part, chars::TERM_START, chars::TERM_END);
+        }
+        return true;
+    }
+
+
+    /*
      * internal functions
      */
 
@@ -510,7 +614,7 @@ class expression extends shared_expression
     }
 
     /**
-     * returns the next formula id if the formula string in the database format contains a triple link
+     * returns the next formula id if the formula string in the database format contains a formula link
      * @param string $ref_text with the formula reference text e.g. ={f42}
      * @return int the word id found in the reference text or zero if no formula id is found
      */
@@ -520,7 +624,7 @@ class expression extends shared_expression
     }
 
     /**
-     * returns the next verb id if the formula string in the database format contains a triple link
+     * returns the next verb id if the formula string in the database format contains a verb link
      * @param string $ref_text with the formula reference text e.g. ={v42}
      * @return int the word id found in the reference text or zero if no verb id is found
      */
@@ -554,6 +658,121 @@ class expression extends shared_expression
         }
 
         return $result;
+    }
+
+    /**
+     * get a term object with only the term id set e.g. w2 for word with id 2
+     *
+     * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @return term|null the term with the id set of null of the expression is not valid
+     */
+    private function term_from_symbol(
+        string       $obj_sym,
+        user_message $usr_msg
+    ): term|null
+    {
+        // check min length
+        if (strlen($obj_sym) < 2) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_TOO_SHORT, [
+                msg_id::VAR_NAME => chars::TERM_START . $obj_sym . chars::TERM_END
+            ]);
+        }
+        // set vars to fallback values
+        $id = 0;
+        $trm = null;
+        // get symbol abd id
+        if ($usr_msg->is_ok()) {
+            $id = $this->symbol_id($obj_sym, $usr_msg);
+        }
+        // get term object
+        if ($usr_msg->is_ok()) {
+            $trm_chr = substr($obj_sym, 0, 1);
+            if ($trm_chr == chars::WORD_SYMBOL) {
+                $wrd = new word($this->usr);
+                $wrd->id = $id;
+                $trm = $wrd->term();
+            } elseif ($trm_chr == chars::TRIPLE_SYMBOL) {
+                $trp = new triple($this->usr);
+                $trp->id = $id;
+                $trm = $trp->term();
+            } elseif ($trm_chr == chars::FORMULA_SYMBOL) {
+                $frm = new formula($this->usr);
+                $frm->id = $id;
+                $trm = $frm->term();
+            } elseif ($trm_chr == chars::VERB_SYMBOL) {
+                $vrb = new verb();
+                $vrb->id = $id;
+                $trm = $vrb->term();
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
+                    msg_id::VAR_NAME => $trm_chr
+                ]);
+            }
+        }
+
+        return $trm;
+    }
+
+    /**
+     * get a phrase object with only the phrase id set e.g. w2 for word with id 2
+     *
+     * @param string $obj_sym the formula result symbol e.g. t2 for triple with id 2
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @return term|null the phrase with the id set of null of the symbol is not valid
+     */
+    private function phrase_from_symbol(
+        string       $obj_sym,
+        user_message $usr_msg
+    ): phrase|null
+    {
+        // check min length
+        if (strlen($obj_sym) < 2) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_TOO_SHORT, [
+                msg_id::VAR_NAME => chars::TERM_START . $obj_sym . chars::TERM_END
+            ]);
+        }
+        // set vars to fallback values
+        $id = 0;
+        $phr = null;
+        // get symbol abd id
+        if ($usr_msg->is_ok()) {
+            $id = $this->symbol_id($obj_sym, $usr_msg);
+        }
+        // get term object
+        if ($usr_msg->is_ok()) {
+            $phr_chr = substr($obj_sym, 0, 1);
+            if ($phr_chr == chars::WORD_SYMBOL) {
+                $wrd = new word($this->usr);
+                $wrd->id = $id;
+                $phr = $wrd->term();
+            } elseif ($phr_chr == chars::TRIPLE_SYMBOL) {
+                $trp = new triple($this->usr);
+                $trp->id = $id;
+                $phr = $trp->term();
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
+                    msg_id::VAR_NAME => $phr_chr
+                ]);
+            }
+        }
+
+        return $phr;
+    }
+
+    function symbol_id(
+        string       $obj_sym,
+        user_message $usr_msg
+    ): int|null
+    {
+        $id = substr($obj_sym, 1);
+        if (!is_numeric($id)) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_ID_NOT_A_NUMBER, [
+                msg_id::VAR_NAME => $obj_sym
+            ]);
+            $id = null;
+        }
+        return $id;
     }
 
     /**
@@ -777,6 +996,7 @@ class expression extends shared_expression
         return $this->user_text();
     }
 
+
     /*
      * overwrite
      */
@@ -873,6 +1093,24 @@ class expression extends shared_expression
             $vrb = null;
         }
         return $vrb;
+    }
+
+
+    /*
+     * review
+     */
+
+    /**
+     * a formula element group is a group of words, verbs, phrases or formula
+     * that retrieve a value or a list of values
+     * e.g. with "sector" "differentiator" all
+     *
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return element_list|element_group_list with the formula element groups used in the expression
+     */
+    function element_grp_lst(?term_list $trm_lst = null): element_list|element_group_list
+    {
+        return $this->element_lst_all(expression::SELECT_ALL, TRUE, $trm_lst);
     }
 
 }

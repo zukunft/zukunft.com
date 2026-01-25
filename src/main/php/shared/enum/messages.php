@@ -586,6 +586,16 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA_NAME . self::VAR_END
         . '" created';
 
+    case EXPRESSION_SYMBOL_TOO_SHORT = 'the formula expression symbol '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is too short';
+    case EXPRESSION_ID_NOT_A_NUMBER = 'the formula expression id '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is no a valid integer number';
+    case EXPRESSION_SYMBOL_NOT_VALID = 'the formula expression symbol '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is not valid. only word, triple, verb and formula are expected.';
+
     case PHRASE_TYPE_UNEXPECTED = 'it is not yet defined how "'
         . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
         . '" should be handled to '

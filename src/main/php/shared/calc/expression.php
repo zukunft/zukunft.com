@@ -109,6 +109,24 @@ class expression
      */
 
     /**
+     * update the database reference expression and the human-readable format
+     * @param string|null $ref_txt the formula expression in the database reference format
+     * @param string|null $usr_txt the formula expression in the human-readable format
+     * @return void
+     */
+    function set_ref_and_user_text(?string $ref_txt, ?string $usr_txt): void
+    {
+        if ($ref_txt != null) {
+            $this->ref_text = $ref_txt;
+            $this->ref_text_dirty = false;
+        }
+        if ($usr_txt != null) {
+            $this->usr_text = $usr_txt;
+            $this->usr_text_dirty = false;
+        }
+    }
+
+    /**
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string|null $usr_txt the formula expression in the human-readable format
      * @param term_list|term_list_ui|null $trm_lst a list of preloaded terms that should be used for the transformation
@@ -168,9 +186,10 @@ class expression
         user_message                $usr_msg = new user_message()
     ): ?string
     {
-        if ($this->ref_text_dirty) {
-            $this->ref_text = $this->get_ref_text($trm_lst, $usr_msg);
+        if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
+            $new_ref_txt = $this->get_ref_text($trm_lst, $usr_msg);
             if ($usr_msg->is_ok()) {
+                $this->ref_text = $new_ref_txt;
                 $this->ref_text_dirty = false;
             }
         }

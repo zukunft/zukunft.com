@@ -38,7 +38,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 37,24,20,90,1,second cubed,,,,,,,,,,,,,,3
 38,27,20,89,1,square metre,,,,,,,,,,,,,,3
 39,27,20,90,1,cubic metre,,,,,,,,,,,,,,3
-40,,26,24,1,cubic metre per second,,,,,,,,,,,,,,3
+40,-39,26,24,1,cubic metre per second,,,,,,,,,,,,,,3
 41,,18,-40,1,m3/s,,,,,,,,,,,,,,
 42,91,23,92,1,elementary charge,,,The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.,,,,,,,,,,,3
 43,2,5,110,1,Planck constant,,,The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.,,,,,,,,,,,3

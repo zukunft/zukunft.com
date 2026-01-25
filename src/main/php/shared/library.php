@@ -403,13 +403,19 @@ class library
     }
 
     /**
-     * @param string $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
-     * @param string $maker e.g. ">end"
+     * @param string|null $text the text from which the left part should be taken e.g. "select" of "select>end ignore"
+     * @param string|null $maker e.g. ">end"
      * @return string the selected text e.g. "select"
      */
-    function str_left_of(string $text, string $maker): string
+    function str_left_of(?string $text, ?string $maker): string
     {
         $result = "";
+        if ($text == null) {
+            $text = "";
+        }
+        if ($maker == null) {
+            $maker = "";
+        }
         $pos = strpos($text, $maker);
         if ($pos > 0) {
             $result = substr($text, 0, strpos($text, $maker));

@@ -114,7 +114,7 @@ class expression_write_tests
         $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
-        $phr_lst_res = $exp->result_phrases();
+        $phr_lst_res = $exp->load_result_phrases();
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
@@ -131,7 +131,7 @@ class expression_write_tests
         //$t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
         // ... and all elements used in the formula
-        $elm_lst = $exp_sector->element_list();
+        $elm_lst = $exp_sector->element_list($usr_msg);
         $result = $elm_lst->name();
         $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';
         $t->assert('element_lst for "' . $exp_sector->dsp_id() . '"', $result, $target);
@@ -150,13 +150,13 @@ class expression_write_tests
         // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases
-        $phr_lst = $exp->element_special_following();
+        $phr_lst = $exp->element_special_following($usr_msg);
         $result = $phr_lst->dsp_name();
         $target = '"' . formulas::THIS_NAME . '","' . formulas::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
-        $frm_lst = $exp->element_special_following_frm();
+        $frm_lst = $exp->element_special_following_frm($usr_msg);
         $result = $frm_lst->name();
         $target = '' . formulas::THIS_NAME . ',' . formulas::PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);

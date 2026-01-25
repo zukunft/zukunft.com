@@ -103,6 +103,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -141,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -725,7 +727,25 @@ class formula_map extends sandbox_code_id
      */
 
     /**
-     * returns ok message if this formula can be added to the database
+     * returns an ok message if this formula can be added to the database if the related terms are added
+     * e.g. a formula without any expression should not be added to the database
+     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @return true if the formula can be added to the database
+     */
+    function can_be_ready(user_message $usr_msg): bool
+    {
+        if ($this->ref_text == null or $this->ref_text == '') {
+            if ($this->usr_text == null or $this->usr_text == '') {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING, [
+                    msg_id::VAR_FORMULA => $this->dsp_id()
+                ]);
+            }
+        }
+        return $usr_msg->is_ok();
+    }
+
+    /**
+     * returns an ok message if this formula can be added to the database
      * e.g. a formula without expression should not be added to the database
      * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
      * @return true if the formula can be added to the database
@@ -739,13 +759,12 @@ class formula_map extends sandbox_code_id
                 $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING, [
                     msg_id::VAR_FORMULA => $this->dsp_id()
                 ]);
-                // TODO Prio 2 check if it can be activate ()
-                /*
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FORMULA_REF_EXPRESSION_MISSING, [
-                    msg_id::VAR_FORMULA => $this->dsp_id()
-                ]);
-                */
+                if ($usr_msg->is_ok() and !$this->no_ref_needed()) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_REF_EXPRESSION_MISSING, [
+                        msg_id::VAR_FORMULA => $this->dsp_id()
+                    ]);
+                }
             }
         }
         return $usr_msg->is_ok();
@@ -811,6 +830,17 @@ class formula_map extends sandbox_code_id
             if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
+        }
+        return $result;
+    }
+
+    function no_ref_needed(): bool
+    {
+        $result = false;
+        if ($this->type_code_id() == formula_types::THIS
+            or $this->type_code_id() == formula_types::PREV
+            or $this->type_code_id() == formula_types::NEXT) {
+            $result = true;
         }
         return $result;
     }

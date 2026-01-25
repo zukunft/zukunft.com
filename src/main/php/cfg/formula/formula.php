@@ -709,7 +709,7 @@ class formula extends formula_map
             $has_result_phrases = false;
             $res_lst = new result_list($this->get_user());
             if ($exp->is_valid()) {
-                $res_add_phr_lst = $exp->result_phrases();
+                $res_add_phr_lst = $exp->load_result_phrases();
                 if (isset($res_add_phr_lst)) {
                     log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
                     $has_result_phrases = true;
@@ -826,8 +826,12 @@ class formula extends formula_map
     function expression(?term_list $trm_lst = null): expression
     {
         $exp = new expression($this);
-        $exp->set_ref_text($this->ref_text, $trm_lst);
-        $exp->set_user_text($this->usr_text, $trm_lst);
+        if ($this->ref_text != '' and $this->usr_text != '') {
+            $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
+        } else {
+            $exp->set_ref_text($this->ref_text, $trm_lst);
+            $exp->set_user_text($this->usr_text, $trm_lst);
+        }
         log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
         return $exp;
     }
@@ -884,12 +888,13 @@ class formula extends formula_map
     function term_list(term_list $cache): term_list
     {
         $trm_lst = new term_list($this->get_user());
+        $usr_msg = new user_message();
         $exp = $this->expression($cache);
-        $elm_lst = $exp->element_list($cache);
+        $elm_lst = $exp->element_list($usr_msg, $cache);
         foreach ($elm_lst->lst() as $elm) {
             $trm_lst->add($elm->term());
         }
-        $res_phr_lst = $exp->result_phrases($cache);
+        $res_phr_lst = $exp->load_result_phrases($cache);
         return $trm_lst->merge($res_phr_lst->term_list());
     }
 
@@ -1132,7 +1137,7 @@ class formula extends formula_map
         $imp = new import();
 
         // get the target list of elements that should be linked to the formula
-        $elm_lst = $this->element_list();
+        $elm_lst = $this->element_list($usr_msg);
 
         // read the existing elements from the database
         $db_lst = new element_list($this->get_user());
@@ -1140,7 +1145,7 @@ class formula extends formula_map
 
         // add the missing links
         $add_lst = $elm_lst->diff($db_lst);
-        $add_lst->db_insert($usr_msg, $imp);
+        $add_lst->db_insert($usr_msg, $imp, $this::class);
 
         // delete links not needed any more
         $del_lst = $db_lst->diff($elm_lst);
@@ -1153,18 +1158,10 @@ class formula extends formula_map
      * get the list of elements used in this formula
      * @return element_list the list of elements used in this formula
      */
-    function element_list(): element_list
+    function element_list(user_message $usr_msg, ?term_list $trm_lst = null): element_list
     {
-        $elm_lst = new element_list($this->get_user());
-        $exp = $this->expression();
-        $exp_trm_lst = $exp->terms();
-        foreach ($exp_trm_lst->lst() as $trm) {
-            $elm = new element($this->get_user());
-            $elm->frm = $this;
-            $elm->obj = $trm->obj();
-            $elm_lst->add($elm);
-        }
-        return $elm_lst;
+        $exp = $this->expression($trm_lst);
+        return $exp->element_list($usr_msg, $trm_lst);
     }
 
 

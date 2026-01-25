@@ -118,7 +118,7 @@ class formula_write_tests
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
         $exp = $frm->expression();
-        $frm_lst = $exp->element_special_following_frm();
+        $frm_lst = $exp->element_special_following_frm($usr_msg);
         $phr_lst = new phrase_list($t->usr1);
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {

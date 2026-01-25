@@ -45,6 +45,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class list_db_write extends list_db_read
@@ -173,11 +175,8 @@ class list_db_write extends list_db_read
                     $qp->obj_name = $sbx->name();
                     $sql_list->add($qp);
                 } else {
-                    // TODO Prio 0 create error because this case should neven happen
-                    // to not add the $ins_usr_msg to the $usr_msg because each add should be possible even if the previous add failed
-                    // $usr_msg->add($ins_usr_msg);
-                    log_warning('Internal import error: ' . $usr_msg->all_message_text());
-                    //log_err('Internal import error: ' . $usr_msg->all_message_text());
+                    $usr_msg->add($ins_usr_msg);
+                    log_err('Internal import error: ' . $usr_msg->all_message_text());
                 }
             }
         }
@@ -212,5 +211,21 @@ class list_db_write extends list_db_read
 
         return $result;
     }
+
+    /*
+     * filter
+     */
+
+    /**
+     * get all objects that are not in the given list
+     *
+     * @param list_db_write|ListOfIdObjects $lst the list to compare with
+     * @return list_db_write|ListOfIdObjects the list of objects that are only in this list
+     */
+    function diff(list_db_write|ListOfIdObjects $lst): list_db_write|ListOfIdObjects
+    {
+        return parent::diff($lst);
+    }
+
 
 }

@@ -1006,6 +1006,7 @@ class result_list extends sandbox_value_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
         $lib = new library();
+        $usr_msg = new user_message();
 
         // to inform the user about the progress
         $last_msg_time = microtime(true); // the start time
@@ -1032,8 +1033,8 @@ class result_list extends sandbox_value_list
         $trm_back = new term($this->get_user());
         $trm_back->load_by_id($back);
         $trm_lst_back->add($trm_back);
-        $phr_lst_preset_following = $exp->element_special_following($trm_lst_back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($trm_lst_back);
+        $phr_lst_preset_following = $exp->element_special_following($usr_msg, $trm_lst_back);
+        $frm_lst_preset_following = $exp->element_special_following_frm($usr_msg, $trm_lst_back);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;
@@ -1075,7 +1076,7 @@ class result_list extends sandbox_value_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->result_phrases();
+        $phr_lst_res = $exp->load_result_phrases();
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }

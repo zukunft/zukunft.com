@@ -227,6 +227,12 @@
       "plural": "Financial income"
     },
     {
+      "name": "percent"
+    },
+    {
+      "name": "prior"
+    },
+    {
       "name": "max",
       "description": "used to define the number of forecast periods"
     },

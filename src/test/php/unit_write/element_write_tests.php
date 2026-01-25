@@ -68,7 +68,7 @@ class element_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
-        $elm_lst = $exp->element_list();
+        $elm_lst = $exp->element_list($usr_msg);
 
         // get the test word ids
         $wrd_country = $t_db->load_word(words::COUNTRY);
@@ -155,7 +155,7 @@ class element_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
-        $elm_lst = $exp->element_list();
+        $elm_lst = $exp->element_list($usr_msg);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();

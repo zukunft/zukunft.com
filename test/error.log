@@ -5107,3 +5107,951 @@ trace
 #9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
 #10 {main}
 by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:37+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:43:50+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:16+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:45:19+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "Pi" "is a" "mathematical constant" (17,2,-1 -> triple_id 2) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:46:25+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "𝑒" "is alias of" "Euler's number" (6,18,18 -> triple_id 5) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:12+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:47:15+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:12+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:49:15+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/reset_db.php(85): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "Pi" "is a" "mathematical constant" (17,2,-1 -> triple_id 2) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:50:16+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "𝑒" "is alias of" "Euler's number" (6,18,18 -> triple_id 5) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:08+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:51:11+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:47+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 3 (zukunft.com system test) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 3 (zukunft.com system test) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:48+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 3 (zukunft.com system test) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:52:50+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 3 (zukunft.com system test) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "Pi" "is a" "mathematical constant" (17,2,-1 -> triple_id 2) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(151): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:58:23+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action add (1) table triples (7) from new "𝑒" "is alias of" "Euler's number" (6,18,18 -> triple_id 5) for user 3 (zukunft.com system test) as phrase link new is a/is (verb_id 2) to new "mathematics" (word_id 1) for user 3 (zukunft.com system test) as phrase
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2321): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2119): Zukunft\ZukunftCom\main\php\cfg\word\triple->log_link_add()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/sandbox/sandbox.php(2144): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded_log()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2619): Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox->save_field_excluded()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/word/triple.php(2832): Zukunft\ZukunftCom\main\php\cfg\word\triple->save_id_if_updated()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/create/test_db_load.php(445): Zukunft\ZukunftCom\main\php\cfg\word\triple->save()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(158): Zukunft\ZukunftCom\test\php\create\test_db_load->test_triple()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_read/all_unit_read_tests.php(90): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->init_unit_db_tests()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(199): Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests->run_unit_db_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:09+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 1 (zukunft.com system) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system - system@zukunft.com (1)
+2026-01-24T23:59:12+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system - system@zukunft.com (1) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 1 (zukunft.com system) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/db/sql_db.php(1193): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(255): Zukunft\ZukunftCom\main\php\cfg\db\sql_db->setup_db()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(211): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_recreate()
+#10 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#11 {main}
+by user zukunft.com system - system@zukunft.com (1)
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:25+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 3 (zukunft.com system test) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 3 (zukunft.com system test) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:26+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "frequency" (word_id 98) for user 0 () as phrase link old wikipedia/wikipedia (ref_type_id 1) to old ref of "frequency" to "wikipedia" (76) from new "frequency" (word_id 98) for user 3 (zukunft.com system test) as phrase link new wikipedia/wikipedia (ref_type_id 1) to new ref of "frequency" to "wikipedia" (76)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed
+
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed", by user "zukunft.com system test - test@zukunft.com (3)
+2026-01-25T00:05:28+00:00: FATAL ERROR! Insert to change log failed
+Insert to change log failed with user_log_link for user zukunft.com system test - test@zukunft.com (3) action update (2) table refs (22) from old "human" (word_id 14) for user 0 () as phrase link old wikidata/wikidata (ref_type_id 2) to old ref of "human" to "wikidata" (18) from new "human" (word_id 14) for user 3 (zukunft.com system test) as phrase link new wikidata/wikidata (ref_type_id 2) to new ref of "human" to "wikidata" (18)
+function user_log_link->add
+trace 
+#0 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1106): Zukunft\ZukunftCom\main\php\cfg\log\change_link->add()
+#1 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref.php(1282): Zukunft\ZukunftCom\main\php\cfg\ref\ref->log_link_upd()
+#2 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/ref/ref_list.php(318): Zukunft\ZukunftCom\main\php\cfg\ref\ref->save()
+#3 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/helper/data_object.php(946): Zukunft\ZukunftCom\main\php\cfg\ref\ref_list->save()
+#4 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import.php(426): Zukunft\ZukunftCom\main\php\cfg\helper\data_object->save()
+#5 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(150): Zukunft\ZukunftCom\main\php\cfg\import\import->put_json()
+#6 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/main/php/cfg/import/import_file.php(353): Zukunft\ZukunftCom\main\php\cfg\import\import_file->json_file()
+#7 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/unit_write/all_unit_write_tests.php(197): Zukunft\ZukunftCom\main\php\cfg\import\import_file->import_base_config()
+#8 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/src/test/php/utils/all_tests.php(228): Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests->run_db_write_tests()
+#9 /home/timon/Nextcloud/Documents/zukunft.com/git/zukunft.com/test/test.php(72): Zukunft\ZukunftCom\test\php\utils\all_tests->run_all_tests()
+#10 {main}
+by user zukunft.com system test - test@zukunft.com (3)

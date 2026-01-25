@@ -769,6 +769,20 @@ class triple_list extends sandbox_list_named
                     $imp->step_end($add_lst->count(), $save_per_sec);
                 }
 
+                // reload the id of the triples added with the last run
+                // TODO use the insert message instead to increase speed
+                $db_lst = new triple_list($this->get_user());
+                if (!$add_lst->is_empty()) {
+                    $db_lst->load_by_names($add_lst->names(true), true);
+                }
+
+                // fill up the cache to prevent loading the same triple again in the next level
+                // TODO increase speed!
+                $cache = $cache->merge($db_lst->phrase_list());
+
+                // fill up the overall db list with db value for later detection of the triples that needs to be updated
+                $db_lst_all->merge($db_lst);
+
                 $cache->filter_valid();
 
                 $level++;
@@ -776,16 +790,6 @@ class triple_list extends sandbox_list_named
 
             // add the user_messages to the last try
             $usr_msg->add($lst_usr_msg);
-
-            // reload the id of the triples added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new triple_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
-            }
-
-            // fill up the overall db list with db value for later detection of the triples that needs to be updated
-            $db_lst_all->merge($db_lst);
 
 
             // create any missing sql update functions and update the triples

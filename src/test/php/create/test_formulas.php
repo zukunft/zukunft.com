@@ -44,6 +44,7 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
@@ -65,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
@@ -346,9 +348,10 @@ class test_formulas extends test_objects
     function element_list(): element_list
     {
         $t_trm = new test_terms($this->env);
+        $usr_msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
         $exp = $this->formula()->expression($trm_lst);
-        return $exp->element_list($trm_lst);
+        return $exp->element_list($usr_msg, $trm_lst);
     }
 
 

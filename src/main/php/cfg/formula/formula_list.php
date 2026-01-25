@@ -785,11 +785,14 @@ class formula_list extends sandbox_list_named
             // to get only the remaining messages
             $lst_usr_msg = new user_message();
             $ref_usr_msg = new user_message();
+            $trm_usr_msg = new user_message();
 
             while ($frm_added and $level < $max_frm_levels) {
 
                 // recreate a new user message object for each try to get only the user messages of the last try to get only the remaining messages
                 $lst_usr_msg = new user_message();
+                $ref_usr_msg = new user_message();
+                $trm_usr_msg = new user_message();
 
                 $frm_added = false;
                 $lst_usr_msg->unset_added_depending();
@@ -799,7 +802,7 @@ class formula_list extends sandbox_list_named
                 foreach ($this->lst() as $frm) {
                     $exp = $frm->expression($trm_lst);
                     if ($exp->is_valid() or $frm->is_predefined()) {
-                        $frm_trm_lst = $exp->terms($trm_lst);
+                        $frm_trm_lst = $exp->terms($trm_usr_msg, $trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
                             $frm_trm = $trm_lst->get_by_name($trm->name());
                             if ($frm_trm == null) {
@@ -836,7 +839,6 @@ class formula_list extends sandbox_list_named
                 $load_lst->fill_by_name($db_lst, true, false);
 
                 // refresh reference text
-                $ref_usr_msg = new user_message();
                 $load_lst->refresh_ref_text($trm_lst, $ref_usr_msg);
 
                 // select the formulas that are ready to be added to the database
@@ -869,24 +871,35 @@ class formula_list extends sandbox_list_named
                 // create the related words
                 $this->save_formulas_words($imp, $lst_usr_msg);
 
+                // reload the id of the formulas added with the last run
+                // TODO use the insert message instead to increase speed
+                $db_lst = new formula_list($this->get_user());
+                if (!$add_lst->is_empty()) {
+                    $db_lst->load_by_names($add_lst->names(true), true);
+                }
+
+                // fill up the cache to prevent loading the same formula again in the next level
+                // TODO increase speed!
+                $trm_lst = $trm_lst->merge($db_lst->term_list());
+
+                // fill up the overall db list with db value for later detection of the formulas that needs to be updated
+                $db_lst_all->merge($db_lst);
+
                 $trm_lst->filter_valid();
 
                 $level++;
             }
 
             // add the user_messages to the last try
-            $usr_msg->add($lst_usr_msg);
-            $usr_msg->add($ref_usr_msg);
-
-            // reload the id of the formulas added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new formula_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
+            if (!$ref_usr_msg->is_ok()) {
+                $usr_msg->add($ref_usr_msg);
             }
-
-            // fill up the overall db list with db value for later detection of the formulas that needs to be updated
-            $db_lst_all->merge($db_lst);
+            if (!$lst_usr_msg->is_ok()) {
+                $usr_msg->add($lst_usr_msg);
+            }
+            if (!$trm_usr_msg->is_ok()) {
+                $usr_msg->add($trm_usr_msg);
+            }
 
 
             // create any missing sql update functions and update the formulas
@@ -1076,7 +1089,7 @@ class formula_list extends sandbox_list_named
                 ]);
             }
             $exp = $frm->expression($cache);
-            $frm_trm_lst = $exp->terms($cache);
+            $frm_trm_lst = $exp->terms($usr_msg, $cache);
             foreach ($frm_trm_lst->lst() as $trm) {
                 if ($trm->id() == 0) {
                     $frm_trm = $cache->get_by_name($trm->name());

@@ -58,6 +58,10 @@ class formulas
     const int NOT_SET_ID = 0;
     const string SCALE_TO_SEC = 'scale minute to sec';
     const string SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
+    const string SCALE_TO_SEC_EXP_REF = '{w24}={w104}*60';
+    const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
+    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
+    const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
     const string SCALE_TO_SEC_CODE_ID = 'scale_minute_to_sec';
     const int SCALE_TO_SEC_ID = 1;

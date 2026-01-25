@@ -500,10 +500,10 @@ class formula_link extends sandbox_link
 
     /**
      * rename and cast the parent from object function
-     * @param formula $frm the formula that should be linked
+     * @param formula|formula_map $frm the formula that should be linked
      * @return void
      */
-    function set_formula(formula $frm): void
+    function set_formula(formula|formula_map $frm): void
     {
         $this->set_fob($frm);
     }
@@ -765,12 +765,12 @@ class formula_link extends sandbox_link
 
     /**
      * load a named user sandbox object by name
-     * @param formula $frm the formula that is supposed to be linked
+     * @param formula|formula_map $frm the formula that is supposed to be linked
      * @param phrase $phr the phrase that is linked to the formula
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
+    function load_by_link(formula|formula_map $frm, phrase $phr, string $class = self::class): int
     {
         global $sys;
         $id = parent::load_by_link_id($frm->id(), $sys->typ_lst->frm_lnk_typ->default_id(), $phr->id(), $class);
@@ -1042,9 +1042,7 @@ class formula_link extends sandbox_link
         }
 
         if (!$usr_msg->is_ok()) {
-            // TODO Prio 1 activate error
-            //log_err($usr_msg->all_message_text());
-            log_warning($usr_msg->all_message_text());
+            log_err($usr_msg->all_message_text());
         }
 
         return $usr_msg->is_ok();
