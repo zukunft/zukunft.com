@@ -484,6 +484,14 @@ class phrase extends combine_named
         return $this->obj()->owner_id();
     }
 
+    /**
+     * @return string|null the description of this phrase or term object based on the word, verb, triple or formula
+     */
+    function get_description(): ?string
+    {
+        return $this->obj()->description;
+    }
+
     function code_id(): ?int
     {
         return $this->obj()->get_code_id();
