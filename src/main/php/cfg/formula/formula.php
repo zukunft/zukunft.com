@@ -71,10 +71,12 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
@@ -91,9 +93,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula extends formula_map
@@ -148,6 +152,58 @@ class formula extends formula_map
     function is_predefined(): bool
     {
         return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
+    }
+
+    function ref_exp_is_valid(user_message $usr_msg): bool
+    {
+        if ($this->ref_text == null) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_NULL, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif ($this->ref_text == '') {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_EMPTY, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif (strlen($this->ref_text) < expression::MIN_REF_LENGTH) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_EMPTY, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        }
+        return $usr_msg->is_ok();
+    }
+
+    function user_exp_is_valid(user_message $usr_msg): bool
+    {
+        if ($this->usr_text == null) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_NULL, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif ($this->usr_text == '') {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_EMPTY, [
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        } elseif (strlen($this->usr_text) < expression::MIN_LENGTH) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id()
+            ]);
+        }
+        return $usr_msg->is_ok();
+    }
+
+    function expression_may_match(user_message $usr_msg): bool
+    {
+        if (substr_count($this->ref_text, chars::TERM_START)
+            + substr_count($this->ref_text, chars::TERM_END)
+            > substr_count($this->usr_text, chars::TERM_DELIMITER)) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+                msg_id::VAR_EXPRESSION => $this->ref_text,
+                msg_id::VAR_FORMULA => $this->dsp_id(),
+                msg_id::VAR_NAME => $this->usr_text
+            ]);
+        }
+        return $usr_msg->is_ok();
     }
 
 
@@ -417,6 +473,69 @@ class formula extends formula_map
     /*
      * calc
      */
+
+    /**
+     * create a list of formula results with values instead of terms
+     *
+     * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of preloaded / cached terms
+     * @param value_list|null $val_lst list of preloaded / cached values
+     * TODO verbs
+     * @return result_list all results of the formula for the given phrase list
+     */
+    function to_num_new(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst = null,
+        ?value_list  $val_lst = null
+    ): result_list
+    {
+        // create an empty result list that is filled up with the results of the formula calculation
+        $res_lst = new result_list($this->get_user());
+
+        $exp = $this->expression_new($usr_msg, $trm_lst);
+        return $res_lst;
+    }
+
+    /**
+     * load all missing terms from the database
+     * and select the terms that are needed to select the values for the calculation
+     * based on the given phrase list
+     *
+     * @param phrase_list $phr_lst with the calculation context
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of terms that are already loaded
+     * @return term_list list of all terms that are needed to calculate the formula
+     */
+    function load_terms(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst
+    ): term_list
+    {
+        $trm_lst = new term_list($this->get_user());
+        return $trm_lst;
+    }
+
+    /**
+     * load all values for the formula calculation
+     * based on the context on the given phrase list
+     *
+     * @param phrase_list $phr_lst with the calculation context
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst list of terms that are already loaded
+     * @return value_list list of all values that are needed to calculate the formula
+     */
+    function load_values(
+        phrase_list  $phr_lst,
+        user_message $usr_msg,
+        ?term_list   $trm_lst
+    ): value_list
+    {
+        $val_lst = new value_list($this->get_user());
+        return $val_lst;
+    }
 
     /**
      * fill the formula in the reference format with numbers
@@ -821,6 +940,27 @@ class formula extends formula_map
     }
 
     /**
+     * refresh the formula expression
+     *
+     * @param user_message $usr_msg to collect the problems and solution for the user to pick
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return expression the formula expression as an expression element
+     */
+    function expression_new(user_message $usr_msg, ?term_list $trm_lst = null): expression
+    {
+        $exp = new expression($this);
+        if ($this->ref_exp_is_valid($usr_msg)
+            and $this->user_exp_is_valid($usr_msg)
+            and $this->expression_may_match($usr_msg)) {
+            $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
+        } else {
+            $exp->set_ref_text($this->ref_text, $trm_lst);
+            $exp->set_user_text($this->usr_text, $trm_lst);
+        }
+        return $exp;
+    }
+
+    /**
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return expression the formula expression as an expression element
      */
@@ -833,7 +973,7 @@ class formula extends formula_map
             $exp->set_ref_text($this->ref_text, $trm_lst);
             $exp->set_user_text($this->usr_text, $trm_lst);
         }
-        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
+        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $this->get_user()->name);
         return $exp;
     }
 

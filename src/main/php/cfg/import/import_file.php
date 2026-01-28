@@ -179,6 +179,7 @@ class import_file
                             // TODO Prio 0 activate
                             //log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
                             log_warning('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
+                            $usr_msg->reset(true);
                         }
                     }
                     $usr_msg->add_message_text('import of ' . $filename . ' failed');

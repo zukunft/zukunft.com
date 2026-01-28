@@ -1095,7 +1095,7 @@ class expression extends shared_expression
                     $work = $lib->str_right_of($work, chars::TERM_END);
 
                     // add reference to result
-                    if ($elm->obj != null) {
+                    if ($elm?->obj != null) {
 
                         $found = true;
 

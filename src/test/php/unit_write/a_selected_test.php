@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
+use Zukunft\ZukunftCom\test\php\unit\formula_calc_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\type_lists_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\value_read_tests;
@@ -104,6 +105,7 @@ class a_selected_test extends test_cleanup
         //new system_tests()->run($this);
         //new import_tests()->run($this);
         //new formula_link_tests()->run($this);
+        new formula_calc_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -248,7 +250,7 @@ class a_selected_test extends test_cleanup
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
+            new formula_write_tests()->run($this);
             //new formula_link_write_tests()->run($this);
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
@@ -258,7 +260,7 @@ class a_selected_test extends test_cleanup
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
-            new import_write_tests()->run($this);
+            //new import_write_tests()->run($this);
 
 
             //$import = new import_file();

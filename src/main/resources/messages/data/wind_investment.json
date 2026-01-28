@@ -443,9 +443,15 @@
       "to": "Germany"
     },
     {
-      "name": "Production per year",
+      "name": "energy production per year",
       "from": "Production",
       "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "lifetime in years",
+      "from": "lifetime",
+      "verb": "in",
       "to": "year"
     },
     {

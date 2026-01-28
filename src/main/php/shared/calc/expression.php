@@ -76,6 +76,15 @@ class expression
 {
 
     /*
+     * constants
+     */
+
+    // the minimum length of a formula expression in the database reference format
+    const int MIN_REF_LENGTH = 3;
+    // the minimum length of a formula expression in the human-readable format
+    const int MIN_LENGTH = 4;
+
+    /*
      * object vars
      */
 

@@ -6,6 +6,9 @@
 
 ```
 \-- formula
+    \-- ref_exp_is_valid - section for function ref_exp_is_valid not yet defined that it should be info in /formula/formula.php
+    \-- user_exp_is_valid - section for function user_exp_is_valid not yet defined that it should be info in /formula/formula.php
+    \-- expression_may_match - section for function expression_may_match not yet defined that it should be info in /formula/formula.php
     \-- special_time_phr - section for function special_time_phr not yet defined that it should be predefined in /formula/formula.php
     \-- special_phr_lst - section for function special_phr_lst not yet defined that it should be predefined in /formula/formula.php
     \-- assign_phr_glst_direct - section for function assign_phr_glst_direct not yet defined that it should be assign in /formula/formula.php
@@ -15,10 +18,14 @@
     \-- assign_phr_lst - section for function assign_phr_lst not yet defined that it should be assign in /formula/formula.php
     \-- assign_phr_ulst - section for function assign_phr_ulst not yet defined that it should be assign in /formula/formula.php
     \-- res_del - section for function res_del not yet defined that it should be result in /formula/formula.php
+    \-- to_num_new - section for function to_num_new not yet defined that it should be calc in /formula/formula.php
+    \-- load_terms - section for function load_terms is expected to be load in /formula/formula.php
+    \-- load_values - section for function load_values is expected to be load in /formula/formula.php
     \-- to_num - section for function to_num not yet defined that it should be calc in /formula/formula.php
     \-- calc_requests - section for function calc_requests not yet defined that it should be calc in /formula/formula.php
     \-- calc - section for function calc not yet defined that it should be calc in /formula/formula.php
     \-- calc_with - section for function calc_with not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
+    \-- expression_new - section for function expression_new not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
     \-- expression - section for function expression not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
     \-- get_res_lst - section for function get_res_lst is expected to be set and get in /formula/formula.php
     \-- term_list - section for function term_list not yet defined that it should be expression in /formula/formula.php
@@ -564,6 +571,12 @@
         \-- component - returns the next free order number for a new view component
     \-- is_predefined
         \-- formula - if the formula has a fixed process for the result
+    \-- ref_exp_is_valid
+        \-- formula - if the formula has a fixed process for the result
+    \-- user_exp_is_valid
+        \-- formula - if the formula has a fixed process for the result
+    \-- expression_may_match
+        \-- formula - if the formula has a fixed process for the result
     \-- no_ref_needed
         \-- formula_map - check if the formula in the database needs to be updated
     \-- needs_to
@@ -677,6 +690,12 @@
     \-- res_del
         \-- formula - delete all results for this formula
 \-- calc
+    \-- to_num_new
+        \-- formula - create a list of formula results with values instead of terms
+    \-- load_terms
+        \-- formula - load all missing terms from the database
+    \-- load_values
+        \-- formula - load all values for the formula calculation
     \-- to_num
         \-- formula - fill the formula in the reference format with numbers
     \-- calc_requests
@@ -686,6 +705,8 @@
 \-- calculate the formula results based on a given figure list
     \-- calc_with
         \-- formula - calculate the formula results based on a given figure list
+    \-- expression_new
+        \-- formula - refresh the formula expression
     \-- expression
         \-- formula - @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
     \-- get_res_lst

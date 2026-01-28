@@ -800,13 +800,14 @@ class formula_list extends sandbox_list_named
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
+                    $frm_usr_msg = new user_message();
                     $exp = $frm->expression($trm_lst);
                     // TODO Prio 2 try to avoid reloading of the terms
                     $trm_lst = $exp->load_terms($trm_lst);
                     $phr_lst = $exp->load_phrases();
                     $trm_lst->merge($phr_lst->term_list());
                     if ($exp->is_valid() or $frm->is_predefined()) {
-                        $frm_trm_lst = $exp->terms($trm_usr_msg, $trm_lst);
+                        $frm_trm_lst = $exp->terms($frm_usr_msg, $trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
                             $frm_trm = $trm_lst->get_by_name($trm->name());
                             if ($frm_trm == null) {
@@ -814,12 +815,13 @@ class formula_list extends sandbox_list_named
                             }
                         }
                         // TODO Prio 1 remove ignoring predefined errors
-                        if (!$trm_usr_msg->is_ok()) {
+                        if (!$frm_usr_msg->is_ok()) {
                             if ($frm->is_predefined()) {
-                                $trm_usr_msg->reset(true);
+                                $frm_usr_msg->reset(true);
                             }
                         }
                     }
+                    $trm_usr_msg->add($frm_usr_msg);
                 }
 
                 // add the database id to the formula list of words and formulas used until now
@@ -903,7 +905,6 @@ class formula_list extends sandbox_list_named
             if (!$trm_usr_msg->is_ok()) {
                 $usr_msg->add($trm_usr_msg);
             }
-
 
             // create any missing sql update functions and update the formulas
             $usr_msg->add($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));

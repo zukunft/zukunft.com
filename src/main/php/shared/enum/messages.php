@@ -606,6 +606,35 @@ enum messages: string
         . '" of formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" is missing';
+    case EXPRESSION_REF_IS_NULL = 'the database format of the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is null';
+    case EXPRESSION_REF_IS_EMPTY = 'the database format of the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is empty';
+    case EXPRESSION_REF_IS_TOO_SHORT = 'the database format of the formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is too short to be a valid expression';
+    case EXPRESSION_HAS_MORE_REFS_THAN_USER_TERMS = 'the database format of the formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" has more references than the  "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is too short to be a valid expression';
+    case EXPRESSION_USER_IS_NULL = 'the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is null';
+    case EXPRESSION_USER_IS_EMPTY = 'the formula expression of "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is empty';
+    case EXPRESSION_USER_IS_TOO_SHORT = 'the database format of formula expression "'
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END
+        . '" of formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" does probably not contain all terms of the formula expression "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '". Probably at least one term is not in the database any more';
 
     case PHRASE_TYPE_UNEXPECTED = 'it is not yet defined how "'
         . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END

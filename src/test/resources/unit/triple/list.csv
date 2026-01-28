@@ -1196,5 +1196,6 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 1195,24,2,-1189,1,second (time constant),,,,,,,,,,,,,,
 1196,1115,20,1116,1,replacement mix,,,,,,,,,,,,,,
 1197,1124,3,292,1,North Germany,,,,,,,,,,,,,,
-1198,1121,26,109,1,Production per year,,,,,,,,,,,,,,
-1199,1119,7,1120,1,Investment duration,,,,,,,,,,,,,,
+1198,1121,26,109,1,energy production per year,,,,,,,,,,,,,,
+1199,1111,32,109,1,lifetime in years,,,,,,,,,,,,,,
+1200,1119,7,1120,1,Investment duration,,,,,,,,,,,,,,
