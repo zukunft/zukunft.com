@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -341,7 +342,15 @@ class expression
                 // check if the preloaded terms can be used for the conversion
                 if ($trm_lst != null) {
                     $trm = $trm_lst->get_by_name($name);
+                    // TODO Prio 1 avoid loading the corresponding formula
                     if ($trm != null) {
+                        if ($trm->obj()::class == word::class) {
+                            if ($trm->obj()->type_id == phrase_types::FORMULA_LINK_ID) {
+                                $frm_trm = new formula($this->usr);
+                                $frm_trm->load_by_name($name);
+                                $trm = $frm_trm->term();
+                            }
+                        }
                         if ($trm->obj_id() > 0) {
                             $db_sym = $this->get_db_sym($trm);
                         }
@@ -352,6 +361,7 @@ class expression
                             msg_id::VAR_EXPRESSION => $frm_part_text
                         ]);
                     }
+
                 }
 
                 if ($db_sym == '') {

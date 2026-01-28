@@ -1101,6 +1101,10 @@ class data_object
 
         $frm_lst = $this->formula_list();
         if (!$frm_lst->is_empty()) {
+            // to prevent that errors in some formulas lead to missing links in formulas that are fine
+            // but to allow that nevertheless links can be saved with blocks of db insert statements
+            $usr_msg_lnk = clone $usr_msg;
+
             $frm_est = $frm_lst->count() / $frm_per_sec;
             $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
             $usr_msg->add($frm_lst->save_with_cache($imp, $cache));
@@ -1126,9 +1130,11 @@ class data_object
             // TODO Prio 2 use fast formulas_link_list block save process
             foreach ($frm_lst->lst() as $frm) {
                 if (!$frm->is_excluded()) {
-                    $frm->save_links($usr_msg);
+                    $frm->save_links($usr_msg_lnk);
                 }
             }
+
+            $usr_msg->add($usr_msg_lnk);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->formula_list()->fill_by_name($frm_lst);

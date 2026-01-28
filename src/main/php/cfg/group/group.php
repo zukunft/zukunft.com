@@ -290,8 +290,8 @@ class group extends sandbox_multi
             if ($this->name != null or !$typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $vars[json_fields::NAME] = $this->name();
             }
-            if ($this->description() != null) {
-                $vars[json_fields::DESCRIPTION] = $this->description();
+            if ($this->get_description() != null) {
+                $vars[json_fields::DESCRIPTION] = $this->get_description();
             }
             if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
                 $phr_lst = $this->phrase_list();
@@ -376,7 +376,7 @@ class group extends sandbox_multi
     /**
      * @return string|null the description of the value, which is the description of the phrase group
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }

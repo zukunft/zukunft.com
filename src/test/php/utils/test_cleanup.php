@@ -344,6 +344,7 @@ class test_cleanup extends test_api
         $test_name = 'request to delete the renamed test word  of "' . words::TEST_RENAMED . '"';
         $wrd = $t_db->load_word(words::TEST_RENAMED);
         if ($wrd->id() > 0) {
+            $usr_msg->reset(true);
             $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
         }
 
@@ -353,6 +354,7 @@ class test_cleanup extends test_api
             if ($wrd_name != words::MATH) {
                 $wrd = $t_db->load_word($wrd_name);
                 if ($wrd->id() > 0) {
+                    $usr_msg->reset(true);
                     $this->assert_true($test_name, $wrd->del($usr_msg), self::TIMEOUT_LIMIT_DB);
                 }
             } else {

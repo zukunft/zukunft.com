@@ -133,6 +133,7 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup formula element write');
+        $usr_msg->reset(true);
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 
@@ -155,7 +156,7 @@ class element_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
-        $elm_lst = $exp->element_list($usr_msg);
+        $elm_lst = $exp->element_list_with_load($usr_msg);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
@@ -168,6 +169,7 @@ class element_write_tests
         }
 
         $t->subheader($ts . 'cleanup');
+        $usr_msg->reset(true);
         $frm_sector->del($usr_msg);
         $wrd_total->del($usr_msg);
 

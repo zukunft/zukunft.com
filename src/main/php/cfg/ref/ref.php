@@ -685,7 +685,7 @@ class ref extends sandbox_link
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
-    function description(): ?string
+    function get_description(): ?string
     {
         return $this->description;
     }
@@ -1276,17 +1276,6 @@ class ref extends sandbox_link
             $std_rec->id = $this->id();
             $std_rec->load_standard();
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
-
-            // if needed log the change and update the database
-            if ($this->get_external_key() <> $db_rec->get_external_key()) {
-                $log = $this->log_link_upd($db_rec);
-                if ($log->id() > 0) {
-                    $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->get_external_key())) {
-                        log_debug('ref->save update ... done.');
-                    }
-                }
-            }
 
             // if everything has been fine until here
             // update the

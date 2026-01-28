@@ -65,6 +65,7 @@ class phrase_types
     const string SCALED_MEASURE_NAME = "scaled measure";
     const string FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
     const string FORMULA_LINK_NAME = "formula link";
+    const int FORMULA_LINK_ID = 10;
     const string CALC = "calc"; // TODO add usage sample
     const string CALC_NAME = "calc";
     const string LAYER = "view"; // TODO add usage sample

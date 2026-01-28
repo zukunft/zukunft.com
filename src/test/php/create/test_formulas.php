@@ -350,7 +350,8 @@ class test_formulas extends test_objects
         $t_trm = new test_terms($this->env);
         $usr_msg = new user_message();
         $trm_lst = $t_trm->term_list_time();
-        $exp = $this->formula()->expression($trm_lst);
+        $frm = $this->formula();
+        $exp = $frm->expression($trm_lst);
         return $exp->element_list($usr_msg, $trm_lst);
     }
 

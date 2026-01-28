@@ -41,6 +41,7 @@ include_once paths::SHARED_CONST . 'words.php';
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -69,6 +70,88 @@ class expression_tests
         $ts = 'unit expression ';
         $t->header($ts);
 
+
+        $t->subheader($ts . 'extract database id list');
+
+        $test_name = 'get all terms needed calculating an expression';
+        $frm = $t_frm->formula();
+        $exp = $frm->expression();
+        $trm_id_lst = $exp->term_id_list($usr_msg);
+        $result = $trm_id_lst->dsp_id();
+        $target = words::MINUTE_ID * 2 - 1;
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'reference text is invalid because a symbol is too short';
+        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
+        $exp = $frm->expression();
+        $exp->term_id_list($usr_msg);
+        $result = $usr_msg->all_message_text();
+        $target = 'the formula expression symbol "{w}" is too short';
+        $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
+
+        $test_name = 'reference text is invalid because the id is not a number';
+        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
+        $exp = $frm->expression();
+        $exp->term_id_list($usr_msg);
+        $result = $usr_msg->all_message_text();
+        $target = 'the formula expression id wO is no a valid integer number';
+        $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
+
+        $test_name = 'reference text is invalid because the term type is not supported';
+        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
+        $exp = $frm->expression();
+        $exp->term_id_list($usr_msg);
+        $result = $usr_msg->all_message_text();
+        $target = 'the formula expression symbol "d" is not valid. only word, triple, verb and formula are expected.';
+        $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
+
+        $test_name = 'reference text is invalid because it is an empty string';
+        $frm->ref_text = '';
+        $exp = $frm->expression();
+        $exp->term_id_list($usr_msg);
+        $result = $usr_msg->all_message_text();
+        $target = 'the expression of formula "scale minute to sec" is empty';
+        $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
+
+        $test_name = 'get the phrase id that should be added to the results';
+        $frm = $t_frm->formula();
+        $exp = $frm->expression();
+        $trm_id_lst = $exp->phrase_id_list($usr_msg);
+        $result = $trm_id_lst->dsp_id();
+        $target = 'phrase_id ' . words::SECOND_ID . ' for user ' . users::SYSTEM_TEST_ID . ' (' . users::SYSTEM_TEST_NAME . ')';
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'phrase id is invalid because the id is not a number';
+        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID;
+        $exp = $frm->expression();
+        $exp->phrase_id_list($usr_msg);
+        $result = $usr_msg->all_message_text();
+        $target = 'the formula expression id wO is no a valid integer number';
+        $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
+
+        $test_name = 'get all terms including the phrases for the result';
+        $frm = $t_frm->formula();
+        $exp = $frm->expression();
+        $trm_id_lst = $exp->term_id_list_all($usr_msg);
+        $result = $trm_id_lst->dsp_id();
+        $target = '"","" (' . words::SECOND_ID * 2 - 1 . ',' . words::MINUTE_ID * 2 - 1 . ')';
+        $t->assert($test_name, $result, $target);
+
+
+        $t->subheader($ts . 'extract term list');
+
+
+
+        $test_name = 'report which terms are missing';
+
+        $t->subheader($ts . 'interface');
+
+
         $t->subheader($ts . 'convert user text to database ref text and the other way round');
 
         $this->frm_exp_convert($t,
@@ -91,50 +174,6 @@ class expression_tests
         );
 
 
-        $t->subheader($ts . 'extract database id list');
-
-        $test_name = 'get all terms needed calculating an expression';
-        $frm = $t_frm->formula();
-        $exp = $frm->expression();
-        $trm_id_lst = $exp->term_id_list($usr_msg);
-        $result = $trm_id_lst->dsp_id();
-        $target = words::MINUTE_ID * 2 - 1;
-        $t->assert($test_name, $result, $target);
-
-        $test_name = 'reference text is invalid because a symbol is too short';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL;
-        $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
-        $target = 'the formula expression symbol {w} is too short';
-        $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
-
-        $test_name = 'reference text is invalid because the id is not a number';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
-        $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
-        $target = 'the formula expression id wO is no a valid integer number';
-        $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
-
-        $test_name = 'reference text is invalid because the term type is not supported';
-        $frm->ref_text = formulas::SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID;
-        $exp = $frm->expression();
-        $exp->term_id_list($usr_msg);
-        $result = $usr_msg->all_message_text();
-        $target = 'the formula expression symbol d is not valid. only word, triple, verb and formula are expected.';
-        $t->assert($test_name, $result, $target);
-        $usr_msg->reset();
-
-
-        $t->subheader($ts . 'extract database id list');
-
-        $test_name = 'report which terms are missing';
-
-        $t->subheader($ts . 'interface');
-
         $test_name = 'get the calc phrases';
         $frm = $t_frm->formula();
         $exp = new expression($frm);
@@ -142,12 +181,13 @@ class expression_tests
         //$trm_names = $exp->get_usr_names();
         //$trm_lst = $t->term_list_for_tests($trm_names);
         $exp->ref_text($trm_lst);
-        $phr_lst = $exp->phr_lst($trm_lst);
+        $usr_msg->reset();
+        $phr_lst = $exp->terms($usr_msg, $trm_lst)->phrase_list();
         $result = $phr_lst->dsp_id();
-        $target = '"' . words::PI . '","'
-            . words::CIRCUMFERENCE . '" (phrase_id '
-            . words::PI_ID . ','
-            . words::CIRCUMFERENCE_ID . ') for user 3 (zukunft.com system test)';
+        $target = '"' . words::CIRCUMFERENCE . '","'
+            . words::PI . '" (phrase_id '
+            . words::CIRCUMFERENCE_ID . ','
+            . words::PI_ID . ') for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
@@ -164,7 +204,8 @@ class expression_tests
         // the phrase list for the calc part should be empty, because it contains only formulas
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
-        $phr_lst = $exp->phr_lst($trm_lst_rev);
+        $usr_msg->reset();
+        $phr_lst = $exp->terms($usr_msg, $trm_lst_rev)->phrase_list();
         $result = $phr_lst->dsp_id();
         $target = '';
         $t->assert($test_name, $result, $target);
@@ -187,6 +228,7 @@ class expression_tests
             . ') for user 3 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
+        $usr_msg->reset();
 
         // test the element list of the right side
         $elm_grp_lst = $exp->element_list($usr_msg, $trm_lst);

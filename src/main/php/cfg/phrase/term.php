@@ -451,6 +451,17 @@ class term extends combine_named
     }
 
     /**
+     * set the value to rank the words by impact
+     *
+     * @param float|null $impact a higher value moves the word to the top of the selection list
+     * @return void
+     */
+    function set_impact(?float $impact): void
+    {
+        $this->obj()->impact = $impact;
+    }
+
+    /**
      * set the user of the term object, which is also the user of the term
      * because of this object retrieval set and get of the user is needed for all linked objects
      *

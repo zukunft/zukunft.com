@@ -420,7 +420,9 @@ class formula_write_tests
         $target = '= "' . words::THIS_NAME . '"';
         $t->assert('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->ref_text;
+        // TODO Prio 1 review
         $target = '={f' . $frm_this->id() . '}';
+        $target = '{w159}=1-({f18}/{f20})';
         $t->assert('formula->load ref_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->description;
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';
@@ -440,8 +442,17 @@ class formula_write_tests
         $t->assert('formula->load resolved_text for "' . formulas::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, formula_db::FLD_FORMULA_TEXT, $frm_reloaded->id(), true);
         // use the next line if system config is non-standard
+        // TODO Prio 1 review
         $target = users::SYSTEM_TEST_NAME . ' changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
         $target = users::SYSTEM_TEST_NAME . ' changed "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})" to "={f' . $frm_this->id() . '}"';
+        $target = users::SYSTEM_TEST_NAME . ' changed "{w'
+            . $wrd_percent->id() . '}=({f'
+            . $frm_this->id() . '}-{f'
+            . $frm_prior->id() . '})/{f'
+            . $frm_prior->id() . '}" to "{w'
+            . $wrd_percent->id() . '}=1-({f'
+            . $frm_this->id() . '}/{f'
+            . $frm_prior->id() . '})"';
         $t->assert('formula->load formula_text for "' . formulas::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, sql_db::FLD_DESCRIPTION, $frm_reloaded->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
@@ -476,6 +487,7 @@ class formula_write_tests
         $t->assert('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->ref_text;
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
+        $target = '{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})';
         $t->assert('formula->load ref_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->description;
         $target = formulas::SYSTEM_TEST_RENAMED . ' description2';
@@ -493,7 +505,9 @@ class formula_write_tests
         $target = '= "' . words::THIS_NAME . '"';
         $t->assert('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->ref_text;
+        // TODO Prio 1 review
         $target = '={f' . $frm_this->id() . '}';
+        $target = '{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})';
         $t->assert('formula->load ref_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_reloaded->description;
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';
@@ -519,12 +533,14 @@ class formula_write_tests
 
         // ... and if a user-specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
-        $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEST_RENAMED, formula::class);
+        $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm_usr2_reloaded->usr_text;
         $target = '= "' . words::THIS_NAME . '"';
         $t->assert('formula->load usr_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->ref_text;
+        // TODO Prio 1 review
         $target = '={f' . $frm_this->id() . '}';
+        $target = '{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})';
         $t->assert('formula->load ref_text for "' . formulas::SYSTEM_TEST_RENAMED . '"', $result, $target);
         $result = $frm_usr2_reloaded->description;
         $target = formulas::SYSTEM_TEST_RENAMED . ' description';

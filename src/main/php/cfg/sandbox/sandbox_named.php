@@ -489,8 +489,8 @@ class sandbox_named extends sandbox
         if ($obj->get_description() != null) {
             $this->set_description($obj->get_description());
         }
-        if ($obj->usage != null) {
-            $this->usage = $obj->usage;
+        if ($obj->get_usage() != null) {
+            $this->set_usage($obj->get_usage());
         }
         return $usr_msg;
     }

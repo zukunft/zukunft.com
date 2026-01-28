@@ -434,11 +434,12 @@ class formula extends formula_map
 
         // check
         $pre_trm_lst = $pre_phr_lst?->term_list();
-        if ($this->ref_text_r == '' and $this->ref_text <> '') {
-            $exp = new expression($this);
-            $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-        }
+        $exp = new expression($this);
+        $exp->set_ref_text($this->ref_text, $pre_trm_lst);
+        $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+
+        // reload missing terms from the database
+        $trm_lst = $exp->load_terms($pre_trm_lst);
 
         // create the result list
         $res_lst = new result_list($this->get_user());
@@ -450,8 +451,8 @@ class formula extends formula_map
         // e.g. for "sales differentiator sector / Total sales" the element groups are
         //      "sales differentiator sector" and "Total sales" where
         //      the element group "sales differentiator sector" has the elements: "sales" (of type word), "differentiator" (verb), "sector" (word)
-        $exp = $this->expression($pre_trm_lst);
-        $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
+        $exp = $this->expression($trm_lst);
+        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
 
         // to check if all needed values are given
@@ -465,7 +466,7 @@ class formula extends formula_map
             // a figure is either the user edited value or a calculated formula result
             $elm_grp->phr_lst = clone $phr_lst;
             $elm_grp->build_symbol();
-            $fig_lst = $elm_grp->figures($pre_trm_lst);
+            $fig_lst = $elm_grp->figures($trm_lst);
             log_debug('figures ');
             log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 

@@ -253,6 +253,7 @@ class a_selected_test extends test_cleanup
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
+            //new element_group_write_tests()->run($this);
             //new view_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);

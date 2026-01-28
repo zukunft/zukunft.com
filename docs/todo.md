@@ -7,6 +7,8 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.3
     TODO target approche to finish frontend: small commits and final solution
+    TODO fix all prio 0 TODO including unit tests
+    TODO finish the expression code review
     TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO finish the frontend component tests
@@ -51,6 +53,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a color theme per view
     TODO use the view (db) version to update the database by using a next_step-php
     TODO create a seperate php session for backend, frontend and test and from test test the login prozess
+    TODO on term load by name get the formula before the word to avoid loading the formula link word instade of the formula
     TODO cleanup init.php to speed up the api
          make init.php as small and fast as possible
          make const.php as small and fast as possible

@@ -146,7 +146,7 @@ class base_ui_tests
         $grp_canton = new group($t->usr1);
         $grp_canton->set_phrase_list($t_phr->phrase_list_canton_mio());
         $grp_ch = new group($t->usr1);
-        $grp_ch->set_phrase_list($t_phr->phrase_list_ch_mio());
+        $grp_ch->set_phrase_list($t_phr->ch_inhabitants_in_mio_2019());
         $grp_city_pct = new group($t->usr1);
         $grp_city_pct->set_phrase_list($t_phr->phrase_list_zh_city_pct());
         $grp_canton_pct = new group($t->usr1);

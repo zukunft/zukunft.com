@@ -2574,7 +2574,7 @@ class phrase_list extends sandbox_list_named
                     log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
                 } else {
                     if ($phr->name() == '') {
-                        $phr->load();
+                        $phr->load_by_name($phr->name());
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {

@@ -60,6 +60,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -74,11 +76,15 @@ class value_tests
         global $usr_sys;
 
         // init
+        $usr_msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $tl = new test_lib();
         $t_val = new test_values($t);
         $t_grp = new test_groups($t);
+        $t_phr = new test_phrases($t);
+        $t_trm = new test_terms($t);
+        $trm_lst = $t_trm->term_list_all();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
@@ -309,6 +315,17 @@ class value_tests
         $t->assert_sql_index_create($tsn);
         // TODO Prio 2 activate
         //$t->assert_sql_foreign_key_create($tsn);
+
+
+        $t->subheader($ts . 'scaling');
+
+        $test_name = 'scale the number of Swiss inhabitants from million to single inhabitants';
+        $trm_lst = $t_phr->ch_inhabitants_in_mio_2019()->term_list();
+        $res_phr_lst = $t_phr->phrase_list_one();
+        $mio_val = $t_val->value_ch();
+        $result = $mio_val->scale_new($res_phr_lst, $usr_msg, $trm_lst);
+        $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
+        //$t->assert($test_name, $result, $target);
 
     }
 

@@ -67,6 +67,8 @@ include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_HELPER . 'db_object.php';
 //include_once paths::MODEL_LOG . 'change.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_db.php';
@@ -90,6 +92,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -464,10 +468,15 @@ class db_object_seq_id extends db_object
     function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = new user_message();
-        if ($obj->id() != 0) {
+        if ($obj::class == phrase::class or $obj::class == term::class) {
+            $id = $obj->obj_id();
+        } else {
+            $id = $obj->id();
+        }
+        if ($id != 0) {
             if ($this->id() == 0) {
-                $this->id = $obj->id();
-            } elseif ($obj->id() != $this->id()) {
+                $this->id = $id;
+            } elseif ($id != $this->id()) {
                 $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }

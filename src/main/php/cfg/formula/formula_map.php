@@ -714,8 +714,8 @@ class formula_map extends sandbox_code_id
                 $this->last_update = $used_obj->last_update;
             }
         }
-        if ($obj->impact != null) {
-            $this->impact = $obj->impact;
+        if ($used_obj->impact != null) {
+            $this->impact = $used_obj->impact;
         }
 
         return $usr_msg;

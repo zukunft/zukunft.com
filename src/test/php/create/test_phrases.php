@@ -126,6 +126,18 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list with the word one to force a value to be scaled to one
+     */
+    function phrase_list_one(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_one()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list as it is returned from the phrase list api, so at the moment without triple links
      */
     function phrase_list_api(): phrase_list
@@ -676,7 +688,7 @@ class test_phrases
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
-    function phrase_list_ch_mio(): phrase_list
+    function ch_inhabitants_in_mio_2019(): phrase_list
     {
         $t_wrd = new test_words($this->env);
         $lst = new phrase_list($this->env->usr1);

@@ -124,6 +124,7 @@ include_once paths::MODEL_LOG . 'change_values_geo_big.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
@@ -172,6 +173,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
@@ -1216,6 +1218,25 @@ class value_base extends sandbox_value
     }
 
     /**
+     * TODO Prio 0 review
+     * scale a value towards the target scaling
+     *
+     * @param phrase_list $phr_lst list of phrases that defines the target scaling
+     * @param user_message $usr_msg to collect the problems and the suggested solutions for the user to select
+     * @param term_list $trm_lst cache of the terms that are used to scale the value towards the target phrases
+     * @return float|null
+     */
+    function scale_new(phrase_list $phr_lst, user_message $usr_msg, term_list $trm_lst): ?float
+    {
+        // fallback value
+        $result = $this->get_value();
+
+
+        return $result;
+    }
+
+
+    /**
      * scale a value for the target words
      * e.g. if the target words contains "millions" "2'100'000" is converted to "2.1"
      *      if the target words are empty convert "2.1 mio" to "2'100'000"
@@ -1267,7 +1288,7 @@ class value_base extends sandbox_value
                                     $exp = new expression($frm);
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->load_result_phrases();
-                                    $phr_lst = $exp->phr_lst();
+                                    $phr_lst = $exp->load_phrases();
                                     if (!$res_phr_lst->is_empty()) {
                                         $res_wrd_lst = $res_phr_lst->wrd_lst_all();
                                         $wrd_lst = $phr_lst->wrd_lst_all();

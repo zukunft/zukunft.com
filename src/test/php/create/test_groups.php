@@ -292,7 +292,7 @@ class test_groups
     function group_ch(): group
     {
         $t_phr = new test_phrases($this->env);
-        $lst = $t_phr->phrase_list_ch_mio();
+        $lst = $t_phr->ch_inhabitants_in_mio_2019();
         return $lst->get_grp_id(false);
     }
 

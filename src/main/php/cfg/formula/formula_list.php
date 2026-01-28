@@ -782,7 +782,7 @@ class formula_list extends sandbox_list_named
 
             // create a new user message object for each try
             // to get only the user messages of the last try
-            // to get only the remaining messages
+            // and to report only the remaining messages
             $lst_usr_msg = new user_message();
             $ref_usr_msg = new user_message();
             $trm_usr_msg = new user_message();
@@ -801,12 +801,22 @@ class formula_list extends sandbox_list_named
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
                     $exp = $frm->expression($trm_lst);
+                    // TODO Prio 2 try to avoid reloading of the terms
+                    $trm_lst = $exp->load_terms($trm_lst);
+                    $phr_lst = $exp->load_phrases();
+                    $trm_lst->merge($phr_lst->term_list());
                     if ($exp->is_valid() or $frm->is_predefined()) {
                         $frm_trm_lst = $exp->terms($trm_usr_msg, $trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
                             $frm_trm = $trm_lst->get_by_name($trm->name());
                             if ($frm_trm == null) {
                                 $chk_lst->add_by_name($frm_trm);
+                            }
+                        }
+                        // TODO Prio 1 remove ignoring predefined errors
+                        if (!$trm_usr_msg->is_ok()) {
+                            if ($frm->is_predefined()) {
+                                $trm_usr_msg->reset(true);
                             }
                         }
                     }
@@ -870,13 +880,6 @@ class formula_list extends sandbox_list_named
 
                 // create the related words
                 $this->save_formulas_words($imp, $lst_usr_msg);
-
-                // reload the id of the formulas added with the last run
-                // TODO use the insert message instead to increase speed
-                $db_lst = new formula_list($this->get_user());
-                if (!$add_lst->is_empty()) {
-                    $db_lst->load_by_names($add_lst->names(true), true);
-                }
 
                 // fill up the cache to prevent loading the same formula again in the next level
                 // TODO increase speed!
@@ -1089,10 +1092,14 @@ class formula_list extends sandbox_list_named
                 ]);
             }
             $exp = $frm->expression($cache);
-            $frm_trm_lst = $exp->terms($usr_msg, $cache);
+            // TODO Prio 3 try to avoid reloading of the terms
+            $trm_lst = $exp->load_terms($cache);
+            $phr_lst = $exp->load_phrases();
+            $trm_lst->merge($phr_lst->term_list());
+            $frm_trm_lst = $exp->terms($usr_msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 if ($trm->id() == 0) {
-                    $frm_trm = $cache->get_by_name($trm->name());
+                    $frm_trm = $trm_lst->get_by_name($trm->name());
                     if ($frm_trm == null) {
                         $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_NOT_FOUND, [
                             msg_id::VAR_NAME => $trm->name(),

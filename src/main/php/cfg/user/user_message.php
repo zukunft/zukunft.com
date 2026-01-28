@@ -119,9 +119,11 @@ class user_message
         }
     }
 
-    function reset(): void
+    function reset(bool $keep_usr = false): void
     {
-        $this->usr = new user();
+        if (!$keep_usr) {
+            $this->usr = new user();
+        }
         $this->info_text = [];
         $this->msg_text = [];
         $this->msg_status = msg_id::OK;

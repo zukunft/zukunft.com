@@ -410,13 +410,6 @@ class component_list extends sandbox_list_named
                 $level++;
             }
 
-            // reload the id of the components added with the last run
-            // TODO use the insert message instead to increase speed
-            $db_lst = new component_list($this->get_user());
-            if (!$add_lst->is_empty()) {
-                $db_lst->load_by_names($add_lst->names(true), true);
-            }
-
             // fill up the overall db list with db value for later detection of the components that needs to be updated
             $db_lst_all->merge($db_lst);
 

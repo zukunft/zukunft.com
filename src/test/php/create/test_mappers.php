@@ -1071,7 +1071,7 @@ class test_mappers
         $url_array[] = [url_var::TYPE, $ref->predicate_id()];
         $url_array[] = [url_var::URL, $ref->get_url()];
         $url_array[] = [url_var::SOURCE, $ref->source_id()];
-        $url_array[] = [url_var::DESCRIPTION, $ref->description()];
+        $url_array[] = [url_var::DESCRIPTION, $ref->get_description()];
         // TODO Prio 1 activate
         //$url_array[] = [url_var::VIEW, $ref->get_view_id()];
         $url_array[] = [url_var::SHARE, $ref->share_id()];
@@ -1095,7 +1095,7 @@ class test_mappers
     {
         $url_array = [];
         $url_array[] = [url_var::NAME, $grp->name()];
-        $url_array[] = [url_var::DESCRIPTION, $grp->description()];
+        $url_array[] = [url_var::DESCRIPTION, $grp->get_description()];
         $url_array[] = [url_var::SOURCE, $grp->source_id()];
         $url_array[] = [url_var::SHARE, $grp->share_id()];
         $url_array[] = [url_var::PROTECTION, $grp->protection_id()];

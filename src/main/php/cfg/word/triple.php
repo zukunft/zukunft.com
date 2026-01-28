@@ -2811,6 +2811,14 @@ class triple extends sandbox_link_named
                         log_err($usr_msg->get_last_message());
                     }
                 }
+
+                // relevant is if there is a user config in the database
+                // so use this information to prevent
+                // the need to forward the db_rec to all functions
+                if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                    $this->usr_cfg_id = $db_rec->usr_cfg_id;
+                }
+
                 log_debug('database triple "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new triple($this->get_user()); // the user must also be set to allow to take the ownership
                 $std_rec->id = $this->id();
@@ -2825,18 +2833,6 @@ class triple extends sandbox_link_named
                 // for a correct user triple detection (function can_change) set the owner even if the triple has not been loaded before the save
                 if ($this->owner_id() <= 0) {
                     $this->set_owner_id($std_rec->owner_id());
-                }
-
-                // check if the id parameters are supposed to be changed
-                if ($usr_msg->is_ok()) {
-                    $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
-                    if (!$usr_msg->is_ok()) {
-                        log_err($usr_msg->get_last_message());
-                    }
-                }
-
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->save_name_fields($db_con, $db_rec, $std_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
