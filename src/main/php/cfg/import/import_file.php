@@ -87,7 +87,7 @@ class import_file
 
     /**
      * import a single json file
-     * TODO add user_message as a parameter
+     * TODO Prio 0 add user_message as a parameter
      * TODO set $direct by default to false
      *
      * @param string $filename
@@ -172,17 +172,13 @@ class import_file
                         $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-
                     // TODO Prio 1 move to calling function and include save
+                    $err_msg = 'import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text();
                     if (!$ignore_errors) {
-                        if (!$usr_msg->is_ok()) {
-                            // TODO Prio 0 activate
-                            //log_err('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
-                            log_warning('import of ' . $filename . ' failed due to ' . $usr_msg->all_message_text());
-                            $usr_msg->reset(true);
-                        }
+                        log_err($err_msg);
+                    } else {
+                        log_warning($err_msg);
                     }
-                    $usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
         }

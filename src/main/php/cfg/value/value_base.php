@@ -1247,6 +1247,7 @@ class value_base extends sandbox_value
         log_debug('value->scale ' . $this->get_value());
         // fallback value
         $result = $this->get_value();
+        $usr_msg = new user_message();
 
         $lib = new library();
 
@@ -1288,7 +1289,7 @@ class value_base extends sandbox_value
                                     $exp = new expression($frm);
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->load_result_phrases();
-                                    $phr_lst = $exp->load_phrases();
+                                    $phr_lst = $frm->load_phrases($usr_msg);
                                     if (!$res_phr_lst->is_empty()) {
                                         $res_wrd_lst = $res_phr_lst->wrd_lst_all();
                                         $wrd_lst = $phr_lst->wrd_lst_all();

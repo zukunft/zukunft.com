@@ -720,12 +720,12 @@
     },
     {
       "name": "Financial income/expense, net",
-      "expression": "\"Profit/loss on equity method investments, net\" + \"Other financial income/expense, net\" + \"Financial income\" + \"Financial expense\"",
+      "expression": "=\"Profit/loss on equity method investments, net\" + \"Other financial income/expense, net\" + \"Financial income\" + \"Financial expense\"",
       "assigned_word": "company"
     },
     {
       "name": "Interest income/expense, net",
-      "expression": "\"Interest income\" + \"Interest expense\"",
+      "expression": "=\"Interest income\" + \"Interest expense\"",
       "assigned_word": "company"
     },
     {

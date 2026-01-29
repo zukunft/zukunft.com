@@ -595,6 +595,9 @@ enum messages: string
     case EXPRESSION_ID_NOT_A_NUMBER = 'the formula expression id '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is no a valid integer number';
+    case EXPRESSION_EQUAL_SIGN_MISSING = 'the equal sign (""=) is missing formula expression "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '"';
     case EXPRESSION_ID_NOT_VALID = 'the formula expression id '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is not valid number.';

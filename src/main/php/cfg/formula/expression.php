@@ -205,7 +205,7 @@ class expression extends shared_expression
      * construct and map
      */
 
-    function __construct(?formula $frm)
+    function __construct(formula|formula_map|null $frm)
     {
         $this->reset();
         $this->frm = $frm;
@@ -662,19 +662,6 @@ class expression extends shared_expression
             $trm_lst->merge($trm_lst_in);
         }
         return $trm_lst;
-    }
-
-    /**
-     * @return phrase_list with the phrases that should be added to the result of a formula
-     */
-    function load_phrases(): phrase_list
-    {
-        $usr_msg = new user_message($this->usr);
-        $phr_lst = $this->phrase_id_list($usr_msg);
-        $id_lst = $phr_lst->phrase_ids();
-        $phr_lst->reset(true);
-        $phr_lst->load_by_ids($id_lst);
-        return $phr_lst;
     }
 
 

@@ -36,6 +36,7 @@
 namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -196,6 +197,7 @@ class expression
         user_message                $usr_msg = new user_message()
     ): ?string
     {
+        // TODO Prio 0 use the ref text check functions that includes the user message
         if ($this->ref_text_dirty or $this->ref_text == null or $this->ref_text == '') {
             $new_ref_txt = $this->get_ref_text($trm_lst, $usr_msg);
             if ($usr_msg->is_ok()) {
@@ -230,16 +232,23 @@ class expression
         $result = '';
 
         // check the formula indicator "=" and convert the left and right part separately
-        $pos = strpos($this->user_text($trm_lst), chars::CHAR_CALC);
-        if ($pos >= 0) {
-            $left_part = $this->res_part_usr();
-            $right_part = $this->r_part_usr();
-            $left_part = $this->get_ref_part($left_part, $trm_lst, $usr_msg);
-            // continue with the right part of the expression only if the left part has been fine
-            if (!$this->usr_text_dirty) {
-                $right_part = $this->get_ref_part($right_part, $trm_lst, $usr_msg);
+        // TODO Prio 1 check that a false return of strpos is always handled
+        $pos = strpos($this->usr_text, chars::CHAR_CALC);
+        if ($pos === false) {
+            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_EQUAL_SIGN_MISSING, [
+                msg_id::VAR_FORMULA => $this->usr_text
+            ]);
+        } else {
+            if ($pos >= 0) {
+                $left_part = $this->res_part_usr();
+                $right_part = $this->r_part_usr();
+                $left_part = $this->get_ref_part($left_part, $trm_lst, $usr_msg);
+                // continue with the right part of the expression only if the left part has been fine
+                if (!$this->usr_text_dirty) {
+                    $right_part = $this->get_ref_part($right_part, $trm_lst, $usr_msg);
+                }
+                $result = $left_part . chars::CHAR_CALC . $right_part;
             }
-            $result = $left_part . chars::CHAR_CALC . $right_part;
         }
 
         // remove all spaces because they are not relevant for calculation and to avoid too much recalculation

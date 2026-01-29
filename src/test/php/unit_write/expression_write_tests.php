@@ -87,7 +87,7 @@ class expression_write_tests
         $exp_pe = new expression($frm);
         $exp_pe->set_user_text($frm_pe->usr_text);
 
-        $exp_sector = new expression($frm);
+        $exp_sector = new expression($frm_sector);
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
@@ -141,7 +141,7 @@ class expression_write_tests
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
         // ... and all elements used in the formula
-        $trm_lst = $exp_sector->load_terms();
+        $trm_lst = $frm_sector->load_exp_terms($usr_msg, null, $exp_sector);
         $elm_lst = $exp_sector->element_list($usr_msg, $trm_lst);
         $result = $elm_lst->name();
         $target = '"Country","can be used as a differentiator for","Canton","System Test Word Total"';

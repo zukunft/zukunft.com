@@ -40,6 +40,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_write;
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\element\element_group;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
@@ -62,6 +63,7 @@ class element_group_write_tests
         // init
         $t_db = new test_db_load($t);
         $tl = new test_lib();
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write formula element group ';
@@ -74,10 +76,11 @@ class element_group_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::INCREASE);
 
+        // load the terms needed for the formula expression
+        $trm_lst = $frm->load_exp_terms($usr_msg);
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
-        $trm_lst = $exp->load_terms();
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
         $result = $elm_grp_lst->dsp_id();

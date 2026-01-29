@@ -81,6 +81,7 @@ include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_PHRASE . 'trm_ids.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'protection_type.php';
@@ -127,6 +128,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
@@ -559,6 +561,44 @@ class formula_map extends sandbox_code_id
     }
 
 
+
+    /*
+     * info
+     */
+
+    /**
+     * if the formula has a fixed process for the result
+     * e.g. "this" or "next" where the value of this or the following time word is returned
+     * @return bool true if result calculation is a kind of hardcoded
+     */
+    function is_predefined(): bool
+    {
+        return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
+    }
+
+
+    /*
+     * related
+     */
+
+    /**
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return expression the formula expression as an expression element
+     */
+    function expression(?term_list $trm_lst = null): expression
+    {
+        $exp = new expression($this);
+        // TODO Prio 0 use the ref text check function that includes the user message
+        if ($this->ref_text != '' and $this->usr_text != '') {
+            $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
+        } else {
+            $exp->set_ref_text($this->ref_text, $trm_lst);
+            $exp->set_user_text($this->usr_text, $trm_lst);
+        }
+        return $exp;
+    }
+
+
     /*
      * load
      */
@@ -661,6 +701,124 @@ class formula_map extends sandbox_code_id
             }
         }
         return $result;
+    }
+
+    /**
+     * load the terms from the database that are used in this formula expression
+     * and that are not yet in the cache term list
+     * and if terms are added, add the formula to the given list of formulas that should be updated
+     *
+     * @param user_message $usr_msg to collect messages which terms are missing
+     * @param term_list $trm_lst with the terms that are already in the cache term list
+     * @param formula_list $frm_lst to collect formulas that should be updated with the terms that have been loaded
+     * @return term_list the additional terms that have been loaded
+     */
+    function load_missing_terms(
+        user_message $usr_msg,
+        term_list    $trm_lst,
+        formula_list $frm_lst
+    ): term_list
+    {
+        $exp = $this->expression($trm_lst);
+        // TODO Prio 2 try to avoid reloading of the terms
+        $trm_lst = $this->load_terms($usr_msg, $trm_lst, $exp);
+        if ($exp->is_valid() or $this->is_predefined()) {
+            $frm_trm_lst = $exp->terms($usr_msg, $trm_lst);
+            foreach ($frm_trm_lst->lst() as $trm) {
+                $frm_trm = $trm_lst->get_by_name($trm->name());
+                if ($frm_trm == null) {
+                    $frm_lst->add_by_name($frm_trm);
+                }
+            }
+            // TODO Prio 1 remove ignoring predefined errors
+            if (!$usr_msg->is_ok()) {
+                if ($this->is_predefined()) {
+                    $usr_msg->reset(true);
+                }
+            }
+        }
+        return $trm_lst;
+    }
+
+    /**
+     * load all missing terms used in the expression,
+     * including the phrases that should be added to the formula results
+     *
+     * @param user_message $usr_msg to collect messages which terms are missing
+     * @param term_list|null $trm_lst_in list of terms already loaded
+     * @param expression|null $exp if given the already created formula expression object
+     * @return term_list
+     */
+    function load_terms(
+        user_message $usr_msg,
+        term_list|null $trm_lst_in = null,
+        expression|null $exp = null
+    ): term_list
+    {
+        if ($exp == null) {
+            $exp = $this->expression($trm_lst_in);
+        }
+        $trm_lst = $this->load_exp_terms($usr_msg, $trm_lst_in, $exp);
+        $trm_lst->merge($this->load_phrases($usr_msg, $trm_lst_in, $exp)->term_list());
+        return $trm_lst;
+    }
+
+    /**
+     * load all missing terms used in the expression
+     *
+     * @param user_message $usr_msg to collect messages which terms are missing
+     * @param term_list|null $trm_lst_in list of terms already loaded
+     * @param expression|null $exp if given the already created formula expression object
+     * @return term_list
+     */
+    function load_exp_terms(
+        user_message $usr_msg,
+        term_list|null $trm_lst_in = null,
+        expression|null $exp = null
+    ): term_list
+    {
+        if ($exp == null) {
+            $exp = $this->expression($trm_lst_in);
+        }
+        $trm_lst = $exp->term_id_list($usr_msg);
+        $id_lst = $trm_lst->ids();
+        if ($trm_lst_in != null) {
+            if (!$trm_lst_in->is_empty()) {
+                $ids_loaded = $trm_lst_in->ids();
+                $id_lst = array_diff($id_lst, $ids_loaded);
+            }
+        }
+        $trm_ids = new trm_ids($id_lst);
+        $trm_lst->reset(true);
+        $trm_lst->load_by_ids($trm_ids);
+        if ($trm_lst_in != null) {
+            $trm_lst->merge($trm_lst_in);
+        }
+        return $trm_lst;
+    }
+
+    /**
+     * load all missing result phrases used in the expression
+     *
+     * @param user_message $usr_msg to collect messages which terms are missing
+     * @param term_list|null $trm_lst_in list of terms already loaded
+     * @param expression|null $exp if given the already created formula expression object
+     * @return phrase_list with the phrases that should be added to the result of a formula
+     */
+    function load_phrases(
+        user_message $usr_msg,
+        term_list|null $trm_lst_in = null,
+        expression|null $exp = null
+    ): phrase_list
+    {
+        if ($exp == null) {
+            $exp = $this->expression($trm_lst_in);
+        }
+        $phr_lst = $exp->phrase_id_list($usr_msg);
+        $id_lst = $phr_lst->phrase_ids();
+        $phr_lst->reset(true);
+        $phr_lst->load_by_ids($id_lst);
+        return $phr_lst;
     }
 
 
@@ -1469,7 +1627,7 @@ class formula_map extends sandbox_code_id
      * @return bool true if everything has been fine
      */
     function save(
-        user_message $usr_msg,
+        user_message        $usr_msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {

@@ -800,28 +800,19 @@ class formula_list extends sandbox_list_named
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
-                    $frm_usr_msg = new user_message();
-                    $exp = $frm->expression($trm_lst);
-                    // TODO Prio 2 try to avoid reloading of the terms
-                    $trm_lst = $exp->load_terms($trm_lst);
-                    $phr_lst = $exp->load_phrases();
-                    $trm_lst->merge($phr_lst->term_list());
-                    if ($exp->is_valid() or $frm->is_predefined()) {
-                        $frm_trm_lst = $exp->terms($frm_usr_msg, $trm_lst);
-                        foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_trm = $trm_lst->get_by_name($trm->name());
-                            if ($frm_trm == null) {
-                                $chk_lst->add_by_name($frm_trm);
-                            }
-                        }
-                        // TODO Prio 1 remove ignoring predefined errors
-                        if (!$frm_usr_msg->is_ok()) {
-                            if ($frm->is_predefined()) {
-                                $frm_usr_msg->reset(true);
-                            }
-                        }
+                    // TODO Prio 0 remove
+                    if ($frm->name() == 'Financial income/expense, net') {
+                        log_info('Financial income/expense, net');
                     }
-                    $trm_usr_msg->add($frm_usr_msg);
+                    // try to reload missing terms
+                    // only for the formulas that are not yet in the database
+                    if ($frm->id == 0) {
+                        // load missing terms even if loading of previous terms failed
+                        // to show to the user all terms missing in the import file at once
+                        $frm_usr_msg = new user_message();
+                        $trm_lst = $frm->load_missing_terms($frm_usr_msg, $trm_lst, $chk_lst);
+                        $trm_usr_msg->add($frm_usr_msg);
+                    }
                 }
 
                 // add the database id to the formula list of words and formulas used until now
@@ -1094,9 +1085,7 @@ class formula_list extends sandbox_list_named
             }
             $exp = $frm->expression($cache);
             // TODO Prio 3 try to avoid reloading of the terms
-            $trm_lst = $exp->load_terms($cache);
-            $phr_lst = $exp->load_phrases();
-            $trm_lst->merge($phr_lst->term_list());
+            $trm_lst = $frm->load_terms($usr_msg, $cache, $exp);
             $frm_trm_lst = $exp->terms($usr_msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 if ($trm->id() == 0) {

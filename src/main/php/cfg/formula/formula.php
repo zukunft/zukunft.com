@@ -144,16 +144,6 @@ class formula extends formula_map
      * info
      */
 
-    /**
-     * if the formula has a fixed process for the result
-     * e.g. "this" or "next" where the value of this or the following time word is returned
-     * @return bool true if result calculation is a kind of hardcoded
-     */
-    function is_predefined(): bool
-    {
-        return in_array($this->type_code_id(), formula_type::PREDEFINED_CALCULATION);
-    }
-
     function ref_exp_is_valid(user_message $usr_msg): bool
     {
         if ($this->ref_text == null) {
@@ -508,7 +498,7 @@ class formula extends formula_map
      * @param term_list|null $trm_lst list of terms that are already loaded
      * @return term_list list of all terms that are needed to calculate the formula
      */
-    function load_terms(
+    function load_all_terms(
         phrase_list  $phr_lst,
         user_message $usr_msg,
         ?term_list   $trm_lst
@@ -550,6 +540,7 @@ class formula extends formula_map
     {
         log_debug('get numbers for ' . $this->dsp_id() . ' and ' . $phr_lst->dsp_id());
         $lib = new library();
+        $usr_msg = new user_message();
 
         // check
         $pre_trm_lst = $pre_phr_lst?->term_list();
@@ -558,7 +549,7 @@ class formula extends formula_map
         $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
 
         // reload missing terms from the database
-        $trm_lst = $exp->load_terms($pre_trm_lst);
+        $trm_lst = $this->load_exp_terms($usr_msg, $pre_trm_lst, $exp);
 
         // create the result list
         $res_lst = new result_list($this->get_user());
@@ -957,23 +948,6 @@ class formula extends formula_map
             $exp->set_ref_text($this->ref_text, $trm_lst);
             $exp->set_user_text($this->usr_text, $trm_lst);
         }
-        return $exp;
-    }
-
-    /**
-     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
-     * @return expression the formula expression as an expression element
-     */
-    function expression(?term_list $trm_lst = null): expression
-    {
-        $exp = new expression($this);
-        if ($this->ref_text != '' and $this->usr_text != '') {
-            $exp->set_ref_and_user_text($this->ref_text, $this->usr_text);
-        } else {
-            $exp->set_ref_text($this->ref_text, $trm_lst);
-            $exp->set_user_text($this->usr_text, $trm_lst);
-        }
-        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $this->get_user()->name);
         return $exp;
     }
 

@@ -61,7 +61,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 60,43,26,-36,1,radian per second squared,,,,,,3,,,,,,,,3
 61,,18,-60,1,rad/s2,,,,,,3,,,,,,,,3
 62,125,18,124,1,l (unit symbol),,,,,,,,,,,,,,
-63,1140,18,24,1,m/s,,,,,,,,,,,,,,3
+63,1139,18,24,1,m/s,,,,,,,,,,,,,,3
 64,98,19,99,1,frequency drift,,,,,,3,,,,,,,,3
 65,41,26,24,1,hertz per second,,,,,,3,,,,,,,,3
 66,,18,-65,1,Hz/s,,,,,,3,,,,,,,,3
@@ -1172,17 +1172,17 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 1171,188,12,1057,1,company uses Energy,,,,,,,,,,,,,,
 1172,1048,12,1058,1,Nestlé uses Brand,,,,,,,,,,,,,,
 1173,1059,18,1048,1,Nestle is alias of Nestlé,,,,,,,,,,,,,,
-1174,1131,24,1106,1,Wind Turbine,,,,,,,,,,,,,,
-1175,1145,7,1146,1,North Sea Coast,,,,,,,,,,,,,,
-1176,-1174,2,1149,1,Wind Turbine (Power Plant),,,,,,,,,,,,,,
-1177,1134,25,1135,1,kW,,,,,,,,,,,,,,
+1174,1130,24,1106,1,Wind Turbine,,,,,,,,,,,,,,
+1175,1144,7,1145,1,North Sea Coast,,,,,,,,,,,,,,
+1176,-1174,2,1148,1,Wind Turbine (Power Plant),,,,,,,,,,,,,,
+1177,1133,25,1134,1,kW,,,,,,,,,,,,,,
 1178,1126,26,105,1,kilowatt hour,,,,,,,,,,,,,,
-1179,1134,25,1136,1,MW,,,,,,,,,,,,,,
+1179,1133,25,1135,1,MW,,,,,,,,,,,,,,
 1180,292,7,-1175,1,German North Sea Coast,,,,,,,,,,,,,,
-1181,1134,26,1142,1,W/m²,,,,,,,,,,,,,,
+1181,1133,26,1141,1,W/m²,,,,,,,,,,,,,,
 1182,1107,26,-1174,1,Power per Wind Turbine,,,,,,,,,,,,,,
-1183,105,6,1150,1,Full load hours,,,,,,,,,,,,,,
-1184,1134,25,1137,1,Gigawatt,,,,,,,,,,,,,,
+1183,105,6,1149,1,Full load hours,,,,,,,,,,,,,,
+1184,1133,25,1136,1,Gigawatt,,,,,,,,,,,,,,
 1185,1122,26,109,1,GWh/a,,,,,,,,,,,,,,
 1186,105,26,109,1,h/a,,,,,,,,,,,,,,
 1187,1108,2,1109,1,energy (product),,,,,,,,,,,,,,
@@ -1192,7 +1192,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 1191,1109,26,-1189,1,production per time constant,,,,,,,,,,,,,,
 1192,1111,2,-1188,1,lifetime per time,,,,,,,,,,,,,,
 1193,-1188,25,-1189,1,time variable scaled by time,,,,,,,,,,,,,,
-1194,1112,25,1154,1,savings (production),,,,,,,,,,,,,,
+1194,1112,25,1153,1,savings (production),,,,,,,,,,,,,,
 1195,24,2,-1189,1,second (time constant),,,,,,,,,,,,,,
 1196,1115,20,1116,1,replacement mix,,,,,,,,,,,,,,
 1197,1124,3,292,1,North Germany,,,,,,,,,,,,,,

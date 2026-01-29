@@ -19,14 +19,13 @@
     \-- assign_phr_ulst - section for function assign_phr_ulst not yet defined that it should be assign in /formula/formula.php
     \-- res_del - section for function res_del not yet defined that it should be result in /formula/formula.php
     \-- to_num_new - section for function to_num_new not yet defined that it should be calc in /formula/formula.php
-    \-- load_terms - section for function load_terms is expected to be load in /formula/formula.php
+    \-- load_all_terms - section for function load_all_terms is expected to be load in /formula/formula.php
     \-- load_values - section for function load_values is expected to be load in /formula/formula.php
     \-- to_num - section for function to_num not yet defined that it should be calc in /formula/formula.php
     \-- calc_requests - section for function calc_requests not yet defined that it should be calc in /formula/formula.php
     \-- calc - section for function calc not yet defined that it should be calc in /formula/formula.php
     \-- calc_with - section for function calc_with not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
     \-- expression_new - section for function expression_new not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
-    \-- expression - section for function expression not yet defined that it should be calculate the formula results based on a given figure list in /formula/formula.php
     \-- get_res_lst - section for function get_res_lst is expected to be set and get in /formula/formula.php
     \-- term_list - section for function term_list not yet defined that it should be expression in /formula/formula.php
     \-- wrd_ids - section for function wrd_ids not yet defined that it should be expression in /formula/formula.php
@@ -60,6 +59,11 @@
     \-- name_linked - section for function name_linked not yet defined that it should be debug in /formula/formula_link.php
     \-- order error - order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase,order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase,order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase,order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase,order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase,order of section set and get has difference at get_predicate_code_id should be before set_phrase of set,set_formula,set_phrase,formula,phrase,formula_id,phrase_id,pos,get_predicate_code_id does not match set_type,11,set_style,set_style_by_id,get_style,get_style_id,set_row_phrase,get_row_phrase_id,get_row_phrase_name,set_col_phrase,get_col_phrase_id,get_col_phrase_name,set_col_sub_phrase,get_col_sub_phrase_id,get_col_sub_phrase_name,set_ui_msg_code_id,get_ui_msg_code_id,set_ui_msg_code_id_vars,get_ui_msg_code_id_vars,set_ui_msg_code_id_exception,get_ui_msg_code_id_exception,set_ui_msg_value_exception,get_ui_msg_value_exception,set_formula_by_id,1,set_formula,get_formula,get_formula_id,set_link_type,set_join,get_view,get_component,get_pos,set_link_objects,get_key,get_predicate_code_id,set_phrase
 \-- formula_map
+    \-- expression - section for function expression not yet defined that it should be related in /formula/formula_map.php
+    \-- load_missing_terms - section for function load_missing_terms is expected to be load in /formula/formula_map.php
+    \-- load_terms - section for function load_terms is expected to be load in /formula/formula_map.php
+    \-- load_exp_terms - section for function load_exp_terms is expected to be load in /formula/formula_map.php
+    \-- load_phrases - section for function load_phrases is expected to be load in /formula/formula_map.php
     \-- no_ref_needed - section for function no_ref_needed not yet defined that it should be info in /formula/formula_map.php
     \-- save_links - section for function save_links is expected to be save in /formula/formula_map.php
     \-- is_std - section for function is_std is expected to be info in /formula/formula_map.php
@@ -524,13 +528,13 @@
     \-- name_field
         \-- component - create an SQL statement to retrieve the user changes of the current view component
         \-- component_link - @return string the field name of the name db field as a function for complex overwrites
-        \-- formula_map - load the corresponding name word for the formula name
+        \-- formula_map - load all missing result phrases used in the expression
         \-- source - check if the source in the database needs to be updated
         \-- verb - get a list of database field names, values and types that have been updated
     \-- all_sandbox_fields
         \-- component - create an SQL statement to retrieve the user changes of the current view component
         \-- component_link - @return string the field name of the name db field as a function for complex overwrites
-        \-- formula_map - load the corresponding name word for the formula name
+        \-- formula_map - load all missing result phrases used in the expression
         \-- source - check if the source in the database needs to be updated
     \-- all_fields
         \-- verb - get a list of database field names, values and types that have been updated
@@ -547,8 +551,18 @@
         \-- component - load a phrase if the id is valid
     \-- reload_objects
         \-- component_link - to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
+    \-- expression
+        \-- formula_map - @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
     \-- reload_wrd
         \-- formula_map - load the corresponding name word for the formula name
+    \-- load_missing_terms
+        \-- formula_map - load the terms from the database that are used in this formula expression
+    \-- load_terms
+        \-- formula_map - load all missing terms used in the expression,
+    \-- load_exp_terms
+        \-- formula_map - load all missing terms used in the expression
+    \-- load_phrases
+        \-- formula_map - load all missing result phrases used in the expression
 \-- modify
     \-- fill
         \-- component - fill this component based on the given component
@@ -562,6 +576,8 @@
 \-- info
     \-- diff_msg
         \-- component - create human-readable messages of the differences between the objects
+    \-- 1
+        \-- formula_map - if the formula has a fixed process for the result
     \-- needs_db_update
         \-- component - check if the named object in the database needs to be updated
         \-- formula_map - check if the formula in the database needs to be updated
@@ -569,14 +585,12 @@
         \-- source - check if the source in the database needs to be updated
     \-- next_nbr
         \-- component - returns the next free order number for a new view component
-    \-- is_predefined
-        \-- formula - if the formula has a fixed process for the result
     \-- ref_exp_is_valid
-        \-- formula - if the formula has a fixed process for the result
+        \-- formula - clear the view component object values
     \-- user_exp_is_valid
-        \-- formula - if the formula has a fixed process for the result
+        \-- formula - clear the view component object values
     \-- expression_may_match
-        \-- formula - if the formula has a fixed process for the result
+        \-- formula - clear the view component object values
     \-- no_ref_needed
         \-- formula_map - check if the formula in the database needs to be updated
     \-- needs_to
@@ -692,7 +706,7 @@
 \-- calc
     \-- to_num_new
         \-- formula - create a list of formula results with values instead of terms
-    \-- load_terms
+    \-- load_all_terms
         \-- formula - load all missing terms from the database
     \-- load_values
         \-- formula - load all values for the formula calculation
@@ -707,8 +721,6 @@
         \-- formula - calculate the formula results based on a given figure list
     \-- expression_new
         \-- formula - refresh the formula expression
-    \-- expression
-        \-- formula - @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
     \-- get_res_lst
         \-- formula - @return result_list a list of all formula results linked to this formula
 \-- expression
@@ -1200,7 +1212,6 @@
     \-- has_ref - section for function has_ref not yet defined that it should be info in /formula/expression.php
     \-- symbols - section for function symbols not yet defined that it should be info in /formula/expression.php
     \-- load_terms - section for function load_terms is expected to be load in /formula/expression.php
-    \-- load_phrases - section for function load_phrases is expected to be load in /formula/expression.php
     \-- element_list_with_load - section for function element_list_with_load not yet defined that it should be to deprecate in /formula/expression.php
     \-- load_result_phrases - section for function load_result_phrases is expected to be load in /formula/expression.php
     \-- element_special_following - section for function element_special_following not yet defined that it should be filter elements in /formula/expression.php
@@ -3933,13 +3944,11 @@
 \-- to review
     \-- load_terms
         \-- expression - load all missing terms used in the expression
-    \-- load_phrases
-        \-- expression - @return phrase_list with the phrases that should be added to the result of a formula
     \-- phr_verb_lst
         \-- expression - similar to phr_lst, but
 \-- to deprecate
     \-- element_list_with_load
-        \-- expression - @return phrase_list with the phrases that should be added to the result of a formula
+        \-- expression - load all missing terms used in the expression
     \-- load_result_phrases
         \-- expression - get the phrases that should be added to the result of a formula
 \-- filter elements

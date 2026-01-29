@@ -155,8 +155,9 @@ class element_write_tests
 
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
-        $exp = $frm->expression();
-        $elm_lst = $exp->element_list_with_load($usr_msg);
+        $trm_lst = $frm->load_terms($usr_msg);
+        $exp = $frm->expression($trm_lst);
+        $elm_lst = $exp->element_list($usr_msg);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
