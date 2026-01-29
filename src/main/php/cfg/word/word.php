@@ -919,9 +919,9 @@ class word extends sandbox_code_id
 
     /**
      * fill this word based on the given word
-     * if the id is set in the given word loaded from the database but this import word does not yet have the db id, set the id
-     * if the given description is not set (null) the description is not remove
-     * if the given description is an empty string the description is removed
+     * if the id is set in the given word loaded from the database, but this import word does not yet have the db id, set the id.
+     * if the given description is not set (null). the description is not removed.
+     * if the given description is an empty string. the description is removed.
      *
      * @param word|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill
@@ -938,6 +938,9 @@ class word extends sandbox_code_id
         }
         if ($obj->impact != null) {
             $this->impact = $obj->impact;
+        }
+        if ($obj->view != null) {
+            $this->view = $obj->view;
         }
         return $usr_msg;
     }

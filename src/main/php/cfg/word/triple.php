@@ -1425,6 +1425,14 @@ class triple extends sandbox_link_named
             if ($trp->name_generated != '') {
                 $this->name_generated = $trp->name_generated;
             }
+
+            // fill the parameters
+            if ($obj->weight != null) {
+                $this->weight = $obj->weight;
+            }
+            if ($obj->view != null) {
+                $this->view = $obj->view;
+            }
         }
         if ($obj::class == phrase::class) {
             if ($obj->get_usage() != null) {

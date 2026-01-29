@@ -1211,14 +1211,27 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_code_id_exception != null) {
             $usr_msg->add($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
         }
-        if ($obj->ui_msg_value_exception != null) {
+        if ($obj->ui_msg_value_exception !== null) {
             $usr_msg->add($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
+        }
+        if ($obj->row_phrase != null) {
+            $this->row_phrase = $obj->row_phrase;
+        }
+        if ($obj->col_phrase != null) {
+            $this->col_phrase = $obj->col_phrase;
+        }
+        if ($obj->col_sub_phrase != null) {
+            $this->col_sub_phrase = $obj->col_sub_phrase;
+        }
+        if ($obj->get_formula_id() != null) {
+            $this->set_formula($obj->get_formula());
         }
         if ($obj->get_style_id() != null) {
             $this->set_style_by_id($obj->get_style_id());
         }
-        if ($obj->get_formula_id() != null) {
-            $this->set_formula($obj->get_formula());
+        // TODO Prio 2 review and maybe deprecate
+        if ($obj->link_type_id != null) {
+            $this->link_type_id = $obj->link_type_id;
         }
         return $usr_msg;
     }

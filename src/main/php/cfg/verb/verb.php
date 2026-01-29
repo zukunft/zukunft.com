@@ -66,6 +66,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -293,9 +295,9 @@ class verb extends type_object
                 $this->rev_plural = $json[json_fields::REV_PLURAL];
             }
         }
-        if (array_key_exists(json_fields::FRM_NAME, $json)) {
-            if ($json[json_fields::FRM_NAME] <> '') {
-                $this->frm_name = $json[json_fields::FRM_NAME];
+        if (array_key_exists(json_fields::NAME_IN_FORMULA, $json)) {
+            if ($json[json_fields::NAME_IN_FORMULA] <> '') {
+                $this->frm_name = $json[json_fields::NAME_IN_FORMULA];
             }
         }
         return $usr_msg->is_ok();
@@ -565,7 +567,7 @@ class verb extends type_object
         $vars[json_fields::PLURAL] = $this->plural;
         $vars[json_fields::REVERSE] = $this->reverse;
         $vars[json_fields::REV_PLURAL] = $this->rev_plural;
-        $vars[json_fields::FRM_NAME] = $this->frm_name;
+        $vars[json_fields::NAME_IN_FORMULA] = $this->frm_name;
         $vars[json_fields::USAGE] = $this->usage;
         $vars[json_fields::IMPACT] = $this->impact;
         $vars[json_fields::ID] = $this->id();
@@ -744,6 +746,45 @@ class verb extends type_object
         $trm->set_name($this->name);
         $trm->set_obj($this);
         return $trm;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this verb based on the given verb
+     * if the id is set in the given verb loaded from the database, but this import verb does not yet have the db id, set the id.
+     * if the given description is not set (null), the description is not removed.
+     * if the given description is an empty string, the description is removed.
+     *
+     * @param verb|CombineObject|db_object_seq_id $obj verb with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(verb|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->plural != null) {
+            $this->plural = $obj->plural;
+        }
+        if ($obj->reverse != null) {
+            $this->reverse = $obj->reverse;
+        }
+        if ($obj->rev_plural != null) {
+            $this->rev_plural = $obj->rev_plural;
+        }
+        if ($obj->frm_name != null) {
+            $this->frm_name = $obj->frm_name;
+        }
+        if ($obj->usage != null) {
+            $this->usage = $obj->usage;
+        }
+        if ($obj->impact != null) {
+            $this->impact = $obj->impact;
+        }
+        return $usr_msg;
     }
 
 

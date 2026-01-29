@@ -2077,7 +2077,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * detects if this object has be changed compared to the given object
+     * detects if this object has been changed compared to the given object,
      * excluding changes on internal fields like last_update
      *
      * @param sandbox|sandbox_named|sandbox_link $db_obj the user database or standard record for compare

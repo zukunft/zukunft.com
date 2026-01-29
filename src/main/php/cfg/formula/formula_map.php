@@ -858,6 +858,7 @@ class formula_map extends sandbox_code_id
             $used_obj = $obj;
         }
 
+        // do not fill all fields for the term ???
         if ($obj::class == formula::class) {
             if ($used_obj->ref_text != null) {
                 $this->ref_text = $used_obj->ref_text;
@@ -870,6 +871,9 @@ class formula_map extends sandbox_code_id
             }
             if ($used_obj->last_update != null) {
                 $this->last_update = $used_obj->last_update;
+            }
+            if ($obj->view != null) {
+                $this->view = $obj->view;
             }
         }
         if ($used_obj->impact != null) {

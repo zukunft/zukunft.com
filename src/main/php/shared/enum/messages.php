@@ -823,6 +823,11 @@ enum messages: string
         . '" failed because the triple "'
         . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
         . '" is incomplete.';
+    case IMPORT_COMPONENT_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the component "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is incomplete.';
     case IMPORT_FORMULA_NOT_READY = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because the formula "'

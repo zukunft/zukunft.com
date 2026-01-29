@@ -87,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 
@@ -450,7 +451,7 @@ class component_list extends sandbox_list_named
             if ($cmp->db_ready($usr_msg)) {
                 $cmp_lst->add_by_name($cmp);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_COMPONENT_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $cmp->dsp_id(),
                 ]);

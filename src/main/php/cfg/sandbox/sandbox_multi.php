@@ -3766,7 +3766,8 @@ class sandbox_multi extends db_object_multi_user
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
         }
-        return $chk_obj->db_fields_changed($db_obj, $usr_msg)->is_empty();
+        $fvt_lst = $chk_obj->db_fields_changed($db_obj, $usr_msg);
+        return $fvt_lst->is_empty_except_internal_fields();
     }
 
     /**

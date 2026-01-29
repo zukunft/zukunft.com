@@ -175,13 +175,13 @@ class word_tests
         $t->assert_json_file(new word($usr), $json_file);
 
         $t->subheader($ts . 'sync and fill');
-        $test_name = 'check if the word fill function set all database fields and the view is updated';
+        $test_name = 'check if the word fill function set all database fields';
         $usr_msg = new user_message();
         $wrd_imp = $t_wrd->word_filled();
         $wrd_db = $t_wrd->word();
         $wrd_db->fill($wrd_imp, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp, $usr_msg)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word_db::FLD_VIEW]);
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, []);
         $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
         $wrd_db = $t_wrd->word_filled();
         $wrd_imp = $t_wrd->word();

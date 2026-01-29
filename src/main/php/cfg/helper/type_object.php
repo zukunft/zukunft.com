@@ -68,6 +68,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -269,7 +271,7 @@ class type_object extends db_object_seq_id
      * set the vars of this type object based on json string from the frontend object
      * @param string $api_json with the api message created by the frontend
      * @param user_message $usr_msg with problems and suggested solutions for the user
-     * @return bool true if the mapping has been completed successful
+     * @return bool true if the mapping has been completed successfully
      */
     function set_from_api(string $api_json, user_message $usr_msg): bool
     {
@@ -382,6 +384,60 @@ class type_object extends db_object_seq_id
     function is_used(): bool
     {
         return true;
+    }
+
+
+    /*
+     * compare
+     */
+
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param type_object $db_typ the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_diff(
+        type_object   $db_typ,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        // for the check it is not relevant if only the user differs
+        $chk_obj = clone $this;
+        $fvt_lst = $chk_obj->db_fields_changed($db_typ, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_internal_fields();
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this type object based on the given type object
+     * if the id is set in the given type object loaded from the database, but this import type object does not yet have the db id, set the id.
+     * if the given description is not set (null), the description is not removed.
+     * if the given description is an empty string, the description is removed.
+     *
+     * @param type_object|CombineObject|db_object_seq_id $obj type object with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(type_object|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->get_code_id() != null) {
+            $this->set_code_id($obj->get_code_id(), $usr_req);
+        }
+        if ($obj->name != null) {
+            $this->name = $obj->name;
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $usr_msg;
     }
 
 

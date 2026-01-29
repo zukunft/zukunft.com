@@ -3,7 +3,7 @@
 /*
 
     test/php/unit_write/element_group_tests.php - write test FORMULA ELEMENT GROUPS to the database and check the results
-    ---------------------------------------------------
+    -------------------------------------------
 
 
     Simple example:
@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -62,6 +63,7 @@ class element_group_write_tests
 
         // init
         $t_db = new test_db_load($t);
+        $t_frm = new test_formulas($t);
         $tl = new test_lib();
         $usr_msg = new user_message($t->usr1);
 
@@ -76,10 +78,17 @@ class element_group_write_tests
         // load increase formula for testing
         $frm = $t_db->load_formula(formulas::INCREASE);
 
+        $test_name = 'compare the database formula "' . formulas::THIS_NAME . '" with the fixed test formula';
+        $t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_this(), $usr_msg));
+        $test_name = 'compare the database formula "' . formulas::PRIOR . '" with the fixed test formula';
+        $t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_prior(), $usr_msg));
+        $test_name = 'compare the database formula "' . formulas::INCREASE . '" with the fixed test formula';
+        $t->assert_true($test_name, $frm_this->no_diff($t_frm->formula_increase(), $usr_msg));
+
         // load the terms needed for the formula expression
         $trm_lst = $frm->load_exp_terms($usr_msg);
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
-        $exp = $frm->expression();
+        $exp = $frm->expression($trm_lst);
         // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
 
@@ -118,11 +127,10 @@ class element_group_write_tests
 
             // test if the values for an element group are displayed correctly
             $elm_grp_dsp = new element_group($elm_grp->api_json());
-            // TODO Prio 1 activate
-            //$result = $elm_grp_dsp->dsp_values();
-            //$fig_lst = $elm_grp->figures();
-            //$target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            //$t->assert('element_group->dsp_values', $result, $target);
+            $result = $elm_grp_dsp->dsp_values();
+            $fig_lst = $elm_grp->figures();
+            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
+            $t->assert('element_group->dsp_values', $result, $target);
 
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();

@@ -161,11 +161,13 @@ class application
      *
      * @param string $code_name the place that is displayed to the user e.g. add word
      * @param bool $echo_env if true log the environment
+     * @param bool $restart if true to start the php session again
      * @return sql_db the open database connection
      */
     function start(
         string $code_name,
-        bool   $echo_env = false
+        bool   $echo_env = false,
+        bool   $restart = false
     ): sql_db
     {
         global $sys;
@@ -176,7 +178,9 @@ class application
 
         // TODO Prio 2 check if cookies are actually needed
         // resume session (based on cookies)
-        session_start();
+        if (!$restart) {
+            session_start();
+        }
 
         /*
         require __DIR__ . '/vendor/autoload.php';

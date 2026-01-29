@@ -1254,6 +1254,34 @@ class user extends db_id_object_non_sandbox
 
 
     /*
+     * compare
+     */
+
+    /**
+     * detects if this object has been changed compared to the given object,
+     * excluding changes on internal fields like last_update
+     *
+     * @param user $db_usr the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_diff(
+        user          $db_usr,
+        user_message  $usr_msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): bool
+    {
+        // for the check it is not relevant if only the user differs
+        $chk_obj = clone $this;
+        // if this object does not yet have a db key ignore this
+        if ($chk_obj->id() == 0) {
+            $chk_obj->id = $db_usr->id();
+        }
+        $fvt_lst = $chk_obj->db_fields_changed($db_usr, $usr_msg, $sc_par_lst);
+        return $fvt_lst->is_empty_except_internal_fields();
+    }
+
+
+    /*
      * owner and access
      */
 
@@ -1637,6 +1665,9 @@ class user extends db_id_object_non_sandbox
         }
         if ($obj->last_name != null) {
             $this->last_name = $obj->last_name;
+        }
+        if ($obj->excluded != null) {
+            $this->excluded = $obj->excluded;
         }
         return $usr_msg;
     }

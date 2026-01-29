@@ -168,6 +168,7 @@
     \-- ip_check - section for function ip_check not yet defined that it should be load sql in /user/user.php
     \-- get - section for function get not yet defined that it should be load sql in /user/user.php
     \-- create_system_user - section for function create_system_user not yet defined that it should be load sql in /user/user.php
+    \-- no_diff - section for function no_diff not yet defined that it should be compare in /user/user.php
     \-- can_add - section for function can_add not yet defined that it should be owner and access in /user/user.php
     \-- can_be_changed_by - section for function can_be_changed_by not yet defined that it should be owner and access in /user/user.php
     \-- can_change - section for function can_change is expected to be sandbox in /user/user.php
@@ -569,6 +570,7 @@
         \-- component_link - fill this component link object based on the given object
         \-- formula_map - fill this formula based on the given formula
         \-- ref - fill this reference based on the given reference
+        \-- verb - fill this verb based on the given verb
     \-- move_up
         \-- component_link - create an array with the export json fields of this component
     \-- move_down
@@ -1566,6 +1568,7 @@
 \-- type_object
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map in /helper/type_object.php
     \-- name - section for function name is expected to be debug in /helper/type_object.php
+    \-- no_diff - section for function no_diff not yet defined that it should be compare in /helper/type_object.php
     \-- sql_table - section for function sql_table not yet defined that it should be sql create in /helper/type_object.php
     \-- sql_index - section for function sql_index not yet defined that it should be sql create in /helper/type_object.php
     \-- load_sql_by_id - section for function load_sql_by_id is expected to be load sql in /helper/type_object.php

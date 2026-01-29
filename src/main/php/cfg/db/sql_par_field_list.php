@@ -52,6 +52,7 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
@@ -477,8 +479,13 @@ class sql_par_field_list
      */
     function is_empty_except_internal_fields(): bool
     {
-        $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE]);
+        $names = array_diff($this->names(), [
+            sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_ID,
+            user_db::FLD_ID,
+            verb_db::FLD_ID,
+            sandbox_multi::FLD_LAST_UPDATE,
+            formula_db::FLD_LAST_UPDATE
+        ]);
         if (count($names) == 0) {
             return true;
         } else {

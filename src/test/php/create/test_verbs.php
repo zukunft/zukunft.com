@@ -87,6 +87,7 @@ class test_verbs extends test_objects
     }
 
     /**
+     * TODO Prio 0 used a real filled verb
      * @return verb the default verb with all vars set
      */
     function verb_filled(): verb
@@ -94,6 +95,7 @@ class test_verbs extends test_objects
         $vrb = new verb(verbs::NOT_SET_ID, verbs::NOT_SET_NAME, verbs::NOT_SET);
         $vrb->set_description(verbs::NOT_SET_COM);
         $vrb->set_user($this->env->usr1);
+        $vrb->frm_name = verbs::NOT_SET_NAME;
         return $vrb;
     }
 
