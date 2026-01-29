@@ -157,7 +157,7 @@ class element_write_tests
         $frm = $t_db->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $trm_lst = $frm->load_terms($usr_msg);
         $exp = $frm->expression($trm_lst);
-        $elm_lst = $exp->element_list($usr_msg);
+        $elm_lst = $exp->element_list($usr_msg, $trm_lst);
 
         if (!$elm_lst->is_empty()) {
             $result = $elm_lst->name();
