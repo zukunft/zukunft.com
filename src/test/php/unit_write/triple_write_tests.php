@@ -310,6 +310,9 @@ class triple_write_tests
         // cleanup - fallback delete
         $t_trp->cleanup($ts);
 
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
+
     }
 
     function create_test_triples(all_tests $t): void

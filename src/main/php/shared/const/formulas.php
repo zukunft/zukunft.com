@@ -73,6 +73,7 @@ class formulas
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';
+    const string THIS_COM = 'hardcoded formula to select now, today, this year, ...';
     const string PRIOR = 'prior';
     const int PRIOR_ID = 20;
     const string PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';

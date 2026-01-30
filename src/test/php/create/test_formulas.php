@@ -208,11 +208,14 @@ class test_formulas extends test_objects
      */
     function formula_this(): formula
     {
+        global $sys;
         $t_phr = new test_phrases($this->env);
         $frm = new formula($this->env->usr1);
         $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
         $frm->set_user_text(formulas::THIS_EXP, $t_phr->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::THIS, $this->env->usr1);
+        $frm->description = formulas::THIS_COM;
+        $frm->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
         return $frm;
     }
 

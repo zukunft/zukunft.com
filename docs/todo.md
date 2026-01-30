@@ -10,6 +10,13 @@ A proper issue ticket should be created for these TODOs notes:
     TODO fix all prio 0 TODO including unit tests
     TODO finish the expression code review
     TODO deprecate all non prepared SQL queries (deprecate the insert_old and update_old functions)
+    TODO for messages use these main functions:
+         - add:            to add a translatable message to the user with parameters
+         - add_text:       to add a translatable message to the user without parameters
+         - add_admin:      to add a non translatable message to the admin
+         - add_develop:    to add a non translatable message for developers
+         - merge (ex add): to merge two messages into one
+
     TODO create more unit tests and create code to review the code because I make too many msitakes!!!
     TODO finish the frontend component tests
     TODO create the frontend page reaction flow tests
@@ -244,7 +251,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO create a config get function for the frontend
     TODO cleanup the object vars and use objects instead repeating ids
     TODO remove the old frontend objects based on the api object
-    TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the json api message
+    TODO remove the dsp_obj() functions (without api objects where it can be used for unit tests) and base the frontend objects only on the api json message
     TODO add at least one HTML test for each class
     TODO remove all dsp_obj functions from the model classes
     TODO make sure that im-and export and api check all objects fields
@@ -331,7 +338,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO ... and switch off the SQL standard log for tables that are using the user friendly log process of this code e.g. the changes tables
     TODO use LLM KI systems like deepSeek to fill up and validate the phrases semi automatically
     TODO fix the button frontend issue
-    TODO use the json api message header for all api messages
+    TODO use the api json message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
     TODO always sort the phrase list by id before creating the group id

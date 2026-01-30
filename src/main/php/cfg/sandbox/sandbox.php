@@ -1420,12 +1420,19 @@ class sandbox extends db_object_seq_id_user
         log_debug($this->id());
 
         $lib = new library();
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->get_user()->id);
-        if ($this->owner_id() == $this->get_user()->id or $this->owner_id() <= 0) {
+        $owner_id = $this->owner_id();
+        $this_user_id = $this->get_user()->id;
+        log_debug('owner is '
+            . $owner_id . ' and the change is requested by '
+            . $this_user_id);
+
+        if ($owner_id == $this_user_id or $owner_id <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->get_user()->id);
-            if ($changer_id == $this->get_user()->id or $changer_id <= 0) {
+            log_debug('changer is '
+                . $changer_id . ' and the change is requested by '
+                . $this_user_id);
+            if ($changer_id == $this_user_id or $changer_id <= 0) {
                 $result = false;
             }
         }

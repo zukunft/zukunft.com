@@ -169,7 +169,7 @@ class test_api extends test_base
         $typ_lst->add(api_types::TEST_MODE);
         $class = $this->class_to_api($usr_obj::class);
 
-        // create the json api message and revert it to an array for better compare
+        // create the api json message and revert it to an array for better compare
         $actual = json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
 
         return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);

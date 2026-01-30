@@ -271,6 +271,9 @@
     },
     {
       "name": "climate gas emissions"
+    },
+    {
+      "name": "Production per year"
     }
   ],
   "triples": [

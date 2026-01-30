@@ -4066,7 +4066,6 @@
       "to": "Asia & Australasia "
     },
     {
-      "name": "$ (FX sign)",
       "from": "$",
       "verb": "is alias of",
       "to": "US-Dollar"

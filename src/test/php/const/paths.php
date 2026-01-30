@@ -60,9 +60,12 @@ class paths
     const string DOCS = ROOT_PATH . 'docs' . DIRECTORY_SEPARATOR;                  // to check the doc consistency
 
 
-
     // main path for the test resources
     const string RESOURCE = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR;
+
+    // path for db tests
+    const string SUB_DB = 'db' . DIRECTORY_SEPARATOR;
+    const string DB_CLEANUP = self::SUB_DB . 'cleanup' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the api
     const string API_RES = self::RESOURCE . 'api' . DIRECTORY_SEPARATOR;

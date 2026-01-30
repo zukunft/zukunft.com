@@ -2336,7 +2336,7 @@ class value_base extends sandbox_value
                 // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
                 $db_rec->load_by_id($this->grp()->id());
                 if ($db_rec->id() != $this->id()) {
-                    $usr_msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
+                    $usr_msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $this->dsp_id() . ' ' . $msg_fail);
                 }
                 log_debug("old database value loaded (" . $db_rec->get_value() . ") with group " . $db_rec->grp()->id() . ".");
 

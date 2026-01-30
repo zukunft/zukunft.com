@@ -54,6 +54,8 @@ include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
@@ -66,6 +68,8 @@ use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class element_group extends list_db_write
@@ -76,6 +80,23 @@ class element_group extends list_db_write
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
+
+    /**
+     * create an array for the api json message
+     *
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        $vars[json_fields::LIST_ELEMENTS] = parent::api_json_array($typ_lst, $usr);
+        if ($this->phr_lst != null) {
+            $vars[json_fields::PHRASES] = $this->phr_lst->api_json_array($typ_lst, $usr);
+        }
+        return $vars;
+    }
 
     /*
      * display

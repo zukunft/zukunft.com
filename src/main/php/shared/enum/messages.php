@@ -202,6 +202,7 @@ enum messages: string
     const string VAR_EXPRESSION = 'VarObjExpression';
     const string VAR_JSON_PART = 'VarJsonPart';
     const string VAR_VERB_NAME = 'VarVerbName';
+    const string VAR_COUNTER = 'VarCounter';
     const string IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
@@ -1087,6 +1088,11 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case DB_CLEANUP_ERROR = 'There are '
+        . self::VAR_START . self::VAR_COUNTER . self::VAR_END
+        . ' unexpected system test rows detected by '
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END;
 
     case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END

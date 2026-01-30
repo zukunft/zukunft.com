@@ -14,6 +14,16 @@
     1. via log_debug, _info, _warning and _error message written directly from th function to the log table
     2. via exception if the calling function needs to be informed and the calling function needs to decide the next steps
 
+    the main functions are:
+         - add:            to add a translatable message to the user with parameters
+         - add_text:       to add a translatable message to the user without parameters
+         - add_admin:      to add a non translatable message to the admin
+         - add_develop:    to add a non translatable message for developers
+         - merge (ex add): to merge two messages into one
+
+    TODO Prio 2 once all messages are in line with the standard rename to message $msg
+    TODO Prio 2 add an int value for the expected specificity of the message to show the most specific messages first because they are expected to be the root cause
+
 
     This file is part of zukunft.com - calc with words
 

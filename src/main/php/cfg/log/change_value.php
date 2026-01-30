@@ -203,7 +203,7 @@ class change_value extends change_log
      */
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included

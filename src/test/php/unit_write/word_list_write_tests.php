@@ -38,6 +38,7 @@ include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -46,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_write_tests
@@ -57,7 +59,10 @@ class word_list_write_tests
         global $usr;
         global $sys;
 
+        // init
         $t_db = new test_db_load($t);
+        $t_wrd = new test_words($t);
+        $usr_msg = new user_message($t->usr1);
 
         // start the test section (ts)
         $ts = 'db write word list ';
@@ -414,6 +419,12 @@ class word_list_write_tests
         $result = $wrd_lst->names();
         $target = array("April", "December", "February", "January", "March", "November", "October", "September");
         $t->assert('word_list->diff of ' . $wrd_lst->dsp_id() . ' with ' . $del_wrd_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_DB);
+
+        // cleanup - fallback delete
+        $t_wrd->cleanup($ts);
+
+        // test if there are any test leftovers in the database and report which
+        $t->check_cleanup($usr_msg);
 
     }
 

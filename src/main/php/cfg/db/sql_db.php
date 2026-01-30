@@ -1172,7 +1172,7 @@ class sql_db
             $usr->load_by_id(users::SYSTEM_ID);
             $usr_msg->usr = $usr;
 
-                // recreate the code link database rows
+            // recreate the code link database rows
             $log_txt->echo_log('Create the code links');
             $this->db_fill_code_links();
             $cac = new data_object($usr);
@@ -1257,8 +1257,10 @@ class sql_db
     function reset_db_core(): void
     {
         // run reset the main database tables
-        $tbl_lst = $this->fetch_all(sql::SELECT
-            . " table_name FROM information_schema.tables WHERE table_schema = 'public';");
+        $usr_msg = new user_message();
+        $sql = sql::SELECT
+            . " table_name FROM information_schema.tables WHERE table_schema = 'public';";
+        $tbl_lst = $this->fetch_all($sql, $usr_msg);
         foreach ($tbl_lst as $tbl) {
             $tbl_name = $tbl[0];
             $this->drop_table($tbl_name);
@@ -2961,15 +2963,21 @@ class sql_db
 
     /**
      * fetch the first value from an SQL database (either Postgres or MySQL at the moment)
+     * TODO Prio 0 return false in case of an error
      *
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
-     * @param bool $fetch_all true all database rows are returned at once
-     * @return array|null with one or all database records
+     * @param bool $fetch_all if true, all database rows are returned at once
+     * @return array|false with one or all database records or false if something went wrong
      */
-    private
-    function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
+    private function fetch(
+        string       $sql,
+        user_message $usr_msg,
+        string       $sql_name = '',
+        array        $sql_array = array(),
+        bool         $fetch_all = false
+    ): array|false
     {
         global $sys;
 
@@ -2987,21 +2995,20 @@ class sql_db
                         if ($fetch_all) {
                             if ($exe_result) {
                                 while ($sql_row = pg_fetch_array($exe_result)) {
-                                    if ($sql_row != false) {
-                                        $result[] = $sql_row;
-                                    }
+                                    $result[] = $sql_row;
                                 }
                             }
                         } else {
                             $sql_row = pg_fetch_array($exe_result);
-                            if ($sql_row != false) {
+                            if ($sql_row !== false) {
                                 $result = $sql_row;
                             }
                         }
                     } catch (Exception $e) {
                         $msg = 'Select';
                         $trace_link = log_fatal($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage(), 'fetch');
-                        $result = [];
+                        $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
+                        $result = false;
                     }
                 }
             } elseif ($this->db_type == sql_db::MYSQL) {
@@ -3021,7 +3028,8 @@ class sql_db
                     } catch (Exception $e) {
                         $msg = 'Select';
                         $trace_link = log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-                        $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
+                        $usr_msg->add_message_text($msg . log::MSG_ERR_INTERNAL . $trace_link);
+                        $result = false;
                     }
                 }
             } else {
@@ -3036,19 +3044,21 @@ class sql_db
     /**
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      */
-    private
-    function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
+    private function fetch_first(
+        string $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+    ): ?array
     {
-        return $this->fetch($sql, $sql_name, $sql_array);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array);
     }
 
     /**
      * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
-    private
-    function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
+    private function fetch_all(
+        $sql, user_message $usr_msg, string $sql_name = '', array $sql_array = array()
+    ): array|false
     {
-        return $this->fetch($sql, $sql_name, $sql_array, true);
+        return $this->fetch($sql, $usr_msg, $sql_name, $sql_array, true);
     }
 
     private
@@ -3063,24 +3073,27 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * returns all values of an SQL query in an array
      */
     function get_old(string $sql, string $sql_name = '', array $sql_array = array()): array
     {
+        $usr_msg = new user_message();
         $this->debug_msg($sql, 'get_old');
-        return $this->fetch_all($sql, $sql_name, $sql_array);
+        return $this->fetch_all($sql, $usr_msg, $sql_name, $sql_array);
     }
 
     /**
      * returns all values of an SQL query in an array
      *
      * @param sql_par $qp the sql statement to get the db rows
-     * @return array the database rows or an empty array
+     * @return array|false the database rows or an empty array
      */
-    function get(sql_par $qp): array
+    function get(sql_par $qp): array|false
     {
+        $usr_msg = new user_message();
         $this->debug_msg($qp->sql, 'get');
-        return $this->fetch_all($qp->sql, $qp->name, $qp->par);
+        return $this->fetch_all($qp->sql, $usr_msg, $qp->name, $qp->par);
     }
 
     /**
@@ -3092,7 +3105,8 @@ class sql_db
      */
     function get_internal(string $sql): array
     {
-        return $this->fetch_all($sql);
+        $usr_msg = new user_message();
+        return $this->fetch_all($sql, $usr_msg);
     }
 
     /**
@@ -3103,7 +3117,7 @@ class sql_db
      * @param string $sql the sql statement to get the db row
      * @return array|null the database row or null
      */
-    function get1_internal(string $sql): ?array
+    function get1_internal(string $sql, user_message $usr_msg = new user_message()): ?array
     {
         $this->debug_msg($sql, 'get1');
 
@@ -3117,13 +3131,13 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, '', array());
+        return $this->fetch_first($sql, $usr_msg, '', array());
     }
 
     /**
      * get only the first record from the database
      */
-    function get1(sql_par $qp): ?array
+    function get1(sql_par $qp, user_message $usr_msg = new user_message()): ?array
     {
         $this->debug_msg($qp->sql, 'get1');
 
@@ -3137,7 +3151,7 @@ class sql_db
             }
         }
 
-        return $this->fetch_first($sql, $qp->name, $qp->par);
+        return $this->fetch_first($sql, $usr_msg, $qp->name, $qp->par);
     }
 
     /**
@@ -3156,11 +3170,13 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * returns first value of a simple SQL query
      */
     function get_value($field_name, $id_name, $id)
     {
         $result = '';
+        $usr_msg = new user_message();
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
         if ($this->class <> '') {
@@ -3180,7 +3196,7 @@ class sql_db
             //$sql_array = array($this->sf($id));
             $sql = "SELECT " . $this->name_sql_esc($field_name) . " FROM " . $this->name_sql_esc($this->table) . " WHERE " . $id_name . " = " . $this->sf($id) . " LIMIT 1;";
 
-            $sql_row = $this->fetch_first($sql);
+            $sql_row = $this->fetch_first($sql, $usr_msg);
 
             if ($sql_row) {
                 if (count($sql_row) > 0) {
@@ -3196,11 +3212,13 @@ class sql_db
     }
 
     /**
+     * TODO Prio 1 deprecate
      * similar to sql_db->get_value, but for two key fields
      */
     function get_value_2key($field_name, $id1_name, $id1, $id2_name, $id2)
     {
         $result = '';
+        $usr_msg = new user_message();
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
@@ -3215,7 +3233,7 @@ class sql_db
         $sql_name = 'get_' . $field_name . '_from_' . $this->table . '_where_' . $id1_name . '_and_' . $id2_name;
         $sql_array = array($id1, $id2);
 
-        $sql_row = $this->fetch_first($sql, $sql_name, $sql_array);
+        $sql_row = $this->fetch_first($sql, $usr_msg, $sql_name, $sql_array);
 
         if ($sql_row != false) {
             if (count($sql_row) > 0) {

@@ -241,27 +241,43 @@ class a_selected_test extends test_cleanup
              */
 
             // run the selected db write tests
-            //new api_write_tests()->run($t);
             //new user_write_tests()->run($this);
-            //new word_write_tests()->run($this);
+            new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
+            //new verb_write_tests()->run($t);
             //new triple_write_tests()->run($this);
+            //new phrase_write_tests()->run($t);
+            //new phrase_list_write_tests()->run($t);
             //new group_write_tests()->run($this);
+            //new group_list_write_tests()->run($t);
+            //new graph_tests()->run($t);
+            //new term_write_tests()->run($t);
+            //new term_list_tests()->run($t);
             //new source_write_tests()->run($this);
             //new ref_write_tests()->run($this);
             //new value_write_tests()->run($this);
-            //new formula_write_tests()->run($this);
-            //new formula_link_write_tests()->run($this);
+            //new value_list_write_tests()->run($t);
             //new expression_write_tests()->run($this);
             //new element_write_tests()->run($this);
             //new element_write_tests()->run_list($this);
             new element_group_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
+            //new formula_write_tests()->run_list($this);
+            //new formula_link_write_tests()->run($this);
+            //new formula_link_write_tests()->run_list($this);
+            //new formula_trigger_tests()->run($t);
+            //new result_write_tests()->run($t);
+            //new result_write_tests()->run_list($t);
+            //new job_write_tests()->run($t);
+            //new job_write_tests()->run_list($t);
             //new view_write_tests()->run($this);
+            //new view_relation_write_tests()->run($this);
             //new view_link_write_tests()->run($this);
             //new component_write_tests()->run($this);
             //new component_link_write_tests()->run($this);
-            //new import_write_tests()->run($this);
 
+            //new api_write_tests()->run($t);
+            //new import_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);

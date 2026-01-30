@@ -139,7 +139,7 @@ class combine_object extends CombineObject
     }
 
     /**
-     * create an array for the json api message
+     * create an array for the api json message
      *
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user

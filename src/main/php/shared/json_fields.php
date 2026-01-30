@@ -270,6 +270,7 @@ class json_fields
     const string LIST_PHRASE_TYPES = 'phrase_types';
     const string LIST_FORMULA_TYPES = 'formula_types';
     const string LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const string LIST_ELEMENTS = 'elements';
     const string LIST_ELEMENT_TYPES = 'element_types';
     const string LIST_VIEW_TYPES = 'view_types';
     const string LIST_VIEW_STYLES = 'view_styles';

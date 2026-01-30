@@ -1932,14 +1932,16 @@ class formula_map extends sandbox_code_id
     {
         global $db_con;
 
+        $usr_msg_del = new user_message();
+
         $frm_lnk_lst = new formula_link_list($this->get_user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
             $msg = $frm_lnk_lst->del_without_log();
-            $usr_msg->add_message_text($msg);
+            $usr_msg_del->add_message_text($msg);
         }
 
         // and the corresponding formula elements
-        if ($usr_msg->is_ok()) {
+        if ($usr_msg_del->is_ok()) {
             $elm_lst = new element_list($this->get_user());
             $elm_lst->load_by_frm($this->id());
             // TODO add del function with test
@@ -1948,21 +1950,23 @@ class formula_map extends sandbox_code_id
             $db_con->set_class(element::class);
             $db_con->set_usr($this->get_user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message_text($msg);
+            $usr_msg_del->add_message_text($msg);
         }
 
         // and the corresponding results
-        if ($usr_msg->is_ok()) {
+        if ($usr_msg_del->is_ok()) {
             $db_con->set_class(result::class);
             $db_con->set_usr($this->get_user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message_text($msg);
+            $usr_msg_del->add_message_text($msg);
         }
 
         // and the corresponding word if possible
-        if ($usr_msg->is_ok()) {
-            $this->wrd_del($usr_msg);
+        if ($usr_msg_del->is_ok()) {
+            $this->wrd_del($usr_msg_del);
         }
+
+        $usr_msg->add($usr_msg_del);
 
         return $usr_msg->is_ok();
     }

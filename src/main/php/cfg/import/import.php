@@ -468,7 +468,8 @@ class import
      */
     public function put(
         array $json_array,
-        user_message $usr_msg
+        user_message $usr_msg,
+        ?data_object $dto = null
     ): bool
     {
         global $usr;
@@ -476,6 +477,10 @@ class import
         log_debug();
         $lib = new library();
         $this->last_display_time = microtime(true);
+
+        if ($dto == null) {
+            $dto = new data_object($usr_msg->usr);
+        }
 
         // get the user first to allow user-specific validation
         $usr_import = null;
@@ -608,6 +613,7 @@ class import
                     $src = new source($this->usr);
                     if ($src->import_obj($json_src, $usr_msg)) {
                         $this->sources_done++;
+                        $dto->source_list()->add($src);
                     } else {
                         $this->sources_failed++;
                     }
@@ -644,7 +650,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, value::class);
                 foreach ($json_obj as $json_val) {
                     $val = new value($this->usr);
-                    if ($val->import_obj($json_val, $usr_msg)) {
+                    if ($val->import_obj($json_val, $usr_msg, $dto)) {
                         $this->values_done++;
                     } else {
                         $this->values_failed++;
@@ -657,7 +663,7 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($this->usr);
-                    if ($val->import_obj($value, $usr_msg)) {
+                    if ($val->import_obj($value, $usr_msg, $dto)) {
                         $this->list_values_done++;
                     } else {
                         $this->list_values_failed++;
@@ -669,7 +675,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, view::class);
                 foreach ($json_obj as $json_msk) {
                     $view_obj = new view($this->usr);
-                    if ($view_obj->import_obj($json_msk, $usr_msg)) {
+                    if ($view_obj->import_obj($json_msk, $usr_msg, $dto)) {
                         $this->views_done++;
                     } else {
                         $this->views_failed++;
@@ -683,6 +689,7 @@ class import
                     $cmp_obj = new component($this->usr);
                     if ($cmp_obj->import_obj($json_cmp, $usr_msg)) {
                         $this->components_done++;
+                        $dto->component_list()->add($cmp_obj);
                     } else {
                         $this->components_failed++;
                     }

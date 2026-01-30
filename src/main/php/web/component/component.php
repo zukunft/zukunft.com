@@ -205,7 +205,7 @@ class component extends sandbox_code_id
      * TODO all set_from_json_array functions should only use json_fields not api::FLD
      * TODO Prio 2 move $typ_lst array convert to one place
      * TODO Prio 2 review $typ_lst->flat_link() ID switches
-     * create an array for the json api message
+     * create an array for the api json message
      * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
