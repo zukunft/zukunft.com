@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\formulas;
@@ -118,7 +119,9 @@ class formula_write_tests
         $t->assert('formula->is_special for "' . $frm->name() . '"', $result, $target);
 
         $exp = $frm->expression();
-        $frm_lst = $exp->element_special_following_frm($usr_msg);
+        $trm_lst = new term_list($t->usr1);
+        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
+        $frm_lst = $exp->element_special_following_frm($usr_msg, $trm_lst);
         $phr_lst = new phrase_list($t->usr1);
         if (!$frm_lst->is_empty()) {
             if (count($frm_lst->lst()) > 0) {

@@ -515,9 +515,7 @@ class expression
             $id = $lib->str_between($frm_part_ref_text, chars::VERB_START, chars::VERB_END);
             if ($id > 0) {
                 $vrb = $trm_lst?->verb_by_id($id);
-                if ($vrb == null) {
-                    $vrb = $this->load_verb($id);
-                }
+                $vrb?->load_by_id($id);
                 if ($vrb == null) {
                     $this->usr_text_dirty = true;
                     log_warning('Verb with id ' . $id . ' not found');

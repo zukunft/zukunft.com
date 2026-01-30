@@ -383,6 +383,25 @@ class expression extends shared_expression
             $this->symbol_list($usr_msg, $this->res_part(), true));
     }
 
+    /**
+     * get a term id of terms that are not part of the given term list
+     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param term_list|null $trm_lst_in list of terms already loaded
+     * @return trm_ids
+     */
+    function terms_missing(user_message $usr_msg, term_list|null $trm_lst_in = null): trm_ids
+    {
+        $trm_lst = $this->term_id_list($usr_msg);
+        $id_lst = $trm_lst->ids();
+        if ($trm_lst_in != null) {
+            if (!$trm_lst_in->is_empty()) {
+                $ids_loaded = $trm_lst_in->ids();
+                $id_lst = array_diff($id_lst, $ids_loaded);
+            }
+        }
+        return new trm_ids($id_lst);
+    }
+
 
     /*
      * internal
@@ -636,44 +655,8 @@ class expression extends shared_expression
 
 
     /*
-     * to review
-     */
-
-    /**
-     * load all missing terms used in the expression
-     * @param term_list|null $trm_lst_in list of terms already loaded
-     * @return term_list
-     */
-    function load_terms(term_list|null $trm_lst_in = null): term_list
-    {
-        $usr_msg = new user_message($this->usr);
-        $trm_lst = $this->term_id_list($usr_msg);
-        $id_lst = $trm_lst->ids();
-        if ($trm_lst_in != null) {
-            if (!$trm_lst_in->is_empty()) {
-                $ids_loaded = $trm_lst_in->ids();
-                $id_lst = array_diff($id_lst, $ids_loaded);
-            }
-        }
-        $trm_ids = new trm_ids($id_lst);
-        $trm_lst->reset(true);
-        $trm_lst->load_by_ids($trm_ids);
-        if ($trm_lst_in != null) {
-            $trm_lst->merge($trm_lst_in);
-        }
-        return $trm_lst;
-    }
-
-
-    /*
      * to deprecate
      */
-
-    function element_list_with_load(user_message $usr_msg, term_list|null $trm_lst = null): element_list
-    {
-        $trm_lst = $this->load_terms($trm_lst);
-        return $this->element_list($usr_msg, $trm_lst);
-    }
 
     /**
      * get the phrases that should be added to the result of a formula
@@ -717,7 +700,7 @@ class expression extends shared_expression
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
-        $elm_lst = $this->element_list_with_load($usr_msg, $trm_lst);
+        $elm_lst = $this->element_list($usr_msg, $trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {
@@ -760,7 +743,7 @@ class expression extends shared_expression
         $lib = new library();
 
         $frm_lst = new formula_list($this->usr);
-        $elm_lst = $this->element_list_with_load($usr_msg, $trm_lst);
+        $elm_lst = $this->element_list($usr_msg, $trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
                 if ($elm->type() == formula::class) {

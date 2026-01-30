@@ -267,14 +267,15 @@ class expression_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the formula term list';
-        $elm_lst = $exp->terms($usr_msg, $trm_lst);
-        $result = $elm_lst->dsp_id();
+        $trm_lst = $exp->terms($usr_msg, $trm_lst);
+        $result = $trm_lst->dsp_id();
         $target = '"' . words::PERCENT . '","'
             . words::PRIOR_NAME . '","'
             . words::THIS_NAME . '" (317,357,361)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following
+        $trm_lst->load_additional_by_id($exp->terms_missing($usr_msg, $trm_lst));
         $phr_lst = $exp->element_special_following($usr_msg, $trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . words::THIS_NAME . '","' . words::PRIOR_NAME . '"';

@@ -71,8 +71,8 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * fill the term list based on a database records
-     * actually just set the term object for the parent function
+     * fill the term list based on the given database records
+     * actually set the term object for the parent function
      *
      * @param array|null $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded terms e.g. for admins
@@ -137,27 +137,88 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * create the common part of an SQL statement to retrieve a list of terms from the database
-     * uses the term view which includes only the main fields
+     * load the terms selected by the id
      *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the query use to prepare and call the query
-     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     * @param trm_ids $ids of term ids that should be loaded
+     * @return bool true if at least one term has been loaded
      */
-    protected function load_sql(sql_creator $sc, string $query_name): sql_par
+    function load_by_ids(trm_ids $ids): bool
     {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
+        global $db_con;
 
-        $sc->set_class(term::class);
-        $sc->set_name($qp->name);
-
-        $sc->set_fields(term::FLD_NAMES);
-        $sc->set_usr_fields(term::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
-
-        return $qp;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
     }
+
+    /**
+     * load a list of term names
+     * @param string $pattern the pattern to filter the terms
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these numbers of pages
+     * @return bool true if at least one term found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
+    }
+
+    /**
+     * load the terms that match the given pattern
+     * @param string $pattern part of the name that should be used to select the terms
+     */
+    function load_like(string $pattern): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the terms that based on the given query parameters
+     * @param sql_par $qp the query parameters created by the calling function
+     * @param bool $load_all force to include also the excluded terms e.g. for admins
+     * @return bool true if at least one term has been loaded
+     */
+    protected function load(sql_par $qp, bool $load_all = false): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $trm_lst = $db_con->get($qp);
+        foreach ($trm_lst as $db_row) {
+            $trm = new term($this->get_user());
+            $trm->row_mapper_sandbox($db_row);
+            if ($trm->id() != 0) {
+                $this->add($trm);
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * add the terms based on the given list of term id to this list
+     * @param trm_ids $id_lst the term ids that should be added to this list
+     * @return bool true if at least one term has been added
+     */
+    function load_additional_by_id(trm_ids $id_lst): bool
+    {
+        $result = false;
+        $trm_lst = new term_list($this->get_user());
+        $trm_lst->load_by_ids($id_lst);
+        if (!$trm_lst->is_empty()) {
+            $result = true;
+            $this->merge($trm_lst);
+        }
+        return $result;
+    }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create an SQL statement to retrieve a list of terms from the database
@@ -165,7 +226,7 @@ class term_list extends sandbox_list_named
      * @param sql_creator $sc with the target db_type set
      * @param trm_ids $ids term ids that should be loaded
      * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
+     * @param int $offset jump over these numbers of pages
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
     function load_sql_by_ids(
@@ -202,65 +263,26 @@ class term_list extends sandbox_list_named
     }
 
     /**
-     * load the terms that based on the given query parameters
-     * @param sql_par $qp the query parameters created by the calling function
-     * @param bool $load_all force to include also the excluded terms e.g. for admins
-     * @return bool true if at least one term has been loaded
-     */
-    protected function load(sql_par $qp, bool $load_all = false): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $trm_lst = $db_con->get($qp);
-        foreach ($trm_lst as $db_row) {
-            $trm = new term($this->get_user());
-            $trm->row_mapper_sandbox($db_row);
-            if ($trm->id() != 0) {
-                $this->add($trm);
-                $result = true;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * load a list of term names
-     * @param string $pattern the pattern to filter the terms
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return bool true if at least one term found
-     */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
-    {
-        return parent::load_sbx_names(new term($this->get_user()), $pattern, $limit, $offset);
-    }
-
-    /**
-     * load the terms selected by the id
+     * create the common part of an SQL statement to retrieve a list of terms from the database
+     * uses the term view which includes only the main fields
      *
-     * @param trm_ids $ids of term ids that should be loaded
-     * @return bool true if at least one term has been loaded
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      */
-    function load_by_ids(trm_ids $ids): bool
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        global $db_con;
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
 
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
-    }
+        $sc->set_class(term::class);
+        $sc->set_name($qp->name);
 
-    /**
-     * load the terms that matches the given pattern
-     * @param string $pattern part of the name that should be used to select the terms
-     */
-    function load_like(string $pattern): bool
-    {
-        global $db_con;
+        $sc->set_fields(term::FLD_NAMES);
+        $sc->set_usr_fields(term::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(term::FLD_NAMES_NUM_USR);
 
-        $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
-        return $this->load($qp);
+        return $qp;
     }
 
 
