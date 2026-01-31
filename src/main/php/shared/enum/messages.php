@@ -1568,6 +1568,7 @@ enum messages: string
 
     case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
     case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';
+    case TRIPLE_PHRASE_WITHOUT_DB_ID = 'triple phrase from id is 0';
     case TRIPLE_TO_PHRASE_MISSING = 'triple to phrase is missing';
     case TRIPLE_PHRASE_TO_NAME_MISSING = 'triple phrase to name is missing and id is 0';
     case FAILED_TO_DELETE_UNUSED_WORK_LINK = 'Failed to delete the unused work link';

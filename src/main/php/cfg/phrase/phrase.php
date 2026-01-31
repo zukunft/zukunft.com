@@ -100,6 +100,7 @@ include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -136,6 +137,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -609,12 +611,12 @@ class phrase extends combine_named
     /**
      * checks if the word or triple object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the underlying word or triple cannot yet be added to the database
+     * @param user_message|Message $msg the explanation for the user why the underlying word or triple cannot yet be added to the database
      * @return true if all mandatory vars of the underlying object are set and the phrase can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        return $this->obj()->db_ready($usr_msg);
+        return $this->obj()->db_ready($msg);
     }
 
     /**
@@ -643,7 +645,7 @@ class phrase extends combine_named
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {
                 if ($phr->is_word()) {
-                    $usr_msg->add($this->obj()->fill($phr->word(), $usr_req));
+                    $usr_msg->merge($this->obj()->fill($phr->word(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                         [
@@ -652,7 +654,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == word::class) {
-                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+                $usr_msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [
@@ -663,7 +665,7 @@ class phrase extends combine_named
         } else {
             if ($phr::class == phrase::class) {
                 if ($phr->is_triple()) {
-                    $usr_msg->add($this->obj()->fill($phr->triple(), $usr_req));
+                    $usr_msg->merge($this->obj()->fill($phr->triple(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
                         [
@@ -672,7 +674,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == triple::class) {
-                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+                $usr_msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [

@@ -276,7 +276,7 @@ class view_relation_list extends sandbox_link_list
             // save the link of the view to the component
             $sbx->save($msk_rel_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($msk_rel_usr_msg);
+            $usr_msg->merge($msk_rel_usr_msg);
         }
         return $usr_msg->is_ok();
     }

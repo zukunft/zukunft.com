@@ -212,7 +212,7 @@ class import_file
                 } else {
                     $this->failed($import_result->all_message_text(), $usr_msg);
                 }
-                $usr_msg->add($import_result);
+                $usr_msg->merge($import_result);
             }
         }
 
@@ -241,7 +241,7 @@ class import_file
 
             // import the system configuration from the resource file
             $imf = new import_file();
-            $usr_msg->add($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
+            $usr_msg->merge($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
 
             // check the import if needed or requested
             if (!$usr_msg->is_ok() or $validate) {
@@ -276,12 +276,12 @@ class import_file
                     if (!$load_msg->is_ok()) {
 
                         // report the issues on loading the config values
-                        $usr_msg->add($load_msg);
+                        $usr_msg->merge($load_msg);
                     } else {
                         if ($validate) {
 
                             // report all config value differences
-                            $usr_msg->add($cfg->diff_msg($dto->value_list()));
+                            $usr_msg->merge($cfg->diff_msg($dto->value_list()));
                         } else {
 
                             // report al least the missing config values

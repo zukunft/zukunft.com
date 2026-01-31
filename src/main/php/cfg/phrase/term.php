@@ -71,6 +71,7 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -100,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
@@ -1168,12 +1170,12 @@ class term extends combine_named
     /**
      * checks if the word, verb, triple or formula object can be added to the database
      *
-     * @param user_message $usr_msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
+     * @param user_message|Message $msg the explanation for the user why the underlying word, verb, triple or formula cannot yet be added to the database
      * @return true if all mandatory vars of the underlying object are set and the term can be stored in the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        return $this->obj()->db_ready($usr_msg);
+        return $this->obj()->db_ready($msg);
     }
 
     /**
@@ -1184,10 +1186,6 @@ class term extends combine_named
         return $this->obj()->is_valid();
     }
 
-
-    /*
-     * im- and export
-     */
 
     /*
      * im- and export

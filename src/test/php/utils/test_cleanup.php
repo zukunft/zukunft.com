@@ -201,7 +201,7 @@ class test_cleanup extends test_api
                 $usr_msg_del = $usr_msg->clone_reset();
                 $test_name = 'request to delete the added test views of "' . $cmp_name . '"';
                 $this->assert_true($test_name, $cmp->del($usr_msg_del), self::TIMEOUT_LIMIT_DB_MULTI);
-                $usr_msg->add($usr_msg_del);
+                $usr_msg->merge($usr_msg_del);
             }
         }
 

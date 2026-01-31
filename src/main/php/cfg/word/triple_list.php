@@ -761,7 +761,7 @@ class triple_list extends sandbox_list_named
                 if (!$add_lst->is_empty()) {
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->add($add_lst->insert($cache, $imp, triple::class));
+                    $lst_usr_msg->merge($add_lst->insert($cache, $imp, triple::class));
                     if ($add_lst->count() > 0) {
                         $lst_usr_msg->set_added_depending();
                         $trp_added = true;
@@ -789,11 +789,11 @@ class triple_list extends sandbox_list_named
             }
 
             // add the user_messages to the last try
-            $usr_msg->add($lst_usr_msg);
+            $usr_msg->merge($lst_usr_msg);
 
 
             // create any missing sql update functions and update the triples
-            $usr_msg->add($this->update($db_lst_all, $imp, triple::class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst_all, $imp, triple::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -806,7 +806,7 @@ class triple_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, $imp, triple::class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst_all, $imp, triple::class, $del_per_sec));
 
         }
 

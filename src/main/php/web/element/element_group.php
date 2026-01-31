@@ -84,11 +84,11 @@ class element_group extends ListBase
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::LIST_ELEMENTS, $json_array)) {
-            $usr_msg->add(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
+            $usr_msg->merge(parent::api_mapper_list($json_array[json_fields::LIST_ELEMENTS], new element()));
         }
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
             $phr_lst = new phrase_list();
-            $usr_msg->add($phr_lst->api_mapper($json_array[json_fields::PHRASES]));
+            $usr_msg->merge($phr_lst->api_mapper($json_array[json_fields::PHRASES]));
             $this->phr_lst = $phr_lst;
         }
         return $usr_msg;

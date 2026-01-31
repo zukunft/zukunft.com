@@ -90,6 +90,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_link_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
@@ -125,6 +126,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -652,40 +654,40 @@ class sandbox_link extends sandbox
      * returns ok message if this link e.g. triple can be added to the database
      * if e.g. the database id of the from or the to object is missing
      *         first the linked object needs to be added to the database
-     * @param user_message $usr_msg is enriched with the explanation why the link cannot yet be added to the database
+     * @param user_message|Message $msg is enriched with the explanation why the link cannot yet be added to the database
      * @return bool false if something is missing
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
 
         if ($this->needs_from()) {
             if ($this->fob == null) {
                 // for some triples it is ok if the from object is not set
                 // e.g. per day
-                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                $msg->add(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 // if the from object is set it should be valid
                 // e.g. for cubic meter per second
                 if (!$this->fob->is_valid()) {
-                    $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                    $msg->add(msg_id::FROM_ZERO_ID,
                         [msg_id::VAR_NAME => $this->dsp_id()]);
                 }
             }
         }
         if ($this->needs_to()) {
             if ($this->tob == null) {
-                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                $msg->add(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 if (!$this->tob->is_valid()) {
-                    $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
+                    $msg->add(msg_id::TO_ZERO_ID,
                         [msg_id::VAR_NAME => $this->dsp_id()]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

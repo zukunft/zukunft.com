@@ -65,6 +65,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
@@ -98,6 +99,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
@@ -366,7 +368,7 @@ class sandbox_list_named extends sandbox_list
                 }
             }
             if ($sbx_to_chk != null) {
-                $usr_msg->add($sbx->diff_msg($sbx_to_chk));
+                $usr_msg->merge($sbx->diff_msg($sbx_to_chk));
             }
         }
         foreach ($sbx_lst->lst() as $sbx) {
@@ -410,12 +412,16 @@ class sandbox_list_named extends sandbox_list
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
      * @param sandbox_named|triple|phrase|term|null $to_add the named object e.g. a word object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
      * @returns bool true the object has been added
      */
-    function add(sandbox_named|triple|phrase|term|null $to_add): bool
+    function add(
+        sandbox_named|triple|phrase|term|null $to_add,
+        bool                                  $allow_duplicates = false,
+        Message                               $msg = new Message()
+    ): bool
     {
-        $result = false;
-
         // second line of defence
         // TODO Prio 2 review
         if ($this::class == triple_list::class and $to_add::class != triple::class) {
@@ -430,33 +436,33 @@ class sandbox_list_named extends sandbox_list
 
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $usr_msg = $this->add_obj($to_add);
-                $result = $usr_msg->is_ok();
+                $this->add_obj($to_add, $allow_duplicates, $msg);
             } else {
                 if (!array_key_exists($to_add->id(), $this->id_pos_lst())) {
                     if ($to_add->id() != 0) {
-                        $usr_msg = $this->add_obj($to_add);
-                        $result = $usr_msg->is_ok();
+                        $this->add_obj($to_add, $allow_duplicates, $msg);
                     }
                 } else {
                     log_debug($to_add->dsp_id() . ' not added, because it is already in the list');
                 }
             }
         }
-        return $result;
+        return $msg->is_ok();
     }
 
     /**
      * add a named object to the list that does not yet have an id but has a name
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param user_message $usr_msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
+    function add_by_name(
+        sandbox_named|triple|phrase|term|null $obj_to_add,
+        bool                                  $allow_duplicates = false,
+        user_message                          $usr_msg = new user_message()
+    ): bool
     {
-        // TODO Prio 1 add $usr_msg to the parameters
-        $usr_msg = new user_message();
-        $result = false;
         if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $obj_to_add->name();
@@ -468,11 +474,11 @@ class sandbox_list_named extends sandbox_list
                         $this->set_lst_dirty();
                     }
                 } else {
-                    $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
+                    parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
                 }
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -482,11 +488,15 @@ class sandbox_list_named extends sandbox_list
      * without repeating the links in the import json message
      * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param user_message $usr_msg to report which entry is double
      * @returns bool true if the object has been added
      */
-    function add_by_name_direct(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
+    function add_by_name_direct(
+        sandbox_named|triple|phrase|term|null $obj_to_add,
+        bool                                  $allow_duplicates = false,
+        user_message                          $usr_msg = new user_message()
+    ): bool
     {
-        $result = false;
         if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $obj_to_add->name(true);
@@ -495,11 +505,11 @@ class sandbox_list_named extends sandbox_list
                     $this->add_direct($obj_to_add);
                     $this->set_lst_dirty();
                 } else {
-                    $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
+                    parent::add_obj($obj_to_add, $allow_duplicates, $usr_msg);
                 }
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
     /**
@@ -728,44 +738,41 @@ class sandbox_list_named extends sandbox_list
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @param user_message $usr_msg to report which entry is double
-     * @returns user_message if adding failed or something is strange, the messages for the user with the suggested solutions
+     * @param user_message|Message $msg to report which entry is double
+     * @returns bool false if the object has not been added
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
         bool                                                         $allow_duplicates = false,
-        user_message                                                 $usr_msg = new user_message()
-    ): user_message
+        user_message|Message                                         $msg = new Message()
+    ): bool
     {
-        // TODO Prio 1 add $usr_msg as parameter
-        $usr_msg = new user_message();
-
         // add only objects that have all mandatory values
-        $obj_to_add->db_ready($usr_msg);
+        $obj_to_add->db_ready($msg);
 
         // add only object with the same user
-        $usr_msg->add($this->same_user($obj_to_add));
+        $msg->merge($this->same_user($obj_to_add));
 
         // do not create duplicates if not explicitly allowed
         if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
             if ($allow_duplicates) {
-                $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
+                parent::add_obj($obj_to_add, $allow_duplicates, $msg);
             } else {
                 if ($obj_to_add->id() <> 0) {
                     if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
-                        $usr_msg->add(parent::add_obj($obj_to_add));
+                        parent::add_obj($obj_to_add, $allow_duplicates, $msg);
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY, [
+                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                             msg_id::VAR_CLASS_NAME => $obj_to_add::class
                         ]);
                     }
                 } elseif ($obj_to_add->name() != '') {
                     if (!in_array($obj_to_add->name(), $this->names())) {
-                        $usr_msg->add($this->add_user_check($obj_to_add));
+                        $msg->merge($this->add_user_check($obj_to_add));
                         parent::add_direct($obj_to_add);
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY, [
+                        $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                             msg_id::VAR_CLASS_NAME => $obj_to_add::class
                         ]);
@@ -773,7 +780,7 @@ class sandbox_list_named extends sandbox_list
                 }
             }
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**
@@ -897,15 +904,15 @@ class sandbox_list_named extends sandbox_list
             $imp->step_end($db_lst->count(), $load_per_sec);
 
             // create any missing sql functions and insert the missing sandbox objects
-            $usr_msg->add($this->insert($db_lst, $imp, $class));
+            $usr_msg->merge($this->insert($db_lst, $imp, $class));
 
             // create any missing sql update functions and update the sandbox objects
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
             // TODO create blocks of update function calls
-            $usr_msg->add($this->update($db_lst, $imp, $class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst, $imp, $class, $upd_per_sec));
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst, $imp, $class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst, $imp, $class, $del_per_sec));
         }
 
         return $usr_msg->is_ok();
@@ -939,7 +946,7 @@ class sandbox_list_named extends sandbox_list
         $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // get the db id from the loaded objects
-        $usr_msg->add($this->fill_by_name($db_lst, true, false));
+        $usr_msg->merge($this->fill_by_name($db_lst, true, false));
 
         // get the objects that need to be added
         $db_names = $db_lst->names();
@@ -976,7 +983,7 @@ class sandbox_list_named extends sandbox_list
             $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
             $add_lst = $add_lst->filter_by_name($func_create_obj_names);
             $ins_calls = $add_lst->sql_insert_call_with_par($sc, $usr_msg);
-            $usr_msg->add($ins_calls->exe($class));
+            $usr_msg->merge($ins_calls->exe($class));
 
             // TODO create a loop to add depending triples
             // add the just added words or triples id to this list
@@ -1043,7 +1050,7 @@ class sandbox_list_named extends sandbox_list
             $step_time = $db_lst->count() / $upd_per_sec;
             $imp->step_start(msg_id::SAVE, $class, $db_lst->count(), $step_time);
             $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $imp->usr);
-            $usr_msg->add($upd_calls->exe_update($class));
+            $usr_msg->merge($upd_calls->exe_update($class));
 
             $imp->step_end($db_lst->count(), $upd_per_sec);
         }
@@ -1108,7 +1115,7 @@ class sandbox_list_named extends sandbox_list
             $step_time = $db_lst->count() / $del_per_sec;
             $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
             $del_calls = $del_lst->sql_delete_call_with_par($sc, $db_lst);
-            $usr_msg->add($del_calls->exe_delete($class));
+            $usr_msg->merge($del_calls->exe_delete($class));
 
             $imp->step_end($db_lst->count(), $del_per_sec);
         }
@@ -1232,7 +1239,7 @@ class sandbox_list_named extends sandbox_list
                             $qp->obj_name = $sbx->name();
                             $sql_list->add($qp);
                         } else {
-                            $usr_msg->add($upd_usr_msg);
+                            $usr_msg->merge($upd_usr_msg);
                             log_err('Internal import error: ' . $usr_msg->all_message_text());
                         }
                     }

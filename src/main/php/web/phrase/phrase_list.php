@@ -607,7 +607,7 @@ class phrase_list extends sandbox_list_named
      */
     function add_phrase(phrase $phr): bool
     {
-        return parent::add_obj($phr)->is_ok();
+        return parent::add_obj($phr);
     }
 
     /**

@@ -211,15 +211,15 @@ class figure_list extends sandbox_list
      */
     function add(?figure $fig_to_add): bool
     {
-        $result = false;
+        $usr_msg = new user_message();
         // check parameters
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
             if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
-                $result = parent::add_obj($fig_to_add)->is_ok();
+                parent::add_obj($fig_to_add, false, $usr_msg);
             }
         }
-        return $result;
+        return $usr_msg->is_ok();
     }
 
 

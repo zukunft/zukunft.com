@@ -811,7 +811,7 @@ class lib_tests
         $msg_2->add_message_text('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
-        $usr_msg->add($msg_2);
+        $usr_msg->merge($msg_2);
         $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
     }
 

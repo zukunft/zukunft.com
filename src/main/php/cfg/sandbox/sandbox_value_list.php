@@ -590,7 +590,7 @@ class sandbox_value_list extends sandbox_list
                 $usr_msg->add_id_with_vars($msg_missing, $vars);
             }
             if ($val_to_chk != null) {
-                $usr_msg->add($val->diff_msg($val_to_chk));
+                $usr_msg->merge($val->diff_msg($val_to_chk));
             }
         }
         foreach ($val_lst->lst() as $val) {

@@ -1148,10 +1148,10 @@ class sql_db
                 $sys->times->switch(system_time_type::DB_SETUP);
                 $sql_msg = $this->exe_script($sql);
                 $sys->times->switch();
-                $usr_msg->add($sql_msg);
+                $usr_msg->merge($sql_msg);
             }
             if (!$sql_msg->is_ok()) {
-                $usr_msg->add($sql_msg);
+                $usr_msg->merge($sql_msg);
             }
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();

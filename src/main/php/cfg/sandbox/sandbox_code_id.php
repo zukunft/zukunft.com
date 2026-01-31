@@ -342,7 +342,7 @@ class sandbox_code_id extends sandbox_typed
     {
         $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->get_code_id() != null) {
-            $usr_msg->add($this->set_code_id($obj->get_code_id(), $usr_req));
+            $usr_msg->merge($this->set_code_id($obj->get_code_id(), $usr_req));
         }
         return $usr_msg;
     }

@@ -120,6 +120,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -174,6 +175,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -1705,17 +1707,17 @@ class sandbox extends db_object_seq_id_user
     /**
      * check if the sandbox can be added to the database
      *
-     * @param user_message $usr_msg including suggested solutions if something is missing e.g. the user
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. the user
      * @return bool false if something is missing
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
         if ($this->get_user() == null) {
             $this->set_user($this->get_user());
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+            $msg->add(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1724,9 +1726,9 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * set the log entry parameter for a new named object
+     * set the log entry parameter for a new-named object
      * for all not named objects like links, this function is overwritten
-     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * e.g. that the user can see "added formula 'scale millions' to the word 'mio'"
      */
     function log_add(): change
     {
@@ -2618,7 +2620,7 @@ class sandbox extends db_object_seq_id_user
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add($similar->id_used_msg($this));
+                            $usr_msg->merge($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -2642,7 +2644,7 @@ class sandbox extends db_object_seq_id_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add($similar->id_used_msg($this));
+                        $usr_msg->merge($similar->id_used_msg($this));
                     }
                 }
 

@@ -1203,16 +1203,16 @@ class component extends sandbox_code_id
     {
         $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->ui_msg_code_id != null) {
-            $usr_msg->add($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+            $usr_msg->merge($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
         }
         if ($obj->ui_msg_code_id_vars != null) {
-            $usr_msg->add($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
+            $usr_msg->merge($this->set_ui_msg_code_id_vars($obj->ui_msg_code_id_vars, $usr_req));
         }
         if ($obj->ui_msg_code_id_exception != null) {
-            $usr_msg->add($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
+            $usr_msg->merge($this->set_ui_msg_code_id_exception($obj->ui_msg_code_id_exception, $usr_req));
         }
         if ($obj->ui_msg_value_exception !== null) {
-            $usr_msg->add($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
+            $usr_msg->merge($this->set_ui_msg_value_exception($obj->ui_msg_value_exception, $usr_req));
         }
         if ($obj->row_phrase != null) {
             $this->row_phrase = $obj->row_phrase;

@@ -35,31 +35,22 @@ namespace Zukunft\ZukunftCom\main\php\web\user;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class user_message
+class user_message extends Message
 {
-
-    private int $msg_status;
 
     // array of the messages that should be shown to the user to explain the result of a process
     private array $txt;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
-
-    // array of the messages id that should be shown to the user
-    // in the language of the user frontend
-    // to explain the result of a process
-    private array $msg_id_lst;
-    // array of an array of a message id
-    // and a list of vars that should be added at the translated messages text
-    // at the predefined and language specific place
-    private array $msg_var_lst;
 
     public ?user $usr;
 
@@ -73,55 +64,14 @@ class user_message
      */
     function __construct(?user $usr = null, string $txt = '')
     {
+        parent::__construct();
         $this->txt = [];
-        if ($txt == '') {
-            $this->msg_status = msg_id::OK;
-        } else {
+        if ($txt !== '') {
             $this->txt[] = $txt;
-            $this->msg_status = msg_id::NOK;
+            $this->set_not_ok();
         }
         $this->db_row_id = 0;
-        $this->msg_id_lst = [];
-        $this->msg_var_lst = [];
         $this->usr = $usr;
-    }
-
-
-    /*
-     * set
-     */
-
-    /**
-     * set the status to not ok
-     * @return void
-     */
-    function set_not_ok(): void
-    {
-        if ($this->msg_status < msg_id::NOK) {
-            $this->msg_status = msg_id::NOK;
-        }
-    }
-
-    /**
-     * set the status to warning
-     * @return void
-     */
-    function set_error(): void
-    {
-        if ($this->msg_status < msg_id::ERROR) {
-            $this->msg_status = msg_id::ERROR;
-        }
-    }
-
-    /**
-     * set the status to warning
-     * @return void
-     */
-    function set_warning(): void
-    {
-        if ($this->msg_status < msg_id::WARNING) {
-            $this->msg_status = msg_id::WARNING;
-        }
     }
 
 
@@ -201,8 +151,8 @@ class user_message
 
     /**
      * add a message id
-     * to offer the user to see more details without retry
-     * more than one message id can be added to a user message result
+     * to offer the user to see more details without a retry
+     * more than one message id can be added to a user message result.
      * the message id is translated to the user interface language at the latest possible moment
      *
      * @param msg_id|null $msg_id the message text to add
@@ -239,8 +189,8 @@ class user_message
 
     /**
      * add a message id and a list of related variables
-     * to offer the user to see more details without retry
-     * more than one message id can be added to a user message result
+     * to offer the user to see more details without a retry
+     * more than one message id can be added to a user message result.
      * the message id is translated to the user interface language at the latest possible moment
      * the vars are expected to be in the target language already
      *
@@ -276,7 +226,7 @@ class user_message
     }
 
     /**
-     * add a message that is classified as an error
+     * add a message classified as an error
      * @param string $txt the explanation that should be shown to the user
      * @return void
      */
@@ -289,7 +239,7 @@ class user_message
     }
 
     /**
-     * add a message that is classified as an warning
+     * add a message classified as a warning
      * @param string $txt the explanation that should be shown to the user
      * @return void
      */
@@ -302,7 +252,7 @@ class user_message
     }
 
     /**
-     * to offer the user to see more details without retry
+     * to offer the user to see more details without a retry,
      * more than one message text can be added to a user message result
      *
      * @param string $txt the message text to add
@@ -330,10 +280,10 @@ class user_message
     /**
      * combine the given message with this message
      *
-     * @param user_message $msg_to_add a message of which all parameter should be added to this message
+     * @param user_message|Message $msg_to_add a message of which all parameters should be added to this message
      * @return void is never expected to fail
      */
-    function add(user_message $msg_to_add): void
+    function merge(user_message|Message $msg_to_add): void
     {
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message_text($msg_text);
@@ -350,20 +300,8 @@ class user_message
      */
 
     /**
-     * @return bool true if user does not need to be informed
-     */
-    function is_ok(): bool
-    {
-        if ($this->msg_status == msg_id::OK) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * simple return the message text
-     * @param int $pos used to get other message than the main message
+     * @param int $pos used to get another message than the main message
      * @return string simple the message text
      */
     function get_message(int $pos = 1): string
@@ -378,7 +316,7 @@ class user_message
     }
 
     /**
-     * @return string with latest added message
+     * @return string with the latest added message
      */
     function get_last_message(): string
     {
@@ -411,7 +349,7 @@ class user_message
 
     /**
      * TODO should pick the last either from msg_var_lst or msg_id_lst
-     * @return string with latest added message translated to the user language
+     * @return string with the latest added message translated to the user language
      */
     function get_last_message_translated(): string
     {
@@ -421,7 +359,7 @@ class user_message
     /**
      * simple return a translated message text with vars
      * TODO review
-     * @param int $pos used to get other message than the main message
+     * @param int $pos used to get another message than the main message
      * @return string simple the message text
      */
     function get_message_translated(int $pos = 1): string

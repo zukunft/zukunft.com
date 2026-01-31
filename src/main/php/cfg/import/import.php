@@ -497,7 +497,7 @@ class import
                             $this->users_failed++;
                         }
                     }
-                    $usr_msg->add($import_result);
+                    $usr_msg->merge($import_result);
                 }
             }
         }
@@ -553,7 +553,7 @@ class import
                     $this->display_progress($this->verbs_done);
                     $pos++;
                 }
-                $usr_msg->add($import_result);
+                $usr_msg->merge($import_result);
                 $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
@@ -579,7 +579,7 @@ class import
                 } else {
                     $this->words_failed++;
                 }
-                $usr_msg->add($import_result);
+                $usr_msg->merge($import_result);
                 $this->display_progress($this->words_done);
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {
@@ -642,7 +642,7 @@ class import
                     } else {
                         $this->values_failed++;
                     }
-                    $usr_msg->add($import_result);
+                    $usr_msg->merge($import_result);
                     $this->display_progress($this->values_done);
                     $pos++;
                 }
@@ -803,63 +803,63 @@ class import
         // create the data_object to fill
         $dto = new data_object($this->usr);
 
-        $usr_msg->add($this->message_check($json_array));
+        $usr_msg->merge($this->message_check($json_array));
         if ($usr_msg->is_ok()) {
             if (key_exists(json_fields::IP_BLACKLIST, $json_array)) {
                 $ip_array = $json_array[json_fields::IP_BLACKLIST];
                 $this->step_start(msg_id::COUNT, ip_range::class, count($ip_array), $step_time);
-                $usr_msg->add($this->dto_get_ip_ranges($ip_array, $dto, $usr_msg, $ip_per_sec));
+                $usr_msg->merge($this->dto_get_ip_ranges($ip_array, $dto, $usr_msg, $ip_per_sec));
                 $this->step_end($dto->ip_range_list()->count(), $ip_per_sec);
             }
             if (key_exists(json_fields::USERS, $json_array)) {
                 $usr_array = $json_array[json_fields::USERS];
                 $this->step_start(msg_id::COUNT, user::class, count($usr_array), $step_time);
-                $usr_msg->add($this->dto_get_users($usr_array, $dto, $usr_msg, $usr_per_sec));
+                $usr_msg->merge($this->dto_get_users($usr_array, $dto, $usr_msg, $usr_per_sec));
                 $this->step_end($dto->word_list()->count(), $usr_per_sec);
             }
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $this->step_start(msg_id::COUNT, word::class, count($wrd_array), $step_time);
-                $usr_msg->add($this->dto_get_words($wrd_array, $dto, $usr_msg, $wrd_per_sec));
+                $usr_msg->merge($this->dto_get_words($wrd_array, $dto, $usr_msg, $wrd_per_sec));
                 $this->step_end($dto->word_list()->count(), $wrd_per_sec);
             }
             if (key_exists(json_fields::LIST_VERBS, $json_array)) {
                 $vrb_lst_array = $json_array[json_fields::LIST_VERBS];
                 $this->step_start(msg_id::COUNT, verb::class, count($vrb_lst_array), $step_time);
-                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $dto, $usr_msg, $vrb_per_sec));
+                $usr_msg->merge($this->dto_get_verbs($vrb_lst_array, $dto, $usr_msg, $vrb_per_sec));
                 $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
             }
             // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $this->step_start(msg_id::COUNT, triple::class, count($trp_array), $step_time);
-                $usr_msg->add($this->dto_get_triples($trp_array, $dto, $usr_msg, $trp_per_sec));
+                $usr_msg->merge($this->dto_get_triples($trp_array, $dto, $usr_msg, $trp_per_sec));
                 $this->step_end($dto->triple_list()->count(), $trp_per_sec);
             }
             if (key_exists(json_fields::SOURCES, $json_array)) {
                 $src_array = $json_array[json_fields::SOURCES];
                 $this->step_start(msg_id::COUNT, source::class, count($src_array), $step_time);
-                $usr_msg->add($this->dto_get_sources($src_array, $dto, $usr_msg, $src_per_sec));
+                $usr_msg->merge($this->dto_get_sources($src_array, $dto, $usr_msg, $src_per_sec));
                 $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
             if (key_exists(json_fields::REFERENCES, $json_array)) {
                 $ref_array = $json_array[json_fields::SOURCES];
                 $this->step_start(msg_id::COUNT, ref::class, count($ref_array), $step_time);
-                $usr_msg->add($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
+                $usr_msg->merge($this->dto_get_references($ref_array, $dto, $usr_msg, $ref_per_sec));
                 $this->step_end($dto->source_list()->count(), $ref_per_sec);
             }
             // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
-                $usr_msg->add($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
+                $usr_msg->merge($this->dto_get_values($val_array, $dto, $usr_msg, $val_per_sec));
                 $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
             // TODO add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
-                $usr_msg->add($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
+                $usr_msg->merge($this->dto_get_formulas($frm_array, $dto, $usr_msg, $frm_per_sec));
                 $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
             // TODO add json_fields::RESULTS
@@ -867,13 +867,13 @@ class import
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
-                $usr_msg->add($this->dto_get_components($cmp_array, $dto, $usr_msg, $cmp_per_sec));
+                $usr_msg->merge($this->dto_get_components($cmp_array, $dto, $usr_msg, $cmp_per_sec));
                 $this->step_end($dto->component_list()->count(), $cmp_per_sec);
             }
             if (key_exists(json_fields::VIEWS, $json_array)) {
                 $msk_array = $json_array[json_fields::VIEWS];
                 $this->step_start(msg_id::COUNT, view::class, count($msk_array), $step_time);
-                $usr_msg->add($this->dto_get_views($msk_array, $dto, $usr_msg, $msk_per_sec));
+                $usr_msg->merge($this->dto_get_views($msk_array, $dto, $usr_msg, $msk_per_sec));
                 $this->step_end($dto->view_list()->count(), $msk_per_sec);
             }
             // TODO add json_fields::VIEW_VALIDATION

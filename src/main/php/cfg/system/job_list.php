@@ -212,7 +212,7 @@ class job_list extends list_db_write
 
         // do not add similar jobs
         if ($usr_msg->is_ok()) {
-            $usr_msg->add($this->has_similar($job));
+            $usr_msg->merge($this->has_similar($job));
         }
 
         // finally add the job to the list if everything has been fine

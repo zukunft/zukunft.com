@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_web;
 
 class ListOfIdObjects extends ListOf
 {
@@ -207,14 +208,14 @@ class ListOfIdObjects extends ListOf
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @param user_message $usr_msg to report which entry is double
-     * @returns user_message if adding failed or something is strange, the messages for the user with the suggested solutions
+     * @param Message $msg to report which entry is double
+     * @returns bool false if the object has not been added
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject $obj_to_add,
         bool                                $allow_duplicates = false,
-        user_message                   $usr_msg = new user_message()
-    ): user_message
+        Message                             $msg = new Message()
+    ): bool
     {
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
@@ -224,13 +225,13 @@ class ListOfIdObjects extends ListOf
             if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                 $this->add_direct($obj_to_add);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY, [
+                $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
                     msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                     msg_id::VAR_CLASS_NAME => $obj_to_add::class
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg->is_ok();
     }
 
     /**

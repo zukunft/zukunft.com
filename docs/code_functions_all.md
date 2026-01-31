@@ -749,7 +749,7 @@
         \-- formula_map - returns an ok message if this formula can be added to the database if the related terms are added
         \-- verb - check if this might be added to the database
     \-- db_ready
-        \-- formula_map - returns an ok message if this formula can be added to the database
+        \-- formula_map - returns an OK message if this formula can be added to the database
         \-- verb - check if the named sandbox object can be added to the database
     \-- is_valid
         \-- formula_map - check if all mandatory formula vars are set
@@ -2447,8 +2447,6 @@
     \-- api_array - section for function api_array not yet defined that it should be api in /user/user_message.php
     \-- api_json - section for function api_json not yet defined that it should be api in /user/user_message.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php
-    \-- add_id - section for function add_id not yet defined that it should be add in /user/user_message.php
-    \-- add_info_id - section for function add_info_id not yet defined that it should be add in /user/user_message.php
     \-- add_info_with_vars - section for function add_info_with_vars not yet defined that it should be add in /user/user_message.php
     \-- add_warning_with_vars - section for function add_warning_with_vars not yet defined that it should be add in /user/user_message.php
     \-- add_err_with_vars - section for function add_err_with_vars not yet defined that it should be add in /user/user_message.php
@@ -2457,7 +2455,7 @@
     \-- add_message_text - section for function add_message_text not yet defined that it should be add in /user/user_message.php
     \-- add_warning_text - section for function add_warning_text not yet defined that it should be add in /user/user_message.php
     \-- add_info_text - section for function add_info_text not yet defined that it should be add in /user/user_message.php
-    \-- add - section for function add not yet defined that it should be add in /user/user_message.php
+    \-- merge - section for function merge not yet defined that it should be add in /user/user_message.php
     \-- add_list_name_id - section for function add_list_name_id not yet defined that it should be add in /user/user_message.php
     \-- set_added_depending - section for function set_added_depending is expected to be set and get in /user/user_message.php
     \-- unset_added_depending - section for function unset_added_depending not yet defined that it should be add in /user/user_message.php
@@ -4980,7 +4978,7 @@
     \-- explain - section for function explain not yet defined that it should be review in /result/result.php
 \-- result_list
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result_list.php
-    \-- add - section for function add not yet defined that it should be modify in /result/result_list.php
+    \-- add_result - section for function add_result not yet defined that it should be modify in /result/result_list.php
     \-- get_by_formula - section for function get_by_formula is expected to be set and get in /result/result_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /result/result_list.php
     \-- display - section for function display not yet defined that it should be display in /result/result_list.php
@@ -5230,9 +5228,6 @@
     \-- dsp_sandbox - section for function dsp_sandbox not yet defined that it should be set and get in /user/user_display_old.php
 \-- user_message
     \-- __construct - section for function __construct is expected to be construct and map in /user/user_message.php
-    \-- set_not_ok - section for function set_not_ok is expected to be set and get in /user/user_message.php
-    \-- set_error - section for function set_error is expected to be set and get in /user/user_message.php
-    \-- set_warning - section for function set_warning is expected to be set and get in /user/user_message.php
     \-- api_array - section for function api_array not yet defined that it should be api in /user/user_message.php
     \-- api_json - section for function api_json not yet defined that it should be api in /user/user_message.php
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /user/user_message.php
@@ -5242,8 +5237,7 @@
     \-- add_err - section for function add_err not yet defined that it should be add in /user/user_message.php
     \-- add_warning - section for function add_warning not yet defined that it should be add in /user/user_message.php
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php
-    \-- add - section for function add not yet defined that it should be add in /user/user_message.php
-    \-- is_ok - section for function is_ok is expected to be info in /user/user_message.php
+    \-- merge - section for function merge not yet defined that it should be add in /user/user_message.php
     \-- get_message - section for function get_message is expected to be set and get in /user/user_message.php
     \-- get_last_message - section for function get_last_message is expected to be set and get in /user/user_message.php
     \-- get_row_id - section for function get_row_id is expected to be set and get in /user/user_message.php

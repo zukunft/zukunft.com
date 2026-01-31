@@ -156,8 +156,8 @@ class phrase_list extends sandbox_list_named
     /**
      * map a phrase list api json to this model phrase list object
      * @param array $api_json the api array with the phrases that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
-     * @return bool true if the mapping has been completed successful
+     * @param user_message $usr_msg if the mapping is incomplete, the human-readable message what happened and how to solve it
+     * @return bool true if the mapping has been completed successfully
      */
     function api_mapper(array $api_json, user_message $usr_msg): bool
     {
@@ -2280,7 +2280,7 @@ class phrase_list extends sandbox_list_named
             // actual save the phrase to the database
             $phr->save($phr_usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($phr_usr_msg);
+            $usr_msg->merge($phr_usr_msg);
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
@@ -2290,7 +2290,7 @@ class phrase_list extends sandbox_list_named
             // actual save the phrase to the database
             $phr->save($usr_msg);
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($phr_usr_msg);
+            $usr_msg->merge($phr_usr_msg);
         }
 
         return $usr_msg->is_ok();

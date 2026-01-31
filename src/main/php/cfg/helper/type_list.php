@@ -5,6 +5,8 @@
     model/helper/type_list.php - the superclass for word, formula and view type lists
     --------------------------
 
+    TODO Prio 2 base this list on ListOfIdObjects to avoid repeating e.g. of the is_empty function
+
 
     This file is part of zukunft.com - calc with words
 

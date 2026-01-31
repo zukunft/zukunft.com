@@ -5,6 +5,8 @@
     model/user/user_list.php - a list of users
     ------------------------
 
+    TODO Prio 2 base this list on ListOfIdObjects to avoid repeating e.g. of the is_empty function
+
 
     This file is part of zukunft.com - calc with words
 
@@ -666,7 +668,7 @@ class user_list
                     $usr->save_user($usr_msg, $usr_req);
                 }
                 // collect the user message for a consolidated list for the user
-                $usr_msg_all->add($usr_msg);
+                $usr_msg_all->merge($usr_msg);
             }
         }
     }

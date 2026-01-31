@@ -375,7 +375,7 @@ class component_link_list extends sandbox_link_list
                 $sbx->save($lnk_usr_msg);
             }
             // collect the user message for a consolidated list for the user
-            $usr_msg->add($lnk_usr_msg);
+            $usr_msg->merge($lnk_usr_msg);
         }
         return $usr_msg->is_ok();
     }

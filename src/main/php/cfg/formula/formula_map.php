@@ -103,6 +103,7 @@ include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -143,6 +144,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\formulas;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
@@ -907,29 +909,29 @@ class formula_map extends sandbox_code_id
     }
 
     /**
-     * returns an ok message if this formula can be added to the database
+     * returns an OK message if this formula can be added to the database
      * e.g. a formula without expression should not be added to the database
-     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @param user_message|Message $msg the explanation why the link cannot yet be added to the database
      * @return true if the formula can be added to the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
 
         if ($this->ref_text == null or $this->ref_text == '') {
             if ($this->usr_text == null or $this->usr_text == '') {
-                $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING, [
+                $msg->add(msg_id::FORMULA_EXPRESSION_MISSING, [
                     msg_id::VAR_FORMULA => $this->dsp_id()
                 ]);
             } else {
-                if ($usr_msg->is_ok() and !$this->no_ref_needed()) {
-                    $usr_msg->add_id_with_vars(msg_id::FORMULA_REF_EXPRESSION_MISSING, [
+                if ($msg->is_ok() and !$this->no_ref_needed()) {
+                    $msg->add(msg_id::FORMULA_REF_EXPRESSION_MISSING, [
                         msg_id::VAR_FORMULA => $this->dsp_id()
                     ]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1521,7 +1523,7 @@ class formula_map extends sandbox_code_id
             // check if a word, triple or verb with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
-                $usr_msg->add($trm->id_used_msg($this));
+                $usr_msg->merge($trm->id_used_msg($this));
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
@@ -1659,10 +1661,10 @@ class formula_map extends sandbox_code_id
                             if ($trm->obj()->type_id == $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
-                                $usr_msg->add($trm->id_used_msg($this));
+                                $usr_msg->merge($trm->id_used_msg($this));
                             }
                         } else {
-                            $usr_msg->add($trm->id_used_msg($this));
+                            $usr_msg->merge($trm->id_used_msg($this));
                         }
                     } else {
                         $this->id = $trm->id_obj();
@@ -1698,7 +1700,7 @@ class formula_map extends sandbox_code_id
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add($similar->id_used_msg($this));
+                            $usr_msg->merge($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -1725,7 +1727,7 @@ class formula_map extends sandbox_code_id
                     // e.g. if a source already exists, update the source
                     // but if a word with the same name of a formula already exists, suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add($similar->id_used_msg($this));
+                        $usr_msg->merge($similar->id_used_msg($this));
                     }
                 }
 
@@ -1966,7 +1968,7 @@ class formula_map extends sandbox_code_id
             $this->wrd_del($usr_msg_del);
         }
 
-        $usr_msg->add($usr_msg_del);
+        $usr_msg->merge($usr_msg_del);
 
         return $usr_msg->is_ok();
     }

@@ -1071,7 +1071,7 @@ class expression extends shared_expression
 
                         // group the references if needed
                         if ($group_it) {
-                            $elm_grp->add_obj($elm, true);
+                            $elm_grp->add_obj($elm, true, $usr_msg);
                             log_debug('new group element "' . $elm->name() . '"');
 
                             // find the next term reference

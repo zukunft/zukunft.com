@@ -1191,7 +1191,7 @@ class value_list extends sandbox_value_list
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $val) {
-            $usr_msg->add($val->set_group_id_by_phrase_list($phr_lst));
+            $usr_msg->merge($val->set_group_id_by_phrase_list($phr_lst));
         }
         return $usr_msg;
     }

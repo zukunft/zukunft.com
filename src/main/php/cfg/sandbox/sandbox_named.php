@@ -87,6 +87,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -119,6 +120,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -701,18 +703,18 @@ class sandbox_named extends sandbox
 
     /**
      * check if the named sandbox object can be added to the database
-     * @param user_message $usr_msg including suggested solutions e.g. if the id and the name are something
+     * @param user_message|Message $msg including suggested solutions e.g. if the id and the name are something
      * @return bool true if the named object can be added to the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
         if ($this->id() == 0) {
             if ($this->name() == '') {
-                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+                $msg->add_id(msg_id::ID_AND_NAME_MISSING);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

@@ -148,7 +148,7 @@ class sql_par_list
 
         foreach ($this->lst as $qp) {
             $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list', $usr_msg);
-            $usr_msg->add($del_msg);
+            $usr_msg->merge($del_msg);
             $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }
         return $usr_msg;

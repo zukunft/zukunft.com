@@ -282,10 +282,10 @@ class view extends sandbox_code_id
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
-            $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
+            $usr_msg->merge($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr));
+            $usr_msg->merge($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_msg->usr));
         }
 
         // TODO get component from the dto object

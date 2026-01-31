@@ -60,6 +60,7 @@ include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_list extends sandbox_list_named
@@ -588,11 +590,17 @@ class formula_list extends sandbox_list_named
     /**
      * add one formula to the formula list, but only if it is not yet part of the list
      * @param formula|sandbox_named|triple|phrase|term|null $to_add the formula backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @param Message $msg to report which entry is double
      * @returns bool true the formula has been added
      */
-    function add(formula|sandbox_named|triple|phrase|term|null $to_add): bool
+    function add(
+        formula|sandbox_named|triple|phrase|term|null $to_add,
+        bool                                          $allow_duplicates = false,
+        Message                                       $msg = new Message()
+    ): bool
     {
-        return parent::add_obj($to_add)->is_ok();
+        return parent::add_obj($to_add, $allow_duplicates, $msg);
     }
 
 
@@ -811,7 +819,7 @@ class formula_list extends sandbox_list_named
                         // to show to the user all terms missing in the import file at once
                         $frm_usr_msg = new user_message();
                         $trm_lst = $frm->load_missing_terms($frm_usr_msg, $trm_lst, $chk_lst);
-                        $trm_usr_msg->add($frm_usr_msg);
+                        $trm_usr_msg->merge($frm_usr_msg);
                     }
                 }
 
@@ -863,7 +871,7 @@ class formula_list extends sandbox_list_named
 
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
-                    $lst_usr_msg->add($add_lst->insert($trm_lst, $imp, formula::class));
+                    $lst_usr_msg->merge($add_lst->insert($trm_lst, $imp, formula::class));
                     if ($add_lst->count() > 0) {
                         $lst_usr_msg->set_added_depending();
                         $frm_added = true;
@@ -888,17 +896,17 @@ class formula_list extends sandbox_list_named
 
             // add the user_messages to the last try
             if (!$ref_usr_msg->is_ok()) {
-                $usr_msg->add($ref_usr_msg);
+                $usr_msg->merge($ref_usr_msg);
             }
             if (!$lst_usr_msg->is_ok()) {
-                $usr_msg->add($lst_usr_msg);
+                $usr_msg->merge($lst_usr_msg);
             }
             if (!$trm_usr_msg->is_ok()) {
-                $usr_msg->add($trm_usr_msg);
+                $usr_msg->merge($trm_usr_msg);
             }
 
             // create any missing sql update functions and update the formulas
-            $usr_msg->add($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
+            $usr_msg->merge($this->update($db_lst_all, $imp, formula::class, $upd_per_sec));
 
 
             // fill up the main list with the words
@@ -911,7 +919,7 @@ class formula_list extends sandbox_list_named
 
 
             // create any missing sql delete functions and delete unused sandbox objects
-            $usr_msg->add($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
+            $usr_msg->merge($this->delete($db_lst_all, $imp, formula::class, $del_per_sec));
 
         }
 

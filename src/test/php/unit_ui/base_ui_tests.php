@@ -198,8 +198,8 @@ class base_ui_tests
 
         // create the formula result list and the table to display the results
         $res_lst = new result_list_ui();
-        $res_lst->add(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
-        $res_lst->add(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_city->api_json([api_types::INCL_PHRASES])));
+        $res_lst->add_result(new result_ui($res_canton->api_json([api_types::INCL_PHRASES])));
         $t->html_page_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context

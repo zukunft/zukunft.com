@@ -116,7 +116,7 @@ class list_db_write extends list_db_read
             $imp->step_start(msg_id::ADD, $class, $this->count(), $step_time);
             $add_lst = $this->filter_by_name($func_create_obj_names);
             $ins_calls = $add_lst->sql_insert_call_with_par($sc);
-            $usr_msg->add($ins_calls->exe($class));
+            $usr_msg->merge($ins_calls->exe($class));
 
             // TODO create a loop to add depending triples
             // add the just added words or triples id to this list
@@ -175,7 +175,7 @@ class list_db_write extends list_db_read
                     $qp->obj_name = $sbx->name();
                     $sql_list->add($qp);
                 } else {
-                    $usr_msg->add($ins_usr_msg);
+                    $usr_msg->merge($ins_usr_msg);
                     log_err('Internal import error: ' . $usr_msg->all_message_text());
                 }
             }

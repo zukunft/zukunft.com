@@ -212,7 +212,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $usr_msg->add($this->del_exe($usr));
+                    $usr_msg->merge($this->del_exe($usr));
                 }
             }
         }
@@ -236,7 +236,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $sc = $db_con->sql_creator();
         $qp = $this->sql_delete($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
         $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id(), $usr_msg);
-        $usr_msg->add($del_msg);
+        $usr_msg->merge($del_msg);
 
         return $usr_msg;
     }

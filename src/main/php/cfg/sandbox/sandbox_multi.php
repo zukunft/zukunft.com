@@ -121,6 +121,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -188,6 +189,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
@@ -2110,20 +2112,20 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * check if the sandbox can be added to the database
-     * @param user_message $usr_msg including suggested solutions if something is missing e.g. the user
+     * @param user_message|Message $msg including suggested solutions if something is missing e.g. the user
      * @return  bool true if the value or result can be added to the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
         if ($this->id == null) {
-            $usr_msg->add_id_with_vars(msg_id::VALUE_ID_MISSING,
+            $msg->add(msg_id::VALUE_ID_MISSING,
                 [msg_id::VAR_VALUE => $this->dsp_id()]);
         }
         if ($this->get_user() == null) {
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+            $msg->add(msg_id::USER_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -3033,7 +3035,7 @@ class sandbox_multi extends db_object_multi_user
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $usr_msg->add($similar->id_used_msg($this));
+                                $usr_msg->merge($similar->id_used_msg($this));
                             }
                         }
                     }
@@ -3056,7 +3058,7 @@ class sandbox_multi extends db_object_multi_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add($similar->id_used_msg($this));
+                        $usr_msg->merge($similar->id_used_msg($this));
                     }
                 }
 
@@ -3168,19 +3170,19 @@ class sandbox_multi extends db_object_multi_user
             // for words first delete all links
             if ($this::class == word::class) {
                 $msg = $this->del_links();
-                $usr_msg->add($msg);
+                $usr_msg->merge($msg);
             }
 
             // for triples first delete all links
             if ($this::class == triple::class) {
                 $msg = $this->del_links();
-                $usr_msg->add($msg);
+                $usr_msg->merge($msg);
             }
 
             // for formulas first delete all links
             if ($this::class == formula::class) {
                 $msg = $this->del_links();
-                $usr_msg->add($msg);
+                $usr_msg->merge($msg);
 
                 // and the corresponding formula elements
                 if ($usr_msg->is_ok()) {
@@ -3211,13 +3213,13 @@ class sandbox_multi extends db_object_multi_user
             // for view components first delete all links
             if ($this::class == component::class) {
                 $msg = $this->del_links();
-                $usr_msg->add($msg);
+                $usr_msg->merge($msg);
             }
 
             // for views first delete all links
             if ($this::class == view::class) {
                 $msg = $this->del_links();
-                $usr_msg->add($msg);
+                $usr_msg->merge($msg);
             }
 
             // delete first all user configuration that have also been excluded

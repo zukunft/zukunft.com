@@ -90,7 +90,6 @@ the object structure is:
 +-- log - the simple log interface object
 +-- system_time_list - a list of system error objects
 +-- user_list - a list of users
-+-- user_message - a complex object that functions can return
 +-- value_db - the database const for value tables
 +-- value_obj - just to select the best fitting class for a value
 +-- verb_db - the database const for predicate/verb tables
@@ -277,6 +276,9 @@ the object structure is:
             \-- view_listUi - a list function to create the HTML code to display a view list
             \-- triple_listUi - a list function to create the HTML code to display a triple list
 +-- MapObjectShared - temp helper object to map the frontend to backend objects until the api is fast enough
+\-- MessageShared
+    \-- user_message - a complex object that functions can return
+    \-- user_messageUi - messages created by the frontend for the user
 \-- TextIdObjectShared
     \-- db_object_key
         \-- db_object_multi
@@ -409,5 +411,4 @@ the object structure is:
 +-- type_listsUi - parent object for all preloaded types used in the html frontend
 \-- type_objectUi
     \-- ref_typeUi - the child class for reference types which has additional the url
-+-- user_messageUi - messages created by the frontend for the user
 ```

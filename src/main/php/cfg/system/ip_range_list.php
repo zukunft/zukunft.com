@@ -64,11 +64,17 @@ class ip_range_list extends list_db_write
      * add an ip range to the list
      *
      * @param ip_range $range the ip range that should be added to the list
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * * @param user_message $usr_msg to report which entry is double
      * @return bool true if the object has been added
      */
-    function add(ip_range $range): bool
+    function add(
+        ip_range     $range,
+        bool         $allow_duplicates = false,
+        user_message $usr_msg = new user_message()
+    ): bool
     {
-        return parent::add_obj($range)->is_ok();
+        return parent::add_obj($range, $allow_duplicates, $usr_msg);
     }
 
     /*
@@ -177,7 +183,7 @@ class ip_range_list extends list_db_write
                 $ip_usr_msg = $usr_msg->clone_reset();
                 $ip->save($ip_usr_msg);
                 // collect the user message for a consolidated list for the user
-                $usr_msg->add($ip_usr_msg);
+                $usr_msg->merge($ip_usr_msg);
             }
 
             /*

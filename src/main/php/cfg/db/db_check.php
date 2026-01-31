@@ -178,8 +178,8 @@ class db_check
         $msg = $this->db_move_time_phrase_to_group();
         if ($msg->is_ok()) {
             //
-            $msg->add($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
-            $msg->add($db_con->del_field('result', 'time_word_id'));
+            $msg->merge($db_con->del_field($lib->class_to_name(value::class), 'time_word_id'));
+            $msg->merge($db_con->del_field('result', 'time_word_id'));
         }
 
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user

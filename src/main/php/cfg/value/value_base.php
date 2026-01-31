@@ -1451,7 +1451,7 @@ class value_base extends sandbox_value
 
         if (array_key_exists(json_fields::WORDS, $api_json)) {
             $grp = new group($this->get_user());
-            $usr_msg->add($grp->save_from_api_msg($api_json[json_fields::WORDS], $do_save));
+            $usr_msg->merge($grp->save_from_api_msg($api_json[json_fields::WORDS], $do_save));
             if ($usr_msg->is_ok()) {
                 $this->set_grp($grp);
             }

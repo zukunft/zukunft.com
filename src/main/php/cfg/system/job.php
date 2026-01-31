@@ -818,24 +818,24 @@ class job extends db_object_seq_id_user
      * e.g. reject if a reserved name is used and the user is not a system test user or an admin user
      * to be overwritten by the child objects
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check(user_message $usr_msg): bool
+    protected function check(user_message $msg): bool
     {
         // the job type must be valid
         if ($this->type_id() <= 0) {
-            $usr_msg->add_err_with_vars(msg_id::JOB_TYPE_INVALID, [
+            $msg->add_err_with_vars(msg_id::JOB_TYPE_INVALID, [
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
         } elseif ($this->type_code_id() != job_types::BASE_IMPORT) {
             if ($this->row_id <= 0) {
-                $usr_msg->add_err_with_vars(msg_id::JOB_ROW_MISSING, [
+                $msg->add_err_with_vars(msg_id::JOB_ROW_MISSING, [
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

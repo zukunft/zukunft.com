@@ -593,7 +593,7 @@ class data_object
         $wrd_lst->load_by_names($wrd_lst->names());
         $trp_lst = $this->triple_list();
         $trp_lst->load_by_names($trp_lst->names());
-        $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
+        $usr_msg->merge($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
         //$this->value_list()->load_by_ids();
         return $usr_msg;
     }
@@ -1107,7 +1107,7 @@ class data_object
 
             $frm_est = $frm_lst->count() / $frm_per_sec;
             $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
-            $usr_msg->add($frm_lst->save_with_cache($imp, $cache));
+            $usr_msg->merge($frm_lst->save_with_cache($imp, $cache));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
 
             // update the reference table for fast calculation
@@ -1134,7 +1134,7 @@ class data_object
                 }
             }
 
-            $usr_msg->add($usr_msg_lnk);
+            $usr_msg->merge($usr_msg_lnk);
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->formula_list()->fill_by_name($frm_lst);
@@ -1228,9 +1228,9 @@ class data_object
     function diff_msg(data_object $dto): user_message
     {
         $usr_msg = new user_message();
-        $usr_msg->add($this->word_list()->diff_msg($dto->word_list()));
-        $usr_msg->add($this->triple_list()->diff_msg($dto->triple_list()));
-        $usr_msg->add($this->value_list()->diff_msg($dto->value_list()));
+        $usr_msg->merge($this->word_list()->diff_msg($dto->word_list()));
+        $usr_msg->merge($this->triple_list()->diff_msg($dto->triple_list()));
+        $usr_msg->merge($this->value_list()->diff_msg($dto->value_list()));
         return $usr_msg;
     }
 

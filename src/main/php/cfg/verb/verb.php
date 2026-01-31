@@ -67,6 +67,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -702,17 +704,17 @@ class verb extends type_object
 
     /**
      * check if the named sandbox object can be added to the database
-     * @param user_message $usr_msg empty if all vars of the verb are set and the verb can be stored in the database
+     * @param user_message|Message $msg empty if all vars of the verb are set and the verb can be stored in the database
      * @return bool true if the verb can be added to the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message|Message $msg): bool
     {
         if ($this->id() == 0) {
             if ($this->name() == '') {
-                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+                $msg->add_id(msg_id::ID_AND_NAME_MISSING);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1016,7 +1018,7 @@ class verb extends type_object
             $this->set_user($usr_msg->usr);
             $trm = $this->reload_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $usr_msg->add($trm->id_used_msg($this));
+                $usr_msg->merge($trm->id_used_msg($this));
             } else {
                 $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');

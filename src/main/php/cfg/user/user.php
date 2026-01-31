@@ -1224,7 +1224,7 @@ class user extends db_id_object_non_sandbox
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $sys_usr->code_id = users::SYSTEM_CODE_ID;
             $sys_usr->excluded = false;
-            $usr_msg->add($sys_usr->save_direct());
+            $usr_msg->merge($sys_usr->save_direct());
             if (!$usr_msg->is_ok()) {
                 log_fatal('system user cannot be created', 'sql_db->create_system_user');
             } elseif ($sys_usr->id != users::SYSTEM_ID) {
@@ -1239,7 +1239,7 @@ class user extends db_id_object_non_sandbox
                 $local_usr->set_profile(user_profiles::ADMIN);
                 $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->excluded = false;
-                $usr_msg->add($local_usr->save_direct());
+                $usr_msg->merge($local_usr->save_direct());
                 if (!$usr_msg->is_ok()) {
                     log_fatal('local admin user cannot be created', 'sql_db->create_system_user');
                 } elseif ($local_usr->id != users::SYSTEM_ADMIN_ID) {
@@ -2106,7 +2106,7 @@ class user extends db_id_object_non_sandbox
             if ($this->id == 0) {
 
                 // create a user if no similar user has been found
-                $usr_msg->add($this->db_insert($db_con, $usr_req));
+                $usr_msg->merge($this->db_insert($db_con, $usr_req));
 
             } else {
 
@@ -2122,7 +2122,7 @@ class user extends db_id_object_non_sandbox
                     ]);
                 } else {
                     if (!$this->is_same($db_rec, $usr_msg)) {
-                        $usr_msg->add($this->db_update_user($db_con, $db_rec, $usr_req));
+                        $usr_msg->merge($this->db_update_user($db_con, $db_rec, $usr_req));
                     }
                 }
             }
@@ -3002,7 +3002,7 @@ class user extends db_id_object_non_sandbox
                             $usr_req = $usr;
                         }
                         // TODO check if there are related log entries and if yes exclude it instead of delete
-                        $usr_msg->add(parent::del_exe($usr_req));
+                        $usr_msg->merge(parent::del_exe($usr_req));
                     }
                 }
             }
