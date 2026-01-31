@@ -641,22 +641,22 @@ class phrase extends combine_named
      */
     function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {
                 if ($phr->is_word()) {
-                    $usr_msg->merge($this->obj()->fill($phr->word(), $usr_req));
+                    $msg->merge($this->obj()->fill($phr->word(), $usr_req));
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                         [
                             msg_id::VAR_WORD_NAME => $this->dsp_id(),
                             msg_id::VAR_NAME => $phr->dsp_id(),
                         ]);
                 }
             } elseif ($phr::class == word::class) {
-                $usr_msg->merge($this->obj()->fill($phr, $usr_req));
+                $msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                     [
                         msg_id::VAR_WORD_NAME => $this->dsp_id(),
                         msg_id::VAR_NAME => $phr->dsp_id(),
@@ -665,25 +665,25 @@ class phrase extends combine_named
         } else {
             if ($phr::class == phrase::class) {
                 if ($phr->is_triple()) {
-                    $usr_msg->merge($this->obj()->fill($phr->triple(), $usr_req));
+                    $msg->merge($this->obj()->fill($phr->triple(), $usr_req));
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
+                    $msg->add(msg_id::FILL_TRIPLE_WITH_OTHER,
                         [
                             msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
                             msg_id::VAR_NAME => $phr->dsp_id(),
                         ]);
                 }
             } elseif ($phr::class == triple::class) {
-                $usr_msg->merge($this->obj()->fill($phr, $usr_req));
+                $msg->merge($this->obj()->fill($phr, $usr_req));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                $msg->add(msg_id::FILL_WORD_WITH_OTHER,
                     [
                         msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
                         msg_id::VAR_NAME => $phr->dsp_id(),
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

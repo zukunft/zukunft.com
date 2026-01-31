@@ -326,13 +326,13 @@ class component_link extends sandbox_link
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported components
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -340,7 +340,7 @@ class component_link extends sandbox_link
 
         // reset the all parameters for the view object but keep the user
         $this->reset(true);
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // if for the component only the position and name is defined
         // do not overwrite an existing component
@@ -366,23 +366,23 @@ class component_link extends sandbox_link
             $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME]);
             if ($cmp == null) {
                 if ($db_con->is_open()) {
-                    $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
+                    $msg->add(msg_id::COMPONENT_MISSING, [
                         msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
                 }
-                $cmp = new component($usr_msg->usr);
+                $cmp = new component($msg->usr);
                 $cmp->set_name($in_ex_json[json_fields::NAME]);
             }
             $this->set_component($cmp);
 
         } elseif (array_key_exists(json_fields::NAME, $in_ex_json)) {
             // assign components just be the name to a view
-            $usr_msg->add_id_with_vars(msg_id::COMPONENT_CREATED, [
+            $msg->add(msg_id::COMPONENT_CREATED, [
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $cmp = new component($usr_msg->usr);
-            $cmp->import_mapper($in_ex_json, $usr_msg, $dto);
+            $cmp = new component($msg->usr);
+            $cmp->import_mapper($in_ex_json, $msg, $dto);
         } elseif (array_key_exists(json_fields::VIEW, $in_ex_json)
             and array_key_exists(json_fields::COMPONENT, $in_ex_json)) {
             // import a component link independent of the view
@@ -399,27 +399,27 @@ class component_link extends sandbox_link
                 if (is_string($msk_json)) {
                     $msk = $dto?->get_view_by_name($msk_json);
                     if ($msk == null) {
-                        $usr_msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                        $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                             msg_id::VAR_VIEW => $msk_json,
                             msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                         ]);
-                        $msk = new view($usr_msg->usr);
+                        $msk = new view($msg->usr);
                         $msk->set_name($msk_json);
                     }
                     $this->set_view($msk);
                 } elseif (is_array($msk_json)) {
-                    $msk = new view($usr_msg->usr);
-                    $msk->import_mapper($msk_json, $usr_msg, $dto);
-                    if ($usr_msg->is_ok()) {
+                    $msk = new view($msg->usr);
+                    $msk->import_mapper($msk_json, $msg, $dto);
+                    if ($msg->is_ok()) {
                         $this->set_view($msk);
                     }
                 }
             } else {
-                $usr_msg->add_info_with_vars(msg_id::VIEW_CREATED, [
+                $msg->add_info_with_vars(msg_id::VIEW_CREATED, [
                     msg_id::VAR_VIEW_NAME => $in_ex_json[json_fields::NAME]
                 ]);
-                $msk = new view($usr_msg->usr);
-                $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+                $msk = new view($msg->usr);
+                $msk->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_view($msk);
             }
 
@@ -435,33 +435,33 @@ class component_link extends sandbox_link
                 if (is_string($msk_json)) {
                     $msk = $dto?->get_component_by_name($msk_json);
                     if ($msk == null) {
-                        $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING_IMPORT, [
+                        $msg->add(msg_id::COMPONENT_MISSING_IMPORT, [
                             msg_id::VAR_COMPONENT => $msk_json,
                             msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                         ]);
-                        $msk = new component($usr_msg->usr);
+                        $msk = new component($msg->usr);
                         $msk->set_name($msk_json);
                     }
                     $this->set_component($msk);
                 } elseif (is_array($msk_json)) {
-                    $msk = new component($usr_msg->usr);
-                    $msk->import_mapper($msk_json, $usr_msg, $dto);
-                    if ($usr_msg->is_ok()) {
+                    $msk = new component($msg->usr);
+                    $msk->import_mapper($msk_json, $msg, $dto);
+                    if ($msg->is_ok()) {
                         $this->set_component($msk);
                     }
                 }
             } else {
-                $usr_msg->add_info_with_vars(msg_id::COMPONENT_CREATED, [
+                $msg->add_info_with_vars(msg_id::COMPONENT_CREATED, [
                     msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
                 ]);
-                $msk = new component($usr_msg->usr);
-                $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+                $msk = new component($msg->usr);
+                $msk->import_mapper($in_ex_json, $msg, $dto);
                 $this->set_component($msk);
             }
 
         } else {
-            $msg = 'unexpected component link json format';
-            log_err($msg);
+            $msg_txt = 'unexpected component link json format';
+            log_err($msg_txt);
         }
 
         if (array_key_exists(json_fields::PREDICATE, $in_ex_json)) {
@@ -480,7 +480,7 @@ class component_link extends sandbox_link
             $this->set_style($in_ex_json[json_fields::STYLE]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1401,9 +1401,9 @@ class component_link extends sandbox_link
 
     /**
      * get a similar reference
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      */
-    function get_similar(user_message $usr_msg): component_link
+    function get_similar(user_message $msg): component_link
     {
         $result = new component_link($this->get_user());
 
@@ -1449,13 +1449,13 @@ class component_link extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param component_link|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         component_link|db_object_seq_id $obj,
-        user_message                    $usr_msg,
+        user_message                    $msg,
         sql_type_list                   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1466,7 +1466,7 @@ class component_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($obj->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -1477,7 +1477,7 @@ class component_link extends sandbox_link
                 );
             }
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::COMPONENT_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1514,7 +1514,7 @@ class component_link extends sandbox_link
                 );
             }
             if ($this->get_pos_type_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::COMPONENT_POS_TYPE_MISSING, [
+                $msg->add(msg_id::COMPONENT_POS_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_pos_type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1537,7 +1537,7 @@ class component_link extends sandbox_link
             }
             // TODO easy move to id function of type list
             if ($this->get_style_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_STYLE_MISSING, [
+                $msg->add(msg_id::COMPONENT_LINK_STYLE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_style_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1558,17 +1558,17 @@ class component_link extends sandbox_link
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
             msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_COMPONENT_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_COMPONENT_IN_LINK_INVALID, [
             msg_id::VAR_COMPONENT_NAME => $this->get_component()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

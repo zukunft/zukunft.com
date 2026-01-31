@@ -270,7 +270,7 @@ class sandbox_list_named extends sandbox_list
     {
         global $usr;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
@@ -280,12 +280,12 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                $msg->add(msg_id::ID_AND_NAME_MISSING, [
                     msg_id::VAR_ID => $sbx_new->dsp_id()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -297,7 +297,7 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_name(sandbox_list_named $lst_new): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name());
@@ -306,12 +306,12 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                $msg->add(msg_id::ID_AND_NAME_MISSING, [
                     msg_id::VAR_ID => $sbx_new->dsp_id()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

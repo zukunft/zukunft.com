@@ -326,15 +326,15 @@ class sandbox_value extends sandbox_multi
     /**
      * map a value api json to this model value object
      * @param array $api_json the api array with the values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
             $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
         }
-        return parent::api_mapper($api_json, $usr_msg);
+        return parent::api_mapper($api_json, $msg);
     }
 
 
@@ -1178,29 +1178,29 @@ class sandbox_value extends sandbox_multi
      */
     function diff_msg(sandbox_value|db_object_multi $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->grp_id() != $obj->grp_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_GROUP, [
+            $msg->add(msg_id::DIFF_GROUP, [
                 msg_id::VAR_VALUE => $obj->grp()->dsp_id(),
                 msg_id::VAR_VALUE_CHK => $this->grp()->dsp_id(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
         if ($this->get_value() != $obj->get_value()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE, [
+            $msg->add(msg_id::DIFF_VALUE, [
                 msg_id::VAR_VALUE => $obj->get_value(),
                 msg_id::VAR_VALUE_CHK => $this->get_value(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
         if ($this->value_type() != $obj->value_type()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE_TYPE, [
+            $msg->add(msg_id::DIFF_VALUE_TYPE, [
                 msg_id::VAR_TYPE => $obj->value_type(),
                 msg_id::VAR_TYPE_CHK => $this->value_type(),
                 msg_id::VAR_VAL_ID => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

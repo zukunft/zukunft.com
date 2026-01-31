@@ -238,17 +238,17 @@ class type_object extends db_object_seq_id
      * general part to import a database object from a JSON array object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::NAME, $in_ex_json)) {
             $this->set_name($in_ex_json[json_fields::NAME]);
@@ -259,7 +259,7 @@ class type_object extends db_object_seq_id
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -292,19 +292,19 @@ class type_object extends db_object_seq_id
      */
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr->can_set_code_id()) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -773,22 +773,22 @@ class type_object extends db_object_seq_id
     }
 
 
-    protected function can_delete(user_message $usr_msg): bool
+    protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
         if (!$this->is_used()) {
             if ($this->code_id != null or $this->code_id != '') {
-                if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                     $can_del = true;
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::CANNOT_DELETE_TYPE_WITH_CODE_IS, [
+                    $msg->add(msg_id::CANNOT_DELETE_TYPE_WITH_CODE_IS, [
                         msg_id::VAR_NAME => $this->name(),
                     ]);
                 }
             }
         } else {
             // for the system user it should be possible to delete a type
-            if ($usr_msg->usr->is_system()) {
+            if ($msg->usr->is_system()) {
                 $can_del = true;
             }
         }
@@ -824,13 +824,13 @@ class type_object extends db_object_seq_id
      * get a list of database field names, values and types that have been updated
      *
      * @param type_object|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         type_object|db_object_seq_id $obj,
-        user_message                 $usr_msg,
+        user_message                 $msg,
         sql_type_list                $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -840,7 +840,7 @@ class type_object extends db_object_seq_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->name <> $this->name) {
             if ($do_log) {
                 $lst->add_field(

@@ -564,7 +564,7 @@ class user_list
         bool $allow_duplicates = false
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
@@ -575,32 +575,32 @@ class user_list
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
-                        $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                        $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                     }
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } elseif ($usr_to_add->name() != '') {
                 if (!array_key_exists($usr_to_add->name(), $this->names())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } elseif ($usr_to_add->email() != '') {
                 if (!array_key_exists($usr_to_add->email(), $this->emails())) {
                     $this->add_direct($usr_to_add);
                 } else {
-                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    $msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::LIST_USER_INVALID,
+                $msg->add(msg_id::LIST_USER_INVALID,
                     [
                         msg_id::VAR_USER_NAME => $usr_to_add->dsp_id(),
                         msg_id::VAR_USER_LIST_NAME => $this->names(),
                     ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

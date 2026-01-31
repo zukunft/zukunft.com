@@ -142,13 +142,13 @@ class view_base extends sandbox_code_id
      * set the vars this view bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         // the root view object
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::STYLE, $json_array)) {
             $this->set_style_id($json_array[json_fields::STYLE]);
         }
@@ -166,7 +166,7 @@ class view_base extends sandbox_code_id
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->api_mapper($dbo_json, $usr_msg);
+                $this->dbo->api_mapper($dbo_json, $msg);
             }
         }
         if (array_key_exists(api::API_TRIPLE, $json_array)) {
@@ -177,11 +177,11 @@ class view_base extends sandbox_code_id
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->api_mapper($dbo_json, $usr_msg);
+                $this->dbo->api_mapper($dbo_json, $msg);
             }
         }
         $this->cmp_lst = $cmp_lst;
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

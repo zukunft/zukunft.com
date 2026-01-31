@@ -144,56 +144,56 @@ class formula extends formula_map
      * info
      */
 
-    function ref_exp_is_valid(user_message $usr_msg): bool
+    function ref_exp_is_valid(user_message $msg): bool
     {
         if ($this->ref_text == null) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_NULL, [
+            $msg->add(msg_id::EXPRESSION_REF_IS_NULL, [
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         } elseif ($this->ref_text == '') {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_EMPTY, [
+            $msg->add(msg_id::EXPRESSION_REF_IS_EMPTY, [
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         } elseif (strlen($this->ref_text) < expression::MIN_REF_LENGTH) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_REF_IS_EMPTY, [
+            $msg->add(msg_id::EXPRESSION_REF_IS_EMPTY, [
                 msg_id::VAR_EXPRESSION => $this->ref_text,
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
-    function user_exp_is_valid(user_message $usr_msg): bool
+    function user_exp_is_valid(user_message $msg): bool
     {
         if ($this->usr_text == null) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_NULL, [
+            $msg->add(msg_id::EXPRESSION_USER_IS_NULL, [
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         } elseif ($this->usr_text == '') {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_EMPTY, [
+            $msg->add(msg_id::EXPRESSION_USER_IS_EMPTY, [
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         } elseif (strlen($this->usr_text) < expression::MIN_LENGTH) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+            $msg->add(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
                 msg_id::VAR_EXPRESSION => $this->ref_text,
                 msg_id::VAR_FORMULA => $this->dsp_id()
             ]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
-    function expression_may_match(user_message $usr_msg): bool
+    function expression_may_match(user_message $msg): bool
     {
         if (substr_count($this->ref_text, chars::TERM_START)
             + substr_count($this->ref_text, chars::TERM_END)
             > substr_count($this->usr_text, chars::TERM_DELIMITER)) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
+            $msg->add(msg_id::EXPRESSION_USER_IS_TOO_SHORT, [
                 msg_id::VAR_EXPRESSION => $this->ref_text,
                 msg_id::VAR_FORMULA => $this->dsp_id(),
                 msg_id::VAR_NAME => $this->usr_text
             ]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

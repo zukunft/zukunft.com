@@ -75,31 +75,31 @@ if ($db_con->is_open()) {
     $part = $_GET[url_var::CONFIG_PART] ?? '';
     $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
-    $usr_msg = new user_message();
+    $msg = new user_message();
     $result = ''; // reset the html code var
 
     // load the session user parameters
     $usr = new user;
-    $usr_msg->add_message_text($usr->get());
+    $msg->add_message_text($usr->get());
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
     if ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($part == api::CONFIG_ALL or $part == '') {
-            $usr_msg = $cfg_lst->load_cfg($usr);
+            $msg = $cfg_lst->load_cfg($usr);
         } elseif ($part == api::CONFIG_FRONTEND) {
-            $usr_msg = $cfg_lst->load_frontend_cfg($usr);
+            $msg = $cfg_lst->load_frontend_cfg($usr);
         } elseif ($part == api::CONFIG_USER) {
-            $usr_msg = $cfg_lst->load_usr_cfg($usr);
+            $msg = $cfg_lst->load_usr_cfg($usr);
         } else {
-            $usr_msg->add_id_with_vars(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
+            $msg->add(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
         }
-        if (!$usr_msg->is_ok()) {
-            $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        if (!$msg->is_ok()) {
+            $msg->add_id(msg_id::CONFIG_NOT_LOADED);
         } else {
             if ($cfg_lst->is_empty()) {
-                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+                $msg->add_id(msg_id::CONFIG_EMPTY);
             }
         }
         $sys->times->switch(system_time_type::MAP_JSON);
@@ -112,7 +112,7 @@ if ($db_con->is_open()) {
 
     $sys->times->switch(system_time_type::API_CTRL);
     $ctrl = new controller();
-    $ctrl->get_json($result, $usr_msg->get_last_message());
+    $ctrl->get_json($result, $msg->get_last_message());
 
     if ($debug == url_var::DEBUG_EXE_TIME_REPORT) {
         // TODO Prio 2 remove this speed testing code

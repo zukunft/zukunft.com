@@ -179,17 +179,17 @@ class sandbox_link_named extends sandbox_link
      * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
+        parent::import_mapper($in_ex_json, $msg, $dto);;
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -200,7 +200,7 @@ class sandbox_link_named extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -343,19 +343,19 @@ class sandbox_link_named extends sandbox_link
      */
     function set_type_id(?int $type_id, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -382,20 +382,20 @@ class sandbox_link_named extends sandbox_link
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($code_id == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_code_id($code_id)) {
                 $this->set_type_id($typ_lst->id($code_id), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $code_id
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -416,20 +416,20 @@ class sandbox_link_named extends sandbox_link
         user      $usr_req = new user()
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($name == null) {
             $this->type_id = null;
         } else {
             if ($typ_lst->has_name($name)) {
                 $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
             } else {
-                $usr_msg->add_id_with_vars($msg_id, [
+                $msg->add($msg_id, [
                     msg_id::VAR_NAME => $name
                 ]);
                 $this->type_id = null;
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -615,13 +615,13 @@ class sandbox_link_named extends sandbox_link
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox_link_named|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_link_named|db_object_seq_id $obj,
-        user_message                        $usr_msg,
+        user_message                        $msg,
         sql_type_list                       $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -629,7 +629,7 @@ class sandbox_link_named extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for insert statements of user sandbox rows user id fields always needs to be included
         $lst->add_name_and_description($this, $obj, $do_log, $table_id);
         return $lst;

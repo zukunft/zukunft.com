@@ -440,18 +440,18 @@ class component_list extends sandbox_list_named
      * get a list of components that are ready to be added to the database
      * TODO Prio 2 move to parent?
      *
-     * @param user_message $usr_msg to collect the error messages for the user and the suggested solutions
+     * @param user_message $msg to collect the error messages for the user and the suggested solutions
      * @param string $file_name the name of the import file which has delevered the data
      * @return component_list list of the components that have an id or a name
      */
-    function get_ready(user_message $usr_msg, string $file_name = ''): component_list
+    function get_ready(user_message $msg, string $file_name = ''): component_list
     {
         $cmp_lst = new component_list($this->get_user());
         foreach ($this->lst() as $cmp) {
-            if ($cmp->db_ready($usr_msg)) {
+            if ($cmp->db_ready($msg)) {
                 $cmp_lst->add_by_name($cmp);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_COMPONENT_NOT_READY, [
+                $msg->add(msg_id::IMPORT_COMPONENT_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $cmp->dsp_id(),
                 ]);

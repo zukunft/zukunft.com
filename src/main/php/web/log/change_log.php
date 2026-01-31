@@ -71,17 +71,17 @@ class change_log extends sandbox
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::CHANGE_TIME, $json_array)) {
             try {
                 $this->change_time = new DateTime($json_array[json_fields::CHANGE_TIME]);
             } catch (Exception $e) {
-                $usr_msg->add_message_text($json_array[json_fields::CHANGE_TIME]
+                $msg->add_message_text($json_array[json_fields::CHANGE_TIME]
                     . ' has wrong change time format because ' . $e->getMessage());
             }
         } else {
@@ -111,7 +111,7 @@ class change_log extends sandbox
         } else {
             $this->row_id = null;
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 }

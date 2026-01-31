@@ -1081,18 +1081,18 @@ class term extends combine_named
     function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
         $lib = new library();
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+            $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
                 msg_id::VAR_CLASS_NAME => $class,
                 msg_id::VAR_NAME => $this->name(),
                 msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
             ]);
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
     /**

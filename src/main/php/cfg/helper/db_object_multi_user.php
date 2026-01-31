@@ -137,15 +137,15 @@ class db_object_multi_user extends db_object_multi
      */
     function diff_msg(db_object_multi_user|db_object_multi $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->get_user_id() != $obj->get_user_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
+            $msg->add(msg_id::DIFF_USER, [
                 msg_id::VAR_USER => $obj->get_user()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 

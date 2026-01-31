@@ -175,13 +175,13 @@ class phrase_list extends sandbox_list_named
      * import a phrase list from an inner part of a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -193,9 +193,9 @@ class phrase_list extends sandbox_list_named
 
         foreach ($json_obj as $phr_name) {
             if ($phr_name == '') {
-                $usr_msg->add_id_with_vars(msg_id::PHRASE_NAME_EMPTY, [msg_id::VAR_VALUE_LIST => implode(',', $json_obj)]);
+                $msg->add(msg_id::PHRASE_NAME_EMPTY, [msg_id::VAR_VALUE_LIST => implode(',', $json_obj)]);
             } else {
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     $phr = $phr_lst->get_by_name($phr_name);
                     if ($phr == null) {
                         // TODO Prio 3 check if in some cases a warning message might be useful
@@ -215,7 +215,7 @@ class phrase_list extends sandbox_list_named
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -597,7 +597,7 @@ class phrase_list extends sandbox_list_named
      */
     function import_map_names(array $json_obj, ?data_object $dto = null): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($json_obj as $word_name) {
             $phr = null;
             $phr = $dto?->get_phrase_by_name($word_name);
@@ -607,14 +607,14 @@ class phrase_list extends sandbox_list_named
                 $phr = $wrd->phrase();
             }
             if ($phr == null) {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+                $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
 
                 ]);
             } else {
                 $this->add($phr);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1336,15 +1336,15 @@ class phrase_list extends sandbox_list_named
      * if this phrase list is empty, it should loaded from the database
      *
      * @param phrase $typ the time period description that should be preferred selected
-     * @param user_message $usr_msg to collect the problems and suggested solutions for the user
+     * @param user_message $msg to collect the problems and suggested solutions for the user
      * @param DateTime|null $time the point in time that should be used for matching
      * @param phrase_list|null $phr_lst use this phrase list for the selection if not null
      * @return phrase|null the phrase that matches best the phrase from the list and the $typ
      */
     function best_matching_time(
-        phrase $typ,
-        user_message $usr_msg,
-        ?DateTime $time = null,
+        phrase       $typ,
+        user_message $msg,
+        ?DateTime    $time = null,
         ?phrase_list $phr_lst = null
     ): ?phrase
     {
@@ -1352,7 +1352,7 @@ class phrase_list extends sandbox_list_named
         if ($typ->is_year()) {
             $phr = $this->get_year($time->format('Y'));
         } else {
-            $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_UNEXPECTED, [
+            $msg->add(msg_id::PHRASE_TYPE_UNEXPECTED, [
                 msg_id::VAR_PHRASE_NAME => $typ->dsp_id(),
                 msg_id::VAR_FUNCTION_NAME => 'get a time word representing now',
             ]);

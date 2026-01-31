@@ -3792,7 +3792,7 @@
     \-- api_array
         \-- data_object - create an api json array for the backend based on this frontend object
     \-- save
-        \-- sys_log - @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+        \-- sys_log - @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
 \-- forward
     \-- include
         \-- element - create an SQL statement to retrieve a formula element by id from the database

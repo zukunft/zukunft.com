@@ -248,17 +248,17 @@ class sandbox_named extends sandbox
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // the usage is set by an internal batch and cannot be set via import
         if (key_exists(json_fields::NAME, $in_ex_json)) {
@@ -281,7 +281,7 @@ class sandbox_named extends sandbox
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -368,7 +368,7 @@ class sandbox_named extends sandbox
     function set_name(?string $name): user_message
     {
         // TODO Prio 2 use user_message from calling function
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         if ($name != null) {
             $used_name = trim($name);
@@ -377,12 +377,12 @@ class sandbox_named extends sandbox
         }
 
         if ($used_name <> $name) {
-            $usr_msg->add_id_with_vars(msg_id::TRIM_NAME,
+            $msg->add(msg_id::TRIM_NAME,
                 [msg_id::VAR_NAME => $name]);
             $name = $used_name;
         }
         $this->name = $name;
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -650,17 +650,17 @@ class sandbox_named extends sandbox
      */
     function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->name() != $obj->name()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
+            $msg->add(msg_id::DIFF_NAME, [
                 msg_id::VAR_NAME => $obj->name(),
                 msg_id::VAR_NAME_CHK => $this->name(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -693,12 +693,12 @@ class sandbox_named extends sandbox
     /**
      * check if this might be added to the database
      * which is for named objects without dependencies the same as db_ready
-     * @param user_message $usr_msg including suggested solutions if something is missing e.g. a linked object
+     * @param user_message $msg including suggested solutions if something is missing e.g. a linked object
      * @return bool true if the named object can be added to the database
      */
-    function can_be_ready(user_message $usr_msg): bool
+    function can_be_ready(user_message $msg): bool
     {
-        return $this->db_ready($usr_msg);
+        return $this->db_ready($msg);
     }
 
     /**
@@ -838,28 +838,28 @@ class sandbox_named extends sandbox
      * TODO use optional sql insert with log
      * TODO use prepared sql insert
      *
-     * @param user_message $usr_msg with status OK
+     * @param user_message $msg with status OK
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        if ($usr_msg->is_ok()) {
-            $msg = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg, $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        if ($msg->is_ok()) {
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -886,11 +886,11 @@ class sandbox_named extends sandbox
      * if the user is a system user or an admin user true is returned
      * so that admin user can change reserved objects
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if the named sandbox object is not using a reserved name
      *              or also true if the user is allowed to add and change reserved named
      */
-    protected function check_preserved(user_message $usr_msg): bool
+    protected function check_preserved(user_message $msg): bool
     {
         global $mtr;
 
@@ -901,7 +901,7 @@ class sandbox_named extends sandbox
         $class_name = $lib->class_to_name($this::class);
 
         // system users are always allowed to add objects e.g. for the system views
-        if (!$usr_msg->usr->is_system()) {
+        if (!$msg->usr->is_system()) {
             if (in_array($this->name(), $this->reserved_names())) {
                 // if the name is a reserved name
                 // to add the read test objects during initial load
@@ -909,8 +909,8 @@ class sandbox_named extends sandbox
                     // an admin user is needed
                     // so if the user is not an admin add a message
                     // which will return false
-                    if (!$usr_msg->usr->is_admin()) {
-                        $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                    if (!$msg->usr->is_admin()) {
+                        $msg->add(msg_id::GROUP_IS_RESERVED, [
                             msg_id::VAR_NAME => $this->name(),
                             msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
                         ]);
@@ -918,7 +918,7 @@ class sandbox_named extends sandbox
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1075,7 +1075,7 @@ class sandbox_named extends sandbox
      * @return sandbox a filled object that has the same name
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(user_message $usr_msg): sandbox
+    function get_similar(user_message $msg): sandbox
     {
         $result = new sandbox_named($this->get_user());
 
@@ -1273,13 +1273,13 @@ class sandbox_named extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox|sandbox_named|db_object_seq_id $obj,
-        user_message                           $usr_msg,
+        user_message                           $msg,
         sql_type_list                          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {

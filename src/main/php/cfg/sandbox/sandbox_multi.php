@@ -402,10 +402,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * fill the vars with this sandbox object based on the given api json array
      * @param array $api_json the api array with the word values that should be mapped
-     * @param user_message $usr_msg if the mapping is incomplete the human-readable message what happened and how to solve it
+     * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
         // make sure that there are no unexpected leftovers
         $usr = $this->get_user();
@@ -419,7 +419,7 @@ class sandbox_multi extends db_object_multi_user
             $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -427,26 +427,26 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $sys;
 
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $sys->typ_lst->shr_typ->id(
                 $in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::SHARE_TYPE_NOT_EXPECTED, [
+                $msg->add(msg_id::SHARE_TYPE_NOT_EXPECTED, [
                     msg_id::VAR_NAME => $in_ex_json[json_fields::SHARE],
                     msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
                 ]);
@@ -457,14 +457,14 @@ class sandbox_multi extends db_object_multi_user
                 $in_ex_json[json_fields::PROTECTION]);
             if ($this->protection_id < 0) {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
+                $msg->add(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
                     msg_id::VAR_NAME => $in_ex_json[json_fields::PROTECTION],
                     msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1027,39 +1027,39 @@ class sandbox_multi extends db_object_multi_user
      */
     function diff_msg(sandbox_multi|db_object_multi $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         // TODO Prio 2 check owner is sometimes null on load?
         if ($this->owner_id() != $obj->owner_id()
             and $this->owner() != null
             and $obj->owner() != null) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
+            $msg->add(msg_id::DIFF_OWNER, [
                 msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
         if ($this->share_id() != $obj->share_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+            $msg->add(msg_id::DIFF_SHARE, [
                 msg_id::VAR_SHARE => $obj->share_type_name(),
                 msg_id::VAR_SHARE_CHK => $this->share_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_PROTECTION, [
+            $msg->add(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
         if ($this->is_excluded() != $obj->is_excluded()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
+            $msg->add(msg_id::DIFF_EXCLUSION, [
                 msg_id::VAR_EXCLUDE => $obj->is_excluded(),
                 msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -1072,21 +1072,21 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $sys;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
-        $this->import_mapper($in_ex_json, $usr_msg);
+        $this->import_mapper($in_ex_json, $msg);
 
 
         // try to get the ownership if requested
@@ -1101,7 +1101,7 @@ class sandbox_multi extends db_object_multi_user
                 $this->share_id = $sys->typ_lst->shr_typ->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::SHARE_TYPE_NOT_EXPECTED, [
+                    $msg->add(msg_id::SHARE_TYPE_NOT_EXPECTED, [
                         msg_id::VAR_NAME => $value,
                         msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
                     ]);
@@ -1111,14 +1111,14 @@ class sandbox_multi extends db_object_multi_user
                 $this->protection_id = $sys->typ_lst->ptc_typ->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
+                    $msg->add(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
                         msg_id::VAR_NAME => $value,
                         msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
                     ]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -2079,16 +2079,16 @@ class sandbox_multi extends db_object_multi_user
     /**
      * dummy function definition that will be overwritten by the child object
      * check if the user requested a preserved name and if yes return a message to the user
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check_preserved(user_message $usr_msg): bool
+    protected function check_preserved(user_message $msg): bool
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'check_preserved',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -2990,7 +2990,7 @@ class sandbox_multi extends db_object_multi_user
      *
      */
 
-    function save(user_message $usr_msg): bool
+    function save(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
@@ -3001,7 +3001,7 @@ class sandbox_multi extends db_object_multi_user
         $class_name = $lib->class_to_name($this::class);
 
         // check the preserved names (only used for group names)
-        if ($this->check_preserved($usr_msg)) {
+        if ($this->check_preserved($msg)) {
 
             // load the objects if needed
             if ($this->is_link_obj()) {
@@ -3022,7 +3022,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($similar->id() <> 0) {
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
-                        $usr_msg->add_id_with_vars(msg_id::SANDBOX_NOT_SIMILAR, [
+                        $msg->add(msg_id::SANDBOX_NOT_SIMILAR, [
                             msg_id::VAR_ID => $this->dsp_id(),
                             msg_id::VAR_ID_CHK => $similar->dsp_id()
                         ]);
@@ -3035,7 +3035,7 @@ class sandbox_multi extends db_object_multi_user
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $usr_msg->merge($similar->id_used_msg($this));
+                                $msg->merge($similar->id_used_msg($this));
                             }
                         }
                     }
@@ -3047,10 +3047,10 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // create a new object if nothing similar has been found
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             if (!$this->is_saved()) {
                 log_debug('add');
-                $this->add($usr_msg);
+                $this->add($msg);
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {
@@ -3058,12 +3058,12 @@ class sandbox_multi extends db_object_multi_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->merge($similar->id_used_msg($this));
+                        $msg->merge($similar->id_used_msg($this));
                     }
                 }
 
                 // update the existing object
-                if ($usr_msg->is_ok()) {
+                if ($msg->is_ok()) {
                     log_debug('update');
 
                     // read the database values to be able to check if something has been changed;
@@ -3072,7 +3072,7 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec->reset();
                     $db_rec->set_user($this->get_user());
                     if ($db_rec->load_by_id($this->id()) != $this->id()) {
-                        $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_OBJECT, [
+                        $msg->add(msg_id::FAILED_RELOAD_OBJECT, [
                             msg_id::VAR_CLASS_NAME => $class_name,
                             msg_id::VAR_VAL_ID => $this->id()
                         ]);
@@ -3080,7 +3080,7 @@ class sandbox_multi extends db_object_multi_user
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
-                                $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_OBJECT, [
+                                $msg->add(msg_id::FAILED_RELOAD_OBJECT, [
                                     msg_id::VAR_VALUE => $class_name,
                                     msg_id::VAR_NAME => $this->name()
                                 ]);
@@ -3102,14 +3102,14 @@ class sandbox_multi extends db_object_multi_user
                     $std_rec->reset();
                     $std_rec->id = $this->id();
                     $std_rec->set_user($this->get_user()); // must also be set to allow to take the ownership
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         if (!$std_rec->load_standard()) {
-                            $usr_msg->add_id_with_vars(msg_id::DEFAULT_VALUES_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
+                            $msg->add(msg_id::DEFAULT_VALUES_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
                         }
                     }
 
                     // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         log_debug('standard loaded');
 
                         if ($this->owner_id() <= 0) {
@@ -3118,24 +3118,24 @@ class sandbox_multi extends db_object_multi_user
                     }
 
                     // check if the id parameters are supposed to be changed
-                    if ($usr_msg->is_ok()) {
-                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
+                    if ($msg->is_ok()) {
+                        $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     // TODO add function based saving
-                    if ($usr_msg->is_ok()) {
-                        $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
+                    if ($msg->is_ok()) {
+                        $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                     }
                 }
             }
-            if (!$usr_msg->is_ok()) {
-                log_err($usr_msg->get_last_message(), 'user_sandbox_' . $class_name . '->save');
+            if (!$msg->is_ok()) {
+                log_err($msg->get_last_message(), 'user_sandbox_' . $class_name . '->save');
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -4243,13 +4243,13 @@ class sandbox_multi extends db_object_multi_user
     {
         $lib = new library();
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        $usr_msg = new user_message();
-        $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+        $msg = new user_message();
+        $msg->add(msg_id::CLASS_ALREADY_EXISTS, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             msg_id::VAR_NAME => $obj_to_add->dsp_id(),
             msg_id::VAR_VALUE => $obj_to_add_name
         ]);
-        return $usr_msg;
+        return $msg;
     }
 
     /**

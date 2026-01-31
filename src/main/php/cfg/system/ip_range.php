@@ -143,13 +143,13 @@ class ip_range extends db_object_seq_id
      * set the vars of this ip range object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -157,7 +157,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
             $this->from = $in_ex_json[json_fields::IP_FROM];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_FROM,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
@@ -165,7 +165,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_TO, $in_ex_json)) {
             $this->to = $in_ex_json[json_fields::IP_TO];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_TO,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
@@ -177,7 +177,7 @@ class ip_range extends db_object_seq_id
             $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -302,19 +302,19 @@ class ip_range extends db_object_seq_id
      * import an ip range from an imported json object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
 
-        $this->import_mapper($in_ex_json, $usr_msg);
+        $this->import_mapper($in_ex_json, $msg);
 
         // reset of object not needed, because the calling function has just created the object
         // TODO Prio 0 switch to a key_exists
@@ -335,12 +335,12 @@ class ip_range extends db_object_seq_id
 
         // save the ip range in the database
         if ($db_con->is_open()) {
-            if ($usr_msg->is_ok()) {
-                $this->save($usr_msg);
+            if ($msg->is_ok()) {
+                $this->save($msg);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -386,10 +386,10 @@ class ip_range extends db_object_seq_id
         return $result;
     }
 
-    protected function can_delete(user_message $usr_msg): bool
+    protected function can_delete(user_message $msg): bool
     {
         $can_del = false;
-        if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+        if ($msg->usr->is_admin() or $msg->usr->is_system()) {
             $can_del = true;
         }
         return $can_del;
@@ -432,7 +432,7 @@ class ip_range extends db_object_seq_id
      *
      * @return ip_range|db_object|null the ip range that matches e.g. to update the reason
      */
-    function get_similar(user_message $usr_msg): ip_range|db_object|null
+    function get_similar(user_message $msg): ip_range|db_object|null
     {
         $result = null;
 
@@ -451,12 +451,12 @@ class ip_range extends db_object_seq_id
     /**
      * update an ip range in the database or update the existing
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
     function save(
-        user_message        $usr_msg,
+        user_message        $msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
@@ -481,7 +481,7 @@ class ip_range extends db_object_seq_id
         if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
-            $similar = $this->get_similar($usr_msg);
+            $similar = $this->get_similar($msg);
             if ($similar != null) {
                 if ($similar->id() != 0) {
                     $this->id = $similar->id();
@@ -491,7 +491,7 @@ class ip_range extends db_object_seq_id
 
         // create a new object or update an existing
         if ($this->id() <= 0) {
-            if (!$this->add($usr_msg)) {
+            if (!$this->add($msg)) {
                 log_warning('ip range add failed');
             }
         } else {
@@ -507,14 +507,14 @@ class ip_range extends db_object_seq_id
                 if ($this->needs_db_update($db_rec)) {
                     // ... create the prepared sql function ...
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_update($sc, $db_rec, $usr_msg, $sc_par_lst);
+                    $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
 
                     // ... and update the database row
-                    $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
+                    $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -652,13 +652,13 @@ class ip_range extends db_object_seq_id
      * get a list of database field names, values and types that have been updated
      *
      * @param ip_range|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         ip_range|db_object_seq_id $obj,
-        user_message              $usr_msg,
+        user_message              $msg,
         sql_type_list             $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -668,7 +668,7 @@ class ip_range extends db_object_seq_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->key() <> $this->key()) {
             if ($do_log) {
                 $lst->add_field(

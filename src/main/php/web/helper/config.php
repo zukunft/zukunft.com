@@ -108,7 +108,7 @@ class config extends value_list
     {
         global $sys;
 
-        $usr_msg = new user_message();
+        $msg = new user_message();
         $sys->times->switch(system_time_type::LOAD_CONFIG);
 
         $data = [];
@@ -117,16 +117,16 @@ class config extends value_list
         $rest = new rest_call();
         $json_body = $rest->api_get(config::class, $data);
         if (array_key_exists(json_fields::MSG, $json_body)) {
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
+            $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[json_fields::MSG]]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->api_mapper($json_body);
             if ($this->is_empty()) {
-                $usr_msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
+                $msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
         $sys->times->switch(system_time_type::DEFAULT);
-        return $usr_msg;
+        return $msg;
     }
 
     /**

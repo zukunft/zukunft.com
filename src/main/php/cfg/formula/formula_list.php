@@ -934,20 +934,20 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    private function save_formulas_words(import $imp, user_message $usr_msg): void
+    private function save_formulas_words(import $imp, user_message $msg): void
     {
         $wrd_lst = new word_list($this->get_user());
         foreach ($this->lst() as $frm) {
             $wrd = $frm->formula_word();
             $wrd_lst->add_by_name($wrd);
         }
-        $wrd_lst->save($usr_msg, $imp);
+        $wrd_lst->save($msg, $imp);
         foreach ($this->lst() as $frm) {
             $name_wrd = $wrd_lst->get_by_name($frm->name());
             if ($name_wrd->id() > 0) {
                 $frm->name_wrd = $name_wrd;
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_WORD_NAME => $frm->name(),
                     msg_id::VAR_FORMULA => $frm->id(),
                 ]);
@@ -1016,14 +1016,14 @@ class formula_list extends sandbox_list_named
      * get a list of formulas that are ready to be added to the database
      * @return formula_list list of the formulas that have an id or a name
      */
-    function get_ready(user_message $usr_msg, string $file_name = ''): formula_list
+    function get_ready(user_message $msg, string $file_name = ''): formula_list
     {
         $frm_lst = new formula_list($this->get_user());
         foreach ($this->lst() as $frm) {
-            if ($frm->db_ready($usr_msg)) {
+            if ($frm->db_ready($msg)) {
                 $frm_lst->add_by_name($frm);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),
                 ]);
@@ -1060,7 +1060,7 @@ class formula_list extends sandbox_list_named
     private function fill_triple_by_name(
         formula_list|sandbox_list_named $db_lst,
         formula                         $frm,
-        user_message                    $usr_msg,
+        user_message                    $msg,
         bool                            $fill_all = false,
         bool                            $report_missing = true
     ): void
@@ -1073,7 +1073,7 @@ class formula_list extends sandbox_list_named
             } else {
                 if ($report_missing and !$frm->is_excluded()) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                    $msg->add(msg_id::ADDED_OBJECT_NOT_FOUND, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($frm::class),
                         msg_id::VAR_NAME => $frm->dsp_id()
                     ]);
@@ -1082,24 +1082,24 @@ class formula_list extends sandbox_list_named
         }
     }
 
-    private function report_missing(user_message $usr_msg, term_list $cache, string $file_name): void
+    private function report_missing(user_message $msg, term_list $cache, string $file_name): void
     {
         foreach ($this->lst() as $frm) {
             if ($frm->id() == 0) {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_FAILED, [
+                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_FAILED, [
                     msg_id::VAR_FORMULA => $frm->name(),
                     msg_id::VAR_FILE_NAME => $file_name
                 ]);
             }
             $exp = $frm->expression($cache);
             // TODO Prio 3 try to avoid reloading of the terms
-            $trm_lst = $frm->load_terms($usr_msg, $cache, $exp);
-            $frm_trm_lst = $exp->terms($usr_msg, $trm_lst);
+            $trm_lst = $frm->load_terms($msg, $cache, $exp);
+            $frm_trm_lst = $exp->terms($msg, $trm_lst);
             foreach ($frm_trm_lst->lst() as $trm) {
                 if ($trm->id() == 0) {
                     $frm_trm = $trm_lst->get_by_name($trm->name());
                     if ($frm_trm == null) {
-                        $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_TERM_NOT_FOUND, [
                             msg_id::VAR_NAME => $trm->name(),
                             msg_id::VAR_ID => $frm->dsp_id()
                         ]);

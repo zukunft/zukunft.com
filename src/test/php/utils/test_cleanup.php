@@ -455,7 +455,7 @@ class test_cleanup extends test_api
     /**
      * @return bool true if the given query finds no system test row
      */
-    private function cleanup_check_query(user_message $usr_msg, string $sql_file_name): bool
+    private function cleanup_check_query(user_message $msg, string $sql_file_name): bool
     {
         global $db_con;
 
@@ -465,14 +465,14 @@ class test_cleanup extends test_api
         $db_rows = $db_con->get($qp);
         if ($db_rows !== false) {
             if (count($db_rows) > 0) {
-                $usr_msg->add_id_with_vars(msg_id::DB_CLEANUP_ERROR, [
+                $msg->add(msg_id::DB_CLEANUP_ERROR, [
                     msg_id::VAR_COUNTER => count($db_rows),
                     msg_id::VAR_FILE_NAME => $sql_file_name
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

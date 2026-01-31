@@ -251,31 +251,31 @@ class verb extends type_object
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
-        $this->common_mapper($in_ex_json, $usr_msg);
+        $this->common_mapper($in_ex_json, $msg);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
                 }
             }
         }
 
         // the usage and impact var is not expected to be changed via import
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function common_mapper(array $json, user_message $usr_msg): bool
@@ -587,20 +587,20 @@ class verb extends type_object
      * add a verb in the database from an imported json object of external database from
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
         global $sys;
 
-        $this->import_mapper($in_ex_json, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         // reset all parameters of this verb object but keep the user
         $this->reset(true);
@@ -612,7 +612,7 @@ class verb extends type_object
             }
             if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
-                    if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
+                    if ($msg->usr->is_admin() or $msg->usr->is_system()) {
                         $this->code_id = $value;
                     }
                 }
@@ -636,18 +636,18 @@ class verb extends type_object
 
         // save the verb in the database
         if ($db_con->is_open()) {
-            if ($usr_msg->is_ok()) {
-                $this->save($usr_msg);
+            if ($msg->is_ok()) {
+                $this->save($msg);
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                $msg->add(msg_id::IMPORT_NOT_SAVED, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                     msg_id::VAR_ID => $this->dsp_id()
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -903,12 +903,12 @@ class verb extends type_object
 
     /**
      * create a new verb
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if the verb has been added
      */
     private function add(
-        user_message        $usr_msg,
+        user_message        $msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
@@ -917,34 +917,34 @@ class verb extends type_object
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, $sc_par_lst);
-        if ($usr_msg->is_ok()) {
-            $msg = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg, $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
+        $qp = $this->sql_insert($sc, $msg, $sc_par_lst);
+        if ($msg->is_ok()) {
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
                 if ($this->id() <= 0) {
-                    $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [
+                    $msg->add(msg_id::VERB_ADD_FAILED, [
                             msg_id::VAR_NAME => $this->name]
                     );
                 }
             }
         }
 
-        if (!$usr_msg->is_ok()) {
+        if (!$msg->is_ok()) {
             log_err('verb not saved');
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * check if the user has requested a verb with a preserved name
      * and if yes return a message to the user
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check_preserved(user_message $usr_msg): bool
+    protected function check_preserved(user_message $msg): bool
     {
         global $usr;
 
@@ -956,14 +956,14 @@ class verb extends type_object
             if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
-                    $usr_msg->add_id_with_vars(msg_id::NAME_IS_RESERVED_FOR_CLASS, [
+                    $msg->add(msg_id::NAME_IS_RESERVED_FOR_CLASS, [
                         msg_id::VAR_NAME => $this->name(),
                         msg_id::VAR_CLASS_NAME => $class_name
                     ]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -983,12 +983,12 @@ class verb extends type_object
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
     function save(
-        user_message        $usr_msg,
+        user_message        $msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
@@ -997,7 +997,7 @@ class verb extends type_object
         global $db_con;
 
         // check the preserved names
-        $this->check_preserved($usr_msg);
+        $this->check_preserved($msg);
 
         // by default all verb changes are logged
         if (is_array($sc_par_lst)) {
@@ -1009,16 +1009,16 @@ class verb extends type_object
         }
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($usr_msg->usr->id);
+        $db_con->set_usr($msg->usr->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
-            $this->set_user($usr_msg->usr);
+            $this->set_user($msg->usr);
             $trm = $this->reload_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $usr_msg->merge($trm->id_used_msg($this));
+                $msg->merge($trm->id_used_msg($this));
             } else {
                 $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
@@ -1026,23 +1026,23 @@ class verb extends type_object
         }
 
         // create a new verb or update an existing
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             if ($this->id() <= 0) {
-                if (!$this->add($usr_msg, $sc_par_lst)) {
-                    $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
+                if (!$this->add($msg, $sc_par_lst)) {
+                    $msg->add(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
                 }
 
             } else {
-                parent::db_update($usr_msg, $db_con, $sc_par_lst);
+                parent::db_update($msg, $db_con, $sc_par_lst);
             }
         }
 
         // TODO log internal errors as errors but user warnings as info
-        if (!$usr_msg->is_ok()) {
-            log_info($usr_msg->get_last_message());
+        if (!$msg->is_ok()) {
+            log_info($msg->get_last_message());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1052,10 +1052,10 @@ class verb extends type_object
 
     /**
      * exclude or delete a verb
-     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         log_debug('verb->del');
 
@@ -1081,7 +1081,7 @@ class verb extends type_object
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->get_user()->id();
                     $db_con->set_class(verb::class);
-                    $usr_msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
+                    $msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
                 }
             } else {
                 // TODO: create a new verb and request to delete the old
@@ -1089,7 +1089,7 @@ class verb extends type_object
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1125,13 +1125,13 @@ class verb extends type_object
      * get a list of database field names, values and types that have been updated
      *
      * @param verb|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         verb|db_object_seq_id $obj,
-        user_message          $usr_msg,
+        user_message          $msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1141,7 +1141,7 @@ class verb extends type_object
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // TODO move to language forms
         if ($obj->plural !== $this->plural) {
             if ($do_log) {

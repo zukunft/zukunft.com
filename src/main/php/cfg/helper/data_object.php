@@ -1272,15 +1272,15 @@ class data_object
      * set the missing id in the phrase based on the given database phrase
      * @param phrase $phr which might have a missing id
      * @param phrase|null $db_phr which might have the missing id
-     * @param user_message $usr_msg warning if something has been missing
+     * @param user_message $msg warning if something has been missing
      */
-    private function set_phrase_id(phrase $phr, phrase|null $db_phr, user_message $usr_msg): void
+    private function set_phrase_id(phrase $phr, phrase|null $db_phr, user_message $msg): void
     {
         if ($phr->id() == 0) {
             if ($db_phr != null) {
                 $phr->set_id($db_phr->id());
             } else {
-                $usr_msg->add_id_with_vars(msg_id::DB_PHRASE_MISSING, [
+                $msg->add(msg_id::DB_PHRASE_MISSING, [
                     msg_id::VAR_NAME => $phr->dsp_id()
                 ]);
             }
@@ -1291,15 +1291,15 @@ class data_object
      * set the missing id in the term based on the given database term
      * @param term $trm which might have a missing id
      * @param term|null $db_trm which might have the missing id
-     * @param user_message $usr_msg warning if something has been missing
+     * @param user_message $msg warning if something has been missing
      */
-    private function set_term_id(term $trm, term|null $db_trm, user_message $usr_msg): void
+    private function set_term_id(term $trm, term|null $db_trm, user_message $msg): void
     {
         if ($trm->id() == 0) {
             if ($db_trm != null) {
                 $trm->set_id($db_trm->id());
             } else {
-                $usr_msg->add_id_with_vars(msg_id::DB_TERM_MISSING, [
+                $msg->add(msg_id::DB_TERM_MISSING, [
                     msg_id::VAR_NAME => $trm->dsp_id()
                 ]);
             }

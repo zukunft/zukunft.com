@@ -145,11 +145,11 @@ class type_lists
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
         if ($json_array == null) {
-            $usr_msg = new user_message();
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+            $msg = new user_message();
+            $msg->add(msg_id::API_MESSAGE_EMPTY, [
                 msg_id::VAR_REQUEST => 'type_lists'
             ]);
-            return $usr_msg;
+            return $msg;
         } else {
             $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
             return $this->set_from_json_array($type_lists_json);

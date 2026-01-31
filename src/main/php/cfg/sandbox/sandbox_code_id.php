@@ -171,25 +171,25 @@ class sandbox_code_id extends sandbox_typed
      * set the code id only if the requesting user is allowed to
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -250,19 +250,19 @@ class sandbox_code_id extends sandbox_typed
      */
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr->can_set_code_id()) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -359,17 +359,17 @@ class sandbox_code_id extends sandbox_typed
      */
     function diff_msg(sandbox|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->get_code_id() != $obj->get_code_id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_CODE_ID, [
+            $msg->add(msg_id::DIFF_CODE_ID, [
                 msg_id::VAR_NAME => $obj->get_code_id(),
                 msg_id::VAR_NAME_CHK => $this->get_code_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->name(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -414,13 +414,13 @@ class sandbox_code_id extends sandbox_typed
      * add the code id field to the list of changed fields if the code_id has been changed
      *
      * @param sandbox_code_id|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_code_id|db_object_seq_id $obj,
-        user_message                     $usr_msg,
+        user_message                     $msg,
         sql_type_list                    $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -430,7 +430,7 @@ class sandbox_code_id extends sandbox_typed
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(

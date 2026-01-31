@@ -76,32 +76,32 @@ class element extends db_object
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg OK or a warning e.g. if the server version does not match
+     * @param user_message $msg OK or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successfully
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word();
-                $wrd->api_mapper($json_array, $usr_msg);
+                $wrd->api_mapper($json_array, $msg);
                 $this->obj = $wrd;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple();
-                $trp->api_mapper($json_array, $usr_msg);
+                $trp->api_mapper($json_array, $msg);
                 $this->obj = $trp;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
                 $vrb = new verb();
-                $vrb->api_mapper($json_array, $usr_msg);
+                $vrb->api_mapper($json_array, $msg);
                 $this->obj = $vrb;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula();
-                $frm->api_mapper($json_array, $usr_msg);
+                $frm->api_mapper($json_array, $msg);
                 $this->obj = $frm;
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

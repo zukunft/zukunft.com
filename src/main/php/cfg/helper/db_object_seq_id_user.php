@@ -166,17 +166,17 @@ class db_object_seq_id_user extends db_object_seq_id
      */
     function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->get_user_id() != $obj->get_user_id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
+            $msg->add(msg_id::DIFF_USER, [
                 msg_id::VAR_USER => $obj->get_user()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->get_user()->dsp_id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     function has_id(): bool
@@ -237,13 +237,13 @@ class db_object_seq_id_user extends db_object_seq_id
      * get a list of database field names, values and types that have been updated
      *
      * @param db_object_seq_id_user|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         db_object_seq_id_user|db_object_seq_id $obj,
-        user_message                           $usr_msg,
+        user_message                           $msg,
         sql_type_list                          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -252,7 +252,7 @@ class db_object_seq_id_user extends db_object_seq_id
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($sc_par_lst->is_insert()) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(

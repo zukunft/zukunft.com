@@ -661,11 +661,11 @@ class element extends db_object_seq_id_user
      */
     function db_fields_changed(
         element|db_object_seq_id $obj,
-        user_message             $usr_msg,
+        user_message             $msg,
         sql_type_list            $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->frm->id() !== $this->frm->id()) {
             $lst->add_field(
                 formula_db::FLD_ID,

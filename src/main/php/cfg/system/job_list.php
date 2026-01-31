@@ -198,30 +198,30 @@ class job_list extends list_db_write
      */
     function add(job $job): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
         if ($job->type_code_id() != job_types::BASE_IMPORT) {
             if (!isset($job->frm)) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             } elseif (!isset($job->phr_lst)) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add_id_with_vars(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             }
         }
 
         // do not add similar jobs
-        if ($usr_msg->is_ok()) {
-            $usr_msg->merge($this->has_similar($job));
+        if ($msg->is_ok()) {
+            $msg->merge($this->has_similar($job));
         }
 
         // finally add the job to the list if everything has been fine
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->add_obj($job);
         }
 
         log_debug('done');
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -232,7 +232,7 @@ class job_list extends list_db_write
      */
     private function has_similar(job $job): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();
@@ -244,12 +244,12 @@ class job_list extends list_db_write
             if ($chk_job->frm == $job->frm) {
                 if ($chk_job->usr == $job->get_user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                        $usr_msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
+                        $msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
                     }
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

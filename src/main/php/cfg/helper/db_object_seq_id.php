@@ -376,53 +376,53 @@ class db_object_seq_id extends db_object
      * kept for future use
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        $usr_msg->start_time = microtime(true);
-        return $usr_msg->is_ok();
+        $msg->start_time = microtime(true);
+        return $msg->is_ok();
     }
 
     /**
      * import a single json object
      *
      * @param array $in_ex_json an array with the data of the json object but without any database ids
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         global $db_con;
 
         // map the json to the object
-        $this->import_mapper($in_ex_json, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         // save the object and the related objects in the database
         if ($db_con->is_open()) {
-            if ($usr_msg->is_ok()) {
-                $this->save($usr_msg);
+            if ($msg->is_ok()) {
+                $this->save($msg);
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                $msg->add(msg_id::IMPORT_NOT_SAVED, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                     msg_id::VAR_ID => $this->dsp_id()
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -437,17 +437,17 @@ class db_object_seq_id extends db_object
      */
     function diff_msg(CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($this->id() != $obj->id()) {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+            $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -467,7 +467,7 @@ class db_object_seq_id extends db_object
      */
     function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($obj::class == phrase::class or $obj::class == term::class) {
             $id = $obj->obj_id();
         } else {
@@ -477,10 +477,10 @@ class db_object_seq_id extends db_object
             if ($this->id() == 0) {
                 $this->id = $id;
             } elseif ($id != $this->id()) {
-                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
+                $msg->add(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -583,12 +583,12 @@ class db_object_seq_id extends db_object
     /**
      * add or update a row in the database
      *
-     * @param user_message $usr_msg to collect the problem messages and solution for the requesting user
+     * @param user_message $msg to collect the problem messages and solution for the requesting user
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
     function save(
-        user_message        $usr_msg,
+        user_message        $msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
@@ -610,43 +610,43 @@ class db_object_seq_id extends db_object
         }
 
         // check e.g. if another unique key is already exists or a preserved name is used
-        $this->check($usr_msg);
+        $this->check($msg);
 
         // create a new database row or update an existing
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             if (!$this->has_db_id()) {
-                $this->db_add($usr_msg, $db_con, $sc_par_lst);
+                $this->db_add($msg, $db_con, $sc_par_lst);
             } else {
-                $this->db_update($usr_msg, $db_con, $sc_par_lst);
+                $this->db_update($msg, $db_con, $sc_par_lst);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     protected function db_add(
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
     ): bool
     {
         log_debug('add ' . $this->dsp_id());
         // if the user has the right to change the database row ...
-        if ($this->can_be_added_by($usr_msg)) {
+        if ($this->can_be_added_by($msg)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, $sc_par_lst);
+            $qp = $this->sql_insert($sc, $msg, $sc_par_lst);
 
             // ... and add the database row
-            $db_con->insert($qp, 'insert ' . $this->dsp_id(), $usr_msg);
+            $db_con->insert($qp, 'insert ' . $this->dsp_id(), $msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NO_UPDATE_PRIVILEGES, [
+            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $usr_msg->usr->name()
+                msg_id::VAR_USER_PROFILE => $msg->usr->name()
             ]);
         }
 
@@ -657,20 +657,20 @@ class db_object_seq_id extends db_object
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
         */
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * updated all changed fields in the database with one sql function
      * and log the changes if needed
      *
-     * @param user_message $usr_msg to collect the problem messages and solution for the requesting user
+     * @param user_message $msg to collect the problem messages and solution for the requesting user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return bool true is the database row has been updated
      */
     protected function db_update(
-        user_message  $usr_msg,
+        user_message  $msg,
         sql_db        $db_con,
         sql_type_list $sc_par_lst
     ): bool
@@ -684,43 +684,43 @@ class db_object_seq_id extends db_object
         $db_rec->load_by_id($this->id());
 
         // if the user has the right to change the database row ...
-        if ($this->can_be_changed_by($usr_msg, $db_rec)) {
+        if ($this->can_be_changed_by($msg, $db_rec)) {
             // ... create the prepared sql function ...
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_update($sc, $db_rec, $usr_msg, $sc_par_lst);
+            $qp = $this->sql_update($sc, $db_rec, $msg, $sc_par_lst);
 
             // ... and update the database row
-            $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
+            $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NO_UPDATE_PRIVILEGES, [
+            $msg->add(msg_id::NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $usr_msg->usr->name()
+                msg_id::VAR_USER_PROFILE => $msg->usr->name()
             ]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
      * delete or exclude an object from or in the database
      * to be overwritten by the child object
      *
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
      * @return bool true if everything has been fine
      */
 
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
-        $usr_msg = new user_message();
-        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+        $msg = new user_message();
+        $msg->add(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'del in db_object_seq_id',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -955,9 +955,9 @@ class db_object_seq_id extends db_object
         return $qp;
     }
 
-    protected function can_delete(user_message $usr_msg): bool
+    protected function can_delete(user_message $msg): bool
     {
-        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+        $msg->add(msg_id::MISSING_OVERWRITE, [
             msg_id::VAR_NAME => 'can_delete',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);
@@ -1301,13 +1301,13 @@ class db_object_seq_id extends db_object
      * get a list of database field names, values and types that have been updated
      *
      * @param db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         db_object_seq_id $obj,
-        user_message     $usr_msg,
+        user_message     $msg,
         sql_type_list    $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1423,13 +1423,13 @@ class db_object_seq_id extends db_object
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @returns db_object|null a filled object that has the same name or links the same objects
      *                         or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(user_message $usr_msg): db_object|null
+    function get_similar(user_message $msg): db_object|null
     {
-        $usr_msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
+        $msg->add_err_with_vars(msg_id::MISSING_FUNCTION_OVERWRITE, [
             msg_id::VAR_FUNCTION_NAME => 'get_similar',
             msg_id::VAR_CLASS_NAME => $this::class
         ]);

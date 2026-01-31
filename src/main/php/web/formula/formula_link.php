@@ -130,15 +130,15 @@ class formula_link extends sandbox_link
      * set the vars this formula link bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
         if (array_key_exists(json_fields::FORMULA, $json_array)) {
             $frm = new formula();
-            $frm->api_mapper($json_array[json_fields::FORMULA], $usr_msg);
+            $frm->api_mapper($json_array[json_fields::FORMULA], $msg);
             $this->set_formula($frm);
         } elseif (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
             $frm = new formula();
@@ -148,7 +148,7 @@ class formula_link extends sandbox_link
         }
         if (array_key_exists(json_fields::PHRASE, $json_array)) {
             $phr = new phrase();
-            $phr->api_mapper($json_array[json_fields::PHRASE], $usr_msg);
+            $phr->api_mapper($json_array[json_fields::PHRASE], $msg);
             $this->set_phrase($phr);
         } elseif (array_key_exists(json_fields::PHRASE_ID, $json_array)) {
             $phr = new phrase();
@@ -164,7 +164,7 @@ class formula_link extends sandbox_link
             $this->order_nbr = null;
         }
         */
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

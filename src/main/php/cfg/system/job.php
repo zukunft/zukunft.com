@@ -273,7 +273,7 @@ class job extends db_object_seq_id_user
      */
     function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $type_id;
         } else {
@@ -282,7 +282,7 @@ class job extends db_object_seq_id_user
                 $this->type_id = $type_id;
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                     msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
@@ -290,7 +290,7 @@ class job extends db_object_seq_id_user
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -302,7 +302,7 @@ class job extends db_object_seq_id_user
      */
     function set_status_id(?int $sta_id = null, user $usr_req = new user()): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr_req->can_set_type_id()) {
             $this->type_id = $sta_id;
         } else {
@@ -311,7 +311,7 @@ class job extends db_object_seq_id_user
                 $this->status_id = $sta_id;
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                $msg->add(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
                     msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
@@ -319,7 +319,7 @@ class job extends db_object_seq_id_user
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     function type_id(): ?int
@@ -563,12 +563,12 @@ class job extends db_object_seq_id_user
 
     /**
      * remove the old requests from the database if they are closed since a while
-     * @param user_message $usr_msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @param user_message $msg the message that should be shown to the user if something went wrong or an empty string if everything is fine
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -608,13 +608,13 @@ class job extends db_object_seq_id_user
      * get a list of database field names, values and types that have been updated
      *
      * @param job|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         job|db_object_seq_id $obj,
-        user_message         $usr_msg,
+        user_message         $msg,
         sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -624,7 +624,7 @@ class job extends db_object_seq_id_user
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -635,7 +635,7 @@ class job extends db_object_seq_id_user
             }
             global $sys;
             if ($this->type_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_TYPE_MISSING, [
+                $msg->add(msg_id::JOB_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -657,7 +657,7 @@ class job extends db_object_seq_id_user
             }
             global $sys;
             if ($this->status_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::JOB_STATUS_MISSING, [
+                $msg->add(msg_id::JOB_STATUS_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

@@ -125,16 +125,16 @@ class component_link extends sandbox_link
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         // get body from message
         $api_msg = new api_message();
         $json_array = $api_msg->validate($json_array);
 
-        parent::api_mapper($json_array, $usr_msg);
+        parent::api_mapper($json_array, $msg);
 
         // to order the component is only defined on the component link itself
         if (array_key_exists(json_fields::POSITION, $json_array)) {
@@ -159,13 +159,13 @@ class component_link extends sandbox_link
             unset($cmp_json[json_fields::LINK_ID]);
             if (array_key_exists(json_fields::ID, $json_array)) {
                 $this->set_component_id($json_array[json_fields::ID]);
-                $this->get_component()->api_mapper($cmp_json, $usr_msg);
+                $this->get_component()->api_mapper($cmp_json, $msg);
             }
         } else {
             // the full object detail version
             if (array_key_exists(json_fields::VIEW, $json_array)) {
                 $msk = new view();
-                $msk->api_mapper($json_array[json_fields::VIEW], $usr_msg);
+                $msk->api_mapper($json_array[json_fields::VIEW], $msg);
                 $this->set_view($msk);
             }
             if (array_key_exists(json_fields::VIEW_ID, $json_array)) {
@@ -173,14 +173,14 @@ class component_link extends sandbox_link
             }
             if (array_key_exists(json_fields::COMPONENT, $json_array)) {
                 $cmp = new component();
-                $cmp->api_mapper($json_array[json_fields::COMPONENT], $usr_msg);
+                $cmp->api_mapper($json_array[json_fields::COMPONENT], $msg);
                 $this->set_component($cmp);
             }
             if (array_key_exists(json_fields::COMPONENT_ID, $json_array)) {
                 $this->set_component_id($json_array[json_fields::COMPONENT_ID]);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

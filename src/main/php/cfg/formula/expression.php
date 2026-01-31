@@ -410,13 +410,13 @@ class expression extends shared_expression
     /**
      * get an array with all element / term symbols used in the formula expression
      *
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param string $exp_part the part of the formula expression e.g. w2 for word with id 2
      * @param bool $can_be_empty if true, no error is reported if the formula part $exp_part is empty
      * @return array with all element / term symbols from the formula expression
      */
     private function symbol_list(
-        user_message $usr_msg,
+        user_message $msg,
         string       $exp_part,
         bool         $can_be_empty = false
     ): array
@@ -432,7 +432,7 @@ class expression extends shared_expression
             }
         } else {
             if (!$can_be_empty) {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_EMPTY, [
+                $msg->add(msg_id::EXPRESSION_EMPTY, [
                     msg_id::VAR_FORMULA_NAME => $this->frm_name
                 ]);
             }
@@ -445,20 +445,20 @@ class expression extends shared_expression
      * get a term object with only the term id set e.g. w2 for word with id 2
      *
      * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return term|null the term with the id set of null of the expression is not valid
      */
     private function term_from_symbol(
         string       $obj_sym,
-        user_message $usr_msg
+        user_message $msg
     ): term|null
     {
         // set vars to fallback values
         $trm = null;
         // get symbol id
-        $id = $this->symbol_id($obj_sym, $usr_msg);
+        $id = $this->symbol_id($obj_sym, $msg);
         // create term object with id
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $trm_chr = $obj_sym[0];
             if ($trm_chr == chars::WORD_SYMBOL) {
                 $wrd = new word($this->usr);
@@ -477,7 +477,7 @@ class expression extends shared_expression
                 $vrb->id = $id;
                 $trm = $vrb->term();
             } else {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
+                $msg->add(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
                     msg_id::VAR_NAME => $trm_chr
                 ]);
             }
@@ -490,20 +490,20 @@ class expression extends shared_expression
      * get a phrase object with only the phrase id set e.g. w2 for word with id 2
      *
      * @param string $obj_sym the formula result symbol e.g. t2 for triple with id 2
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return term|null the phrase with the id set of null of the symbol is not valid
      */
     private function phrase_from_symbol(
         string       $obj_sym,
-        user_message $usr_msg
+        user_message $msg
     ): phrase|null
     {
         // set vars to fallback values
         $phr = null;
         // get symbol id
-        $id = $this->symbol_id($obj_sym, $usr_msg);
+        $id = $this->symbol_id($obj_sym, $msg);
         // get term object
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $phr_chr = $obj_sym[0];
             if ($phr_chr == chars::WORD_SYMBOL) {
                 $wrd = new word($this->usr);
@@ -514,7 +514,7 @@ class expression extends shared_expression
                 $trp->id = $id;
                 $phr = $trp->phrase();
             } else {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
+                $msg->add(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
                     msg_id::VAR_NAME => $phr_chr
                 ]);
             }
@@ -526,26 +526,26 @@ class expression extends shared_expression
     /**
      * return a list of formula elements from the given part of the formula expression
      * @param string $exp_part the part of the formula expression e.g. w2 for word with id 2
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @param bool $can_be_empty if true, no error is reported if the formula part $exp_part is empty
      * @return element_list the filled list of formula elements
      */
     private function element_part_list(
         string       $exp_part,
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst = null,
         bool         $can_be_empty = false
     ): element_list
     {
         $elm_lst = new element_list($this->usr);
-        $sym_lst = $this->symbol_list($usr_msg, $exp_part, $can_be_empty);
+        $sym_lst = $this->symbol_list($msg, $exp_part, $can_be_empty);
         foreach ($sym_lst as $sym) {
-            $elm = $this->element_from_symbol($sym, $usr_msg, $trm_lst);
+            $elm = $this->element_from_symbol($sym, $msg, $trm_lst);
             if ($elm != null) {
                 $elm_lst->add($elm);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_TERM_MISSING, [
+                $msg->add(msg_id::EXPRESSION_TERM_MISSING, [
                     msg_id::VAR_TERM => $sym,
                     msg_id::VAR_FORMULA => $this->frm->dsp_id()
                 ]);
@@ -560,22 +560,22 @@ class expression extends shared_expression
      * or load the object from the database
      *
      * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @param term_list|null $trm_lst a list of preloaded terms
      * @return element|null the filled formula element
      */
     private function element_from_symbol(
         string       $obj_sym,
-        user_message $usr_msg,
+        user_message $msg,
         ?term_list   $trm_lst = null
     ): element|null
     {
         // set vars to fallback values
         $elm = null;
         // get symbol id
-        $id = $this->symbol_id($obj_sym, $usr_msg);
+        $id = $this->symbol_id($obj_sym, $msg);
         // get element object
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $trm_chr = $obj_sym[0];
             $class = match ($trm_chr) {
                 chars::WORD_SYMBOL => word::class,
@@ -585,20 +585,20 @@ class expression extends shared_expression
                 default => ''
             };
             if ($class == '') {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
+                $msg->add(msg_id::EXPRESSION_SYMBOL_NOT_VALID, [
                     msg_id::VAR_NAME => $trm_chr
                 ]);
             }
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 $trm = $trm_lst?->term_by_obj_id($id, $class);
                 if ($trm == null) {
-                    $usr_msg->add_id_with_vars(msg_id::EXPRESSION_TERM_MISSING, [
+                    $msg->add(msg_id::EXPRESSION_TERM_MISSING, [
                         msg_id::VAR_TERM => $obj_sym,
                         msg_id::VAR_FORMULA => $this->frm->dsp_id()
                     ]);
                 } else {
                     if ($trm->id() == 0) {
-                        $usr_msg->add_id_with_vars(msg_id::EXPRESSION_TERM_MISSING, [
+                        $msg->add(msg_id::EXPRESSION_TERM_MISSING, [
                             msg_id::VAR_TERM => $trm->dsp_id(),
                             msg_id::VAR_FORMULA => $this->frm->dsp_id()
                         ]);
@@ -620,17 +620,17 @@ class expression extends shared_expression
      * and report an error if the symbol is not valid
      *
      * @param string $obj_sym the formula element symbol e.g. t2 for triple with id 2
-     * @param user_message $usr_msg to collect the error messages e.g. syntax errors
+     * @param user_message $msg to collect the error messages e.g. syntax errors
      * @return int|null the id of the formula element or null if the symbol is not valid
      */
     private function symbol_id(
         string       $obj_sym,
-        user_message $usr_msg
+        user_message $msg
     ): int|null
     {
         // check min length
         if (strlen($obj_sym) < 2) {
-            $usr_msg->add_id_with_vars(msg_id::EXPRESSION_SYMBOL_TOO_SHORT, [
+            $msg->add(msg_id::EXPRESSION_SYMBOL_TOO_SHORT, [
                 msg_id::VAR_NAME => chars::TERM_START . $obj_sym . chars::TERM_END
             ]);
             $id = null;
@@ -638,13 +638,13 @@ class expression extends shared_expression
             // check if the id is valid
             $id = substr($obj_sym, 1);
             if (!is_numeric($id)) {
-                $usr_msg->add_id_with_vars(msg_id::EXPRESSION_ID_NOT_A_NUMBER, [
+                $msg->add(msg_id::EXPRESSION_ID_NOT_A_NUMBER, [
                     msg_id::VAR_NAME => $obj_sym
                 ]);
                 $id = null;
             } else {
                 if ($id == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::EXPRESSION_ID_NOT_VALID, [
+                    $msg->add(msg_id::EXPRESSION_ID_NOT_VALID, [
                         msg_id::VAR_NAME => $obj_sym
                     ]);
                 }

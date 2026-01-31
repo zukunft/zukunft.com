@@ -186,17 +186,17 @@ class view_relation extends sandbox_link
      * import the name and description of a sandbox link object
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);;
+        parent::import_mapper($in_ex_json, $msg, $dto);;
 
         // reset of object not needed, because the calling function has just created the object
         // name is not mandatory because might be generated based on the link
@@ -205,7 +205,7 @@ class view_relation extends sandbox_link
                 $this->set_parent_by_name($in_ex_json[json_fields::PARENT]);
             } else {
                 $msk = new view($this->get_user());
-                $msk->import_mapper($in_ex_json[json_fields::PARENT], $usr_msg, $dto);
+                $msk->import_mapper($in_ex_json[json_fields::PARENT], $msg, $dto);
                 $this->set_parent($msk);
             }
         }
@@ -214,7 +214,7 @@ class view_relation extends sandbox_link
                 $this->set_child_by_name($in_ex_json[json_fields::CHILD]);
             } else {
                 $msk = new view($this->get_user());
-                $msk->import_mapper($in_ex_json[json_fields::CHILD], $usr_msg, $dto);
+                $msk->import_mapper($in_ex_json[json_fields::CHILD], $msg, $dto);
                 $this->set_child($msk);
             }
         }
@@ -228,7 +228,7 @@ class view_relation extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -688,13 +688,13 @@ class view_relation extends sandbox_link
      * add the type field to the list of changed database fields with name, value and type
      *
      * @param view_relation|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         view_relation|db_object_seq_id $obj,
-        user_message                   $usr_msg,
+        user_message                   $msg,
         sql_type_list                  $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -704,7 +704,7 @@ class view_relation extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
 
         if ($obj->predicate_id() !== $this->predicate_id()) {
             if ($do_log) {
@@ -716,7 +716,7 @@ class view_relation extends sandbox_link
             }
             global $sys;
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

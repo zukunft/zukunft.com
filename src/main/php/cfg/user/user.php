@@ -401,28 +401,28 @@ class user extends db_id_object_non_sandbox
      * set the vars of this user object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         // map the fields that are common for import and api json messages
-        $this->json_mapper($in_ex_json, $usr_msg->usr, $usr_msg);
+        $this->json_mapper($in_ex_json, $msg->usr, $msg);
 
         // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code od
-            if ($usr_msg->usr->is_admin() or $usr_msg->usr->is_system()) {
-                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_msg->usr);
+            if ($msg->usr->is_admin() or $msg->usr->is_system()) {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $msg->usr);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -430,13 +430,13 @@ class user extends db_id_object_non_sandbox
      *
      * @param array $json
      * @param user|null $usr_req
-     * @param user_message $usr_msg
+     * @param user_message $msg
      * @return void return value is not needed because the messages are written to the given user_message object
      */
     private function json_mapper(
         array        $json,
         ?user        $usr_req,
-        user_message $usr_msg
+        user_message $msg
     ): void
     {
         global $sys;
@@ -466,7 +466,7 @@ class user extends db_id_object_non_sandbox
                 if ($usr_req->can_set_profile($profile_id_to_add)) {
                     $this->profile_id = $profile_id_to_add;
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                    $msg->add(msg_id::USER_NO_IMPORT_PRIVILEGES, [
                         msg_id::VAR_USER_NAME => $this->name(),
                         msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
                     ]);
@@ -590,19 +590,19 @@ class user extends db_id_object_non_sandbox
      */
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         if ($usr->can_set_code_id()) {
             $this->code_id = $code_id;
         } else {
             $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+            $msg->add(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
                 msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     function get_code_id(): ?string
@@ -1492,7 +1492,7 @@ class user extends db_id_object_non_sandbox
      */
     function import_obj(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null,
         ?object      $test_obj = null,
         ?user        $usr_req = null
@@ -1509,7 +1509,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        $this->import_mapper($in_ex_json, $usr_msg, $dto);
+        $this->import_mapper($in_ex_json, $msg, $dto);
 
         // reset all parameters of this user object
         $this->reset();
@@ -1547,23 +1547,23 @@ class user extends db_id_object_non_sandbox
 
         // save the user in the database
         if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
+            if ($msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
-                    $this->save_user($usr_msg, $usr_req);
+                    $this->save_user($msg, $usr_req);
                 }
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                $msg->add(msg_id::IMPORT_NOT_SAVED, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                     msg_id::VAR_ID => $this->dsp_id()
                 ]);
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1605,18 +1605,18 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * returns ok message if this formula can be added to the database
+     * returns an OK message if this formula can be added to the database
      * e.g. a formula without expression should not be added to the database
-     * @param user_message $usr_msg the explanation why the link cannot yet be added to the database
+     * @param user_message $msg the explanation why the link cannot yet be added to the database
      * @return true if the formula can be added to the database
      */
-    function db_ready(user_message $usr_msg): bool
+    function db_ready(user_message $msg): bool
     {
         if (($this->ip_addr == null or $this->ip_addr == '')) {
-            $usr_msg->add_id_with_vars(msg_id::USER_IP_ADDR_MISSING,
+            $msg->add(msg_id::USER_IP_ADDR_MISSING,
                 [msg_id::VAR_USER_NAME => $this->dsp_id()]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -2013,25 +2013,25 @@ class user extends db_id_object_non_sandbox
      * and if return a message to the user to suggest another name
      *
      * @param user $usr the user who has request the user adding or update
-     * @param user_message $usr_msg
+     * @param user_message $msg
      * @return bool true if ...
      */
     protected
-    function check_preserved(user_message $usr_msg, user $usr): bool
+    function check_preserved(user_message $msg, user $usr): bool
     {
         // system users are always allowed to add users e.g. to add the system users
         if (!$usr->is_system()) {
             if (in_array($this->name(), users::RESERVED_NAMES)) {
                 // the admin user needs to add the read test objects during initial load
                 if ($usr->is_admin() and !in_array($this->name(), users::FIXED_NAMES)) {
-                    $usr_msg->add_id_with_vars(msg_id::USER_IS_RESERVED, [
+                    $msg->add(msg_id::USER_IS_RESERVED, [
                         msg_id::VAR_USER_NAME => $this->name(),
                         msg_id::VAR_NAME_LIST => implode(',', users::RESERVED_NAMES)
                     ]);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function is_same(user $usr, user_message $usr_msg): bool
@@ -2053,10 +2053,10 @@ class user extends db_id_object_non_sandbox
      * add or update a user in the database
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @param user_message $usr_msg the message that should be shown to the user in case something went wrong
+     * @param user_message $msg the message that should be shown to the user in case something went wrong
      *                              or the database id of the user just added
      */
-    function save_user(user_message $usr_msg, ?user $usr_req = null): void
+    function save_user(user_message $msg, ?user $usr_req = null): void
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
@@ -2075,17 +2075,17 @@ class user extends db_id_object_non_sandbox
         $db_con->set_usr($usr_req->id);
 
         // check the preserved names
-        if ($this->check_preserved($usr_msg, $usr_req)) {
+        if ($this->check_preserved($msg, $usr_req)) {
             // check if a user with the same name or email already exists
             if ($this->id == 0) {
                 // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
-                $similar = $this->get_similar($usr_msg);
+                $similar = $this->get_similar($msg);
                 if ($similar->id <> 0) {
                     log_debug('got similar ' . $similar->dsp_id());
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
-                        $usr_msg->add_id_with_vars(msg_id::NOT_SIMILAR_OBJECTS, [
+                        $msg->add(msg_id::NOT_SIMILAR_OBJECTS, [
                             msg_id::VAR_NAME => $this->dsp_id(),
                             msg_id::VAR_NAME_CHK => $similar->dsp_id()
                         ]);
@@ -2102,11 +2102,11 @@ class user extends db_id_object_non_sandbox
         }
 
         // create or update
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             if ($this->id == 0) {
 
                 // create a user if no similar user has been found
-                $usr_msg->merge($this->db_insert($db_con, $usr_req));
+                $msg->merge($this->db_insert($db_con, $usr_req));
 
             } else {
 
@@ -2117,12 +2117,12 @@ class user extends db_id_object_non_sandbox
                 $db_rec->reset();
                 if ($db_rec->load_by_id($this->id) != $this->id) {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [
+                    $msg->add(msg_id::FAILED_RELOAD_CLASS, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
-                    if (!$this->is_same($db_rec, $usr_msg)) {
-                        $usr_msg->merge($this->db_update_user($db_con, $db_rec, $usr_req));
+                    if (!$this->is_same($db_rec, $msg)) {
+                        $msg->merge($this->db_update_user($db_con, $db_rec, $usr_req));
                     }
                 }
             }
@@ -2180,11 +2180,11 @@ class user extends db_id_object_non_sandbox
 
     /**
      * check if a user with the name or email already exists
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @return user a filled object that has the same name
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(user_message $usr_msg): user
+    function get_similar(user_message $msg): user
     {
         $result = new user();
         if ($this->name() != '' and $this->name() != null and $this->email() != '' and $this->email() != null) {
@@ -2239,8 +2239,8 @@ class user extends db_id_object_non_sandbox
         log_debug($this->dsp_id());
 
         // always return a user message and if everything is fine, it is just empty
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr_req;
+        $msg = new user_message();
+        $msg->usr = $usr_req;
 
         // use the signup system user for standard accounts if no requesting user is given
         if ($usr_req->id == 0) {
@@ -2250,20 +2250,20 @@ class user extends db_id_object_non_sandbox
         if ($this->can_add($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-            $msg = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg, $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
+            $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
             }
         } else {
             log_debug('no permission to add user ' . $this->dsp_id());
-            $usr_msg->add_id_with_vars(msg_id::USER_NO_ADD_PRIVILEGES, [
+            $msg->add(msg_id::USER_NO_ADD_PRIVILEGES, [
                 msg_id::VAR_USER_NAME => $this->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
             ]);
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -2285,30 +2285,30 @@ class user extends db_id_object_non_sandbox
         log_debug($this->dsp_id());
 
         // always return a user message and if everything is fine, it is just empty
-        $usr_msg = new user_message();
-        $usr_msg->usr = $usr_req;
+        $msg = new user_message();
+        $msg->usr = $usr_req;
 
-        if ($this->can_be_changed_by($usr_msg, $db_usr)) {
+        if ($this->can_be_changed_by($msg, $db_usr)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
             if (in_array($this->name(), users::TEST_NO_LOG)) {
-                $qp = $this->sql_update($sc, $db_usr, $usr_msg, new sql_type_list([]));
-                $db_con->update($qp, 'update ' . $this->dsp_id(), $usr_msg);
+                $qp = $this->sql_update($sc, $db_usr, $msg, new sql_type_list([]));
+                $db_con->update($qp, 'update ' . $this->dsp_id(), $msg);
             } else {
-                $qp = $this->sql_update($sc, $db_usr, $usr_msg, new sql_type_list([sql_type::LOG]));
-                $db_con->update($qp, 'update and log ' . $this->dsp_id(), $usr_msg);
+                $qp = $this->sql_update($sc, $db_usr, $msg, new sql_type_list([sql_type::LOG]));
+                $db_con->update($qp, 'update and log ' . $this->dsp_id(), $msg);
             }
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         } else {
-            $usr_msg->add_id_with_vars(msg_id::USER_NO_UPDATE_PRIVILEGES, [
+            $msg->add(msg_id::USER_NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_USER_NAME => $this->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
             ]);
         }
 
-        return $usr_msg;
+        return $msg;
     }
 
 
@@ -2686,13 +2686,13 @@ class user extends db_id_object_non_sandbox
      * get a list of database field names, values and types that have been updated
      *
      * @param user|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         user|db_object_seq_id $obj,
-        user_message          $usr_msg,
+        user_message          $msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -2790,7 +2790,7 @@ class user extends db_id_object_non_sandbox
                 log_fatal('no user profile found', 'user->db_fields_changed');
             } else {
                 if ($this->profile_id() < 0) {
-                    $usr_msg->add_id_with_vars(msg_id::USER_PROFILE_MISSING, [
+                    $msg->add(msg_id::USER_PROFILE_MISSING, [
                         msg_id::VAR_TYPE => $this->profile_id(),
                         msg_id::VAR_NAME => $this->dsp_id()
                     ]);
@@ -2959,19 +2959,19 @@ class user extends db_id_object_non_sandbox
      * exclude, archive or delete this user
      *
      * @param user|null $usr_req the user who has request the user adding or update
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg, user|null $usr_req = null): bool
+    function del(user_message $msg, user|null $usr_req = null): bool
     {
         if ($this->never_used()) {
             $lib = new library();
             $class_name = $lib->class_to_name($this::class);
             if ($this->id == 0) {
-                $usr_msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
+                $msg->add(msg_id::ID_MISSING_FOR_DEL, [
                     msg_id::VAR_CLASS_NAME => $class_name,
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -3002,17 +3002,17 @@ class user extends db_id_object_non_sandbox
                             $usr_req = $usr;
                         }
                         // TODO check if there are related log entries and if yes exclude it instead of delete
-                        $usr_msg->merge(parent::del_exe($usr_req));
+                        $msg->merge(parent::del_exe($usr_req));
                     }
                 }
             }
-            return $usr_msg->is_ok();
+            return $msg->is_ok();
         } else {
-            $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
+            $msg->add(msg_id::USER_CANNOT_DEL, [
                 msg_id::VAR_USER_NAME => $this->name(),
             ]);
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

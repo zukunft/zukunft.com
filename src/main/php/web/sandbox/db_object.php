@@ -186,10 +186,10 @@ class db_object extends TextIdObject
      * this function is expected to be extended by each child object that has additional object vars
      *
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         // get body from message
         $api_msg = new api_message();
@@ -199,13 +199,13 @@ class db_object extends TextIdObject
             $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
 
         // remember to send the updates to the backend
         $this->set_modified();
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function set_id(int|string $id): void

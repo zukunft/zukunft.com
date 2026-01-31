@@ -354,21 +354,21 @@ class sandbox_list_named extends sandbox_list
         msg_id             $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
     ): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($this->lst() as $sbx) {
             $sbx_to_chk = $sbx_lst->get($sbx->id());
             if ($sbx_to_chk == null) {
                 $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
                 if ($sbx_to_chk == null) {
                     $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
-                    $usr_msg->add_id_with_vars($msg_missing, $vars);
+                    $msg->add($msg_missing, $vars);
                 } else {
                     $vars = [msg_id::VAR_ID => $sbx->dsp_id()];
-                    $usr_msg->add_id_with_vars($msg_id_missing, $vars);
+                    $msg->add($msg_id_missing, $vars);
                 }
             }
             if ($sbx_to_chk != null) {
-                $usr_msg->merge($sbx->diff_msg($sbx_to_chk));
+                $msg->merge($sbx->diff_msg($sbx_to_chk));
             }
         }
         foreach ($sbx_lst->lst() as $sbx) {
@@ -377,14 +377,14 @@ class sandbox_list_named extends sandbox_list
                 $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
                 if ($sbx_to_chk == null) {
                     $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
-                    $usr_msg->add_id_with_vars($msg_additional, $vars);
+                    $msg->add($msg_additional, $vars);
                 } else {
                     $vars = [msg_id::VAR_ID => $sbx->$sbx->dsp_id()];
-                    $usr_msg->add_id_with_vars($msg_id_additional, $vars);
+                    $msg->add($msg_id_additional, $vars);
                 }
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -541,7 +541,7 @@ class sandbox_list_named extends sandbox_list
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
         global $usr;
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
@@ -552,13 +552,13 @@ class sandbox_list_named extends sandbox_list
                 }
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::FILL_OBJECT_ID_MISSING, [
+                $msg->add(msg_id::FILL_OBJECT_ID_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($sbx_new::class),
                     msg_id::VAR_NAME => $sbx_new->dsp_id()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -575,7 +575,7 @@ class sandbox_list_named extends sandbox_list
     ): user_message
     {
         global $usr;
-        $usr_msg = new user_message();
+        $msg = new user_message();
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $obj_to_fill) {
@@ -586,19 +586,19 @@ class sandbox_list_named extends sandbox_list
                 }
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
+                $msg->add(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
                     msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
                     msg_id::VAR_NAME => $this->name()
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     function add_id_by_name(array $id_lst, string $class): user_message
     {
-        $usr_msg = new user_message();
+        $msg = new user_message();
         foreach ($id_lst as $name => $id) {
             if ($id != 0 and $name != '') {
                 $sbx_old = $this->get_by_name($name);
@@ -606,20 +606,20 @@ class sandbox_list_named extends sandbox_list
                     $sbx_old->id = $id;
                 } else {
                     $lib = new library();
-                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                    $msg->add(msg_id::ADDED_OBJECT_NOT_FOUND, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
                         msg_id::VAR_NAME => $name
                     ]);
                 }
             } else {
                 $lib = new library();
-                $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_ID_MISSING, [
+                $msg->add(msg_id::ADDED_OBJECT_ID_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
                     msg_id::VAR_NAME => $name
                 ]);
             }
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**

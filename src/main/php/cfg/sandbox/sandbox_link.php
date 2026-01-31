@@ -611,33 +611,33 @@ class sandbox_link extends sandbox
     /**
      * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
-     * @param user_message $usr_msg to add the suggested solutions if something is missing e.g. a linked object
+     * @param user_message $msg to add the suggested solutions if something is missing e.g. a linked object
      * @return bool true if the link can be added to the database after the linked objects have been added
      */
-    function can_be_ready(user_message $usr_msg): bool
+    function can_be_ready(user_message $msg): bool
     {
-        parent::db_ready($usr_msg);
+        parent::db_ready($msg);
 
         if ($this->needs_from()) {
             if ($this->fob == null) {
-                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                $msg->add(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
-                $this->fob->can_be_ready($usr_msg);
+                $this->fob->can_be_ready($msg);
             }
         }
         if ($this->needs_to()) {
             if ($this->tob == null) {
-                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                $msg->add(msg_id::TO_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
             } else {
                 // a reference have only an external key but not a target object
                 if ($this::class != ref::class) {
-                    $this->tob->can_be_ready($usr_msg);
+                    $this->tob->can_be_ready($msg);
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     function needs_from(): bool
@@ -876,28 +876,28 @@ class sandbox_link extends sandbox
     /**
      * create a new link object and log the change
      * TODO do a rollback in case of an error
-     * @param user_message $usr_msg with status ok
+     * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
      *                              including suggested solutions
      * @return bool true if everything has been fine
      */
-    function add(user_message $usr_msg): bool
+    function add(user_message $msg): bool
     {
         log_debug($this->dsp_id());
 
         global $db_con;
 
         $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc, $usr_msg, new sql_type_list([sql_type::LOG]));
-        if ($usr_msg->is_ok()) {
-            $msg = 'add and log ' . $this->dsp_id();
-            if ($db_con->insert($qp, $msg, $usr_msg)) {
-                $this->id = $usr_msg->get_row_id();
+        $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
+        if ($msg->is_ok()) {
+            $msg_txt = 'add and log ' . $this->dsp_id();
+            if ($db_con->insert($qp, $msg_txt, $msg)) {
+                $this->id = $msg->get_row_id();
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -1013,11 +1013,11 @@ class sandbox_link extends sandbox
      *      but a word with the same name already exists, a term with the word "millions" is returned
      *      in this case the calling function should suggest the user to name the formula "scale millions"
      *      to prevent confusion when writing a formula where all words, phrases, verbs and formulas should be unique
-     * @param user_message $usr_msg the user who has requested the update and the object to collect the potential reject messages
+     * @param user_message $msg the user who has requested the update and the object to collect the potential reject messages
      * @returns string a filled object that links the same objects
      *                 or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar(user_message $usr_msg): sandbox
+    function get_similar(user_message $msg): sandbox
     {
         $result = new sandbox($this->get_user());
 
@@ -1305,13 +1305,13 @@ class sandbox_link extends sandbox
      * of the object to combine the list with the list of the child object e.g. word
      *
      * @param sandbox_link|db_object_seq_id $obj the same named sandbox as this to compare which fields have been changed
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_link|db_object_seq_id $obj,
-        user_message                  $usr_msg,
+        user_message                  $msg,
         sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1336,9 +1336,9 @@ class sandbox_link extends sandbox
             // to delete a link, the actual link is compared with an empty link, so no message should be created
             if ($this->needs_from() and !$sc_par_lst->is_delete()) {
                 if ($this->fob() == null) {
-                    $this->message_from_invalid($usr_msg);
+                    $this->message_from_invalid($msg);
                 } elseif (!$this->fob()->is_valid()) {
-                    $this->message_from_invalid($usr_msg);
+                    $this->message_from_invalid($msg);
                 }
             }
             if ($obj->from_id() !== $this->from_id()) {
@@ -1361,9 +1361,9 @@ class sandbox_link extends sandbox
                 // to delete a link, the actual link is compared with an empty link, so no message should be created
                 if ($this->needs_to() and !$sc_par_lst->is_delete()) {
                     if ($this->tob() == null) {
-                        $this->message_to_invalid($usr_msg);
+                        $this->message_to_invalid($msg);
                     } elseif (!$this->tob()->is_valid()) {
-                        $this->message_to_invalid($usr_msg);
+                        $this->message_to_invalid($msg);
                     }
                 }
             }
@@ -1630,17 +1630,17 @@ class sandbox_link extends sandbox
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_FROM_OBJECT_INVALID, [
+        $msg->add(msg_id::MANDATORY_FROM_OBJECT_INVALID, [
             msg_id::VAR_NAME_FROM => $this->fob()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TO_OBJECT_INVALID, [
+        $msg->add(msg_id::MANDATORY_TO_OBJECT_INVALID, [
             msg_id::VAR_NAME_TO => $this->tob()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

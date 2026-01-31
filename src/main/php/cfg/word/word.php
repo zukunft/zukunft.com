@@ -339,13 +339,13 @@ class word extends sandbox_code_id
      * set the vars of this word object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
+     * @param user_message $msg to enrich with warnings, problems and solutions including the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -356,7 +356,7 @@ class word extends sandbox_code_id
         $this->reset(true);
 
         // set the object vars based on the json
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $sys->typ_lst->phr_typ->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -374,10 +374,10 @@ class word extends sandbox_code_id
                 foreach ($ref_json as $ref_data) {
                     $ref_obj = new ref($this->get_user());
                     $ref_obj->set_phrase($this->phrase());
-                    $ref_obj->import_mapper($ref_data, $usr_msg, $dto);
+                    $ref_obj->import_mapper($ref_data, $msg, $dto);
                     // TODO $dto should never be null if no direct import is used
                     $dto?->add_reference($ref_obj);
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         $this->ref_lst[] = $ref_obj;
                     }
                 }
@@ -391,7 +391,7 @@ class word extends sandbox_code_id
             if ($db_con->is_open()) {
                 $wrd_view->load_by_name($msk_name);
                 if ($wrd_view->id() == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
+                    $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
                 } else {
                     $this->set_view_id($wrd_view->id());
                 }
@@ -406,7 +406,7 @@ class word extends sandbox_code_id
             $this->type_id = $sys->typ_lst->phr_typ->default_id();
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -805,15 +805,15 @@ class word extends sandbox_code_id
      */
     function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($obj);
+        $msg = parent::diff_msg($obj);
         if ($this->id() != $obj->id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+            $msg->add(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->dsp_id(),
                 msg_id::VAR_ID_CHK => $this->dsp_id(),
                 msg_id::VAR_WORD_NAME => $this->dsp_id(),
             ]);
         }
-        return $usr_msg;
+        return $msg;
     }
 
     /**
@@ -1608,13 +1608,13 @@ class word extends sandbox_code_id
      * get a list of database field names, values and types that have been updated
      *
      * @param word|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         word|db_object_seq_id $obj,
-        user_message          $usr_msg,
+        user_message          $msg,
         sql_type_list         $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1624,7 +1624,7 @@ class word extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         if ($obj->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1635,7 +1635,7 @@ class word extends sandbox_code_id
             }
             global $sys;
             if ($this->type_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
+                $msg->add(msg_id::PHRASE_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->type_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

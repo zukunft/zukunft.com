@@ -110,7 +110,7 @@ class url_mapper
 
     private function map_standard_to(
         array        $std_array,
-        user_message $usr_msg,
+        user_message $msg,
         array        $map_lst,
         string       $map_name
     ): array
@@ -133,10 +133,10 @@ class url_mapper
                     $pos = $map_pos[$std_key];
                     $target_key = $map_lst[$pos][0];
                     if ($std_key == url_var::ACTION) {
-                        $value = $this->map_std_action_to($value, $usr_msg);
+                        $value = $this->map_std_action_to($value, $msg);
                     }
                     if ($std_key == url_var::STEP) {
-                        $value = $this->map_std_step_to($value, $usr_msg);
+                        $value = $this->map_std_step_to($value, $msg);
                     }
                     if (array_key_exists(2, $std)) {
                         if (array_key_exists(3, $std)) {
@@ -148,7 +148,7 @@ class url_mapper
                         $url_array[] = [$target_key, $value];
                     }
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::URL_MAP_MISSING, [
+                    $msg->add(msg_id::URL_MAP_MISSING, [
                         msg_id::VAR_URL_KEY => $std_key
                     ]);
                 }
@@ -223,7 +223,7 @@ class url_mapper
 
     private function map_std_value_to(
         string       $std_value,
-        user_message $usr_msg,
+        user_message $msg,
         array        $map_lst,
         string       $map_name
     ): string
@@ -231,7 +231,7 @@ class url_mapper
         if (array_key_exists($std_value, $map_lst)) {
             $target_value = $map_lst[$std_value];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::URL_MAP_MISSING, [
+            $msg->add(msg_id::URL_MAP_MISSING, [
                 msg_id::VAR_URL_KEY => $std_value,
                 msg_id::VAR_NAME => $map_name
             ]);
@@ -242,7 +242,7 @@ class url_mapper
 
     private function map_url_to_standard(
         array        $url_array,
-        user_message $usr_msg,
+        user_message $msg,
         array        $map_lst,
         string       $map_name
     ): array
@@ -254,7 +254,7 @@ class url_mapper
                     if (array_key_exists($map[0], $url_array)) {
                         $std_array[$map[1]] = $url_array[$map[0]] ?? $map[2];
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::URL_KEY_MISSING, [
+                        $msg->add(msg_id::URL_KEY_MISSING, [
                             msg_id::VAR_URL_KEY => $map[0]
                         ]);
                     }
@@ -279,7 +279,7 @@ class url_mapper
         if (count($std_array) < count($url_array)) {
             $diff = array_diff($url_array, $std_array);
             foreach ($diff as $key => $val) {
-                $usr_msg->add_id_with_vars(msg_id::URL_MAP_MISSING, [
+                $msg->add(msg_id::URL_MAP_MISSING, [
                     msg_id::VAR_URL_KEY => $key
                 ]);
             }
@@ -287,18 +287,18 @@ class url_mapper
         // map the values
         $key = url_var::ACTION;
         if (array_key_exists($key, $std_array)) {
-            $std_array[$key] = $this->map_human_action_to_std($std_array[$key], $usr_msg);
+            $std_array[$key] = $this->map_human_action_to_std($std_array[$key], $msg);
         }
         $key = url_var::STEP;
         if (array_key_exists($key, $std_array)) {
-            $std_array[$key] = $this->map_human_step_to_std($std_array[$key], $usr_msg);
+            $std_array[$key] = $this->map_human_step_to_std($std_array[$key], $msg);
         }
         return $std_array;
     }
 
     private function add_url_default(
         array        $url_array,
-        user_message $usr_msg
+        user_message $msg
     ): array
     {
         $std_array = [];
@@ -321,7 +321,7 @@ class url_mapper
                         if (array_key_exists($key, $url_array)) {
                             $std_array[$key] = $val ?? $map[1];
                         } else {
-                            $usr_msg->add_id_with_vars(msg_id::URL_KEY_MISSING, [
+                            $msg->add(msg_id::URL_KEY_MISSING, [
                                 msg_id::VAR_URL_KEY => $key
                             ]);
                         }
@@ -357,7 +357,7 @@ class url_mapper
         return $std_array;
     }
 
-    function name_to_human(string $std_name, user_message $usr_msg): string
+    function name_to_human(string $std_name, user_message $msg): string
     {
         $lib = new library();
         $human_name = $std_name;
@@ -366,7 +366,7 @@ class url_mapper
         if (array_key_exists($std_name, $keys)) {
             $human_name = $keys[$std_name];
         } else {
-            $usr_msg->add_id_with_vars(msg_id::URL_KEY_MISSING, [
+            $msg->add(msg_id::URL_KEY_MISSING, [
                 msg_id::VAR_URL_KEY => $std_name
             ]);
         }

@@ -237,20 +237,20 @@ class term_view extends sandbox_link
      * set the vars of this view link object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         // reset the all parameters for these formula link object but keep the user
         $this->reset(true);
 
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // import the view
         if (array_key_exists(json_fields::VIEW, $in_ex_json)) {
@@ -263,27 +263,27 @@ class term_view extends sandbox_link
             if (is_string($msk_json)) {
                 $msk = $dto?->get_view_by_name($msk_json);
                 if ($msk == null) {
-                    $usr_msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                    $msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $msk = new view($usr_msg->usr);
+                    $msk = new view($msg->usr);
                     $msk->set_name($msk_json);
                 }
                 $this->set_view($msk);
             } elseif (is_array($msk_json)) {
-                $msk = new view($usr_msg->usr);
-                $msk->import_mapper($msk_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $msk = new view($msg->usr);
+                $msk->import_mapper($msk_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_view($msk);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::VIEW_CREATED, [
+            $msg->add_info_with_vars(msg_id::VIEW_CREATED, [
                 msg_id::VAR_VIEW_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $msk = new view($usr_msg->usr);
-            $msk->import_mapper($in_ex_json, $usr_msg, $dto);
+            $msk = new view($msg->usr);
+            $msk->import_mapper($in_ex_json, $msg, $dto);
             $this->set_view($msk);
         }
 
@@ -298,26 +298,26 @@ class term_view extends sandbox_link
             if (is_string($trm_json)) {
                 $trm = $dto?->get_term_by_name($trm_json);
                 if ($trm == null) {
-                    $usr_msg->add_id_with_vars(msg_id::TERM_MISSING_IMPORT, [
+                    $msg->add_id_with_vars(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $trm = new term($usr_msg->usr);
+                    $trm = new term($msg->usr);
                     $trm->set_name($trm_json);
                 }
                 $this->set_term($trm);
             } elseif (is_array($trm_json)) {
-                $trm = new term($usr_msg->usr);
-                $trm->import_mapper($trm_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $trm = new term($msg->usr);
+                $trm->import_mapper($trm_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_term($trm);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::TERM_CREATED, [
+            $msg->add_info_with_vars(msg_id::TERM_CREATED, [
                 msg_id::VAR_TERM_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $trm = new term($usr_msg->usr);
+            $trm = new term($msg->usr);
             //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
             $this->set_term($trm);
         }
@@ -330,7 +330,7 @@ class term_view extends sandbox_link
             $this->description = $in_ex_json[json_fields::DESCRIPTION];;
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -727,13 +727,13 @@ class term_view extends sandbox_link
      * add the type field to the list of changed database fields with name, value and type
      *
      * @param term_view|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         term_view|db_object_seq_id $obj,
-        user_message               $usr_msg,
+        user_message               $msg,
         sql_type_list              $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -743,7 +743,7 @@ class term_view extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
 
         if ($obj->description !== $this->description) {
             if ($do_log) {
@@ -770,7 +770,7 @@ class term_view extends sandbox_link
                 );
             }
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -790,17 +790,17 @@ class term_view extends sandbox_link
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+        $msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
             msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
+        $msg->add_id_with_vars(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

@@ -89,7 +89,7 @@ if ($usr->id() > 0) {
 
         if ($confirm == 1) {
             // actually delete the value (at least for this user)
-            $val->del($usr_msg);
+            $val->del($msg);
 
             $result .= $html->dsp_go_back($back, $usr);
         } else {

@@ -176,16 +176,16 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @param user_message $usr_msg if the deletion cannot be done the reason why for the user
+     * @param user_message $msg if the deletion cannot be done the reason why for the user
      * @return bool true if everything has been fine
      */
-    function del(user_message $usr_msg): bool
+    function del(user_message $msg): bool
     {
         global $usr;
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
-            $usr_msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
+            $msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
                 msg_id::VAR_CLASS_NAME => $class_name,
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
@@ -212,11 +212,11 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $usr_msg->merge($this->del_exe($usr));
+                    $msg->merge($this->del_exe($usr));
                 }
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**
@@ -473,15 +473,15 @@ class db_id_object_non_sandbox extends db_object_seq_id
 
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         $msg = 'import_mapper used but not overwritten in ' . $this::class;
         log_err($msg);
-        $usr_msg = new user_message();
-        $usr_msg->add_message_text($msg);
-        return $usr_msg->is_ok();
+        $msg = new user_message();
+        $msg->add_message_text($msg);
+        return $msg->is_ok();
     }
 
 }

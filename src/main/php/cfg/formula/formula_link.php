@@ -290,20 +290,20 @@ class formula_link extends sandbox_link
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return bool true if everything was fine
      */
     function import_mapper(
         array        $in_ex_json,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
         // reset the all parameters for these formula link object but keep the user
         $this->reset(true);
 
-        parent::import_mapper($in_ex_json, $usr_msg, $dto);
+        parent::import_mapper($in_ex_json, $msg, $dto);
 
         // import the formula
         if (array_key_exists(json_fields::FORMULA, $in_ex_json)) {
@@ -316,27 +316,27 @@ class formula_link extends sandbox_link
             if (is_string($frm_json)) {
                 $frm = $dto?->get_formula_by_name($frm_json);
                 if ($frm == null) {
-                    $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                    $msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $frm = new formula($usr_msg->usr);
+                    $frm = new formula($msg->usr);
                     $frm->set_name($frm_json);
                 }
                 $this->set_formula($frm);
             } elseif (is_array($frm_json)) {
-                $frm = new formula($usr_msg->usr);
-                $frm->import_mapper($frm_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $frm = new formula($msg->usr);
+                $frm->import_mapper($frm_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_formula($frm);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::FORMULA_CREATED, [
+            $msg->add_info_with_vars(msg_id::FORMULA_CREATED, [
                 msg_id::VAR_FORMULA_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $frm = new formula($usr_msg->usr);
-            $frm->import_mapper($in_ex_json, $usr_msg, $dto);
+            $frm = new formula($msg->usr);
+            $frm->import_mapper($in_ex_json, $msg, $dto);
             $this->set_formula($frm);
         }
 
@@ -351,26 +351,26 @@ class formula_link extends sandbox_link
             if (is_string($phr_json)) {
                 $phr = $dto?->get_phrase_by_name($phr_json);
                 if ($phr == null) {
-                    $usr_msg->add_id_with_vars(msg_id::PHRASE_MISSING_IMPORT, [
+                    $msg->add_id_with_vars(msg_id::PHRASE_MISSING_IMPORT, [
                         msg_id::VAR_PHRASE => $phr_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
-                    $phr = new phrase($usr_msg->usr);
+                    $phr = new phrase($msg->usr);
                     $phr->set_name($phr_json);
                 }
                 $this->set_phrase($phr);
             } elseif (is_array($phr_json)) {
-                $phr = new phrase($usr_msg->usr);
-                $phr->import_mapper($phr_json, $usr_msg, $dto);
-                if ($usr_msg->is_ok()) {
+                $phr = new phrase($msg->usr);
+                $phr->import_mapper($phr_json, $msg, $dto);
+                if ($msg->is_ok()) {
                     $this->set_phrase($phr);
                 }
             }
         } else {
-            $usr_msg->add_info_with_vars(msg_id::PHRASE_CREATED, [
+            $msg->add_info_with_vars(msg_id::PHRASE_CREATED, [
                 msg_id::VAR_PHRASE_NAME => $in_ex_json[json_fields::NAME]
             ]);
-            $phr = new phrase($usr_msg->usr);
+            $phr = new phrase($msg->usr);
             //$phr->import_mapper($in_ex_json, $usr_msg, $dto);
             $this->set_phrase($phr);
         }
@@ -384,7 +384,7 @@ class formula_link extends sandbox_link
             $this->order_nbr = $in_ex_json[json_fields::PRIORITY];
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -446,23 +446,23 @@ class formula_link extends sandbox_link
     /**
      * set the formula of this link based on the formula array
      * @param int|array $api_msg_part either the id itself or an array with the id and the formula details
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return void true if setting the formula has been successful
      */
     private function set_formula_from_api_json(
         int|array    $api_msg_part,
-        user_message $usr_msg
+        user_message $msg
     ): void
     {
         $frm = new formula($this->get_user());
         if (is_array($api_msg_part)) {
-            $frm->api_mapper($api_msg_part, $usr_msg);
+            $frm->api_mapper($api_msg_part, $msg);
         } else {
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+            $msg->add(msg_id::FORMULA_JSON_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->set_formula($frm);
         }
     }
@@ -471,13 +471,13 @@ class formula_link extends sandbox_link
      * set the formula of this link based on the id
      * and fill the formula based on the cache if possible
      * @param int|array $api_msg_part the id itself or an array which leads to an user error message
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param data_object|null $dto the data object that contains the already imported formulas
      * @return void true if setting the formula has been successful
      */
     private function set_formula_from_id(
         int|array    $api_msg_part,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): void
     {
@@ -489,11 +489,11 @@ class formula_link extends sandbox_link
                 $frm->id = $api_msg_part;
             }
         } else {
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+            $msg->add(msg_id::FORMULA_ID_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->set_formula($frm);
         }
     }
@@ -511,23 +511,23 @@ class formula_link extends sandbox_link
     /**
      * set the phrase of this link based on the phrase array
      * @param int|array $api_msg_part either the id itself or an array with the id and the phrase details
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return void true if setting the phrase has been successful
      */
     private function set_phrase_from_api_json(
         int|array    $api_msg_part,
-        user_message $usr_msg
+        user_message $msg
     ): void
     {
         $phr = new phrase($this->get_user());
         if (is_array($api_msg_part)) {
-            $phr->api_mapper($api_msg_part, $usr_msg);
+            $phr->api_mapper($api_msg_part, $msg);
         } else {
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+            $msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->set_phrase($phr);
         }
     }
@@ -536,13 +536,13 @@ class formula_link extends sandbox_link
      * set the phrase of this link based on the id
      * and fill the phrase based on the cache if possible
      * @param int|array $api_msg_part the id itself or an array which leads to an user error message
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @param data_object|null $dto the data object that contains the already imported phrases
      * @return void true if setting the phrase has been successful
      */
     private function set_phrase_from_id(
         int|array    $api_msg_part,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): void
     {
@@ -554,11 +554,11 @@ class formula_link extends sandbox_link
                 $phr->set_id($api_msg_part);
             }
         } else {
-            $usr_msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+            $msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
-        if ($usr_msg->is_ok()) {
+        if ($msg->is_ok()) {
             $this->set_phrase($phr);
         }
     }
@@ -938,12 +938,12 @@ class formula_link extends sandbox_link
 
     /**
      * update a formula_link in the database or create a user formula_link
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation
      * @return bool true if everything has been fine
      */
     function save(
-        user_message $usr_msg,
+        user_message        $msg,
         sql_type_list|array $sc_par_lst = []
     ): bool
     {
@@ -989,9 +989,9 @@ class formula_link extends sandbox_link
         }
 
         if ($this->id() <= 0) {
-            if ($this->db_ready($usr_msg)) {
+            if ($this->db_ready($msg)) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $this->add($usr_msg);
+                $this->add($msg);
             }
         } else {
             log_debug('update "' . $this->id() . '"');
@@ -1024,28 +1024,28 @@ class formula_link extends sandbox_link
                 if ($db_rec->formula()->id() <> $this->formula()->id()
                     or $db_rec->phrase()->id() <> $this->phrase()->id()) {
                     log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $usr_msg->add_message_text(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
+                    $msg->add_message_text(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
                 }
             }
 
             // check if the id parameters are supposed to be changed
             $this->reload_objects();
-            if ($usr_msg->is_ok()) {
-                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $usr_msg);
+            if ($msg->is_ok()) {
+                $this->save_id_if_updated($db_con, $db_rec, $std_rec, $msg);
             }
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            if ($usr_msg->is_ok()) {
-                $this->save_fields_func($db_con, $db_rec, $std_rec, $usr_msg);
+            if ($msg->is_ok()) {
+                $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
             }
         }
 
-        if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->all_message_text());
+        if (!$msg->is_ok()) {
+            log_err($msg->all_message_text());
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -1082,13 +1082,13 @@ class formula_link extends sandbox_link
      * get a list of database field names, values and types that have been updated
      *
      * @param formula_link|db_object_seq_id $obj the compare value to detect the changed fields
-     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
+     * @param user_message $msg the user message object that collects any issues during the sql creation
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         formula_link|db_object_seq_id $obj,
-        user_message                  $usr_msg,
+        user_message                  $msg,
         sql_type_list                 $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
@@ -1099,7 +1099,7 @@ class formula_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($obj, $usr_msg, $sc_par_lst);
+        $lst = parent::db_fields_changed($obj, $msg, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($obj->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -1111,7 +1111,7 @@ class formula_link extends sandbox_link
             }
             global $sys;
             if ($this->predicate_id() < 0) {
-                $usr_msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
+                $msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1147,17 +1147,17 @@ class formula_link extends sandbox_link
      * message
      */
 
-    function message_from_invalid(user_message $usr_msg): void
+    function message_from_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_FORMULA_IN_LINK_INVALID, [
+        $msg->add_id_with_vars(msg_id::MANDATORY_FORMULA_IN_LINK_INVALID, [
             msg_id::VAR_FORMULA_NAME => $this->formula()->dsp_id(),
             msg_id::VAR_NAME => $this->phrase()->dsp_id(),
         ]);
     }
 
-    function message_to_invalid(user_message $usr_msg): void
+    function message_to_invalid(user_message $msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::MANDATORY_PHRASE_IN_LINK_INVALID, [
+        $msg->add_id_with_vars(msg_id::MANDATORY_PHRASE_IN_LINK_INVALID, [
             msg_id::VAR_PHRASE_NAME => $this->phrase()->dsp_id(),
             msg_id::VAR_NAME => $this->formula()->dsp_id(),
         ]);

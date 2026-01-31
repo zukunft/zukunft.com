@@ -868,13 +868,13 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user_message $usr_msg to enrich with warnings, problems and solutions
+     * @param user_message $msg to enrich with warnings, problems and solutions
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return bool true if everything was fine
      */
     function import_obj(
         array        $json_obj,
-        user_message $usr_msg,
+        user_message $msg,
         ?data_object $dto = null
     ): bool
     {
@@ -896,7 +896,7 @@ class value_list extends sandbox_value_list
 
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->get_user());
-                if ($phr_lst->import_lst($value, $usr_msg)) {
+                if ($phr_lst->import_lst($value, $msg)) {
                     $val->set_grp($phr_lst->get_grp_id($do_save));
                 }
             }
@@ -905,7 +905,7 @@ class value_list extends sandbox_value_list
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    $msg->add(msg_id::CANNOT_ADD_TIMESTAMP, [
                         msg_id::VAR_VALUE => $value,
                         msg_id::VAR_ID => $val->dsp_id()
                     ]);
@@ -924,10 +924,10 @@ class value_list extends sandbox_value_list
                 $src = new source($this->get_user());
                 $src->set_name($value);
                 if ($do_save) {
-                    if ($usr_msg->is_ok()) {
+                    if ($msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
-                            $src->save($usr_msg);
+                            $src->save($msg);
                         }
                     }
                 }
@@ -938,28 +938,28 @@ class value_list extends sandbox_value_list
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
-                            $usr_msg = $this->add_value(
+                            $msg = $this->add_value(
                                 $val_key,
                                 $val_number,
                                 $val,
                                 $phr_lst,
                                 $do_save,
-                                $usr_msg);
+                                $msg);
                         }
                     } else {
-                        $usr_msg = $this->add_value(
+                        $msg = $this->add_value(
                             $val_entry_key,
                             $val_entry,
                             $val,
                             $phr_lst,
                             $do_save,
-                            $usr_msg);
+                            $msg);
                     }
                 }
             }
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     private function add_value(
@@ -1457,7 +1457,7 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(user_message $usr_msg, import $imp, float $est_per_sec = 0.0): bool
+    function save(user_message $msg, import $imp, float $est_per_sec = 0.0): bool
     {
         $lib = new library();
         $name = $lib->class_to_table(value::class);
@@ -1482,12 +1482,12 @@ class value_list extends sandbox_value_list
             $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
                 if ($val->get_value() === null) {
-                    $usr_msg->add_id_with_vars(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
+                    $msg->add(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
                 } else {
                     if ($val->id() == 0) {
-                        $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
+                        $msg->add(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
                     } else {
-                        $val->save($usr_msg);
+                        $val->save($msg);
                     }
                 }
                 $i++;
@@ -1502,7 +1502,7 @@ class value_list extends sandbox_value_list
             //      create blocks of update function calls
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 

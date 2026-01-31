@@ -246,12 +246,12 @@ class group extends sandbox_multi
      * map a group api json to this model group object
      * similar to the import_obj function but using the database id instead of names as the unique key
      * @param array $api_json the api array with the group values that should be mapped
-     * @param user_message $usr_msg the message for the user why the action has failed and a suggested solution
+     * @param user_message $msg the message for the user why the action has failed and a suggested solution
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $api_json, user_message $usr_msg): bool
+    function api_mapper(array $api_json, user_message $msg): bool
     {
-        parent::api_mapper($api_json, $usr_msg);
+        parent::api_mapper($api_json, $msg);
 
         if (array_key_exists(json_fields::ID, $api_json)) {
             $this->set_id($api_json[json_fields::ID]);
@@ -263,7 +263,7 @@ class group extends sandbox_multi
             $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
 
@@ -456,7 +456,7 @@ class group extends sandbox_multi
     /**
      * @return sql_par_field_list with the id field or fields of this group
      */
-    function id_fvt(user_message $usr_msg): sql_par_field_list
+    function id_fvt(user_message $msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         if ($this->is_prime()) {
@@ -470,7 +470,7 @@ class group extends sandbox_multi
                     $pos++;
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+                $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
                     msg_id::VAR_VALUE => $this->dsp_id()
                 ]);
             }
@@ -484,7 +484,7 @@ class group extends sandbox_multi
         return $fvt_lst;
     }
 
-    function id_fvt_main(user_message $usr_msg): sql_par_field_list
+    function id_fvt_main(user_message $msg): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $grp_id = new group_id();
@@ -497,7 +497,7 @@ class group extends sandbox_multi
                 $pos++;
             }
         } else {
-            $usr_msg->add_id_with_vars(msg_id::MANDATORY_GROUP_ID_MISSING, [
+            $msg->add(msg_id::MANDATORY_GROUP_ID_MISSING, [
                 msg_id::VAR_VALUE => $this->dsp_id()
             ]);
         }
@@ -1249,10 +1249,10 @@ class group extends sandbox_multi
      * check if the user has requested a group with a preserved name
      * and yes if return a message to the user
      *
-     * @param user_message $usr_msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
+     * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @return bool true if everything has been fine
      */
-    protected function check_preserved(user_message $usr_msg): bool
+    protected function check_preserved(user_message $msg): bool
     {
         global $usr;
         global $mtr;
@@ -1267,13 +1267,13 @@ class group extends sandbox_multi
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
-                $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                $msg->add(msg_id::GROUP_IS_RESERVED, [
                     msg_id::VAR_NAME => $this->name(),
                     msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
                 ]);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

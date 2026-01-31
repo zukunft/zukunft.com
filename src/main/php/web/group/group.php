@@ -190,13 +190,13 @@ class group extends sandbox_named
     /**
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
-     * @param user_message $usr_msg ok or a warning e.g. if the server version does not match
+     * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if the mapping has been completed successful
      */
-    function api_mapper(array $json_array, user_message $usr_msg): bool
+    function api_mapper(array $json_array, user_message $msg): bool
     {
         if (array_key_exists(json_fields::ID, $json_array)) {
-            parent::api_mapper($json_array, $usr_msg);
+            parent::api_mapper($json_array, $msg);
             if (array_key_exists(json_fields::PHRASES, $json_array)) {
                 $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
@@ -204,13 +204,13 @@ class group extends sandbox_named
                 }
             }
         } else {
-            $usr_msg = new user_message();
+            $msg = new user_message();
             // create phrase group based on the phrase list as fallback
             foreach ($json_array as $phr_json) {
                 $this->set_phrase_from_json_array($phr_json);
             }
         }
-        return $usr_msg->is_ok();
+        return $msg->is_ok();
     }
 
     /**

@@ -595,20 +595,20 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
-     * @param user_message $usr_msg collect the messages for the user
+     * @param user_message $msg collect the messages for the user
      * @param bool $can_be_missing if true no error log message is created if the field does not exists
      * @return sql_par_field|null the name, value and type selected by the name
      */
     function get(
         string       $name,
-        user_message $usr_msg,
+        user_message $msg,
         bool         $can_be_missing = false
     ): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
             if (!$can_be_missing) {
-                $usr_msg->add_id_with_vars(msg_id::MANDATORY_FIELD_MISSING, [
+                $msg->add(msg_id::MANDATORY_FIELD_MISSING, [
                     msg_id::VAR_NAME => $name,
                     msg_id::VAR_NAME_LIST => implode(',', $this->names())
                 ]);
