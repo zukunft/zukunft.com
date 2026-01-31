@@ -1585,6 +1585,11 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '.';
 
+    case MISSING_KEY =
+        self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is missing in '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+
     /*
      * internal code errors
      */

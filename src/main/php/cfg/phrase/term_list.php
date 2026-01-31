@@ -206,11 +206,13 @@ class term_list extends sandbox_list_named
     function load_additional_by_id(trm_ids $id_lst): bool
     {
         $result = false;
-        $trm_lst = new term_list($this->get_user());
-        $trm_lst->load_by_ids($id_lst);
-        if (!$trm_lst->is_empty()) {
-            $result = true;
-            $this->merge($trm_lst);
+        if (!$id_lst->is_empty()) {
+            $trm_lst = new term_list($this->get_user());
+            $trm_lst->load_by_ids($id_lst);
+            if (!$trm_lst->is_empty()) {
+                $result = true;
+                $this->merge($trm_lst);
+            }
         }
         return $result;
     }

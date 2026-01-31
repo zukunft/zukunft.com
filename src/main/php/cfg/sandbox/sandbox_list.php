@@ -401,16 +401,15 @@ class sandbox_list extends list_db_write
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @param user_message $usr_msg to report which entry is double
+     * @returns user_message if adding failed or something is strange, the messages for the user with the suggested solutions
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
-        bool                                                         $allow_duplicates = false
+        bool                                                         $allow_duplicates = false,
+        user_message                                                 $usr_msg = new user_message()
     ): user_message
     {
-        // TODO Prio 1 add $usr_msg as parameter
-        $usr_msg = new user_message();
-
         // add only objects that have all mandatory values
         $obj_to_add->db_ready($usr_msg);
 
@@ -427,11 +426,10 @@ class sandbox_list extends list_db_write
                     if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                         $usr_msg->add(parent::add_obj($obj_to_add));
                     } else {
-                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
-                            [
-                                msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                                msg_id::VAR_CLASS_NAME => $obj_to_add::class
-                            ]);
+                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY, [
+                            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                            msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                        ]);
                     }
                 }
             }

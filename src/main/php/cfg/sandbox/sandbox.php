@@ -2507,6 +2507,7 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * TODO Prio 1 rename to db_insert and only call from save to make it protected
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
      * @param user_message $usr_msg with status OK
      *                              or if something went wrong

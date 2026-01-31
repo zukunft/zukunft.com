@@ -47,6 +47,7 @@ include_once html_paths::WEB . 'frontend.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once test_paths::CREATE . 'test_types.php';
 include_once test_paths::CREATE . 'unit_env.php';
+include_once test_paths::UNIT . 'base_object_tests.php';
 include_once test_paths::UNIT . 'coding_rule_tests.php';
 include_once test_paths::UNIT . 'permission_tests.php';
 include_once test_paths::UNIT_API . 'api_tests.php';
@@ -116,6 +117,7 @@ class all_unit_tests extends test_cleanup
         new pod_tests()->run($this);
         new user_tests()->run($this);
         new user_list_tests()->run($this);
+        new base_object_tests()->run($this);
         new sandbox_tests()->run($this);
         new language_tests()->run($this); // TODO add assert_api_to_ui
         new type_tests()->run($this); // TODO add assert_api_to_ui

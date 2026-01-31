@@ -212,6 +212,7 @@ class list_db_write extends list_db_read
         return $result;
     }
 
+
     /*
      * filter
      */
@@ -226,6 +227,5 @@ class list_db_write extends list_db_read
     {
         return parent::diff($lst);
     }
-
 
 }

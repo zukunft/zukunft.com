@@ -152,6 +152,8 @@ class test_terms
         $lst->add($t_wrd->word_this()->term());
         $lst->add($t_wrd->word_parts()->term());
         $lst->add($t_wrd->word_total()->term());
+        $lst->add($t_wrd->second()->term());
+        $lst->add($t_wrd->word_minute()->term());
         $lst->add($t_vrb->verb_of()->term());
         $lst->add($t_vrb->verb_with()->term());
         $lst->add($t_wrd->word_one()->term());

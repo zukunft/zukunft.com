@@ -669,7 +669,7 @@ class test_base
      * check if the result is true and format the result as a string
      *
      * @param string $msg (unique) description of the test
-     * @param bool $result the result of the previous called test
+     * @param bool $result the result of the previously called test
      * @return bool true is the result is fine
      */
     function assert_true(
@@ -686,10 +686,30 @@ class test_base
     }
 
     /**
+     * check if the result is null
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|null $result the result of the previously called test
+     * @return bool true is the result is fine
+     */
+    function assert_null(
+        string      $msg,
+        string|null $result,
+        float       $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
+    {
+        if ($result === null) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, 'null', $result, '', $exe_max_time);
+        }
+    }
+
+    /**
      * check if the result is false and format the result as a string
      *
      * @param string $msg (unique) description of the test
-     * @param bool $result the result of the previous called test
+     * @param bool $result the result of the previously called test
      * @return bool true is the result is fine
      */
     function assert_false(
@@ -706,7 +726,7 @@ class test_base
 
     /**
      * check if the result text is empty
-     * e.g. because the result string is a difference message
+     * e.g. because the result string is a different message
      *
      * @param string $msg (unique) description of the test
      * @param string $err_message the error message which is expected to be an empty string

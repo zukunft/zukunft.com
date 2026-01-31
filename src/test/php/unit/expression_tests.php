@@ -142,6 +142,17 @@ class expression_tests
         $target = '"","" (' . words::SECOND_ID * 2 - 1 . ',' . words::MINUTE_ID * 2 - 1 . ')';
         $t->assert($test_name, $result, $target);
 
+        $test_name = 'id list of missing terms is empty if all terms are given';
+        $frm = $t_frm->formula();
+        $exp = $frm->expression();
+        $trm_lst = $t_trm->term_list_all();
+        $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
+        $t->assert_true($test_name, $id_lst->is_empty());
+        $test_name = 'id list of missing terms is returning the missing term id';
+        $trm_lst->unset(words::SECOND_ID);
+        $id_lst = $exp->terms_missing($usr_msg, $trm_lst);
+        $t->assert($test_name, $result, $target);
+
 
         $t->subheader($ts . 'extract term list');
 
