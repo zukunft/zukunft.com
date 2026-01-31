@@ -204,9 +204,9 @@ class job_list extends list_db_write
         // check if the job to add has all needed parameters
         if ($job->type_code_id() != job_types::BASE_IMPORT) {
             if (!isset($job->frm)) {
-                $msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             } elseif (!isset($job->phr_lst)) {
-                $msg->add_id_with_vars(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
+                $msg->add(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             }
         }
 
@@ -244,7 +244,7 @@ class job_list extends list_db_write
             if ($chk_job->frm == $job->frm) {
                 if ($chk_job->usr == $job->get_user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                        $msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
+                        $msg->add(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
                     }
                 }
             }

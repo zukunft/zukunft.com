@@ -77,19 +77,19 @@ class ListOf
      * TODO check if a more specific return object can be used
      * get one object of the list by the key
      * @param string|int $key the key of the lst array
-     * @param user_message|null $usr_msg to report missing keys
+     * @param user_message|null $msg to report missing keys
      * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
     function get(
         string|int        $key,
-        user_message|null $usr_msg = null
+        user_message|null $msg = null
     ): IdObject|TextIdObject|CombineObject|null
     {
         if (array_key_exists($key, $this->lst)) {
             return $this->lst[$key];
         } else {
             $lib = new library();
-            $usr_msg?->add_id_with_vars(msg_id::MISSING_KEY, [
+            $msg?->add(msg_id::MISSING_KEY, [
                 msg_id::VAR_NAME => $key,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
             ]);

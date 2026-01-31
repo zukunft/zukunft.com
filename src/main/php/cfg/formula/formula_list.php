@@ -947,7 +947,7 @@ class formula_list extends sandbox_list_named
             if ($name_wrd->id() > 0) {
                 $frm->name_wrd = $name_wrd;
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_WORD_NAME => $frm->name(),
                     msg_id::VAR_FORMULA => $frm->id(),
                 ]);
@@ -1023,7 +1023,7 @@ class formula_list extends sandbox_list_named
             if ($frm->db_ready($msg)) {
                 $frm_lst->add_by_name($frm);
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                $msg->add(msg_id::IMPORT_FORMULA_NOT_READY, [
                     msg_id::VAR_FILE_NAME => $file_name,
                     msg_id::VAR_FORMULA => $frm->dsp_id(),
                 ]);
@@ -1086,7 +1086,7 @@ class formula_list extends sandbox_list_named
     {
         foreach ($this->lst() as $frm) {
             if ($frm->id() == 0) {
-                $msg->add_id_with_vars(msg_id::IMPORT_FORMULA_FAILED, [
+                $msg->add(msg_id::IMPORT_FORMULA_FAILED, [
                     msg_id::VAR_FORMULA => $frm->name(),
                     msg_id::VAR_FILE_NAME => $file_name
                 ]);

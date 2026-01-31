@@ -995,7 +995,7 @@ class formula extends formula_map
     }
 
     /**
-     * get all terms used in this formula
+     * get all terms used in this formula,
      * including the phrases that should be added to the result
      * @param term_list $cache with the terms already loaded
      * @return term_list list of all terms used in the formula expression

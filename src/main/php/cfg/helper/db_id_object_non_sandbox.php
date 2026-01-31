@@ -185,7 +185,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         if ($this->id() == 0) {
-            $msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
+            $msg->add(msg_id::ID_MISSING_FOR_DEL, [
                 msg_id::VAR_CLASS_NAME => $class_name,
                 msg_id::VAR_NAME => $this->dsp_id()
             ]);
@@ -477,10 +477,10 @@ class db_id_object_non_sandbox extends db_object_seq_id
         ?data_object $dto = null
     ): bool
     {
-        $msg = 'import_mapper used but not overwritten in ' . $this::class;
-        log_err($msg);
+        $msg_txt = 'import_mapper used but not overwritten in ' . $this::class;
+        log_err($msg_txt);
         $msg = new user_message();
-        $msg->add_message_text($msg);
+        $msg->add_message_text($msg_txt);
         return $msg->is_ok();
     }
 

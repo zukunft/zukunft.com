@@ -716,7 +716,7 @@ class view_relation extends sandbox_link
             }
             global $sys;
             if ($this->predicate_id() < 0) {
-                $msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);

@@ -182,47 +182,9 @@ class user_message extends Message
      */
     function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $this->add($msg_id, $var_lst, true);
         $msg = $this->get_last_message_translated();
         log_err($msg);
-    }
-
-    /**
-     * add a message id and a list of related variables
-     * to offer the user to see more details without a retry
-     * more than one message id can be added to a user message result.
-     * the message id is translated to the user interface language at the latest possible moment
-     * the vars are expected to be in the target language already
-     *
-     * @param msg_id|null $msg_id the message text to add
-     * @return void is never expected to fail
-     */
-    function add_id_with_vars(?msg_id $msg_id, array $var_lst, bool $ok = false): void
-    {
-        if ($msg_id != null) {
-            $key_lst = [];
-            foreach ($this->msg_var_lst as $msg_row) {
-
-                $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
-            }
-
-            // check the var list
-            foreach ($var_lst as $var) {
-                if (is_array($var)) {
-                    log_warning('var ' . implode(",", $var) . 'is an array');
-                }
-            }
-
-            // do not repeat the same text more than once
-            if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
-                $key_lst)) {
-                $this->msg_var_lst[] = [$msg_id, $var_lst];
-            }
-            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
-            if ($this->is_ok() and !$ok) {
-                $this->set_not_ok();
-            }
-        }
     }
 
     /**
@@ -289,7 +251,7 @@ class user_message extends Message
             $this->add_message_text($msg_text);
         }
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
-            $this->add_id_with_vars($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
+            $this->add($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
         }
         $this->combine_status($msg_to_add);
     }

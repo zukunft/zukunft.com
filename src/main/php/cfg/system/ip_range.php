@@ -157,7 +157,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
             $this->from = $in_ex_json[json_fields::IP_FROM];
         } else {
-            $msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_FROM,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);
@@ -165,7 +165,7 @@ class ip_range extends db_object_seq_id
         if (key_exists(json_fields::IP_TO, $in_ex_json)) {
             $this->to = $in_ex_json[json_fields::IP_TO];
         } else {
-            $msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+            $msg->add(msg_id::IMPORT_IP_MISSING, [
                 msg_id::VAR_NAME => json_fields::IP_TO,
                 msg_id::VAR_IP_RANGE => json_encode($in_ex_json),
             ]);

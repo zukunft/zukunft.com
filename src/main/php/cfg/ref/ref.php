@@ -331,7 +331,7 @@ class ref extends sandbox_link
                 if ($db_con->is_open()) {
                     $src->load_by_name($src_name);
                     if ($src->id() == 0) {
-                        $msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_SOURCE_NOT_FOUND, [
                             msg_id::VAR_NAME => $src_name,
                             msg_id::VAR_ID => $this->dsp_id()
                         ]);
@@ -346,7 +346,7 @@ class ref extends sandbox_link
             $this->set_predicate_id($sys->typ_lst->ref_typ->id($in_ex_json[json_fields::TYPE_NAME]));
 
             if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                $msg->add_id_with_vars(msg_id::REFERENCE_TYPE_NOT_FOUND, [
+                $msg->add(msg_id::REFERENCE_TYPE_NOT_FOUND, [
                     msg_id::VAR_TYPE_NAME->value => $in_ex_json[json_fields::TYPE_NAME],
                 ]);
 
@@ -369,7 +369,7 @@ class ref extends sandbox_link
                 if ($db_con->is_open()) {
                     $phr->load_by_name($phr_name);
                     if ($phr->id() == 0) {
-                        $msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                        $msg->add(msg_id::IMPORT_PHRASE_NOT_FOUND, [
                             msg_id::VAR_NAME => $phr_name,
                             msg_id::VAR_ID => $this->dsp_id()
                         ]);
@@ -1352,7 +1352,7 @@ class ref extends sandbox_link
                 }
                 global $sys;
                 if ($this->predicate_id() < 0) {
-                    $msg->add_id_with_vars(msg_id::REFERENCE_TYPE_MISSING, [
+                    $msg->add(msg_id::REFERENCE_TYPE_MISSING, [
                         msg_id::VAR_TYPE => $this->predicate_id(),
                         msg_id::VAR_NAME => $this->dsp_id()
                     ]);

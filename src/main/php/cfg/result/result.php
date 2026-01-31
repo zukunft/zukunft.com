@@ -301,7 +301,7 @@ class result extends sandbox_value
             $frm = $frm_lst->get_by_name($frm_name);
             if ($frm == null) {
                 if ($db_con->is_open()) {
-                    $msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                    $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_name,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -336,7 +336,7 @@ class result extends sandbox_value
             if (strtotime($value)) {
                 $this->set_last_update($lib->get_datetime($value, $this->dsp_id(), 'JSON import'));
             } else {
-                $msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                $msg->add(msg_id::CANNOT_ADD_TIMESTAMP,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
                 );
             }
@@ -347,7 +347,7 @@ class result extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC,
+                $msg->add(msg_id::IMPORT_VALUE_NOT_NUMERIC,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
                 );
             }

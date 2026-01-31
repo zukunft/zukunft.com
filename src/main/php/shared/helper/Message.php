@@ -145,7 +145,7 @@ class Message
     }
 
     /**
-     * TODO Prio 3 rename to add_text because just a translateable text is added
+     * TODO Prio 3 rename to add_text because just a translatable text is added
      * add a message id
      * to offer the user to see more details without a retry
      * more than one message id can be added to a user message result.

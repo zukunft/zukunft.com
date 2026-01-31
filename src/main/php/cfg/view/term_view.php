@@ -263,7 +263,7 @@ class term_view extends sandbox_link
             if (is_string($msk_json)) {
                 $msk = $dto?->get_view_by_name($msk_json);
                 if ($msk == null) {
-                    $msg->add_id_with_vars(msg_id::VIEW_MISSING_IMPORT, [
+                    $msg->add(msg_id::VIEW_MISSING_IMPORT, [
                         msg_id::VAR_VIEW => $msk_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -298,7 +298,7 @@ class term_view extends sandbox_link
             if (is_string($trm_json)) {
                 $trm = $dto?->get_term_by_name($trm_json);
                 if ($trm == null) {
-                    $msg->add_id_with_vars(msg_id::TERM_MISSING_IMPORT, [
+                    $msg->add(msg_id::TERM_MISSING_IMPORT, [
                         msg_id::VAR_TERM => $trm_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -770,7 +770,7 @@ class term_view extends sandbox_link
                 );
             }
             if ($this->predicate_id() < 0) {
-                $msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::VIEW_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_name(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -792,7 +792,7 @@ class term_view extends sandbox_link
 
     function message_from_invalid(user_message $msg): void
     {
-        $msg->add_id_with_vars(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_VIEW_IN_LINK_INVALID, [
             msg_id::VAR_VIEW_NAME => $this->get_view()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);
@@ -800,7 +800,7 @@ class term_view extends sandbox_link
 
     function message_to_invalid(user_message $msg): void
     {
-        $msg->add_id_with_vars(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_TERM_IN_LINK_INVALID, [
             msg_id::VAR_TERM_NAME => $this->term()?->dsp_id(),
             msg_id::VAR_NAME => $this->dsp_id(),
         ]);

@@ -316,7 +316,7 @@ class formula_link extends sandbox_link
             if (is_string($frm_json)) {
                 $frm = $dto?->get_formula_by_name($frm_json);
                 if ($frm == null) {
-                    $msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                    $msg->add(msg_id::FORMULA_MISSING_IMPORT, [
                         msg_id::VAR_FORMULA => $frm_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -351,7 +351,7 @@ class formula_link extends sandbox_link
             if (is_string($phr_json)) {
                 $phr = $dto?->get_phrase_by_name($phr_json);
                 if ($phr == null) {
-                    $msg->add_id_with_vars(msg_id::PHRASE_MISSING_IMPORT, [
+                    $msg->add(msg_id::PHRASE_MISSING_IMPORT, [
                         msg_id::VAR_PHRASE => $phr_json,
                         msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                     ]);
@@ -523,7 +523,7 @@ class formula_link extends sandbox_link
         if (is_array($api_msg_part)) {
             $phr->api_mapper($api_msg_part, $msg);
         } else {
-            $msg->add_id_with_vars(msg_id::FORMULA_JSON_MISSING, [
+            $msg->add(msg_id::FORMULA_JSON_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
@@ -554,7 +554,7 @@ class formula_link extends sandbox_link
                 $phr->set_id($api_msg_part);
             }
         } else {
-            $msg->add_id_with_vars(msg_id::FORMULA_ID_MISSING, [
+            $msg->add(msg_id::FORMULA_ID_MISSING, [
                 msg_id::VAR_JSON_TEXT => json_encode($api_msg_part)
             ]);
         }
@@ -1111,7 +1111,7 @@ class formula_link extends sandbox_link
             }
             global $sys;
             if ($this->predicate_id() < 0) {
-                $msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
+                $msg->add(msg_id::FORMULA_LINK_TYPE_MISSING, [
                     msg_id::VAR_TYPE => $this->predicate_id(),
                     msg_id::VAR_NAME => $this->dsp_id()
                 ]);
@@ -1149,7 +1149,7 @@ class formula_link extends sandbox_link
 
     function message_from_invalid(user_message $msg): void
     {
-        $msg->add_id_with_vars(msg_id::MANDATORY_FORMULA_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_FORMULA_IN_LINK_INVALID, [
             msg_id::VAR_FORMULA_NAME => $this->formula()->dsp_id(),
             msg_id::VAR_NAME => $this->phrase()->dsp_id(),
         ]);
@@ -1157,7 +1157,7 @@ class formula_link extends sandbox_link
 
     function message_to_invalid(user_message $msg): void
     {
-        $msg->add_id_with_vars(msg_id::MANDATORY_PHRASE_IN_LINK_INVALID, [
+        $msg->add(msg_id::MANDATORY_PHRASE_IN_LINK_INVALID, [
             msg_id::VAR_PHRASE_NAME => $this->phrase()->dsp_id(),
             msg_id::VAR_NAME => $this->formula()->dsp_id(),
         ]);

@@ -325,7 +325,7 @@ class user_message extends Message
      */
     function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $this->add($msg_id, $var_lst, true);
     }
 
     /**
@@ -338,7 +338,7 @@ class user_message extends Message
      */
     function add_warning_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $this->add($msg_id, $var_lst, true);
         $msg = $this->get_last_message_translated();
         log_warning($msg);
     }
@@ -353,27 +353,9 @@ class user_message extends Message
      */
     function add_err_with_vars(?msg_id $msg_id, array $var_lst): void
     {
-        $this->add_id_with_vars($msg_id, $var_lst, true);
+        $this->add($msg_id, $var_lst, true);
         $msg = $this->get_last_message_translated();
         log_err($msg);
-    }
-
-    /**
-     * add a message id and a list of related variables
-     * to offer the user to see more details without a retry
-     * more than one message id can be added to a user message result.
-     * the message id is translated to the user interface language at the latest possible moment
-     * the vars are expected to be in the target language already
-     *
-     * the function just adds the message and sets the status to fail
-     * without writing to the log
-     *
-     * @param msg_id|null $msg_id the message text to add
-     * @return void is never expected to fail
-     */
-    function add_id_with_vars(?msg_id $msg_id, array $var_lst, bool $ok = false): void
-    {
-        parent::add($msg_id, $var_lst, $ok);
     }
 
     /**
