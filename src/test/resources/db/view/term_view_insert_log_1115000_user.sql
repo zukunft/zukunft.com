@@ -18,7 +18,7 @@ BEGIN
          SELECT         _user_id,_change_action_id,_field_id_view_link_type_id,_type_name,_view_link_type_id,_term_view_id ;
 
     INSERT INTO user_term_views (term_view_id, user_id, description, view_link_type_id)
-         SELECT                      _term_view_id,_user_id,_description,_view_link_type_id ;
+         SELECT                 _term_view_id,_user_id,_description,_view_link_type_id ;
 
 END $$ LANGUAGE plpgsql;
 

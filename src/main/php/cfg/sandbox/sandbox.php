@@ -3881,13 +3881,14 @@ class sandbox extends db_object_seq_id_user
                 $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 /*
+                // TODO Prio 0 activate or remove
                 $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log);
                 $par_lst_out->add_list($qp_log->par_fld_lst);
-                // TODO use these functions more often
+                // TODO Prio 1 use these functions more often
                 $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
                 $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
-                */
                 $sql .= ' ' . $qp_log->sql;
+                */
             } else {
                 log_err('Only named and link objects are supported in sandbox::sql_delete_and_log');
             }
